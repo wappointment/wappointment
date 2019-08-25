@@ -1,0 +1,125 @@
+<?php
+
+namespace Wappointment\WP;
+
+use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Services\Settings;
+
+class CustomPage
+{
+    public $slug = 'wappointment';
+    public $page_title = 'Wappointment page';
+    public $page_content = '[wappointment_page]';
+
+    public function install()
+    {
+        $page_exist_already = get_page_by_path($this->slug, OBJECT, $this->slug);
+        if (empty($page_exist_already)) {
+            $wappointmentPage = [
+                'post_status' => 'publish',
+                'post_type' => $this->slug,
+                'post_author' => 1,
+                'post_content' => $this->page_content,
+                'post_title' => $this->page_title,
+                'post_name' => $this->slug
+            ];
+            $page_id = wp_insert_post($wappointmentPage);
+        } else {
+            $page_id = $page_exist_already->ID;
+        }
+
+        Settings::save('front_page', $page_id, true);
+    }
+
+    public function boot()
+    {
+        $showItf = false;
+        register_post_type(
+            $this->slug,
+            [
+                'labels' => 'Wappointment',
+                'public' => true,
+                'has_archive' => false,
+                'show_ui' => $showItf,
+                'show_in_menu' => $showItf,
+                'rewrite' => false,
+                'show_in_nav_menus' => false,
+                'can_export' => false,
+                'publicly_queryable' => true,
+                'exclude_from_search' => true,
+            ]
+        );
+
+        // when on the wappointment page scan the title and the content
+        if ($this->isDisplayed()) {
+            add_filter('wp_title', [$this, 'metaPageTitle']);
+            add_filter('the_title', [$this, 'scanTitle']);
+            add_filter('the_content', [$this, 'scanContent'], 98);
+            \Wappointment\WP\Helpers::enqueueFrontScripts();
+        }
+    }
+
+    public function isDisplayed()
+    {
+        return empty(WPHelpers::requestGet()->input($this->slug)) ? false : true;
+    }
+
+    public function isAddEventToCalendarPage()
+    {
+        return WPHelpers::requestGet()->input('view') == 'add-event-to-calendar' ? true : false;
+    }
+
+    public function isReschedulePage()
+    {
+        return WPHelpers::requestGet()->input('view') == 'reschedule-event' ? true : false;
+    }
+
+    public function isCancelPage()
+    {
+        return WPHelpers::requestGet()->input('view') == 'cancel-event' ? true : false;
+    }
+
+    public function isNewAppointmentPage()
+    {
+        return WPHelpers::requestGet()->input('view') == 'new-event' ? true : false;
+    }
+
+    public function getPageTitle()
+    {
+        if ($this->isAddEventToCalendarPage()) {
+            return (new \Wappointment\Services\WidgetSettings)->get()['confirmation']['savetocal'];
+        }
+        if ($this->isReschedulePage()) {
+            return (new \Wappointment\Services\WidgetSettings)->get()['reschedule']['page_title'];
+        }
+        if ($this->isCancelPage()) {
+            return (new \Wappointment\Services\WidgetSettings)->get()['cancel']['page_title'];
+        }
+        if ($this->isNewAppointmentPage()) {
+            return Settings::get('new_booking_link');
+        }
+    }
+
+    public function getPageContent()
+    {
+        return '<div class="wappointment_page"></div>';
+    }
+
+    public function metaPageTitle($title)
+    {
+        $title = str_replace($this->page_title, $this->getPageTitle(), $title);
+        return $title;
+    }
+
+    public function scanTitle($title)
+    {
+        $title = str_replace($this->page_title, $this->getPageTitle(), $title);
+        return $title;
+    }
+
+    public function scanContent($content)
+    {
+        $content = str_replace($this->page_content, $this->getPageContent(), $content);
+        return $content;
+    }
+}

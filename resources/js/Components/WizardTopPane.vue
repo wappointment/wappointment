@@ -1,0 +1,97 @@
+<template>
+    <StickyBar>
+        <div class="d-block d-md-none">
+            <div class="d-flex flex-wrap">
+                <div class="progress align-self-center">
+                    <div class="progress-bar progress-bar-striped bg-info" role="progressbar" :style="'width:'+((pstep/total)*100)+'%'">
+                        Wizard {{ step }} / {{ total }}
+                    </div>
+                </div>
+                <div class="buttons align-self-center">
+                    <button class="btn btn-secondary btn-xs" @click="emitBack">Back</button>
+                    <button v-if="nextEnabled" class="btn btn-primary btn-xs" @click="emitNext">Next</button>
+                </div>
+            </div>
+        </div>
+        <div class="d-none d-md-block">
+            <div class=" d-flex flex-wrap">
+                <div class="progress align-self-center">
+                    <div class="progress-bar progress-bar-striped bg-info" role="progressbar" :style="'width:'+((pstep/total)*100)+'%'">
+                        Wizard {{ step }} / {{ total }}
+                    </div>
+                </div>
+                <div class="buttons align-self-center">
+                    <button class="btn btn-secondary btn-xl" @click="emitBack">Back</button>
+                    <button v-if="nextEnabled" class="btn btn-primary btn-xl" @click="emitNext">Next</button>
+                </div>
+                <ContactButton subject="Installation Wizard" buttonClass="btn btn-secondary btn-sm" buttonLabel="Help" />
+            </div>
+        </div>
+        
+    </StickyBar>
+</template>
+
+<script>
+import ContactButton from '../Wappointment/ContactButton'
+export default {
+  components:{ContactButton},
+  props: {
+      step:0,
+      total:0,
+      nextEnabled:  {
+        type: Boolean,
+        default: true
+    },
+  },
+  data() {
+      return {
+          pstep: 0
+      } 
+  },
+
+  mounted(){
+      this.pstep = window.prevStep
+      console.log(this.pstep)
+      setTimeout(this.delayMounted , 50);
+  },
+  
+
+  methods: {
+      delayMounted(){
+        this.pstep = this.step
+      },
+      emitBack(){
+          this.$emit('back')
+      },
+
+      emitNext(){
+          this.$emit('next')
+      },
+     
+  },
+
+}
+</script>
+<style>
+.progress {
+    width:40%;
+    height: 2.2rem;
+    margin-right: 2rem;
+    margin-left: 1rem;
+}
+
+.bg-info {
+    background-color: #d1d1d1 !important;
+    color: #4d4949;
+    font-size: .9rem;
+    font-weight: bold;
+    transition: all 0.3s ease-in;
+}
+
+@media (max-width: 769px) { 
+    .progress {
+        height: 1.6rem;
+    }
+}
+
+</style>

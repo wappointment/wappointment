@@ -1,0 +1,116 @@
+.wapmodal {
+    display: none; 
+    position: fixed; 
+    z-index: 99999 !important; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgba(0,0,0,.4); 
+    animation-name: fadeIn;
+    animation-duration: .4s;
+  }
+
+  .wapmodal .wapmodal-body-wrapper{
+    width: 90%;
+    margin: 1rem auto;
+  }
+
+  .wapmodal.wapmodal-show{
+      display: block;
+  }
+  
+  /* Modal Content */
+  .wapmodal-content.standard {
+    position: relative;
+    background-color: #fefefe;
+    width: 50%;
+    margin: 4rem auto;
+    animation-name: slideInTop;
+    animation-duration: .4s;
+    min-width: 600px;
+    border: 1px solid #929292;
+    overflow: auto;
+  }
+  .wapmodal-content.large {
+    width: 90%;
+  }
+
+  .wapmodal-content.standard.noscroll {
+    overflow: unset !important;
+    border-radius: 0 0 0 0;
+  }
+
+  .wapmodal-content.screenshot {
+    position: absolute;
+    bottom: 0;
+    background-color: #fefefe;
+    right: 0;
+    width: 100%;
+    max-height: 80%;
+    animation-name: slideIn;
+    animation-duration: .4s;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .wapmodal-content.standard{
+      width: 100%;
+      min-width: 100%;
+    }
+  }
+
+  .wapmodal .dashicons-dismiss {
+    color: white;
+    font-weight: bold;
+  }
+  
+  .wapmodal .dashicons-dismiss:hover,
+  .wapmodal .dashicons-dismiss:focus {
+    color: #cfcfcf;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  
+  .wapmodal .wapmodal-header {
+    padding: 2px 16px;
+    background-color: #484848;
+    color: #fff;
+  }
+  .wapmodal .wapmodal-header .modal-title {
+    text-align: center;
+    margin: .6rem 0;
+    color: #fff;
+  }
+  
+  .wapmodal .wapmodal-body {
+      padding: 2px 16px;
+      overflow: auto;
+      background-color: #fff;
+  }
+
+  
+  /* Add Animation */
+  @-webkit-keyframes slideInTop {
+    from {top: -300px; opacity: 0} 
+    to {top: 0; opacity: 1}
+  }
+  @-webkit-keyframes slideIn {
+    from {bottom: -300px; opacity: 0} 
+    to {bottom: 0; opacity: 1}
+  }
+  
+  @keyframes slideIn {
+    from {bottom: -300px; opacity: 0}
+    to {bottom: 0; opacity: 1}
+  }
+  
+  @-webkit-keyframes fadeIn {
+    from {opacity: 0} 
+    to {opacity: 1}
+  }
+  
+  @keyframes fadeIn {
+    from {opacity: 0} 
+    to {opacity: 1}
+  }

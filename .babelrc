@@ -1,0 +1,28 @@
+{
+    "presets": [
+      ["es2015", { "modules": false }],
+      ["stage-2"],
+      ["env", {
+        "modules": false,
+        "targets": {
+          "browsers": ["> 1%", "last 2 versions", "not ie <= 10"]
+        }
+      }]
+    ],
+    "plugins": [
+      "syntax-dynamic-import", 
+      "transform-class-properties", 
+      "transform-vue-jsx",
+      [
+        "transform-imports", {
+          "@fortawesome/free-solid-svg-icons": {
+            "transform": "@fortawesome/free-solid-svg-icons/${member}",
+            "skipDefaultConversion": true
+          },
+          "@fortawesome/free-brand-svg-icons": {
+            "transform": "@fortawesome/free-brand-svg-icons/${member}",
+            "skipDefaultConversion": true
+          },
+        }
+      ]]
+  }

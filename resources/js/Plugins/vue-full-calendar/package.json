@@ -1,0 +1,93 @@
+{
+  "_from": "vue-full-calendar",
+  "_id": "vue-full-calendar@2.6.1",
+  "_inBundle": false,
+  "_integrity": "sha512-JN+eQIgmO59R4GubHq/dNk7nTVblH42SfCNI4EmmG6lcmx/JtMRs3L390wb231Bp/PD4dAcd43Mw02Zf2/JJOQ==",
+  "_location": "/vue-full-calendar",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "vue-full-calendar",
+    "name": "vue-full-calendar",
+    "escapedName": "vue-full-calendar",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/vue-full-calendar/-/vue-full-calendar-2.6.1.tgz",
+  "_shasum": "db9f454f3fd793ba0691161b49efca37017bc2b8",
+  "_spec": "vue-full-calendar",
+  "_where": "/home/vagrant/Code/wproots/wp-content/plugins/wappointment",
+  "author": {
+    "name": "Brock Reece"
+  },
+  "browserify": {
+    "transform": [
+      "babelify",
+      "vueify"
+    ]
+  },
+  "bugs": {
+    "url": "https://github.com/CroudSupport/vue-fullcalendar/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "fullcalendar": "^3.4.0",
+    "lodash.defaultsdeep": "^4.6.0"
+  },
+  "deprecated": false,
+  "description": "FullCalendar wrapper for vue",
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-jest": "^21.2.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-stage-2": "^6.24.1",
+    "jest": "^21.2.1",
+    "jest-serializer-vue": "^0.3.0",
+    "jest-vue": "^0.8.2",
+    "jquery": "^3.2.1",
+    "vue": "^2.5.4",
+    "vue-template-compiler": "^2.5.4"
+  },
+  "homepage": "https://github.com/CroudSupport/vue-fullcalendar#readme",
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "vue"
+    ],
+    "moduleNameMapper": {
+      "^@/(.*)$": "<rootDir>/$1"
+    },
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest",
+      ".*\\.(vue)$": "<rootDir>/node_modules/jest-vue"
+    },
+    "snapshotSerializers": [
+      "<rootDir>/node_modules/jest-serializer-vue"
+    ],
+    "mapCoverage": true
+  },
+  "keywords": [
+    "vue",
+    "fullcalendar",
+    "calendar",
+    "js"
+  ],
+  "license": "ISC",
+  "main": "index.js",
+  "name": "vue-full-calendar",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CroudSupport/vue-fullcalendar.git"
+  },
+  "scripts": {
+    "test": "jest -i"
+  },
+  "version": "2.6.1"
+}

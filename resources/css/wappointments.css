@@ -1,0 +1,66 @@
+@font-face {
+    font-family: 'wappointments';
+    src: url('../fonts/wappointments.eot');
+    src: url('../fonts/wappointments.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/wappointments.woff') format('woff'),
+         url('../fonts/wappointments.ttf') format('truetype'),
+         url('../fonts/wappointments.svg#wappointments') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+[class*='dashicons-wappo']:before{
+	display: inline-block;
+   font-family: 'wappointments';
+   font-style: normal;
+   font-weight: normal;
+   line-height: 1;
+   -webkit-font-smoothing: antialiased;
+   -moz-osx-font-smoothing: grayscale
+}
+.dashicons-wappointments:before{content:'\0041';}
+
+.wappointment-wrap .form-control::placeholder {
+    color: #dadada;
+    opacity: 1;
+}
+#wpbody-content > .error {
+    display:none;
+}
+.wp-list-table.plugins tr[data-slug="wappointment"] .column-description .notice-info{
+    border-left-color: #6664cb;
+}
+
+.wp-list-table.plugins tr[data-slug="wappointment"] .column-description .button.button-primary.button-large{
+    background-color: #6664cb;
+    color: #fff;
+    text-shadow: none;
+    border: none;
+    box-shadow: none;
+}
+
+
+@keyframes justactivated {
+    0% {
+        background-color: #ededff;
+    }
+    50% {
+        background-color: #fff;
+    }
+    100% {
+        background-color: #ededff;
+    }
+
+}
+    
+
+.wp-list-table.plugins tr.just-activated[data-slug="wappointment"] th,
+.wp-list-table.plugins tr.just-activated[data-slug="wappointment"] td{
+    background-color: #ededff;
+    animation-name: justactivated;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}  
+
+
+  

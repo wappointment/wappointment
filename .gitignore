@@ -1,0 +1,9 @@
+/node_modules
+/build
+/bin
+/dist
+/logs
+/vendor
+/wappointment
+/wappointment.zip
+!/bin/build.sh

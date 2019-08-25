@@ -1,0 +1,259 @@
+<template>
+    <transition name="slide-fade">
+        <div v-if="mounted">
+            <div class="text-center mb-2">
+                <ul class="li-unstyled my-2">
+                    <li><strong>{{options.form.header}}</strong></li>
+                    <li><strong>{{ getMoment(selectedSlot, currentTz).format(fullDateFormat) }}</strong></li>
+                </ul>
+                <div class="wappointment-errors" v-if="errors.length > 0">
+                    <div v-for="error in errors">
+                        {{ error }}
+                    </div>
+                </div>
+                
+                <div v-if="serviceHasTypes">
+                    <div v-if="allowedType('physical')" @click="selectType('physical')" class="btn btn-secondary btn-cell" :class="{selected: physicalSelected}">
+                        <font-awesome-icon icon="map-marked-alt" size="lg"/>
+                        <div>{{options.form.inperson}}</div>
+                    </div>
+                    <div v-if="allowedType('phone')" @click="selectType('phone')" class="btn btn-secondary btn-cell" :class="{selected: phoneSelected}">
+                        <font-awesome-icon icon="phone" size="lg"/>
+                        <div>{{options.form.byphone}}</div>
+                    </div>
+                    <div v-if="allowedType('skype')" @click="selectType('skype')" class="btn btn-secondary btn-cell" :class="{selected: skypeSelected}">
+                        <font-awesome-icon :icon="['fab', 'skype']" size="lg"/>
+                        <div>{{options.form.byskype}}</div>
+                    </div>
+                </div>
+
+            </div>
+            <transition name="slide-fade">
+                <div v-if="selectedServiceType">
+                    <form>
+                        <div v-if="physicalSelected" class="address-service">
+                            <BookingAddress :service="service">
+                                <font-awesome-icon icon="map-marked-alt" size="lg"/>
+                            </BookingAddress>
+                        </div>
+                        <div class="field-required" :class="hasError('name')">
+                            <label for="name">{{options.form.fullname}}</label>
+                            <p class="d-flex">
+                                <input class="form-control" id="name" type="text" v-model="bookingForm.name" :required="true">
+                            </p>
+                        </div>
+                        <div class="field-required" :class="hasError('email')">
+                            <label for="email">{{options.form.email}}</label>
+                            <p class="d-flex">
+                                <input type="email" id="email" class="form-control" v-model="bookingForm.email" :required="true">
+                            </p>
+                        </div>
+                        <div v-if="phoneSelected" class="field-required" :class="hasError('phone')">
+                            <PhoneInput 
+                            :label="options.form.phone"
+                            :phone="bookingForm.phone"
+                            :countries="service.options.countries"
+                            @onInput="onInput" 
+                            ></PhoneInput>
+                        </div>
+                        <div v-if="skypeSelected" class="field-required" :class="hasError('skype')">
+                            <label for="skype">{{options.form.skype}}</label>
+                            <p class="d-flex">
+                                <input class="form-control" type="text" id="skype" v-model="bookingForm.skype">
+                            </p>
+                        </div>
+                    </form>
+                </div>
+            </transition>
+            <hr>
+            <div class="d-flex btn-confirm">
+                <div class="mr-2"><span class="btn-secondary btn" @click="back">{{options.form.back}}</span></div>
+                <span  v-if="canSubmit" class="btn-primary btn flex-fill mr-0" @click="confirm">{{options.form.confirm}}</span>
+                <span v-else class="btn-primary btn disabled flex-fill mr-0" disabled>{{options.form.confirm}}</span>
+            </div>
+        </div>
+    </transition>
+</template>
+
+<script>
+import abstractFront from '../../Views/abstractFront'
+import BookingAddress from './Address'
+import Dates from "../../Modules/Dates";
+import PhoneInput from './PhoneInput'
+import {isEmail, isEmpty} from 'validator';
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faMapMarkedAlt, faPhone} from '@fortawesome/free-solid-svg-icons'
+import { faSkype} from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import momenttz from '../../appMoment'
+library.add(faMapMarkedAlt, faPhone, faSkype)
+
+export default {
+    extends: abstractFront,
+    mixins: [Dates],
+    props: ['service','selectedSlot','currentTz','fullDateFormat', 'options', 'errors', 'data'],
+    components: {
+        BookingAddress,
+        PhoneInput,
+        'font-awesome-icon': FontAwesomeIcon,
+    }, 
+    data: () => ({
+        bookingForm: {
+            email: '',
+            phone: '',
+            skype: '',
+            name: '',
+        },
+        phoneValid: false,
+        errorsOnFields: {},
+        selectedServiceType: false,
+        mounted: false,
+        disabledButtons: false
+    }),
+    watch: {
+        bookingForm: {
+            handler: function(newValue) {
+                this.errorsOnFields = {}
+
+                if(isEmpty(newValue.name) ) this.errorsOnFields.name = true
+                if(isEmpty(newValue.email) || !isEmail(newValue.email)) this.errorsOnFields.email = true
+                if(this.phoneSelected && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
+                if(this.skypeSelected && (isEmpty(newValue.skype) || !this.skypeValid)) this.errorsOnFields.skype = true
+                if(this.disabledButtons) {
+                    this.options.eventsBus.emits('dataDemoChanged', newValue)
+                } 
+            },
+            deep: true
+        }
+    },
+    created(){
+        if(this.options.demoData !== undefined){
+            this.bookingForm = this.options.demoData.form 
+            this.selectedServiceType = this.bookingForm.type
+            this.disabledButtons = true
+        }
+    },
+    mounted(){
+        if(this.service !== false) {
+            if(!this.serviceHasTypes) this.selectDefaultType()
+        }
+        this.mounted = true
+        if(Object.keys(this.data).length > 1){
+            this.bookingForm = Object.assign({},this.data)
+            if(this.bookingForm.type!==undefined)this.selectedServiceType = this.bookingForm.type
+        }
+    },
+    computed: {
+        canSubmit(){
+            return this.selectedServiceType && Object.keys(this.errorsOnFields).length < 1 && !this.dataEmpty
+        },
+        phoneSelected(){
+            return this.selectedServiceType == 'phone'
+        },
+        physicalSelected(){
+            return this.selectedServiceType == 'physical'
+        },
+        skypeSelected(){
+            return this.selectedServiceType == 'skype'
+        },
+        skypeValid(){
+            return /^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/.test(this.bookingForm.skype)
+        },
+        serviceHasTypes(){
+            return this.service.type.length > 1 
+        },
+        dataEmpty(){
+            for (const key in this.bookingForm) {
+                if (this.bookingForm.hasOwnProperty(key)) {
+                    if(this.bookingForm[key]!== '') return false
+                }
+            }
+            return true
+        },
+    },
+    methods: {
+        back(){
+            if(this.disabledButtons) {
+              this.options.eventsBus.emits('stepChanged', 'selection')
+              return
+            } 
+            this.$emit('back')
+        },
+        confirm(){
+            if(this.disabledButtons) {
+              this.options.eventsBus.emits('stepChanged', 'confirmation')
+              return
+            } 
+            let data = this.bookingForm
+            data.time = this.selectedSlot
+            data.type = this.selectedServiceType
+            data.ctz = momenttz.tz.guess();
+            this.$emit('confirm', data)
+        },
+        selectDefaultType(){
+            this.selectedServiceType = this.service.type[0]
+        },
+        
+        allowedType(type){
+            return this.service.type.indexOf(type) !== -1
+        },
+        selectType(type){
+            this.selectedServiceType = type
+            let bookingForm =  Object.assign ({}, this.bookingForm)
+            this.bookingForm = {}
+            this.bookingForm = bookingForm
+            this.bookingForm.type = type
+        },
+
+        hasError(field){
+            if(this.bookingForm[field] === '') return ''
+            if(this.errorsOnFields[field] !== undefined && this.errorsOnFields[field]===true) return 'isInvalid'
+            return 'isValid'
+        },
+        onInput({ number, isValid, country }) {
+            this.bookingForm.phone = number
+            this.phoneValid = isValid
+        },
+    }
+
+}
+</script>
+<style>
+@import '../../../css/vue-tel.css';
+
+.wap-front .phone-field .dropdown ul {
+    position: initial;
+    max-width: 266px;
+    min-width: 224px;
+    margin-top: 12px;
+    overflow-y: scroll !important;
+    overflow: hidden;
+}
+
+.wap-front .phone-field .dropdown {
+    border-radius: .2em;
+}
+
+.wap-front .phone-field .dropdown.open + input {
+    display:none;
+}
+
+.wap-front .address-service{
+    border-radius: .2em;
+    padding: .3em;
+    margin: auto;
+    text-align: left;
+    margin-bottom: .6rem;
+}
+
+.wap-front .address-service .icon-address{
+    padding: 0 .3em;
+}
+
+.wap-front .address-service address{
+    margin-left: .6em;
+}
+
+
+</style>

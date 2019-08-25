@@ -1,0 +1,305 @@
+<template>
+  <div class="container-fluid m-2">
+    <div class="d-flex align-items-center">
+      <h1 class="m-2">Addons</h1>
+      <div v-if="dataLoaded">
+        <button class="btn btn-secondary" @click="openModal">
+          <div class="d-flex align-items-center">
+            <div><span class="dashicons dashicons-admin-network"></span></div>
+            <div class="ml-2">Enter licence key</div>
+          </div>
+        </button>
+        <a href="javascript:;" v-if="debugIsOn" @click="checkLicence">checkLicence</a>
+      </div>
+    </div>
+    <div class="addons d-flex flex-wrap" v-if="dataLoaded">
+      <div v-for="(addon,id) in viewData.addons" 
+      class="addon addon-active d-flex flex-column align-self-start" 
+      :class="{registered: isRegistered(addon), installed: isInstalled(addon), activated: isActivated(addon), 'coming-soon': !isPublished(addon)}">
+          <h3 class="mb-3 text-center">{{ addon.options.name }}</h3>
+          <div class="text-muted mb-4" v-html="addon.options.description"></div>
+          <div v-if="isPublished(addon)">
+              <div v-if="!isRegistered(addon)" class="mt-auto d-flex align-items-center">
+                <div class="font-italic">
+                  <div>Price: <strong>{{ getRealPrice(getPrice(addon)) }}€</strong></div>
+                </div>
+                <div class="ml-auto pl-2"> 
+                  <a :href="buyAddonUrl(addon)" target="_blank" class="btn btn-outline-primary btn-block">Get it</a>
+                </div>
+              </div>
+              <div v-else class="mt-auto">
+                  <div>Licence <strong class="text-success">active</strong> until : <u class="small">{{ addon.expires_at }}</u></div>
+                  <div v-if="isPlugin(addon)" class="my-2">
+                    <div v-if="!isInstalled(addon)">
+                      <button class="btn btn-primary" @click="install(addon)">Install</button>
+                    </div>
+                    <div v-else>
+                        
+                        <button v-if="!isActivated(addon)" class="btn btn-primary" @click="activate(addon)">Activate</button>
+                        <button v-else class="btn btn-secondary btn-sm" @click="deactivate(addon)">Deactivate</button>
+                        <button v-if="isActivated(addon)" class="btn btn-sm" :class="[requireSetup(addon)?'btn-primary':'btn-secondary']" @click="openWizardModal(addon)"><span class="dashicons dashicons-admin-generic"></span> Setup Addon</button>
+                    </div>
+                  </div>
+                  
+              </div>
+          </div>
+          <div v-else>
+            <hr class="mt-0 mb-4">
+            <SubscribeNewsletter v-if="!isActivated(addon)" :list="addon.key" :defaultEmail="viewData.admin_email" :statuses="viewData.statuses" @updatedStatuses="updatedStatuses">
+              <p class="h6 font-italic">Want to know when it's out?</p>
+            </SubscribeNewsletter>
+          </div>
+      </div>
+    </div>
+    <div v-else>
+      <div v-if="cantShowAddons" class="text-muted text-center bg-light p-4">
+        <p>The addons list cannot be loaded unless you authorize the connection to <a href="https://wappointment.com/">Wappointment.com</a></p>
+        <button class="btn btn-secondary" @click="authorizeAddons"><span class="dashicons dashicons-admin-plugins"></span> Show Addons</button>
+      </div>
+    </div>
+    
+    <WapModal v-if="showModal" :show="showModal" @hide="hideModal" large noscroll>
+
+        
+        <h4 slot="title" class="modal-title">{{ addonWizardOn ? 'Wizard Setup: ' + addonWizard.options.name:'Enter licence key'}}</h4>
+        <AddonsWizard :addon="addonWizard" @closeWizard="hideModal" v-if="addonWizardOn"/>
+        <div v-else>
+          <div class="input-group">
+            <input type="text" placeholder="Enter licence key" v-model="productKey" class="form-control form-control-lg">
+            <button class="btn btn-primary" :class="{disabled: this.productKey==''}" @click="register">Register</button>
+          </div>
+          <p class="m-0 text-muted">Your licence key is given to you when you complete your order on <a href="https://wappointment.com/addons">Wappointment.com</a></p>
+        </div>
+    </WapModal>
+  </div>
+</template>
+
+<script>
+import AddonsService from '../Services/Addons'
+import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
+import abstractView from './Abstract'
+import HelpersPackages from '../Helpers/Packages'
+import AddonsWizard from '../Addons/Wizard'
+export default {
+    extends: abstractView,
+    mixins: [HelpersPackages],
+    data: () => ({
+        serviceAddons: null,
+        paramsBase: {},
+        productKey: '',
+        showModal: false,
+        cantShowAddons: false,
+        addonWizard: null
+    }),
+    components: {SubscribeNewsletter, AddonsWizard},
+    created(){
+      this.serviceAddons = this.$vueService(new AddonsService)
+      if(window.apiWappointment.allowed === true) {
+        return this.request(this.loadAddons, false, this.loadedAddons)
+      }
+      this.authorizeAddons()
+    },
+    computed:{
+      apiSite(){
+        return window.apiWappointment.apiSite
+      },
+      addonWizardOn(){
+        return this.addonWizard !== null
+      }
+    },
+    methods: {
+      openWizardModal(addon){
+        this.addonWizard = addon
+        this.openModal()
+      },
+      openModal(){
+        this.showModal = true
+      },
+      requireSetup(addon){
+        return this.isActivated(addon) && addon.initial_setup!==undefined && addon.initial_setup
+      },
+      authorizeAddons(){
+         //ask for connection confirmation
+        this.$WapModal().confirm({
+          title: 'Confirm connection to wappointment.com?',
+          content: `<div class="small font-italic">We need to connect to 
+          <a href="https://wappointment.com" target="_blank" title="Wappointment\'s website ">wappointment.com</a></div>`,
+          remember: true
+        }).then((response) => {
+
+            if(response === false){
+                this.cantShowAddons = true
+                return
+            }
+            if(response.remember) {
+              window.apiWappointment.allowed = true
+            }
+            this.request(this.loadAddons, response.remember, this.loadedAddons)
+        })  
+      },
+       buyAddonUrl(addon){
+         return this.apiSite + '/addons?addon=' + addon.key +'&origin=' + encodeURIComponent(window.location.href)
+       },
+        updatedStatuses(statuses){
+          this.viewData.statuses = statuses
+        },
+        isPublished(addon){
+            return addon.status > 0
+        },
+        isRegistered(addon){
+          return addon.expires_at !== undefined
+        },
+        isPlugin(addon){
+          return addon.plugin
+        },
+        isActivated(addon){
+          return this.isRegistered(addon) && (addon.solutions.length > 1 || addon.activated)
+        },
+        isInstalled(addon){
+          return this.isRegistered(addon) && (addon.solutions.length > 1 || addon.installed)
+        },
+
+        checkLicence(){
+          this.$WapModal().request(this.checkLicenceRequest()).then(this.successInstalled).catch(this.failedCheckRequest)
+            //this.request(this.checkLicenceRequest, false, this.loadedAddons)
+        },
+        failedCheckRequest(error){
+          this.failedRequest(error)
+          this.request(this.loadAddons, false, this.loadedAddons)
+        },
+ 
+        async checkLicenceRequest() {
+            return await this.serviceAddons.call('check')
+        }, 
+
+        hideModal(){
+            this.showModal = false
+            this.addonWizard = null
+        },
+
+        async loadAddons(remember = false){
+          return await this.serviceAddons.call('get', {remember: remember})
+        },
+
+        loadedAddons(response){
+          this.viewData = response.data
+        },
+        install(addon){
+          this.$WapModal().request(this.installAddonRequest(addon)).then(this.successInstalled).catch(this.failedRequest)
+        },
+        async installAddonRequest(addon) {
+            return await this.serviceAddons.call('install', { addon: addon })
+        }, 
+        successInstalled(response){
+
+          this.$WapModal().notifySuccess(response.data.message)
+          this.request(this.loadAddons, false, this.loadedAddons)
+        },
+        successActivate(response){
+          this.$WapModal().notifySuccess(response.data.message)
+          this.$WapModal()
+            .request(this.sleep(4000))
+          window.location = '/wp-admin/admin.php?page=wappointment_addons'
+        },
+        activate(addon){
+          this.$WapModal().request(this.activateAddonRequest(addon)).then(this.successActivate).catch(this.failedRequest)
+        },
+        async activateAddonRequest(addon) {
+            return await this.serviceAddons.call('activate', { addon: addon })
+        }, 
+
+        deactivate(addon){
+          this.$WapModal().request(this.deactivateAddonRequest(addon)).then(this.successInstalled).catch(this.failedRequest)
+        },
+        async deactivateAddonRequest(addon) {
+            return await this.serviceAddons.call('deactivate', { addon: addon })
+        }, 
+
+        register(){
+          if(this.productKey == '') return
+          this.$WapModal().request(this.registerWappointmentRequest()).then(this.successRequestAlt).catch(this.failedRequest)
+        },
+
+        successRequestAlt(response) {
+          if(response.data.message!==undefined) {
+            this.hideModal()
+            this.viewData.addons = response.data.addons
+            return this.$WapModal().notifySuccess(response.data.message)
+          }
+        },
+
+        async registerWappointmentRequest() {
+            return await this.serviceAddons.call('register', { pkey: this.productKey })
+        }, 
+
+    }  
+}
+</script>
+<style>
+
+.addons .addon {
+    border-radius: 1rem;
+    background-color: #fcfcfc;
+    border: 1px solid #f2f2f2;
+    margin: 1rem;
+    padding: 2rem;
+    max-width: 320px;
+}
+
+.addons .addon.addon-active{
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(0,0,0,.1);
+}
+.addons .addon.addon-active:hover{
+    transform: scale(1.02);
+    box-shadow: 0 .4rem 1rem 0 rgba(0,0,0,.1);
+}
+.addon hr{
+  width: 100%;
+  border-top: 2px solid rgba(210, 210, 210, 0.4);
+}
+.addons .addon::before {
+    height: 1rem;
+    width: 1rem;
+    content: "";
+    border-radius: 2rem;
+    position: absolute;
+    right: 12px;
+    top: 12px;
+}
+
+.addons .addon.registered{
+  border: 1px solid #6664cb;
+}
+
+.addons .addon.addon-active.coming-soon {
+    border: 2px dashed #cacaca;
+    background-color: #fbfbfb;
+    color: #a6a3a3 !important;
+}
+
+ .coming-soon h2, .coming-soon .text-muted {
+    color: #a6a3a3 !important;
+}
+
+.coming-soon:hover, .coming-soon:hover h2, .coming-soon:hover .text-muted {
+    color: #515050 !important;
+}
+
+
+.addons .addon.registered.installed.activated{
+  border: 1px solid #64cb86;
+}
+
+.addons .addon.registered.installed::before {
+    border: 2px solid #6ed52d;
+}
+.addons .addon.registered.installed.activated::before {
+    background-color: #72ea9a;
+}
+
+</style>
+
+
