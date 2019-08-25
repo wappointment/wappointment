@@ -10,7 +10,6 @@ if (!defined('ABSPATH')) {
  * Plugin URI: https://wappointment.com
  * Description: Manage your appointments in your professional field, reliably
  * Author: Wappointment
- * Author URI: https://wappointment.com
  * Requires at least: 4.7
  * Tested up to: 5.2
  *
@@ -22,7 +21,7 @@ if (!defined('ABSPATH')) {
  * 
  * Wappointment is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
+ * the Free Software Foundation, either version 2 of the License, or
  * any later version.
  *
  * Wappointment is distributed in the hope that it will be useful,
