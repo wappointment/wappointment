@@ -36,16 +36,19 @@ export default {
           this.request(this.wizardStep1Request,  undefined, this.redirectWizardStep1)
       },
       failedRequest(e){
-        for (const key in e.response.data.data.errors.validations) {
-          if (e.response.data.data.errors.validations.hasOwnProperty(key)) {
-            const errors_sub = e.response.data.data.errors.validations[key];
-            for (let i = 0; i < errors_sub.length; i++) {
-              const error_sing = errors_sub[i];
-              this.installationErrors.push(error_sing)
+        if(e.response !== undefined){
+          for (const key in e.response.data.data.errors.validations) {
+            if (e.response.data.data.errors.validations.hasOwnProperty(key)) {
+              const errors_sub = e.response.data.data.errors.validations[key];
+              for (let i = 0; i < errors_sub.length; i++) {
+                const error_sing = errors_sub[i];
+                this.installationErrors.push(error_sing)
+              }
             }
           }
+          this.mainInstallationError = e.response.data.message
         }
-        this.mainInstallationError = e.response.data.message
+        this.serviceError(e)
       },
 
       redirectLater(){

@@ -78,8 +78,8 @@ class EventsController extends RestController
         if (Appointment::patch(
             $request->input('id'),
             [
-                'start_at' => DateTime::converTotUtc($request->input('start'), $this->timezone),
-                'end_at' => DateTime::converTotUtc($request->input('end'), $this->timezone)
+                'start_at' => DateTime::convertUnixTS($request->input('start')),
+                'end_at' => DateTime::convertUnixTS($request->input('end'))
             ]
         )) {
             return ['message' => 'Appointment updated'];
@@ -103,8 +103,8 @@ class EventsController extends RestController
 
     private function events(Request $request)
     {
-        $ends_at_carbon = (new Carbon($request->input('end'), $this->timezone))->setTimezone('UTC');
-        $start_at_string = (new Carbon($request->input('start'), $this->timezone))->setTimezone('UTC')->format(WAPPOINTMENT_DB_FORMAT);
+        $ends_at_carbon = DateTime::TimeZToUtc($request->input('end'));
+        $start_at_string = DateTime::TimeZToUtc($request->input('start'))->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $ends_at_carbon->format(WAPPOINTMENT_DB_FORMAT);
         $events = [];
         $appointments = AppointmentModel::with('client')

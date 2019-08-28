@@ -32,6 +32,7 @@ export default {
       RegularAvailability,
       TimeZones
   }, 
+  props:['noback'],
   data() {
       return {
           viewName: 'regav',

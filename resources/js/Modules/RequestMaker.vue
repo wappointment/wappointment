@@ -48,8 +48,12 @@ export default {
           if(error.response.data.message !== undefined)  return this.$WapModal().notifyError( error.response.data.message)
         }
         
-
-         this.$WapModal().notifyError( 'Unidentified service error')
+        if(error.message!== undefined) {
+          this.$WapModal().notifyError( error.message)
+        }else{
+          this.$WapModal().notifyError( 'Unidentified service error')
+        }
+         
       },
 
       lengthGreaterThan(arrayOrObject,X){

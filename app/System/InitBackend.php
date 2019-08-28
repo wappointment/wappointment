@@ -40,7 +40,7 @@ class InitBackend
 
     public function enqueueBackendPlugin()
     {
-        wp_register_script(WAPPOINTMENT_SLUG . '_backend', Helpers::assetUrl('main.js'), [], null, true);
+        wp_register_script(WAPPOINTMENT_SLUG . '_backend', Helpers::assetUrl('main.js'), ['jquery'], null, true);
 
         wp_register_script(WAPPOINTMENT_SLUG . '_backend_menu', Helpers::assetUrl('js/backend_menu.js'), [], null, true);
         wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', WAPPOINTMENT_SLUG . 'Admin', [

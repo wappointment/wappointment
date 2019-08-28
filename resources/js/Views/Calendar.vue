@@ -1,6 +1,6 @@
 <template>
   <div>
-     <StickyBar>
+     <StickyBar v-if="fcIsReady">
         <div>
             <div class="d-flex flex-wrap flex-md-nowrap justify-content-between">
               <div class="d-flex">
@@ -20,147 +20,151 @@
 
       <div class="full-width center-content calendar-wrap full-width-layout">
         <div class="wrap">
-            <WapModal v-if="bookForAclient" :show="bookForAclient" @hide="hideModal" noscroll>
-                <h4 slot="title" class="modal-title">Choose an action</h4>
-                <h5 v-if="selectionSingleDay"> {{ startDayDisplay }} - <span class="text-muted">From {{ startTimeDisplay }} until {{ endTimeDisplay }}</span></h5>
-                <h5 v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h5>
-                <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!selectedChoice">
-                  
-                  <div class="btn btn-secondary mr-md-2  align-items-center" @click="confirmNewBooking" :class="{'fdisabled' :!selectionSingleDay}">
-                    <div class="dashicons dashicons-admin-users"></div>
-                    <div class="text-center">
-                      <p class="h6 m-0">Book an appointment</p>
-                      <p class="small m-0">On behalf of your client</p>
-                    </div>
-                  </div>
-
-                  <div class="btn btn-secondary  mr-md-2 align-items-center" @click="confirmFree" :class="{'fdisabled' :(!selectionSingleDay || isAvailable)}">
-                    <div class="dashicons dashicons-unlock txt blue"></div>
-                    <div class="text-center">
-                      <p class="h6 m-0">Open this time</p>
-                      <p class="small m-0">Allow new bookings</p>
-                    </div>
-                  </div>
-
-                  <div class="btn btn-secondary  align-items-center" @click="confirmBusy" :class="{'fdisabled' : isBusy}">
-                    <div class="dashicons dashicons-lock txt red"></div>
-                    <div class="text-center">
-                      <p class="h6 m-0">Block this time</p>
-                      <p class="small m-0">Prevent new bookings</p>
-                    </div>
-                  </div>
-
-                </div>
-                <div v-else>
-                  <div v-if="shownAppointmentForm">
-                    <div class="mb-2">
-                      <h3>Book an appointment for your client</h3>
-                      <div>
-                          <AppointmentTypeSelection :service="viewData.service" :preselect="selectedAppointmentType" @selected="selectingAppointmentType"></AppointmentTypeSelection>
-                      </div>
-                      <div v-if="selectedAppointmentType">
-                          <div v-if="clientSelected">
-                              <div class="d-flex align-items-center">
-                                <div class="mr-2">
-                                  <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name">
-                                </div>
-                                <div>
-                                  <h6 class="m-0">{{ clientSelected.name }}</h6>
-                                  <small>{{ clientSelected.email }}</small>
-                                </div>
-                              </div>
-                              <small class="btn btn-link btn-sm" @click="clearClientSelection">Change client</small>
-                          </div>
-                          <div v-else>
-                              <div class="mb-3">
-                                <div class="input-group input-group-lg" >
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroup-sizing-lg">Email</span>
-                                  </div>
-                                  <input type="text" class="form-control" id="bookingemail" :class="hasError('email')" v-model="bookingForm.email" @focus="canShowDropdown" @blur="clearDropdownDelay">
-                                </div>
-                                <div>
-                                    <div class="dd-search-results" v-if="showDropdown" >
-                                      <div v-if="clientsResults.length>0">
-                                        <div class="btn btn-light d-flex align-items-center" v-for="client in clientsResults" @click="selectClient(client)">
-                                            <div class="mr-2">
-                                              <img class="rounded-circle" :src="client.avatar" :title="client.name">
-                                            </div>
-                                            <div>
-                                              <h6 class="m-0 text-left">{{ client.name }}</h6>
-                                              <small>{{ client.email }}</small>
-                                            </div>
-                                        </div>
-                                      </div>
-                                      <div v-if="clientSearching">
-                                        Loading ...
-                                      </div>
-                                    </div>  
-                                </div>
-                              </div>
-                              <div class="input-group mb-3" >
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
-                                </div>
-                                <input class="form-control" id="bookingname" type="text" :class="hasError('name')" v-model="bookingForm.name">
-                              </div>
-
-                              <div class="input-group mb-3" v-if="phoneSelected" >
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="inputGroup-sizing-default">Phone</span>
-                                </div>
-                                <PhoneInput 
-                                :phone="bookingForm.phone"
-                                @onInput="onInput"
-                                :className="hasError('phone')+ ' form-control'"
-                                :countries="preferredCountries" 
-                                ></PhoneInput>
-                              </div>
-
-                              <div class="input-group mb-3" v-if="skypeSelected" >
-                                <div class="input-group-prepend">
-                                  <span class="input-group-text" id="inputGroup-sizing-default">Skype</span>
-                                </div>
-                                <input class="form-control" id="bookingskype" type="text" :class="hasError('skype')" v-model="bookingForm.skype">
-                              </div>
-
-                          </div>
-
-                      </div>
-                    </div>
-                    <div>
-                        <button type="button" class="btn btn-secondary btn-lg" @click="hideModal">Cancel</button>
-                        <button type="button" class="btn btn-primary btn-lg" :class="{'disabled': !readyToBook}" @click="confirmNewBookingRequest">Confirm Booking</button>
-                    </div>
-                  </div>
-
-                  <div v-if="shownBusyConfirm">
-                    <h5>Confirm that you are busy?</h5>
-                    <button type="button" class="btn btn-secondary btn-lg" @click="hideModal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-lg" @click="confirmBusyRequest">Confirm</button>
-                  </div>
-
-                  <div v-if="shownFreeConfirm">
-                    <h5>Confirm that you are free?</h5>
-                    <button type="button" class="btn btn-secondary btn-lg" @click="hideModal">Cancel</button>
-                    <button type="button" class="btn btn-primary btn-lg" @click="confirmFreeRequest">Confirm</button>
-                  </div>
-                  
-                </div>
-
-            </WapModal>
-            <WapModal v-if="showRegularAv" :show="showRegularAv" @hide="hideRegavModal" large>
-              <h4 slot="title" class="modal-title">Modify your Weekly Availability</h4>
-              <Regav noback></Regav>
-              <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">Close</button>
-            </WapModal>
+            
             <div class="calendar-overflow" v-if="fullCalOption!==undefined">
-              <keep-alive> 
-                <full-calendar :config="fullCalOption" ref="calendar" ></full-calendar>
-              </keep-alive>
+              <div id="calendar">
+                <FullCalendarWrapper ref="calendar" @isReady="fcIsReady=true" :config="fullCalOption" />
+              </div>
             </div>
 
             <ControlBar v-if="viewData!==null" :progressWizard="viewData.wizard_step"></ControlBar>
+
+            <div v-if="fcIsReady">
+                <WapModal v-if="bookForAclient" :show="bookForAclient" @hide="hideModal" noscroll>
+                  <h4 slot="title" class="modal-title">Choose an action</h4>
+                  <h5 v-if="selectionSingleDay"> {{ startDayDisplay }} - <span class="text-muted">From {{ startTimeDisplay }} until {{ endTimeDisplay }}</span></h5>
+                  <h5 v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h5>
+                  <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!selectedChoice">
+                    
+                    <div class="btn btn-secondary mr-md-2  align-items-center" @click="confirmNewBooking" :class="{'fdisabled' :!selectionSingleDay}">
+                      <div class="dashicons dashicons-admin-users"></div>
+                      <div class="text-center">
+                        <p class="h6 m-0">Book an appointment</p>
+                        <p class="small m-0">On behalf of your client</p>
+                      </div>
+                    </div>
+
+                    <div class="btn btn-secondary  mr-md-2 align-items-center" @click="confirmFree" :class="{'fdisabled' :(!selectionSingleDay || isAvailable)}">
+                      <div class="dashicons dashicons-unlock txt blue"></div>
+                      <div class="text-center">
+                        <p class="h6 m-0">Open this time</p>
+                        <p class="small m-0">Allow new bookings</p>
+                      </div>
+                    </div>
+
+                    <div class="btn btn-secondary  align-items-center" @click="confirmBusy" :class="{'fdisabled' : isBusy}">
+                      <div class="dashicons dashicons-lock txt red"></div>
+                      <div class="text-center">
+                        <p class="h6 m-0">Block this time</p>
+                        <p class="small m-0">Prevent new bookings</p>
+                      </div>
+                    </div>
+
+                  </div>
+                  <div v-else>
+                    <div v-if="shownAppointmentForm">
+                      <div class="mb-2">
+                        <h3>Book an appointment for your client</h3>
+                        <div>
+                            <AppointmentTypeSelection :service="viewData.service" :preselect="selectedAppointmentType" @selected="selectingAppointmentType"></AppointmentTypeSelection>
+                        </div>
+                        <div v-if="selectedAppointmentType">
+                            <div v-if="clientSelected">
+                                <div class="d-flex align-items-center">
+                                  <div class="mr-2">
+                                    <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name">
+                                  </div>
+                                  <div>
+                                    <h6 class="m-0">{{ clientSelected.name }}</h6>
+                                    <small>{{ clientSelected.email }}</small>
+                                  </div>
+                                </div>
+                                <small class="btn btn-link btn-sm" @click="clearClientSelection">Change client</small>
+                            </div>
+                            <div v-else>
+                                <div class="mb-3">
+                                  <div class="input-group input-group-lg" >
+                                    <div class="input-group-prepend">
+                                      <span class="input-group-text" id="inputGroup-sizing-lg">Email</span>
+                                    </div>
+                                    <input type="text" class="form-control" id="bookingemail" :class="hasError('email')" v-model="bookingForm.email" @focus="canShowDropdown" @blur="clearDropdownDelay">
+                                  </div>
+                                  <div>
+                                      <div class="dd-search-results" v-if="showDropdown" >
+                                        <div v-if="clientsResults.length>0">
+                                          <div class="btn btn-light d-flex align-items-center" v-for="client in clientsResults" @click="selectClient(client)">
+                                              <div class="mr-2">
+                                                <img class="rounded-circle" :src="client.avatar" :title="client.name">
+                                              </div>
+                                              <div>
+                                                <h6 class="m-0 text-left">{{ client.name }}</h6>
+                                                <small>{{ client.email }}</small>
+                                              </div>
+                                          </div>
+                                        </div>
+                                        <div v-if="clientSearching">
+                                          Loading ...
+                                        </div>
+                                      </div>  
+                                  </div>
+                                </div>
+                                <div class="input-group mb-3" >
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
+                                  </div>
+                                  <input class="form-control" id="bookingname" type="text" :class="hasError('name')" v-model="bookingForm.name">
+                                </div>
+
+                                <div class="input-group mb-3" v-if="phoneSelected" >
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Phone</span>
+                                  </div>
+                                  <PhoneInput 
+                                  :phone="bookingForm.phone"
+                                  @onInput="onInput"
+                                  :className="hasError('phone')+ ' form-control'"
+                                  :countries="preferredCountries" 
+                                  ></PhoneInput>
+                                </div>
+
+                                <div class="input-group mb-3" v-if="skypeSelected" >
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text" id="inputGroup-sizing-default">Skype</span>
+                                  </div>
+                                  <input class="form-control" id="bookingskype" type="text" :class="hasError('skype')" v-model="bookingForm.skype">
+                                </div>
+
+                            </div>
+
+                        </div>
+                      </div>
+                      <div>
+                          <button type="button" class="btn btn-secondary btn-lg" @click="hideModal">Cancel</button>
+                          <button type="button" class="btn btn-primary btn-lg" :class="{'disabled': !readyToBook}" @click="confirmNewBookingRequest">Confirm Booking</button>
+                      </div>
+                    </div>
+
+                    <div v-if="shownBusyConfirm">
+                      <h5>Confirm that you are busy?</h5>
+                      <button type="button" class="btn btn-secondary btn-lg" @click="hideModal">Cancel</button>
+                      <button type="button" class="btn btn-primary btn-lg" @click="confirmBusyRequest">Confirm</button>
+                    </div>
+
+                    <div v-if="shownFreeConfirm">
+                      <h5>Confirm that you are free?</h5>
+                      <button type="button" class="btn btn-secondary btn-lg" @click="hideModal">Cancel</button>
+                      <button type="button" class="btn btn-primary btn-lg" @click="confirmFreeRequest">Confirm</button>
+                    </div>
+                    
+                  </div>
+
+              </WapModal>
+              <WapModal v-if="showRegularAv" :show="showRegularAv" @hide="hideRegavModal" large>
+                <h4 slot="title" class="modal-title">Modify your Weekly Availability</h4>
+                <Regav noback></Regav>
+                <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">Close</button>
+              </WapModal>
+            </div>
       </div>
     </div>
   </div>
@@ -175,14 +179,14 @@ import Helpers from '../Standalone/helpers'
 import TimeZones from '../Components/TimeZones'
 import AppointmentTypeSelection from '../Components/AppointmentTypeSelection'
 import ControlBar from '../Components/ControlBar'
-import FullCalendar from '../Plugins/vue-full-calendar'
+import FullCalendarWrapper from '../Components/FullCalendarWrapper'
 import abstractView from './Abstract'
 import PhoneInput from '../Components/BookingForm/PhoneInput'
 import '../../css/vue-tel.css'
 import {isEmail, isEmpty} from 'validator';
-import Vue from '../appVue'
-Vue.use(FullCalendar)
 import momenttz from '../appMoment'
+
+const jQuery = window.jQuery
 
 export default {
   extends: abstractView,
@@ -193,11 +197,15 @@ export default {
       ControlBar,
       AppointmentTypeSelection,
       PhoneInput,
-      Regav
+      Regav,
+      FullCalendarWrapper
   }, 
 
   data: () => ({
-    currentView: 'agendaWeek',
+    fcIsReady: false,
+    canLoadEvents: true,
+    callback: undefined,
+    currentView: 'timeGridWeek',
     bookingForm: {
         email: '',
         phone: '',
@@ -285,7 +293,6 @@ export default {
       events: {
         handler: function(newValue) {
               if(this.openconfirm && newValue.length > 1){
-                console.log()
                 this.confirmRequest(this.openconfirm)
                 this.openconfirm = false
               }
@@ -356,13 +363,13 @@ export default {
 
     },
     shortStDayDisplay(){
-      return momenttz.tz(this.startTime,this.displayTimezone).format(this.shortDayFormat+' '+this.viewData.time_format)
+      return this.startTime.format(this.shortDayFormat+' '+this.viewData.time_format)
     },
     shortEdDayDisplay(){
-      return momenttz.tz(this.endTime,this.displayTimezone).format(this.shortDayFormat+' '+this.viewData.time_format)
+      return this.endTime.format(this.shortDayFormat+' '+this.viewData.time_format)
     },
     startDayDisplay() {
-      return momenttz.tz(this.startTime,this.displayTimezone).format(this.viewData.date_format)
+      return this.startTime.format(this.viewData.date_format)
     },
     startTimeDisplay(){
       return this.formatTime(this.startTime)
@@ -547,17 +554,17 @@ export default {
             jquery('.nowtime').remove()
         };
           
-         this.$refs.calendar.jQuery('#calendar').on("mouseover", ".fc-now-indicator-line", 
-         mouseover_func.bind(null, this.$refs.calendar.jQueryObject(), momenttz.tz(this.viewData.now, this.viewData.timezone))); 
-         this.$refs.calendar.jQuery('#calendar').on("mouseout", ".fc-now-indicator-line", 
-         mouseout_func.bind(null, this.$refs.calendar.jQueryObject())); 
+         jQuery('#calendar').on("mouseover", ".fc-now-indicator-line", 
+         mouseover_func.bind(null, jQuery, momenttz.tz(this.viewData.now, this.viewData.timezone))); 
+         jQuery('#calendar').on("mouseout", ".fc-now-indicator-line", 
+         mouseout_func.bind(null, jQuery)); 
 
         this.jqueryloaded = true
     }, 
     startTimeDisplayed() {
-      if(this.$refs.calendar!==undefined) {
-        if(this.$refs.calendar.fireMethod('getDate') !== undefined)
-          return this.$refs.calendar.fireMethod('getDate').tz(this.selectedTimezone).day(1).hours(this.minHour)
+      if(this.fcIsReady) {
+        if(this.getDate() !== undefined)
+          return this.getDate().tz(this.selectedTimezone).day(1).hours(this.minHour)
       }
       return undefined
     },
@@ -568,20 +575,26 @@ export default {
       return undefined
     },
     endTimeDisplayed() {
-      if(this.$refs.calendar!==undefined) {
-        if(this.$refs.calendar.fireMethod('getDate') !== undefined)
-        return this.$refs.calendar.fireMethod('getDate').tz(this.selectedTimezone).day(7).hours(this.maxHour)
+      if(this.fcIsReady) {
+        if(this.getDate() !== undefined)
+        return this.getDate().tz(this.selectedTimezone).day(7).hours(this.maxHour)
       }
       return undefined
     },
-      updateTimezone(selectedTimezone){
+      updateTimezone(selectedTimezone,initSave = false){
         this.selectedTimezone = selectedTimezone
-        this.$refs.calendar.option( 'timezone', selectedTimezone)
+        momenttz.tz.setDefault(selectedTimezone)
+        this.timezone = selectedTimezone
+        
+        //this.$refs.calendar.option( 'timeZone', selectedTimezone)
         this.writeHistory()
+
+        //if(initSave === false)window.location.reload()
+        if(initSave === false)this.reload()
+        
+        //this.refreshEvents()
       },
-      myTimeout(){
-        this.fullCalOption = this.fullCalOptionSaved
-      },
+
       setInterval(duration){
         this.intervals.hours = parseInt(duration/ 60)
         this.intervals.minutes = duration % 60
@@ -590,65 +603,73 @@ export default {
         let hours = this.intervals.hours
         let minutes = this.intervals.minutes
         if(hours >= 1 ) hours = (hours < 10) ? '0' + hours : hours
-        else hours = '00';
+        else hours = '00'
         minutes = (minutes < 10) ? '0' + minutes : minutes
         
         return hours + ':' + minutes
       },
-      loaded(viewData){
+      loaded(viewData, reloaded = false){
           this.viewData = viewData.data
-          this.openedDays = this.viewData.regav
+          if(reloaded === false){
+            
+            this.openedDays = this.viewData.regav
 
-          this.intervalsCollection = new Intervals(this.viewData.availability)
-          this.viewData.time_format = (new Helpers()).convertPHPToMomentFormat(this.viewData.time_format)
-          this.viewData.date_format = (new Helpers()).convertPHPToMomentFormat(this.viewData.date_format)
-          this.setMinAndMax()
-          this.setInterval(this.viewData.service.duration)
+            this.intervalsCollection = new Intervals(this.viewData.availability)
+            this.viewData.time_format = (new Helpers()).convertPHPToMomentFormat(this.viewData.time_format)
+            this.viewData.date_format = (new Helpers()).convertPHPToMomentFormat(this.viewData.date_format)
+            this.setMinAndMax()
+            this.setInterval(this.viewData.service.duration)
+            
+            let initTimezone = (window.savedQueries !== undefined)? window.savedQueries.timezone:this.viewData.timezone
+            this.timezone = initTimezone // staff timezone
+            this.selectedTimezone = initTimezone // display timezone
+          }
           const intervalString = this.convertInterval()
-          let initTimezone = (window.savedQueries !== undefined)? window.savedQueries.timezone:this.viewData.timezone
-
-          this.timezone = initTimezone // staff timezone
-          this.selectedTimezone = initTimezone // display timezone
+          
           this.fullCalOption = {
-              slotLabelInterval: [intervalString],
-              slotDuration: intervalString + ':00',
-              showNonCurrentDates: true,
-              nowIndicator: true,
-              now: this.viewData.now,
-              weekends: true,
-              allDaySlot: false,
-              locale: window.waplocale,
-              timezone: this.displayTimezone,
-              slotLabelFormat: [this.viewData.time_format],
-              timeFormat: this.viewData.time_format,
-              eventDurationEditable:  true,
-              eventStartEditable: true,
-              selectable: true,
-              selectHelper: true,
-              select: this.selectMethod,
-              selectMinDistance: 10,
-              selectAllow: this.selectAllow,
-              eventClick: this.clickEvent,
-              defaultView: 'agendaWeek',
-              header: {
-                left: '',
-                center: '',
-                right: ''
+              events: {
+                select: this.selectMethod,
+                loading: this.isLoading,
+                eventClick: this.clickEvent,
+                eventDragStart: this.eventDragStart,
+                eventDragStop: this.eventDragStop,
+                eventDrop: this.eventPatch,
+                eventResize: this.eventPatch,
               },
-              firstDay: this.viewData.week_starts_on,
-              minTime: this.minHour + ':00',
-              maxTime: this.maxHour + ':00',  
-              navLinks: false, 
-              editable: true,
-              eventLimit: true,
-              loading: this.isLoading,
-              events: this.loadingEvents,
-              eventAllow: this.eventAllow,
-              eventDragStart: this.eventDragStart,
-              eventDragStop: this.eventDragStop,
-              eventDrop: this.eventPatch,
-              eventResize: this.eventPatch,
-              eventRender: this.eventRender,
+              props: {
+                header: {
+                  left: '',
+                  center: '',
+                  right: ''
+                },
+                slotLabelInterval: intervalString,
+                slotDuration: intervalString + ':00',
+                showNonCurrentDates: true,
+                nowIndicator: true,
+                now: this.viewData.now,
+                weekends: true,
+                allDaySlot: false,
+                locale: window.waplocale,
+                timeZone: this.displayTimezone,
+                slotLabelFormat: this.viewData.time_format,
+                eventTimeFormat: this.viewData.time_format,
+                eventDurationEditable:  true,
+                eventStartEditable: true, 
+                selectable: true,
+                selectMirror: true,
+                selectMinDistance: 10,
+                selectAllow: this.selectAllow,
+                defaultView: 'timeGridWeek',
+                firstDay: this.viewData.week_starts_on,
+                minTime: this.minHour + ':00',
+                maxTime: this.maxHour + ':00',  
+                navLinks: false, 
+                editable: true,
+                eventLimit: true,
+                events: this.loadingEvents,
+                eventAllow: this.eventAllow,
+                eventRender: this.eventRender
+              }
               
             }
             if(window.savedQueries !== undefined){
@@ -656,27 +677,35 @@ export default {
             }
             
       },
+      loadAgain(){
+        this.loaded({data:Object.assign({},this.viewData)}, true)
+      },
+      reload(){
+        this.fullCalOption = undefined
+        this.fcIsReady = false
+        setTimeout(this.loadAgain, 100)
+      },
       setDaysProperties(){
+
         if(this.daysProperties !== false) return
-        var $ = this.$refs.calendar.jQueryObject()
-        var daysProperties = []
-        $('.fc-day.fc-widget-content').each(function( index ) {
-          if($(this).hasClass('fc-past') ) daysProperties.push('fc-past')
+        let daysProperties = []
+        jQuery('.fc-day.fc-widget-content').each(function( index ) {
+          if(jQuery(this).hasClass('fc-past') ) daysProperties.push('fc-past')
           else daysProperties.push('')
         })
         this.daysProperties = daysProperties
       },
       setSkeletonProperties(){
-        var $ = this.$refs.calendar.jQueryObject()
-        var daysProperties = this.daysProperties
+
+        let daysProperties = this.daysProperties
         //console.log('daysProperties',daysProperties)
-        $('.fc-content-skeleton tr td').each(function( index ) {
-          if($(this).hasClass('fc-axis')){
+        jQuery('.fc-content-skeleton tr td').each(function( index ) {
+          if(jQuery(this).hasClass('fc-axis')){
 
           }else{
             //console.log((index+1)+' '+daysProperties[index+1])
             if(daysProperties[index-1]=='fc-past') {
-              $(this).addClass('skel-past')
+              jQuery(this).addClass('skel-past')
             }
           }
           
@@ -686,19 +715,23 @@ export default {
         this.setDaysProperties()
         this.setSkeletonProperties()
       },
-      eventRender(event, element,a){
-         this.isParentInThePast(element)
+
+      eventRender(renderInfo){
+        let event = renderInfo.event
+        let eventExt = event.extendedProps
+        let element = jQuery(renderInfo.el)
+        this.isParentInThePast(element)
          //'.fc-content-skeleton tr td'
         
-          element.attr('data-id', event.dbid)
-          element.attr('id', 'event-'+event.type+event.id)
+          element.attr('data-id', eventExt.dbid)
+          element.attr('id', 'event-'+eventExt.type+event.id)
           element.attr('data-rendering', event.rendering)
 
           
-          if(event.onlyDelete!==undefined){
+          if(eventExt.onlyDelete!==undefined){
             element.attr('data-only-delete', 1)
           }
-          if(event.past !== undefined && event.past === true) {
+          if(eventExt.past !== undefined && eventExt.past === true) {
             element.addClass('past-event')
             
             if(this.isAppointmentEvent(event.rendering)){
@@ -708,9 +741,10 @@ export default {
                 element.mouseleave(this.EOut)
               }
           }else{
+
             if(event.rendering =='background'){
               element.mousedown(this.bgEOut)
-              if(event.title !== undefined){
+              if(eventExt.title !== undefined){
                 element.innerhtml = this.getCalendarSyncHtml(event)
               }
               
@@ -720,6 +754,7 @@ export default {
             }else{
               if(this.isAppointmentEvent(event.rendering)){
                 element.find('.fc-time').html(this.getAppointmentHtml(event))
+                element.append('<div class="fc-bg"></div>')
                 element.click(this.cancelClick)
                 element.mouseenter(this.EOver)
                 element.mouseleave(this.EOut)
@@ -729,26 +764,26 @@ export default {
 
       },
       getCalendarSyncHtml(event){
-        return '<div>'+event.title+'</div>'
+        return '<div>'+event.extendedProps.title+'</div>'
       },
       getAppointmentHtml(event){
-        if(event.client === null) return ''
+
+        if(event.extendedProps.client === null) return ''
         return `<div class="d-flex">
                   <div> ${this.getClientAvatarSize(event)} </div>
                   <div class="ml-1">
-                  <div class="client-name"> ${event.client.name} </div> 
-                  <div class="time"> ${this.formatTime(event.start)}  -  ${this.formatTime(event.end)}</div>
+                  <div class="client-name"> ${event.extendedProps.client.name} </div> 
+                  <div class="time"> ${this.formatTime(this.toMoment(event.start))}  -  ${this.formatTime(this.toMoment(event.end))}</div>
                   </div>
                 </div>`
       },
 
       EOver(event){
-        let el =  this.$refs.calendar.jQuery(event.currentTarget)
-        if(this.disableBgEvent) return false;
+        if(this.disableBgEvent) return false
 
         this.disableSelectClick = true
         
-        this.attachEvent(el)
+        this.attachEvent( jQuery(event.currentTarget))
         
       },
       EOut(event){
@@ -757,14 +792,14 @@ export default {
 
         if(this.disableBgEvent) return false;
 
-        /*this.$refs.calendar.jQuery(event.target).parent().css('z-index',2)*/
-        let el = this.$refs.calendar.jQuery(event.currentTarget)
+        /*jQuery(event.target).parent().css('z-index',2)*/
+        let el = jQuery(event.currentTarget)
         el.removeClass('hover')
         el.find('.fill-event').remove()
 
       },
       bgEDown(event){ 
-        this.hasBeenClicked = this.$refs.calendar.jQuery(event.currentTarget).attr('data-id')
+        this.hasBeenClicked = jQuery(event.currentTarget).attr('data-id')
         event.stopPropagation();
       },
 
@@ -829,6 +864,7 @@ export default {
           
 
           if(this.isAppointmentEvent(el.attr('data-rendering'))){
+            //el.find('.fc-content').append(innerhtml)
             el.find('.fc-bg').append(innerhtml)
             el.find('.cancelAppointment').on( "click", this.cancelAppointment)
             el.find('.viewElement').on( "click", this.viewAppointment)
@@ -860,20 +896,19 @@ export default {
         this.cancelbgOver = setTimeout(this.bgEOver.bind('',event),200)
       },
       bgEOver(event,fsdfsd){
-
-        let el =  this.$refs.calendar.jQuery(event.target)
+        let el =  jQuery(event.target)
         //return;
         if(!el.hasClass('fc-bgevent')) return;
         this.parentAttach = el.parent()
 
         if(this.disableBgEvent) return false;
 
-        if(this.parentAttach.parent('.fc-content-col').find('.fc-helper-container .fc-helper').length>0) {
+        if(this.parentAttach.parent('.fc-content-col').find('.fc-highlight-container .fc-highlight').length>0) {
           this.disableBgEvent = true
           return false;
         }
         this.activeBgOverId = el.attr('data-id')
-        this.$refs.calendar.jQuery('[data-id="' + this.activeBgOverId + '"]').addClass('hover')
+        jQuery('[data-id="' + this.activeBgOverId + '"]').addClass('hover')
 
         this.disableSelectClick = true
 
@@ -883,19 +918,19 @@ export default {
         el.css('z-index', 9)
 
         el.attr('data-parent-class', this.parentAttach.attr('class') )
-        el.insertAfter(this.parentAttach.parent('.fc-content-col').find('.fc-helper-container'))
+        el.insertAfter(this.parentAttach.parent('.fc-content-col').find('.fc-highlight-container'))
         
 
       },
       bgEOut(event){
-        this.$refs.calendar.jQuery('[data-id="' + this.activeBgOverId + '"]').removeClass('hover')
+        jQuery('[data-id="' + this.activeBgOverId + '"]').removeClass('hover')
         this.activeBgOverId = false
         
         if(this.cancelbgOver) {
           clearTimeout(this.cancelbgOver)
           this.cancelbgOver = false
         }
-        if(event.type=='mousedown' && this.$refs.calendar.jQuery(event.target).hasClass('btn-secondary')) {
+        if(event.type=='mousedown' && jQuery(event.target).hasClass('btn-secondary')) {
           this.$refs.calendar.unselect()
           return false;
         }
@@ -903,7 +938,7 @@ export default {
 
         if(this.disableBgEvent) return false;
 
-        let el = this.$refs.calendar.jQuery(event.target)
+        let el = jQuery(event.target)
         if(el.attr('data-parent-class') !== undefined){
           this.reAttach(el)
         }else{
@@ -932,7 +967,7 @@ export default {
           return false;
       },
       bgEClick(event){
-        let eventId = this.$refs.calendar.jQuery(event.currentTarget).attr('data-id')
+        let eventId = jQuery(event.currentTarget).attr('data-id')
 
       },
       getEventById(eventId){
@@ -947,16 +982,21 @@ export default {
       },
 
       deleteElement(event){
-        let eventId = this.$refs.calendar.jQuery(event.currentTarget).attr('data-id')
+        let eventId = jQuery(event.currentTarget).attr('data-id')
         this.deleteStatus(eventId)
       },
       cancelAppointment(event){
-        let eventId = this.$refs.calendar.jQuery(event.currentTarget).attr('data-id')
+        let eventId = jQuery(event.currentTarget).attr('data-id')
         this.cancelRequest(eventId)
       },
 
       findAppointmentById(eventId){
-        return this.findEventById(eventId, 'appointment')
+        let tmp = this.findEventById(eventId, 'appointment')
+        return {
+          start: tmp.start,
+          end:tmp.end,
+          extendedProps:tmp,
+        }
       },
 
       findEventById(eventId, type = false){
@@ -971,8 +1011,9 @@ export default {
       },
 
       viewAppointment(event){
-        let eventId = this.$refs.calendar.jQuery(event.currentTarget).attr('data-id')
+        let eventId = jQuery(event.currentTarget).attr('data-id')
         let appointment = this.findAppointmentById(eventId)
+
         this.$WapModalOn({
             title:'Appointment details',
             content: this.getAppointmentInfoHTML(appointment)
@@ -980,19 +1021,19 @@ export default {
       },
 
       getClientAvatarSize(appointment, size = 30){
-        return `<img class="rounded-circle" src="${appointment.client.avatar.replace('s=30', 's='+size)}" title="${appointment.client.name}">`
+        return `<img class="rounded-circle" src="${appointment.extendedProps.client.avatar.replace('s=30', 's='+size)}" title="${appointment.extendedProps.client.name}">`
       },
       getClientAvatarName(appointment){
-        return `${this.getClientAvatarSize(appointment, 60)} ${appointment.client.name}`
+        return `${this.getClientAvatarSize(appointment, 60)} ${appointment.extendedProps.client.name}`
       },
 
       getAllAppointmentOptions(appointment){
         let clientoptions = '';
-        for (const key in appointment.client.options) {
-          if (appointment.client.options.hasOwnProperty(key)) {
-            const element = appointment.client.options[key];
-            if(appointment.client.options[key]!= '') {
-              clientoptions += `<div> ${key}: ${appointment.client.options[key]} </div>`
+        for (const key in appointment.extendedProps.client.options) {
+          if (appointment.extendedProps.client.options.hasOwnProperty(key)) {
+            const element = appointment.extendedProps.client.options[key];
+            if(appointment.extendedProps.client.options[key]!= '') {
+              clientoptions += `<div> ${key}: ${appointment.extendedProps.client.options[key]} </div>`
             }
           }
         }
@@ -1001,7 +1042,7 @@ export default {
       getClientAppointment(appointment){
         return`<div>
                   <div>${this.getClientAvatarName(appointment)} </div>
-                  <div>Email: ${appointment.client.email} </div>
+                  <div>Email: ${appointment.extendedProps.client.email} </div>
                   ${this.getAllAppointmentOptions(appointment)}
                 </div>`
 
@@ -1011,23 +1052,25 @@ export default {
       },
 
       getScheduledTime(appointment){
-
+        console.log('scheduledTime', appointment)
           return `
             <div class="d-sm-flex justify-content-around align-items-center my-2">
               ${this.getClientAppointment(appointment)}
               <div class="bg-light border border-primary rounded p-2 text-center">
                 <div> Scheduled Time </div>
-                ${this.getAppointmentTimeAndDate(appointment.start, appointment.end)}
+                ${this.getAppointmentTimeAndDate(this.toMoment(appointment.start), this.toMoment(appointment.end))}
               </div>
             </div>
           `
       },
 
       getOldAndNewAppointment(appointment, delta){
-          let dms = -delta._milliseconds;
-          let daysdelta = -delta._days
-          let oldStart = appointment.start.clone().add(dms, 'ms').add(daysdelta, 'd')
-          let oldEnd = appointment.end.clone().add(dms, 'ms').add(daysdelta, 'd')
+
+          let dms = -delta.milliseconds
+          let daysdelta = -delta.days
+          
+          let oldStart = this.toMoment(appointment.start).clone().add(dms, 'ms').add(daysdelta, 'd')
+          let oldEnd = this.toMoment(appointment.end).clone().add(dms, 'ms').add(daysdelta, 'd')
           return `
               <div class="text-center">${this.getClientAppointment(appointment)}<hr></div>
               <div class="d-sm-flex justify-content-around align-items-center my-2 text-center">
@@ -1039,7 +1082,7 @@ export default {
                 <div class="d-sm-none"> <span class="dashicons dashicons-arrow-down-alt2"></span> </div>
                 <div class="bg-light border border-primary rounded p-2">
                   <div> New schedule </div>
-                  ${this.getAppointmentTimeAndDate(appointment.start, appointment.end, 'text-success')}
+                  ${this.getAppointmentTimeAndDate(this.toMoment(appointment.start), this.toMoment(appointment.end), 'text-success')}
                 </div>  
               </div>
           `
@@ -1048,17 +1091,17 @@ export default {
       getAppointmentTimeAndDate(momentStart, momentEnd, className=''){
         return `<div>
                 <div class="${className}"> 
-                  ${ this.formatTime(momenttz(momentStart), this.viewData.date_format ) } 
+                  ${ this.formatTime(momentStart, this.viewData.date_format ) } 
                 </div>
                 <div class="${className}">
-                  From ${this.formatTime(momenttz(momentStart))} until ${this.formatTime(momenttz(momentEnd))} 
+                  From ${this.formatTime(momentStart)} until ${this.formatTime(momentEnd)} 
                 </div>
                 <div class="small font-italic">${this.displayTimezone}</div>
               </div>`
       },
 
       confirmAppointment(event){
-        let eventId = this.$refs.calendar.jQuery(event.currentTarget).attr('data-id')
+        let eventId = jQuery(event.currentTarget).attr('data-id')
         this.confirmRequest(eventId)
       },
 
@@ -1130,24 +1173,45 @@ export default {
         this.disableBgEvent = false
       },
 
-      eventPatch(event, delta, revertFunc ){
+      eventPatch(info ){
+        let event = info.event
+        let delta =info.delta
+        let revertFunc = info.revert
+        
+
+        //console.log('patch to ', event, this.toMoment(event.start))
+
         this.$WapModal().confirm({
           title: 'Do you really want to modify this appointment?',
           content: this.getAppointmentInfoHTML(event,delta)
         }).then((result) => {
           if(result === true){
-             this.request(this.editEventRequest, {eventId: event.dbid, start: event.start, end: event.end}, this.refreshEvents)
+             this.request(this.editEventRequest, {eventId: event.extendedProps.dbid, start: this.toMoment(event.start).unix(), end: this.toMoment(event.end).unix()}, this.refreshEvents)
           }else {
             revertFunc()
           }  
         })
 
       },
+      toMoment(FullCaldateString, timezone = false, debug=false){
 
+/*          if(debug){
+            console.log('time is ', FullCaldateString)
+           console.log('default timezone before debug',this.timezone)
+          console.log('event is ', event)
+          //if(this.timezone)console.log(momenttz.tz(FullCaldateString,this.timezone))
+          //console.log(momenttz(FullCaldateString,this.timezone))
+          console.log(momenttz.tz(FullCaldateString,this.timezone))
+          console.log(momenttz.tz(FullCaldateString,this.timezone).format())
+        }  */
+
+        return momenttz.tz(FullCaldateString,this.timezone) //momenttz.tz(FullCaldateString, timezone === false ? 'UTC': timezone)
+      },
       isInThePast(event){
-        if(momenttz.tz(this.viewData.now,this.timezone).unix() > momenttz.tz(event.start.format(),this.timezone).unix() 
+
+        if(momenttz.tz(this.viewData.now,this.timezone).unix() > this.toMoment(event.start).unix() 
           ||
-           momenttz.tz(this.viewData.now,this.timezone).unix() > momenttz.tz(event.end.format(),this.timezone).unix()
+           momenttz.tz(this.viewData.now,this.timezone).unix() > this.toMoment(event.end).unix()
         ){
           return true
         }
@@ -1157,14 +1221,14 @@ export default {
       eventAllow(dropLocation, draggedEvent){
 
         if(this.isInThePast(dropLocation)) return false
-
-        return draggedEvent.editable
+        return draggedEvent.extendedProps.allowedit
       },
 
-      selectMethod(start, end) {
+      selectMethod(selectInfo) {
+        
+            this.startTime = this.toMoment(selectInfo.startStr)
+            this.endTime = this.toMoment(selectInfo.endStr)
 
-            this.startTime = start
-            this.endTime = end
             /* this.startTime = momenttz.tz(start.format(), this.timezone)
             this.endTime = momenttz.tz(end.format(), this.timezone) */
             this.openModalFreeTime();
@@ -1216,30 +1280,44 @@ export default {
         for (const key in this.events) {
           
           if (this.events.hasOwnProperty(key)) {
-            const element = this.events[key]; 
-            element.dbid = element.delId
-            element.id = element.type+'-'+element.id
-          
+
+            const element = this.events[key]
+
+            this.events[key].dbid = this.events[key].delId
+            this.events[key].id = this.events[key].type+'-'+this.events[key].id
             if( momenttz.tz(this.viewData.now, this.viewData.timezone).unix() > momenttz.tz(this.events[key].end, this.selectedTimezone).unix() ) {
-              this.events[key].editable = false
+              this.events[key].allowedit = false
               this.events[key].past = true
             }else{
-              this.events[key].editable = true
+              this.events[key].allowedit = true
               this.events[key].past = false
             }
+            this.events[key] = Object.assign({},this.events[key])
           }
         }
-
         this.$refs.calendar.option('now', a.data.now)
 
         this.intervalsCollection = null
         this.intervalsCollection = new Intervals(a.data.availability)
-
         //this.option
         this.callback(this.events)
+        this.canLoadEvents = true
       },
 
-      loadingEvents(start, end, timezone, callback){
+      loadingEvents(fetchInfo, successCallback, failureCallback/* , start, end, timezone, callback */){
+        this.callback = successCallback
+        let params = {start: this.toMoment(fetchInfo.start), end: this.toMoment(fetchInfo.end), timezone: this.timezone}
+        if(window.savedQueries !== undefined){
+          this.writeHistory()
+          window.savedQueries = undefined
+        } 
+        if(this.canLoadEvents){
+          this.request(this.getEventsRequest, params, this.callbackInternal)
+          this.canLoadEvents = false
+        }
+        
+      },
+      /* loadingEvents(start, end, timezone, callback){
         this.callback = callback
 
         let params = {start: start, end: end, timezone: timezone}
@@ -1249,7 +1327,7 @@ export default {
         } 
         
         this.request(this.getEventsRequest, params, this.callbackInternal)
-      },
+      }, */
 
       async getEventsRequest(params) {
           return await this.serviceEvent.call('get', {start: params.start.format(), end: params.end.format(), timezone:params.timezone, view: this.currentView})
@@ -1265,7 +1343,7 @@ export default {
           return await this.serviceStatus.call('delete', {id: eventId})
       },
       async editEventRequest(params) {
-          return await this.serviceEvent.call('patch', {id: params.eventId, start: params.start.format(), end: params.end.format(), timezone: this.displayTimezone})
+          return await this.serviceEvent.call('patch', {id: params.eventId, start: params.start, end: params.end, timezone: this.displayTimezone})
       },
       async setFreeRequest(params) {
           return await this.serviceStatus.call('save', {start: params.start.format(), end: params.end.format(), timezone: this.displayTimezone, type: 'free'})
@@ -1278,14 +1356,17 @@ export default {
       },
       
       isLoading(isLoading){
-        this.resetFirstDay()
-        if(this.$refs.calendar!==undefined && this.jqueryloaded === false) {
+        
+        if(this.fcIsReady && this.jqueryloaded === false) {
+          this.resetFirstDay()
           this.runJquerySetup()
         }
       },
-      
+      getDate(){
+        return this.toMoment(this.$refs.calendar.fireMethod('getDate'))
+      },
       resetFirstDay(){
-        this.firstDay = this.$refs.calendar.fireMethod('getDate').startOf('week')
+        this.firstDay = this.getDate().startOf('week')
       },
       nextWeek(){
         this.daysProperties = false
@@ -1303,7 +1384,8 @@ export default {
         this.writeHistory()
       },
       writeHistory(){
-        window.history.pushState(
+        if(this.firstDay !== undefined){
+          window.history.pushState(
           {
             query: {
               page: 'wappointment_calendar',
@@ -1315,13 +1397,15 @@ export default {
           'Calendar week ' + this.firstDay.format() + ' - ' + this.lastDay.format(),
           'admin.php?page=wappointment_calendar&start=' + this.firstDay.format() + '&end=' + this.lastDay.format() + '&timezone=' + this.displayTimezone
         )
+        }
+        
       },
 
 
       today(){
-         this.$refs.calendar.fireMethod('changeView', 'agendaWeek')
+         this.$refs.calendar.fireMethod('changeView', 'timeGridWeek')
          this.$refs.calendar.fireMethod('today')
-         this.currentView = 'agendaWeek'
+         this.currentView = 'timeGridWeek'
          this.refreshEvents()
          this.resetFirstDay()
       },
@@ -1349,8 +1433,10 @@ export default {
 }
 </script>
 <style>
-@import '~fullcalendar/dist/fullcalendar.css';
-  
+/*@import '~fullcalendar/dist/fullcalendar.css';*/
+@import '~@fullcalendar/core/main.css';
+@import '~@fullcalendar/daygrid/main.css';
+@import '~@fullcalendar/timegrid/main.css';
   .calendar-overflow {
     overflow: auto;
   }
@@ -1377,7 +1463,10 @@ export default {
   .fc-event.past-event .fc-resizer{
     display: none;
   }
-  .fc-event .fill-event:hover .ctrlbar, .fc-bgevent .fill-event:hover .ctrlbar{
+  .fc-event .fill-event:hover .ctrlbar, 
+  .fc-bgevent .fill-event:hover .ctrlbar,
+    .fc-event .fill-event.hover .ctrlbar, 
+  .fc-bgevent .fill-event.hover .ctrlbar{
     top: 0 !important;
     right:0;
     opacity: 1 !important;
@@ -1571,7 +1660,7 @@ export default {
       display: none;
   }
 
-  .fc-helper-container .fc-event {
+  .fc-highlight-container .fc-highlight {
     background-color: transparent;
     border-color: transparent;
   }
@@ -1582,8 +1671,14 @@ export default {
     border-color: #5b447b;
   }
 
-  #calendar .fc-event:hover .fc-bg {
-    background-color: rgba(166, 111, 204, 0.3)
+.fc-event-container.fc-mirror-container .fc-event{
+    background-color: rgba(172, 137, 196, 0.3);
+    border-color: rgba(214, 179, 238, 0.3);
+    font-size: 1.4rem;
+    text-align: center;
+}
+.fc-event-container.fc-mirror-container .fc-event .fc-time{
+    color:#776e6e;
 }
 
   .fc-event-container .fc-event.appointment-pending, 
@@ -1692,7 +1787,10 @@ export default {
   padding: .3rem .8rem;
 }
 
-.fc-event .fill-event:hover .crib, .fc-bgevent .fill-event:hover .crib{
+.fc-event .fill-event:hover .crib, 
+.fc-bgevent .fill-event:hover .crib,
+.fc-event .fill-event.hover .crib, 
+.fc-bgevent .fill-event.hover .crib{
   opacity: 1 !important;
   top: 0px;
   left: 0px;
@@ -1708,7 +1806,10 @@ export default {
   color:#fff;
 }
 
-.fc-event .fill-event:hover .crib:hover, .fc-bgevent .fill-event:hover .crib:hover{
+.fc-event .fill-event:hover .crib:hover, 
+.fc-bgevent .fill-event:hover .crib:hover,
+.fc-event .fill-event.hover .crib:hover, 
+.fc-bgevent .fill-event.hover .crib:hover{
   overflow: none !important;
   width: 100% !important;
   color: #fff !important;
@@ -1729,8 +1830,9 @@ export default {
 
 .fc-event .fc-bg {
     z-index: 1;
-    background: #506c7a;
+    background: rgba(0, 0, 0, 0.27);
     opacity: .25;
+    border-radius: 1rem;
 }
 .fc-event:hover .fc-bg {
     z-index: 6;
@@ -1764,6 +1866,8 @@ export default {
 
 
 #calendar .btn-xs .dashicons {
+  width: 1rem;
+  height: 1rem;
   font-size: 1rem;
 }
 

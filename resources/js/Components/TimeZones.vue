@@ -42,7 +42,8 @@ export default {
         return {
             timezone: '',
             classWrapper: 'form-group p-0 col-sm-4 col-lg-3',
-            initSave: false //allow to save on wizard initsetup
+            initSave: false, //allow to save on wizard initsetup,
+            firstTrigger: true
         }
     },
     created(){
@@ -51,14 +52,14 @@ export default {
         if(this.classW!=='') this.classWrapper = this.classW
     },
     watch: {
-        // whenever question changes, this function will run
         timezone: function (newTz, oldTz) {
             if(this.initSave === true){
-                this.$emit('updateTimezone', newTz)
+                this.$emit('updateTimezone', newTz, this.firstTrigger)
                 this.initSave = false
             }else{
-                this.$emit('updateTimezone', newTz)
+                this.$emit('updateTimezone', newTz, this.firstTrigger)
             }
+            this.firstTrigger = false
 
         }
     },
