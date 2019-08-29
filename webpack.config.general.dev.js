@@ -2,11 +2,9 @@
 const webpack = require('webpack')
 const { VueLoaderPlugin } = require('vue-loader')
 const path = require('path');
-const CleanWebpackPlugin = require('clean-webpack-plugin'); 
-const ManifestPlugin = require('webpack-manifest-plugin');
-const WebpackAssetsManifest = require('webpack-assets-manifest');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CleanWebpackPlugin = require('clean-webpack-plugin')
+const WebpackAssetsManifest = require('webpack-assets-manifest')
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 let cleanOptions = {
   verbose:  true,

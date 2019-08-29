@@ -7,21 +7,11 @@
     import dayGridPlugin from '@fullcalendar/daygrid'
     import timeGridPlugin from '@fullcalendar/timegrid'
     import interactionPlugin from '@fullcalendar/interaction'
-    import momentTimezonePlugin from '@fullcalendar/moment-timezone' //tz recognition
-    import momentPlugin from '@fullcalendar/moment' //formatting
-    const jQuery = window.jQuery
-
-    //modify the css function in order to implement a change on fc-now
-    var overridenCss = jQuery.fn.css;
-    jQuery.fn.css = function (name,value){
-        let result =  overridenCss.apply(this, arguments); 
-        if(jQuery(this).hasClass('fc-now-indicator-line') && name == 'top' && value !== '' && value!==undefined && value > 0){
-            jQuery(this).css('height',value)
-            jQuery(this).css('top',0)
-        }
-        return result
-    }
-
+    //import momentTimezonePlugin from '@fullcalendar/moment-timezone' //tz recognition
+    import momentTimezonePlugin from '../Plugins/fcmoment-timezone/main.esm' //tz recognition
+    //import momentPlugin from '@fullcalendar/moment' //formatting
+    import momentPlugin from '../Plugins/fcmoment/main.esm'
+    
     export default {
         components:{
             FullCalendar
@@ -32,9 +22,10 @@
                 configPrepared: {},
                 eventsPrepared: {},
                 isReady: false,
-                calendarAPI: undefined
+                calendarAPI: undefined,
             }
         },
+
         props: {
 
             config: {
@@ -54,21 +45,20 @@
             this.configPrepared = this.config.props
             this.configPrepared.plugins = this.calendarPlugins
             this.eventsPrepared = this.config.events
+            
         },
         mounted() {
             this.calendarAPI = this.$refs.calendarcore.getApi()
-            const cal = this.calendar
             this.isReady = true
             this.$emit('isReady')
         },
+        
+
 
         methods: {
+            
             apiReady(){
                 return this.calendarAPI !== undefined
-            },
-
-            unselect() {
-                return jQuery(this.$el).fullCalendar('unselect')
             },
 
             fireMethod(...options) {
@@ -80,6 +70,7 @@
                 if(options.indexOf('prev') !== -1) return this.getApi.prev()
                 if(options.indexOf('getDate') !== -1) return this.getApi.getDate()
                 if(options.indexOf('refetchEvents') !== -1) return this.getApi.refetchEvents()
+                if(options.indexOf('unselect') !== -1) return this.getApi.unselect()
 
             }, 
 

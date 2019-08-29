@@ -186,7 +186,6 @@ import '../../css/vue-tel.css'
 import {isEmail, isEmpty} from 'validator';
 import momenttz from '../appMoment'
 
-const jQuery = window.jQuery
 
 export default {
   extends: abstractView,
@@ -203,6 +202,7 @@ export default {
 
   data: () => ({
     fcIsReady: false,
+    observer: undefined,
     canLoadEvents: true,
     callback: undefined,
     currentView: 'timeGridWeek',
@@ -247,7 +247,6 @@ export default {
       hours: 0,
       minutes: 0
     },
-    jqueryloaded: false,
     activeBgOverId: false,
     shortDayFormat: 'Do MMM YY',
     daysProperties: false,
@@ -298,7 +297,7 @@ export default {
               }
 
           },
-      }
+      },
   },
  
  computed: {
@@ -544,23 +543,84 @@ export default {
       this.refreshEvents()
     },
 
-    runJquerySetup(){
-      let selectedTz = this.selectedTimezone
-      let mouseover_func = function(jquery,now, e) {
-        //jquery( e.currentTarget ).html('<div class="nowtime>'+now.tz(selectedTz).format('dddd HH:mm')+'</div>')
-            jquery('<div>', {class: 'nowtime', html:now.tz(selectedTz).format('dddd HH:mm')}).appendTo( jquery( e.currentTarget ) )
-        };
-        let mouseout_func = function(jquery,e) {
-            jquery('.nowtime').remove()
-        };
-          
-         jQuery('#calendar').on("mouseover", ".fc-now-indicator-line", 
-         mouseover_func.bind(null, jQuery, momenttz.tz(this.viewData.now, this.viewData.timezone))); 
-         jQuery('#calendar').on("mouseout", ".fc-now-indicator-line", 
-         mouseout_func.bind(null, jQuery)); 
+    hoverIndicatorRegister(){
+      let selectedTz = this.selectedTimezone 
+      window.jQuery('.fc-content-today').on('mouseover','.fc-now-indicator-line', function(now, e) {
+          window.jQuery('.fc-now-indicator-line .nowtime').html(now.tz(selectedTz).format('dddd HH:mm'))
+          window.jQuery('.fc-now-indicator-line .nowtime').addClass('show')
+      }.bind(null,  momenttz.tz(this.viewData.now, this.viewData.timezone)))
 
-        this.jqueryloaded = true
+      window.jQuery('.fc-content-today').on('mouseout','.fc-now-indicator-line',() => window.jQuery('.nowtime').removeClass('show'))
     }, 
+    hoverIndicatorUnregister(){
+
+      window.jQuery('.fc-content-today').unbind('mouseover')
+      window.jQuery('.fc-content-today').unbind('mouseout')
+    }, 
+    beforeDestroy(){
+        this.hoverIndicatorUnregister()
+        this.observer.disconnect()
+    },
+    observeNowIndicator(){
+        if(this.observer !== undefined){
+            this.hoverIndicatorUnregister()
+            this.observer.disconnect()
+        }
+        this.observer = undefined
+        const elements = document.querySelectorAll('.fc-content-skeleton td .fc-content-col')
+        let today = false
+        for (let i = 0; i < elements.length; i++) {
+              if(elements[i].childNodes.length > 0){
+                  for (let j = 0; j < elements[i].childNodes.length; j++) {
+                      if(Array.from(elements[i].childNodes[j].classList).indexOf('fc-now-indicator-line') !== -1) {
+                          today = elements[i]
+                          today.classList.toggle('fc-content-today')
+                      }
+                      if(today !== false) break
+                  }
+                  
+              }
+            if(today !== false) break
+        }
+        if(today !== false){
+            // config object
+            const config = {
+                attributes: false,
+                attributeOldValue: false,
+                characterData: false,
+                characterDataOldValue: false,
+                childList: true,
+                subtree: false
+            };
+            // instantiating observer
+            this.observer = new MutationObserver(this.observerSubscriber)
+
+            // observing target
+            this.observer.observe(today, config)
+            this.hoverIndicatorRegister()
+        }
+    },
+    observerSubscriber(mutations) {
+        for (let i = 0; i < mutations.length; i++) {
+          const mutation = mutations[i]
+          if (mutation.addedNodes.length > 0) {
+                for (let k = 0; k < mutation.addedNodes.length; k++) {
+                  if( Array.from(mutation.addedNodes[k].classList).indexOf('fc-now-indicator-line')!==-1){
+                    this.setTodayPastSection()
+                  }
+                }
+            }
+        }
+    },
+    setTodayPastSection(){
+      if([0, '0', '0px'].indexOf(window.jQuery('.fc-now-indicator-line').css('top')) === -1){
+        window.jQuery('.fc-now-indicator-line').css('height',window.jQuery('.fc-now-indicator-line').css('top'))
+        window.jQuery('.fc-now-indicator-line').css('top', 0)
+      }
+
+      window.jQuery('<div>', {class: 'nowtime', html:''}).appendTo( window.jQuery( '.fc-now-indicator-line' ) )
+        
+    },
     startTimeDisplayed() {
       if(this.fcIsReady) {
         if(this.getDate() !== undefined)
@@ -689,8 +749,8 @@ export default {
 
         if(this.daysProperties !== false) return
         let daysProperties = []
-        jQuery('.fc-day.fc-widget-content').each(function( index ) {
-          if(jQuery(this).hasClass('fc-past') ) daysProperties.push('fc-past')
+        window.jQuery('.fc-day.fc-widget-content').each(function( index ) {
+          if(window.jQuery(this).hasClass('fc-past') ) daysProperties.push('fc-past')
           else daysProperties.push('')
         })
         this.daysProperties = daysProperties
@@ -699,13 +759,13 @@ export default {
 
         let daysProperties = this.daysProperties
         //console.log('daysProperties',daysProperties)
-        jQuery('.fc-content-skeleton tr td').each(function( index ) {
-          if(jQuery(this).hasClass('fc-axis')){
+        window.jQuery('.fc-content-skeleton tr td').each(function( index ) {
+          if(window.jQuery(this).hasClass('fc-axis')){
 
           }else{
             //console.log((index+1)+' '+daysProperties[index+1])
             if(daysProperties[index-1]=='fc-past') {
-              jQuery(this).addClass('skel-past')
+              window.jQuery(this).addClass('skel-past')
             }
           }
           
@@ -719,7 +779,7 @@ export default {
       eventRender(renderInfo){
         let event = renderInfo.event
         let eventExt = event.extendedProps
-        let element = jQuery(renderInfo.el)
+        let element = window.jQuery(renderInfo.el)
         this.isParentInThePast(element)
          //'.fc-content-skeleton tr td'
         
@@ -736,6 +796,7 @@ export default {
             
             if(this.isAppointmentEvent(event.rendering)){
                 element.find('.fc-time').html(this.getAppointmentHtml(event))
+                element.append('<div class="fc-bg"></div>')
                 element.click(this.cancelClick)
                 element.mouseenter(this.EOver)
                 element.mouseleave(this.EOut)
@@ -783,7 +844,7 @@ export default {
 
         this.disableSelectClick = true
         
-        this.attachEvent( jQuery(event.currentTarget))
+        this.attachEvent( window.jQuery(event.currentTarget))
         
       },
       EOut(event){
@@ -792,14 +853,14 @@ export default {
 
         if(this.disableBgEvent) return false;
 
-        /*jQuery(event.target).parent().css('z-index',2)*/
-        let el = jQuery(event.currentTarget)
+        /*window.jQuery(event.target).parent().css('z-index',2)*/
+        let el = window.jQuery(event.currentTarget)
         el.removeClass('hover')
         el.find('.fill-event').remove()
 
       },
       bgEDown(event){ 
-        this.hasBeenClicked = jQuery(event.currentTarget).attr('data-id')
+        this.hasBeenClicked = window.jQuery(event.currentTarget).attr('data-id')
         event.stopPropagation();
       },
 
@@ -896,7 +957,7 @@ export default {
         this.cancelbgOver = setTimeout(this.bgEOver.bind('',event),200)
       },
       bgEOver(event,fsdfsd){
-        let el =  jQuery(event.target)
+        let el =  window.jQuery(event.target)
         //return;
         if(!el.hasClass('fc-bgevent')) return;
         this.parentAttach = el.parent()
@@ -908,7 +969,7 @@ export default {
           return false;
         }
         this.activeBgOverId = el.attr('data-id')
-        jQuery('[data-id="' + this.activeBgOverId + '"]').addClass('hover')
+        window.jQuery('[data-id="' + this.activeBgOverId + '"]').addClass('hover')
 
         this.disableSelectClick = true
 
@@ -923,22 +984,22 @@ export default {
 
       },
       bgEOut(event){
-        jQuery('[data-id="' + this.activeBgOverId + '"]').removeClass('hover')
+        window.jQuery('[data-id="' + this.activeBgOverId + '"]').removeClass('hover')
         this.activeBgOverId = false
         
         if(this.cancelbgOver) {
           clearTimeout(this.cancelbgOver)
           this.cancelbgOver = false
         }
-        if(event.type=='mousedown' && jQuery(event.target).hasClass('btn-secondary')) {
-          this.$refs.calendar.unselect()
+        if(event.type=='mousedown' && window.jQuery(event.target).hasClass('btn-secondary')) {
+          this.$refs.calendar.fireMethod('unselect')
           return false;
         }
         this.disableSelectClick = false
 
         if(this.disableBgEvent) return false;
 
-        let el = jQuery(event.target)
+        let el = window.jQuery(event.target)
         if(el.attr('data-parent-class') !== undefined){
           this.reAttach(el)
         }else{
@@ -967,7 +1028,7 @@ export default {
           return false;
       },
       bgEClick(event){
-        let eventId = jQuery(event.currentTarget).attr('data-id')
+        let eventId = window.jQuery(event.currentTarget).attr('data-id')
 
       },
       getEventById(eventId){
@@ -982,11 +1043,11 @@ export default {
       },
 
       deleteElement(event){
-        let eventId = jQuery(event.currentTarget).attr('data-id')
+        let eventId = window.jQuery(event.currentTarget).attr('data-id')
         this.deleteStatus(eventId)
       },
       cancelAppointment(event){
-        let eventId = jQuery(event.currentTarget).attr('data-id')
+        let eventId = window.jQuery(event.currentTarget).attr('data-id')
         this.cancelRequest(eventId)
       },
 
@@ -1011,7 +1072,7 @@ export default {
       },
 
       viewAppointment(event){
-        let eventId = jQuery(event.currentTarget).attr('data-id')
+        let eventId = window.jQuery(event.currentTarget).attr('data-id')
         let appointment = this.findAppointmentById(eventId)
 
         this.$WapModalOn({
@@ -1052,7 +1113,6 @@ export default {
       },
 
       getScheduledTime(appointment){
-        console.log('scheduledTime', appointment)
           return `
             <div class="d-sm-flex justify-content-around align-items-center my-2">
               ${this.getClientAppointment(appointment)}
@@ -1101,7 +1161,7 @@ export default {
       },
 
       confirmAppointment(event){
-        let eventId = jQuery(event.currentTarget).attr('data-id')
+        let eventId = window.jQuery(event.currentTarget).attr('data-id')
         this.confirmRequest(eventId)
       },
 
@@ -1317,17 +1377,6 @@ export default {
         }
         
       },
-      /* loadingEvents(start, end, timezone, callback){
-        this.callback = callback
-
-        let params = {start: start, end: end, timezone: timezone}
-        if(window.savedQueries !== undefined){
-          this.writeHistory()
-          window.savedQueries = undefined
-        } 
-        
-        this.request(this.getEventsRequest, params, this.callbackInternal)
-      }, */
 
       async getEventsRequest(params) {
           return await this.serviceEvent.call('get', {start: params.start.format(), end: params.end.format(), timezone:params.timezone, view: this.currentView})
@@ -1357,10 +1406,11 @@ export default {
       
       isLoading(isLoading){
         
-        if(this.fcIsReady && this.jqueryloaded === false) {
+        if(this.fcIsReady) {
           this.resetFirstDay()
-          this.runJquerySetup()
         }
+
+        this.observeNowIndicator()
       },
       getDate(){
         return this.toMoment(this.$refs.calendar.fireMethod('getDate'))
@@ -1755,7 +1805,7 @@ export default {
     z-index: 9;
 }
 
-.fc-now-indicator-line{
+.fc-time-grid .fc-now-indicator-line{
   border: 2px solid #f3f3f3;
   border-bottom: 2px dashed #6664cb;
   z-index: 3;
@@ -1862,6 +1912,10 @@ export default {
   text-align: center;
   position: absolute;
   width: 100%;
+  display: none;
+}
+.nowtime.show{
+  display: block;
 }
 
 

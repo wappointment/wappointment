@@ -1,0 +1,63 @@
+{
+  "_from": "@fullcalendar/moment",
+  "_id": "@fullcalendar/moment@4.3.0",
+  "_inBundle": false,
+  "_integrity": "sha512-Ek+wJL+PcLpBddrOoIFLGnqsp1LG5Jm6lWeqA37sKvTwx/02IgZsHzx+lrhzR6l1JTFmtAfuANQeYdYYjVor1Q==",
+  "_location": "/@fullcalendar/moment",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "@fullcalendar/moment",
+    "name": "@fullcalendar/moment",
+    "escapedName": "@fullcalendar%2fmoment",
+    "scope": "@fullcalendar",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@fullcalendar/moment/-/moment-4.3.0.tgz",
+  "_shasum": "7db57cc9a1d11055974c42388fab16bfa523d74c",
+  "_spec": "@fullcalendar/moment",
+  "_where": "/home/vagrant/Code/wappointment-plugin",
+  "author": {
+    "name": "Adam Shaw",
+    "email": "arshaw@arshaw.com",
+    "url": "http://arshaw.com/"
+  },
+  "bugs": {
+    "url": "https://fullcalendar.io/reporting-bugs"
+  },
+  "bundleDependencies": false,
+  "copyright": "2019 Adam Shaw",
+  "deprecated": false,
+  "description": "A connector to the MomentJS date library",
+  "docs": "https://fullcalendar.io/docs/moment-plugins",
+  "homepage": "https://fullcalendar.io/",
+  "keywords": [
+    "calendar",
+    "event",
+    "full-sized"
+  ],
+  "license": "MIT",
+  "main": "main.js",
+  "module": "main.esm.js",
+  "name": "@fullcalendar/moment",
+  "peerDependencies": {
+    "@fullcalendar/core": "~4.3.0",
+    "moment": "^2.24.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fullcalendar/fullcalendar.git",
+    "homepage": "https://github.com/fullcalendar/fullcalendar"
+  },
+  "title": "FullCalendar Moment Plugin",
+  "types": "main.d.ts",
+  "unpkg": "main.min.js",
+  "version": "4.3.0"
+}
