@@ -50,7 +50,6 @@
 import ClickOutside from 'vue-click-outside'
 import { formatNumber, AsYouType, isValidNumber } from 'libphonenumber-js'
 import allCountries from '../../Standalone/all-countries'
-//import getCountry from './default-country'
 
 export default {
   props: {
@@ -64,11 +63,6 @@ export default {
       type: String,
       default: '',
     },
-    
-    /* disabledFetchingCountry: {
-      type: Boolean,
-      default: false,
-    }, */
     disabled: {
       type: Boolean,
       default: false,

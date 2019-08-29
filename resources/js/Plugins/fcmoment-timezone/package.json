@@ -1,0 +1,64 @@
+{
+  "_from": "@fullcalendar/moment-timezone",
+  "_id": "@fullcalendar/moment-timezone@4.3.0",
+  "_inBundle": false,
+  "_integrity": "sha512-ko7WEcWtayi4GCUuRv99ml5MxfbZ28l0hWdtL95ErEaHqBrZYn3Y1F0P2jzFklAFKvyywxD0cq61wbGYpI20gg==",
+  "_location": "/@fullcalendar/moment-timezone",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "@fullcalendar/moment-timezone",
+    "name": "@fullcalendar/moment-timezone",
+    "escapedName": "@fullcalendar%2fmoment-timezone",
+    "scope": "@fullcalendar",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/@fullcalendar/moment-timezone/-/moment-timezone-4.3.0.tgz",
+  "_shasum": "452b6721beb8a392a01d6201381ead1f7949d962",
+  "_spec": "@fullcalendar/moment-timezone",
+  "_where": "/home/vagrant/Code/wappointment-plugin",
+  "author": {
+    "name": "Adam Shaw",
+    "email": "arshaw@arshaw.com",
+    "url": "http://arshaw.com/"
+  },
+  "bugs": {
+    "url": "https://fullcalendar.io/reporting-bugs"
+  },
+  "bundleDependencies": false,
+  "copyright": "2019 Adam Shaw",
+  "deprecated": false,
+  "description": "A connector to the moment-timezone library",
+  "docs": "https://fullcalendar.io/docs/moment-plugins#moment-timezone",
+  "homepage": "https://fullcalendar.io/",
+  "keywords": [
+    "calendar",
+    "event",
+    "full-sized"
+  ],
+  "license": "MIT",
+  "main": "main.js",
+  "module": "main.esm.js",
+  "name": "@fullcalendar/moment-timezone",
+  "peerDependencies": {
+    "@fullcalendar/core": "~4.3.0",
+    "moment": "^2.24.0",
+    "moment-timezone": "^0.5.25"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fullcalendar/fullcalendar.git",
+    "homepage": "https://github.com/fullcalendar/fullcalendar"
+  },
+  "title": "FullCalendar Moment Timezone Plugin",
+  "types": "main.d.ts",
+  "unpkg": "main.min.js",
+  "version": "4.3.0"
+}
