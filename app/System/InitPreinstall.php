@@ -13,12 +13,8 @@ class InitPreinstall
         add_action('admin_init', [$this, 'checkJustActivated']);
         add_filter('plugin_row_meta', [$this, 'custom_plugin_row_meta'], 10, 2);
         new \Wappointment\Routes\Init();
-        //add_action('init', [$this, 'initRoutes']);
     }
-    /*  public function initRoutes()
-    {
-        new \Wappointment\Routes\Init();
-    } */
+
     function activated()
     {
         add_option('wappo_plug_activated', 'wappointment');

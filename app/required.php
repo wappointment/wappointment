@@ -185,6 +185,10 @@ class WappointmentLv
         return $value instanceof Closure ? $value() : $value;
     }
 
+    public static function starts_with($lookin, $lookfor)
+    {
+        return strpos($lookin, $lookfor) === 0;
+    }
     public static function windows_os()
     {
         return strtolower(substr(PHP_OS, 0, 3)) === 'win';

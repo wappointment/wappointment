@@ -131,7 +131,7 @@ class Helpers
 
     public static function isPluginPage()
     {
-        return \Illuminate\Support\Str::startsWith(self::$request->get('page'), self::$option_prefix);
+        return WappointmentLv::starts_with(self::$request->get('page'), self::$option_prefix);
     }
 
     public static function restError($error_string, $status = 500, $errors = [])

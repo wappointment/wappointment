@@ -7,9 +7,7 @@
     import dayGridPlugin from '@fullcalendar/daygrid'
     import timeGridPlugin from '@fullcalendar/timegrid'
     import interactionPlugin from '@fullcalendar/interaction'
-    //import momentTimezonePlugin from '@fullcalendar/moment-timezone' //tz recognition
     import momentTimezonePlugin from '../Plugins/fcmoment-timezone/main.esm' //tz recognition
-    //import momentPlugin from '@fullcalendar/moment' //formatting
     import momentPlugin from '../Plugins/fcmoment/main.esm'
     
     export default {

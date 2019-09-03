@@ -16,7 +16,7 @@ class Database
         $this->port = '3306';
         $this->prefix = $wpdb->prefix;
 
-        if (\Illuminate\Support\Str::contains($this->host, ':')) {
+        if (strpos($this->host, ':') !== false) {
             $host_port = explode(':', $this->host);
             $this->host = $host_port[0];
             $this->port = $host_port[1];
