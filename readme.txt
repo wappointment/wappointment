@@ -11,26 +11,30 @@ The reliable solution to manage your appointments. Perfect for medical appointme
 
 == Description ==
 
+https://www.youtube.com/embed/jUkiyejbuzg?modestbranding=1&autoplay=1&showinfo=0&rel=0
+
 Start getting booked within seconds. Quickly setup your service. 
 Drag and drop your availability. Preview and easily customize your booking widget. 
 Setup Confirmation and Reminders emails sent to your customers.
 
+Wappointment is for you to **[Get Booked](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**.
+
 == The Appointment manager which makes it all simpler ==
 
 = Manage Your Availability Within Seconds =
-Wappointment is easy to install and simple to use.
-Simply drag and drop your availability, whether it’s a recurrent or punctual event.
+Wappointment is **easy to install** and simple to use.
+Simply **drag and drop your availability**, whether it’s a recurrent or punctual event.
 
 = Simplify Your Booking Process =
-Our super user friendly booking widget gives your clients a quick overview of your availability.
-Clients book you within seconds, from their mobile phone, tablet or desktop computer.
+Our super **user friendly booking widget** gives your clients a quick overview of your availability.
+**Clients book you within seconds**, from their mobile phone, tablet or desktop computer.
 
 = Increase Your Bookings =
-Clients can book you 24/7, Wappointment is basically a booking assistant which never sleeps.
+**Get booked 24/7**, Wappointment is basically a **booking assistant which never sleeps**.
 You do the maths!
 
 = Reduce No-Shows =
-Your clients receive appointment confirmation and reminders.
+Your clients receive **appointment confirmation and reminders**.
 You quickly define when they receive them.
 
 = Integrate Nicely Powerful Tools =

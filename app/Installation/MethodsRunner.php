@@ -18,7 +18,7 @@ class MethodsRunner
         foreach ($class->getMethods(\ReflectionMethod::IS_PROTECTED) as $method) {
             $methodName = $method->name;
 
-            if (WappointmentLv::starts_with($methodName, 'can')) {
+            if (\WappointmentLv::starts_with($methodName, 'can')) {
                 try {
                     $this->$methodName();
                 } catch (\WappointmentException $e) {

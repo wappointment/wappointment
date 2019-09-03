@@ -95,7 +95,7 @@ class Reminder extends Model
         $newBodyEmailContent = [];
 
         foreach ($bodyEmail['content'] as $key => $rowContent) {
-            if (WappointmentLv::starts_with($rowContent['type'], 'cblock')) {
+            if (\WappointmentLv::starts_with($rowContent['type'], 'cblock')) {
                 if ($appointment->isPhysical() && $rowContent['type'] == 'cblockphysical') {
                     $newBodyEmailContent[] = $rowContent;
                 } else {
