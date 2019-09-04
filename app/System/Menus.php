@@ -23,7 +23,7 @@ class Menus
         }
         $this->menu_capability = $this->roleAllowed();
 
-        add_menu_page(WAPPOINTMENT_NAME, WAPPOINTMENT_NAME, $this->menu_capability, $this->parent_slug, $this->load_view, 'dashicons-wappointments', 25);
+        add_menu_page(WAPPOINTMENT_NAME, WAPPOINTMENT_NAME, $this->menu_capability, $this->parent_slug, $this->load_view, 'dashicons-wappointment', 25);
     }
 
     public function addSubmenus()

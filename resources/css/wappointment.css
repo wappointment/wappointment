@@ -1,23 +1,23 @@
 @font-face {
-    font-family: 'wappointments';
-    src: url('../fonts/wappointments.eot');
-    src: url('../fonts/wappointments.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/wappointments.woff') format('woff'),
-         url('../fonts/wappointments.ttf') format('truetype'),
-         url('../fonts/wappointments.svg#wappointments') format('svg');
+    font-family: 'wappointment';
+    src: url('../fonts/wappointment.eot');
+    src: url('../fonts/wappointment.eot?#iefix') format('embedded-opentype'),
+         url('../fonts/wappointment.woff') format('woff'),
+         url('../fonts/wappointment.ttf') format('truetype'),
+         url('../fonts/wappointment.svg#wappointment') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 [class*='dashicons-wappo']:before{
 	display: inline-block;
-   font-family: 'wappointments';
+   font-family: 'wappointment';
    font-style: normal;
    font-weight: normal;
    line-height: 1;
    -webkit-font-smoothing: antialiased;
    -moz-osx-font-smoothing: grayscale
 }
-.dashicons-wappointments:before{content:'\0041';}
+.dashicons-wappointment:before{content:'\0057';}
 
 .wappointment-wrap .form-control::placeholder {
     color: #dadada;

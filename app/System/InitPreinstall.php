@@ -23,7 +23,7 @@ class InitPreinstall
     function checkJustActivated()
     {
         if (get_option('wappo_plug_activated') == 'wappointment') {
-            wp_enqueue_style(WAPPOINTMENT_SLUG . '-wap', plugins_url(WAPPOINTMENT_SLUG . '/dist/css/wappointments.css'));
+            wp_enqueue_style(WAPPOINTMENT_SLUG . '-wap', plugins_url(WAPPOINTMENT_SLUG . '/dist/css/wappointment.css'));
             add_action('wp_print_scripts', [$this, 'scrollDownToUs']);
             delete_option('wappo_plug_activated');
         }

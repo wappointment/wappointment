@@ -35,7 +35,7 @@ class InitBackend
 
     public function enqueueMin()
     {
-        wp_enqueue_style(WAPPOINTMENT_SLUG . '-wap', plugins_url(WAPPOINTMENT_SLUG . '/dist/css/wappointments.css'));
+        wp_enqueue_style(WAPPOINTMENT_SLUG . '-wap', plugins_url(WAPPOINTMENT_SLUG . '/dist/css/wappointment.css'));
     }
 
     public function enqueueBackendPlugin()

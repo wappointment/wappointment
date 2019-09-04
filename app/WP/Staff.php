@@ -24,8 +24,13 @@ class Staff
         }
         $this->id = $staff_id;
         $this->avatar = get_avatar_url($staff_id, ['size' => 40]);
-        $this->name = $this->wp_user->first_name . ' ' . $this->wp_user->last_name;
+        $this->name = $this->getUserDisplayName();
         $this->timezone = Settings::getStaff('timezone', $staff_id);
+    }
+
+    public function getUserDisplayName()
+    {
+        return empty($this->wp_user->display_name) ? $this->wp_user->first_name . ' ' . $this->wp_user->last_name : $this->wp_user->display_name;
     }
 
     public function getAvailability()

@@ -5,15 +5,18 @@ export default class AddonsService {
         return {
             get: { 
                 method: 'get',
-                route: '/addons'
+                route: '/addons',
+                timeout: 20000
             },
             register: { 
                 method: 'post',
                 route: '/addons',
+                timeout: 20000
             },
             install: { 
                 method: 'post',
                 route: '/addons/install',
+                timeout: 20000
             },
             activate: { 
                 method: 'post',
@@ -25,7 +28,8 @@ export default class AddonsService {
             },
             check: { 
                 method: 'get',
-                route: '/addons/check'
+                route: '/addons/check',
+                timeout: 20000
             },
         };
     }

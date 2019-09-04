@@ -18,14 +18,14 @@ class AddonsController extends RestController
         $data = (new Addons)->get();
         $data->admin_email = Settings::get('email_notifications');
         $statuses = WPHelpers::getOption('subscribed_status');
-        $data->statuses = $statuses === false ? []:$statuses;
+        $data->statuses = $statuses === false ? [] : $statuses;
         return $data;
     }
 
     public function save(Request $request)
     {
         $result = (new Licences)->register($request->input('pkey'));
-        
+
         return [
             'message' => $result->message,
             'addons' => (new Addons)->get()->addons
@@ -50,7 +50,7 @@ class AddonsController extends RestController
     public function check()
     {
         $resultCheck = (new Licences)->check();
-        if($resultCheck) {
+        if ($resultCheck) {
             return ['message' => 'Success checking licence'];
         }
     }
