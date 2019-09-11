@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
  *
  * @package Wappointment
  * @author Wappointment
- * @since 1.0.0
+ * @since 1.0.1
  * 
  * Wappointment is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ if (!defined('ABSPATH')) {
  * GNU General Public License for more details.
  */
 
-define('WAPPOINTMENT_VERSION', '1.0.0');
+define('WAPPOINTMENT_VERSION', '1.0.1');
 define('WAPPOINTMENT_PHP_MIN', '7.0.0');
 define('WAPPOINTMENT_NAME', 'Wappointment');
 define('WAPPOINTMENT_SLUG', strtolower(WAPPOINTMENT_NAME));

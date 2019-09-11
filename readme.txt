@@ -1,49 +1,78 @@
-=== Wappointment ===
+=== Appointment Booking Calendar by Wappointment ===
 Contributors: wappointment, benheu
-Tags: appointment, booking, calendar, reminders, productivity 
+Tags: appointment booking, appointment, booking, booking calendar, booking system, appointment booking system, booking form, booking plugin, appointment plugin 
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-The reliable solution to manage your appointments. Perfect for medical appointments, coach's one-on-one phone or skype sessions, consultants and any kind of service professional.
+A powerful appointment booking system, automating your appointments' scheduling. The easiest booking process for your clients, it's Wappointment time!
 
 == Description ==
 
-https://www.youtube.com/embed/jUkiyejbuzg?modestbranding=1&autoplay=1&showinfo=0&rel=0
+A powerful **appointment booking system**, automating your **appointments' scheduling**. 
+The most reliable **booking solution for professionals**. Get booked 24/7 using our super **user-friendly booking form**.
 
-Start getting booked within seconds. Quickly setup your service. 
-Drag and drop your availability. Preview and easily customize your booking widget. 
-Setup Confirmation and Reminders emails sent to your customers.
+Our Appointment booking system is designed for anyone who provide services to customers (personal coach, estate agent, language teachers, therapists,  health professionals, beauty and wellness professionals, fitness professionals, etc...)
 
-Wappointment is for you to **[Get Booked](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**.
+Wappointment is free and will remain **free forever**.
 
-== Appointment Manager for Professionals ==
+https://www.youtube.com/watch?v=jUkiyejbuzg
 
-= Manage Your Availability Within Seconds =
-Wappointment is **easy to install** and simple to use.
-Simply **drag and drop your availability**, whether it’s a recurrent or punctual event.
+== Our Booking Calendar's Benefits ==
+
+= Increase your Bookings =
+Convert visitors into customers with a simple call to action. **Get booked 24/7**, Wappointment is basically a **booking assistant which never sleeps**.
+
+= Improve Customer Satisfaction =
+Because your clients need to book you somehow, make sure their experience is great. Wappointment is all about smooth user experience, no questions only certainties.
 
 = Simplify Your Booking Process =
 Our super **user friendly booking widget** gives your clients a quick overview of your availability.
-**Clients book you within seconds**, from their mobile phone, tablet or desktop computer.
-
-= Increase Your Bookings =
-**Get booked 24/7**, Wappointment is basically a **booking assistant which never sleeps**.
 
 = Reduce No-Shows =
-Your clients receive **appointment confirmation and reminders**.
-You easily define when they receive them.
+Your clients receive **appointment confirmations and reminders**. You easily define when they receive them.
 
-= Customize The Look And Feel =
-Quickly customize colors, texts and emails to ﬁt your site’s appearance.
-Make the style and the message reﬂect your business.
+= Avoid double bookings =
+Our centralize system updates your availability on each action making sure you cannot get booked twice at the same time.
 
-= Improve Customer Satisfaction =
-Because your clients need to book you somehow, make sure their experience is great.
-Wappointment is all about smooth user experience, no questions only certainties.
+==  Our Appointment Booking System features ==
+* Unlimited bookings
+* User-friendly and intuitive interface with no coding involved
+
+= Availability Setup as an Admin =
+* Set your recurrent availability within seconds
+* Set your punctual availability and block your non-bookable time (non working days and hours, busy times, holidays, etc) in just few clicks
+* Select the timezone from which you operate
+
+= Appointments Settings as an Admin =
+* Manage your appointments through a comprehensive Admin panel
+* Define how you provide the appointment by Phone, by Skype or in Person
+* Hand-pick the countries you will allow for a phone appointment
+* Change appointment's duration
+* Set the appointments' approval mode: automatic or manual 
+* Set how far in advance an appointment can be booked 
+* Allow clients to cancel and reschedule appointments
+* Book an appointment on behalf of your customer
+* Connect your personal calendar to the booking system and automatically block time where you are busy
+* Set the date and time format 
+
+= Make the Booking Widget Blend =
+* Quickly customize colors and texts for your booking widget 
+* 4-steps booking process, each step is editable
+
+= Booking an Appointment as a Customer =
+* Clients book you within seconds, from their mobile phone, tablet or desktop computer
+* The available booking slots are displayed in your client's timezone, no more confusion for your international clients
+* Client receive a confirmation and as many reminders as you've setup
+* Clients can easily save your appointment to their personal calendar
+
+= Appointments' Confirmations Reminders and Notifications =
+* Receive email notifications when clients book, reschedule or cancel an appointment
+* Receive daily and weekly notifications
+* Customize and personalize your confirmations and reminders sent to your clients
 
 = Have a Question? =
 Ask us on [https://wappointment.com/support](https://wappointment.com/support?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
@@ -70,10 +99,13 @@ It requires work on your end but keeps your site safe and optimized.
 7. Settings Panel. Modify all that you had setup in the wizard, manage the confirmations and reminders, etc...
 8. Help Page. Have a question? Simply ask for it straight in there.
 
-== Technical Details ==
-git repo https://github.com/wappointment/wappointment
-
 == Changelog ==
+
+= 1.0.1 - 2019-09-11 =
+* Fixed installation process halting while mistaking a lack of MySQL user permissions
 
 = 1.0.0 - 2019-08-21 =
 * Hello WordPress!
+
+== Technical Details ==
+git repo https://github.com/wappointment/wappointment

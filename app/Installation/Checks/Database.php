@@ -18,13 +18,13 @@ class Database extends \Wappointment\Installation\MethodsRunner
 
     protected function canInstallAndRun()
     {
-        //$testPrivileges = ['CREATE', 'DELETE', 'INSERT', 'ALTER', 'UPDATE'];
+
         $testPrivileges = ['CREATE', 'DELETE', 'INSERT', 'UPDATE'];
         try {
             $db = \Wappointment\Config\Database::capsule()->getConnection('default');
-            $result = $db->select('SHOW GRANTS;');
+            $results = $db->select('SHOW GRANTS;');
 
-            foreach ($result[0] as $res) {
+            foreach ($results as $res) {
                 if (strpos($res, 'GRANT ') !== false) {
                     if (strpos($res, 'ALL PRIVILEGES') !== false) {
                         return true;

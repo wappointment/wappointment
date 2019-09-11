@@ -7,7 +7,7 @@
         </div>
         <div v-if="showWidget">
             <div class="mt-4">
-                <VideoIframe src="https://www.youtube.com/embed/h_bWIqOmq0M?autoplay=1" />
+                <VideoIframe src="https://www.youtube.com/embed/h_bWIqOmq0M" />
             </div>
         </div>
         <div v-if="showPost">
@@ -16,7 +16,7 @@
                 <ClickCopy :value="shortcode"></ClickCopy>
             </div>
             <div class="mt-4">
-                <VideoIframe src="https://www.youtube.com/embed/VMi2Ry-JrGA?autoplay=1" />
+                <VideoIframe src="https://www.youtube.com/embed/VMi2Ry-JrGA" />
             </div>
         </div>
         <div v-if="showTheme">

@@ -81,9 +81,9 @@ export default {
         return this.showGoogle || this.showIcal || this.showOutlook
     },
     getYouTubeUrl(){
-        if(this.showGoogle) return 'https://www.youtube.com/embed/5D_CfTJ9FzA?autoplay=1'
-        if(this.showIcal) return 'https://www.youtube.com/embed/H0A7Jc0G84Y?autoplay=1'
-        if(this.showOutlook) return 'https://www.youtube.com/embed/-BXafWQs8wg?autoplay=1'
+        if(this.showGoogle) return 'https://www.youtube.com/embed/5D_CfTJ9FzA'
+        if(this.showIcal) return 'https://www.youtube.com/embed/H0A7Jc0G84Y'
+        if(this.showOutlook) return 'https://www.youtube.com/embed/-BXafWQs8wg'
     }
   },
   methods: {

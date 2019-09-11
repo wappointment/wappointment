@@ -18,14 +18,18 @@ return [
         Finder::create()
             ->files()
             ->ignoreVCS(true)
-            ->notName('/LICENSE|.*\\.md|.*\\.dist|Makefile|composer\\.json|composer\\.lock/')
+            ->notName('/LICENSE|.*\\.md|.*\\.dist|Makefile|phpstan.neon|build.xml|phpunit.xml|composer\\.json|composer\\.lock/')
             ->exclude([
                 'doc',
+                'docs',
                 'test',
+                'Test',
                 'test_old',
-                'tests',
                 'Tests',
+                'tests',
                 'vendor-bin',
+                'bin',
+                'vobject/resources'
             ])
             ->in('vendor'),
         Finder::create()->append([
