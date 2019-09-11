@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Plugin Name: Wappointment
- * Version: 1.0.0
+ * Version: 1.0.1
  * Plugin URI: https://wappointment.com
  * Description: Manage your appointments in your professional field, reliably
  * Author: Wappointment
