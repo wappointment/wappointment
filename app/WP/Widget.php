@@ -31,29 +31,35 @@ class Widget extends \WP_Widget
 
     public function form($instance)
     {
-        $title = !empty($instance['title']) ? $instance['title'] : (empty($instance)) ? 'Book an appointment' : '';
-        ?>
-<p>
-    <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php echo 'Title'; ?></label>
-    <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>" name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text" value="<?php echo esc_attr($title); ?>">
-</p>
-
-<?php
-        $title = !empty($instance['button_title']) ? $instance['button_title'] : (new \Wappointment\Services\WidgetSettings)->get()['button']['title'];
-
-        ?>
-<p>
-    <label for="<?php echo esc_attr($this->get_field_id('button_title')); ?>"><?php echo 'Button text'; ?></label>
-    <input class="widefat" id="<?php echo esc_attr($this->get_field_id('button_title')); ?>" name="<?php echo esc_attr($this->get_field_name('button_title')); ?>" type="text" value="<?php echo esc_attr($title); ?>">
-</p><?php
-
+        if (empty($instance)) {
+            $title = 'Book an appointment';
+        } else {
+            $title = !empty($instance['title']) ? $instance['title'] : '';
         }
 
-        public function update($new_instance, $old_instance)
-        {
-            $instance = $old_instance;
-            $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
-            $instance['button_title'] = (!empty($new_instance['button_title'])) ? strip_tags($new_instance['button_title']) : '';
-            return $instance;
-        }
-    }
+
+        ?>
+        <p>
+            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php echo 'Title'; ?></label>
+            <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>" name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text" value="<?php echo esc_attr($title); ?>">
+        </p>
+
+        <?php
+                $title = !empty($instance['button_title']) ? $instance['button_title'] : (new \Wappointment\Services\WidgetSettings)->get()['button']['title'];
+
+                ?>
+        <p>
+            <label for="<?php echo esc_attr($this->get_field_id('button_title')); ?>"><?php echo 'Button text'; ?></label>
+            <input class="widefat" id="<?php echo esc_attr($this->get_field_id('button_title')); ?>" name="<?php echo esc_attr($this->get_field_name('button_title')); ?>" type="text" value="<?php echo esc_attr($title); ?>">
+        </p><?php
+
+                }
+
+                public function update($new_instance, $old_instance)
+                {
+                    $instance = $old_instance;
+                    $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+                    $instance['button_title'] = (!empty($new_instance['button_title'])) ? strip_tags($new_instance['button_title']) : '';
+                    return $instance;
+                }
+            }
