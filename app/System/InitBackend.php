@@ -40,6 +40,7 @@ class InitBackend
 
     public function enqueueBackendPlugin()
     {
+        wp_enqueue_style(WAPPOINTMENT_SLUG . '-admin-wap', plugins_url(WAPPOINTMENT_SLUG . '/dist/css/wappointment-admin.css'));
         wp_register_script(WAPPOINTMENT_SLUG . '_backend', Helpers::assetUrl('main.js'), ['jquery'], null, true);
 
         wp_register_script(WAPPOINTMENT_SLUG . '_backend_menu', Helpers::assetUrl('js/backend_menu.js'), [], null, true);

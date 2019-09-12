@@ -19,13 +19,7 @@
 }
 .dashicons-wappointment:before{content:'\0057';}
 
-.wappointment-wrap .form-control::placeholder {
-    color: #dadada;
-    opacity: 1;
-}
-#wpbody-content > .error {
-    display:none;
-}
+
 .wp-list-table.plugins tr[data-slug="wappointment"] .column-description .notice-info{
     border-left-color: #6664cb;
 }
@@ -37,6 +31,16 @@
     border: none;
     box-shadow: none;
 }
+    
+
+.wp-list-table.plugins tr.just-activated[data-slug="wappointment"] th,
+.wp-list-table.plugins tr.just-activated[data-slug="wappointment"] td{
+    background-color: #ededff;
+    animation-name: justactivated;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}  
 
 
 @keyframes justactivated {
@@ -51,16 +55,3 @@
     }
 
 }
-    
-
-.wp-list-table.plugins tr.just-activated[data-slug="wappointment"] th,
-.wp-list-table.plugins tr.just-activated[data-slug="wappointment"] td{
-    background-color: #ededff;
-    animation-name: justactivated;
-    animation-duration: 3s;
-    animation-iteration-count: infinite;
-    animation-timing-function: ease-in-out;
-}  
-
-
-  
