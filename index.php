@@ -6,9 +6,9 @@ if (!defined('ABSPATH')) {
 
 /**
  * Plugin Name: Wappointment
- * Version: 1.0.1
+ * Version: 1.0.2
  * Plugin URI: https://wappointment.com
- * Description: Manage your appointments in your professional field, reliably
+ * Description: The reliable Appointment booking manager to get booked simply
  * Author: Wappointment
  * Requires at least: 4.7
  * Tested up to: 5.2
@@ -17,7 +17,7 @@ if (!defined('ABSPATH')) {
  *
  * @package Wappointment
  * @author Wappointment
- * @since 1.0.1
+ * @since 1.0.2
  * 
  * Wappointment is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,7 @@ if (!defined('ABSPATH')) {
  * GNU General Public License for more details.
  */
 
-define('WAPPOINTMENT_VERSION', '1.0.1');
+define('WAPPOINTMENT_VERSION', '1.0.2');
 define('WAPPOINTMENT_PHP_MIN', '7.0.0');
 define('WAPPOINTMENT_NAME', 'Wappointment');
 define('WAPPOINTMENT_SLUG', strtolower(WAPPOINTMENT_NAME));

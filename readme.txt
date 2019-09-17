@@ -1,19 +1,19 @@
-=== Appointment Booking Calendar by Wappointment ===
+=== Appointments Booking by Wappointment ===
 Contributors: wappointment, benheu
-Tags: appointment booking, appointment, booking, booking calendar, booking system, appointment booking system, booking form, booking plugin, appointment plugin 
+Tags: appointments, appointment booking, appointment booking calendar, appointment booking system, appointment booking manager
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 7.0
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A powerful appointment booking system, automating your appointments' scheduling. The easiest booking process for your clients, it's Wappointment time!
+A powerful and reliable appointment booking system, packing the simplest appointment booking process for your clients
 
 == Description ==
 
-A powerful **appointment booking system**, automating your **appointments' scheduling**. 
-The most reliable **booking solution for professionals**. Get booked 24/7 using our super **user-friendly booking form**.
+A powerful and reliable **[appointment booking system](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**, packing the simplest appointment booking process for your clients.
+The **booking solution for professionals**. Get booked 24/7 using our super **user-friendly booking form**.
 
 Our Appointment booking system is designed for anyone who provide services to customers (personal coach, estate agent, language teachers, therapists,  health professionals, beauty and wellness professionals, fitness professionals, etc...)
 
@@ -77,6 +77,12 @@ Our centralize system updates your availability on each action making sure you c
 = Have a Question? =
 Ask us on [https://wappointment.com/support](https://wappointment.com/support?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
+== Frequently Asked Questions ==
+
+**Can I set the duration of my appointment**
+
+Of course. You decide the duration of your appointments whether it's 5 minutes, 10 minutes, ..., 4 hours long. It's all up to you.
+
 == Installation ==
 
 = Minimum Requirements =
@@ -100,6 +106,11 @@ It requires work on your end but keeps your site safe and optimized.
 8. Help Page. Have a question? Simply ask for it straight in there.
 
 == Changelog ==
+
+= 1.0.2 - 2019-09-17 =
+* Fixed MailGun API connection for emails delivery
+* Fixed booking widget editing title was not working
+* Cleaned up third party messages appearing
 
 = 1.0.1 - 2019-09-11 =
 * Fixed installation process halting while mistaking a lack of MySQL user permissions
