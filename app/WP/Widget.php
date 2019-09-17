@@ -9,14 +9,23 @@ class Widget extends \WP_Widget
         parent::__construct('wappointment', 'Wappointment Booking');
     }
 
-    public static function baseHtml($button_title)
+    protected static function baseHtml($button_title)
     {
         \Wappointment\WP\Helpers::enqueueFrontScripts();
         return '<div class="wappointment_widget" data-button-title="' . esc_attr($button_title) . '"></div>';
     }
-
+    protected static function getDefaultInstance()
+    {
+        return [
+            'title' => 'Book an appointment',
+            'button_title' => 'Book now!',
+        ];
+    }
     public function widget($args, $instance)
     {
+        if (empty($instance)) {
+            $instance = self::getDefaultInstance();
+        }
         $widget_html = '';
         $widget_html .= $args['before_widget'];
         if (!empty($instance['title'])) {
@@ -32,11 +41,10 @@ class Widget extends \WP_Widget
     public function form($instance)
     {
         if (empty($instance)) {
-            $title = 'Book an appointment';
-        } else {
-            $title = !empty($instance['title']) ? $instance['title'] : '';
+            $instance = self::getDefaultInstance();
         }
 
+        $title = !empty($instance['title']) ? $instance['title'] : '';
 
         ?>
         <p>
