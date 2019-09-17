@@ -43,7 +43,7 @@ class Mailgun extends Transport
      * @param  string  $domain
      * @return void
      */
-    public function __construct(ClientInterface $client, $key, $domain)
+    public function __construct(ClientInterface $client,  $domain, $key)
     {
         $this->key = $key;
         $this->client = $client;
