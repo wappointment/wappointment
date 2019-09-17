@@ -1,4 +1,4 @@
-=== Appointments Booking by Wappointment ===
+=== Appointments Booking Calendar by Wappointment ===
 Contributors: wappointment, benheu
 Tags: appointments, appointment booking, appointment booking calendar, appointment booking system, appointment booking manager
 Requires at least: 4.7
@@ -110,6 +110,7 @@ It requires work on your end but keeps your site safe and optimized.
 = 1.0.2 - 2019-09-17 =
 * Fixed MailGun API connection for emails delivery
 * Fixed booking widget editing title was not working
+* Added activation hook checking PHP version
 * Cleaned up third party messages appearing
 
 = 1.0.1 - 2019-09-11 =
