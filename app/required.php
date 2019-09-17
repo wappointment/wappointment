@@ -2,6 +2,13 @@
 
 if (!defined('WAPPOINTMENT_SITE')) define('WAPPOINTMENT_SITE', 'https://wappointment.com');
 define('WAPPOINTMENT_DB_FORMAT', 'Y-m-d H:i');
+
+
+
+register_activation_hook(WAPPOINTMENT_FILE, ['WappointmentLv', 'activating']);
+
+
+
 /**
  * Simple widget insertion in php code useful for custom made versions
  *
@@ -206,5 +213,11 @@ class WappointmentLv
     public static function quotedString($string)
     {
         return html_entity_decode($string, ENT_QUOTES);
+    }
+    public static function activating()
+    {
+        if (version_compare(PHP_VERSION, WAPPOINTMENT_PHP_MIN) < 0) {
+            die('Your website\'s PHP version(' . PHP_VERSION . ') is lower to our minimum requirement ' . WAPPOINTMENT_PHP_MIN . '. Contact us at <a href="https://wappointment.com/support?php_too_low=1" target="_blank">https://wappointment.com/support</a> for help.');
+        }
     }
 }
