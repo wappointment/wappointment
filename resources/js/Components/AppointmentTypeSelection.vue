@@ -2,7 +2,7 @@
     <div class="d-flex mb-4" v-if="serviceHasTypes">
         <div v-if="allowedType('physical')" @click="selectType('physical')" class="btn btn-secondary btn-cell" :class="{selected: physicalSelected}">
             <font-awesome-icon icon="map-marked-alt" size="lg"/>
-            <div>In person</div>
+            <div>At a location</div>
         </div>
         <div v-if="allowedType('phone')" @click="selectType('phone')" class="btn btn-secondary btn-cell" :class="{selected: phoneSelected}">
             <font-awesome-icon icon="phone" size="lg"/>

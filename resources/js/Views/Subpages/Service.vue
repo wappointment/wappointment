@@ -93,7 +93,7 @@ export default {
               required: true,
               validator: ['array'],
               values: [
-                { value:'physical', name:'In person', icon: 'map-marked-alt'},
+                { value:'physical', name:'At a location', icon: 'map-marked-alt'},
                 { value:'phone', name:'By Phone', icon: 'phone'},
                 { value:'skype', name:'By Skype', icon: ['fab', 'skype']}
               ],

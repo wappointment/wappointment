@@ -112,7 +112,7 @@
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockphysical.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockphysical')"
-                  >For appointments in Person</a>
+                  >For appointments at a Location</a>
                 </div>
               </div>
             </div>

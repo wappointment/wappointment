@@ -1,6 +1,6 @@
 === Appointments Booking Calendar by Wappointment ===
 Contributors: wappointment, benheu
-Tags: appointments, appointment booking, appointment booking calendar, appointment booking system, appointment booking manager
+Tags: appointments, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 7.0
@@ -40,7 +40,7 @@ Our centralize system updates your availability on each action making sure you c
 
 ==  Our Appointment Booking System features ==
 * Unlimited bookings
-* User-friendly and intuitive interface with no coding involved
+* User-friendly and intuitive interfaces with no coding involved
 
 = Availability Setup as an Admin =
 * Set your recurrent availability within seconds

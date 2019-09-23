@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
  * Requires at least: 4.7
  * Tested up to: 5.2
  *
- * Domain Path: /lang/
+ * Text Domain: wappointment
  *
  * @package Wappointment
  * @author Wappointment
