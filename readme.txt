@@ -1,10 +1,10 @@
-=== Appointments Booking Calendar by Wappointment ===
+=== Appointment Booking Calendar by Wappointment ===
 Contributors: wappointment, benheu
-Tags: appointments, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
+Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 7.0
-Stable tag: 1.0.2
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,7 +79,7 @@ Ask us on [https://wappointment.com/support](https://wappointment.com/support?ut
 
 == Frequently Asked Questions ==
 
-**Can I set the duration of my appointment**
+**Can I set the duration of my appointment?**
 
 Of course. You decide the duration of your appointments whether it's 5 minutes, 10 minutes, ..., 4 hours long. It's all up to you.
 
@@ -107,6 +107,15 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 1.1.0 - 2019-10-04 =
+* Added Set the staff taking the appointments from your WordPress users list
+* Added Set the staff image within few clicks
+* Added back to original timezone when previewing calendar in a different Timezone
+* Fixed Backend interfaces not working for subfolders WordPress installations
+* Fixed a few bugs on admin calendar
+* Fixed availability regeneration when updating weekly availability
+* Fixed a few strings corrections
+
 = 1.0.2 - 2019-09-17 =
 * Fixed MailGun API connection for emails delivery
 * Fixed booking widget editing title was not working
@@ -119,5 +128,5 @@ It requires work on your end but keeps your site safe and optimized.
 = 1.0.0 - 2019-08-21 =
 * Hello WordPress!
 
-== Technical Details ==
-git repo https://github.com/wappointment/wappointment
+Maintained at https://github.com/wappointment/wappointment
+

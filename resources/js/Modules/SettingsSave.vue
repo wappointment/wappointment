@@ -1,7 +1,7 @@
 <script>
 
-import SettingService from '../Services/Setting'
-import SettingStaffService from '../Services/SettingStaff'
+import SettingService from '../Services/V1/Setting'
+import SettingStaffService from '../Services/V1/SettingStaff'
 import RequestMaker from './RequestMaker'
 
 export default {

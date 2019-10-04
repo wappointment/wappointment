@@ -8,8 +8,9 @@ class BaseService {
         }
 
         this.endpoints = service.endpoints
-
+        this.suffix = service.suffix()
         this.base = options.base !== undefined ? options.base:'/'
+        this.base += this.suffix
     }
 
     call(endpoint, params = {}, headers = {} ) {

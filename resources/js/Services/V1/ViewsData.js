@@ -1,4 +1,5 @@
-export default class ViewsDataService {
+import ApiV1 from './ApiV1'
+export default class ViewsDataService extends ApiV1 {
 
     endpoints() {
         return {

@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import WappointmentService from '../Services/Wappointment'
+import WappointmentService from '../Services/V1/Wappointment'
 import abstractView from '../Views/Abstract'
 export default {
     extends: abstractView,

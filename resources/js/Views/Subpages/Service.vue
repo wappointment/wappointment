@@ -37,7 +37,7 @@ Vue.component("field-bsaddressfield", fieldBSAdressField);
 Vue.component("field-bscountryfield", fieldBSCountryField);
 
 
-import ServiceService from '../../Services/Service' 
+import ServiceService from '../../Services/V1/Service' 
 import Validation from '../../Modules/Validation'
 import abstractView from '../Abstract'
 

@@ -11,7 +11,7 @@
 
 <script>
 
-import AppService from '../../Services/App' // your service
+import AppService from '../../Services/V1/App' // your service
 import abstractview from '../Abstract'
 import Notifications from '../../WP/Notifications'
 

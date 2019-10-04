@@ -1,4 +1,5 @@
-export default class ServiceEvent {
+import ApiV1 from './ApiV1'
+export default class ServiceEvent extends ApiV1{
 
     endpoints() {
         return {

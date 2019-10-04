@@ -18,6 +18,9 @@ class SettingsStaffController extends RestController
             $result['calurl'] = Settings::getStaff('calurl');
             $result['timezone'] = Settings::getStaff('timezone');
         }
+        if ($request->input('key') == 'regav') {
+            (new \Wappointment\Services\Availability())->regenerate();
+        }
         return $result;
     }
 

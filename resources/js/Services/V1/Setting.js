@@ -1,4 +1,5 @@
-export default class SettingService{
+import ApiV1 from './ApiV1'
+export default class SettingService extends ApiV1{
 
     endpoints() {
         return {

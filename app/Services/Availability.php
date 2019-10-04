@@ -153,6 +153,7 @@ class Availability
         $this->availabilities = $segmentService->substract($this->availabilities, $appointments);
 
         $this->reOrder();
+
         WPHelpers::setStaffOption('since_last_refresh', 0, $staff_id);
         //save it to the db
         return WPHelpers::setStaffOption('availability', $this->availabilities, $staff_id);

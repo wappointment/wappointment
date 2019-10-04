@@ -1,7 +1,7 @@
 <script>
 
-import BookingService from '../Services/Booking'
-import AvailabilityService from '../Services/Availability'
+import BookingService from '../Services/V1/Booking'
+import AvailabilityService from '../Services/V1/Availability'
 import Loader from '../Components/Loaders/BigCalendar'
 import Helpers from '../Modules/Helpers'
 import eventsBus from '../eventsBus'

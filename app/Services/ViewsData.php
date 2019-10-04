@@ -4,6 +4,8 @@ namespace Wappointment\Services;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Models\WPUser;
+use Wappointment\Models\WPUserMeta;
 
 class ViewsData
 {
@@ -17,8 +19,14 @@ class ViewsData
 
     private function regav()
     {
+        $gravatar_img = get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
         return [
             'regav' => Settings::getStaff('regav'),
+            'staffs' => WPUser::whereIn('ID', WPUserMeta::getUserIdWithRoles())->get(),
+            'activeStaffId' => Settings::get('activeStaffId'),
+            'activeStaffAvatar' => Settings::getStaff('avatarId') ? wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
+            'activeStaffGravatar' => $gravatar_img,
+            'activeStaffAvatarId' => Settings::getStaff('avatarId'),
             'timezone' => Settings::getStaff('timezone'),
             'timezones_list' => DateTime::tz(),
             'savedTimezone' => Settings::hasStaff('timezone')

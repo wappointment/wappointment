@@ -3,6 +3,7 @@
         <div v-if="typeAdvanced">
             <SearchDropdownTimezone v-model="timezone" :ph="labelDefault" :elements="timezones" 
              idKey="name" hasGroup :typeClass="typeClass"></SearchDropdownTimezone>
+             <button v-if="viewingInDifferentTz" class="btn btn-link btn-xs" @click="backToStaffTimezone"> < <small> Back to {{ staffTimezone }}</small></button>
         </div>
         <select v-else class="form-control form-control-sm" v-model="timezone" id="timezoneselection">
             <option value="">{{ labelDefault }}</option>
@@ -21,6 +22,10 @@ export default {
     props: {
         timezones: null,
         defaultTimezone: '',
+        staffTimezone: {
+            type: String,
+            default: ''
+        },
         classW:'',
         typeAdvanced: {
             type: Boolean,
@@ -41,7 +46,7 @@ export default {
     data() {
         return {
             timezone: '',
-            classWrapper: 'form-group p-0 col-sm-4 col-lg-3',
+            classWrapper: 'form-group p-0 col-sm-4 col-lg-3 m-0',
             initSave: false, //allow to save on wizard initsetup,
             firstTrigger: true
         }
@@ -51,13 +56,18 @@ export default {
         this.timezone = this.defaultTimezone == ''? momenttz.tz.guess():this.defaultTimezone
         if(this.classW!=='') this.classWrapper = this.classW
     },
+    methods:{
+        backToStaffTimezone(){
+            this.timezone = this.staffTimezone
+        }
+    },
     watch: {
         timezone: function (newTz, oldTz) {
             if(this.initSave === true){
                 this.$emit('updateTimezone', newTz, this.firstTrigger)
                 this.initSave = false
             }else{
-                this.$emit('updateTimezone', newTz, this.firstTrigger)
+                if(!this.firstTrigger) this.$emit('updateTimezone', newTz, this.firstTrigger)
             }
             this.firstTrigger = false
 
@@ -67,6 +77,9 @@ export default {
         tzLoaded(){
             return (this.timezones !== undefined) ? true:false
         },
+        viewingInDifferentTz(){
+            return this.staffTimezone !== '' && this.staffTimezone !== this.defaultTimezone
+        }
     },
 }
 </script>

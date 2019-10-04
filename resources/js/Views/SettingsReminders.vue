@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import ServiceReminder from '../Services/Reminder' 
+import ServiceReminder from '../Services/V1/Reminder' 
 import MailConfig from '../Components/MailConfig'
 import Scroll from '../Modules/Scroll'
 import Vue from '../appVue'

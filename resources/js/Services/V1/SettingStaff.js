@@ -1,4 +1,5 @@
-export default class SettingStaffService {
+import ApiV1 from './ApiV1'
+export default class SettingStaffService extends ApiV1 {
 
     endpoints() {
         return {

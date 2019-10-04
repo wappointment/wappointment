@@ -1,4 +1,5 @@
-export default class AppointmentService {
+import ApiV1 from './ApiV1'
+export default class AppointmentService extends ApiV1 {
 
     endpoints() {
         return {

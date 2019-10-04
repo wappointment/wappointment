@@ -58,13 +58,27 @@
             apiReady(){
                 return this.calendarAPI !== undefined
             },
-
+            next(lastDay){
+                let nextweek = lastDay.clone().add(1,'day')
+                this.getApi.gotoDate(nextweek.format())
+                this.getApi.refetchEvents()
+                return nextweek
+            },
+            prev(firstDay){
+                let prevweek = firstDay.clone().subtract(7,'days')
+                this.getApi.gotoDate(prevweek.format())
+                this.getApi.refetchEvents()
+                return prevweek
+            },
             fireMethod(...options) {
                 if(!this.apiReady()) {
                     console.log('API not ready for call fireMethod', ...options)
                 }
 
-                if(options.indexOf('next') !== -1) return this.getApi.next()
+                if(options.indexOf('next') !== -1) {
+                    console.log('get date',this.getApi.getDate())
+                    return this.getApi.gotodate()
+                }
                 if(options.indexOf('prev') !== -1) return this.getApi.prev()
                 if(options.indexOf('getDate') !== -1) return this.getApi.getDate()
                 if(options.indexOf('refetchEvents') !== -1) return this.getApi.refetchEvents()

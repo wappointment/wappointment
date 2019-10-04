@@ -1,4 +1,5 @@
-export default class BookingService {
+import ApiV1 from './ApiV1'
+export default class BookingService extends ApiV1{
 
     endpoints() {
         return {

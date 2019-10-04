@@ -1,4 +1,5 @@
-export default class ClientService {
+import ApiV1 from './ApiV1'
+export default class ClientService extends ApiV1{
 
     endpoints() {
         return {

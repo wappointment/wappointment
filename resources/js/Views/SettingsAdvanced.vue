@@ -110,7 +110,7 @@ export default {
     redirectReset(){
         this.$WapModal()
             .request(this.sleep(4000))
-          window.location = '/wp-admin/admin.php?page=wappointment_calendar'
+          window.location = window.apiWappointment.base_admin + '?page=wappointment_calendar'
     },
     changedDay(value){
       this.viewData['week_starts_on'] = value

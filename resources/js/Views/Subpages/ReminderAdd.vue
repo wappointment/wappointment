@@ -29,7 +29,7 @@ Vue.component("field-bsradios", FieldBsRadios);
 Vue.component("field-bschecklist", FieldBsCheckList);
 Vue.component("field-bsslider", fieldBSSlider);
 
-import ServiceService from '../../Services/Service' 
+import ServiceService from '../../Services/V1/Service' 
 import abstractView from '../Abstract'
 
 export default {

@@ -23,7 +23,8 @@ class Staff
             throw new \WappointmentException("Can't load staff information", 1);
         }
         $this->id = $staff_id;
-        $this->avatar = get_avatar_url($staff_id, ['size' => 40]);
+
+        $this->avatar = Settings::getStaff('avatarId') ? wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
         $this->name = $this->getUserDisplayName();
         $this->timezone = Settings::getStaff('timezone', $staff_id);
     }

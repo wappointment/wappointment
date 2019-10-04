@@ -16,7 +16,7 @@
 
 <script>
 import FormGenerator from '../Form/FormGenerator'
-import WappointmentService from '../Services/Wappointment'
+import WappointmentService from '../Services/V1/Wappointment'
 import abstractview from '../Views/Abstract'
 let inputStyle = {'max-width':'200px'}
 export default {

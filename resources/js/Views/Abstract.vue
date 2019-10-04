@@ -2,8 +2,8 @@
 
 import SettingsSave from '../Modules/SettingsSave'
 import Helpers from '../Modules/Helpers'
-import AppService from '../Services/App'
-import ViewsDataService from '../Services/ViewsData'
+import AppService from '../Services/V1/App'
+import ViewsDataService from '../Services/V1/ViewsData'
 
 export default {
   mixins: [SettingsSave, Helpers],

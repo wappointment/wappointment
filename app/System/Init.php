@@ -64,7 +64,7 @@ class Init
     public function jsVariables()
     {
         $variables = [
-            'root' => esc_url_raw(rest_url() . WAPPOINTMENT_SLUG . '/v1'),
+            'root' => esc_url_raw(rest_url()),
             'resourcesUrl' => Helpers::pluginUrl() . '/dist/',
             'baseUrl' => plugins_url(),
             'apiSite' => WAPPOINTMENT_SITE,
@@ -76,6 +76,11 @@ class Init
         if (defined('WAPPOINTMENT_DEBUG')) {
             $variables['debug'] = true;
         }
+        if (is_admin()) {
+            $parsed = parse_url(WPHelpers::adminUrl('admin.php'));
+            $variables['base_admin'] = !empty($parsed['path']) ? $parsed['path'] : '/wp-admin/admin.php';
+        }
+
         $return = '<script type="text/javascript">' . "\n";
         $return .= '/* Wappointment globals */ ' . "\n";
         $return .= '/* <![CDATA[ */ ' . "\n";

@@ -10,7 +10,7 @@
                 <span class="d-none d-md-block badge badge-secondary align-self-center ml-3" >Free slots {{ totalSlots }}</span>
               </div>
               <div class="d-flex">
-                <TimeZones v-if="viewData!==null" :timezones="viewData.timezones_list" classW="align-self-center pr-2" 
+                <TimeZones v-if="viewData!==null" :timezones="viewData.timezones_list" :staffTimezone="viewData.timezone" classW="align-self-center pr-2" 
                 labelDefault="View in a different timezone" :defaultTimezone="displayTimezone" @updateTimezone="updateTimezone"></TimeZones>
                 <a v-if="!isToday" class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="today">This week</a>
               </div>
@@ -171,9 +171,9 @@
 </template>
 <script>
 import Regav from './Subpages/Regav'
-import EventService from '../Services/Event'
-import StatusService from '../Services/Status'
-import ClientService from '../Services/Client'
+import EventService from '../Services/V1/Event'
+import StatusService from '../Services/V1/Status'
+import ClientService from '../Services/V1/Client'
 import Intervals from '../Standalone/intervals'
 import Helpers from '../Standalone/helpers'
 import TimeZones from '../Components/TimeZones'
@@ -548,7 +548,7 @@ export default {
       window.jQuery('.fc-content-today').on('mouseover','.fc-now-indicator-line', function(now, e) {
           window.jQuery('.fc-now-indicator-line .nowtime').html(now.tz(selectedTz).format('dddd HH:mm'))
           window.jQuery('.fc-now-indicator-line .nowtime').addClass('show')
-      }.bind(null,  momenttz.tz(this.viewData.now, this.viewData.timezone)))
+      }.bind(null,  momenttz.tz(this.viewData.now,this.viewData.timezone)))
 
       window.jQuery('.fc-content-today').on('mouseout','.fc-now-indicator-line',() => window.jQuery('.nowtime').removeClass('show'))
     }, 
@@ -630,7 +630,7 @@ export default {
     },
     nowTime() {
       if(this.viewData!==null && this.viewData.now!==undefined) {
-        return momenttz.tz(this.viewData.now,this.timezone)
+        return momenttz.tz(this.viewData.now,this.viewData.timezone)
       }
       return undefined
     },
@@ -706,7 +706,7 @@ export default {
                 slotDuration: intervalString + ':00',
                 showNonCurrentDates: true,
                 nowIndicator: true,
-                now: this.viewData.now,
+                now: momenttz.tz(this.viewData.now,this.viewData.timezone).tz(this.timezone).format(),
                 weekends: true,
                 allDaySlot: false,
                 locale: window.waplocale,
@@ -733,7 +733,7 @@ export default {
               
             }
             if(window.savedQueries !== undefined){
-              this.fullCalOption.defaultDate = window.savedQueries.start
+              this.fullCalOption.props.defaultDate = this.toMoment(window.savedQueries.start.replace(' ','+')).format()
             }
             
       },
@@ -1269,9 +1269,9 @@ export default {
       },
       isInThePast(event){
 
-        if(momenttz.tz(this.viewData.now,this.timezone).unix() > this.toMoment(event.start).unix() 
+        if(momenttz.tz(this.viewData.now,this.viewData.timezone).unix() > this.toMoment(event.start).unix() 
           ||
-           momenttz.tz(this.viewData.now,this.timezone).unix() > this.toMoment(event.end).unix()
+           momenttz.tz(this.viewData.now,this.viewData.timezone).unix() > this.toMoment(event.end).unix()
         ){
           return true
         }
@@ -1345,7 +1345,7 @@ export default {
 
             this.events[key].dbid = this.events[key].delId
             this.events[key].id = this.events[key].type+'-'+this.events[key].id
-            if( momenttz.tz(this.viewData.now, this.viewData.timezone).unix() > momenttz.tz(this.events[key].end, this.selectedTimezone).unix() ) {
+            if( momenttz.tz(this.viewData.now,this.viewData.timezone).unix() > momenttz.tz(this.events[key].end, this.selectedTimezone).unix() ) {
               this.events[key].allowedit = false
               this.events[key].past = true
             }else{
@@ -1366,11 +1366,19 @@ export default {
 
       loadingEvents(fetchInfo, successCallback, failureCallback/* , start, end, timezone, callback */){
         this.callback = successCallback
-        let params = {start: this.toMoment(fetchInfo.start), end: this.toMoment(fetchInfo.end), timezone: this.timezone}
+        let params = {}
+
         if(window.savedQueries !== undefined){
+          this.timezone = window.savedQueries.timezone
+          params = {start: this.toMoment(window.savedQueries.start.replace(' ','+')), end: this.toMoment(window.savedQueries.end.replace(' ','+')), timezone: this.timezone}
           this.writeHistory()
           window.savedQueries = undefined
-        } 
+        } else{
+          params = {start: this.toMoment(fetchInfo.start), end: this.toMoment(fetchInfo.end), timezone: this.timezone}
+        }
+
+        this.firstDay = params.start
+
         if(this.canLoadEvents){
           this.request(this.getEventsRequest, params, this.callbackInternal)
           this.canLoadEvents = false
@@ -1407,7 +1415,7 @@ export default {
       isLoading(isLoading){
         
         if(this.fcIsReady) {
-          this.resetFirstDay()
+          //this.resetFirstDay()
         }
 
         this.observeNowIndicator()
@@ -1420,17 +1428,17 @@ export default {
       },
       nextWeek(){
         this.daysProperties = false
-
-        this.$refs.calendar.fireMethod('next')
-        this.resetFirstDay()
+        this.firstDay = this.$refs.calendar.next(this.lastDay)
+        
+        //this.resetFirstDay()
         this.writeHistory()
         
       },
       
       prevWeek(){
         this.daysProperties = false
-        this.$refs.calendar.fireMethod('prev')
-        this.resetFirstDay()
+        this.firstDay = this.$refs.calendar.prev(this.firstDay)
+        //this.resetFirstDay()
         this.writeHistory()
       },
       writeHistory(){
@@ -1457,7 +1465,7 @@ export default {
          this.$refs.calendar.fireMethod('today')
          this.currentView = 'timeGridWeek'
          this.refreshEvents()
-         this.resetFirstDay()
+         //this.resetFirstDay()
       },
       monthView(){
          this.$refs.calendar.fireMethod('changeView', 'month')

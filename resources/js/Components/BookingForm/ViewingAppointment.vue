@@ -73,7 +73,7 @@ import abstractFront from '../../Views/abstractFront'
 import SaveButtons from './SaveButtons'
 import Iframe from "../Iframe";
 import Helpers from '../../Standalone/helpers'
-import AppointmentService from '../../Services/Appointment'
+import AppointmentService from '../../Services/V1/Appointment'
 
 import RescheduleForm from '../RescheduleForm'
 

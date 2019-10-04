@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import AddonsService from '../Services/Addons'
+import AddonsService from '../Services/V1/Addons'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import abstractView from './Abstract'
 import HelpersPackages from '../Helpers/Packages'
@@ -199,7 +199,7 @@ export default {
           this.$WapModal().notifySuccess(response.data.message)
           this.$WapModal()
             .request(this.sleep(4000))
-          window.location = '/wp-admin/admin.php?page=wappointment_addons'
+          window.location = window.apiWappointment.base_admin + '?page=wappointment_addons'
         },
         activate(addon){
           this.$WapModal().request(this.activateAddonRequest(addon)).then(this.successActivate).catch(this.failedRequest)

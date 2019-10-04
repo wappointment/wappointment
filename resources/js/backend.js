@@ -39,7 +39,7 @@ const ReminderAdd = () => import(/* webpackChunkName: "group-settingspages" */ '
 
 const router = window.wappointmentrouter = new VueRouter({
   mode: 'history',
-  base: '/wp-admin/admin.php?page=wappointment_',
+  base: window.apiWappointment.base_admin + '?page=wappointment_',
   routes: [
       {
           path: 'calendar',
@@ -167,12 +167,12 @@ router.beforeEach((to, from, next) => {
     if(['wappointment_calendar', 'wappointment_settings'].indexOf(to.query.page) !== -1 && to.hash.indexOf('#/') !== -1){
             next({ name: to.hash.replace('#/','')})
         }else{
-          if(to.path == '/wp-admin/admin.php' && to.query.page=='wappointment_calendar' && to.query.start !== undefined){
+          if(to.path == window.apiWappointment.base_admin && to.query.page=='wappointment_calendar' && to.query.start !== undefined){
             //we save the query parameters for later use start, end , timezone
             window.savedQueries = to.query
           }
           next({ name: to.query.page})
-            //
+
         }
     } else{
         changeWpMenuActiveLink(to.name)

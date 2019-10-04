@@ -1,5 +1,5 @@
-
-export default class WappointmentService {
+import ApiV1 from './ApiV1'
+export default class WappointmentService extends ApiV1 {
 
     endpoints() {
         return {

@@ -2,7 +2,6 @@
 
 namespace Wappointment\System;
 
-
 class InitPreinstall
 {
     private $plugin_file = '';
@@ -45,7 +44,7 @@ class InitPreinstall
     {
 
         if (strpos($file, $this->plugin_file) !== false) {
-            $buttonInit = '<a href="/wp-admin/admin.php?page=wappointment_calendar" class="button button-primary button-large" >Initial Setup</a>';
+            $buttonInit = '<a href="' . \Wappointment\WP\Helpers::adminUrl('wappointment_calendar') . '" class="button button-primary button-large" >Initial Setup</a>';
             $htmlWrap = '<div class="notice inline notice-info">
             <p>Alright! Thanks for activating me, now let\'s go through my initial setup ' . $buttonInit . '
             </p></div>';

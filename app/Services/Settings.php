@@ -28,7 +28,6 @@ class Settings
         if (static::$settings === false) {
             static::$settings = WPHelpers::getOption(static::$key_option);
         }
-        //if (static::$key_option == 'woocommerce_settings') dd(static::$settings);
         return static::$settings;
     }
 
@@ -129,10 +128,12 @@ class Settings
             ],
             'calurl' => '',
             'timezone' => $timezone,
+            'avatarId' => false
         ];
     }
 
-    public static function default($key)
+    public static function
+    default($key)
     {
         $default_settings = static::allDefaults();
 
@@ -153,7 +154,8 @@ class Settings
         if (isset($values[$setting_key])) {
             return $values[$setting_key];
         }
-        return ($default !== null) ? $default : static::default($setting_key);
+        return ($default !== null) ? $default : static::
+            default($setting_key);
     }
 
     public static function save($setting_key, $value)
@@ -162,6 +164,12 @@ class Settings
             $values = static::getValues();
 
             $values[$setting_key] = $value;
+
+            //before save
+            $method = $setting_key . 'BeforeSave';
+            if (method_exists(__CLASS__, $method)) {
+                static::$method($value);
+            }
 
             static::updateLocalSettings($values);
 
@@ -413,6 +421,13 @@ class Settings
     protected static function activeStaffIdValid($value)
     {
         return ($value > 0 && WPHelpers::get_user_by('id', $value) !== false) ? true : false;
+    }
+
+    protected static function activeStaffIdBeforeSave($newStaffId)
+    {
+        //transfer all staff id settings to the right full owner
+        //dd('current ' . Settings::get('activeStaffId'), 'old ' . $newStaffId);
+        WPHelpers::transferStaffOptions(Settings::get('activeStaffId'), $newStaffId);
     }
 
     protected static function calurlValid($value, $staff_id)
