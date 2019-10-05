@@ -111,6 +111,7 @@ It requires work on your end but keeps your site safe and optimized.
 * Added Set the staff taking the appointments from your WordPress users list
 * Added Set the staff image within few clicks
 * Added back to original timezone when previewing calendar in a different Timezone
+* Fixed cron bug on low traffic sites
 * Fixed Backend interfaces not working for subfolders WordPress installations
 * Fixed a few bugs on admin calendar
 * Fixed availability regeneration when updating weekly availability

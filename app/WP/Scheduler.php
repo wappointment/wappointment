@@ -62,18 +62,27 @@ class Scheduler
         //self::clearScheduler();
         foreach (self::$scheduled_jobs as $wappo_wp_scheduled_job => $scheduledObject) {
             $scheduled_time = wp_next_scheduled($wappo_wp_scheduled_job);
-            if (!$scheduled_time || ($scheduled_time - time()) < -300) {
+            $time_record++;
+            if ($scheduled_time === false) {
+                wp_schedule_event($time_record + self::getInterval($scheduledObject['frequency']), $scheduledObject['frequency'], $wappo_wp_scheduled_job);
+            } elseif ($scheduled_time - \time() < -300) {
                 $time_record++;
-                /*                 echo 'rescheduled <br/>';
-                echo '<br>now ' . $time_record;
-                echo '<br>NEXT ' . ($time_record + self::getInterval($scheduledObject['frequency'])); */
+                /* if (!empty($_GET['testcron'])) {
+                    echo 'rescheduled <br/>';
+                    echo '<br>now ' . $time_record;
+                    echo '<br>NEXT ' . ($time_record + self::getInterval($scheduledObject['frequency']));
+                } */
+                wp_clear_scheduled_hook($wappo_wp_scheduled_job);
                 wp_schedule_event($time_record + self::getInterval($scheduledObject['frequency']), $scheduledObject['frequency'], $wappo_wp_scheduled_job);
             }
 
+
             //action to be run
             add_action($wappo_wp_scheduled_job, ['\\Wappointment\\System\\Scheduler', $scheduledObject['method']]);
-
-            //echo ' Runs at : ' . $scheduled_time . ' ' . $wappo_wp_scheduled_job . ($scheduled_time - time()) . '<br>';
+            /* if (!empty($_GET['testcron'])) {
+                echo 'now' . time();
+                echo ' Runs at : ' . $scheduled_time . ' ' . $wappo_wp_scheduled_job . ($scheduled_time - time()) . '<br>';
+            } */
         }
     }
 
