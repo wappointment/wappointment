@@ -9,7 +9,7 @@ class Widget extends \WP_Widget
         parent::__construct('wappointment', 'Wappointment Booking');
     }
 
-    protected static function baseHtml($button_title)
+    public static function baseHtml($button_title)
     {
         \Wappointment\WP\Helpers::enqueueFrontScripts();
         return '<div class="wappointment_widget" data-button-title="' . esc_attr($button_title) . '"></div>';
