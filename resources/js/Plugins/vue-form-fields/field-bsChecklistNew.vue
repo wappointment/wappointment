@@ -97,6 +97,7 @@
 <style>
 .btn-cell{
     text-align: center;
-    padding: .4rem;
+	padding: .4rem;
+	margin-right: 1rem;
 }
 </style>

@@ -15,17 +15,28 @@ class Admin
         if ($client_id > 0) {
             $client = MClient::find($client_id);
         } else {
-            $client = MClient::firstOrCreate(
-                ['email' => $booking->get('email')],
-                [
-                    'name' => $booking->get('name'),
-                    'options' => [
-                        'phone' => $booking->get('phone'),
-                        'skype' => $booking->get('skype'),
-                        'tz' => $booking->get('timezone'),
-                    ]
-                ]
-            );
+            $client = MClient::where('email', $booking->get('email'))->first();
+        }
+
+        $dataClient = [
+            'name' => $booking->get('name'),
+            'options' => [
+                'tz' => $booking->get('timezone'),
+            ]
+        ];
+
+        if (!empty($booking->get('phone'))) $dataClient['options']['phone'] = $booking->get('phone');
+        if (!empty($booking->get('skype'))) $dataClient['options']['skype'] = $booking->get('skype');
+
+        if (empty($client)) {
+            $dataClient['email'] = $booking->get('email');
+            $client = MClient::create($dataClient);
+        } else {
+            $options = $client->options;
+            if (!empty($booking->get('phone'))) $options['phone'] = $booking->get('phone');
+            if (!empty($booking->get('skype'))) $options['skype'] = $booking->get('skype');
+            $client->options = $options;
+            $client->save();
         }
 
         //book with that client
@@ -43,7 +54,7 @@ class Admin
             throw new \WappointmentException('Error booking type not allowed', 1);
         }
 
-        $type = (int)call_user_func('Wappointment\Models\Appointment::getType' . ucfirst($type));
+        $type = (int) call_user_func('Wappointment\Models\Appointment::getType' . ucfirst($type));
 
         //test that this is bookable
         $hasBeenBooked = Appointment::adminBook($client, $start, $end, $type, $service);
