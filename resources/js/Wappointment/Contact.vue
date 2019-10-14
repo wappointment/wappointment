@@ -1,6 +1,9 @@
 <template>
     <transition name="fade-in">
-        <div>
+        <div v-if="sent">
+          <h4 class="bg-success p-2 text-white rounded">Thank you! Your message has been sent!</h4>
+        </div>
+        <div v-else>
           <h4 v-if="title">{{ title }}</h4>
           <FormGenerator v-if="dataLoaded" :schema="schema" :data="modelHolder" @submit="submitMessage" labelButton="Send Message" classWrapper="contact-wrapper" >
             <div class="mb-2">
@@ -47,6 +50,7 @@ export default {
         optionsData: {},
         hiddenData:false,
         viewName: 'wizardinit',
+        sent: false,
         schema: [
             {
               type: 'row',
@@ -84,9 +88,14 @@ export default {
     }),
     created(){
       this.serviceWappointment = this.$vueService(new WappointmentService)
-      if(this.autofill.subject !== undefined) this.modelHolder.subject = this.autofill.subject
+      if(this.autofill !== undefined){
+        if(this.autofill.subject !== undefined) this.modelHolder.subject = this.autofill.subject
+        if(this.autofill.message !== undefined) this.modelHolder.message = this.autofill.message
+        if(this.autofill.extra !== undefined) this.optionsData.extra = this.autofill.extra
+      } 
       this.optionsData.urlerror = window.location.href
       this.optionsData.errors = this.errors
+      
     },
     methods: {
         loaded(response){
@@ -109,6 +118,8 @@ export default {
 
         messageSent(response){
             this.$WapModal().notifySuccess(response.data.message)
+            this.sent = true
+            this.$emit('sent')
         },
         failedSending(e){
           this.cannot_contact = true

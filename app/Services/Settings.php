@@ -128,7 +128,8 @@ class Settings
             ],
             'calurl' => '',
             'timezone' => $timezone,
-            'avatarId' => false
+            'avatarId' => false,
+            'viewed_updates' => false
         ];
     }
 

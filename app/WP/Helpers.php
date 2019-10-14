@@ -80,13 +80,13 @@ class Helpers
         return (empty($setting)) ? $default : $setting;
     }
 
-    public static function setStaffOption($option_name, $value, $staff_id = false)
+    public static function setStaffOption($option_name, $value, $staff_id = false, $global = false)
     {
         if ($staff_id === false) {
             $staff_id = Settings::get('activeStaffId');
         }
         // dd($option_name, $value);
-        return update_user_option($staff_id, self::$option_prefix . '_' . strtolower($option_name), $value);
+        return update_user_option($staff_id, self::$option_prefix . '_' . strtolower($option_name), $value, $global);
     }
     public static function transferStaffOptions($old_staff_id, $new_staff_id)
     {

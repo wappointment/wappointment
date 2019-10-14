@@ -1,14 +1,18 @@
 <template>
     <transition name="fade" mode="out-in">
       <div class="wappointment-wrap">
+          <HelloPage></HelloPage>
+          <VersionsInfos></VersionsInfos>
           <router-view></router-view>
       </div>
     </transition>
 </template>
 
 <script>
-
+import VersionsInfos from './Components/VersionsInfos'
+import HelloPage from './Components/HelloPage'
 export default {
+    components: {VersionsInfos, HelloPage},
 }
 </script>
 <style scoped>

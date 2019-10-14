@@ -114,11 +114,13 @@ class EventsController extends RestController
             ->get();
 
         foreach ($appointments as $event) {
+
             $addedEvent = [
                 'start' => $event->start_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
                 'end' => $event->end_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
                 'id' => $event->id,
                 'delId' => $event->id,
+                'location' => $event->getLocationSlug(),
                 'status' => $event->status,
                 'client' => $this->prepareClient($event->client),
                 'type' => 'appointment',

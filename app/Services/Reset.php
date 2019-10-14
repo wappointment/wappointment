@@ -30,6 +30,8 @@ class Reset
             WPHelpers::deleteStaffOption('last-calendar-id', $staff_id);
             WPHelpers::deleteStaffOption('last-calendar-checked', $staff_id);
             WPHelpers::deleteStaffOption('last-calendar-parsed', $staff_id);
+            WPHelpers::deleteStaffOption('viewed_updates', $staff_id);
+            WPHelpers::deleteStaffOption('hello_page', $staff_id);
         }
     }
 

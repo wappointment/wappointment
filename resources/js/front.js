@@ -19,14 +19,16 @@ const vuesInstances = [];
 const vues = document.querySelectorAll(".wappointment_page, .wappointment_widget");
 
 for (let index = 0; index < vues.length; index++) {
-    const el = vues[index];
+    const el = vues[index]
+    console.log('brfxed', el.getAttribute('data-brfixed'))
     vuesInstances[index] = new Vue({
         el, 
         components: { Front },
         render: h => h(Front, {
             props: {
                 'classEl' : el.getAttribute('class'),
-                'buttonTitle' : el.getAttribute('data-button-title') ? el.getAttribute('data-button-title'):'Book an appointment'
+                'buttonTitle' : el.getAttribute('data-button-title') ? el.getAttribute('data-button-title'):'Book an appointment',
+                'brFixed' : [undefined,null].indexOf(el.getAttribute('data-brfixed')) === -1 ? true:false
             }
         }),
     }) 

@@ -23,7 +23,7 @@ class AppointmentController extends RestController
         $appointmentData = [
             'start_at' => $appointment->start_at->getTimestamp(),
             'end_at' => $appointment->end_at->getTimestamp(),
-            'type' => $appointment->getStringType(),
+            'type' => $appointment->getLocationSlug(),
         ];
         if (Settings::get('allow_rescheduling')) {
             $appointmentData['canRescheduleUntil'] = $appointment->canRescheduleUntilTimestamp();

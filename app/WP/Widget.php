@@ -9,16 +9,18 @@ class Widget extends \WP_Widget
         parent::__construct('wappointment', 'Wappointment Booking');
     }
 
-    public static function baseHtml($button_title)
+    public static function baseHtml($button_title, $brfixed = false)
     {
         \Wappointment\WP\Helpers::enqueueFrontScripts();
-        return '<div class="wappointment_widget" data-button-title="' . esc_attr($button_title) . '"></div>';
+        $brFixedString = !empty($brfixed) ? 'data-brfixed="true"' : '';
+        return '<div class="wappointment_widget" data-button-title="' . esc_attr($button_title) . '" ' . $brFixedString . '></div>';
     }
     protected static function getDefaultInstance()
     {
         return [
             'title' => 'Book an appointment',
             'button_title' => 'Book now!',
+            'br_fixed' => false,
         ];
     }
     public function widget($args, $instance)
@@ -26,13 +28,13 @@ class Widget extends \WP_Widget
         if (empty($instance)) {
             $instance = self::getDefaultInstance();
         }
+        $brfixed = (!empty($instance['br_fixed'])) ? true : false;
         $widget_html = '';
         $widget_html .= $args['before_widget'];
-        if (!empty($instance['title'])) {
+        if (!empty($instance['title']) && !$brfixed) {
             $widget_html .= $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
         }
-
-        $widget_html .= self::baseHtml($instance['button_title']);
+        $widget_html .= self::baseHtml($instance['button_title'], $brfixed);
         $widget_html .= $args['after_widget'];
 
         echo $widget_html;
@@ -45,6 +47,7 @@ class Widget extends \WP_Widget
         }
 
         $title = !empty($instance['title']) ? $instance['title'] : '';
+        $br_fixed = !empty($instance['br_fixed']) ? (bool) $instance['br_fixed'] : false;
 
         ?>
         <p>
@@ -59,15 +62,23 @@ class Widget extends \WP_Widget
         <p>
             <label for="<?php echo esc_attr($this->get_field_id('button_title')); ?>"><?php echo 'Button text'; ?></label>
             <input class="widefat" id="<?php echo esc_attr($this->get_field_id('button_title')); ?>" name="<?php echo esc_attr($this->get_field_name('button_title')); ?>" type="text" value="<?php echo esc_attr($title); ?>">
-        </p><?php
+        </p>
+        <?php
 
-                }
+                ?>
+        <p>
+            <input class="checkbox" type="checkbox" <?php checked($br_fixed); ?> id="<?php echo $this->get_field_id('br_fixed'); ?>" name="<?php echo $this->get_field_name('br_fixed'); ?>" />
+            <label for="<?php echo $this->get_field_id('br_fixed'); ?>"><?php echo 'Fixed button at the bottom right of the screen' ?></label>
+        </p>
+<?php
+    }
 
-                public function update($new_instance, $old_instance)
-                {
-                    $instance = $old_instance;
-                    $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
-                    $instance['button_title'] = (!empty($new_instance['button_title'])) ? strip_tags($new_instance['button_title']) : '';
-                    return $instance;
-                }
-            }
+    public function update($new_instance, $old_instance)
+    {
+        $instance = $old_instance;
+        $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
+        $instance['button_title'] = (!empty($new_instance['button_title'])) ? strip_tags($new_instance['button_title']) : '';
+        $instance['br_fixed'] = (!empty($new_instance['br_fixed'])) ? true : false;
+        return $instance;
+    }
+}

@@ -29,7 +29,7 @@ class Appointment extends Model
     const STATUS_CONFIRMED = 1;
 
 
-    public function getStringType()
+    public function getLocationSlug()
     {
         switch ($this->type) {
             case self::TYPE_PHYSICAL:

@@ -1,5 +1,5 @@
 <template>
-    <div class="wap-front" :id="elementId">
+    <div class="wap-front" :class="{'br-fixed': isBottomRight}" :id="elementId">
         <StyleGenerator :options="opts" :wrapper="elementId"></StyleGenerator>
         <div v-if="isPage">
             <BookingForm v-if="isBookingPage" :options="opts"></BookingForm>
@@ -7,6 +7,7 @@
         </div>
         
         <div class="wap-wid" v-if="isWidget">
+            <span v-if="bookForm && isBottomRight" @click="backToButton" class="close-wid"></span>
             <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :passedDataSent="dataSent"></BookingForm>
             <BookingButton v-else @click="toggleBookForm" class="btn btn-booking btn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
         </div>
@@ -23,7 +24,7 @@ import ckl from './Standalone/chunkloader.js'
 
 export default {
     mixins: [Colors, UrlParam],
-    props: ['classEl', 'buttonTitle', 'options', 'step'],
+    props: ['classEl', 'buttonTitle', 'brFixed', 'options', 'step'],
     components: { 
         BookingButton,
         StyleGenerator,
@@ -44,7 +45,6 @@ export default {
       this.opts = this.options === undefined ? widgetWappointment : Object.assign ({}, this.options)
       if(this.opts.demoData !== undefined){
             this.disabledButtons = true
-            
         }
     },
      watch:{
@@ -77,10 +77,15 @@ export default {
         isWidget(){
             return this.classEl === 'wappointment_widget'
         },
+        isBottomRight(){
+          return this.brFixed !== undefined && this.brFixed === true
+        }
 
     },
     methods: {
-        
+        backToButton(){
+          this.bookForm = false
+        },
         toggleBookForm() {
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'selection')
@@ -102,6 +107,7 @@ export default {
     font-size: 18px;  
     font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
 }
+
 
 .wap-front .btn {
   display: inline-block;
@@ -192,5 +198,62 @@ export default {
   align-self: stretch !important;
 }
 
+.wap-front.br-fixed{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 1rem;
+    z-index: 99;
+}
 
+.close-wid::after {
+    transform: translateX(15px) rotate(-45deg);
+}
+.close-wid::before, .close-wid::after {
+    content: ' ';
+    position: absolute;
+    background-color: #b5b1b1;
+}
+.close-wid::before {
+    transform: translateX(15px) rotate(45deg);
+}
+.close-wid:hover::before, .close-wid:hover::after {
+    background-color: #575656;
+    width: 2px;
+}
+.close-wid{
+  cursor: pointer;
+height: 25px;
+width: 25px;
+display: block;
+position: absolute;
+right: 0;
+}
+
+.close-wid::before, .close-wid::after  {
+    height: 10px;
+    width: 1px;
+    top: 6px;
+    right: 28px;
+}
+
+@media only screen and (max-width: 500px) {
+  .wap-front.br-fixed{
+    width: 100%;
+    margin: 0;
+  }
+  .wap-front.br-fixed{
+    width: 100%;
+    margin: 0;
+  }
+  .wap-front.br-fixed .btn.btn-booking.btn-primary{
+    margin: 0;
+    width:100%;
+    border-radius: .2rem .2rem 0 0;
+  }
+
+  .wap-front.br-fixed .wap-bf, .wap-front.br-fixed .wap-wid{
+    max-width: 100%;
+  }
+}
 </style>
