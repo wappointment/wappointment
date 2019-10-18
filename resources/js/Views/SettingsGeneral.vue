@@ -1,30 +1,16 @@
 <template>
   <div>
     <div  v-if="dataLoaded">
-      <div class="reduced">
+      <div>
+          <BreadCrumbs v-if="crumbs.length>0" :crumbs="crumbs" @click="goTo"/>
+          <component v-if="currentView !== false" :is="currentView" :key="subCompKey" :subview="subview" @updateCrumb="updateCrumb"></component>
+          <div class="reduced" v-else>
+              <LargeButton @click="goToRegav" label="Weekly availability" :is_set="viewData.is_availability_set" ></LargeButton>
 
-          <div>
-              <div class="card cardb p-2 px-3  d-flex flex-row justify-content-between" @click="goToRegav">
-                  <span class="h5 my-1">
-                    <span v-if="viewData.is_availability_set" class="dashicons dashicons-yes text-success" ></span> 
-                    <span v-else class="dashicons dashicons-no text-danger" ></span> 
-                    Weekly availability</span>
-                  <button  class="btn btn-xs btn-secondary hidden">{{ isSetupLabel(viewData.is_availability_set) }}</button>
-              </div>
-              <div class="card cardb p-2 px-3  d-flex flex-row justify-content-between"  @click="goToService">
-                <span class="h5 my-1">
-                  <span v-if="viewData.is_service_set" class="dashicons dashicons-yes text-success" ></span> 
-                    <span v-else class="dashicons dashicons-no text-danger" ></span>
-                   Service setup</span>
-                <button class="btn btn-xs btn-secondary hidden">{{ isSetupLabel(viewData.is_service_set) }}</button>
-              </div>
-              <div class="card cardb p-2 px-3  d-flex flex-row justify-content-between"  @click="goToWidgetSetup">
-                <span class="h5 my-1">
-                  <span v-if="viewData.is_widget_set" class="dashicons dashicons-yes text-success" ></span> 
-                    <span v-else class="dashicons dashicons-no text-danger" ></span>
-                   Booking Widget setup</span>
-                <button class="btn btn-xs btn-secondary hidden">{{ isSetupLabel(viewData.is_widget_set) }}</button>
-              </div>
+              <LargeButton @click="goToService" :label="serviceBtnLabel" :is_set="viewData.is_service_set" ></LargeButton>
+
+              <LargeButton @click="goToWidgetSetup" label="Booking Widget setup" :is_set="viewData.is_widget_set" ></LargeButton>
+
               <div class="card p-2 px-3">
                 <div class="h5">Scheduling preferences</div>
                 <hr/>
@@ -114,39 +100,25 @@
       </div>
       
     </div>
-    <WapModal v-if="showModal" :show="showModal" @hide="hideModal" :classExtra="getExtraClass" large noscroll>
-      <h4 slot="title" class="modal-title"> 
-        <span v-if="showRegav">Modify your Weekly Availability</span>
-        <span v-if="showService">Service Edit</span>
-        <span v-if="showWidget">Booking Widget setup</span>
-        <span v-if="showEditPage">Edit Cancel/Reschedule page</span>
-      </h4>
 
-      <Regav v-if="showRegav" ></Regav>
-      <Service v-if="showService" @close="hideModal"></Service>
-      <div v-if="showWidget" class="mt-4">
-        <Widget></Widget>
-      </div>
-      <div v-if="showEditPage" class="mt-4">
-        <EditCancelPage></EditCancelPage>
-      </div>
-      <button v-if="!showService && showRegav" type="button" class="btn btn-secondary btn-lg mt-2" @click="hideModal">Close</button>
-    </WapModal>
   </div>
 </template>
 
 <script>
 import abstractView from './Abstract'
-
 import Helpers from '../Standalone/helpers'
 import momenttz from '../appMoment'
 import Regav from './Subpages/Regav'
-import Service from './Subpages/Service'
+import Service from './Subpages/ServiceNew'
 import Widget from './Subpages/Widget'
 import EditCancelPage from './Subpages/EditCancelPage'
+import LargeButton from '../Components/LargeSettingsButton'
+import BreadCrumbs from '../Components/BreadCrumbs'
+import RequestMaker from '../Modules/RequestMaker'
 export default {
   extends: abstractView,
-  components: { Service, Regav,Widget , EditCancelPage},
+  components: window.wappointmentExtends.filter('SettingsGeneralComponents', { Service, Regav, Widget , EditCancelPage, LargeButton, BreadCrumbs}, {extends: abstractView, mixins: [RequestMaker]} ),
+
   data() {
     return {
       viewName: 'settingsgeneral',
@@ -155,6 +127,10 @@ export default {
       showService: false,
       showWidget: false,
       showEditPage: false,
+      currentView: false,
+      subview: '',
+      serviceBtnLabel: window.wappointmentExtends.filter('serviceBtnLabel', 'Service setup' ),
+      crumbs: [],
       isToggled: {
         date_format : false,
         time_format : false,
@@ -180,10 +156,16 @@ export default {
     date_example(){
       return momenttz().tz(this.viewData.timezone).format(
         (new Helpers()).convertPHPToMomentFormat(this.viewData.date_format + '['+this.viewData.date_time_union+']' + this.viewData.time_format))
+    },
+    subCompKey(){
+      return this.currentView + this.subview
     }
   },
   methods: {
-    
+    goTo(crumb){
+      this[crumb.target]()
+      this.subview = (crumb.subview !== undefined) ? crumb.subview:''
+    },
     hideModal(){
       this.showModal = false
       this.showRegav = false
@@ -191,21 +173,42 @@ export default {
       this.showWidget = false
       this.showEditPage = false
     },
+    goToMain() {
+      this.currentView = false
+      this.crumbs = []
+    },
+    updateCrumb(crumbs, subview = '') {
+      this.crumbs = crumbs  
+      this.subview = subview
+    },
+
     goToRegav() {
-      this.showModal = true
-      this.showRegav = true
+      this.currentView = 'Regav'
+      this.crumbs = [
+        { target: 'goToMain', label: 'General'},
+        { target: 'goToRegav', label: 'Weekly Availaibility', disabled:true},
+      ]
     },
     goToService() {
-      this.showModal = true
-      this.showService = true
+      this.currentView = 'Service'
+      this.crumbs = [
+        { target: 'goToMain', label: 'General'},
+        { target: 'goToService', label: this.serviceBtnLabel , disabled:true},
+      ]
     },
     goToWidgetSetup() {
-      this.showModal = true
-      this.showWidget = true //widgetDefault!==null
+      this.currentView = 'Widget'
+      this.crumbs = [
+        { target: 'goToMain', label: 'General'},
+        { target: 'goToWidgetSetup', label: 'Booking Widget setup', disabled:true},
+      ]
     },
     EditTextPage(){
-      this.showModal = true
-      this.showEditPage = true
+      this.currentView = 'EditCancelPage'
+      this.crumbs = [
+        { target: 'goToMain', label: 'General'},
+        { target: 'EditTextPage', label: 'Edit Cancel/reschedule page', disabled:true},
+      ]
     },
     
     day_example(dformat){

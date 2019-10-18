@@ -48,14 +48,14 @@ export default {
    show(val){
      
      for (let i = 0; i < this.list_body_elements.length; i++) {
-       const element = this.list_body_elements[i];
+       const element = this.list_body_elements[i]
        this.list_body_elements[i].style.filter = (val === true) ? 'blur(1px)':''
        //wp hack
        let is_wpbackend = document.getElementsByClassName('wp-toolbar')
 
        if(is_wpbackend.length > 0){
-         this.list_body_elements[i].style.paddingTop = (val === true) ?  '32px':'';
-         this.list_body_elements[i].style.marginTop =  (val === true) ?  '-32px':'';
+         this.list_body_elements[i].style.paddingTop = (val === true) ?  '32px':''
+         this.list_body_elements[i].style.marginTop =  (val === true) ?  '-32px':''
        }
      }
 
@@ -63,7 +63,7 @@ export default {
   },
   created(){
     for (let i = 0; i < document.body.childNodes.length; i++) {
-      const element = document.body.childNodes[i];
+      const element = document.body.childNodes[i]
 
       if(element.innerHTML !== undefined && ['style','script'].indexOf(element.nodeName.toLowerCase()) === -1){
         this.list_body_elements.push(element)
@@ -121,7 +121,7 @@ export default {
         this.failRequest
       )
       
-      return new Promise(this.promiseCallback);
+      return new Promise(this.promiseCallback)
     },
     successRequest(s){
       this.show = false
@@ -145,12 +145,12 @@ export default {
       this.show = true
       this.prompt = true
       
-      return new Promise(this.promiseCallback);
+      return new Promise(this.promiseCallback)
     },
 
     promiseCallback(resolve, reject) {
-      this.pResolve = resolve;
-      this.pReject = reject;
+      this.pResolve = resolve
+      this.pReject = reject
     },
     canceled(){
       if(this.pResolve !== null) {

@@ -82,14 +82,17 @@ export default {
         changingNow: false,
         messageSent:false,
         helloIgnore: false,
+        viewName: 'serverinfo',
+        parentLoad: false,
+        serverObj: false
     }),
 
     computed:{
         autofillHappy(){
             return {
                 subject: 'Happily using Wappointment for '+this.days+' days so far',
-                message: `Hi,
-                I just wanted to say Hi!`
+                message: `<p>Hi,</p>
+                <p>I just wanted to say Hi!</p>`
                 ,
                 extra: {
                     experience: this.experience
@@ -99,16 +102,21 @@ export default {
         autofillUnHappy(){
             return {
                 subject: 'Not happy with Wappointment',
-                message: `Hi,
-                I'm having problems with Wappointment.
+                message: `<p>Hi,</p>
+                <p>I'm having the following problems with Wappointment:</p>
+                <ol><li>First of all</li></ol>
                 `,
                 extra: {
-                    experience: this.experience
-                }
+                    experience: this.experience,
+                },
+                server: this.serverObj
             }
+            
         },
         canShow(){
-            return this.days > 30 && this.versions === false && !this.helloIgnore
+            if(!(this.days > 30 && this.versions === false && !this.helloIgnore)) return false
+            this.initValueRequest().then(this.loaded)
+            return true
         },
         great(){
             return this.experience > 4
@@ -122,6 +130,9 @@ export default {
             this.experience = experience
             this.changingNow = true
             setTimeout(this.reloading, 100);
+        },
+        loaded(response){
+            this.serverObj  = response.data.server
         },
         reloading(){
             this.changingNow = false

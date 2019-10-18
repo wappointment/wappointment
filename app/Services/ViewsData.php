@@ -33,6 +33,13 @@ class ViewsData
         ];
     }
 
+    private function serverinfo()
+    {
+        return [
+            'server' => \Wappointment\Services\Server::data()
+        ];
+    }
+
     private function calsync()
     {
         return [

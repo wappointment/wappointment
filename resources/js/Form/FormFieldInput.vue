@@ -1,7 +1,7 @@
 <template>
     <div>
         <LabelMaterial>
-            <input type="text" class="form-control" :id="id" 
+            <input type="text" class="form-control" :class="{'is-invalid':hasErrors}" :id="id" 
             aria-describedby="emailHelp" :placeholder="label" 
             v-model="updatedValue">
         </LabelMaterial>

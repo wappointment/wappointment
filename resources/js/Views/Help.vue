@@ -7,8 +7,8 @@
         <p>We'll try to answer you as quickly as possible.</p>
         <p>We speak English, mais aussi Français y tambien Español.</p>
       </div>
-      <div>
-        <Contact @sent="sent"/>
+      <div v-if="serverObj">
+        <Contact :autofill="autofillMessage" @sent="sent"/>
       </div>
     </div>
   </div>
@@ -16,12 +16,31 @@
 
 <script>
 import Contact from '../Wappointment/Contact'
+import abstractview from './Abstract'
 export default {
+  extends: abstractview,
     components: {Contact},
     data: () => ({
         messageSent:false,
+        viewName: 'serverinfo',
+        parentLoad: false,
+        serverObj: false
     }),
+    created(){
+      this.initValueRequest().then(this.loaded)
+    },
+    computed: {
+      autofillMessage(){
+            return {
+                server: this.serverObj
+            }
+            
+        },
+    },
     methods:{
+      loaded(response){
+          this.serverObj  = response.data.server
+      },
       sent(){
         this.messageSent = true
       }

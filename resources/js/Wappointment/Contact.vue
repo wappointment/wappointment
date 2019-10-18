@@ -1,15 +1,19 @@
 <template>
     <transition name="fade-in">
         <div v-if="sent">
-          <h4 class="bg-success p-2 text-white rounded">Thank you! Your message has been sent!</h4>
+          <h4 class="text-primary p-2">Thank you! Your message has been sent!</h4>
         </div>
         <div v-else>
           <h4 v-if="title">{{ title }}</h4>
-          <FormGenerator v-if="dataLoaded" :schema="schema" :data="modelHolder" @submit="submitMessage" labelButton="Send Message" classWrapper="contact-wrapper" >
+          <FormGenerator v-if="dataLoaded" :schema="schema" :data="modelHolder" 
+          @submit="submitMessage" labelButton="Send Message" classWrapper="contact-wrapper" >
             <div class="mb-2">
               <a href="javascript:;" @click="hiddenData = !hiddenData" class="small">Show data sent with message</a>
               <div class="hidden-data small text-muted" v-if="hiddenData">
-                {{ optionsData }}
+                <div class="p-4" v-for="(options,label) in optionsData">
+                  <h5><input type="checkbox" @change="switchOption(label)" :checked="willBeSent(label)"> {{ label }}</h5>
+                  <div v-if="willBeSent(label)">{{ options }}</div>
+                </div>
               </div>
             </div>
           </FormGenerator>
@@ -20,6 +24,7 @@
 <script>
 import FormGenerator from '../Form/FormGenerator'
 import WappointmentService from '../Services/V1/Wappointment'
+import BrowserInfo from 'browser-info'
 import abstractview from '../Views/Abstract'
 let inputStyle = {'max-width':'200px'}
 export default {
@@ -48,6 +53,7 @@ export default {
         serviceWappointment: null,
         cannot_contact: false,
         optionsData: {},
+        doNotSend: {},
         hiddenData:false,
         viewName: 'wizardinit',
         sent: false,
@@ -92,19 +98,52 @@ export default {
         if(this.autofill.subject !== undefined) this.modelHolder.subject = this.autofill.subject
         if(this.autofill.message !== undefined) this.modelHolder.message = this.autofill.message
         if(this.autofill.extra !== undefined) this.optionsData.extra = this.autofill.extra
+        if(this.autofill.server !== undefined) {
+          for (const key in this.autofill.server) {
+            if (this.autofill.server.hasOwnProperty(key)) {
+              this.optionsData[key] =  this.autofill.server[key]
+            }
+          }
+        } 
+        this.optionsData.browser = BrowserInfo()
       } 
       this.optionsData.urlerror = window.location.href
       this.optionsData.errors = this.errors
       
     },
+    computed: {
+      optionsParsed(){
+        let optionsSent = {}
+        for (const key in this.optionsData) {
+          if (this.optionsData.hasOwnProperty(key)) {
+            const element = this.optionsData[key]
+            if(this.doNotSend[key] === undefined){
+              optionsSent[key] = this.optionsData[key]
+            }
+          }
+        }
+        return optionsSent
+      }
+    },
     methods: {
+        willBeSent(label){
+          return this.doNotSend[label] === undefined
+        },
+        switchOption(label){
+          let doNotSend = Object.assign({},this.doNotSend)
+
+          if(doNotSend[label] === undefined) doNotSend[label] =  true
+          else doNotSend[label] = undefined
+          
+          this.doNotSend = doNotSend
+        },
         loaded(response){
           this.viewData = response.data
           this.modelHolder.email = this.viewData.admin_email
           this.modelHolder.name = this.viewData.admin_name
         },
        submitMessage(data){
-            data.options = this.optionsData
+            data.options = this.optionsParsed
             return this.sendMessage(data)
         },
         sendMessage(data){

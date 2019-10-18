@@ -5,17 +5,17 @@
         </div>
         <div class="fields-wrap" >
             <template v-for="(element, keydi) in schema">
-                <div v-if="element.type == 'row'"  class="d-flex justify-content-between flex-wrap flex-sm-wrap">
-                    <div class="form-group"  v-for="(subelement, skeydi) in element.fields" :style="getStyle(subelement)">
-                        <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)"
+                <div v-if="element.type == 'row'"  :class="getRowClass(element)">
+                    <div class="form-group"  v-for="(subelement, skeydi) in element.fields" :class="getRowEachClass(element)" :style="getStyle(subelement)">
+                        <component v-if="isVisible(subelement)" :is="getFormComponent(subelement)" :value="getModelValue(subelement)"
                         @loaded="loadedField(keydi, skeydi)"
-                        v-bind="allowBind(subelement)" @change="changedValue" />
+                        v-bind="allowBind(subelement)" @change="changedValue" :definition="subelement" :errors="getErrors(subelement)" />
                     </div>
                 </div>
                 <div v-else class="form-group"  :style="getStyle(element)">
-                    <component :is="getFormComponent(element)" :value="getModelValue(element)"
-                    @loaded="loadedField(keydi)"
-                    v-bind="allowBind(element)" @change="changedValue" />
+                    <component v-if="isVisible(element)" :is="getFormComponent(element)" :value="getModelValue(element)"
+                    @loaded="loadedField(keydi)" :errors="getErrors(element)"
+                    v-bind="allowBind(element)" @change="changedValue" :definition="element"/>
                 </div>
             </template>
             <slot></slot>
@@ -28,11 +28,16 @@
 
 <script>
 import FormFieldInput from './FormFieldInput'
+import FormFieldDuration from './FormFieldDuration'
+import FormFieldAddress from './FormFieldAddress'
 import FormFieldFile from './FormFieldFile'
 import FormFieldEditor from './FormFieldEditor'
 import FormFieldPrices from './FormFieldPrices'
 import FormFieldStatus from './FormFieldStatus'
+import FormFieldCountrySelector from './FormFieldCountrySelector'
 import FormFieldSelect from './FormFieldSelect'
+import FormFieldCheckImages from './FormFieldCheckImages'
+
 import DotKey from '../Modules/DotKey'
 export default {
     mixins: [DotKey],
@@ -62,18 +67,23 @@ export default {
         },
         classWrapper: {
             type: String,
+            default: 'basic-form-wrapper'
         },
         ready: {
             type: Boolean,
             default: false
         },
     },
-    components: {FormFieldInput, FormFieldEditor, FormFieldPrices, FormFieldStatus, FormFieldFile, FormFieldSelect},
+    components: {FormFieldInput, FormFieldEditor, FormFieldPrices, FormFieldStatus, 
+    FormFieldFile, FormFieldSelect, FormFieldCheckImages, FormFieldAddress, 
+    FormFieldDuration, FormFieldCountrySelector},
     data: () => ({
         modelHolder: {},
         isValid: false,
         fieldsStatus:{},
-        formIsReady: false
+        formIsReady: false,
+        pendingValidation: false,
+        errors: {}
     }),
     created(){
         this.modelHolder = this.creating === false ? Object.assign({},this.data):{}
@@ -86,6 +96,67 @@ export default {
         },
     },
     methods: {
+        getErrors(element){
+            return this.errors[element.model] !== undefined ? this.errors[element.model]:false
+        },
+        getRowClass(row){
+            return row.class!== undefined ? row.class: 'd-flex justify-content-between flex-wrap flex-sm-wrap'
+        },
+        getRowEachClass(row){
+            return row.classEach!== undefined ? row.classEach: ''
+        },
+        getElementDefinition(model){
+            for (let i = 0; i < this.schema.length; i++) {
+                const row = this.schema[i]
+                if(row.type !== undefined && row.type == 'row'){
+                    for (let j = 0; j < row.fields.length; j++) {
+                        if(row.fields[j].model == model){
+                            return row.fields[j]
+                        } 
+                    }
+                }else{
+                    if(row.model == model){
+                        return row
+                    }  
+                }
+            }
+            
+        },
+        isVisible(element){
+            
+            if(element.conditions !== undefined){
+                let conditions_failed = false
+                for (let i = 0; i < element.conditions.length; i++) {
+                    const condition = element.conditions[i]
+                    //console.log('typeof',typeof this.modelHolder[condition.model], this.modelHolder[condition.model])
+                    if(['array','object'].indexOf(typeof this.modelHolder[condition.model]) !== -1){
+                        
+                        conditions_failed = !this.atLeastOne(this.modelHolder[condition.model], condition)
+                    }else{
+                        if(condition.values.indexOf(this.modelHolder[condition.model]) === -1){
+                            conditions_failed = true
+                        }
+                    }
+                    
+                    
+                }
+                //console.log('conditions_failed', conditions_failed)
+                if(conditions_failed) return false
+            }
+            return true
+        },
+        atLeastOne(values, condition){
+            let at_least_one = false
+            for (let j = 0; j < values.length; j++) {
+                const value = values[j]
+                
+                //console.log('value match',condition.values, value, condition.values.indexOf(value))
+                if(condition.values.indexOf(value) !== -1){
+                    at_least_one = true
+                }
+            }
+            return at_least_one
+        },
         loadedField(keydi, skeydi = false){
             if(skeydi !== false) {
                 this.schema[keydi].fields[skeydi].loaded = true
@@ -100,10 +171,10 @@ export default {
                 if (this.schema.hasOwnProperty(key)) {
                     if(this.schema[key].type == 'row'){
                         for(var i = 0, length1 = this.schema[key].fields.length; i < length1; i++){
-                            if(this.schema[key].fields[i].loaded === false) return
+                            if(this.isVisible(this.schema[key].fields[i]) && this.schema[key].fields[i].loaded === false) return
                         }
                     }else{
-                        if(this.schema[key].loaded === false) return
+                        if(this.isVisible(this.schema[key]) && this.schema[key].loaded === false) return
                     }
                     
                 }
@@ -123,11 +194,41 @@ export default {
              }
              return styleString;
          },
+         validateElement(key, subkey = false){
+             let keyEl = subkey ? key+'.'+subkey:key
+             let value = subkey ? this.modelHolder[key][subkey]:this.modelHolder[key]
+             if(this.getElementDefinition(keyEl)!== undefined && this.isVisible(this.getElementDefinition(keyEl))) {
+                if(Array.isArray(value) && value.length == 0){
+                    this.errors[keyEl] = 'Element is required'
+                    return false
+                } 
+                if(typeof value == 'string' && value == ''){
+                    this.errors[keyEl] = 'Element is required'
+                    return false
+                } 
+            }
+            console.log('validateElement ',key, subkey, true)
+            return true
+         },
          runValidation(){
+             this.errors = {}
              for (const key in this.modelHolder) {
-                 if (this.modelHolder.hasOwnProperty(key)) {
-                     if(Array.isArray(this.modelHolder[key]) && this.modelHolder[key].length == 0) return this.isValid = false
-                     if(typeof this.modelHolder[key] && this.modelHolder[key] == '') return this.isValid = false
+                 if (this.modelHolder.hasOwnProperty(key) ) {
+                     
+                     if(key == 'options'){
+                         for (const subkey in this.modelHolder[key]) {
+                             if (this.modelHolder[key].hasOwnProperty(subkey) ) {
+                                 if(!this.validateElement(key, subkey)){
+                                     return this.isValid = false
+                                 }
+                             }
+                         }
+                     }else{
+                         if(!this.validateElement(key)){
+                            return this.isValid = false
+                        }
+                     }
+                     
                  }
              }
              this.isValid = true
@@ -160,8 +261,16 @@ export default {
             }, {})
         },
         changedValue(newVal, model){
+            //console.log('changedValue', newVal, model)
             this.setModelValue(newVal, model)
+            if(this.pendingValidation === false){
+                this.pendingValidation = setTimeout(this.runningValidation, 200)
+            }
+        },
+        runningValidation(){
             this.runValidation()
+            this.testFormReady()
+            this.pendingValidation = false
         },
         submit(){
             if(!this.isValid) return false
@@ -204,22 +313,24 @@ export default {
             switch (element.type) {
                 case 'input':
                     return 'FormFieldInput'
-                    break;
                 case 'file':
                     return 'FormFieldFile'
-                    break;
                 case 'editor':
                     return 'FormFieldEditor'
-                    break;
                 case 'prices':
                     return 'FormFieldPrices'
-                    break;
                 case 'status':
                     return 'FormFieldStatus'
-                    break;
                 case 'select':
                     return 'FormFieldSelect'
-                    break;
+                case 'checkimages':
+                    return 'FormFieldCheckImages'
+                case 'address':
+                    return 'FormFieldAddress'
+                case 'duration':
+                    return 'FormFieldDuration'
+                case 'countryselector':
+                    return 'FormFieldCountrySelector'
                 default:
                     return 'FormFieldInput'
             }
@@ -244,5 +355,8 @@ export default {
 }
 .fields-wrap {
       border-radius: .8rem;
+}
+.basic-form-wrapper {
+    max-width: 700px;
 }
 </style>

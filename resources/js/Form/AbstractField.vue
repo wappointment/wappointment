@@ -1,6 +1,6 @@
 <script>
 export default {
-    props: ['value', 'label', 'tip', 'model', 'eventChange'],
+    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors'],
     watch: {
         updatedValue(newVal, oldVal){
             return this.$emit(this.eventEmit, newVal, this.model)
@@ -20,5 +20,10 @@ export default {
         if(this.waitForScript === false) this.$emit('loaded')
         this.id = this._uid
     },
+    computed:{
+        hasErrors(){
+            return this.errors !== undefined && this.errors.length > 0
+        }
+    }
 }
 </script>

@@ -131,7 +131,7 @@ export default {
 .label-wrapper.active label {
     color: #ced4da;
 }
-.label-wrapper input{
+.label-wrapper input, .label-wrapper textarea{
     height: auto;
     padding-top: 1rem;
 }

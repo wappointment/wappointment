@@ -86,6 +86,25 @@ class Scheduler
         }
     }
 
+    public static function getStatuses()
+    {
+        add_filter('cron_schedules', ['\\Wappointment\\WP\\Scheduler', 'addFrequencies']);
+        $statuses = [];
+        $time_record = time();
+        foreach (self::$scheduled_jobs as $wappo_wp_scheduled_job => $scheduledObject) {
+            $scheduled_time = wp_next_scheduled($wappo_wp_scheduled_job);
+            $time_record++;
+            if ($scheduled_time === false) {
+                $statuses[$wappo_wp_scheduled_job] = ['status' => false, 'label' => 'unscheduled'];
+            } elseif ($scheduled_time - \time() < -120) {
+                $statuses[$wappo_wp_scheduled_job] = ['status' => ($scheduled_time - \time()), 'label' => 'late'];
+            } else {
+                $statuses[$wappo_wp_scheduled_job] = ['status' => ($scheduled_time - \time()), 'label' => 'scheduled'];
+            }
+        }
+        return $statuses;
+    }
+
     public static function getInterval($frequency)
     {
         return self::$registered_frequencies[$frequency]['interval'];

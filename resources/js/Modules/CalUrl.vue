@@ -1,5 +1,5 @@
 <script>
-import Dates from "./Dates";
+import Dates from "./Dates"
 export default {
   mixins: [Dates],
   computed: {

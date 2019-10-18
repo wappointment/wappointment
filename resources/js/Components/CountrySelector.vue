@@ -18,7 +18,7 @@
         :class="{open: open}"
         >
         <span class="selection d-flex">
-            <input ref="search" @keypress="detectKey" id="search-field" class="search flex-fill" :class="{'show':open}" placeholder="Select countries" type="text" v-model="search" >
+            <input ref="search" @keypress="detectKey" id="search-field" class="form-control search flex-fill" :class="{'show':open, 'is-invalid':hasErrors}" placeholder="Select countries" type="text" v-model="search" >
             <span @click.stop="clickedOutside" class="dashicons dashicons-dismiss"></span>
         </span>
             <ul v-show="open" ref="list" @click.stop>
@@ -56,7 +56,7 @@
 import allCountries from '../Standalone/all-countries'
 import ClickOutside from 'vue-click-outside'
 export default {
-    props: ['label','selected', 'required'],
+    props: ['label','selected', 'required', 'hasErrors'],
     data: () => ({
         countries: allCountries,
         selectedCountries: [],
