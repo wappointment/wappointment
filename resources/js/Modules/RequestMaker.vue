@@ -2,10 +2,19 @@
 export default {
 
   methods: {
-      request(serviceRequest, params, finalCallback = undefined, staff = false){
+      request(serviceRequest, params, finalCallback = undefined, staff = false, successCallback = false, failureCallback = false){
         if(this.beforeRequest !== undefined) this.beforeRequest()
-
-        this.$WapModal().request(serviceRequest(params, staff), finalCallback).then(this.successRequest).catch(this.failedRequest)
+        
+        if(!successCallback &&  !failureCallback){
+          this.$WapModal().request(serviceRequest(params, staff), finalCallback).then(this.successRequest).catch(this.failedRequest)
+        }else if(!successCallback &&  failureCallback!==false){
+          this.$WapModal().request(serviceRequest(params, staff), finalCallback).then(this.successRequest).catch(failureCallback)
+        }else if(successCallback!==false &&  !failureCallback){
+          this.$WapModal().request(serviceRequest(params, staff), finalCallback).then(successCallback).catch(this.failedRequest)
+        }else{
+          this.$WapModal().request(serviceRequest(params, staff), finalCallback).then(successCallback).catch(failureCallback)
+        }
+        
   
       },
       successRequest(result) {

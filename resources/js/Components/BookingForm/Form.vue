@@ -14,15 +14,15 @@
                 
                 <div v-if="serviceHasTypes">
                     <div v-if="allowedType('physical')" @click="selectType('physical')" class="btn btn-secondary btn-cell" :class="{selected: physicalSelected}">
-                        <font-awesome-icon icon="map-marked-alt" size="lg"/>
+                        <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
                         <div>{{options.form.inperson}}</div>
                     </div>
                     <div v-if="allowedType('phone')" @click="selectType('phone')" class="btn btn-secondary btn-cell" :class="{selected: phoneSelected}">
-                        <font-awesome-icon icon="phone" size="lg"/>
+                        <FontAwesomeIcon icon="phone" size="lg"/>
                         <div>{{options.form.byphone}}</div>
                     </div>
                     <div v-if="allowedType('skype')" @click="selectType('skype')" class="btn btn-secondary btn-cell" :class="{selected: skypeSelected}">
-                        <font-awesome-icon :icon="['fab', 'skype']" size="lg"/>
+                        <FontAwesomeIcon :icon="['fab', 'skype']" size="lg"/>
                         <div>{{options.form.byskype}}</div>
                     </div>
                 </div>
@@ -33,7 +33,7 @@
                     <form>
                         <div v-if="physicalSelected" class="address-service">
                             <BookingAddress :service="service">
-                                <font-awesome-icon icon="map-marked-alt" size="lg"/>
+                                <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
                             </BookingAddress>
                         </div>
                         <div class="field-required" :class="hasError('name')">
@@ -72,15 +72,16 @@
                 <span v-else class="btn-primary btn disabled flex-fill mr-0" disabled>{{options.form.confirm}}</span>
             </div>
         </div>
+        <CountryStyle/>
     </transition>
 </template>
 
 <script>
 import abstractFront from '../../Views/abstractFront'
 import BookingAddress from './Address'
-import Dates from "../../Modules/Dates";
+import Dates from "../../Modules/Dates"
 import PhoneInput from './PhoneInput'
-import {isEmail, isEmpty} from 'validator';
+import {isEmail, isEmpty} from 'validator'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMapMarkedAlt, faPhone} from '@fortawesome/free-solid-svg-icons'
@@ -88,7 +89,7 @@ import { faSkype} from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import momenttz from '../../appMoment'
 library.add(faMapMarkedAlt, faPhone, faSkype)
-
+const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../CountryStyle')
 export default {
     extends: abstractFront,
     mixins: [Dates],
@@ -96,7 +97,8 @@ export default {
     components: {
         BookingAddress,
         PhoneInput,
-        'font-awesome-icon': FontAwesomeIcon,
+        FontAwesomeIcon,
+        CountryStyle
     }, 
     data: () => ({
         bookingForm: {
@@ -220,7 +222,6 @@ export default {
 }
 </script>
 <style>
-@import '../../../css/vue-tel.css';
 
 .wap-front .phone-field .dropdown ul {
     position: initial;

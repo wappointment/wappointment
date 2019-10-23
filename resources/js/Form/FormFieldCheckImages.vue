@@ -4,10 +4,15 @@
             {{ label}}
         </div>
         <div class="d-flex">
-            <div v-for="(item, idx) in images" :key="idx" @click="onChanged(item)" 
-            class="btn btn-secondary btn-cell" :class="{selected: isItemChecked(item)}">
+            <div v-for="(item, idx) in images" :key="idx" @click="onChanged(item)"  
+            class="btn btn-secondary btn-cell" :class="{'is-invalid':hasErrors, selected: isItemChecked(item)}">
                 <FontAwesomeIcon :icon="item.icon" size="lg"/>
                 <div>{{ item.name }}</div>
+            </div>
+        </div>
+        <div class="small text-danger" v-if="hasErrors">
+            <div v-for="error in errors">
+                {{ error }}
             </div>
         </div>
     </div>
@@ -102,3 +107,8 @@ export default {
     }
 }
 </script>
+<style>
+.btn-secondary.is-invalid {
+    border-color: #ed7575 !important;
+}
+</style>

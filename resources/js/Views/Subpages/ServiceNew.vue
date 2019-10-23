@@ -1,7 +1,7 @@
 <template>
     <div>
-        <FormGenerator v-if="dataLoaded" :schema="schema" :data="modelHolder" 
-        @submit="save" labelButton="Save">
+        <FormGenerator v-if="dataLoaded" ref="formgenerator" :schema="schemaParsed" :data="modelHolder" 
+        @submit="save" :errors="errorsPassed" :key="formKey" labelButton="Save">
         </FormGenerator>
     </div>
 
@@ -28,7 +28,8 @@ export default {
               countries: []
             }
           },
-
+          errors:{},
+          formKey: 'form',
           schema: [
             {
               type: 'row',
@@ -47,6 +48,7 @@ export default {
                     label: 'Duration',
                     model: 'duration',
                     cast: String,
+                    class: 'w-100',
                     default: 60,
                     min: 5,
                     max: 240,
@@ -86,13 +88,21 @@ export default {
                 ]
             },
 
-    
         ]
 
       } 
   },
 
+  computed: {
 
+    schemaParsed(){
+      return  window.wappointmentExtends.filter('serviceFormSchema', this.schema, this.modelHolder )
+    },
+
+    errorsPassed(){
+      return this.errors
+    }
+  },
   methods: {
     initMethod(){
       this.serviceService = this.$vueService(new ServiceService)
@@ -109,10 +119,21 @@ export default {
         }
         this.viewData = viewData.data
     },
-
+    saveExternal(){
+      this.$refs.formgenerator.submitTrigger(true)
+    },
     save(data) {
         this.modelHolder = data
-        this.request(this.saveServiceRequest,  undefined, this.saved)
+        this.request(this.saveServiceRequest,  undefined, this.saved, false, false, this.failedValidation)
+    },
+    failedValidation(e){
+      if(e.response!== undefined && e.response.data!== undefined 
+      && e.response.data.data!== undefined && 
+      e.response.data.data.errors!== undefined &&
+      e.response.data.data.errors.validations !== undefined){
+        this.errors = e.response.data.data.errors.validations
+        this.formKey = 'form' + ((new Date()).getTime())
+      }
     },
     async saveServiceRequest() {
         return await this.serviceService.call('save', this.modelHolder)

@@ -5,6 +5,11 @@
             aria-describedby="emailHelp" :placeholder="label" 
             v-model="updatedValue">
         </LabelMaterial>
+        <div class="small text-danger" v-if="hasErrors">
+            <div v-for="error in errors">
+                {{ error }}
+            </div>
+        </div>
         <small id="emailHelp" v-if="tip" class="form-text text-muted">{{ tip }}</small>
     </div>
 </template>

@@ -49,14 +49,17 @@
                 </li>
             </ul>
         </div>
+        <CountryStyle/>
     </div>
 </template>
 
 <script>
 import allCountries from '../Standalone/all-countries'
 import ClickOutside from 'vue-click-outside'
+const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ './CountryStyle')
 export default {
     props: ['label','selected', 'required', 'hasErrors'],
+    components: {CountryStyle},
     data: () => ({
         countries: allCountries,
         selectedCountries: [],

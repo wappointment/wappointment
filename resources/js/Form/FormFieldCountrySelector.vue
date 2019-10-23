@@ -6,6 +6,11 @@
         <div>
             <CountrySelector required :selected="value" @selected="selectedCountries" :hasErrors="hasErrors"></CountrySelector>
         </div>
+        <div class="small text-danger" v-if="hasErrors">
+            <div v-for="error in errors">
+                {{ error }}
+            </div>
+        </div>
     </div>
 </template>
 

@@ -1,18 +1,18 @@
 <template>
-    <form @submit.prevent="submit" class="form-wrap" :class="classWrapper">
+    <form @submit.prevent="submitTrigger" class="form-wrap" :class="classWrapper">
         <div v-if="!formIsReady" class="loading-overlay d-flex align-items-center">
             <WLoader></WLoader>
         </div>
         <div class="fields-wrap" >
             <template v-for="(element, keydi) in schema">
                 <div v-if="element.type == 'row'"  :class="getRowClass(element)">
-                    <div class="form-group"  v-for="(subelement, skeydi) in element.fields" :class="getRowEachClass(element)" :style="getStyle(subelement)">
+                    <div class="form-group"  v-for="(subelement, skeydi) in element.fields" :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
                         <component v-if="isVisible(subelement)" :is="getFormComponent(subelement)" :value="getModelValue(subelement)"
                         @loaded="loadedField(keydi, skeydi)"
                         v-bind="allowBind(subelement)" @change="changedValue" :definition="subelement" :errors="getErrors(subelement)" />
                     </div>
                 </div>
-                <div v-else class="form-group"  :style="getStyle(element)">
+                <div v-else class="form-group"  :style="getStyle(element)" :class="getRowEachClass(element)">
                     <component v-if="isVisible(element)" :is="getFormComponent(element)" :value="getModelValue(element)"
                     @loaded="loadedField(keydi)" :errors="getErrors(element)"
                     v-bind="allowBind(element)" @change="changedValue" :definition="element"/>
@@ -20,13 +20,15 @@
             </template>
             <slot></slot>
             <div>
-                <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent="submit">{{ buttonLabel }}</button>
+                <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent="submitTrigger">{{ buttonLabel }}</button>
             </div>
         </div>
     </form>
 </template>
 
 <script>
+import AbstractField from './AbstractField'
+import LabelMaterial from '../Fields/LabelMaterial'
 import FormFieldInput from './FormFieldInput'
 import FormFieldDuration from './FormFieldDuration'
 import FormFieldAddress from './FormFieldAddress'
@@ -46,6 +48,10 @@ export default {
             type: Array,
             default: []
         }, 
+        errors: {
+            type: Object,
+            default: {}
+        },
         data: {
             type: Object,
             default: undefined
@@ -74,36 +80,46 @@ export default {
             default: false
         },
     },
-    components: {FormFieldInput, FormFieldEditor, FormFieldPrices, FormFieldStatus, 
-    FormFieldFile, FormFieldSelect, FormFieldCheckImages, FormFieldAddress, 
-    FormFieldDuration, FormFieldCountrySelector},
+    components: {FormFieldInput, FormFieldEditor,FormFieldPrices,
+        FormFieldStatus,FormFieldFile, FormFieldSelect,FormFieldCheckImages,
+        FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,},
     data: () => ({
         modelHolder: {},
         isValid: false,
         fieldsStatus:{},
         formIsReady: false,
         pendingValidation: false,
-        errors: {}
+        submitted: false,
+        errorsData: {},
     }),
     created(){
+        if(this.submittedErrors){
+            this.errorsData = Object.assign({}, this.errors)
+            this.submitted = true
+        }
         this.modelHolder = this.creating === false ? Object.assign({},this.data):{}
         this.verifyModel()
     },
 
     computed: {
+        submittedErrors(){
+            return Object.keys(this.errors).length > 0
+        },
         buttonLabel(){
             return this.labelButton !== undefined ? this.labelButton :(this.creating === false ? this.modify:this.create)
         },
     },
     methods: {
         getErrors(element){
-            return this.errors[element.model] !== undefined ? this.errors[element.model]:false
+            return this.submitted && this.errorsData[element.model] !== undefined ? this.errorsData[element.model]:false
         },
         getRowClass(row){
             return row.class!== undefined ? row.class: 'd-flex justify-content-between flex-wrap flex-sm-wrap'
         },
-        getRowEachClass(row){
-            return row.classEach!== undefined ? row.classEach: ''
+        getRowEachClass(row, sube){
+            let classStr = row.classEach!== undefined ? row.classEach: ''
+            classStr += sube!== undefined && sube.class!== undefined ? ' '+sube.class: ''
+            return classStr
         },
         getElementDefinition(model){
             for (let i = 0; i < this.schema.length; i++) {
@@ -192,26 +208,84 @@ export default {
                      styleString += key+':'+styleObject[key]+';'
                  }
              }
-             return styleString;
+             return styleString
          },
+         setError(keyEl, type){
+             if(this.errorsData[keyEl] === undefined )this.errorsData[keyEl] = {}
+             if(this.errorsData[keyEl][type] === undefined) this.errorsData[keyEl][type] = this.getErrorMsg(type)
+         },
+         clearError(keyEl, type){
+             
+            delete this.errorsData[keyEl]
+            this.errorsData = this.cleanObject(this.errorsData)
+/*             if(Object.keys(this.errorsData[keyEl]).length < 1){
+                
+            }
+              if(this.errorsData[keyEl] !== undefined && this.errorsData[keyEl][type] !== undefined){
+                 delete this.errorsData[keyEl][type]
+                 this.errorsData[keyEl] = this.cleanObject(this.errorsData[keyEl])
+                 
+             }  */
+            /* if(this.errorsData[keyEl] !== undefined && this.errorsData[keyEl][type] !== undefined){
+                 delete this.errorsData[keyEl][type]
+                 this.errorsData[keyEl] = this.cleanObject(this.errorsData[keyEl])
+                 console.log('new obj 1', this.errorsData[keyEl])
+                 if(Object.keys(this.errorsData[keyEl]).length == 0) {
+                     delete this.errorsData[keyEl]
+                     this.errorsData = this.cleanObject(this.errorsData)
+                     console.log('new obj 2', this.errorsData)
+                 }
+                 
+             }  */
+         },
+
+        cleanObject(obj) {
+            let newObj = {}
+            Object.keys(obj).forEach(key => {
+                if( obj[key] != undefined) newObj[key] = obj[key]
+            })  
+            return newObj
+        },
+
+         getErrorMsg(type){
+             switch (type) {
+                 case 'required':
+                     return 'Element is required'
+             }
+         },
+
+         isEmptyValue(value){
+             switch (typeof value) {
+                 case 'array':
+                     return value.length == 0
+                 case 'string':
+                     return value == ''
+                 case 'boolean':
+                     return value == ''
+                 case 'object':
+                     return Object.keys(value).length == 0
+             }
+         },
+
          validateElement(key, subkey = false){
              let keyEl = subkey ? key+'.'+subkey:key
              let value = subkey ? this.modelHolder[key][subkey]:this.modelHolder[key]
              if(this.getElementDefinition(keyEl)!== undefined && this.isVisible(this.getElementDefinition(keyEl))) {
-                if(Array.isArray(value) && value.length == 0){
-                    this.errors[keyEl] = 'Element is required'
-                    return false
-                } 
-                if(typeof value == 'string' && value == ''){
-                    this.errors[keyEl] = 'Element is required'
-                    return false
-                } 
+                if(this.isEmptyValue(value)){
+                     console.log('set error for', keyEl)
+                     this.setError(keyEl,'required')
+                     return false
+                }else{
+                    console.log('clear error for', keyEl,  typeof value, value)
+                    this.clearError(keyEl,'required')
+                }
+                
             }
-            console.log('validateElement ',key, subkey, true)
             return true
          },
          runValidation(){
-             this.errors = {}
+
+             //this.errorsData = {}
              for (const key in this.modelHolder) {
                  if (this.modelHolder.hasOwnProperty(key) ) {
                      
@@ -261,19 +335,22 @@ export default {
             }, {})
         },
         changedValue(newVal, model){
-            //console.log('changedValue', newVal, model)
             this.setModelValue(newVal, model)
             if(this.pendingValidation === false){
                 this.pendingValidation = setTimeout(this.runningValidation, 200)
             }
         },
         runningValidation(){
+
             this.runValidation()
             this.testFormReady()
+            
+            
             this.pendingValidation = false
         },
-        submit(){
-            if(!this.isValid) return false
+        submitTrigger(forceRequest = false){
+            this.submitted = true
+            if(forceRequest=== false && !this.isValid) return false
             this.$emit('submit', Object.assign({}, this.modelHolder), this.creating)
         },
 
@@ -310,30 +387,22 @@ export default {
             this.modelHolder[myarr[0]][myarr[1]] = new element.cast 
         },
         getFormComponent(element){
-            switch (element.type) {
-                case 'input':
-                    return 'FormFieldInput'
-                case 'file':
-                    return 'FormFieldFile'
-                case 'editor':
-                    return 'FormFieldEditor'
-                case 'prices':
-                    return 'FormFieldPrices'
-                case 'status':
-                    return 'FormFieldStatus'
-                case 'select':
-                    return 'FormFieldSelect'
-                case 'checkimages':
-                    return 'FormFieldCheckImages'
-                case 'address':
-                    return 'FormFieldAddress'
-                case 'duration':
-                    return 'FormFieldDuration'
-                case 'countryselector':
-                    return 'FormFieldCountrySelector'
-                default:
-                    return 'FormFieldInput'
+            let fieldsTypes = {
+                'input' : 'FormFieldInput',
+                'file' : 'FormFieldFile',
+                'editor' : 'FormFieldEditor',
+                'prices' : 'FormFieldPrices',
+                'status' : 'FormFieldStatus',
+                'select' : 'FormFieldSelect',
+                'checkimages' : 'FormFieldCheckImages',
+                'address' : 'FormFieldAddress',
+                'duration' : 'FormFieldDuration',
+                'countryselector' : 'FormFieldCountrySelector',
             }
+
+            fieldsTypes = window.wappointmentExtends.filter( 'FormGeneratorFieldsTypes', fieldsTypes, {mixins: AbstractField, components:{LabelMaterial} } )
+
+            return fieldsTypes[element.type]!== undefined ? fieldsTypes[element.type]:'FormFieldInput'
         }
     }
 }

@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex">
+    <div class="d-flex flex-wrap flex-sm-nowrap">
       <div class="mr-2">
           <LabelMaterial>
                 <textarea class="form-control" :class="{'is-invalid':hasErrors}" v-model="updatedValue"
@@ -10,6 +10,11 @@
             :placeholder="definition.label"></textarea>
         </LabelMaterial>
         <small id="emailHelp" v-if="tip" class="form-text text-muted">{{ tip }}</small>
+        <div class="small text-danger" v-if="hasErrors">
+            <div v-for="error in errors">
+                {{ error }}
+            </div>
+        </div>
       </div>
       <div>
           <wapIframe :height="200" :src="getIframeMap"></wapIframe>

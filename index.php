@@ -11,7 +11,7 @@ if (!defined('ABSPATH')) {
  * Description: The reliable Appointment booking manager to get booked simply
  * Author: Wappointment
  * Requires at least: 4.7
- * Tested up to: 5.2
+ * Tested up to: 5.3
  *
  * Text Domain: wappointment
  *

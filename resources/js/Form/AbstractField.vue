@@ -22,8 +22,9 @@ export default {
     },
     computed:{
         hasErrors(){
-            return this.errors !== undefined && this.errors.length > 0
+            return this.errors !== undefined && Object.keys(this.errors).length > 0
         }
-    }
+    },
+
 }
 </script>

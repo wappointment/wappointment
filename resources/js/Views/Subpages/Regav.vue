@@ -1,27 +1,18 @@
 <template>
-    <div class="container-fluid" v-if="dataLoaded">
-        <div class="col-12">
-            <div>
-                <div class="d-flex">
-                    <h1>Weekly Availability</h1>
-                </div>
-                <p class="h6 text-muted">This is you recurring availability, you can change it again at anytime</p>
-                <hr>
-            </div>
-            <p class="h6 text-muted">1 - Select the staff providing the service</p>
-            <div v-if="viewData" class="d-flex align-items-center mb-2">
-                <StaffPicture :src="viewData.activeStaffAvatar" :gravatar="viewData.activeStaffGravatar" @changed="changed"></StaffPicture>
-                <StaffSelector :staffs="viewData.staffs" :activeStaffId="viewData.activeStaffId" @updateStaff="updateStaff"></StaffSelector>
-            </div>
-            
-            <p class="h6 text-muted">2 - Define the timezone in which you are operating</p>
-            <TimeZones v-if="viewData" :wizard="noback" :timezones="viewData.timezones_list" 
-            :defaultTimezone="viewData.timezone" @updateTimezone="updateTimezone" typeClass="btn btn-outline-primary"></TimeZones>
-            <hr>
-            <div v-if="hasRegav">
-                <p class="h6 text-muted">3 - Drag and drop the times you want to open for appointments</p>
-                <RegularAvailability :initValue="viewData.regav" @updatedDays="updatedRA"></RegularAvailability>
-            </div>
+    <div v-if="dataLoaded">
+        <p class="h6 text-muted">1 - Select the staff providing the service</p>
+        <div v-if="viewData" class="d-flex align-items-center mb-2">
+            <StaffPicture :src="viewData.activeStaffAvatar" :gravatar="viewData.activeStaffGravatar" @changed="changed"></StaffPicture>
+            <StaffSelector :staffs="viewData.staffs" :activeStaffId="viewData.activeStaffId" @updateStaff="updateStaff"></StaffSelector>
+        </div>
+        
+        <p class="h6 text-muted">2 - Define the timezone in which you are operating</p>
+        <TimeZones v-if="viewData" :wizard="noback" :timezones="viewData.timezones_list" 
+        :defaultTimezone="viewData.timezone" @updateTimezone="updateTimezone" typeClass="btn btn-outline-primary"></TimeZones>
+        <hr>
+        <div v-if="hasRegav">
+            <p class="h6 text-muted">3 - Drag and drop the times you want to open for appointments</p>
+            <RegularAvailability :initValue="viewData.regav" @updatedDays="updatedRA"></RegularAvailability>
         </div>
     </div>
 </template>
