@@ -379,8 +379,10 @@ export default {
             }
         },
         clickedOutside() {
+            if(this.open) this.$emit('activated')
             this.open = false
             this.search = ''
+            
         },
         getItemClass(index, iso2) {
             const highlighted = this.selectedIndex === index

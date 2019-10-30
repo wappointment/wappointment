@@ -108,7 +108,7 @@ export default {
         this.optionsData.browser = BrowserInfo()
       } 
       this.optionsData.urlerror = window.location.href
-      this.optionsData.errors = this.errors
+      if(this.errors!==undefined)this.optionsData.errors = this.errors
       
     },
     computed: {

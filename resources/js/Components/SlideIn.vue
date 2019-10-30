@@ -1,12 +1,11 @@
 <template>
   <div>
-      <div class="wappo-slide-in" :class="{show: appear && disappear!==true, 'd-flex align-items-center':flex}"   :data-route="routerPath">
+      <div v-if="!show_already" class="wappo-slide-in" :class="{show: appear && disappear!==true, 'd-flex align-items-center':flex}"   :data-route="routerPath">
         <button class="btn btn-white" @click="check"><slot name="intro" ></slot></button>
       </div>
       <WapModal :screenshot="true" :show="show" @hide="hideModal">
           <h4 slot="title" class="modal-title"><slot name="modal-title"></slot></h4>
           <slot name="modal-body"></slot>
-            
     </WapModal>
   </div>
 </template>
@@ -20,6 +19,10 @@ export default {
         disappearOnCheck:{
             type:Boolean,
             default: true
+        },
+        show_already:{
+            type:Boolean,
+            default: false
         }
     },
     data: () => ({
@@ -40,8 +43,13 @@ export default {
         },
     },
     mounted(){
-      this.init = false
-      setTimeout(this.appearNow, 2000)
+        if(this.show_already){
+            this.show = true
+        }else{
+            this.init = false
+            setTimeout(this.appearNow, 2000)
+        }
+      
     },
     methods:{
         appearNow(){
@@ -54,6 +62,7 @@ export default {
         },
         hideModal(){
             this.show = false
+            this.$emit('closed')
         },
     }
 }

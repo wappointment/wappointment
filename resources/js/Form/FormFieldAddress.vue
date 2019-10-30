@@ -2,7 +2,7 @@
     <div class="d-flex flex-wrap flex-sm-nowrap">
       <div class="mr-2">
           <LabelMaterial>
-                <textarea class="form-control" :class="{'is-invalid':hasErrors}" v-model="updatedValue"
+                <textarea class="form-control" @focusout="$emit('activated')" :class="{'is-invalid':hasErrors}" v-model="updatedValue"
             :id="id"
             :maxlength="definition.max"
             :minlength="definition.min"

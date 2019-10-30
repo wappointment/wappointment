@@ -83,6 +83,7 @@ export default {
         },
 
         onChanged(item) {
+            this.$emit('activated')
             if(this.radioMode){
                 this.updatedValue = this.getItemValue(item)
             }else{

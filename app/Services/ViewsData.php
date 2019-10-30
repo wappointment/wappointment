@@ -183,7 +183,10 @@ class ViewsData
         }
         return $avails;
     }
-
+    private function all_versions_changes()
+    {
+        return ['versions' => \Wappointment\System\Status::allUpdates()];
+    }
     private function front_availability()
     {
         $staff_availability = [];

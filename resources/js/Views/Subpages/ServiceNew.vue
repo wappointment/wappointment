@@ -1,6 +1,6 @@
 <template>
     <div>
-        <FormGenerator v-if="dataLoaded" ref="formgenerator" :schema="schemaParsed" :data="modelHolder" 
+        <FormGenerator ref="formgenerator" :schema="schemaParsed" :data="modelHolder" 
         @submit="save" :errors="errorsPassed" :key="formKey" labelButton="Save">
         </FormGenerator>
     </div>
@@ -9,16 +9,16 @@
 
 <script>
 import FormGenerator from '../../Form/FormGenerator'
-import ServiceService from '../../Services/V1/Service' 
+import ServiceService from '../../Services/V1/Service'
 import abstractView from '../Abstract'
 export default {
   extends: abstractView,
   components:{FormGenerator},
+  props:['dataPassed'],
   data() {
       return {
+          
           serviceService: null,
-          viewName: 'service',
-          parentLoad: false,
           modelHolder: {             
             name: '',
             duration: 60,
@@ -42,6 +42,7 @@ export default {
                     model: 'name',
                     cast: String,
                     styles: {'max-width':'200px'},
+                    validation: ['required']
                 },
                 {
                     type: 'duration',
@@ -55,6 +56,7 @@ export default {
                     step: 5,
                     int: true,
                     unit: 'min',
+                    validation: ['required']
                 },
               ]
             },
@@ -67,7 +69,8 @@ export default {
                   { value:'physical', name:'At a location', icon: 'map-marked-alt'},
                   { value:'phone', name:'By Phone', icon: 'phone'},
                   { value:'skype', name:'By Skype', icon: ['fab', 'skype']}
-                ]
+                ],
+                validation: ['required']
             },
             {
                 type: 'address',
@@ -76,23 +79,29 @@ export default {
                 cast: String,
                 conditions: [
                   { model:'type', values: ['physical'] }
-                ]
+                ],
+                validation: ['required']
             },
             {
                 type: 'countryselector',
                 label: 'Countries you will provide phone service for',
                 model: 'options.countries',
-                cast: String,
+                cast: Array,
                 conditions: [
                   { model:'type', values: ['phone'] }
-                ]
+                ],
+                validation: ['required']
             },
 
         ]
 
       } 
   },
-
+  created(){
+    if(this.dataPassed!== undefined){
+       this.modelHolder = Object.assign({}, this.dataPassed)
+    }
+  },
   computed: {
 
     schemaParsed(){
@@ -106,19 +115,9 @@ export default {
   methods: {
     initMethod(){
       this.serviceService = this.$vueService(new ServiceService)
-      this.request(this.initValueRequest,  undefined, this.loaded)
 
     },
-    loaded(viewData){
-        this.modelHolder = viewData.data.service
-        this.modelHolder.duration = parseInt(this.modelHolder.duration)
-        if( ['', null, undefined].indexOf(this.modelHolder.options) !==-1 ){
-          this.modelHolder.options = {
-            countries: []
-          }
-        }
-        this.viewData = viewData.data
-    },
+
     saveExternal(){
       this.$refs.formgenerator.submitTrigger(true)
     },

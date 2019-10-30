@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.2
 Requires PHP: 7.0
-Stable tag: 1.1.1
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,12 @@ It requires work on your end but keeps your site safe and optimized.
 8. Help Page. Have a question? Simply ask for it straight in there.
 
 == Changelog ==
+
+= 1.2.0 - 2019-11-1 =
+* Added Floating booking buttons in the widget options
+* Added icons to differentiate type of appointment phone, skype or at a location
+* Fixed bug staff selection on ms or prefixed site
+* Fixed bug client updating contact info when taking appointment
 
 = 1.1.1 - 2019-10-07 =
 * Fixed shortcode bug inserted in page or post

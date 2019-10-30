@@ -6,16 +6,22 @@
         <div class="fields-wrap" >
             <template v-for="(element, keydi) in schema">
                 <div v-if="element.type == 'row'"  :class="getRowClass(element)">
-                    <div class="form-group"  v-for="(subelement, skeydi) in element.fields" :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
-                        <component v-if="isVisible(subelement)" :is="getFormComponent(subelement)" :value="getModelValue(subelement)"
-                        @loaded="loadedField(keydi, skeydi)"
-                        v-bind="allowBind(subelement)" @change="changedValue" :definition="subelement" :errors="getErrors(subelement)" />
+                    <div class="form-group"  v-for="(subelement, skeydi) in element.fields" 
+                    :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
+                        <div :class="{'d-none': visibles.indexOf(subelement.model) === -1}">
+                            <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)"
+                            @loaded="loadedField(keydi, skeydi)"
+                            v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement.model)" :definition="subelement" :errors="getErrors(subelement)" />
+                        </div>
                     </div>
                 </div>
                 <div v-else class="form-group"  :style="getStyle(element)" :class="getRowEachClass(element)">
-                    <component v-if="isVisible(element)" :is="getFormComponent(element)" :value="getModelValue(element)"
+                    <div :class="{'d-none': visibles.indexOf(element.model) === -1}">
+                        <component :is="getFormComponent(element)" :value="getModelValue(element)"
                     @loaded="loadedField(keydi)" :errors="getErrors(element)"
-                    v-bind="allowBind(element)" @change="changedValue" :definition="element"/>
+                    v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element.model)" :definition="element"/>
+                    </div>
+                    
                 </div>
             </template>
             <slot></slot>
@@ -30,6 +36,7 @@
 import AbstractField from './AbstractField'
 import LabelMaterial from '../Fields/LabelMaterial'
 import FormFieldInput from './FormFieldInput'
+import FormFieldCheckbox from './FormFieldCheckbox'
 import FormFieldDuration from './FormFieldDuration'
 import FormFieldAddress from './FormFieldAddress'
 import FormFieldFile from './FormFieldFile'
@@ -39,6 +46,7 @@ import FormFieldStatus from './FormFieldStatus'
 import FormFieldCountrySelector from './FormFieldCountrySelector'
 import FormFieldSelect from './FormFieldSelect'
 import FormFieldCheckImages from './FormFieldCheckImages'
+import FormFieldImageSelect from './FormFieldImageSelect'
 
 import DotKey from '../Modules/DotKey'
 export default {
@@ -80,9 +88,9 @@ export default {
             default: false
         },
     },
-    components: {FormFieldInput, FormFieldEditor,FormFieldPrices,
+    components: {FormFieldInput, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
         FormFieldStatus,FormFieldFile, FormFieldSelect,FormFieldCheckImages,
-        FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,},
+        FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect},
     data: () => ({
         modelHolder: {},
         isValid: false,
@@ -91,6 +99,8 @@ export default {
         pendingValidation: false,
         submitted: false,
         errorsData: {},
+        visibles: [],
+        activated_fields: []
     }),
     created(){
         if(this.submittedErrors){
@@ -111,7 +121,7 @@ export default {
     },
     methods: {
         getErrors(element){
-            return this.submitted && this.errorsData[element.model] !== undefined ? this.errorsData[element.model]:false
+            return this.activated_fields.indexOf(element.model) !== -1 && this.errorsData[element.model] !== undefined ? this.errorsData[element.model]:false
         },
         getRowClass(row){
             return row.class!== undefined ? row.class: 'd-flex justify-content-between flex-wrap flex-sm-wrap'
@@ -138,27 +148,30 @@ export default {
             }
             
         },
+
         isVisible(element){
             
             if(element.conditions !== undefined){
                 let conditions_failed = false
                 for (let i = 0; i < element.conditions.length; i++) {
                     const condition = element.conditions[i]
-                    //console.log('typeof',typeof this.modelHolder[condition.model], this.modelHolder[condition.model])
-                    if(['array','object'].indexOf(typeof this.modelHolder[condition.model]) !== -1){
+                    const modelValue = this.getModelValue(this.getElementDefinition(condition.model))
+                    
+                    if(['array','object'].indexOf(typeof modelValue) !== -1){
                         
-                        conditions_failed = !this.atLeastOne(this.modelHolder[condition.model], condition)
+                        conditions_failed = !this.atLeastOne(modelValue, condition)
                     }else{
-                        if(condition.values.indexOf(this.modelHolder[condition.model]) === -1){
+                        
+                        if(condition.values.indexOf(modelValue) === -1){
                             conditions_failed = true
                         }
                     }
                     
                     
                 }
-                //console.log('conditions_failed', conditions_failed)
                 if(conditions_failed) return false
             }
+            this.visibles.push(element.model)
             return true
         },
         atLeastOne(values, condition){
@@ -218,25 +231,7 @@ export default {
              
             delete this.errorsData[keyEl]
             this.errorsData = this.cleanObject(this.errorsData)
-/*             if(Object.keys(this.errorsData[keyEl]).length < 1){
-                
-            }
-              if(this.errorsData[keyEl] !== undefined && this.errorsData[keyEl][type] !== undefined){
-                 delete this.errorsData[keyEl][type]
-                 this.errorsData[keyEl] = this.cleanObject(this.errorsData[keyEl])
-                 
-             }  */
-            /* if(this.errorsData[keyEl] !== undefined && this.errorsData[keyEl][type] !== undefined){
-                 delete this.errorsData[keyEl][type]
-                 this.errorsData[keyEl] = this.cleanObject(this.errorsData[keyEl])
-                 console.log('new obj 1', this.errorsData[keyEl])
-                 if(Object.keys(this.errorsData[keyEl]).length == 0) {
-                     delete this.errorsData[keyEl]
-                     this.errorsData = this.cleanObject(this.errorsData)
-                     console.log('new obj 2', this.errorsData)
-                 }
-                 
-             }  */
+
          },
 
         cleanObject(obj) {
@@ -270,23 +265,59 @@ export default {
          validateElement(key, subkey = false){
              let keyEl = subkey ? key+'.'+subkey:key
              let value = subkey ? this.modelHolder[key][subkey]:this.modelHolder[key]
-             if(this.getElementDefinition(keyEl)!== undefined && this.isVisible(this.getElementDefinition(keyEl))) {
-                if(this.isEmptyValue(value)){
-                     console.log('set error for', keyEl)
-                     this.setError(keyEl,'required')
-                     return false
-                }else{
-                    console.log('clear error for', keyEl,  typeof value, value)
-                    this.clearError(keyEl,'required')
+             let elDefinition = this.getElementDefinition(keyEl)
+             let hasError = false
+             if(elDefinition!== undefined && this.isVisible(elDefinition)) {
+                if(elDefinition.validation !== undefined){
+                    for (let i = 0; i < elDefinition.validation.length; i++) {
+                        const validationType = elDefinition.validation[i]
+                        if(this.validateType(validationType, value)){
+                            this.setError(keyEl,validationType)
+                            hasError = true
+                            //return false
+                        }else{
+                            this.clearError(keyEl,validationType)
+                        }
+                    }
                 }
                 
             }
-            return true
+            return !hasError
+         },
+         validateType(type, value){
+             switch (type) {
+                 case 'required':
+                     return this.isEmptyValue(value)
+                 case 'required2':
+                     return this.isEmptyValue(value)
+             }
          },
          runValidation(){
 
              //this.errorsData = {}
+             //console.log('runvaldiation mholder', this.modelHolder)
+             const modelKeys = Object.keys(this.modelHolder)
+             this.isValid = true
+             for (let i = 0; i < modelKeys.length; i++) {
+                 const key = modelKeys[i]
+                 
+                 if(key == 'options'){
+                     for (let j = 0; j < Object.keys(this.modelHolder[key]).length; j++) {
+                         const subkey = Object.keys(this.modelHolder[key])[j]
+                         if(!this.validateElement(key, subkey)){
+                            this.isValid = false
+                        }
+                     }
+
+                }else{
+                    if(!this.validateElement(key)){
+                        this.isValid = false
+                    }
+                }
+             }
+/* 
              for (const key in this.modelHolder) {
+                 //console.log('runvaldiation key', key)
                  if (this.modelHolder.hasOwnProperty(key) ) {
                      
                      if(key == 'options'){
@@ -304,8 +335,8 @@ export default {
                      }
                      
                  }
-             }
-             this.isValid = true
+             } */
+             
          },
          verifyModel(){
             for (const key in this.schema) {
@@ -334,6 +365,9 @@ export default {
                 return obj;
             }, {})
         },
+        wasActive(model){
+            if(this.activated_fields.indexOf(model) === -1)this.activated_fields.push(model)
+        },
         changedValue(newVal, model){
             this.setModelValue(newVal, model)
             if(this.pendingValidation === false){
@@ -341,7 +375,7 @@ export default {
             }
         },
         runningValidation(){
-
+            this.visibles = []
             this.runValidation()
             this.testFormReady()
             
@@ -378,17 +412,25 @@ export default {
              
             
         },
+        getDefaultCasted(element){
+            let defaultVal = element.default !== undefined ? element.default:''
+            
+            return defaultVal 
+        },
         defineModelEntry(element){
-            this.modelHolder[element.model] = new element.cast 
+            let castType = element.cast
+            let defaultVal = element.default !== undefined ? element.default:''
+            this.modelHolder[element.model] = this.getDefaultCasted(element)
         },
         defineSubModelEntry(element, myarr){
             if(Array.isArray(this.modelHolder[myarr[0]])) this.modelHolder[myarr[0]] = undefined
             if(this.modelHolder[myarr[0]] === undefined ) this.modelHolder[myarr[0]] = new Object
-            this.modelHolder[myarr[0]][myarr[1]] = new element.cast 
+            this.modelHolder[myarr[0]][myarr[1]] = this.getDefaultCasted(element)
         },
         getFormComponent(element){
             let fieldsTypes = {
                 'input' : 'FormFieldInput',
+                'checkbox' : 'FormFieldCheckbox',
                 'file' : 'FormFieldFile',
                 'editor' : 'FormFieldEditor',
                 'prices' : 'FormFieldPrices',
@@ -398,9 +440,10 @@ export default {
                 'address' : 'FormFieldAddress',
                 'duration' : 'FormFieldDuration',
                 'countryselector' : 'FormFieldCountrySelector',
+                'imageselect' : 'FormFieldImageSelect',
             }
 
-            fieldsTypes = window.wappointmentExtends.filter( 'FormGeneratorFieldsTypes', fieldsTypes, {mixins: AbstractField, components:{LabelMaterial} } )
+            fieldsTypes = window.wappointmentExtends.filter( 'FormGeneratorFieldsTypes', fieldsTypes, {mixins: [AbstractField], components:{LabelMaterial} } )
 
             return fieldsTypes[element.type]!== undefined ? fieldsTypes[element.type]:'FormFieldInput'
         }

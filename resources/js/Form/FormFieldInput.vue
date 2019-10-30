@@ -2,7 +2,7 @@
     <div>
         <LabelMaterial>
             <input type="text" class="form-control" :class="{'is-invalid':hasErrors}" :id="id" 
-            aria-describedby="emailHelp" :placeholder="label" 
+            @focusout="$emit('activated')" :placeholder="label" 
             v-model="updatedValue">
         </LabelMaterial>
         <div class="small text-danger" v-if="hasErrors">

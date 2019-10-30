@@ -4,7 +4,8 @@
             {{ label}}
         </div>
         <div>
-            <CountrySelector required :selected="value" @selected="selectedCountries" :hasErrors="hasErrors"></CountrySelector>
+            <CountrySelector required :selected="value" @selected="selectedCountries" :hasErrors="hasErrors"
+            @activated="$emit('activated')"></CountrySelector>
         </div>
         <div class="small text-danger" v-if="hasErrors">
             <div v-for="error in errors">

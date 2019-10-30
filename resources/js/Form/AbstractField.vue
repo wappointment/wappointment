@@ -3,6 +3,13 @@ export default {
     props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors'],
     watch: {
         updatedValue(newVal, oldVal){
+            if(this.definition!==undefined && this.definition.liveParse !== undefined) {
+                const parsedVal = this.definition.liveParse(newVal)
+                if(newVal != parsedVal){
+                    setTimeout(this.updateValueDelay.bind(null,parsedVal), 100);
+                }
+                
+            }
             return this.$emit(this.eventEmit, newVal, this.model)
         }
     },
@@ -19,6 +26,11 @@ export default {
     mounted(){
         if(this.waitForScript === false) this.$emit('loaded')
         this.id = this._uid
+    },
+    methods: {
+        updateValueDelay(newVal){
+            this.updatedValue = newVal
+        }
     },
     computed:{
         hasErrors(){

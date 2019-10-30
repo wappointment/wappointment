@@ -49,14 +49,13 @@ class Status
         return (int) WPHelpers::getOption('wizard_step') < 0 || (int) WPHelpers::getOption('wizard_step') == self::$last_step;
     }
 
-    public static function updatePages()
+    public static function newUpdates()
     {
-        $versions = ['1.1.1', '1.1.0'];
         $viewed_updates_until = self::viewedUpdates();
         $toView = [];
-        foreach ($versions as $version) {
+        foreach (self::allVersionsWithUpdates() as $version) {
             if (empty($viewed_updates_until) || version_compare($version, $viewed_updates_until) > 0) {
-                $toView[] = ['version' => $version, 'changes' => call_user_func(get_called_class() . '::' . 'version' . str_replace('.', '_', $version))];
+                $toView[] = self::getVersionUpdates($version);
             } else {
                 return $toView;
             }
@@ -64,29 +63,57 @@ class Status
         return $toView;
     }
 
+    public static function allUpdates()
+    {
+        $toView = [];
+        foreach (self::allVersionsWithUpdates() as $version) {
+            $toView[] = self::getVersionUpdates($version);
+        }
+        return $toView;
+    }
+
+    public static function getVersionUpdates($version)
+    {
+        return [
+            'version' => $version,
+            'changes' => call_user_func(
+                get_called_class() . '::' . 'version' . str_replace('.', '_', $version)
+            )
+        ];
+    }
+
+    public static function allVersionsWithUpdates()
+    {
+        return ['1.2.0', '1.1.0'];
+    }
+
+    public static function version1_2_0()
+    {
+        return [
+            [
+                'title' => 'Booking Button widget can float',
+                'images' => [
+                    ['src' => 'set_floating_button.gif', 'alt' => 'Tick option in widget'],
+                    ['src' => 'front_floating_button.gif', 'alt' => 'Frontend Button floats'],
+                ]
+            ],
+        ];
+    }
+
     public static function version1_1_0()
     {
         return [
             [
                 'title' => 'Change staff providing services',
-                'img' => 'change_staff.gif'
+                'images' => [
+                    ['src' => 'change_staff.gif']
+                ]
             ],
             [
                 'title' => 'Change staff picture',
-                'img' => 'change_staff_picture.gif'
-            ],
-            [
-                'title' => 'Calendar back to staff\'s Timezone',
-                'img' => 'calendar_back_staff_timezone.gif'
-            ]
-        ];
-    }
-    public static function version1_1_1()
-    {
-        return [
-            [
-                'title' => 'Bug fix',
-                'img' => 'change_staff.gif'
+                'images' => [
+                    ['src' => 'change_staff_picture.gif']
+                ]
             ],
         ];
     }

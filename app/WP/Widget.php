@@ -20,7 +20,7 @@ class Widget extends \WP_Widget
         return [
             'title' => 'Book an appointment',
             'button_title' => 'Book now!',
-            'br_fixed' => false,
+            'brc_floats' => false,
         ];
     }
     public function widget($args, $instance)
@@ -28,7 +28,7 @@ class Widget extends \WP_Widget
         if (empty($instance)) {
             $instance = self::getDefaultInstance();
         }
-        $brfixed = (!empty($instance['br_fixed'])) ? true : false;
+        $brfixed = (!empty($instance['brc_floats'])) ? true : false;
         $widget_html = '';
         $widget_html .= $args['before_widget'];
         if (!empty($instance['title']) && !$brfixed) {
@@ -47,7 +47,7 @@ class Widget extends \WP_Widget
         }
 
         $title = !empty($instance['title']) ? $instance['title'] : '';
-        $br_fixed = !empty($instance['br_fixed']) ? (bool) $instance['br_fixed'] : false;
+        $brc_floats = !empty($instance['brc_floats']) ? (bool) $instance['brc_floats'] : false;
 
         ?>
         <p>
@@ -67,8 +67,8 @@ class Widget extends \WP_Widget
 
                 ?>
         <p>
-            <input class="checkbox" type="checkbox" <?php checked($br_fixed); ?> id="<?php echo $this->get_field_id('br_fixed'); ?>" name="<?php echo $this->get_field_name('br_fixed'); ?>" />
-            <label for="<?php echo $this->get_field_id('br_fixed'); ?>"><?php echo 'Fixed button at the bottom right of the screen' ?></label>
+            <input class="checkbox" type="checkbox" <?php checked($brc_floats); ?> id="<?php echo $this->get_field_id('brc_floats'); ?>" name="<?php echo $this->get_field_name('brc_floats'); ?>" />
+            <label for="<?php echo $this->get_field_id('brc_floats'); ?>"><?php echo 'Floats in the bottom right corner' ?></label>
         </p>
 <?php
     }
@@ -78,7 +78,7 @@ class Widget extends \WP_Widget
         $instance = $old_instance;
         $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
         $instance['button_title'] = (!empty($new_instance['button_title'])) ? strip_tags($new_instance['button_title']) : '';
-        $instance['br_fixed'] = (!empty($new_instance['br_fixed'])) ? true : false;
+        $instance['brc_floats'] = (!empty($new_instance['brc_floats'])) ? true : false;
         return $instance;
     }
 }

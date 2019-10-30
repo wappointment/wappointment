@@ -35,6 +35,7 @@ export default {
   data() {
       return {
           viewName: 'regav',
+          reload:false
       } 
   },
   computed: {
@@ -54,12 +55,17 @@ export default {
         this.settingStaffSave('timezone', selectedTimezone)
     },
     updateStaff(selectedStaff){
+        this.reload = true
         this.settingSave('activeStaffId', selectedStaff)
     },
 
     afterSuccess(result) {
         //console.log('regav after success')
-        if(result.config.data.indexOf('timezone')!==-1) this.refreshInitValue()
+        if(result.config.data.indexOf('timezone')!==-1 || this.reload) {
+            this.refreshInitValue()
+            this.reload = false
+        }
+        
     }
   }  
 }

@@ -23,6 +23,7 @@ class Alerts
 
     public static function error($message, $details = '', $pages = [])
     {
+
         self::record('error', self::setupMessage($message, $details), $pages);
     }
 
@@ -47,15 +48,14 @@ class Alerts
 
         foreach (self::get() as $type => $messagesGroup) {
             $group = '';
+
             foreach ($messagesGroup as $message) {
-                if (in_array((get_current_screen())->parent_base, $message['pages'])) {
-                    $group .= '<p>' . nl2br($message['message']) . '</p>';
-                }
+                $group .= '<p>' . nl2br($message['message']) . '</p>';
             }
             if (!empty($group)) {
-                $finalMessages .= sprintf('<div class="notice notice-%1$s">
-                <div class="notice-' . WAPPOINTMENT_SLUG . '"><span class="notice-logo">A</span></div>
-                <div class="notice-text">%2$s</div>
+                $finalMessages .= sprintf('<div class="d-flex align-items-center notice notice-%1$s">
+                <div class="notice-' . WAPPOINTMENT_SLUG . '"><span class="dashicons-before dashicons-wappointment text-primary"></span></div>
+                <div class="ml-2 notice-text">%2$s</div>
                 <div class="clear"></div>
                 </div>', $type, $group);
             }
@@ -63,17 +63,18 @@ class Alerts
         echo $finalMessages;
     }
 
-    private static function get()
+    protected static function get()
     {
+
         return self::$messages;
     }
 
-    private static function record($type, $message, $pages = [])
+    protected static function record($type, $message, $pages = [])
     {
         self::$messages[$type][] = ['message' => $message, 'pages' => $pages];
     }
 
-    private static function setupMessage($message, $details)
+    protected static function setupMessage($message, $details)
     {
         $message = sprintf(
             '%s ',

@@ -59,7 +59,7 @@ export default {
         },
         selectMedia(element){
             this.selected = element.id
-            this.$emit('selected', this.selected)
+            this.$emit('selected', this.selected, element)
         },
         isSelected(element){
             return this.selected == element.id

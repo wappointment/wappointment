@@ -14,12 +14,12 @@ class InitBackend
         if ($addons_activated) new \Wappointment\Services\Wappointment\VersionCheck;
         add_action('admin_init', [$this, 'enqueueMin']);
         add_action('admin_menu', [$this, 'registerMenuRoot']);
-        add_action('admin_notices', ['\Wappointment\WP\Alerts', 'display']);
         if ($isInstalledAndUpdated) {
             add_action('admin_menu', [$this, 'registerMenuSubs']);
         }
         if (WPHelpers::isPluginPage()) {
             add_action('admin_init', [$this, 'enqueueBackendPlugin']);
+            add_action('admin_notices', ['\Wappointment\WP\Alerts', 'display']);
         }
     }
 
@@ -46,7 +46,7 @@ class InitBackend
         wp_register_script(WAPPOINTMENT_SLUG . '_backend_menu', Helpers::assetUrl('js/backend_menu.js'), [], null, true);
         wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', WAPPOINTMENT_SLUG . 'Admin', [
             'wizardStep' => Status::wizardStep(),
-            'updatePages' => Status::updatePages(),
+            'updatePages' => Status::newUpdates(),
             'helloIgnore' => Status::helloPage(),
             'days' => Status::installedForXDays(),
         ]);

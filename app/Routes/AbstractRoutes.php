@@ -34,8 +34,9 @@ abstract class AbstractRoutes
                     if (!class_exists($controller_name)) {
                         continue;
                     }
+                    $apiVersion = empty($controller_method_args['version']) ? 'v1' : $controller_method_args['version'];
                     register_rest_route(
-                        WAPPOINTMENT_SLUG . '/v1',
+                        WAPPOINTMENT_SLUG . '/' . $apiVersion,
                         $route,
                         [
                             'methods' => $http_method,

@@ -371,6 +371,9 @@ export default {
 .booking-widget-editor{
     min-height: 300px;
 }
+.booking-widget-editor .wapmodal-content.large {
+    width: 60%;
+}
 .biggerPop .booking-widget-editor{
     position: absolute;
 }
