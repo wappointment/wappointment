@@ -26,7 +26,10 @@ export default {
             type: String,
             default: ''
         },
-        classW:'',
+        classW: {
+            type: String,
+            default: ''
+        },
         typeAdvanced: {
             type: Boolean,
             default: true
@@ -54,7 +57,7 @@ export default {
     created(){
         if(this.wizard === true) this.initSave = true
         this.timezone = this.defaultTimezone == ''? momenttz.tz.guess():this.defaultTimezone
-        if(this.classW!=='') this.classWrapper = this.classW
+        if(this.classW!='') this.classWrapper = this.classW
     },
     methods:{
         backToStaffTimezone(){

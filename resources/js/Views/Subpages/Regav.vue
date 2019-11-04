@@ -7,8 +7,8 @@
         </div>
         
         <p class="h6 text-muted">2 - Define the timezone in which you are operating</p>
-        <TimeZones v-if="viewData" :wizard="noback" :timezones="viewData.timezones_list" 
-        :defaultTimezone="viewData.timezone" @updateTimezone="updateTimezone" typeClass="btn btn-outline-primary"></TimeZones>
+        <TimeZones v-if="viewData" classW="d-flex" :wizard="noback" :timezones="viewData.timezones_list" 
+        :defaultTimezone="viewData.timezone" @updateTimezone="updateTimezone" typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control"></TimeZones>
         <hr>
         <div v-if="hasRegav">
             <p class="h6 text-muted">3 - Drag and drop the times you want to open for appointments</p>

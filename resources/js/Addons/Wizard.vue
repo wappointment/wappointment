@@ -26,7 +26,7 @@ export default {
     data() {
         return {
             currentStep: false,
-            addons: window.wappointmentExtends.filter('AddonsActive', {} )
+            addons: window.wappointmentExtends.filter('AddonsActive', window.wappointmentAdmin.addons )
         }
     },
     created(){

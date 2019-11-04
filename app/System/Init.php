@@ -86,10 +86,6 @@ class Init
         $return .= '/* <![CDATA[ */ ' . "\n";
         $return .= 'var apiWappointment = ' . json_encode($variables) . ";\n";
         $return .= 'var widgetWappointment = ' . json_encode((new \Wappointment\Services\WidgetSettings)->get()) . ";\n";
-        if (is_admin()) {
-            $return .= 'var addonsWappointment = ' . json_encode(\Wappointment\Services\Addons::getActive()) . ";\n";
-        }
-
         $return .= apply_filters('wappointment_js_vars', '');
         $return .= '/* ]]> */ ' . "\n";
 

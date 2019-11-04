@@ -71,8 +71,8 @@
                 <span  v-if="canSubmit" class="btn-primary btn flex-fill mr-0" @click="confirm">{{options.form.confirm}}</span>
                 <span v-else class="btn-primary btn disabled flex-fill mr-0" disabled>{{options.form.confirm}}</span>
             </div>
+            <CountryStyle/>
         </div>
-        <CountryStyle/>
     </transition>
 </template>
 

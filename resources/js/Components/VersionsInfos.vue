@@ -3,20 +3,20 @@
       <SlideIn @viewed="viewed" @closed="closed" :show_already="show_already">
           <template slot="intro">
                 <Count>{{changesCount}}</Count>
-                <span class="text-dark">new changes</span> 
+                <span class="text-dark">new features</span> 
                 <span class="dashicons-before dashicons-wappointment text-primary"></span> 
           </template>
           <template slot="modal-title">What's new in the latest versions</template>
           <template slot="modal-body">
              
             <div  v-for="versionObj in versions">
-                <h3>Changes in version {{ versionObj.version }}</h3>
+                <h3>Updates in version {{ versionObj.version }}</h3>
                 <div class="my-3" v-for="change in versionObj.changes">
                     <h6>{{ change.title }}</h6>
                     <div class="d-flex flex-wrap">
-                        <div v-for="image in change.images" class="mr-2 mb-2">
-                            <img class="img-thumbnail" :src="getImageLink(image.src)" :alt="image.alt">
-                            <div class="img-caption">{{ image.alt }}</div>
+                        <div v-for="(image, idx) in change.images" class="mr-2 mb-2 img-thumbnail">
+                            <img :src="getImageLink(image.src)" :class="{'img-no-caption':hasCaption(image,change.images.length)}" :alt="image.alt">
+                            <div v-if="hasCaption(image,change.images.length)" class="img-caption">{{ idx+1 }} - {{ image.alt }}</div>
                         </div>
                     </div>
                 </div>
@@ -73,6 +73,9 @@ export default {
         }
     },
     methods: {
+        hasCaption(image, countImages){
+            return image.alt !== undefined && countImages > 1
+        },
         closed(){
             this.$emit('closed')
         },
@@ -94,6 +97,14 @@ export default {
     border: 1px solid #d3d3d3;
     border-radius: .4rem;
     box-shadow: 0 .01rem .6rem 0 rgba(197, 37, 211, 0.15);
+}
+
+.img-thumbnail img{
+    border-radius: .4rem;
+}
+.img-thumbnail img.img-no-caption {
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
 }
 .img-caption{
     text-align: center;

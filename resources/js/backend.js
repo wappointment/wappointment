@@ -7,6 +7,10 @@ import StickyBar from './Components/StickyBar'
 import RingLoader from './Components/Loaders/Ring'
 import WLoader from './Components/Loaders/BigCalendar'
 import VueService from './Plugins/vue-service'
+import changeWPmenu from './Standalone/changeWPmenu'
+import parseQuery from './Standalone/parseQuery'
+window.wappoChangeWPmenu = changeWPmenu
+
 
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
@@ -139,7 +143,6 @@ const router = window.wappointmentrouter = new VueRouter({
                 component: SettingsPage
             }
             
-            
           ]
       },
 
@@ -147,25 +150,12 @@ const router = window.wappointmentrouter = new VueRouter({
   linkActiveClass: 'active',
 })
 
-window.changeWpMenuActiveLink = function (pagename) {
 
-  jQuery(function($){
-    $('#toplevel_page_wappointment_calendar li.current, #toplevel_page_wappointment_calendar li a.current').removeClass('current')
-    let testpagename = pagename
-    if(['general','reminders', 'notifications', 'advanced', 'addonstab'].indexOf(testpagename) !== -1){
-      testpagename = 'wappointment_settings'
-    }
-    let menuIndex = ['wappointment_calendar','wappointment_settings', 'wappointment_addons', 'wappointment_help' ].indexOf(testpagename) + 2
-      $('#toplevel_page_wappointment_calendar ul.wp-submenu li:nth-child('+menuIndex+') , #toplevel_page_wappointment_calendar ul.wp-submenu li:nth-child('+menuIndex+') a')
-      .addClass('current')
-  });
-  
-};
 
 router.beforeEach((to, from, next) => {
   if(to.query.page!== undefined && to.query.page.indexOf('wappointment_')!==-1){
     if(['wappointment_calendar', 'wappointment_settings'].indexOf(to.query.page) !== -1 && to.hash.indexOf('#/') !== -1){
-            next({ name: to.hash.replace('#/','')})
+          next({ name: to.hash.replace('#/','')})
         }else{
           if(to.path == window.apiWappointment.base_admin && to.query.page=='wappointment_calendar' && to.query.start !== undefined){
             //we save the query parameters for later use start, end , timezone
@@ -175,12 +165,25 @@ router.beforeEach((to, from, next) => {
 
         }
     } else{
-        changeWpMenuActiveLink(to.name)
+        window.wappoChangeWPmenu(to.name)
         next()
     }
 
   })
 
+  window.jQuery(function($){
+    $('.wappointmentLink').click(function(e){
+      let pagename =  e.currentTarget.getAttribute('data-pagename')
+      router.push({ name: pagename })
+      window.wappoChangeWPmenu(pagename)
+      if (e.stopPropagation) e.stopPropagation()
+      if (e.preventDefault) e.preventDefault()
+      return false
+    })
+    
+  });
+
+  
 const app = new Vue({
   router,
   el: '#wappointment_app',
@@ -203,8 +206,7 @@ const app = new Vue({
         if(parseInt(wappointmentAdmin.updatePage) === 1){
             router.push({ name: 'wappointment_update'})
         }else{
-            let result = wap_parse_query_string(window.location.search.replace('?',''))
-
+            let result = parseQuery(window.location.search.replace('?',''))
             if(result.page !== undefined && result.page.startsWith('wappointment_')) {
                 if(result.page == 'wappointment_settings') {
                     if(result.page == 'wappointment_settings' && window.location.hash.indexOf('#/') !== -1){
@@ -228,24 +230,4 @@ const app = new Vue({
   render: h => h(App)
 })
 
-function wap_parse_query_string(query) {
-    var vars = query.split("&");
-    var query_string = {};
-    for (var i = 0; i < vars.length; i++) {
-      var pair = vars[i].split("=");
-      var key = decodeURIComponent(pair[0]);
-      var value = decodeURIComponent(pair[1]);
-      // If first entry with this name
-      if (typeof query_string[key] === "undefined") {
-        query_string[key] = decodeURIComponent(value);
-        // If second entry with this name
-      } else if (typeof query_string[key] === "string") {
-        var arr = [query_string[key], decodeURIComponent(value)];
-        query_string[key] = arr;
-        // If third or later entry with this name
-      } else {
-        query_string[key].push(decodeURIComponent(value));
-      }
-    }
-    return query_string;
-  }
+

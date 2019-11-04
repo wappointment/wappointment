@@ -99,6 +99,7 @@ export default {
 <style>
 .wap-wid{
     max-width: 300px;
+    min-width: 200px;
 }
 .wap-wid .loader {
     min-height: 68px;

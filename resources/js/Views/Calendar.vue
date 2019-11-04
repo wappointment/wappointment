@@ -279,18 +279,8 @@ export default {
 
  watch: {
       bookingForm: {
-          handler: function(newValue) {
-              this.errorsOnFields = {}
-              if(newValue.email!== undefined && newValue.email.length > 4 && newValue.email.indexOf('@')!== -1 && this.prevEmail != newValue.email){
-                this.searchClient(newValue.email)
-                this.prevEmail = newValue.email
-              }
-
-              if(isEmpty(newValue.name) ) this.errorsOnFields.name = true
-              if(isEmpty(newValue.email) || !isEmail(newValue.email)) this.errorsOnFields.email = true
-              if(this.phoneSelected && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
-              if(this.skypeSelected && (isEmpty(newValue.skype) || !this.skypeValid)) this.errorsOnFields.skype = true
-
+          handler: function(newValue){
+            this.changedFormValue(newValue)
           },
           deep: true
       },
@@ -428,6 +418,20 @@ export default {
     },
  },
   methods: {
+    changedFormValue(newValue) {
+        this.errorsOnFields = {}
+        if(newValue.email!== undefined && newValue.email.length > 4 && newValue.email.indexOf('@')!== -1 && this.prevEmail != newValue.email){
+          this.searchClient(newValue.email)
+          this.prevEmail = newValue.email
+        }
+
+        if(isEmpty(newValue.name) ) this.errorsOnFields.name = true
+        if(isEmpty(newValue.email) || !isEmail(newValue.email)) this.errorsOnFields.email = true
+        if(this.phoneSelected && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
+        if(this.skypeSelected && (isEmpty(newValue.skype) || !this.skypeValid)) this.errorsOnFields.skype = true
+
+    },
+    
     hasError(field){
         if(this.bookingForm[field] === '') return ''
         if(this.errorsOnFields[field] !== undefined && this.errorsOnFields[field]===true) return 'is-invalid'
@@ -439,7 +443,9 @@ export default {
     },
     selectingAppointmentType(type){
       this.bookingForm.type=type
+      
       this.selectedAppointmentType = type
+      this.changedFormValue(this.bookingForm)
     },
     canShowDropdown(){
       if(this.clientsResults.length > 0){

@@ -13,18 +13,22 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
     {
         $this->capsule = Database::capsule();
 
-        $this->migrationRepo = new \Illuminate\Database\Migrations\DatabaseMigrationRepository($this->capsule->getDatabaseManager(), Database::$prefix_self . '_migrations');
+        $this->migrationRepo = new \Illuminate\Database\Migrations\DatabaseMigrationRepository(
+            $this->capsule->getDatabaseManager(),
+            Database::$prefix_self . '_migrations'
+        );
 
         if (!$this->migrationRepo->repositoryExists()) {
             $this->migrationRepo->createRepository();
         }
     }
 
-    public function migrate()
+    public function migrate($migrations_folder = false)
     {
+        $migrations_folder = $migrations_folder === false ? WAPPOINTMENT_PATH . 'database' . DIRECTORY_SEPARATOR . 'migrations' : $migrations_folder;
         $filesys = new \Illuminate\Filesystem\Filesystem();
         $migrator = new \Illuminate\Database\Migrations\Migrator($this->migrationRepo, $this->capsule->getDatabaseManager(), $filesys);
-        $migrator->run([WAPPOINTMENT_PATH . 'database' . DIRECTORY_SEPARATOR . 'migrations']);
+        $migrator->run([$migrations_folder]);
         $migrationCreator = new \Illuminate\Database\Migrations\MigrationCreator($filesys);
     }
 }

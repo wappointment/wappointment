@@ -1,16 +1,16 @@
 <template>
   <div>
-    <div v-if="!isActive" @click="makeActive(true)" class="clickable" :class="typeClass">
+    <div v-if="!isActive" @click="makeActive(true)" class="clickable d-flex align-items-center" :class="typeClass">
         <span class="dashicons dashicons-admin-site-alt3"></span> 
-        <span v-if="value">{{ displaySelectedElement }}</span> 
-        <span class="dashicons dashicons-arrow-down-alt2" ></span>
+        <span class="mr-2" v-if="value">{{ displaySelectedElement }}</span> 
+        <div :class="arrowDownClass" ></div>
     </div>
     <div v-click-outside="makeInactive" class="elementsContainer" v-else>
         <div class="d-flex align-items-center input-group-sm">
             <LabelMaterial >
                 <input ref="searchfield" type="text" v-model="search" class="form-control" :placeholder="placeHolderLabel"> 
             </LabelMaterial>
-            <span class="dashicons dashicons-arrow-up-alt2 clickable" @click="makeInactive"></span>
+            <span :class="arrowUpClass" @click="makeInactive"></span>
         </div>
         <div v-if="hasGroup" class="dropElements">
             <div v-if="search!=''">

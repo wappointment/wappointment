@@ -1,5 +1,5 @@
 <template>
-    <div class="card cardb p-2 px-3  d-flex flex-row justify-content-between" @click="$emit('click')">
+    <div class="card cardb d-flex flex-row justify-content-between" @click="$emit('click')">
         <span class="h5 my-1">
             <span v-if="is_set" class="dashicons dashicons-yes text-success" ></span> 
             <span v-else class="dashicons dashicons-no text-danger" ></span> 
@@ -29,3 +29,21 @@ export default {
     }
 }   
 </script>
+<style>
+    .card{
+        max-width: none;
+        border-radius: .225rem;
+        border-color: #e8e8e8;
+        padding: .5rem !important;
+    }
+    .card.cardb:hover  {
+        background-color:#f8f8f8;
+        cursor:pointer;
+    }
+    .card .hidden{
+        display: none;
+    }
+    .card:hover .hidden{
+        display: block;
+    }
+</style>

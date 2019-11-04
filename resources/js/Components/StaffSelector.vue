@@ -1,5 +1,5 @@
 <template>
-    <div v-if="staffLoaded" class="form-group p-0 col-sm-4 col-lg-3 m-0">
+    <div v-if="staffLoaded">
         <span v-if="this.staffs.length == 1">{{ displayElementFunc(staffs[0]) }}</span>
         <SearchStaff v-else v-model="staffId" :ph="labelDefault" :elements="staffs" 
             idKey="ID" labelSearchKey="display_name" :displayElement="displayElementFunc"></SearchStaff>

@@ -66,13 +66,17 @@ export default {
       settingsAddons
     },
 
-    created() {
-        if(this.tabs[this.$router.currentRoute.name] !== undefined) {
-            this.activeTab = this.$router.currentRoute.name
+    computed: {
+        activePage(){
+            this.activeTab = this.$route.name
+            return this.$route.name
         }
-        if(window.addonsWappointment !== undefined && Object.keys(window.addonsWappointment).length > 0) {
+    },
+    created() {
+         if(window.wappointmentAdmin.addons !== undefined && Object.keys(window.wappointmentAdmin.addons).length > 0) {
             this.tabs['addonstab'] = { label: 'Addons'}
         }
+       this.activeTab = this.$route.name
     },
 
     methods: {
@@ -80,7 +84,6 @@ export default {
             return (key==this.activeTab)
         },
         changeTab(selectedTab){
-            this.activeTab = selectedTab
             this.$router.push({name: selectedTab})
         },       
     }  
@@ -93,20 +96,6 @@ export default {
 
 .updated.error ol{
   margin-top: 1rem;
-}
-.card{
-  max-width: none;
-
-}
-.card.cardb:hover  {
-  background-color:#f8f8f8;
-  cursor:pointer;
-}
-.card .hidden{
-  display: none;
-}
-.card:hover .hidden{
-  display: block;
 }
 </style>
 

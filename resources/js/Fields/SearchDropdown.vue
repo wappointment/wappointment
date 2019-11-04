@@ -11,7 +11,7 @@
                     <span class="close" @click.prevent.stop="selectElement(getElement(val))"></span>
                 </span>
             </span>
-            <span  v-else>
+            <span class="mr-2" v-else>
                 {{ displayElementFunc(getElement(value)) }}
             </span>
         </div>

@@ -93,8 +93,8 @@ class Status
             [
                 'title' => 'Booking Button widget can float',
                 'images' => [
-                    ['src' => 'set_floating_button.gif', 'alt' => 'Tick option in widget'],
-                    ['src' => 'front_floating_button.gif', 'alt' => 'Frontend Button floats'],
+                    ['src' => 'set_floating_button.gif', 'alt' => 'Tick option in Appearance > Widgets'],
+                    ['src' => 'front_floating_button.gif', 'alt' => 'Button floats in the frontend'],
                 ]
             ],
         ];

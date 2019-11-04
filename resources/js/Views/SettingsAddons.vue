@@ -31,7 +31,7 @@ export default {
       viewName: 'settingsaddons',
       viewData: [],
       activeAddonKey: '',
-      addons: window.wappointmentExtends.filter('AddonsActive', {} )
+      addons: window.wappointmentExtends.filter('AddonsActive', window.wappointmentAdmin.addons )
     };
   },
   computed:{

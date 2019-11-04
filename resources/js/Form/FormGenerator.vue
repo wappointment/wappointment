@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="submitTrigger" class="form-wrap" :class="classWrapper">
+    <form @submit.prevent="submitTrigger" class="form-wrapppo" :class="classWrapper">
         <div v-if="!formIsReady" class="loading-overlay d-flex align-items-center">
             <WLoader></WLoader>
         </div>
@@ -451,9 +451,12 @@ export default {
 }
 </script>
 <style>
-.form-wrap{
+.form-wrapppo{
     border-radius: .8rem;
     position:relative;
+}
+.form-wrapppo p{
+    font-size: 1rem;
 }
 .loading-overlay{
     position: absolute;
