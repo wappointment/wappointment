@@ -55,6 +55,10 @@ class InitBackend
                 'days' => Status::installedForXDays(),
                 'addons' =>  \Wappointment\Services\Addons::getActive()
             ]);
+
+            if (Status::hasPendingUpdates()) {
+                $varJs['hasPendingUpdates'] = true;
+            }
         }
         wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', WAPPOINTMENT_SLUG . 'Admin', $varJs);
 
@@ -69,11 +73,11 @@ class InitBackend
             // Gutenberg is not active.
             return;
         }
-        wp_register_script(WAPPOINTMENT_SLUG . 'block-gutenberg', Helpers::assetUrl('js/gutenberg/block-gutenberg.js'), ['wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor'], null, true);
+        /*  wp_register_script(WAPPOINTMENT_SLUG . 'block-gutenberg', Helpers::assetUrl('js/gutenberg/block-gutenberg.js'), ['wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor'], null, true);
         wp_enqueue_script(WAPPOINTMENT_SLUG . 'block-gutenberg');
 
         register_block_type('gutenberg-examples/example-01-basic', [
             'editor_script' => 'block-gutenberg',
-        ]);
+        ]); */
     }
 }

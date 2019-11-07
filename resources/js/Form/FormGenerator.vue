@@ -9,7 +9,7 @@
                     <div class="form-group"  v-for="(subelement, skeydi) in element.fields" 
                     :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
                         <div :class="{'d-none': visibles.indexOf(subelement.model) === -1}">
-                            <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)"
+                            <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" :parentModel="modelHolder"
                             @loaded="loadedField(keydi, skeydi)"
                             v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement.model)" :definition="subelement" :errors="getErrors(subelement)" />
                         </div>
@@ -17,7 +17,7 @@
                 </div>
                 <div v-else class="form-group"  :style="getStyle(element)" :class="getRowEachClass(element)">
                     <div :class="{'d-none': visibles.indexOf(element.model) === -1}">
-                        <component :is="getFormComponent(element)" :value="getModelValue(element)"
+                        <component :is="getFormComponent(element)" :value="getModelValue(element)" :parentModel="modelHolder"
                     @loaded="loadedField(keydi)" :errors="getErrors(element)"
                     v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element.model)" :definition="element"/>
                     </div>
@@ -26,6 +26,7 @@
             </template>
             <slot></slot>
             <div>
+                <button v-if="backbutton" class="btn btn-secondary" type="button" @click.prevent="$emit('back')">{{ backbuttonLabel }}</button>
                 <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent="submitTrigger">{{ buttonLabel }}</button>
             </div>
         </div>
@@ -48,6 +49,9 @@ import FormFieldSelect from './FormFieldSelect'
 import FormFieldCheckImages from './FormFieldCheckImages'
 import FormFieldImageSelect from './FormFieldImageSelect'
 
+let allComponents = {FormFieldInput, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
+        FormFieldStatus,FormFieldFile, FormFieldSelect,FormFieldCheckImages,
+        FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect}
 import DotKey from '../Modules/DotKey'
 export default {
     mixins: [DotKey],
@@ -87,10 +91,15 @@ export default {
             type: Boolean,
             default: false
         },
+        backbutton: {
+            type: Boolean,
+            default: false
+        },
+        backbuttonLabel: {
+            type: String,
+        },
     },
-    components: {FormFieldInput, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
-        FormFieldStatus,FormFieldFile, FormFieldSelect,FormFieldCheckImages,
-        FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect},
+    components: allComponents,
     data: () => ({
         modelHolder: {},
         isValid: false,
@@ -443,7 +452,7 @@ export default {
                 'imageselect' : 'FormFieldImageSelect',
             }
 
-            fieldsTypes = window.wappointmentExtends.filter( 'FormGeneratorFieldsTypes', fieldsTypes, {mixins: [AbstractField], components:{LabelMaterial} } )
+            fieldsTypes = window.wappointmentExtends.filter( 'FormGeneratorFieldsTypes', fieldsTypes, {mixins: [AbstractField], components:{LabelMaterial}, allComponents:allComponents } )
 
             return fieldsTypes[element.type]!== undefined ? fieldsTypes[element.type]:'FormFieldInput'
         }

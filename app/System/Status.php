@@ -8,6 +8,7 @@ class Status
 {
     public static $version = WAPPOINTMENT_VERSION;
     private static $last_step = 4;
+    private static $db_version_required = '1.2.0';
 
     public static function isInstalled()
     {
@@ -24,10 +25,28 @@ class Status
         return round((time() - self::installationTime()) / (60 * 60 * 24));
     }
 
+    public static function dbVersion()
+    {
+        return WPHelpers::getOption('db_version');
+    }
+
     public static function hasPendingUpdates()
+    {
+        $current_version = self::dbVersion();
+        return version_compare($current_version, self::$db_version_required) < 0;
+    }
+
+    public static function dbVersionUpdateComplete()
+    {
+        return WPHelpers::setOption('db_version', self::$db_version_required);
+    }
+
+    public static function hasCorePendingUpdates()
     {
         return false;
     }
+
+
 
     public static function viewedUpdates()
     {

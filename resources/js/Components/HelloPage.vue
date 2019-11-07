@@ -148,7 +148,7 @@ export default {
     },
    
     created(){
-        if(window.wappointmentAdmin.updatePages.length > 0 ){
+        if(window.wappointmentAdmin.updatePages !== undefined && window.wappointmentAdmin.updatePages.length > 0 ){
             this.versions = window.wappointmentAdmin.updatePages
         }
         if(window.wappointmentAdmin.helloIgnore != '') this.helloIgnore = window.wappointmentAdmin.helloIgnore

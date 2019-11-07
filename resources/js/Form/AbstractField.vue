@@ -1,6 +1,6 @@
 <script>
 export default {
-    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors'],
+    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel'],
     watch: {
         updatedValue(newVal, oldVal){
             if(this.definition!==undefined && this.definition.liveParse !== undefined) {

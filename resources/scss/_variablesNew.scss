@@ -350,6 +350,7 @@ $table-cell-padding-sm:       .3rem !default;
 $table-color:                 $body-color !default;
 $table-bg:                    transparent !default;
 $table-accent-bg:             rgba($black, .05) !default;
+$table-hover-color:           $table-color !default;
 $table-hover-bg:              rgba($black, .075) !default;
 $table-hover-bg:              rgba($black, .075) !default;
 $table-active-bg:             $table-hover-bg !default;
@@ -374,7 +375,6 @@ $table-caption-color:         $text-muted !default;
 
 $table-bg-level:              -9 !default;
 $table-border-level:          -6 !default;
-
 
 // Buttons + Forms
 //

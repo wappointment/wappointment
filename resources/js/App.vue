@@ -1,9 +1,14 @@
 <template>
     <transition name="fade" mode="out-in">
       <div class="wappointment-wrap">
-          <HelloPage></HelloPage>
-          <VersionsInfos></VersionsInfos>
-          <router-view></router-view>
+          <div v-if="!db_update">
+              <HelloPage />
+              <VersionsInfos />
+          </div>
+          <div v-else>
+              <PendingDBUpdate />
+          </div>
+          <router-view />
       </div>
     </transition>
 </template>
@@ -11,8 +16,17 @@
 <script>
 import VersionsInfos from './Components/VersionsInfos'
 import HelloPage from './Components/HelloPage'
+import PendingDBUpdate from './Components/PendingDBUpdate'
 export default {
-    components: {VersionsInfos, HelloPage},
+    components: {VersionsInfos, HelloPage, PendingDBUpdate},
+    data: () => ({
+        db_update: false,
+    }),
+    created(){
+        if(window.wappointmentAdmin.hasPendingUpdates!== undefined ){
+            this.db_update = true
+        }
+    },
 }
 </script>
 <style scoped>

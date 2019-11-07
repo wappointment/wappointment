@@ -11,7 +11,7 @@ class Appointment extends Model
     protected $table = 'wappo_appointments';
 
     protected $fillable = [
-        'start_at', 'end_at', 'edit_key', 'client_id', 'status', 'type', 'staff_id', 'service_id', 'options'
+        'start_at', 'end_at', 'edit_key', 'client_id', 'status', 'type', 'staff_id', 'service_id', 'options', 'location_id'
     ];
     protected $casts = [
         'options' => 'array',

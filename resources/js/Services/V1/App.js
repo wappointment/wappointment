@@ -15,6 +15,10 @@ export default class AppService extends ApiV1{
                 method: 'post',
                 route: 'wizard',
             },
+            migrate: {
+                method: 'post',
+                route: 'app/migrate',
+            },
         };
     }
 

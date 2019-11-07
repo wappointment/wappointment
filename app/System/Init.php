@@ -33,7 +33,7 @@ class Init
 
     private function isInstalledAndUpdated()
     {
-        return (Status::isInstalled() && !Status::hasPendingUpdates());
+        return (Status::isInstalled() && !Status::hasCorePendingUpdates());
     }
 
     public function initNotInstalled()

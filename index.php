@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
  * Plugin Name: Wappointment
  * Version: 1.2.0
  * Plugin URI: https://wappointment.com
- * Description: The reliable Appointment booking manager to get booked simply
+ * Description: The reliable Appointment booking manager to get new clients simply
  * Author: Wappointment
  * Requires at least: 4.7
  * Tested up to: 5.3

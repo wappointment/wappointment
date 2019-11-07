@@ -7,7 +7,7 @@
             <span class="nav-link" :class="{'active' : isActive(key)}" @click="changeTab(key)">{{ tab.label }}</span>
         </li>
     </ul>
-    <div class="tab-content" id="myTabContent">
+    <div class="tab-content" id="myTabContent" :data-active-page="activePage">
         <div class="tab-pane fade" :class="{'show active' : isActive('general')}" v-if="isActive('general')">
             <settingsGeneral></settingsGeneral>
         </div>
@@ -68,7 +68,7 @@ export default {
 
     computed: {
         activePage(){
-            this.activeTab = this.$route.name
+            this.recordActiveTab()
             return this.$route.name
         }
     },
@@ -76,10 +76,14 @@ export default {
          if(window.wappointmentAdmin.addons !== undefined && Object.keys(window.wappointmentAdmin.addons).length > 0) {
             this.tabs['addonstab'] = { label: 'Addons'}
         }
-       this.activeTab = this.$route.name
+        this.recordActiveTab()
     },
 
     methods: {
+        recordActiveTab(){
+            let atab = this.$route.name
+            this.activeTab = atab
+        },
         isActive(key){
             return (key==this.activeTab)
         },

@@ -15,14 +15,27 @@ class Database extends \Wappointment\Installation\MethodsRunner
 
         return true;
     }
-
+    protected function testResults($results)
+    {
+        $newresults = [];
+        foreach ($results as $key => $value) {
+            if (is_string($value)) {
+                $newresults[] = $value;
+            } else {
+                foreach ($value as $key => $val) {
+                    $newresults[] = $val;
+                }
+            }
+        }
+        return $newresults;
+    }
     protected function canInstallAndRun()
     {
 
         $testPrivileges = ['CREATE', 'DELETE', 'INSERT', 'UPDATE'];
         try {
             $db = \Wappointment\Config\Database::capsule()->getConnection('default');
-            $results = $db->select('SHOW GRANTS;');
+            $results = $this->testResults($db->select('SHOW GRANTS;'));
 
             foreach ($results as $res) {
                 if (strpos($res, 'GRANT ') !== false) {

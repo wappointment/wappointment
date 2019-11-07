@@ -3,7 +3,7 @@
     <div  v-if="dataLoaded">
       <div>
           <BreadCrumbs v-if="crumbs.length>0" :crumbs="crumbs" @click="goTo"/>
-          <component v-if="currentView !== false" :is="currentView" :key="subCompKey" :subview="subview" @updateCrumb="updateCrumb"></component>
+          <component v-if="currentView !== false" :is="currentView" :key="subCompKey" :subview="subview" v-bind="dynamicProps" @updateCrumb="updateCrumb"></component>
           <div class="reduced" v-else>
               <LargeButton @click="goToRegav" label="Weekly availability" :is_set="viewData.is_availability_set" ></LargeButton>
 
@@ -115,9 +115,23 @@ import EditCancelPage from './Subpages/EditCancelPage'
 import LargeButton from '../Components/LargeSettingsButton'
 import BreadCrumbs from '../Components/BreadCrumbs'
 import RequestMaker from '../Modules/RequestMaker'
+import AbstractListing from './AbstractListing'
+
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faMapMarkedAlt, faPhone, faCalendarCheck } from '@fortawesome/free-solid-svg-icons'
+import { faSkype} from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+
+library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck)
 export default {
   extends: abstractView,
-  components: window.wappointmentExtends.filter('SettingsGeneralComponents', { Service, Regav, Widget , EditCancelPage, LargeButton, BreadCrumbs}, {extends: abstractView, mixins: [RequestMaker]} ),
+  components: window.wappointmentExtends.filter('SettingsGeneralComponents', { 
+    Service, Regav, Widget , EditCancelPage, LargeButton, BreadCrumbs, AbstractListing, FontAwesomeIcon
+    }, 
+    {
+      extends: abstractView, 
+      mixins: [RequestMaker]
+    } ),
 
   data() {
     return {
@@ -129,6 +143,7 @@ export default {
       showEditPage: false,
       currentView: false,
       subview: '',
+      dynamicProps: {},
       serviceBtnLabel: window.wappointmentExtends.filter('serviceBtnLabel', 'Service setup' ),
       crumbs: [],
       isToggled: {
@@ -177,9 +192,10 @@ export default {
       this.currentView = false
       this.crumbs = []
     },
-    updateCrumb(crumbs, subview = '') {
+    updateCrumb(crumbs, subview = '', props = {}) {
       this.crumbs = crumbs  
       this.subview = subview
+      this.dynamicProps = props
     },
 
     goToRegav() {

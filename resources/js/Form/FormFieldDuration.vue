@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex">
+    <div class="d-flex w-100">
         <range-slider
             class="slider"
             :min="definition.min"
@@ -9,7 +9,7 @@
             :maxlength="definition.max"
             :readonly="definition.readonly">
         </range-slider> 
-        <input type="text" v-model="formatedValue" readonly="readonly" size="5">
+        <small>{{ formatedValue }}</small>
         <small id="emailHelp" v-if="tip" class="form-text text-muted">{{ tip }}</small>
     </div>
 </template>

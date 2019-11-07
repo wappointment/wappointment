@@ -1,7 +1,7 @@
 <template>
     <div>
         <FormGenerator ref="formgenerator" :schema="schemaParsed" :data="modelHolder" 
-        @submit="save" :errors="errorsPassed" :key="formKey" labelButton="Save">
+        @submit="save" @back="$emit('back')" :errors="errorsPassed" :key="formKey" labelButton="Save" v-bind="extraOptions">
         </FormGenerator>
     </div>
 
@@ -14,7 +14,7 @@ import abstractView from '../Abstract'
 export default {
   extends: abstractView,
   components:{FormGenerator},
-  props:['dataPassed'],
+  props:['dataPassed', 'servicesService', 'extraOptions'],
   data() {
       return {
           
@@ -101,6 +101,7 @@ export default {
     if(this.dataPassed!== undefined){
        this.modelHolder = Object.assign({}, this.dataPassed)
     }
+    
   },
   computed: {
 
@@ -114,7 +115,12 @@ export default {
   },
   methods: {
     initMethod(){
-      this.serviceService = this.$vueService(new ServiceService)
+      if(this.servicesService!==undefined){
+        this.serviceService = this.servicesService
+      }else{
+        this.serviceService = this.$vueService(new ServiceService)
+      }
+      
 
     },
 

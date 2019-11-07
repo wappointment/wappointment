@@ -81,6 +81,10 @@ class Main extends AbstractRoutes
                 ],
             ],
             'POST' => [
+                '/app/migrate' => [
+                    'method' => 'migrate',
+                    'controller' => 'AppController',
+                ],
                 '/wappointment/subscribe' => [
                     'method' => 'subscribe',
                     'controller' => 'WappointmentController',

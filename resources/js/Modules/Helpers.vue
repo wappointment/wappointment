@@ -12,6 +12,9 @@ export default {
       }, 
       async sleep(milliseconds) {
         return new Promise(resolve => setTimeout(resolve, milliseconds))
+      },
+      cleanObject(ObjectToClean) {
+        return Object.entries(ObjectToClean).reduce((a,[k,v]) => (v === undefined ? a : {...a, [k]:v}), {})
       }
     }
 }

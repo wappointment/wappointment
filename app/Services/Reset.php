@@ -4,13 +4,16 @@ namespace Wappointment\Services;
 
 use Wappointment\Config\Database;
 use Wappointment\WP\Helpers as WPHelpers;
-use Wappointment\System\Installation;
 use Wappointment\WP\Scheduler as WPScheduler;
+use Wappointment\ClassConnect\Capsule;
 
 class Reset
 {
     public function __construct()
     {
+
+        do_action('wappointment_reset');
+
         $this->removeStaffSettings();
 
         $this->dropTables();
@@ -18,8 +21,6 @@ class Reset
         $this->removeCoreSettings();
 
         WPScheduler::clearScheduler();
-
-        //$this->reInstallApplication();
     }
 
     private function removeStaffSettings()
@@ -38,14 +39,9 @@ class Reset
 
     private function dropTables()
     {
-        \Illuminate\Database\Capsule\Manager::schema()->dropIfExists(Database::$prefix_self . '_appointments');
-        \Illuminate\Database\Capsule\Manager::schema()->dropIfExists(Database::$prefix_self . '_statuses');
-        \Illuminate\Database\Capsule\Manager::schema()->dropIfExists(Database::$prefix_self . '_reminders');
-        \Illuminate\Database\Capsule\Manager::schema()->dropIfExists(Database::$prefix_self . '_clients');
-        \Illuminate\Database\Capsule\Manager::schema()->dropIfExists(Database::$prefix_self . '_jobs');
-        \Illuminate\Database\Capsule\Manager::schema()->dropIfExists(Database::$prefix_self . '_failed_jobs');
-        \Illuminate\Database\Capsule\Manager::schema()->dropIfExists(Database::$prefix_self . '_logs');
-        \Illuminate\Database\Capsule\Manager::schema()->dropIfExists(Database::$prefix_self . '_migrations');
+        $migrate = new \Wappointment\Installation\Migrate();
+        $migrate->rollback();
+        Capsule::schema()->dropIfExists(Database::$prefix_self . '_migrations');
     }
 
     private function removeCoreSettings()
@@ -62,10 +58,5 @@ class Reset
         WPHelpers::deleteOption('installation_step');
 
         Settings::delete();
-    }
-
-    private function reInstallApplication()
-    {
-        new Installation();
     }
 }

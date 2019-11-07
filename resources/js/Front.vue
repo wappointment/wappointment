@@ -101,6 +101,9 @@ export default {
     max-width: 300px;
     min-width: 200px;
 }
+.br-fixed .wap-wid .btn-booking{
+  float:right;
+}
 .wap-wid .loader {
     min-height: 68px;
 }

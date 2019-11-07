@@ -48,7 +48,7 @@ export default {
             this.viewName = 'all_versions_changes'
             this.refreshInitValue()
         }else{
-            if(window.wappointmentAdmin.updatePages.length > 0 ){
+            if(window.wappointmentAdmin.updatePages!== undefined && window.wappointmentAdmin.updatePages.length > 0 ){
                 this.versions = window.wappointmentAdmin.updatePages
             }
         }

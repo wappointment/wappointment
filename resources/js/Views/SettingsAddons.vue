@@ -1,7 +1,6 @@
 <template>
   <div >
       <div class="reduced">
-
           <div v-for="(addon, addonkey) in addons" class="card cardb p-2 px-3 d-flex flex-row justify-content-between" @click="editAddonSettings(addonkey)">
                 <span class="h5 my-1">
                   <span class="dashicons dashicons-admin-generic text-muted"></span>
