@@ -57,6 +57,8 @@ class Reset
         WPHelpers::deleteOption('installation_completed');
         WPHelpers::deleteOption('installation_step');
 
+        WPHelpers::deleteOption('db_version');
+
         Settings::delete();
     }
 }

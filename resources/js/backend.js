@@ -3,6 +3,7 @@ import Vue from './appVue'
 import VueRouter from 'vue-router'
 import App from './App'
 import VueWapModal from './Plugins/vue-wap-modal'
+import FormGenerator from './Form/FormGenerator'
 import StickyBar from './Components/StickyBar'
 import RingLoader from './Components/Loaders/Ring'
 import WLoader from './Components/Loaders/BigCalendar'
@@ -10,7 +11,6 @@ import VueService from './Plugins/vue-service'
 import changeWPmenu from './Standalone/changeWPmenu'
 import parseQuery from './Standalone/parseQuery'
 window.wappoChangeWPmenu = changeWPmenu
-
 
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
@@ -20,6 +20,7 @@ Vue.component('v-style', {
       return createElement('style', this.$slots.default)
   }
 });
+Vue.component('WAPFormGenerator', FormGenerator)
 Vue.component('StickyBar', StickyBar)
 Vue.component('RingLoader', RingLoader)
 Vue.component('WLoader', WLoader)

@@ -6,7 +6,7 @@
         <div class="d-flex">
             <div v-for="(item, idx) in images" :key="idx" @click="onChanged(item)"  
             class="btn btn-secondary btn-cell" :class="{'is-invalid':hasErrors, selected: isItemChecked(item)}">
-                <FontAwesomeIcon :icon="item.icon" size="lg"/>
+                <FontAwesomeIcon v-if="item.icon !== undefined" :icon="item.icon" size="lg"/>
                 <div>{{ item.name }}</div>
             </div>
         </div>

@@ -2,12 +2,18 @@
     <div class="picture-edit">
         <div @click="changePicture" class="text-center mr-2 preview-fimage">
             <div class="fimage-edit">
-                <img v-if="src_image" :src="src_image" class="img-fluid rounded" width="40">
+                <img v-if="hasImage" :src="updatedValue.src" class="img-fluid rounded" width="40">
                 <i v-else class="dashicons dashicons-format-image"></i>
                 <span class="small text-primary" href="javascript:;">edit</span>
             </div>
         </div>
         <div v-if="edit" class="fimage-selection">
+            <div v-if="hasImage">
+                <div class="fimage-edit" >
+                    <img :src="updatedValue.src" class="img-fluid rounded" width="40">
+                </div>
+                <a class="btn btn-link" href="javascript:;" @click="clearImage">Clear</a>
+            </div>
             <span class="close close-gallery" @click="close"></span>
             <div class="gallery">
                 <hr>
@@ -37,14 +43,20 @@ export default {
     data() {
         return {
             edit: false,
-            selectedId: false,
-            src_image:  ''
         } 
     },
     created(){
-        if(this.src)    this.src_image = this.src
+        if(this.src)    this.updatedValue.src = this.src
+    },
+    computed:{
+        hasImage(){
+            return this.updatedValue !== undefined && this.updatedValue.src !== undefined
+        }
     },
     methods:{
+        clearImage(){
+            this.updatedValue = ''
+        },
         changePicture(){
             this.edit = true
         },
@@ -53,14 +65,14 @@ export default {
             this.edit = false
         },
         selectedFromGallery(id, element){
-            this.updatedValue = id
+            let wp_image = {wp_id: id, src: this.updatedValue.src }
             if(element.media_details!== undefined && element.media_details.sizes.thumbnail!== undefined){
-                this.src_image = element.media_details.sizes.thumbnail.source_url
+                wp_image.src = element.media_details.sizes.thumbnail.source_url
             }
+            this.updatedValue = wp_image
         },
         selectImage(){
             this.close()
-            this.selectedId = false
         }
     },
 

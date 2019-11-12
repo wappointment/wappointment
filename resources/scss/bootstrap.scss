@@ -56,11 +56,11 @@
     text-align: center;
     padding: .4rem;
     border-radius: .8rem;
-    margin-right: 1rem;
+    cursor:pointer;
+    margin: 0 .5rem;
+    width: 130px;
 }
-.field-wrap .btn.btn-secondary.btn-cell {
-    margin-right: 1rem;
-}
+
 /*Plugins/vue-form-fields/fields-bsSlider*/
 .range-slider-inner .range-slider-fill {
     background-color: $primary;

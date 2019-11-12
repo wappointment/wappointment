@@ -57,7 +57,7 @@ class WidgetSettings
             'header' => 'Confirm Appointment',
             'byskype' => 'By Skype',
             'byphone' => 'By Phone',
-            'inperson' => 'In Person',
+            'inperson' => 'At a Location',
             'fullname' => 'Full Name:',
             'email' => 'E-mail:',
             'phone' => 'Phone:',
@@ -186,7 +186,8 @@ class WidgetSettings
         $this->merged_settings = empty($this->db_settings) ? $this->default() : $this->merge($this->default(), $this->db_settings);
         //$this->merged_settings = $this->merge($this->settings, $this->db_settings);
     }
-    public function default()
+    public function
+    default()
     {
         return apply_filters('wappointment_widget_settings_default', $this->settings);
     }

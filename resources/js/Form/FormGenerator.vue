@@ -9,7 +9,7 @@
                     <div class="form-group"  v-for="(subelement, skeydi) in element.fields" 
                     :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
                         <div :class="{'d-none': visibles.indexOf(subelement.model) === -1}">
-                            <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" :parentModel="modelHolder"
+                            <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" :parentErrors="errorsData" :parentModel="modelHolder"
                             @loaded="loadedField(keydi, skeydi)"
                             v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement.model)" :definition="subelement" :errors="getErrors(subelement)" />
                         </div>
@@ -17,7 +17,7 @@
                 </div>
                 <div v-else class="form-group"  :style="getStyle(element)" :class="getRowEachClass(element)">
                     <div :class="{'d-none': visibles.indexOf(element.model) === -1}">
-                        <component :is="getFormComponent(element)" :value="getModelValue(element)" :parentModel="modelHolder"
+                        <component :is="getFormComponent(element)" :value="getModelValue(element)" :parentErrors="errorsData" :parentModel="modelHolder"
                     @loaded="loadedField(keydi)" :errors="getErrors(element)"
                     v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element.model)" :definition="element"/>
                     </div>
@@ -35,6 +35,7 @@
 
 <script>
 import AbstractField from './AbstractField'
+import RequestMaker from '../Modules/RequestMaker'
 import LabelMaterial from '../Fields/LabelMaterial'
 import FormFieldInput from './FormFieldInput'
 import FormFieldCheckbox from './FormFieldCheckbox'
@@ -452,7 +453,7 @@ export default {
                 'imageselect' : 'FormFieldImageSelect',
             }
 
-            fieldsTypes = window.wappointmentExtends.filter( 'FormGeneratorFieldsTypes', fieldsTypes, {mixins: [AbstractField], components:{LabelMaterial}, allComponents:allComponents } )
+            fieldsTypes = window.wappointmentExtends.filter( 'FormGeneratorFieldsTypes', fieldsTypes, {mixins: [AbstractField,RequestMaker], components:{LabelMaterial}, allComponents:allComponents } )
 
             return fieldsTypes[element.type]!== undefined ? fieldsTypes[element.type]:'FormFieldInput'
         }

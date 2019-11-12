@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :class="getClassWrapper">
         <LabelMaterial>
             <input type="text" class="form-control" :class="{'is-invalid':hasErrors}" :id="id" 
             @focusout="$emit('activated')" :placeholder="label" 

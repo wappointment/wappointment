@@ -1,6 +1,6 @@
 <script>
 export default {
-    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel'],
+    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors'],
     watch: {
         updatedValue(newVal, oldVal){
             if(this.definition!==undefined && this.definition.liveParse !== undefined) {
@@ -33,6 +33,9 @@ export default {
         }
     },
     computed:{
+        getClassWrapper(){
+            return this.definition.classWrapper !== undefined ? this.definition.classWrapper:{}
+        },
         hasErrors(){
             return this.errors !== undefined && Object.keys(this.errors).length > 0
         }

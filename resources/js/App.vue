@@ -104,6 +104,32 @@ export default {
     color: #66b36d;
 }
 
+.slide-fade-top-enter-active{
+  transition: all .3s ease;
+}
+
+.slide-fade-top-leave-active{
+  transition: all .1s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.slide-fade-top-enter, .slide-fade-top-leave-to {
+  transform: translateY(-100px);
+  opacity: 0;
+}
+
+.fade-enter-active{
+  transition: all .3s ease;
+}
+
+.fade-leave-active{
+  transition: all .1s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.fade-enter, .fade-leave-to {
+  opacity: 0;
+  transform:scaleY(0)
+}
+
 @media (max-width: 769px) { 
     
     .auto-fold #wpcontent{
