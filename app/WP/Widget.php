@@ -2,7 +2,7 @@
 
 namespace Wappointment\WP;
 
-class Widget extends \WP_Widget
+class Widget extends WidgetAbstract
 {
     public function __construct()
     {
@@ -15,18 +15,21 @@ class Widget extends \WP_Widget
         $brFixedString = !empty($brfixed) ? 'data-brfixed="true"' : '';
         return '<div class="wappointment_widget" data-button-title="' . esc_attr($button_title) . '" ' . $brFixedString . '></div>';
     }
-    protected static function getDefaultInstance()
+
+
+    protected static function formDefinition()
     {
-        return [
-            'title' => 'Book an appointment',
-            'button_title' => 'Book now!',
-            'brc_floats' => false,
+        $definition = [
+            'title' => ['type' => 'text', 'label' => 'Title', 'default' => 'Book an appointment'],
+            'button_title' => ['type' => 'text', 'label' => 'Button text', 'default' => (new \Wappointment\Services\WidgetSettings)->get()['button']['title']],
+            'brc_floats' => ['type' => 'checkbox', 'label' => 'Floats in the bottom right corner', 'default' => false],
         ];
+        return apply_filters('wappointment_booking_widget_form_fields', $definition);
     }
     public function widget($args, $instance)
     {
         if (empty($instance)) {
-            $instance = self::getDefaultInstance();
+            $instance = static::getDefaultInstance();
         }
         $brfixed = (!empty($instance['brc_floats'])) ? true : false;
         $widget_html = '';
@@ -34,7 +37,7 @@ class Widget extends \WP_Widget
         if (!empty($instance['title']) && !$brfixed) {
             $widget_html .= $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
         }
-        $widget_html .= self::baseHtml($instance['button_title'], $brfixed);
+        $widget_html .= static::baseHtml($instance['button_title'], $brfixed);
         $widget_html .= $args['after_widget'];
 
         echo $widget_html;
@@ -42,43 +45,13 @@ class Widget extends \WP_Widget
 
     public function form($instance)
     {
+
         if (empty($instance)) {
-            $instance = self::getDefaultInstance();
+            $instance = static::getDefaultInstance();
         }
 
-        $title = !empty($instance['title']) ? $instance['title'] : '';
-        $brc_floats = !empty($instance['brc_floats']) ? (bool) $instance['brc_floats'] : false;
+        $form = new \Wappointment\Services\Forms($this->fillFormDefinition(static::formDefinition(), $instance));
 
-        ?>
-        <p>
-            <label for="<?php echo esc_attr($this->get_field_id('title')); ?>"><?php echo 'Title'; ?></label>
-            <input class="widefat" id="<?php echo esc_attr($this->get_field_id('title')); ?>" name="<?php echo esc_attr($this->get_field_name('title')); ?>" type="text" value="<?php echo esc_attr($title); ?>">
-        </p>
-
-        <?php
-                $title = !empty($instance['button_title']) ? $instance['button_title'] : (new \Wappointment\Services\WidgetSettings)->get()['button']['title'];
-
-                ?>
-        <p>
-            <label for="<?php echo esc_attr($this->get_field_id('button_title')); ?>"><?php echo 'Button text'; ?></label>
-            <input class="widefat" id="<?php echo esc_attr($this->get_field_id('button_title')); ?>" name="<?php echo esc_attr($this->get_field_name('button_title')); ?>" type="text" value="<?php echo esc_attr($title); ?>">
-        </p>
-        <?php
-
-                ?>
-        <p>
-            <input class="checkbox" type="checkbox" <?php checked($brc_floats); ?> id="<?php echo $this->get_field_id('brc_floats'); ?>" name="<?php echo $this->get_field_name('brc_floats'); ?>" />
-            <label for="<?php echo $this->get_field_id('brc_floats'); ?>"><?php echo 'Floats in the bottom right corner' ?></label>
-        </p>
-<?php
-    }
-
-    public function update($new_instance, $old_instance)
-    {
-        $instance = $old_instance;
-        $instance['title'] = (!empty($new_instance['title'])) ? strip_tags($new_instance['title']) : '';
-        $instance['button_title'] = (!empty($new_instance['button_title'])) ? strip_tags($new_instance['button_title']) : '';
-        $instance['brc_floats'] = (!empty($new_instance['brc_floats'])) ? true : false;
-        return $instance;
+        echo $form->getHtml();
     }
 }

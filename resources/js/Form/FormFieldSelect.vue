@@ -1,8 +1,8 @@
 <template>
     <div>
-        <label >{{ label }}</label>
+        <label v-if="label" >{{ label }}</label>
         <SearchDropdown v-model="updatedValue" :ph="labelDefault" :elements="elements" 
-             :idKey="idKey" :labelSearchKey="labelSearchKey"></SearchDropdown>
+             :idKey="idKey" :labelSearchKey="labelSearchKey" :flexWrap="flexWrap"></SearchDropdown>
     </div>
 </template>
 
@@ -27,6 +27,10 @@ export default {
         elements: {
             type: Array,
         },
+        flexWrap: {
+            type:Boolean,
+            default:false
+        }
     },
 }
 </script>

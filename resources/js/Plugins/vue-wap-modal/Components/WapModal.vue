@@ -103,26 +103,26 @@ export default {
     height:100%;
 }
 
-.wapmodal-content .close {
+.wapmodal-content .wapmodal-header .close {
   width: 32px;
   height: 32px;
   opacity: .3;
   cursor:pointer;
 }
-.wapmodal-content .close:hover {
+.wapmodal-content .wapmodal-header .close:hover {
   opacity: 1;
 }
-.wapmodal-content .close:before, .wapmodal-content .close:after {
+.wapmodal-content .wapmodal-header .close:before, .wapmodal-content .wapmodal-header .close:after {
   content: ' ';
   height: 33px;
   width: 4px;
   position: absolute;
   background-color: #fff;
 }
-.wapmodal-content .close:before {
+.wapmodal-content .wapmodal-header .close:before {
   transform: translateX(15px) rotate(45deg);
 }
-.wapmodal-content .close:after {
+.wapmodal-content .wapmodal-header .close:after {
   transform: translateX(15px) rotate(-45deg);
 }
 

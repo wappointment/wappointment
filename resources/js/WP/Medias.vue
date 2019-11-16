@@ -2,7 +2,7 @@
     <div >
         <div v-if="elements.length > 0" class="d-flex flex-wrap">
             <div v-for="element in elements" class="media-cell" :class="[isSelected(element)?'selected':'']" @click="selectMedia(element)">
-                <MediaPreview :element="element"></MediaPreview>
+                <MediaPreview :element="element" :selected="selectedImage"></MediaPreview>
             </div>
         </div>
         <div v-else>
@@ -31,6 +31,10 @@ export default {
             type: String,
             default: 'image'
         },
+        selectedImage:{
+            type: Number,
+            default: 0
+        }
 
     },
     data() {

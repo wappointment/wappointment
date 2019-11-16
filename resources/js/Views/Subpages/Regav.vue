@@ -1,17 +1,18 @@
 <template>
     <div v-if="dataLoaded">
-        <p class="h6 text-muted">1 - Select the staff providing the service</p>
+        <p class="h6 text-muted"><span class="bullet-wap">1</span> <span class="bullet-title"> Select the staff providing the service</span></p>
         <div v-if="viewData" class="d-flex align-items-center mb-2">
             <StaffPicture :src="viewData.activeStaffAvatar" :gravatar="viewData.activeStaffGravatar" @changed="changed"></StaffPicture>
             <StaffSelector :staffs="viewData.staffs" :activeStaffId="viewData.activeStaffId" @updateStaff="updateStaff"></StaffSelector>
         </div>
         
-        <p class="h6 text-muted">2 - Define the timezone in which you are operating</p>
+        <p class="h6 text-muted"><span class="bullet-wap">2</span> <span class="bullet-title"> Define the timezone in which you are operating</span></p>
         <TimeZones v-if="viewData" classW="d-flex" :wizard="noback" :timezones="viewData.timezones_list" 
         :defaultTimezone="viewData.timezone" @updateTimezone="updateTimezone" typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control"></TimeZones>
         <hr>
         <div v-if="hasRegav">
-            <p class="h6 text-muted">3 - Drag and drop the times you want to open for appointments</p>
+            <p class="h6 text-muted">
+                <span class="bullet-wap">3</span> <span class="bullet-title"> Drag and drop the times you want to open for appointments</span></p>
             <RegularAvailability :initValue="viewData.regav" @updatedDays="updatedRA"></RegularAvailability>
         </div>
     </div>
@@ -70,4 +71,33 @@ export default {
   }  
 }
 </script>
+<style >
+.bullet-title{
+    color: #777;
 
+border-bottom: 1px solid #c2c1cc;
+}
+.bullet-wap{
+    border: 1px solid var(--primary);
+
+padding: .35rem;
+
+border-radius: 1.2rem;
+
+height: 2rem;
+
+width: 2rem;
+
+display: inline-block;
+
+text-align: center;
+
+font-size: 1rem;
+
+color: var(--primary);
+
+margin-right: .5rem;
+
+background-color: #fff;
+}
+</style>

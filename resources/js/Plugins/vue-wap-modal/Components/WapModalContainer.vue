@@ -134,6 +134,9 @@ export default {
     failRequest(e){
       this.show = false
       this.pReject(e)
+      if(this.finalCallback!== null){
+        this.finalCallback(e)
+      }
     },
     confirm(options){
       this.options = options

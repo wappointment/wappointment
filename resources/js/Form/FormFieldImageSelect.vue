@@ -8,16 +8,16 @@
             </div>
         </div>
         <div v-if="edit" class="fimage-selection">
-            <div v-if="hasImage">
+            <div class="d-flex align-items-center" v-if="hasImage">
                 <div class="fimage-edit" >
                     <img :src="updatedValue.src" class="img-fluid rounded" width="40">
                 </div>
-                <a class="btn btn-link" href="javascript:;" @click="clearImage">Clear</a>
+                <a class="btn btn-secondary btn-xs" href="javascript:;" @click="clearImage">Clear</a>
             </div>
             <span class="close close-gallery" @click="close"></span>
             <div class="gallery">
                 <hr>
-                <WPMedias @selected="selectedFromGallery"></WPMedias>
+                <WPMedias @selected="selectedFromGallery" :selectedImage="selectedImage"></WPMedias>
                 <div class="bg-white pt-3">
                     <button class="btn btn-secondary" @click.prevent="close">Close</button>
                 </div>
@@ -51,6 +51,9 @@ export default {
     computed:{
         hasImage(){
             return this.updatedValue !== undefined && this.updatedValue.src !== undefined
+        },
+        selectedImage(){
+            return this.updatedValue !== undefined && this.updatedValue.wp_id !== undefined ? this.updatedValue.wp_id:false
         }
     },
     methods:{
@@ -70,6 +73,7 @@ export default {
                 wp_image.src = element.media_details.sizes.thumbnail.source_url
             }
             this.updatedValue = wp_image
+            this.close()
         },
         selectImage(){
             this.close()

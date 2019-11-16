@@ -38,6 +38,7 @@ import AbstractField from './AbstractField'
 import RequestMaker from '../Modules/RequestMaker'
 import LabelMaterial from '../Fields/LabelMaterial'
 import FormFieldInput from './FormFieldInput'
+import FormFieldInputs from './FormFieldInputs'
 import FormFieldCheckbox from './FormFieldCheckbox'
 import FormFieldDuration from './FormFieldDuration'
 import FormFieldAddress from './FormFieldAddress'
@@ -50,7 +51,7 @@ import FormFieldSelect from './FormFieldSelect'
 import FormFieldCheckImages from './FormFieldCheckImages'
 import FormFieldImageSelect from './FormFieldImageSelect'
 
-let allComponents = {FormFieldInput, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
+let allComponents = {FormFieldInput,FormFieldInputs, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
         FormFieldStatus,FormFieldFile, FormFieldSelect,FormFieldCheckImages,
         FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect}
 import DotKey from '../Modules/DotKey'
@@ -440,6 +441,7 @@ export default {
         getFormComponent(element){
             let fieldsTypes = {
                 'input' : 'FormFieldInput',
+                'inputs' : 'FormFieldInputs',
                 'checkbox' : 'FormFieldCheckbox',
                 'file' : 'FormFieldFile',
                 'editor' : 'FormFieldEditor',

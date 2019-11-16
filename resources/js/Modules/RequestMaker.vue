@@ -1,21 +1,51 @@
 <script>
+if(window.wapRequests === undefined) {
+  window.wapRequests = []
+  window.wapRunning = false
+}
 export default {
-
   methods: {
-      request(serviceRequest, params, finalCallback = undefined, staff = false, successCallback = false, failureCallback = false){
-        if(this.beforeRequest !== undefined) this.beforeRequest()
-        
-        if(!successCallback &&  !failureCallback){
-          this.$WapModal().request(serviceRequest(params, staff), finalCallback).then(this.successRequest).catch(this.failedRequest)
-        }else if(!successCallback &&  failureCallback!==false){
-          this.$WapModal().request(serviceRequest(params, staff), finalCallback).then(this.successRequest).catch(failureCallback)
-        }else if(successCallback!==false &&  !failureCallback){
-          this.$WapModal().request(serviceRequest(params, staff), finalCallback).then(successCallback).catch(this.failedRequest)
+      queueExecuteOne(){
+        if(window.wapRunning === false){
+          
+          window.wapRunning = window.wapRequests.shift()
+          if(this.beforeRequest !== undefined) this.beforeRequest()
+          
+          if(!window.wapRunning.successCallback &&  !window.wapRunning.failureCallback){
+            this.$WapModal().request(window.wapRunning.serviceRequest(window.wapRunning.params, window.wapRunning.staff), this.finalCallbackWrapper).then(this.successRequest).catch(this.failedRequest)
+          }else if(!window.wapRunning.successCallback &&  window.wapRunning.failureCallback!==false){
+            this.$WapModal().request(window.wapRunning.serviceRequest(window.wapRunning.params, window.wapRunning.staff), this.finalCallbackWrapper).then(this.successRequest).catch(window.wapRunning.failureCallback)
+          }else if(window.wapRunning.successCallback!==false &&  !window.wapRunning.failureCallback){
+            this.$WapModal().request(window.wapRunning.serviceRequest(window.wapRunning.params, window.wapRunning.staff), this.finalCallbackWrapper).then(window.wapRunning.successCallback).catch(this.failedRequest)
+          }else{
+            this.$WapModal().request(window.wapRunning.serviceRequest(window.wapRunning.params, window.wapRunning.staff), this.finalCallbackWrapper).then(window.wapRunning.successCallback).catch(window.wapRunning.failureCallback)
+          }
         }else{
-          this.$WapModal().request(serviceRequest(params, staff), finalCallback).then(successCallback).catch(failureCallback)
+          //waiting turn
+          console.log('waiting turn')
+        }  
+      },
+      finalCallbackWrapper(data){
+        console.log('final callback left',window.wapRequests.length)
+         if(window.wapRunning.finalCallback !== undefined) window.wapRunning.finalCallback(data)
+         window.wapRunning = false
+         if(window.wapRequests.length > 0) this.queueExecuteOne()
+      },
+      
+      enqueueRequest(requestObject){
+        window.wapRequests.push(requestObject)
+      },
+      request(serviceRequest, params, finalCallback = undefined, staff = false, successCallback = false, failureCallback = false){
+        let requestObject = {
+            'serviceRequest':serviceRequest, 
+            'params':params, 
+            'finalCallback':finalCallback, 
+            'staff':staff, 
+            'successCallback':successCallback , 
+            'failureCallback':failureCallback
         }
-        
-  
+        this.enqueueRequest(requestObject)
+        this.queueExecuteOne()
       },
       successRequest(result) {
         if(result.data.message!==undefined) {

@@ -6,13 +6,12 @@
         <div v-if="emptyValue">{{ placeHolderLabel }}</div>
         <div v-else>
             <span  v-if="hasMulti" class="d-flex flex-wrap">
-                <span class="value-card" v-if="value.length > 0"  v-for="val in value">
-                    <span class="label">{{ displayElementFunc(getElement(val)) }}</span>
-                    <span class="close" @click.prevent.stop="selectElement(getElement(val))"></span>
-                </span>
+                <ValueCard v-if="value.length > 0" v-for="val in value" :key="val"
+                        :value="val" @discard="discardElement">{{ displayElementFunc(getElement(val)) }}</ValueCard>
             </span>
             <span class="mr-2" v-else>
-                {{ displayElementFunc(getElement(value)) }}
+                <ValueCard :key="value"
+                        :value="value" @discard="discardElement">{{ displayElementFunc(getElement(value)) }}</ValueCard>
             </span>
         </div>
         <div :class="arrowDownClass" ></div>
@@ -25,9 +24,9 @@
                 </LabelMaterial>
                 <span :class="arrowUpClass" @click="makeInactive"></span>
             </div>
-            <div class="dropElements">
+            <div class="dropElements "  :class="[ flexWrap ? 'd-flex flex-wrap':'']">
                 <div v-if="filteredElements.length > 0" v-for="elementLoop in filteredElements" @click="selectElement(elementLoop)" 
-                class="btn btn-sm m-0 btn-block clickable" :class="[ isSelected(elementLoop)? 'btn-outline-primary':'btn-light']">
+                class="btn btn-sm m-0 clickable" :class="[ isSelected(elementLoop)? 'btn-outline-primary':'btn-light', flexWrap ? '':'btn-block']">
                     <small>{{ displayElementFunc(elementLoop) }}</small>
                 </div>
                 <div v-else>
@@ -41,12 +40,13 @@
 </template>
 
 <script>
+import ValueCard from './ValueCard'
 import LabelMaterial from './LabelMaterial'
 import ClickOutside from 'vue-click-outside'
 import DotKey from '../Modules/DotKey'
 export default {
     directives: { ClickOutside },
-    components:{ LabelMaterial },
+    components:{ LabelMaterial, ValueCard },
     mixins: [DotKey],
     props: {
         elements: {
@@ -90,6 +90,10 @@ export default {
         arrowUpClass: {
             type: String,
             default: 'arrow-up mx-2 clickable'
+        },
+        flexWrap: {
+            type:Boolean,
+            default:false
         }
     },
     data () {
@@ -127,10 +131,13 @@ export default {
         return this.ph =='' ? this.getLabelElement(this.selectedElement):this.ph
     },
     emptyValue(){
-        return (this.hasMulti && this.value.length == 0) || (this.hasMulti === false && typeof this.value == 'string' && this.value != '') 
+        return (this.hasMulti && this.value.length == 0) || (this.hasMulti === false && typeof this.value == 'string' && this.value == '') 
     }
   },
   methods: {
+    discardElement(val){
+        return this.selectElement(this.getElement(val))
+    },
     getElement(value){
         let idKey = this.idKey
         return this.elements.find((e) => e[idKey] == value)
@@ -173,8 +180,8 @@ export default {
             this.$emit('input', newValues)
             //this.makeInactive()
         }else{
-            this.selectedElement = element
-            this.$emit('input', element[this.idKey], element)
+            this.selectedElement = this.isSelected(element) ? '':element[this.idKey]
+            this.$emit('input', this.selectedElement, element)
             this.makeInactive()
         }
     },

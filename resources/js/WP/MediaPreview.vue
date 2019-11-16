@@ -30,6 +30,10 @@ export default {
         thumbnail:{
             type:Boolean,
             default: true
+        },
+        selected:{
+            type: Number,
+            default: 0
         }
     },
     data() {
@@ -43,7 +47,9 @@ export default {
     },
     computed:{
         getClass(){
-            return this.thumbnail === true ? 'rounded img-fluid':'';
+            let classString = this.isSelected ? ' selected ':''
+            classString += this.thumbnail === true ? ' rounded img-fluid ':''
+            return classString
         },
         getTitle(){
             return this.element.media_details.image_meta.title
@@ -53,8 +59,16 @@ export default {
         },
         isImage(){
             return this.element.media_type == 'image'
+        },
+        isSelected(){
+            return this.selected == this.element.id
         }
     }
 }
 </script>
+<style>
+.selected {
+    border: 1px solid #b8b8f5;
+}
+</style>
 
