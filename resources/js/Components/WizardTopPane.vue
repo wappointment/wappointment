@@ -51,7 +51,6 @@ export default {
 
   mounted(){
       this.pstep = window.prevStep
-      console.log(this.pstep)
       setTimeout(this.delayMounted , 50);
   },
   

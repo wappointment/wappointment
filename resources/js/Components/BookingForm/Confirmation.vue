@@ -6,7 +6,7 @@
         </div>
         <ul class="li-unstyled my-2">
             <li><strong>{{ service.name }}</strong> - {{ service.duration }}min</li>
-            <li><strong>{{ getMoment(selectedSlot, currentTz).format(fullDateFormat) }}</strong></li>
+            <li><strong>{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></li>
         </ul>
         <p v-if="isApprovalManual">{{options.confirmation.pending}}</p>
         <div v-if="physicalSelected">
@@ -39,7 +39,7 @@
             <div  v-else="showSaveButtons">
                 <transition name="slide-fade">
                     <SaveButtons :selectedSlot="selectedSlot" :service="service"
-                    :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected"></SaveButtons>
+                    :staff="staff" :currentTz="timeprops.currentTz" :physicalSelected="physicalSelected"></SaveButtons>
                 </transition>
             </div>
         </div>
@@ -64,11 +64,10 @@ export default {
     }, 
     props: [
         'selectedSlot', 
-        'currentTz', 
         'service', 
         'result', 
         'isApprovalManual', 
-        'fullDateFormat',
+        'timeprops',
         'staff',
         'options'
     ],

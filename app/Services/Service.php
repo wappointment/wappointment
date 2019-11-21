@@ -37,7 +37,7 @@ class Service
         }
 
 
-        $service = Settings::get('service'); // to test the existing service
+        $service = static::get('service'); // to test the existing service
 
         $serviceData['options'] = array_merge($service['options'], $serviceData['options']);
         //dd($service, $serviceData);
@@ -55,12 +55,16 @@ class Service
 
     public static function get()
     {
-        return new \Wappointment\Decorators\Service(Settings::get('service'));
+        return Settings::get('service');
+    }
+    public static function getObject()
+    {
+        return new \Wappointment\Decorators\Service(static::get());
     }
 
     public static function all()
     {
-        return [Settings::get('service', false)];
+        return apply_filters('wappointment_get_services', [static::get()]);
     }
 
     private static function createdService($types)

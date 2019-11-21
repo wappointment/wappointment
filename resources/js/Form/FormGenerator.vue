@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent="submitTrigger" class="form-wrapppo" :class="classWrapper">
+    <form @submit.prevent.stop="submitTrigger" class="form-wrapppo" :class="classWrapper">
         <div v-if="!formIsReady" class="loading-overlay d-flex align-items-center">
             <WLoader></WLoader>
         </div>
@@ -27,7 +27,7 @@
             <slot></slot>
             <div>
                 <button v-if="backbutton" class="btn btn-secondary" type="button" @click.prevent="$emit('back')">{{ backbuttonLabel }}</button>
-                <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent="submitTrigger">{{ buttonLabel }}</button>
+                <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent.stop="submitTrigger">{{ buttonLabel }}</button>
             </div>
         </div>
     </form>
@@ -126,13 +126,31 @@ export default {
         submittedErrors(){
             return Object.keys(this.errors).length > 0
         },
+        hasErrors(){
+            return Object.keys(this.errorsData).length > 0
+        },
         buttonLabel(){
             return this.labelButton !== undefined ? this.labelButton :(this.creating === false ? this.modify:this.create)
         },
     },
     methods: {
         getErrors(element){
-            return this.activated_fields.indexOf(element.model) !== -1 && this.errorsData[element.model] !== undefined ? this.errorsData[element.model]:false
+            if(this.hasErrors && (this.submitted || this.activated_fields.indexOf(element.model) !== -1)){
+                if(this.errorsData[element.model] !== undefined ) {
+                    return this.errorsData[element.model]
+                }else{
+                    let errorsStack = {}
+                    for (const key in this.errorsData) {
+                        if (this.errorsData.hasOwnProperty(key)) {
+                            if(key.indexOf(element.model)!==-1){
+                                errorsStack[key]=this.errorsData[key]
+                            }
+                        }
+                    }
+                    if(Object.keys(errorsStack).length > 0) return errorsStack
+                }
+            }
+            return false
         },
         getRowClass(row){
             return row.class!== undefined ? row.class: 'd-flex justify-content-between flex-wrap flex-sm-wrap'
@@ -242,7 +260,6 @@ export default {
              
             delete this.errorsData[keyEl]
             this.errorsData = this.cleanObject(this.errorsData)
-
          },
 
         cleanObject(obj) {
@@ -367,14 +384,25 @@ export default {
             }
         }, 
         allowBind(element){
-            let ignoreKeys = ['cast', 'type']
+            
+            let ignoreKeys = ['cast', 'type', 'required_options_props']
 
-            return Object.keys(element)
+            let objectProp = Object.keys(element)
             .filter((e) => ignoreKeys.indexOf(e) === -1)
             .reduce((obj, key) => {
-                obj[key] = element[key];
-                return obj;
+                obj[key] = element[key]
+                return obj
             }, {})
+
+            if(element.required_options_props !== undefined) {
+                for (const key in element.required_options_props) {
+                    if (element.required_options_props.hasOwnProperty(key) && this.modelHolder.options!== undefined && this.modelHolder.options[element.required_options_props[key]] !== undefined) {
+                        objectProp[key] = this.modelHolder.options[element.required_options_props[key]]
+                    }
+                }
+            }
+            
+            return objectProp
         },
         wasActive(model){
             if(this.activated_fields.indexOf(model) === -1)this.activated_fields.push(model)
@@ -395,6 +423,7 @@ export default {
         },
         submitTrigger(forceRequest = false){
             this.submitted = true
+            this.errorsData = {}
             if(forceRequest=== false && !this.isValid) return false
             this.$emit('submit', Object.assign({}, this.modelHolder), this.creating)
         },

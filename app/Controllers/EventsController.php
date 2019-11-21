@@ -202,7 +202,7 @@ class EventsController extends RestController
                 $start = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))->hour($dayTimeblock[0]);
                 $end = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))->hour($dayTimeblock[1]);
 
-                $bg_event[] = [
+                $bg_events[] = [
                     'start' => $start->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
                     'end' => $end->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
                     'rendering' => 'background',
@@ -214,6 +214,6 @@ class EventsController extends RestController
             unset($daysOfTheWeek[$startDate->dayOfWeek]);
             $startDate->addDay(1);
         }
-        return $bg_event;
+        return $bg_events;
     }
 }

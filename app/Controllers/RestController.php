@@ -51,8 +51,14 @@ class RestController
             $request = WPHelpers::requestGet($param->get_params());
 
             // wrap request with validated data
+
             if (!empty($param->get_attributes()['args']['hint'])) {
-                $class = '\\Wappointment\\Validators\\HttpRequest\\' . $param->get_attributes()['args']['hint'];
+                if (class_exists($param->get_attributes()['args']['hint'])) {
+                    $class = $param->get_attributes()['args']['hint'];
+                } else {
+                    $class = '\\Wappointment\\Validators\\HttpRequest\\' . $param->get_attributes()['args']['hint'];
+                }
+
                 $request = new $class($request);
             }
             if (!method_exists($this, $methodName)) {

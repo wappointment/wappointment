@@ -108,7 +108,11 @@ class Appointment extends Model
     }
     public function getService()
     {
-        return \Wappointment\Services\Service::get();
+        static $services = [];
+        if (empty($services[$this->service_id])) {
+            $services[$this->service_id] = apply_filters('wappointment_get_appointment_service', \Wappointment\Services\Service::getObject(), $this->service_id);
+        }
+        return $services[$this->service_id];
     }
 
     public function getServiceAddress()

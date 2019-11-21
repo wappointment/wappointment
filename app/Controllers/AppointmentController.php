@@ -7,6 +7,7 @@ use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Services\Settings;
 use Wappointment\Services\Appointment;
+use Wappointment\Services\Service;
 
 class AppointmentController extends RestController
 {
@@ -34,7 +35,7 @@ class AppointmentController extends RestController
         return [
             'appointment' => $appointmentData,
             'client' => $appointment->client()->select(['name', 'email', 'options'])->first(),
-            'service' => Settings::get('service'),
+            'service' => Service::get(),
             'staff' => (new \Wappointment\WP\Staff($appointment->getStaffId()))->toArray(),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),

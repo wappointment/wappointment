@@ -5,6 +5,7 @@ namespace Wappointment\Models;
 use Wappointment\ClassConnect\Model;
 use Wappointment\Services\Settings;
 use Wappointment\Services\Appointment as AppointmentService;
+use Wappointment\Services\Service;
 
 class Client extends Model
 {
@@ -47,7 +48,7 @@ class Client extends Model
     public function book($startTime, $type, $service = false)
     {
         if ($service === false) {
-            $service = Settings::get('service');
+            $service = Service::get();
         }
 
         //test type is allowed

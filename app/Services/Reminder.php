@@ -60,7 +60,7 @@ class Reminder
     public static function getSeeds($service_type = false)
     {
         if ($service_type === false) {
-            $service = Settings::get('service');
+            $service = Service::get();
             $service_type = $service['type'];
         }
         return self::baseSeeds(self::remindersToSeed($service_type));

@@ -201,7 +201,7 @@ class Availability
                 $end = (new Carbon($now->format(WAPPOINTMENT_DB_FORMAT . ':00'), $staff_timezone))->hour($dayTimeblock[1]);
                 if ($min_time->gte($end)) continue;
                 while ($min_time->gt($start)) {
-                    $start = $start->addMinutes(Service::get()->duration);
+                    $start = $start->addMinutes(Service::getObject()->duration);
                     //echo $min_time->format(WAPPOINTMENT_DB_FORMAT.':00') . ' > ' . $start->format(WAPPOINTMENT_DB_FORMAT.':00') . "\n";
                     continue;
                 }

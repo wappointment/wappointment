@@ -127,7 +127,7 @@ export default {
     },
     save(data) {
         this.modelHolder = data
-        this.request(this.saveServiceRequest,  undefined, this.saved, false, false, this.failedValidation)
+        this.request(this.saveServiceRequest,  undefined, undefined, false, this.saved, this.failedValidation)
     },
     failedValidation(e){
       if(e.response!== undefined && e.response.data!== undefined 
@@ -137,12 +137,14 @@ export default {
         this.errors = e.response.data.data.errors.validations
         this.formKey = 'form' + ((new Date()).getTime())
       }
+      this.serviceError(e)
     },
     async saveServiceRequest() {
         return await this.serviceService.call('save', this.modelHolder)
     },
-    saved(){
+    saved(e){
         this.$emit('saved')
+        this.serviceSuccess(e)
     }
   }  
 }

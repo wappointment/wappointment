@@ -5,6 +5,7 @@ namespace Wappointment\Messages;
 use Wappointment\Services\Settings;
 use Wappointment\Services\Sections;
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Services\Service;
 
 class AdminDailySummaryEmail extends AbstractAdminEmail
 {
@@ -18,13 +19,13 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
         $this->addLogo();
         $this->addBr();
         $tz = Settings::getStaff('timezone');
-        $serviceDurationInSeconds = Settings::get('service')['duration'] * 60;
+        $serviceDurationInSeconds = Service::get()['duration'] * 60;
         $coverage = $this->sections->getCoverage($serviceDurationInSeconds);
 
         if (!empty($coverage)) {
             $contentBlock = [
                 '<center>' . 'Appointments: ' . count($this->sections->appointments) . '</center>',
-                '<center>' . 'Free slots: ' . $this->sections->getFreeSlots($serviceDurationInSeconds) . ' (duration ' . Settings::get('service')['duration'] . 'min)</center>',
+                '<center>' . 'Free slots: ' . $this->sections->getFreeSlots($serviceDurationInSeconds) . ' (duration ' . Service::get()['duration'] . 'min)</center>',
                 '<center>' . 'Coverage: ' . $coverage . '</center>'
             ];
 

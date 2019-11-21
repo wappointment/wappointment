@@ -94,7 +94,7 @@ export default {
         failedRequestWrap(error){
             this.failedRequest(error)
             if(error.response !== undefined){
-                console.log('failedRequest', error.response )
+                //console.log('failedRequest', error.response )
               if(error.response.data.data.errors.validations !== undefined) this.serverValidationErrors = error.response.data.data.errors.validations
             }
         },

@@ -89,7 +89,6 @@ export default {
 
     methods: {
         clickedRegion(pb,b){
-            console.log('clicked', pb,b)
             this[pb.fn]()
         },
         getHtmlName(pb){

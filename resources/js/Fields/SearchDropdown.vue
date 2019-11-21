@@ -163,7 +163,6 @@ export default {
         this.makeActive(false)
         this.groupShow = undefined
         this.search = ''
-        console.log('makeInactive')
     },
     selectElement(element){
         if(this.hasMulti){

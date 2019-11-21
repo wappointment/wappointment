@@ -32,7 +32,7 @@ class BookingAdmin extends AbstractProcessor
 
     protected function addValidators()
     {
-        $service = \Wappointment\Services\Service::get();
+        $service = \Wappointment\Services\Service::getObject();
         $this->validator->addValidator('is_phone', new Phone($service->getCountries()));
     }
 

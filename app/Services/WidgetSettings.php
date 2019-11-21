@@ -235,7 +235,7 @@ class WidgetSettings
     }
     private function setHiddenFields($fields)
     {
-        $service = Service::get();
+        $service = Service::getObject();
         if (!$service->hasManyTypes()) {
             $fields = $this->hideButtonService($fields);
         }

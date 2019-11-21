@@ -59,12 +59,14 @@ import calendar from '../../Plugins/calendar-js'
 import Dates from "../../Modules/Dates"
 import momenttz from '../../appMoment'
 export default {
-    props: ['options','service','currentTz', 'initIntervalsCollection', 'time_format'],
+    props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration'],
     mixins: [Dates],
     components: {
         BookingButton,
     }, 
     data: () => ({
+        currentTz: '',
+        time_format:'',
         currentMonth : null,
         yearNumber: 0,
         monthNumber: 0,
@@ -90,11 +92,16 @@ export default {
     }),
 
     mounted(){
+        this.time_format = this.timeprops.time_format
+        this.currentTz = this.timeprops.currentTz
+
         this.setMonth(this.todayYear, this.todayMonth - 1)
         this.intervalsCollection = this.initIntervalsCollection
         this.resetIntervals()
+       
         this.mounted = true
-
+        
+        
     },
     updated: function () {
         if(this.isDemo && this.demoSelected.init == false && this.demoSelected.day !== false){
@@ -253,7 +260,8 @@ export default {
               this.options.eventsBus.emits('stepChanged', 'form')
               return
             } 
-            this.$emit('selectSlot',slot)
+            this.$emit('selectSlot', 'BookingFormInputs', {selectedSlot: slot})
+
         },
         daySelected(daynumber, idweek){
             this.selectedWeek = idweek
@@ -305,7 +313,7 @@ export default {
         setIntervals(start, end){
 
             this.currentIntervals = this.intervalsCollection.get(start, end)
-            this.totalSlots = this.currentIntervals.splits(parseInt(this.service.duration)*60).totalSlots()
+            this.totalSlots = this.currentIntervals.splits(parseInt(this.duration)*60).totalSlots()
         },
         setMonth(yearNumber, monthNumber){
             this.monthNumber = monthNumber 
@@ -331,7 +339,7 @@ export default {
 
             let dayIntervals = this.getDayIntervals(daynumber)
             
-            this.cachedSlots[daynumber] = dayIntervals.splits(parseInt(this.service.duration)*60).totalSlots()
+            this.cachedSlots[daynumber] = dayIntervals.splits(parseInt(this.duration)*60).totalSlots()
             if(this.isDemo && this.demoSelected.day == false && this.cachedSlots[daynumber] > 0){
                 
                 this.demoSelected.day = daynumber
@@ -363,11 +371,11 @@ export default {
         },
        
         daySlots(segment) {
-            let end = segment.end - this.service.duration * 60
+            let end = segment.end - this.duration * 60
             let allslots = []
             while (end >= segment.start) {
                 allslots.push(end)
-                end -= this.service.duration * 60
+                end -= this.duration * 60
             }
             allslots.reverse()
             return allslots
@@ -395,7 +403,8 @@ export default {
                 start = momenttz.tz(this.yearNumber + '-' + prefixMonth + this.realMonthNumber + '-' + prefixDay+daynumber, this.currentTz).startOf('day')
             }
             
-            return this.intervalsCollection.get(start, start.clone().endOf('day'), today)
+            let dayIntervals = this.intervalsCollection.get(start, start.clone().endOf('day'), today)
+            return window.wappointmentExtends.filter('DayIntervals', dayIntervals, {start: start, end: start.clone().endOf('day'), today:today, staffs:this.staffs} )
         },
 
         initial(string){

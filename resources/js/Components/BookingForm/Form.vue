@@ -4,7 +4,7 @@
             <div class="text-center mb-2">
                 <ul class="li-unstyled my-2">
                     <li><strong>{{options.form.header}}</strong></li>
-                    <li><strong>{{ getMoment(selectedSlot, currentTz).format(fullDateFormat) }}</strong></li>
+                    <li><strong>{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></li>
                 </ul>
                 <div class="wappointment-errors" v-if="errors.length > 0">
                     <div v-for="error in errors">
@@ -87,13 +87,12 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMapMarkedAlt, faPhone} from '@fortawesome/free-solid-svg-icons'
 import { faSkype} from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import momenttz from '../../appMoment'
 library.add(faMapMarkedAlt, faPhone, faSkype)
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../CountryStyle')
 export default {
     extends: abstractFront,
     mixins: [Dates],
-    props: ['service','selectedSlot','currentTz','fullDateFormat', 'options', 'errors', 'data'],
+    props: ['service','selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations'],
     components: {
         BookingAddress,
         PhoneInput,
@@ -130,6 +129,7 @@ export default {
         }
     },
     created(){
+
         if(this.options.demoData !== undefined){
             this.bookingForm = this.options.demoData.form 
             this.selectedServiceType = this.bookingForm.type
@@ -180,8 +180,10 @@ export default {
               this.options.eventsBus.emits('stepChanged', 'selection')
               return
             } 
-            this.$emit('back')
+            
+            this.$emit('back', this.relations.prev,{selectedSlot:false})
         },
+
         confirm(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'confirmation')
@@ -190,9 +192,34 @@ export default {
             let data = this.bookingForm
             data.time = this.selectedSlot
             data.type = this.selectedServiceType
-            data.ctz = momenttz.tz.guess();
-            this.$emit('confirm', data)
+            data.ctz = this.timeprops.ctz
+            //turns loading mode on in parent
+            this.$emit('loading', {loading:true, dataSent: data})
+            //create request
+            this.saveBookingRequest(data)
+            .then(this.appointmentBooked)
+            .catch(this.appointmentBookingError)
         },
+
+
+        async saveBookingRequest(data) {
+            return await this.serviceBooking.call('save', data)
+        }, 
+
+        appointmentBooked(result){
+
+            this.$emit('confirmed', this.relations.next, {
+                isApprovalManual:(result.data.status == 0), 
+                appointmentSaved: true, 
+                loading: false
+            })
+        },
+
+        appointmentBookingError(error){
+            this.$emit('serviceError',error)
+        },
+
+        
         selectDefaultType(){
             this.selectedServiceType = this.service.type[0]
         },

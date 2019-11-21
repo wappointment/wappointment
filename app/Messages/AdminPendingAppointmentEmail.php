@@ -6,6 +6,7 @@ use Wappointment\Models\Client;
 use Wappointment\Models\Appointment;
 use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Services\Service;
 
 class AdminPendingAppointmentEmail extends AbstractAdminEmail
 {
@@ -22,7 +23,7 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
             [
                 'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
                 'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format')) . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
-                'Service: ' . Settings::get('service')['name'],
+                'Service: ' . Service::get()['name'],
                 "Client's name: " . $client->name,
                 "Client's email: " . $client->email,
             ]

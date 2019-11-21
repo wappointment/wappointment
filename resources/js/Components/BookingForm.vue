@@ -1,72 +1,21 @@
 <template>
     <div class="wap-bf" :class="{show: canBeBooked}">
         <div v-if="canBeBooked">
-            <div v-for="staff in this.viewData.staffs"> 
-                <div class="d-flex wap-head align-items-center">
-                    <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="refreshClick">
-                        <img :src="staff.a" :alt="staff.n">
-                        
-                        <div class="after" v-if="isStepSlotSelection">
-                            <svg viewBox="0 0 32 32" class="ic-refresh" aria-hidden="true"><path d="M27.1 14.313V5.396L24.158 8.34c-2.33-2.325-5.033-3.503-8.11-3.503C9.902 4.837 4.901 9.847 4.899 16c.001 6.152 5.003 11.158 11.15 11.16 4.276 0 9.369-2.227 10.836-8.478l.028-.122h-3.23l-.022.068c-1.078 3.242-4.138 5.421-7.613 5.421a8 8 0 0 1-5.691-2.359A7.993 7.993 0 0 1 8 16.001c0-4.438 3.611-8.049 8.05-8.049 2.069 0 3.638.58 5.924 2.573l-3.792 3.789H27.1z"/></svg>
-                        </div>
-                    </div>
-                    <div class="staff-desc">
-                        <div><strong>{{ staff.n }}</strong></div>
-                        <div>{{ service.name }}</div>
-                    </div>
-                </div>
-            </div>   
+            <BookingFormHeader :staffs="viewData.staffs" :isStepSlotSelection="isStepSlotSelection" 
+            :service="service" @refreshed="refreshClick"/>
+
             <div class="wrap-calendar p-2">
                 <div v-if="loading">
                     <Loader></Loader>
                 </div>
-                <div v-else>
-                        <div v-if="isStepSlotSelection">
-                                <BookingCalendar 
-                                :service="service"
-                                :initIntervalsCollection="intervalsCollection"
-                                :currentTz="currentTz"
-                                :options="options"
-                                :time_format="time_format"
-                                @selectSlot="selectSlot"
-                                ></BookingCalendar>
-                        </div>
-
-                        <div v-if="!savedAppointment && reschedulingSelectedSlot" >
-                                <RescheduleConfirm v-if="!savedAppointment && reschedulingSelectedSlot"
-                                :selectedSlot="selectedSlot" 
-                                :currentTz="currentTz" 
-                                :fullDateFormat="fullDateFormat"
-                                :options="options"
-                                @back="backToCalendar"
-                                @confirm="confirmReschedule"
-                                ></RescheduleConfirm>
-                        </div>
-
-                        <div v-if="isStepForm" class="confirm-form">
-                                <BookingFormInputs
-                                :selectedSlot="selectedSlot" 
-                                :currentTz="currentTz" 
-                                :fullDateFormat="fullDateFormat"
-                                :service="service"
-                                :options="options"
-                                :errors="errorMessages"
-                                :data="dataSent"
-                                @back="backToCalendar"
-                                @confirm="confirmBooking"
-                                ></BookingFormInputs>
-                        </div>
-                        <div v-if="savedAppointment">
-                            <component :is="alternateComp" @switchToRegular="switchToRegular" :selectedSlot="selectedSlot" 
-                            :currentTz="currentTz" 
-                            :fullDateFormat="fullDateFormat"
-                            :service="service" 
-                            :result="dataSent"
-                            :options="options"
-                            :isApprovalManual="isApprovalManual"
-                            :staff="staff"></component>
-                        </div>
-                        
+                <div :class="{'hide-loading':loading}">
+                    <div v-if="currentStep == loadingStep && isCompVisible(currentStep)">
+                        <component :is="getComp(currentStep)"
+                        v-bind="getCompProp(currentStep)"
+                        v-on="getCompListeners(currentStep)"
+                        :relations="getCompRelations(currentStep)"
+                        ></component>
+                    </div>
                 </div>
             </div>
         </div>
@@ -90,16 +39,18 @@ import BookingFormConfirmation from './BookingForm/Confirmation'
 import RescheduleConfirm from './BookingForm/RescheduleConfirm'
 import BookingCalendar from './BookingForm/Calendar'
 import BookingFormInputs from './BookingForm/Form'
+import BookingFormHeader from './BookingForm/Header'
 
 import momenttz from '../appMoment'
 
 
 let compDeclared = {
-        'BookingFormConfirmation' : BookingFormConfirmation,
-        'RescheduleConfirm': RescheduleConfirm,
-        'BookingCalendar': BookingCalendar,
-        'BookingFormInputs':BookingFormInputs
-    };
+    'BookingFormConfirmation' : BookingFormConfirmation,
+    'RescheduleConfirm': RescheduleConfirm,
+    'BookingCalendar': BookingCalendar,
+    'BookingFormInputs':BookingFormInputs,
+    'BookingFormHeader': BookingFormHeader
+}
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
 
 export default {
@@ -115,12 +66,18 @@ export default {
         selectedSlot: false,
         time_format: '',
         date_format: '',
-        savedAppointment: false,
+        appointmentSaved: false,
         dataloaded: false,
         isApprovalManual: false,
         dataSent: {},
         errors: null,
-        alternateComp: 'BookingFormConfirmation'
+        componentsList: null,
+        services: [],
+        service: false,
+        location: false,
+        duration: false,
+        currentStep: 'BookingCalendar',
+        loadingStep: '',
     }),
 
     mounted () {
@@ -128,24 +85,32 @@ export default {
         this.refreshInitValue()
         this.currentTz = momenttz.tz.guess()
         this.createdAt = momenttz().unix()
+        
         if(this.step == 'button') {
             this.$emit('changedStep','selection')
         }
+
     },
 
-    watch:{
-        step(val){
-            if([undefined, null].indexOf(val) === -1 ) {
-                this.demoConfigure(val)
-            }
-        }
-    },
     computed: {
+
+        serviceSelected(){
+            return this.service !== false
+        },
+        durationSelected(){
+            return this.duration !== false
+        },
+        locationSelected(){
+            return this.location !== false
+        },
+        slotSelected(){
+            return this.selectedSlot !== false && this.selectedSlot > 0
+        },
         isStepForm(){
-            return !this.savedAppointment && !this.reschedulingSelectedSlot && this.selectedSlot
+            return !this.appointmentSaved && !this.reschedulingSelectedSlot && this.selectedSlot
         },
         isStepSlotSelection(){
-            return !this.savedAppointment && !this.reschedulingSelectedSlot && !this.selectedSlot
+            return !this.appointmentSaved && !this.reschedulingSelectedSlot && !this.selectedSlot
         },
        rescheduling(){
            return this.serviceAction === 'rescheduling'
@@ -163,81 +128,87 @@ export default {
        staff(){
            return this.getDefaultStaff()
        },
-       service(){
-            return this.getDefaultService
+       timeprops(){
+           let timeprops = {
+               currentTz: this.currentTz,
+               time_format: this.time_format,
+               fullDateFormat: this.fullDateFormat,
+               ctz: momenttz.tz.guess()
+           }
+           if(this.appointmentkey !== undefined){
+               timeprops.appointmentkey = this.appointmentkey
+           }
+           return timeprops
+       }
+    },
+    methods: {
+        loadStep(step){
+            this.loadingStep = step
         },
+        childChangedStep(newStep, dataChanged){
+            if(typeof dataChanged == 'object' && Object.keys(dataChanged).length > 0) {
+                this.childChangedData(dataChanged)
+            }
+            this.currentStep = newStep
+            setTimeout(this.loadStep.bind(null,newStep), 100)
+        },
+        childChangedData(dataChanged){
+            for (const key in dataChanged) {
+                if (dataChanged.hasOwnProperty(key)) {
+                    this[key] = dataChanged[key]
+                }
+            }
+        },
+
         getDefaultService(){
             return this.dataloaded && this.viewData.services[0] !== undefined ?this.viewData.services[0]:false
         },
-
-    },
-    methods: {
-        switchToRegular(){
-            this.alternateComp = 'BookingFormConfirmation'
-        },
-        demoConfigure(val){
-            if(['button'].indexOf(val) === -1) {
-                this.selectedSlot = false
-                this.savedAppointment = false
-                this.dataSent = {}
+        getCompProp(component_name){
+            let props = this.componentsList[component_name].props !== undefined ? this.componentsList[component_name].props:{}
+            for (const key in props) {
+                if (props.hasOwnProperty(key)) {
+                    const element = props[key]
+                    if(typeof element == 'string'){
+                        props[key] = this[element]
+                    }
+                }
             }
-            if(['button', 'selection'].indexOf(val) === -1) {
-                let laskey = this.intervalsCollection.intervals.length -1
-                this.selectedSlot = this.intervalsCollection.intervals[laskey].start
-            }
-            if(['button', 'selection', 'form'].indexOf(val) === -1) {
-                this.savedAppointment = true
-                
-                if(this.passedDataSent !== null)this.dataSent = this.passedDataSent
-                else this.dataSent = this.options.demoData.form
-                if(val == 'confirmation') this.switchToRegular()
-            }
+            return props
         },
-        selectSlot(slot){
-            this.selectedSlot = slot
-            this.$emit('changedStep','form')
+        getCompRelations(component_name){
+            return this.componentsList[component_name].relations !== undefined ? this.componentsList[component_name].relations:{}
+        },
+        getCompListeners(component_name){
+            let listeners = this.componentsList[component_name].listeners !== undefined ? this.componentsList[component_name].listeners:{}
+            for (const key in listeners) {
+                if (listeners.hasOwnProperty(key)) {
+                    const element = listeners[key]
+                    if(typeof element == 'string'){
+                        listeners[key] = this[element]
+                    }
+                }
+            }
+            return listeners
+        },
+        getComp(component_name){
+            return this.componentsList[component_name].name
+        },
+        isCompVisible(component_name){
+            let conditions = this.componentsList[component_name].conditions !== undefined ? this.componentsList[component_name].conditions : false
+            if(conditions !== false) {
+                let conditionKeys = Object.keys(conditions)
+                for (let i = 0; i < conditionKeys.length; i++) {
+                    const keyCondition = conditionKeys[i]
+                    if(this[keyCondition] !== conditions[keyCondition]) {
+                        return false
+                    }
+                }
+            }
+            return true
         },
 
-        confirmBooking(data){
-            this.loading = true
-            this.dataSent = data
-            this.saveBookingRequest(data)
-            .then(this.appointmentBooked)
-            .catch(this.appointmentBookingError)
-        },
 
-        async saveBookingRequest(data) {
-            return await this.serviceBooking.call('save', data)
-        }, 
 
-        appointmentBooked(result){
-            this.isApprovalManual = (result.data.status == 0) ? true:false
-          
-            this.savedAppointment = true
-            this.loading = false
-            this.$emit('changedStep','confirmation',this.dataSent, this.selectedSlot)
-        },
-        appointmentBookingError(error){
-            this.serviceError(error)
-        },
-        confirmReschedule(){
-            this.loading = true
-            this.saveRescheduleRequest()
-            .then(this.appointmentBooked)
-            .catch(this.appointmentBookingError)
-        },
-        async saveRescheduleRequest() {
-            let data = {
-                appointmentkey: this.appointmentkey,
-                time: this.selectedSlot,
-                ctz: momenttz.tz.guess(),
-            }
-            return await this.serviceBooking.call('reschedule', data)
-        }, 
-        
-        backToCalendar(){
-            this.selectedSlot = false
-        },
         refreshClick() {
             if(!this.isStepSlotSelection) return false
             this.loading = true
@@ -260,14 +231,126 @@ export default {
             momenttz.locale(this.getLocale())
 
             this.dataloaded = true
+
+            this.services = this.viewData.services
+            this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
             
-            if(!this.rescheduling){
-                this.alternateComp = window.wappointmentExtends.filter('alternateComp', this.alternateComp, this.service )
+            if(this.service !== false){
+                this.duration = this.service.duration !== undefined ? this.service.duration : window.wappointmentExtends.filter('durationDefault', this.service)
+                this.location = this.service.type !== undefined ? false : window.wappointmentExtends.filter('locationDefault', this.service)
+            } 
+
+            this.setComponentLists()
+
+            this.currentStep = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', {service:this.service, duration:this.duration, location: this.location})
+            this.loadStep(this.currentStep)
+
+            if(this.loadedInit !== undefined){
+                this.loadedInit(this.step)
             }
-            if([undefined, null].indexOf(this.step) === -1) {
-                this.demoConfigure(this.step)
+        },
+        setComponentLists(){
+            let componentsList = {
+                BookingCalendar: {
+                    name: 'BookingCalendar',
+                    conditions: {
+                        'serviceSelected':true,
+                        'durationSelected':true,
+                        'locationSelected':true,
+                        'appointmentSaved':false,
+                    },
+                    props: {
+                        service: 'service',
+                        initIntervalsCollection: 'intervalsCollection',
+                        options: 'options',
+                        duration:"duration",
+                        timeprops: 'timeprops',
+                        staffs: this.viewData.staffs,
+                    },
+                    listeners: {
+                        selectSlot:'childChangedStep',
+                        loading: 'childChangedData',
+                    },
+                    relations:{
+                        'next': 'BookingFormInputs',
+                    }
+                },
+                RescheduleConfirm: {
+                    name: 'RescheduleConfirm',
+                    conditions: {
+                        'slotSelected':true,
+                        'rescheduling':true,
+                        'appointmentSaved':false,
+                    },
+                    props: {
+                        selectedSlot:"selectedSlot",
+                        timeprops: 'timeprops', 
+                        options:"options",
+                    },
+                    listeners: {
+                        back:'childChangedStep',
+                        loading: 'childChangedData',
+                        confirmed: 'childChangedStep',
+                        serviceError: 'serviceError'
+                    },
+                    relations:{
+                        'next': 'BookingFormConfirmation',
+                        'prev': 'BookingCalendar',
+                    }
+                },
+                BookingFormInputs: {
+                    name: 'BookingFormInputs',
+                    conditions: {
+                        'slotSelected':true,
+                        'rescheduling':false,
+                        'appointmentSaved':false,
+                    },
+                    props: {
+                        selectedSlot:"selectedSlot",
+                        timeprops: 'timeprops', 
+                        service:"service",
+                        duration:"duration",
+                        location:"location",
+                        errors:"errorMessages",
+                        data:"dataSent",
+                        options:"options",
+                        relatedComps: 'relatedComps'
+                    },
+                    listeners: {
+                        back:'childChangedStep',
+                        loading: 'childChangedData',
+                        confirmed: 'childChangedStep',
+                        serviceError: 'serviceError'
+                    },
+                    relations:{
+                        'next': 'BookingFormConfirmation',
+                        'prev': 'BookingCalendar',
+                    }
+                },
                 
+                BookingFormConfirmation: {
+                    name: 'BookingFormConfirmation',
+                    conditions: {
+                        'appointmentSaved':true,
+                    },
+                    props: {
+                        selectedSlot:"selectedSlot",
+                        timeprops: 'timeprops', 
+                        service:"service",
+                        errors:"errorMessages",
+                        result:"dataSent",
+                        options:"options",
+                        isApprovalManual:"isApprovalManual",
+                        staff:"staff"
+                    },
+                    listeners: {
+                        loading: 'childChangedData',
+                    }
+
+                },
             }
+            this.componentsList = window.wappointmentExtends.filter('componentsList', componentsList,
+             {service: this.service, rescheduling:this.rescheduling} )
         },
         getLocale(){
             return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
@@ -369,36 +452,7 @@ export default {
   opacity: 1;
 }
 
-.wap-front .staff-av {
-    position:relative;
-    cursor: pointer;
-}
-.wap-front .staff-av .after{
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  width: 100%;
-  content: "\f463";
-  transition: .3s ease;
-  background-color: transparent;
-  border-radius: 3px;
-  opacity:0;
-}
-.wap-front .staff-av:hover .after{
-  background-color: rgba(210, 210, 210, 0.8);
-  opacity:1;
-}
-.wap-front .staff-av .ic-refresh {
-  fill: #fff;
-}
-.wap-front .wap-head .staff-desc {
-    padding-left: .4em;
-    line-height: 1.2;
-    font-size: 1em;
-}
+
 .wap-bf button {
     font-size: .7em;
 }
@@ -548,13 +602,9 @@ export default {
     list-style: none;
     font-size: 1em;
 }
-.wap-front .staff-av img{
-    max-width: 40px;
-    display: block;
-    overflow: hidden;
-    font-size: 12px;
+
+.wap-front .hide-loading{
+    display:none;
 }
-.wap-front .staff-av.norefresh {
-    cursor: default;
-}
+
 </style>

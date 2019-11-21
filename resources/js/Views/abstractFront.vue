@@ -65,7 +65,6 @@ export default {
 
       serviceError(error) {
        this.loading = false
-       //console.log('serviceError Start',error)
        if(error.response.data.message !== undefined)  this.errorMessages.push(error.response.data.message)
        
        if(error.response.data.data.errors!==undefined && this.lengthGreaterThan(error.response.data.data.errors, 0)){

@@ -15,7 +15,6 @@ class Extends {
 
     filter(extendName, extendParams, extraParams){
         let paramsNew = clone(extendParams)
-
         if(this.callbacks[extendName] !== undefined) {
             for (let i = 0; i < this.callbacks[extendName].length; i++) {
                 paramsNew = this.callbacks[extendName][i](paramsNew, extraParams)

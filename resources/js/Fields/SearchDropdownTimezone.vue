@@ -83,21 +83,7 @@ export default {
     }
   },
   created(){
-    if(this.hasGroup){
-        for (var continent in this.elements) {
-            // skip loop if the property is from prototype
-            if(!this.elements.hasOwnProperty(continent)) continue
-            let sub_elements = this.elements[continent]
-            for(var city in sub_elements){
-                if(!sub_elements.hasOwnProperty(city)) continue
-                let element = sub_elements[city]
-                this.groupElements.push(element)
-                if(this.isSelectedValue(continent, city)) {
-                    this.selectedElement = element
-                }
-            }
-        }
-    }
+    this.setSelectedElement()
   },
 
 
@@ -110,9 +96,32 @@ export default {
     }
   },
   methods: {
+    setSelectedElement(){
+        if(this.hasGroup){
+            for (var continent in this.elements) {
+                // skip loop if the property is from prototype
+                if(!this.elements.hasOwnProperty(continent)) continue
+                let sub_elements = this.elements[continent]
+                for(var city in sub_elements){
+                    if(!sub_elements.hasOwnProperty(city)) continue
+                    let element = sub_elements[city]
+                    this.groupElements.push(element)
+                    if(this.isSelectedValue(continent, city)) {
+                        this.selectedElement = element
+                    }
+                }
+            }
+        }
+    },
+    selectElement(element){
+        this.selectedElement = element
+
+        this.$emit('input', element[this.idKey], element)
+        this.makeInactive()
+    },
     isSelectedValue(continent, city){
         let compareTo = (this.value == 'UTC') ? continent:continent+'/'+city
-
+        
         return compareTo == this.value
     },
     toggleGroup(parent) {

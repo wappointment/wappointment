@@ -1,0 +1,25 @@
+<template>
+    <div class="wap-front" :class="{'br-fixed': isBottomRight}" :id="elementId">
+        <StyleGenerator :options="opts" :wrapper="elementId"></StyleGenerator>
+        <div v-if="isPage">
+            <BookingFormDemo v-if="isBookingPage" :options="opts"></BookingFormDemo>
+            <ViewingAppointment v-else  :options="opts" :view="getParameterByName('view')" :appointmentkey="getParameterByName('appointmentkey')"></ViewingAppointment>
+        </div>
+        
+        <div class="wap-wid" v-if="isWidget">
+            <span v-if="bookForm && isBottomRight" @click="backToButton" class="close-wid"></span>
+            <BookingFormDemo v-if="bookForm" :step="currentStep" :options="opts" :passedDataSent="dataSent"></BookingFormDemo>
+            <BookingButton v-else @click="toggleBookForm" class="btn btn-booking btn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
+        </div>
+    </div>
+</template>
+<script>
+import Front from './Front'
+import BookingFormDemo from './Components/BookingFormDemo'
+export default {
+    extends: Front,
+    components:{
+      BookingFormDemo: BookingFormDemo
+    }
+}
+</script>

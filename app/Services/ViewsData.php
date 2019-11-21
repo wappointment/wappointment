@@ -50,7 +50,7 @@ class ViewsData
     private function service()
     {
         return [
-            'service' => Settings::get('service')
+            'service' => Service::get()
         ];
     }
 
@@ -60,7 +60,7 @@ class ViewsData
             'widget' => (new WidgetSettings)->get(),
             'widgetDefault' => (new WidgetSettings)->default(),
             'config' => [
-                'service' => Settings::get('service'),
+                'service' => Service::get(),
                 'approval_mode' => Settings::get('approval_mode'),
             ],
             'bgcolor' => WPHelpers::getThemeBgColor(),
@@ -90,17 +90,17 @@ class ViewsData
             'wizard_step' => WPHelpers::getOption('wizard_step'),
             'timezones_list' => DateTime::tz(),
             'now' => (new Carbon())->setTimezone($staff_timezone)->format('Y-m-d\TH:i:00'),
-            'service' => Settings::get('service'),
+            'service' => Service::get(),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
-            'preferredCountries' => Service::get()->getCountries(),
+            'preferredCountries' => Service::getObject()->getCountries(),
         ];
     }
 
     private function settingsgeneral()
     {
-        $service = Settings::get('service');
+        $service = Service::get();
         $widget = (new WidgetSettings)->get();
         return [
             // general
@@ -119,7 +119,7 @@ class ViewsData
             'timezone' => Settings::getStaff('timezone'),
             'widget' => (new WidgetSettings)->get(),
             'config' => [
-                'service' => Settings::get('service'),
+                'service' => Service::get(),
                 'approval_mode' => Settings::get('approval_mode'),
             ],
             'bgcolor' => WPHelpers::getThemeBgColor(),

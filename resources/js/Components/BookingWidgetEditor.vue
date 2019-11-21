@@ -5,12 +5,12 @@
             <div class="widget-wraper p-3 mr-3"  :style="getStyleThemeBg" >
                 <div class="clear pt-2" >
                     <div v-if="!editingMode">
-                        <Front :options="preoptions" classEl="wappointment_widget" ></Front>
+                        <FrontDemo :options="preoptions"  classEl="wappointment_widget" ></FrontDemo>
                     </div>
                     <div v-if="editingMode" class="d-flex flex-wrap preview">
                         <div v-for="(stepObj,idx) in editionsSteps" class="bordered" :class="orderedClass(stepObj,idx)" :data-tt="stepObj.key==step?labelActiveStep:false">
                             <div class="overflowhidden" :class="'step-'+stepObj.key">
-                                <Front :options="options" classEl="wappointment_widget" :step="stepObj.key" ></Front>
+                                <FrontDemo :options="options"  classEl="wappointment_widget" :step="stepObj.key" ></FrontDemo>
                             </div>
                         </div>
                     </div>
@@ -97,11 +97,11 @@ import { faPalette, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faPalette,faEdit, faSave)
-import Front from '../Front'
+import FrontDemo from '../FrontDemo'
 import ColorPicker from './ColorPicker'
 import FormFieldCheckbox from '../Form/FormFieldCheckbox'
 import FormFieldSlider from '../Form/FormFieldSlider'
-import BookingForm from './BookingForm'
+import BookingFormDemo from './BookingFormDemo'
 import Colors from '../Modules/Colors'
 import SettingsSave from '../Modules/SettingsSave'
 import CountrySelector from './CountrySelector'
@@ -109,9 +109,8 @@ import InputPh from '../Fields/InputLabelMaterial'
 import eventsBus from '../eventsBus'
 export default {
     components: {
-        Front,
+        FrontDemo,
         ColorPicker,
-        BookingForm,
         CountrySelector,
         InputPh,
         FormFieldCheckbox,
@@ -257,7 +256,7 @@ export default {
             }
         },
         changedInput(a,b){
-            console.log('changedInput',a,b)
+            //console.log('changedInput',a,b)
         },
         getFieldAdminInfos(section, key){
             return (this.widgetFields !== null && this.widgetFields[section]!== undefined && this.widgetFields[section][key] !== undefined) ? this.widgetFields[section][key]:false

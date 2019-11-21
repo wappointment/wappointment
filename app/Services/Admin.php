@@ -46,7 +46,7 @@ class Admin
     private static function createAppointment(MClient $client, $start, $end, $type, $service = false)
     {
         if ($service === false) {
-            $service = Settings::get('service');
+            $service = Service::get();
         }
 
         //test type is allowed

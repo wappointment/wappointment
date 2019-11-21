@@ -20,7 +20,6 @@ const vues = document.querySelectorAll(".wappointment_page, .wappointment_widget
 
 for (let index = 0; index < vues.length; index++) {
     const el = vues[index]
-    console.log('brfxed', el.getAttribute('data-brfixed'))
     vuesInstances[index] = new Vue({
         el, 
         components: { Front },
