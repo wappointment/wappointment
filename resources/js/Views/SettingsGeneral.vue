@@ -116,7 +116,7 @@ import LargeButton from '../Components/LargeSettingsButton'
 import BreadCrumbs from '../Components/BreadCrumbs'
 import RequestMaker from '../Modules/RequestMaker'
 import AbstractListing from './AbstractListing'
-
+import DurationCell from '../Components/BookingForm/DurationCell'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMapMarkedAlt, faPhone, faCalendarCheck } from '@fortawesome/free-solid-svg-icons'
 import { faSkype} from '@fortawesome/free-brands-svg-icons'
@@ -126,7 +126,7 @@ library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck)
 export default {
   extends: abstractView,
   components: window.wappointmentExtends.filter('SettingsGeneralComponents', { 
-    Service, Regav, Widget , EditCancelPage, LargeButton, BreadCrumbs, AbstractListing, FontAwesomeIcon
+    Service, Regav, Widget , EditCancelPage, LargeButton, BreadCrumbs, AbstractListing, FontAwesomeIcon, DurationCell
     }, 
     {
       extends: abstractView, 

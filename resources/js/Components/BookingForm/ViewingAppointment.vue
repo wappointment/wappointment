@@ -5,11 +5,11 @@
             <ul>
                 <li>{{ client.name }} - {{ client.email }}</li>
                 <li><strong>{{ getMoment(selectedSlot, currentTz).format(fullDateFormat) }}</strong></li>
-                <li><strong>{{ service.name }}</strong> - {{ service.duration }}min</li>
+                <li><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></li>
                 <li v-if="physicalSelected">
                     <p>{{options.confirmation.physical}} </p>
                     <p><a :href="getMapAdress" target="_blank">{{ service.address}}</a></p>
-                    <wap-iframe :height="200" :src="getIframeMap"></wap-iframe>
+                    <Iframe :height="200" :src="getIframeMap"></Iframe>
                 </li>
                 <li v-if="phoneSelected">
                     {{options.confirmation.phone}} <strong>{{ clientPhone }}</strong>
@@ -68,13 +68,13 @@
 <script>
 import momenttz from '../../appMoment'
 
-import Dates from "../../Modules/Dates";
+import Dates from '../../Modules/Dates'
 import abstractFront from '../../Views/abstractFront'
 import SaveButtons from './SaveButtons'
-import Iframe from "../Iframe";
+import Iframe from '../Iframe'
 import Helpers from '../../Standalone/helpers'
 import AppointmentService from '../../Services/V1/Appointment'
-
+import DurationCell from './DurationCell'
 import RescheduleForm from '../RescheduleForm'
 
 export default {
@@ -83,8 +83,9 @@ export default {
     extends: abstractFront,
     components: {
         SaveButtons,
-        'wap-iframe': Iframe,
-        RescheduleForm
+        Iframe,
+        RescheduleForm,
+        DurationCell
     }, 
     props: ['appointmentkey', 'view', 'options'],
     data: () => ({

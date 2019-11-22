@@ -41,7 +41,7 @@ class Service
 
         $serviceData['options'] = array_merge($service['options'], $serviceData['options']);
         //dd($service, $serviceData);
-        $serviceData = apply_filters('wappointment_service_before_saved',  $serviceData);
+        $serviceData = apply_filters('wappointment_service_before_saved',  $serviceData, $service);
         //  return $serviceData;
         $resultSave = (bool) Settings::save('service', $serviceData);
 

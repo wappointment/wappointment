@@ -5,7 +5,7 @@
             <div class="text-conf">{{options.confirmation.confirmation}}</div>
         </div>
         <ul class="li-unstyled my-2">
-            <li><strong>{{ service.name }}</strong> - {{ service.duration }}min</li>
+            <li><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></li>
             <li><strong>{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></li>
         </ul>
         <p v-if="isApprovalManual">{{options.confirmation.pending}}</p>
@@ -104,7 +104,6 @@ export default {
             this.selectedServiceType = this.showResult.type
         }
     }
-    
 
 }
 </script>

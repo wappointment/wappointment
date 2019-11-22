@@ -1,8 +1,14 @@
 <template>
     <div class="wap-bf" :class="{show: canBeBooked}">
         <div v-if="canBeBooked">
-            <BookingFormHeader :staffs="viewData.staffs" :isStepSlotSelection="isStepSlotSelection" 
-            :service="service" @refreshed="refreshClick"/>
+            <BookingFormHeader :staffs="viewData.staffs" 
+            :isStepSlotSelection="isStepSlotSelection" 
+            :service="service" :duration="duration" @refreshed="refreshClick"
+            :services="services"
+            @changeStaff="childChangedStep"
+            @changeService="childChangedStep"
+            @changeDuration="childChangedStep"
+            />
 
             <div class="wrap-calendar p-2">
                 <div v-if="loading">
@@ -40,7 +46,9 @@ import RescheduleConfirm from './BookingForm/RescheduleConfirm'
 import BookingCalendar from './BookingForm/Calendar'
 import BookingFormInputs from './BookingForm/Form'
 import BookingFormHeader from './BookingForm/Header'
-
+import DurationCell from './BookingForm/DurationCell'
+BookingFormHeader.components = {DurationCell}
+BookingFormConfirmation.components[DurationCell] = DurationCell
 import momenttz from '../appMoment'
 
 
@@ -49,7 +57,8 @@ let compDeclared = {
     'RescheduleConfirm': RescheduleConfirm,
     'BookingCalendar': BookingCalendar,
     'BookingFormInputs':BookingFormInputs,
-    'BookingFormHeader': BookingFormHeader
+    'BookingFormHeader': BookingFormHeader,
+    'DurationCell': DurationCell
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
 
@@ -139,6 +148,9 @@ export default {
                timeprops.appointmentkey = this.appointmentkey
            }
            return timeprops
+       },
+       getStaffs(){
+           return this.viewData !== undefined && this.viewData.staffs !== undefined ? this.viewData.staffs: []
        }
     },
     methods: {
@@ -164,16 +176,20 @@ export default {
             return this.dataloaded && this.viewData.services[0] !== undefined ?this.viewData.services[0]:false
         },
         getCompProp(component_name){
+            
             let props = this.componentsList[component_name].props !== undefined ? this.componentsList[component_name].props:{}
+            let nprops = {}
             for (const key in props) {
                 if (props.hasOwnProperty(key)) {
                     const element = props[key]
                     if(typeof element == 'string'){
-                        props[key] = this[element]
+                        nprops[key] = this[element]
+                    }else{
+                        nprops[key] = element
                     }
                 }
             }
-            return props
+            return nprops
         },
         getCompRelations(component_name){
             return this.componentsList[component_name].relations !== undefined ? this.componentsList[component_name].relations:{}
@@ -237,7 +253,7 @@ export default {
             
             if(this.service !== false){
                 this.duration = this.service.duration !== undefined ? this.service.duration : window.wappointmentExtends.filter('durationDefault', this.service)
-                this.location = this.service.type !== undefined ? false : window.wappointmentExtends.filter('locationDefault', this.service)
+                this.location = this.service.type !== undefined ? this.service.type : window.wappointmentExtends.filter('locationDefault', this.service)
             } 
 
             this.setComponentLists()
@@ -265,7 +281,7 @@ export default {
                         options: 'options',
                         duration:"duration",
                         timeprops: 'timeprops',
-                        staffs: this.viewData.staffs,
+                        staffs: 'getStaffs',
                     },
                     listeners: {
                         selectSlot:'childChangedStep',
