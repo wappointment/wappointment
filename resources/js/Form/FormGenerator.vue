@@ -50,7 +50,7 @@ import FormFieldCountrySelector from './FormFieldCountrySelector'
 import FormFieldSelect from './FormFieldSelect'
 import FormFieldCheckImages from './FormFieldCheckImages'
 import FormFieldImageSelect from './FormFieldImageSelect'
-
+import eventsBus from '../eventsBus'
 let allComponents = {FormFieldInput,FormFieldInputs, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
         FormFieldStatus,FormFieldFile, FormFieldSelect,FormFieldCheckImages,
         FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect}
@@ -401,6 +401,7 @@ export default {
                     }
                 }
             }
+            if(element.bus !== undefined) objectProp.eventsBus = eventsBus
             
             return objectProp
         },
@@ -417,8 +418,6 @@ export default {
             this.visibles = []
             this.runValidation()
             this.testFormReady()
-            
-            
             this.pendingValidation = false
         },
         submitTrigger(forceRequest = false){

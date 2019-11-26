@@ -5,11 +5,11 @@
             <div class="widget-wraper p-3 mr-3"  :style="getStyleThemeBg" >
                 <div class="clear pt-2" >
                     <div v-if="!editingMode">
-                        <FrontDemo :options="preoptions"  classEl="wappointment_widget" ></FrontDemo>
+                        <Front :options="preoptions"  classEl="wappointment_widget" ></Front>
                     </div>
-                    <div v-if="editingMode" class="d-flex flex-wrap preview">
-                        <div v-for="(stepObj,idx) in editionsSteps" class="bordered" :class="orderedClass(stepObj,idx)" :data-tt="stepObj.key==step?labelActiveStep:false">
-                            <div class="overflowhidden" :class="'step-'+stepObj.key">
+                    <div v-if="editingMode && frontAvailability!==undefined" class="d-flex flex-wrap preview">
+                        <div  v-for="(stepObj,idx) in editionsSteps" class="bordered" :class="orderedClass(stepObj,idx)" :data-tt="stepObj.key==step?labelActiveStep:false">
+                            <div  class="overflowhidden" :class="'step-'+stepObj.key">
                                 <FrontDemo :options="options"  classEl="wappointment_widget" :step="stepObj.key" ></FrontDemo>
                             </div>
                         </div>
@@ -24,7 +24,7 @@
                         <span v-if="!editingMode"><span class="dashicons dashicons-edit"></span> Edit</span>
                         <span v-else><span class="dashicons dashicons-visibility"></span> Preview</span>
                     </button>
-                    <button class="btn btn-primary" :class="{disabled: !canSave}" @click="saveChanges"><font-awesome-icon :icon="['fas', 'save']" size="lg"/> Save changes</button>
+                    <button class="btn btn-primary" :class="{disabled: !canSave}" @click="saveChanges"><FontAwesomeIcon :icon="['fas', 'save']" size="lg"/> Save changes</button>
                 </div>
                 
                 
@@ -33,11 +33,11 @@
                     <div class="d-flex">
                         <div class="d-flex align-items-center mb-2">
                             <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit"  @click="toggleColor">
-                                <span v-if="colorEdit"><font-awesome-icon :icon="['fas', 'edit']" size="lg"/> Edit Texts</span>
-                                <span v-else><font-awesome-icon :icon="['fas', 'palette']" size="lg"/> Edit Colors</span>
+                                <span v-if="colorEdit"><FontAwesomeIcon :icon="['fas', 'edit']" size="lg"/> Edit Texts</span>
+                                <span v-else><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Colors</span>
                             </button>
-                            <div class="d-flex" v-if="!colorEdit"> 
-                                <button v-for="(stepObj,idx) in editionsSteps" class="btn btn-secondary btn-xs mr-2" 
+                            <div class="d-flex flex-wrap" v-if="!colorEdit"> 
+                                <button v-for="(stepObj,idx) in editionsSteps" class="btn btn-secondary btn-xs mr-2 mb-2" 
                                 :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key, getLabelForStep(stepObj.key))" :data-tt="stepObj.label"> Text Step {{ idx + 1 }}</button>
                             </div>
                         </div>
@@ -97,6 +97,7 @@ import { faPalette, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 
 library.add(faPalette,faEdit, faSave)
+import Front from '../Front'
 import FrontDemo from '../FrontDemo'
 import ColorPicker from './ColorPicker'
 import FormFieldCheckbox from '../Form/FormFieldCheckbox'
@@ -109,19 +110,21 @@ import InputPh from '../Fields/InputLabelMaterial'
 import eventsBus from '../eventsBus'
 export default {
     components: {
+        Front,
         FrontDemo,
         ColorPicker,
         CountrySelector,
         InputPh,
         FormFieldCheckbox,
         FormFieldSlider,
-        'font-awesome-icon': FontAwesomeIcon,
+        FontAwesomeIcon,
     },
     mixins: [Colors, SettingsSave],
-    props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings'],
+    props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability'],
     data: () => ({
         step: 'button',
         stepPassed: 'button',
+        
         options: null,
         tbgcolor: '#fff',
         colorEdit: false,
@@ -156,6 +159,8 @@ export default {
         this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.editionsSteps,  this.config.service )
         this.reverseEditionsSteps = this.editionsSteps.slice(0).reverse()
         this.options = Object.assign ({}, this.preoptions)
+        this.options.editionsSteps = this.editionsSteps
+        this.options.frontAvailability = this.frontAvailability
         this.options.eventsBus = eventsBus
         this.options.demoData = {
             form: {

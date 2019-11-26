@@ -211,6 +211,7 @@ export default {
             this.$emit('confirmed', this.relations.next, {
                 isApprovalManual:(result.data.status == 0), 
                 appointmentSaved: true, 
+                appointmentKey: result.data.appointment.edit_key, 
                 loading: false
             })
         },

@@ -2,7 +2,7 @@
     <div>
         <div v-for="staff in staffs"> 
             <div class="d-flex wap-head align-items-center">
-                <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="$emit('refreshed')">
+                <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="refreshClicked">
                     <img :src="staff.a" :alt="staff.n">
                     <div class="after" v-if="isStepSlotSelection">
                         <svg viewBox="0 0 32 32" class="ic-refresh" aria-hidden="true">
@@ -34,8 +34,32 @@ export default {
         },
         duration:{
             type: [Boolean,Number]
+        },
+        appointmentSaved:{
+            type: Boolean,
+            default: false
+        },
+        options: {
+            type:[Object]
         }
     },
+    data: () => ({
+        disabledButtons: false,
+    }),
+    created(){
+        if(this.options.demoData !== undefined){
+            this.disabledButtons = true
+        }
+    },
+    methods:{
+        refreshClicked(){
+            if(this.disabledButtons) {
+              this.options.eventsBus.emits('stepChanged', 'selection')
+              return
+            } 
+            this.$emit('refreshed')
+        }
+    }
 
 }
 </script>

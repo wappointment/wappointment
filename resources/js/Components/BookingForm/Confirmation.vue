@@ -48,8 +48,9 @@
 
 <script>
 import BookingAddress from './Address'
+import DurationCell from './DurationCell'
 import SaveButtons from './SaveButtons'
-import Dates from "../../Modules/Dates";
+import Dates from "../../Modules/Dates"
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMapMarkedAlt, faPhone, faCalendarCheck, faCalendarAlt } from '@fortawesome/free-solid-svg-icons'
 import { faSkype } from '@fortawesome/free-brands-svg-icons'
@@ -60,7 +61,8 @@ export default {
     components: {
         FontAwesomeIcon,
         BookingAddress,
-        SaveButtons
+        SaveButtons,
+        DurationCell
     }, 
     props: [
         'selectedSlot', 

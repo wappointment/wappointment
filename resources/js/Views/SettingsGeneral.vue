@@ -57,6 +57,15 @@
                           <div class="date-preview"> <span class="font-weight-bold small">{{ date_example }}</span> </div>
                         </div>
                   </div>
+                 <div class="d-flex mb-2">
+                  <div>
+                    <label for="week-starts-on" class="m-0">Week starts on</label>
+                    <div class="small text-muted">In Admin Calendar view</div>
+                  </div>
+                  <div class="ml-4">
+                      <weekDays id="week-starts-on" classN="form-control" :selected="viewData.week_starts_on" @changed="changedDay"></weekDays>
+                  </div>
+                </div> 
                   <div class="mb-2">
                     <label class="form-check-label" for="hrs-before-allowed">
                      <div class="d-flex align-items-center">Appointments can be booked up to 
@@ -114,6 +123,7 @@ import Widget from './Subpages/Widget'
 import EditCancelPage from './Subpages/EditCancelPage'
 import LargeButton from '../Components/LargeSettingsButton'
 import BreadCrumbs from '../Components/BreadCrumbs'
+import weekDays from "../Components/weekDays"
 import RequestMaker from '../Modules/RequestMaker'
 import AbstractListing from './AbstractListing'
 import DurationCell from '../Components/BookingForm/DurationCell'
@@ -126,7 +136,7 @@ library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck)
 export default {
   extends: abstractView,
   components: window.wappointmentExtends.filter('SettingsGeneralComponents', { 
-    Service, Regav, Widget , EditCancelPage, LargeButton, BreadCrumbs, AbstractListing, FontAwesomeIcon, DurationCell
+    Service, Regav, Widget , EditCancelPage, LargeButton, BreadCrumbs, AbstractListing, FontAwesomeIcon, DurationCell, weekDays
     }, 
     {
       extends: abstractView, 
@@ -237,6 +247,10 @@ export default {
       this.viewData[key] = date
       this.toggle(key)
       this.changed(key)
+    },
+    changedDay(value){
+      this.viewData['week_starts_on'] = value
+      this.changed('week_starts_on')
     },
     
     toggled(element){

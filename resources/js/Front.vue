@@ -87,10 +87,6 @@ export default {
           this.bookForm = false
         },
         toggleBookForm() {
-            if(this.disabledButtons) {
-              this.options.eventsBus.emits('stepChanged', 'selection')
-              return
-            } 
             this.bookForm = !this.bookForm
         },
     }

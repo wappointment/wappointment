@@ -14,7 +14,7 @@
       <div v-if="isTesting">
           <transition name="slide-fade-top">
             <BookingWidgetEditor  :bgcolor="getBgColor" :widgetFields="widgetFields" 
-            :config="viewData.config" :preoptions="widgetData" :defaultSettings="widgetDefault" />
+            :config="viewData.config" :preoptions="widgetData" :defaultSettings="widgetDefault" :frontAvailability="frontAvailability" />
           </transition>
       </div>
       <div v-else>
@@ -60,6 +60,9 @@ export default {
       },
       widgetDefault(){
           return (this.viewData !== null && this.viewData.widgetDefault !== undefined)?  this.viewData.widgetDefault:null
+      },
+      frontAvailability(){
+          return (this.viewData !== null && this.viewData.front_availability !== undefined)?  this.viewData.front_availability:null
       }
   },
 }

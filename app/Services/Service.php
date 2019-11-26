@@ -53,11 +53,11 @@ class Service
         return $resultSave;
     }
 
-    public static function get()
+    public static function get($service_id = false)
     {
         return Settings::get('service');
     }
-    public static function getObject()
+    public static function getObject($service_id = false)
     {
         return new \Wappointment\Decorators\Service(static::get());
     }

@@ -53,39 +53,39 @@ class Appointment
 
     public static function tryBook(Client $client, $start_at, $end_at, $type, $service)
     {
-        if (self::canBook($start_at, $end_at)) {
-            return self::processBook($client, $start_at, $end_at, $type, $service);
+        if (static::canBook($start_at, $end_at)) {
+            return static::processBook($client, $start_at, $end_at, $type, $service);
         }
     }
 
     public static function adminBook(Client $client, $start_at, $end_at, $type, $service)
     {
-        if (self::canBook($start_at, $end_at, true)) {
-            return self::processBook($client, $start_at, $end_at, $type, $service, true);
+        if (static::canBook($start_at, $end_at, true)) {
+            return static::processBook($client, $start_at, $end_at, $type, $service, true);
         }
     }
 
-    private static function processBook(Client $client, $start_at, $end_at, $type, $service, $forceConfirmed = false)
+    protected static function processBook(Client $client, $start_at, $end_at, $type, $service, $forceConfirmed = false)
     {
-        $start_at = self::unixToDb($start_at);
-        $end_at = self::unixToDb($end_at);
+        $start_at = static::unixToDb($start_at);
+        $end_at = static::unixToDb($end_at);
         $appointmentData = [
             'start_at' => $start_at,
             'end_at' => $end_at,
             'type' => $type,
             'client_id' => $client->id,
             'edit_key' => md5($client->id . $start_at),
-            'status' => $forceConfirmed ? AppointmentModel::STATUS_CONFIRMED : self::getDefaultStatus($service)
+            'status' => $forceConfirmed ? AppointmentModel::STATUS_CONFIRMED : static::getDefaultStatus($service)
         ];
 
-        return self::book($appointmentData, $client, $forceConfirmed);
+        return static::book($appointmentData, $client, $forceConfirmed);
     }
 
-    private static function canBook($start_at, $end_at, $is_admin = false)
+    protected static function canBook($start_at, $end_at, $is_admin = false)
     {
         //test that this is not a double booking scenario
-        $start_at_str = self::unixToDb($start_at);
-        $end_at_str = self::unixToDb($end_at);
+        $start_at_str = static::unixToDb($start_at);
+        $end_at_str = static::unixToDb($end_at);
 
 
         if (AppointmentModel::where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
@@ -145,9 +145,9 @@ class Appointment
         throw new \WappointmentException('Slot not available', 1);
     }
 
-    private static function book($data, Client $client, $is_admin = false)
+    protected static function book($data, Client $client, $is_admin = false)
     {
-        $appointment = self::create($data);
+        $appointment = static::create($data);
 
         if ($appointment->status == AppointmentModel::STATUS_AWAITING_CONFIRMATION) {
             Events::dispatch('AppointmentBookedEvent', ['appointment' => $appointment, 'client' => $client]);
@@ -192,8 +192,8 @@ class Appointment
         }
         $result = $appointment->update(
             [
-                'start_at' => self::unixToDb($start_at),
-                'end_at' => self::unixToDb($start_at + $appointment->getDurationInSec()),
+                'start_at' => static::unixToDb($start_at),
+                'end_at' => static::unixToDb($start_at + $appointment->getDurationInSec()),
             ]
         );
         if ($result) {
@@ -227,7 +227,7 @@ class Appointment
             throw new \WappointmentException("Can't cancel appointment anymore", 1);
         }
 
-        self::cancel($appointment);
+        static::cancel($appointment);
     }
 
     public static function cancel(AppointmentModel $appointment)
@@ -245,7 +245,7 @@ class Appointment
         return $result;
     }
 
-    private static function getDefaultStatus($service)
+    protected static function getDefaultStatus($service)
     {
         $default_status = ((int) Settings::get('approval_mode') === 1) ? AppointmentModel::STATUS_CONFIRMED : AppointmentModel::STATUS_AWAITING_CONFIRMATION;
 

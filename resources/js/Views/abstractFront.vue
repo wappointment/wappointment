@@ -65,17 +65,23 @@ export default {
 
       serviceError(error) {
        this.loading = false
-       if(error.response.data.message !== undefined)  this.errorMessages.push(error.response.data.message)
+       if(error.response !== undefined){
+         if(error.response.data.message !== undefined)  this.errorMessages.push(error.response.data.message)
        
-       if(error.response.data.data.errors!==undefined && this.lengthGreaterThan(error.response.data.data.errors, 0)){
-          if(this.lengthGreaterThan(error.response.data.data.errors, 0)){
-            this.errorMessages = error.response.data.data.errors
-          }else{
-            //console.log(error.response.data)
-            //this.errorMessages.push('An error occured')
+        if(error.response.data.data.errors!==undefined && this.lengthGreaterThan(error.response.data.data.errors, 0)){
+            if(this.lengthGreaterThan(error.response.data.data.errors, 0)){
+              this.errorMessages = error.response.data.data.errors
+            }else{
+              //console.log(error.response.data)
+              //this.errorMessages.push('An error occured')
+            }
+            
           }
-          
-        }
+       }else{
+         this.errorMessages = []
+         this.errorMessages.push(error.message !== undefined ? error.message : 'Undefined error in response')
+
+       }
 
         //console.log('serviceError End',error)
 

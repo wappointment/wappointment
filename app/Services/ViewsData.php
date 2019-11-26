@@ -57,6 +57,7 @@ class ViewsData
     private function widget()
     {
         return [
+            'front_availability' => $this->front_availability(),
             'widget' => (new WidgetSettings)->get(),
             'widgetDefault' => (new WidgetSettings)->default(),
             'config' => [
@@ -110,6 +111,7 @@ class ViewsData
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'allow_cancellation' => Settings::get('allow_cancellation'),
             'allow_rescheduling' => Settings::get('allow_rescheduling'),
+            'week_starts_on' => Settings::get('week_starts_on'),
             'hours_before_booking_allowed' => Settings::get('hours_before_booking_allowed'),
             'is_availability_set' => empty(WPHelpers::getStaffOption('availability')) ? false : true,
             'is_service_set' => empty($service['type']) && empty($service['name']) ? false : true,
@@ -149,7 +151,6 @@ class ViewsData
         return [
             'is_calendar_sync_set' => empty(Settings::getStaff('calurl')) ? false : true,
             'timezone' => Settings::getStaff('timezone'),
-            'week_starts_on' => Settings::get('week_starts_on'),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'wappointment_allowed' => Settings::get('wappointment_allowed'),

@@ -35,7 +35,7 @@ class Client
 
 
         //book with that client
-        return $client->book($booking->get('time'), $booking->get('type'));
+        return $client->book($booking);
     }
 
     public static function search($email, $size = 30)

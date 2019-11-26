@@ -45,11 +45,11 @@ class Client extends Model
         return empty($this->options['tz']) ? '' : $this->options['tz'];
     }
 
-    public function book($startTime, $type, $service = false)
+    public function book($bookingRequest)
     {
-        if ($service === false) {
-            $service = Service::get();
-        }
+        $startTime = $bookingRequest->get('time');
+        $type = $bookingRequest->get('type');
+        $service = Service::get();
 
         //test type is allowed
         if (!in_array($type, $service['type'])) {

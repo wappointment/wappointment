@@ -13,7 +13,12 @@ export default {
             }
         }
     },
+
     methods: {
+        refreshInitValue(){
+            this.viewData = this.options.frontAvailability
+            this.loadedAfter()
+        },
 
         loadedInit(step){
 
@@ -23,24 +28,39 @@ export default {
         },
 
         demoConfigure(step_name){
-            if(['button'].indexOf(step_name) === -1) {
-                this.selectedSlot = false
-                this.appointmentSaved = false
-                this.dataSent = {}
-            }
-            if(['button', 'selection'].indexOf(step_name) === -1) {
-                let laskey = this.intervalsCollection.intervals.length -1
-                this.selectedSlot = this.intervalsCollection.intervals[laskey].start
-            }
-            if(['button', 'selection', 'form'].indexOf(step_name) === -1) {
-                this.appointmentSaved = true
-                
-                if(this.passedDataSent !== null)this.dataSent = this.passedDataSent
-                else this.dataSent = this.options.demoData.form
-            }
+            
             let component_name = window.wappointmentExtends.filter('BFDemoGetChildComponentForStep', this.getChildComponentForStep(step_name), {step_name: step_name} ) 
-            console.log('component_name', component_name)
-            this.childChangedStep(component_name )
+            let component_data = window.wappointmentExtends.filter('BFDemoGetChildComponentDataForStep', this.getChildComponentDataForStep(step_name, this.options.editionsSteps), 
+            {step_name: step_name, bookingFormObject: this, editionsSteps: this.options.editionsSteps}) 
+
+            this.childChangedStep(component_name ,component_data)
+        },
+
+        getChildComponentDataForStep(step_name, editionsSteps){
+            let data = {}
+            let calendar_at = editionsSteps.findIndex((element) => element.key == 'selection')
+            let form_at = editionsSteps.findIndex((element) => element.key == 'form')
+            let confirmation_at = editionsSteps.findIndex((element) => element.key == 'confirmation')
+            var cursor_step_name_id = step_name
+            let cursor_at = editionsSteps.findIndex((element) => element.key == cursor_step_name_id)
+
+            if(cursor_at < calendar_at) {
+                data.selectedSlot = false
+                data.appointmentSaved = false
+                data.dataSent = {}
+            }
+            if(cursor_at >= calendar_at) {
+                let laskey = this.intervalsCollection.intervals.length -1
+                data.selectedSlot = this.intervalsCollection.intervals[laskey].start
+            }
+            
+            if(cursor_at > form_at) {
+                data.appointmentSaved = true
+                
+                if(this.passedDataSent !== null)data.dataSent = this.passedDataSent
+                else data.dataSent = this.options.demoData.form
+            }
+            return data
         },
 
         getChildComponentForStep(step_name){
@@ -53,6 +73,7 @@ export default {
                     return 'BookingFormConfirmation'
             }
         }
+
     }
 }
 </script>

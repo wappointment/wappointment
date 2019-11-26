@@ -23,15 +23,6 @@
               <div class="card p-2 px-3">
                 <div class="h5">Advanced settings</div>
                 <hr/>
-                <!-- <div class="d-flex mb-2">
-                  <div>
-                    <label for="week-starts-on" class="m-0">Week starts on</label>
-                    <div class="small text-muted">In Admin Calendar view</div>
-                  </div>
-                  <div class="ml-4">
-                      <weekDays id="week-starts-on" classN="form-control" :selected="viewData.week_starts_on" @changed="changedDay"></weekDays>
-                  </div>
-                </div> -->
                 <div class="d-flex mb-2">
                     
                     <label class="form-check-label" for="allow-wappointment">
@@ -67,11 +58,11 @@
 import abstractView from './Abstract'
 import CalUrl from '../Modules/CalUrl'
 import Sync from './Subpages/Sync'
-import weekDays from "../Components/weekDays";
+
 export default {
   extends: abstractView,
   mixins: [CalUrl],
-  components: {Sync, weekDays},
+  components: {Sync},
   data() {
     return {
       viewName: 'settingssync',
@@ -112,10 +103,7 @@ export default {
             .request(this.sleep(4000))
           window.location = window.apiWappointment.base_admin + '?page=wappointment_calendar'
     },
-    changedDay(value){
-      this.viewData['week_starts_on'] = value
-      this.changed('week_starts_on')
-    },
+    
     changedWappointmentAllowed(){
       
       this.changed('wappointment_allowed')

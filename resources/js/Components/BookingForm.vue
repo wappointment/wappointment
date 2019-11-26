@@ -1,8 +1,10 @@
 <template>
     <div class="wap-bf" :class="{show: canBeBooked}">
         <div v-if="canBeBooked">
-            <BookingFormHeader :staffs="viewData.staffs" 
-            :isStepSlotSelection="isStepSlotSelection" 
+            <BookingFormHeader :staffs="getStaffs" 
+            :isStepSlotSelection="isStepSlotSelection"
+            :appointmentSaved="appointmentSaved"
+            :options="options"
             :service="service" :duration="duration" @refreshed="refreshClick"
             :services="services"
             @changeStaff="childChangedStep"
@@ -48,9 +50,8 @@ import BookingFormInputs from './BookingForm/Form'
 import BookingFormHeader from './BookingForm/Header'
 import DurationCell from './BookingForm/DurationCell'
 BookingFormHeader.components = {DurationCell}
-BookingFormConfirmation.components[DurationCell] = DurationCell
-import momenttz from '../appMoment'
 
+import momenttz from '../appMoment'
 
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
@@ -58,7 +59,8 @@ let compDeclared = {
     'BookingCalendar': BookingCalendar,
     'BookingFormInputs':BookingFormInputs,
     'BookingFormHeader': BookingFormHeader,
-    'DurationCell': DurationCell
+    'DurationCell': DurationCell,
+    'abstractFront':abstractFront
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
 
@@ -76,6 +78,7 @@ export default {
         time_format: '',
         date_format: '',
         appointmentSaved: false,
+        appointmentKey: false,
         dataloaded: false,
         isApprovalManual: false,
         dataSent: {},
@@ -102,7 +105,9 @@ export default {
     },
 
     computed: {
-
+        getStaffs(){
+            return this.viewData.staffs !== undefined ? this.viewData.staffs:[]
+        },
         serviceSelected(){
             return this.service !== false
         },
@@ -248,13 +253,8 @@ export default {
 
             this.dataloaded = true
 
-            this.services = this.viewData.services
-            this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
             
-            if(this.service !== false){
-                this.duration = this.service.duration !== undefined ? this.service.duration : window.wappointmentExtends.filter('durationDefault', this.service)
-                this.location = this.service.type !== undefined ? this.service.type : window.wappointmentExtends.filter('locationDefault', this.service)
-            } 
+            this.setServiceDurationLocation()
 
             this.setComponentLists()
 
@@ -264,6 +264,16 @@ export default {
             if(this.loadedInit !== undefined){
                 this.loadedInit(this.step)
             }
+        },
+        setServiceDurationLocation(){
+            this.services = this.viewData.services
+
+            this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
+            
+            if(this.service !== false){
+                this.duration = this.service.duration !== undefined ? this.service.duration : window.wappointmentExtends.filter('durationDefault', this.service)
+                this.location = this.service.type !== undefined ? this.service.type : window.wappointmentExtends.filter('locationDefault', this.service)
+            } 
         },
         setComponentLists(){
             let componentsList = {
@@ -365,6 +375,7 @@ export default {
 
                 },
             }
+            
             this.componentsList = window.wappointmentExtends.filter('componentsList', componentsList,
              {service: this.service, rescheduling:this.rescheduling} )
         },

@@ -93,10 +93,6 @@ class Appointment extends Model
             ->format(Settings::get('date_format') . Settings::get('date_time_union') . Settings::get('time_format'));
     }
 
-    public function getServiceName()
-    {
-        return  $this->getService()->name;
-    }
 
     private function getPageLink($view = 'reschedule-event')
     {
@@ -106,6 +102,12 @@ class Appointment extends Model
         }
         return $page_link . ((strpos($page_link, '?') !== false) ? '&' : '?') . 'view=' . $view . '&appointmentkey=' . $this->edit_key;
     }
+
+    public function getServiceName()
+    {
+        return  $this->getService()->name;
+    }
+
     public function getService()
     {
         static $services = [];

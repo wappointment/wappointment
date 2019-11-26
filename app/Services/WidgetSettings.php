@@ -10,7 +10,7 @@ class WidgetSettings
     private $settings = [
         'colors' => [
             'primary' => [
-                'bg' => '#576D85',
+                'bg' => '#855785',
                 'text' => '#ffffff',
             ],
 
@@ -47,7 +47,7 @@ class WidgetSettings
             'title' => 'Book now!',
             'check_full' => false,
             'check_bold' => false,
-            'slide_size' => .8
+            'slide_size' => 1.3
         ],
         'selection' => [
             'title' => '[total_slots] free slots',

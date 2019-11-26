@@ -20,6 +20,16 @@ export default {
     extends: Front,
     components:{
       BookingFormDemo: BookingFormDemo
+    },
+    methods: {
+
+        toggleBookForm() {
+            if(this.disabledButtons) {
+                let nextStepIndex = this.options.editionsSteps.findIndex((element) => element.key == 'button') + 1
+              this.options.eventsBus.emits('stepChanged', this.options.editionsSteps[nextStepIndex].key)
+              return
+            } 
+        },
     }
 }
 </script>
