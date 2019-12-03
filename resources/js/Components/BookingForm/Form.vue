@@ -1,7 +1,7 @@
 <template>
     <transition name="slide-fade">
         <div v-if="mounted">
-            <div class="text-center mb-2">
+            <div class="text-center">
                 <ul class="li-unstyled my-2">
                     <li><strong>{{options.form.header}}</strong></li>
                     <li><strong>{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></li>
@@ -30,7 +30,7 @@
             </div>
             <transition name="slide-fade">
                 <div v-if="selectedServiceType">
-                    <form>
+                    <div class="booking-fields">
                         <div v-if="physicalSelected" class="address-service">
                             <BookingAddress :service="service">
                                 <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
@@ -62,10 +62,9 @@
                                 <input class="form-control" type="text" id="skype" v-model="bookingForm.skype">
                             </p>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </transition>
-            <hr>
             <div class="d-flex btn-confirm">
                 <div class="mr-2"><span class="btn-secondary btn" @click="back">{{options.form.back}}</span></div>
                 <span  v-if="canSubmit" class="btn-primary btn flex-fill mr-0" @click="confirm">{{options.form.confirm}}</span>
@@ -175,6 +174,12 @@ export default {
         },
     },
     methods: {
+        isEmail(field){
+            return isEmail(field)
+        },
+        isEmpty(field){
+            return isEmpty(field)
+        },
         back(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'selection')
@@ -207,8 +212,9 @@ export default {
         }, 
 
         appointmentBooked(result){
-
-            this.$emit('confirmed', this.relations.next, {
+            let relationnext = window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, {result:result, service: this.service} )
+            
+            this.$emit('confirmed', relationnext , {
                 isApprovalManual:(result.data.status == 0), 
                 appointmentSaved: true, 
                 appointmentKey: result.data.appointment.edit_key, 
@@ -284,5 +290,14 @@ export default {
     margin-left: .6em;
 }
 
+.wap-front .booking-fields {
+    text-align: left;
+    margin: .5em 0;
+}
+
+.wap-front .booking-fields label{
+    margin-bottom: 0;
+    font-size: .9em;
+}
 
 </style>

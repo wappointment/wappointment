@@ -16,6 +16,7 @@ class SettingsStaffController extends RestController
         if ($request->input('key') == 'hello_page') {
             return WPHelpers::setStaffOption('hello_page', $request->input('val'), Settings::get('activeStaffId'), true);
         }
+
         $result = Settings::saveStaff($request->input('key'), $request->input('val'));
         if ($request->input('key') == 'calurl') {
             $result['last_checked'] = WPHelpers::getStaffOption('last-calendar-checked');

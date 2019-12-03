@@ -32,6 +32,10 @@ export default {
         label: {
             type:String
         },
+        keyInput: {
+            type:String,
+            default: ''
+        },
         countries: {
             type: Array,
             default: () => [],
@@ -43,7 +47,7 @@ export default {
     }),
     methods: {
         onInput(data){
-            this.$emit('onInput',data)
+            this.$emit('onInput',data, this.keyInput)
         }
     },
 }

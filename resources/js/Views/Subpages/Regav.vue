@@ -13,7 +13,7 @@
         <div v-if="hasRegav">
             <p class="h6 text-muted">
                 <span class="bullet-wap">3</span> <span class="bullet-title"> Drag and drop the times you want to open for appointments</span></p>
-            <RegularAvailability :initValue="viewData.regav" @updatedDays="updatedRA"></RegularAvailability>
+            <RegularAvailability :initValue="viewData.regav" :viewData="viewData" @updatedDays="updatedRA"></RegularAvailability>
         </div>
     </div>
 </template>
@@ -24,14 +24,11 @@ import StaffSelector from '../../Components/StaffSelector'
 import TimeZones from '../../Components/TimeZones'
 import abstractView from '../Abstract'
 import StaffPicture from '../../Components/StaffPicture'
+import RequestMaker from '../../Modules/RequestMaker'
+
 export default {
   extends: abstractView,
-  components: {
-      RegularAvailability,
-      TimeZones,
-      StaffSelector,
-      StaffPicture
-  }, 
+  components: window.wappointmentExtends.filter('RegavComponents', {RegularAvailability,TimeZones,StaffSelector, StaffPicture},{'RequestMaker':RequestMaker} ), 
   props:['noback'],
   data() {
       return {

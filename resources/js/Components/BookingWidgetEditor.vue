@@ -37,7 +37,7 @@
                                 <span v-else><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Colors</span>
                             </button>
                             <div class="d-flex flex-wrap" v-if="!colorEdit"> 
-                                <button v-for="(stepObj,idx) in editionsSteps" class="btn btn-secondary btn-xs mr-2 mb-2" 
+                                <button v-for="(stepObj,idx) in editionsSteps" class="btn btn-secondary btn-xs m-1" 
                                 :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key, getLabelForStep(stepObj.key))" :data-tt="stepObj.label"> Text Step {{ idx + 1 }}</button>
                             </div>
                         </div>

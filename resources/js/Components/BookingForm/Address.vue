@@ -1,23 +1,21 @@
 <template>
     <div v-if="iframe">
-        <wap-iframe :height="200" :src="getIframeMap"></wap-iframe>
+        <WIframe :height="200" :src="getIframeMap" />
     </div>
     <div class="d-flex align-items-center" v-else>
         <div class="icon-address">
             <slot></slot>
         </div>
         <address>
-            <a :href="getMapAdress" target="_blank">{{ service.address }}</a>
+            <a :href="getMapAdress" target="_blank">{{ getAddress }}</a>
         </address>
     </div>
 </template>
 
 <script>
-import Iframe from "../Iframe";
+import WIframe from "../Iframe"
 export default {
-    components: {
-        'wap-iframe': Iframe,
-    }, 
+    components: {WIframe}, 
     props: {
         service: {
             type: Object
@@ -28,6 +26,10 @@ export default {
         },
     },
     computed: {
+        getAddress(){
+            if(this.service.options.address !== undefined) return this.service.options.address
+            if(this.service.address !== undefined) return this.service.address
+        },
         getIframeMap(){
             return 'https://maps.google.com/maps?width=100%&height=200&hl=en&q='+this.getEncodedAdress+'&ie=UTF8&t=&z=14&iwloc=B&output=embed'
         },
@@ -35,7 +37,7 @@ export default {
             return 'https://www.google.com/maps/search/?api=1&query=' + this.getEncodedAdress
         },
         getEncodedAdress(){
-            return encodeURIComponent(this.service.address);
+            return encodeURIComponent(this.getAddress);
         },
     }
 

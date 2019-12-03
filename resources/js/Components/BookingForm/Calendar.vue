@@ -56,7 +56,7 @@
 
 import BookingButton from '../BookingButton'
 import calendar from '../../Plugins/calendar-js'
-import Dates from "../../Modules/Dates"
+import Dates from '../../Modules/Dates'
 import momenttz from '../../appMoment'
 export default {
     props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration'],
@@ -81,6 +81,7 @@ export default {
         selectedWeek: false,
         selectedDay: false,
         sideMonth: 'left',
+        localmomenttz: momenttz,
         mounted: false,
         demoSelected: {
             week: false,

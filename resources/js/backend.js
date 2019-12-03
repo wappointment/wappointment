@@ -42,6 +42,7 @@ const SyncPage = () => import(/* webpackChunkName: "group-settingspages" */ './V
 const ServicePage = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/Service')
 const ReminderAdd = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/ReminderAdd')
 
+
 const router = window.wappointmentrouter = new VueRouter({
   mode: 'history',
   base: window.apiWappointment.base_admin + '?page=wappointment_',

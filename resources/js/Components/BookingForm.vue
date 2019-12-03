@@ -188,7 +188,19 @@ export default {
                 if (props.hasOwnProperty(key)) {
                     const element = props[key]
                     if(typeof element == 'string'){
-                        nprops[key] = this[element]
+                        if(element.indexOf('.')!==-1){
+                            let splited_name = element.split('.')
+                            let temp = Object.assign({},this)
+
+                            for (let i = 0; i < splited_name.length; i++) {
+                                temp = temp[splited_name[i]]
+                            }
+                            nprops[key] = temp
+                            
+                        }else{
+                            nprops[key] = this[element]
+                        }
+                        
                     }else{
                         nprops[key] = element
                     }
@@ -491,7 +503,7 @@ export default {
 
 .wrap-calendar p, .wrap-calendar hr{
     margin: 0 0 .4em;
-    font-size: .8em;
+    font-size: .9em;
 }
 
 .wap-front .dayselected{
@@ -553,13 +565,7 @@ export default {
 .wap-bf .field-required inoput{
     transition: border-right ease-in-out .3s;
 }
-.wap-front hr {
-    margin: 1em auto;
-    width: 100%;
-    height: 1px;
-    max-width: 100%;
-    text-align: center;
-}
+
 .wap-front .form-control, .wap-front .phone-field{
     width: 100%;
     font-weight: 400;

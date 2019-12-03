@@ -2,7 +2,7 @@
     <div>
         <label v-if="label" >{{ label }}</label>
         <SearchDropdown v-model="updatedValue" :ph="labelDefault" :elements="elements" 
-             :idKey="idKey" :labelSearchKey="labelSearchKey" :flexWrap="flexWrap"></SearchDropdown>
+             :idKey="idKey" :labelSearchKey="labelSearchKey" :flexWrap="flexWrap" :hasMulti="multi"></SearchDropdown>
     </div>
 </template>
 
@@ -30,6 +30,10 @@ export default {
         flexWrap: {
             type:Boolean,
             default:false
+        },
+        multi: {
+            type: Boolean,
+            default: false
         }
     },
 }

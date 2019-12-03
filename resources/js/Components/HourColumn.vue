@@ -1,6 +1,6 @@
 <template> 
-    <div class="pr-0 col-3 col-sm-1" :class="{ 'd-sm-none':hideOnDesktop }" @mouseover="editTimes" @mouseout="cancelEditTimes">
-        <strong class="columnTitle">Hours <span class="dashicons dashicons-edit" :class="{ 'd-none': !hideOnDesktop }"></span></strong>
+    <div class="hours-col"  @mouseover="editTimes" @mouseout="cancelEditTimes">
+        <strong class="columnTitle">Hours <span class="dashicons dashicons-edit" ></span></strong>
         <div :class="edittime ? 'box-shadow box-times active' : 'box-shadow box-times'">
 
             <div v-for="(time, timeidx) in openingTimes" class="hour-cell" :style="'height: '+heightUnit+'px;'">
@@ -25,7 +25,7 @@
 
 <script>
 export default {
-    props: ['openingTimes','hideOnDesktop','heightUnit'],
+    props: ['openingTimes','heightUnit'],
     data() {
         return {
             edittime: false
@@ -58,6 +58,11 @@ export default {
 }
 </script>
 <style>
+    .hours-col{
+        padding: 0 .5rem;
+        min-width: 80px;
+        box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,.08);
+    }
     .controltime-bt, .controltime-tp{
         z-index: 1;
         left: calc(50% - 22px);

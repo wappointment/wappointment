@@ -101,17 +101,26 @@ class EventsController extends RestController
         return $client;
     }
 
+    private function getAppointments($start_at_string, $end_at_string)
+    {
+        return AppointmentModel::with('client')
+            ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
+            ->where('start_at', '>=', $start_at_string)
+            ->where('end_at', '<=', $end_at_string)
+            ->get();
+    }
     private function events(Request $request)
     {
         $ends_at_carbon = DateTime::TimeZToUtc($request->input('end'));
         $start_at_string = DateTime::TimeZToUtc($request->input('start'))->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $ends_at_carbon->format(WAPPOINTMENT_DB_FORMAT);
         $events = [];
-        $appointments = AppointmentModel::with('client')
-            ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
-            ->where('start_at', '>=', $start_at_string)
-            ->where('end_at', '<=', $end_at_string)
-            ->get();
+
+        $appointments = apply_filters('wappointment_calendar_events_query', [], ['start_at' => $start_at_string, 'end_at' => $end_at_string]);
+
+        if (empty($appointments)) {
+            $appointments = $this->getAppointments($start_at_string, $end_at_string);
+        }
 
         foreach ($appointments as $event) {
 

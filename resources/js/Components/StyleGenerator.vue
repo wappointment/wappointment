@@ -169,10 +169,6 @@
             margin: .5em 0;
         }
 
-        .wap-front hr {
-            background-color: {{ hx_rgb(opts.colors.body.bg) }};
-        }
-
         .wap-front {
             font-size: {{ baseFontSize }};
         }

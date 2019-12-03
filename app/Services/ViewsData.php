@@ -20,7 +20,8 @@ class ViewsData
     private function regav()
     {
         $gravatar_img = get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
-        return [
+
+        return apply_filters('wappointment_back_regav', [
             'regav' => Settings::getStaff('regav'),
             'staffs' => WPUser::whereIn('ID', WPUserMeta::getUserIdWithRoles())->get(),
             'activeStaffId' => Settings::get('activeStaffId'),
@@ -30,7 +31,7 @@ class ViewsData
             'timezone' => Settings::getStaff('timezone'),
             'timezones_list' => DateTime::tz(),
             'savedTimezone' => Settings::hasStaff('timezone')
-        ];
+        ]);
     }
 
     private function serverinfo()
@@ -198,7 +199,7 @@ class ViewsData
             $staffs[] = $staff->toArray();
         }
 
-        return [
+        return apply_filters('wappointment_front_availability', [
             'staffs' => $staffs,
             'availability' => $staff_availability,
             'timezones_list' => DateTime::tz(),
@@ -208,6 +209,6 @@ class ViewsData
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'now' => (new Carbon())->format('Y-m-d\TH:i:00'),
             'services' => Service::all()
-        ];
+        ]);
     }
 }

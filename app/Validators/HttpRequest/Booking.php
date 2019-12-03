@@ -28,7 +28,7 @@ class Booking extends AbstractProcessor
             'ctz' => ''
         ];
     }
-    private function getTimeMin()
+    protected function getTimeMin()
     {
         return time() + (\Wappointment\Services\Settings::get('hours_before_booking_allowed') * 60 * 60);
     }

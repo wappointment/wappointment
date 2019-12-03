@@ -13,14 +13,18 @@ class Extends {
         this.callbacks[extendName].push(callBack)
     }
 
-    filter(extendName, extendParams, extraParams){
-        let paramsNew = clone(extendParams)
+    filter(extendName, extendParams, extraParams, cloning = true){
+        
         if(this.callbacks[extendName] !== undefined) {
+            let paramsNew = cloning? clone(extendParams):extendParams
             for (let i = 0; i < this.callbacks[extendName].length; i++) {
                 paramsNew = this.callbacks[extendName][i](paramsNew, extraParams)
             }
+            return paramsNew
+        }else{
+            return extendParams
         }
-        return paramsNew
+        
     }
 
    /* loadComponent(name,componentFile){

@@ -26,8 +26,6 @@
             <p>{{options.confirmation.skype}} <strong>{{ showResult.skype}}</strong> </p>
         </div>
         <div >
-            <hr>  
-
             <div v-if="!showSaveButtons">
                 <transition name="slide-fade">
                     <span class="btn-secondary btn" @click="showSaveButtons=true">

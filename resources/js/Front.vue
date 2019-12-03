@@ -108,6 +108,9 @@ export default {
     font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
 }
 
+.wap-front .btn.btn-secondary.btn-cell{
+  border-radius: .5em;
+}
 
 .wap-front .btn {
   display: inline-block;
@@ -179,6 +182,11 @@ export default {
 .wap-front .justify-content-around {
   -ms-flex-pack: distribute !important;
   justify-content: space-around !important;
+}
+.wap-front .justify-content-center {
+    -webkit-box-pack: center !important;
+    -ms-flex-pack: center !important;
+    justify-content: center !important;
 }
 .wap-front .align-items-center {
   -ms-flex-align: center !important;

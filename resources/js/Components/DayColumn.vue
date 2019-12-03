@@ -26,7 +26,7 @@
                 @updatedBlock="updatedBlock"
                 @active="activeDay"
                 @deactive="deactiveDay"
-
+                @editBlock="editBlock"
                 ></timeBlock>
             
             </div>
@@ -37,7 +37,7 @@
 <script>
 import timeBlock from '../Components/TimeBlock'
 
-
+let timeBlockComps = window.wappointmentExtends.filter('RegavTimeBlockComponent', {'timeBlock': timeBlock} )
 export default {
     props: ['daykey', 'openedTimes', 'minHour', 'maxHour', 'classColumn', 'heightUnit'],
     data() {
@@ -52,15 +52,10 @@ export default {
             activeBlock: []
         }
     },
-    components: {
-        timeBlock
-    }, 
+    components: timeBlockComps, 
     computed: {
         isAtLeastOneSlot(){
-            if(this.isDragging && (this.ghost[1]-this.ghost[0]) != 0) {
-                return true;
-            }
-            return false;
+            return this.isDragging && (this.ghost[1]-this.ghost[0]) != 0
         },
         getGhostStyle(){
           if(this.ghost.length > 0) return 'height:'+this.getHeight(this.ghost)+'px;top:'+this.getY(this.ghost[0])+'px;'
@@ -72,7 +67,7 @@ export default {
         }
     },
     mounted(){
-        this.deactiveDay();
+        this.deactiveDay()
     },
     methods: {
 
@@ -93,13 +88,13 @@ export default {
 
       stopCreate(e){
           if(this.isDragging) this.createBlock(e)
-          this.ghost = [];
+          this.ghost = []
           this.deactiveDay()
       },
 
       dragging(e){
           this.initGhost(e)
-          this.isDragging = true;
+          this.isDragging = true
           this.activeDay()
       },
 
@@ -124,15 +119,15 @@ export default {
       },
       
       getHeight(timeBlock){
-          return (timeBlock[1]-timeBlock[0]) * this.heightUnit ;
+          return (timeBlock[1]-timeBlock[0]) * this.heightUnit 
       },
 
       getY(hour){
-          return (hour - this.minHour) * this.heightUnit ;
+          return (hour - this.minHour) * this.heightUnit 
       },
 
       getHeightColumn(){
-          return (this.maxHour - this.minHour) * this.heightUnit ;
+          return (this.maxHour - this.minHour) * this.heightUnit 
       },
 
       openingTimes(){
@@ -140,9 +135,9 @@ export default {
         for (let index = this.minHour; index < this.maxHour; index++) {
           opening_times.push(index+'h') 
         }
-        return opening_times;
+        return opening_times
       },
-
+        
       deletedBlock( tblockid){
           let openedTimes = this.openedTimes
           openedTimes.splice(tblockid, 1)
@@ -153,21 +148,28 @@ export default {
       createBlock(event){
 
             this.currentDrag = this.startDragAt = 0
-            this.isDragging = false;
+            this.isDragging = false
 
             let openedTimes = this.openedTimes
             if(this.ghost.length == 0) this.ghost=[this.convertYToHour(event.layerY), this.convertYToHour(event.layerY+this.heightUnit)]
 
             openedTimes.push(this.ghost)
             this.$emit('updatedSlots', this.daykey, openedTimes)
-            this.ghost = [];
+            this.ghost = []
       },
 
-      updatedBlock(tblockid, hstart, hend){
-          let openedTimes = this.openedTimes;
-          openedTimes[tblockid] = [hstart, hend];
+
+      updatedBlock(tblockid, hstart, hend, original){
+          let openedTimes = this.openedTimes
+          original[0] = hstart
+          original[1] = hend
+          openedTimes[tblockid] = original
 
           this.$emit('updatedSlots', this.daykey, openedTimes)
+      },
+
+      editBlock(tblockid, hstart, hend, tblock){
+          this.$emit('editBlock', this.daykey, hstart, hend, tblock)
       },
 
       convertYToHour(val){
