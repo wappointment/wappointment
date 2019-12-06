@@ -26,7 +26,7 @@ class Status extends Model
     const RECUR_YEARLY = 4;
 
     protected $fillable = [
-        'type', 'start_at', 'end_at', 'source', 'recur', 'staff_id', 'muted'
+        'type', 'start_at', 'end_at', 'source', 'recur', 'staff_id', 'muted', 'options'
     ];
 
     protected $dates = [

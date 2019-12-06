@@ -304,6 +304,7 @@ export default {
                         duration:"duration",
                         timeprops: 'timeprops',
                         staffs: 'getStaffs',
+                        viewData: 'viewData'
                     },
                     listeners: {
                         selectSlot:'childChangedStep',

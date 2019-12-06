@@ -10,7 +10,7 @@ class StatusController extends RestController
     public function save(Request $request)
     {
         if ($request->input('type') == 'free') {
-            if (Status::free($request->input('start'), $request->input('end'), $request->input('timezone'))) {
+            if (Status::free($request->input('start'), $request->input('end'), $request->input('timezone'), $request)) {
                 return ['message' => 'Extra free time added'];
             }
         } elseif ($request->input('type') == 'busy') {

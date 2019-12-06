@@ -78,7 +78,7 @@
         }
         .wap-front .wrap-calendar .timezone {
             text-align: left;
-            font-size: .5em;
+            font-size: .8em;
         }
         .wap-front .wrap-calendar {
             border-top: none;

@@ -59,7 +59,7 @@ import calendar from '../../Plugins/calendar-js'
 import Dates from '../../Modules/Dates'
 import momenttz from '../../appMoment'
 export default {
-    props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration'],
+    props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration', 'viewData'],
     mixins: [Dates],
     components: {
         BookingButton,
@@ -389,9 +389,11 @@ export default {
         getDayIntervals(daynumber){
             let start = null
             let today = false
+            let until = null
             if(this.isCurrentMonth && daynumber === this.todayDay) {
                 today = true
-                start = momenttz.tz(this.now, this.currentTz)
+                start = momenttz.tz(this.now, this.currentTz).add(parseInt(this.viewData.min_bookable),'hours')
+                until = start.clone().add(1, 'day').startOf('day')
                 //console.log('Today is ', this.todayDay, start.format())
                 //let dayIntervals = this.intervalsCollection.get(start, start.clone().endOf('day'), true)
                 //console.log(start.format(), start.clone().endOf('day').format(),dayIntervals)
@@ -402,12 +404,15 @@ export default {
                 if( this.realMonthNumber < 10 ) prefixMonth = '0'
                 //console.log(this.yearNumber+'-'+prefixMonth+this.realMonthNumber+'-'+prefixDay+daynumber)
                 start = momenttz.tz(this.yearNumber + '-' + prefixMonth + this.realMonthNumber + '-' + prefixDay+daynumber, this.currentTz).startOf('day')
+                until = start.clone().add(1, 'day')
             }
             
-            let dayIntervals = this.intervalsCollection.get(start, start.clone().endOf('day'), today)
-            return window.wappointmentExtends.filter('DayIntervals', dayIntervals, {start: start, end: start.clone().endOf('day'), today:today, staffs:this.staffs} )
+            let dayIntervals = this.intervalsCollection.get(start, until)
+            return this.prepareDayInterval(dayIntervals, start,until)
         },
-
+        prepareDayInterval(dayIntervals, start,until){
+            return dayIntervals
+        },
         initial(string){
             return string.substring(0, 1)
         },

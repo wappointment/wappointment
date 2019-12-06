@@ -10,9 +10,8 @@
     :y="y" 
     :h="h"
     >
-        
         <div class="controls">
-            <div class="timeText" v-if="controls" >
+            <div class="timeText"  >
                 <strong class="timeText" :key="start+end">{{ start }}h - {{ end }}h 
                 </strong>
             </div>
@@ -31,7 +30,6 @@ export default {
     props: ['y', 'h', 'daykey', 'tblockid', 'timeBlock'],
     data() {
         return {
-            controls:true,
             minHour:0,
             maxHour:0,
             heightUnit:0,
@@ -54,7 +52,7 @@ export default {
     },
     methods: {
       toggleControls(visible){
-          this.controls = true
+          this.showControls = visible
       },
       keepActive(){
           this.$emit('active')

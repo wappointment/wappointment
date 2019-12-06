@@ -12,7 +12,7 @@ class Helpers
     public static function getThemeBgColor()
     {
         $color = get_background_color();
-        return !empty($color) ? '#' . $color : '#e6e6e6';
+        return !empty($color) ? '#' . $color : '#fcfcfc';
     }
 
     public static function getOption($option_name, $default = false)

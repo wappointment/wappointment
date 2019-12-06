@@ -57,7 +57,7 @@ class ViewsData
 
     private function widget()
     {
-        return [
+        return apply_filters('wappointment_back_widget_editor', [
             'front_availability' => $this->front_availability(),
             'widget' => (new WidgetSettings)->get(),
             'widgetDefault' => (new WidgetSettings)->default(),
@@ -68,7 +68,7 @@ class ViewsData
             'bgcolor' => WPHelpers::getThemeBgColor(),
             'more' => get_theme_mods(),
             'widgetFields' => (new \Wappointment\Services\WidgetSettings)->adminFieldsInfo()
-        ];
+        ]);
     }
 
     private function widgetcancel()
@@ -84,7 +84,8 @@ class ViewsData
     {
         $staff_timezone = Settings::getStaff('timezone');
 
-        return [
+
+        return  apply_filters('wappointment_back_calendar', [
             'regav' => Settings::getStaff('regav'),
             'availability' => WPHelpers::getStaffOption('availability'),
             'timezone' => $staff_timezone,
@@ -97,7 +98,7 @@ class ViewsData
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'preferredCountries' => Service::getObject()->getCountries(),
-        ];
+        ]);
     }
 
     private function settingsgeneral()
@@ -206,6 +207,7 @@ class ViewsData
             'week_starts_on' => Settings::get('week_starts_on'),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
+            'min_bookable' => Settings::get('hours_before_booking_allowed'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'now' => (new Carbon())->format('Y-m-d\TH:i:00'),
             'services' => Service::all()

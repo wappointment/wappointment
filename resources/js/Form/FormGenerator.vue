@@ -25,7 +25,7 @@
                 </div>
             </template>
             <slot></slot>
-            <div>
+            <div v-if="buttons">
                 <button v-if="backbutton" class="btn btn-secondary" type="button" @click.prevent="$emit('back')">{{ backbuttonLabel }}</button>
                 <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent.stop="submitTrigger">{{ buttonLabel }}</button>
             </div>
@@ -64,7 +64,10 @@ export default {
         }, 
         errors: {
             type: Object,
-            default: {}
+            default: () =>{
+                return {}
+            }
+
         },
         data: {
             type: Object,
@@ -92,6 +95,10 @@ export default {
         ready: {
             type: Boolean,
             default: false
+        },
+        buttons: {
+            type: Boolean,
+            default: true
         },
         backbutton: {
             type: Boolean,
@@ -434,6 +441,7 @@ export default {
             }else{
                 this.modelHolder[model] = newVal
             }
+            this.$emit('changedValue',this.modelHolder)
         },
         getModelValue(element){
             if(element.model.indexOf('.')!== -1){

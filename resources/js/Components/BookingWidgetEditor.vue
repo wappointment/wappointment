@@ -44,7 +44,7 @@
                         
                     </div>
                     <div>
-                        <transition name="slide-fade-top"  >
+                        <transition name="slide-fade-top">
                             <div class="colors-fields" v-if="colorEdit" >
                                 <fieldset v-for="(groupData, group_key) in options.colors">
                                     <legend>{{ getLabel('colors', group_key) }}</legend>
@@ -62,7 +62,6 @@
                                 </fieldset>
                             </div>
                         </transition>
-
                     </div>
                     <div v-if="!colorEdit" v-for="(stepObj,idx) in reverseEditionsSteps" :key="stepObj.key">
                         <transition name="slide-fade-top"  >
@@ -156,7 +155,7 @@ export default {
     }),
 
     created(){
-        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.editionsSteps,  this.config.service )
+        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.editionsSteps,  this.config )
         this.reverseEditionsSteps = this.editionsSteps.slice(0).reverse()
         this.options = Object.assign ({}, this.preoptions)
         this.options.editionsSteps = this.editionsSteps

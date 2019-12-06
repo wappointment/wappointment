@@ -15,6 +15,7 @@ class Status
         if ($statusObject && !empty($statusObject->source)) {
             $status = $statusObject->update(['muted' => 1]);
         } else {
+            do_action('wappointment_admin_status_deleted',  $id);
             $status = Mstatus::destroy($id);
         }
         if ($status) {
@@ -23,9 +24,9 @@ class Status
         }
     }
 
-    public static function free($start, $end, $timezone)
+    public static function free($start, $end, $timezone, $request)
     {
-        return self::create($start, $end, $timezone, MStatus::TYPE_FREE);
+        return self::create($start, $end, $timezone, MStatus::TYPE_FREE, $request);
     }
 
     public static function busy($start, $end, $timezone)
@@ -33,22 +34,22 @@ class Status
         return self::create($start, $end, $timezone, MStatus::TYPE_BUSY);
     }
 
-    protected static function create($start, $end, $timezone, $type)
+    protected static function create($start, $end, $timezone, $type, $request = null)
     {
-        $result = MStatus::create(
-            [
-                'start_at' => DateTime::converTotUtc($start, $timezone),
-                'end_at' => DateTime::converTotUtc($end, $timezone),
-                'type' => (int) $type,
-                //'source' => '',
-                //'eventkey' => ''
-            ]
-        );
-        if ($result) {
+        $arrayCreate = [
+            'start_at' => DateTime::converTotUtc($start, $timezone),
+            'end_at' => DateTime::converTotUtc($end, $timezone),
+            'type' => (int) $type,
+        ];
+
+        $resultObject = MStatus::create($arrayCreate);
+
+        if ($resultObject) {
             (new \Wappointment\Services\Availability())->regenerate();
+            do_action('wappointment_admin_status_created',  $resultObject, $request);
         }
 
-        return $result;
+        return $resultObject;
     }
 
     public static function expand($recurringBusy, $until = false)

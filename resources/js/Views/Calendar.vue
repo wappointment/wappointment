@@ -152,6 +152,7 @@
 
                     <div v-if="shownFreeConfirm">
                       <h5>Confirm that you are free?</h5>
+                      <component v-if="advancedOptionsFreeSlot !== false" :viewData="viewData" v-on="advancedOptionsFreeSlotEvents" :is="advancedOptionsFreeSlot"></component>
                       <button type="button" class="btn btn-secondary btn-lg" @click="hideModal">Cancel</button>
                       <button type="button" class="btn btn-primary btn-lg" @click="confirmFreeRequest">Confirm</button>
                     </div>
@@ -200,11 +201,7 @@ for (const key in mixins_object) {
   }
 }
 
-export default {
-  extends: abstractView,
-  mixins: mixins_array,
-  name: 'calendar',
-  components: {
+let calendar_components = window.wappointmentExtends.filter('BackendCalendarComponents', {
       TimeZones,
       ControlBar,
       AppointmentTypeSelection,
@@ -212,7 +209,12 @@ export default {
       Regav,
       FullCalendarWrapper,
       FontAwesomeIcon
-  }, 
+  })
+export default {
+  extends: abstractView,
+  mixins: mixins_array,
+  name: 'calendar',
+  components: calendar_components, 
 
   data: () => ({
     fcIsReady: false,
@@ -274,7 +276,8 @@ export default {
     serviceEvent: null,
     serviceStatus: null,
     serviceClient: null,
-    openconfirm: false
+    openconfirm: false,
+    advancedOptionsFreeSlot: false
   }),
 
   created(){
@@ -544,6 +547,7 @@ export default {
       this.request(this.setBusyRequest,{start:this.startTime, end:this.endTime}, this.refreshEvents)
     },
     confirmFreeRequest(){
+      if(this.confirmFreeRequestOR !== undefined) return this.confirmFreeRequestOR()
       this.hideModal()
       this.request(this.setFreeRequest,{start:this.startTime, end:this.endTime}, this.refreshEvents)
     },

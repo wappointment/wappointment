@@ -119,6 +119,8 @@ export default {
       },
       
       getHeight(timeBlock){
+          console.log('get height block',timeBlock[1],timeBlock[0],this.heightUnit)
+          console.log('extra',(timeBlock[1]-timeBlock[0]) * this.heightUnit ,this.y,this.getY(timeBlock[0]))
           return (timeBlock[1]-timeBlock[0]) * this.heightUnit 
       },
 
