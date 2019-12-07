@@ -9,8 +9,13 @@ class Widget extends WidgetAbstract
         parent::__construct('wappointment', 'Wappointment Booking');
     }
 
+    public static function canShow()
+    {
+        return empty($_REQUEST['wappo_module_off']);
+    }
     public static function baseHtml($button_title, $brfixed = false)
     {
+        if (!self::canShow()) return;
         \Wappointment\WP\Helpers::enqueueFrontScripts();
         $brFixedString = !empty($brfixed) ? 'data-brfixed="true"' : '';
         return '<div class="wappointment_widget" data-button-title="' . esc_attr($button_title) . '" ' . $brFixedString . '></div>';
@@ -28,6 +33,7 @@ class Widget extends WidgetAbstract
     }
     public function widget($args, $instance)
     {
+        if (!self::canShow()) return;
         if (empty($instance)) {
             $instance = static::getDefaultInstance();
         }
@@ -39,6 +45,7 @@ class Widget extends WidgetAbstract
         }
         $widget_html .= static::baseHtml($instance['button_title'], $brfixed);
         $widget_html .= $args['after_widget'];
+
 
         echo $widget_html;
     }

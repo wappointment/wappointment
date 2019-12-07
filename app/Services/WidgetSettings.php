@@ -183,13 +183,16 @@ class WidgetSettings
     public function __construct()
     {
         $this->db_settings = WPHelpers::getOption($this->key_option, []);
-        $this->merged_settings = empty($this->db_settings) ? $this->default() : $this->merge($this->default(), $this->db_settings);
+        $this->merged_settings = empty($this->db_settings) ? $this->defaultSettings() : $this->merge($this->defaultSettings(), $this->db_settings);
         //$this->merged_settings = $this->merge($this->settings, $this->db_settings);
     }
-    public function
-    default()
+    public function defaultSettings()
     {
         return apply_filters('wappointment_widget_settings_default', $this->settings);
+    }
+    public function defaultFields()
+    {
+        return apply_filters('wappointment_widget_fields_default', $this->fields);
     }
 
     public function get()
@@ -200,7 +203,7 @@ class WidgetSettings
 
     public function adminFieldsInfo()
     {
-        return $this->setHiddenFields($this->fields);
+        return $this->setHiddenFields($this->defaultFields());
     }
 
     private function hidePhone($fields)

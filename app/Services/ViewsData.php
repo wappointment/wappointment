@@ -60,7 +60,7 @@ class ViewsData
         return apply_filters('wappointment_back_widget_editor', [
             'front_availability' => $this->front_availability(),
             'widget' => (new WidgetSettings)->get(),
-            'widgetDefault' => (new WidgetSettings)->default(),
+            'widgetDefault' => (new WidgetSettings)->defaultSettings(),
             'config' => [
                 'service' => Service::get(),
                 'approval_mode' => Settings::get('approval_mode'),
