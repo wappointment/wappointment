@@ -2,7 +2,7 @@
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
 Requires at least: 4.7
-Tested up to: 5.2
+Tested up to: 5.3
 Requires PHP: 7.0
 Stable tag: 1.2.0
 License: GPLv2 or later
@@ -107,11 +107,12 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 1.2.0 - 2019-11-1 =
-* Added Floating booking buttons in the widget options
-* Added icons to differentiate type of appointment phone, skype or at a location
+= 1.2.0 - 2019-12-14 =
+* Your Booking button can float in the bottom right corner of your page now
+* Clearer backend calendar to manage your appointment better
 * Fixed bug staff selection on ms or prefixed site
 * Fixed bug client updating contact info when taking appointment
+* And tons of quick refactoring and interfaces corrections for more coherence
 
 = 1.1.1 - 2019-10-07 =
 * Fixed shortcode bug inserted in page or post

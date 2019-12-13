@@ -12,10 +12,12 @@
 </template>
 
 <script>
-import Dates from "../../Modules/Dates";
+import Dates from "../../Modules/Dates"
+import AbstractFront from "../../Views/abstractFront"
 export default {
+    extends: AbstractFront,
     mixins: [Dates],
-    props: ['options','selectedSlot','timeprops','relations'],
+    props: ['options','selectedSlot','timeprops','relations','rescheduleData'],
     methods: {
         back(){
             this.$emit('back', this.relations.prev, {selectedSlot:false, loading:true})
@@ -28,24 +30,31 @@ export default {
                 ctz: this.timeprops.ctz,
             }
             this.$emit('loading', {loading:true, dataSent: data})
-            this.saveRescheduleRequest()
-            .then(this.appointmentBooked)
-            .catch(this.appointmentBookingError)
+            this.saveRescheduleRequest(data)
+            .then(this.appointmentRescheduled)
+            .catch(this.appointmentReschedulingError)
         },
-        async saveRescheduleRequest() {
-            
+        async saveRescheduleRequest(data) {
             return await this.serviceBooking.call('reschedule', data)
         }, 
 
-        appointmentBooked(result){
+        appointmentRescheduled(result){
+            //console.log('result',result.data)
+            let data = result.data
+            data.appointmentkey = this.timeprops.appointmentkey
+            data.time = this.selectedSlot
+            data.ctz = this.timeprops.ctz
+            data.client = this.rescheduleData.client
             this.$emit('confirmed', this.relations.next, {
+                appointmentSavedData: result.data,
                 isApprovalManual:(result.data.status == 0), 
                 appointmentSaved: true, 
-                loading: false
+                loading: false,
+                dataSent: data
             })
         },
 
-        appointmentBookingError(error){
+        appointmentReschedulingError(error){
             this.serviceError(error)
         },
 

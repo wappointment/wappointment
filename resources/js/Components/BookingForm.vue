@@ -7,6 +7,7 @@
             :options="options"
             :service="service" :duration="duration" @refreshed="refreshClick"
             :services="services"
+            :rescheduling="rescheduling"
             @changeStaff="childChangedStep"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
@@ -67,7 +68,7 @@ compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared
 export default {
      extends: abstractFront,
      mixins: [Colors],
-     props: ['serviceAction', 'appointmentkey', 'options', 'step','passedDataSent'],
+     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent'],
      components: compDeclared, 
     data: () => ({
         viewName: 'availability',
@@ -77,6 +78,7 @@ export default {
         selectedSlot: false,
         time_format: '',
         date_format: '',
+        appointmentSavedData: false,
         appointmentSaved: false,
         appointmentKey: false,
         dataloaded: false,
@@ -270,7 +272,17 @@ export default {
 
             this.setComponentLists()
 
-            this.currentStep = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', {service:this.service, duration:this.duration, location: this.location})
+            if(this.rescheduling) {
+                this.currentStep = 'BookingCalendar'
+
+                this.service = this.rescheduleData.service
+                this.duration = (this.rescheduleData.appointment.end_at - this.rescheduleData.appointment.start_at)/60
+                this.location = this.rescheduleData.location
+
+            }else{
+                this.currentStep = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', {service:this.service, duration:this.duration, location: this.location})
+            }
+            
             this.loadStep(this.currentStep)
 
             if(this.loadedInit !== undefined){
@@ -304,7 +316,8 @@ export default {
                         duration:"duration",
                         timeprops: 'timeprops',
                         staffs: 'getStaffs',
-                        viewData: 'viewData'
+                        viewData: 'viewData',
+                        rescheduling: 'rescheduling'
                     },
                     listeners: {
                         selectSlot:'childChangedStep',
@@ -325,6 +338,7 @@ export default {
                         selectedSlot:"selectedSlot",
                         timeprops: 'timeprops', 
                         options:"options",
+                        rescheduleData: 'rescheduleData'
                     },
                     listeners: {
                         back:'childChangedStep',
@@ -373,10 +387,10 @@ export default {
                         'appointmentSaved':true,
                     },
                     props: {
-                        selectedSlot:"selectedSlot",
                         timeprops: 'timeprops', 
                         service:"service",
                         errors:"errorMessages",
+                        appointment:"appointmentSavedData",
                         result:"dataSent",
                         options:"options",
                         isApprovalManual:"isApprovalManual",

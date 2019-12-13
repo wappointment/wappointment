@@ -1,7 +1,7 @@
 <template>
     <div :class="getClassWrapper">
         <LabelMaterial>
-            <input type="text" class="form-control" :class="{'is-invalid':hasErrors}" :id="id" 
+            <input type="text" class="form-control" @keydown.prevent.stop.enter="catchEnterEvent"  :class="{'is-invalid':hasErrors}" :id="id" 
             @focusout="$emit('activated')" :placeholder="label" 
             v-model="updatedValue">
         </LabelMaterial>
@@ -20,5 +20,11 @@ import LabelMaterial from '../Fields/LabelMaterial'
 export default {
     components: {LabelMaterial},
     mixins: [AbstractField],
+    methods:{
+        catchEnterEvent(e){
+            this.$emit('submitted',e)
+        },
+
+    }
 }
 </script>

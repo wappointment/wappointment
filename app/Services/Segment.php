@@ -54,7 +54,9 @@ class Segment
 
     public function substract($mainSegments, $substractSegments)
     {
+
         $mainSegments = $this->convertToIntervals($mainSegments);
+
         $substractSegments = $this->convertToIntervals($substractSegments);
 
         foreach ($substractSegments as $j => $substract) {

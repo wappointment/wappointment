@@ -19,16 +19,15 @@ class BookingController extends RestController
         if (isset($result['errors'])) {
             return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['errors']);
         }
-        return (new \Wappointment\ClassConnect\Collection($result->toArray()))->except(['id', 'client_id']);
+
+        return ['result' => true, 'appointment' => (new \Wappointment\ClassConnect\Collection($result->toArraySpecial()))->except(['id', 'client_id'])];
     }
 
     public function reschedule(Request $request)
     {
         $result = Appointment::reschedule($request->input('appointmentkey'), $request->input('time'));
 
-        /*         if ($result) {
-                    return ['message' => 'Appointment has been rescheduled'];
-                } */
+
         return $result;
     }
 }

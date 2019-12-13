@@ -6,7 +6,7 @@
         </div>
         <ul class="li-unstyled my-2">
             <li><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></li>
-            <li><strong>{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></li>
+            <li><strong>{{ getMoment(appointment.start_at, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></li>
         </ul>
         <p v-if="isApprovalManual">{{options.confirmation.pending}}</p>
         <div v-if="physicalSelected">
@@ -20,10 +20,10 @@
             </BookingAddress>
         </div>
         <div v-if="phoneSelected">
-            <p>{{options.confirmation.phone}} <strong>{{ showResult.phone}}</strong></p>
+            <p>{{options.confirmation.phone}} <strong>{{ getClientPhone}}</strong></p>
         </div>
         <div v-if="skypeSelected">
-            <p>{{options.confirmation.skype}} <strong>{{ showResult.skype}}</strong> </p>
+            <p>{{options.confirmation.skype}} <strong>{{ getClientSkype }}</strong> </p>
         </div>
         <div >
             <div v-if="!showSaveButtons">
@@ -34,9 +34,9 @@
                 </transition>
             </div>
             
-            <div  v-else="showSaveButtons">
+            <div  v-else>
                 <transition name="slide-fade">
-                    <SaveButtons :selectedSlot="selectedSlot" :service="service"
+                    <SaveButtons :service="service" :showResult="showResult" :appointment="appointment"
                     :staff="staff" :currentTz="timeprops.currentTz" :physicalSelected="physicalSelected"></SaveButtons>
                 </transition>
             </div>
@@ -63,7 +63,7 @@ export default {
         DurationCell
     }, 
     props: [
-        'selectedSlot', 
+        'appointment',
         'service', 
         'result', 
         'isApprovalManual', 
@@ -78,16 +78,26 @@ export default {
     }),
 
     created(){
-        
         this.showResult = this.result
         this.selectedServiceType = this.showResult.type
 
         if(this.options.demoData !== undefined){
             this.options.eventsBus.listens('dataDemoChanged', this.dataChanged)
         }
-       
     },
     computed: {
+        getClientPhone(){
+            if(this.showResult.client !== undefined){
+                return this.showResult.client.options.phone
+            }
+            return this.showResult.phone
+        },
+        getClientSkype(){
+            if(this.showResult.client !== undefined){
+                return this.showResult.client.options.skype
+            }
+            return this.showResult.skype
+        },
         phoneSelected(){
             return this.selectedServiceType == 'phone'
         },
@@ -104,7 +114,6 @@ export default {
             this.selectedServiceType = this.showResult.type
         }
     }
-
 }
 </script>
 <style>

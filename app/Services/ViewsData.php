@@ -98,6 +98,7 @@ class ViewsData
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'preferredCountries' => Service::getObject()->getCountries(),
+            'widgetOptions' => (new \Wappointment\Services\WidgetSettings)->get()
         ]);
     }
 

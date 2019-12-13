@@ -62,101 +62,16 @@
 
                   </div>
                   <div v-else>
-                    <div v-if="shownAppointmentForm">
-                      <div class="mb-2">
-                        <h3>Book an appointment for your client</h3>
-                        <div>
-                            <AppointmentTypeSelection :service="viewData.service" :preselect="selectedAppointmentType" @selected="selectingAppointmentType"></AppointmentTypeSelection>
-                        </div>
-                        <div v-if="selectedAppointmentType">
-                            <div v-if="clientSelected">
-                                <div class="d-flex align-items-center">
-                                  <div class="mr-2">
-                                    <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name">
-                                  </div>
-                                  <div>
-                                    <h6 class="m-0">{{ clientSelected.name }}</h6>
-                                    <small>{{ clientSelected.email }}</small>
-                                  </div>
-                                </div>
-                                <small class="btn btn-link btn-sm" @click="clearClientSelection">Change client</small>
-                            </div>
-                            <div v-else>
-                                <div class="mb-3">
-                                  <div class="input-group input-group-lg" >
-                                    <div class="input-group-prepend">
-                                      <span class="input-group-text" id="inputGroup-sizing-lg">Email</span>
-                                    </div>
-                                    <input type="text" class="form-control" id="bookingemail" :class="hasError('email')" v-model="bookingForm.email" @focus="canShowDropdown" @blur="clearDropdownDelay">
-                                  </div>
-                                  <div>
-                                      <div class="dd-search-results" v-if="showDropdown" >
-                                        <div v-if="clientsResults.length>0">
-                                          <div class="btn btn-light d-flex align-items-center" v-for="client in clientsResults" @click="selectClient(client)">
-                                              <div class="mr-2">
-                                                <img class="rounded-circle" :src="client.avatar" :title="client.name">
-                                              </div>
-                                              <div>
-                                                <h6 class="m-0 text-left">{{ client.name }}</h6>
-                                                <small>{{ client.email }}</small>
-                                              </div>
-                                          </div>
-                                        </div>
-                                        <div v-if="clientSearching">
-                                          Loading ...
-                                        </div>
-                                      </div>  
-                                  </div>
-                                </div>
-                                <div class="input-group mb-3" >
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
-                                  </div>
-                                  <input class="form-control" id="bookingname" type="text" :class="hasError('name')" v-model="bookingForm.name">
-                                </div>
+                    <AdminAppointmentBooking v-if="shownAppointmentForm" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"
+                      :timezone="displayTimezone" @cancelled="hideModal" @confirmed="confirmedStatus" @updateEndTime="updateEndTime"/>
 
-                                <div class="input-group mb-3" v-if="phoneSelected" >
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroup-sizing-default">Phone</span>
-                                  </div>
-                                  <PhoneInput 
-                                  :phone="bookingForm.phone"
-                                  @onInput="onInput"
-                                  :className="hasError('phone')+ ' form-control'"
-                                  :countries="preferredCountries" 
-                                  ></PhoneInput>
-                                </div>
+                    <AdminStatusBusyConfirm v-if="shownBusyConfirm" 
+                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :viewData="viewData"  
+                    @confirmed="confirmedStatus" @cancelled="hideModal"/>
 
-                                <div class="input-group mb-3" v-if="skypeSelected" >
-                                  <div class="input-group-prepend">
-                                    <span class="input-group-text" id="inputGroup-sizing-default">Skype</span>
-                                  </div>
-                                  <input class="form-control" id="bookingskype" type="text" :class="hasError('skype')" v-model="bookingForm.skype">
-                                </div>
-
-                            </div>
-
-                        </div>
-                      </div>
-                      <div>
-                          <button type="button" class="btn btn-secondary btn-lg" @click="hideModal">Cancel</button>
-                          <button type="button" class="btn btn-primary btn-lg" :class="{'disabled': !readyToBook}" @click="confirmNewBookingRequest">Confirm Booking</button>
-                      </div>
-                    </div>
-
-                    <div v-if="shownBusyConfirm">
-                      <h5>Confirm that you are busy?</h5>
-                      <button type="button" class="btn btn-secondary btn-lg" @click="hideModal">Cancel</button>
-                      <button type="button" class="btn btn-primary btn-lg" @click="confirmBusyRequest">Confirm</button>
-                    </div>
-
-                    <div v-if="shownFreeConfirm">
-                      <h5>Confirm that you are free?</h5>
-                      <component v-if="advancedOptionsFreeSlot !== false" :viewData="viewData" v-on="advancedOptionsFreeSlotEvents" :is="advancedOptionsFreeSlot"></component>
-                      <button type="button" class="btn btn-secondary btn-lg" @click="hideModal">Cancel</button>
-                      <button type="button" class="btn btn-primary btn-lg" @click="confirmFreeRequest">Confirm</button>
-                    </div>
-                    
+                    <AdminStatusFreeConfirm v-if="shownFreeConfirm" 
+                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :viewData="viewData"
+                    @confirmed="confirmedStatus" @cancelled="hideModal"/>
                   </div>
 
               </WapModal>
@@ -174,23 +89,16 @@
 import Regav from './Subpages/Regav'
 import EventService from '../Services/V1/Event'
 import StatusService from '../Services/V1/Status'
-import ClientService from '../Services/V1/Client'
 import Intervals from '../Standalone/intervals'
 import Helpers from '../Standalone/helpers'
 import TimeZones from '../Components/TimeZones'
-import AppointmentTypeSelection from '../Components/AppointmentTypeSelection'
 import ControlBar from '../Components/ControlBar'
 import FullCalendarWrapper from '../Components/FullCalendarWrapper'
+import AdminAppointmentBooking from '../Components/AdminAppointmentBooking'
+import AdminStatusBusyConfirm from '../Components/AdminStatusBusyConfirm'
+import AdminStatusFreeConfirm from '../Components/AdminStatusFreeConfirm'
 import abstractView from './Abstract'
-import PhoneInput from '../Components/BookingForm/PhoneInput'
-import {isEmail, isEmpty} from 'validator'
 import momenttz from '../appMoment'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faMapMarkedAlt, faPhone} from '@fortawesome/free-solid-svg-icons'
-import { faSkype} from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-library.add(faMapMarkedAlt, faPhone, faSkype)
 
 import AppointmentRender from './Calendar/AppointmentRender'
 let mixins_object = window.wappointmentExtends.filter('BackendCalendarMixins', {AppointmentRender:AppointmentRender})
@@ -204,11 +112,11 @@ for (const key in mixins_object) {
 let calendar_components = window.wappointmentExtends.filter('BackendCalendarComponents', {
       TimeZones,
       ControlBar,
-      AppointmentTypeSelection,
-      PhoneInput,
       Regav,
       FullCalendarWrapper,
-      FontAwesomeIcon
+      AdminAppointmentBooking,
+      AdminStatusFreeConfirm,
+      AdminStatusBusyConfirm
   })
 export default {
   extends: abstractView,
@@ -222,13 +130,7 @@ export default {
     canLoadEvents: true,
     callback: undefined,
     currentView: 'timeGridWeek',
-    bookingForm: {
-        email: '',
-        phone: '',
-        skype: '',
-        name: '',
-        clientid: false
-    },
+    
     showRegularAv: false,
     clientSelected: false,
     viewName: 'calendar',
@@ -247,17 +149,12 @@ export default {
     disableBgEvent: false,
     startTime:0,
     endTime:0,
+    realEndTime:0,
     intervalsCollection: null,
-    model: {             
-      id: false,
-      url: '',
-      options: {
-      },
-    },
     fullCalOption: undefined,
     openedDays: [],
-    minHour: false,
-    maxHour: false,
+    minHour: 7,
+    maxHour: 19,
     events: [],
     intervals: {
       hours: 0,
@@ -266,36 +163,20 @@ export default {
     activeBgOverId: false,
     shortDayFormat: 'Do MMM YY',
     daysProperties: false,
-    clientSearching:false,
-    clientsResults: [],
-    showDropdown: false,
-    selectedAppointmentType: false,
-    phoneValid: false,
-    errorsOnFields: {},
-    prevEmail: '',
     serviceEvent: null,
     serviceStatus: null,
-    serviceClient: null,
     openconfirm: false,
-    advancedOptionsFreeSlot: false
   }),
 
   created(){
     this.serviceEvent = this.$vueService(new EventService)
     this.serviceStatus = this.$vueService(new StatusService)
-    this.serviceClient = this.$vueService(new ClientService)
     if(window.savedQueries!== undefined && [null,undefined].indexOf(window.savedQueries.open_confirm) === -1 && window.savedQueries.open_confirm > 0) {
       this.openconfirm = window.savedQueries.open_confirm
     }
   },
 
  watch: {
-      bookingForm: {
-          handler: function(newValue){
-            this.changedFormValue(newValue)
-          },
-          deep: true
-      },
       events: {
         handler: function(newValue) {
               if(this.openconfirm && newValue.length > 1){
@@ -310,21 +191,6 @@ export default {
  computed: {
     isToday(){
       return this.firstDay!== undefined && this.lastDay !== undefined && this.firstDay.unix() < momenttz().unix() && this.lastDay.unix() > momenttz().unix()
-    },
-    preferredCountries(){
-      return this.viewData.preferredCountries
-    },
-    readyToBook(){
-      return this.bookingForm.clientid !== false || (Object.keys(this.errorsOnFields).length < 1 && isEmail(this.bookingForm.email))
-    },
-    skypeValid(){
-        return /^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/.test(this.bookingForm.skype)
-    },
-    phoneSelected(){
-        return this.selectedAppointmentType == 'phone'
-    },
-    skypeSelected(){
-        return this.selectedAppointmentType == 'skype'
     },
     staffExceptOwner() {
       return this.windowStaff.filter((staff) => {
@@ -430,83 +296,6 @@ export default {
     },
  },
   methods: {
-    changedFormValue(newValue) {
-        this.errorsOnFields = {}
-        if(newValue.email!== undefined && newValue.email.length > 4 && newValue.email.indexOf('@')!== -1 && this.prevEmail != newValue.email){
-          this.searchClient(newValue.email)
-          this.prevEmail = newValue.email
-        }
-
-        if(isEmpty(newValue.name) ) this.errorsOnFields.name = true
-        if(isEmpty(newValue.email) || !isEmail(newValue.email)) this.errorsOnFields.email = true
-        if(this.phoneSelected && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
-        if(this.skypeSelected && (isEmpty(newValue.skype) || !this.skypeValid)) this.errorsOnFields.skype = true
-
-    },
-    
-    hasError(field){
-        if(this.bookingForm[field] === '') return ''
-        if(this.errorsOnFields[field] !== undefined && this.errorsOnFields[field]===true) return 'is-invalid'
-        return 'is-valid'
-    },
-    onInput({ number, isValid, country }) {
-        this.bookingForm.phone = number
-        this.phoneValid = isValid
-    },
-    selectingAppointmentType(type){
-      this.bookingForm.type=type
-      
-      this.selectedAppointmentType = type
-      this.changedFormValue(this.bookingForm)
-    },
-    canShowDropdown(){
-      if(this.clientsResults.length > 0){
-        this.showDropdown = true
-      }
-    },
-    clearDropdownDelay(){
-      setTimeout(this.clearDropDown, 100);
-    },
-    clearDropDown(){
-      this.showDropdown = false
-    },
-    clearClientSelection(){
-      this.bookingForm.clientid = false
-      this.clientSelected = false
-    },
-    selectClient(client){
-      this.bookingForm.clientid = client.id
-      this.clientSelected = client
-      this.bookingForm.email = ''
-      this.showDropDown = false
-    },
-    searchClient(){
-      if(!this.clientSearching){
-        this.clientSearching = true
-        this.showDropdown = true
-        this.clientsResults = []
-        this.searchClientRequest(this.bookingForm.email).then(
-          function(result){
-            return this.clientsFound(result)
-          }.bind(this),
-          function(err){
-            return this.clientsError(err)
-          }.bind(this))
-      }
-    },
-    async searchClientRequest(email) {
-        return await this.serviceClient.call('search', {email: email})
-    },
-    clientsFound(result){
-      this.clientSearching = false
-      if(result.length > 0){
-        this.clientsResults = result
-      }
-      
-    },
-    clientsError(){
-      this.clientSearching = false
-    },
     selectIsWithin(element){
       let selStart = momenttz.tz(this.startTime.format(), this.timezone)
       let selEnd = momenttz.tz(this.endTime.format(), this.timezone)
@@ -542,22 +331,7 @@ export default {
         this.selectedChoice = 3
       }
     },
-    confirmBusyRequest(){
-      this.hideModal()
-      this.request(this.setBusyRequest,{start:this.startTime, end:this.endTime}, this.refreshEvents)
-    },
-    confirmFreeRequest(){
-      if(this.confirmFreeRequestOR !== undefined) return this.confirmFreeRequestOR()
-      this.hideModal()
-      this.request(this.setFreeRequest,{start:this.startTime, end:this.endTime}, this.refreshEvents)
-    },
-    confirmNewBookingRequest(){
-      if(this.readyToBook) {
-        this.hideModal()
-        this.request(this.bookingRequest,{start:this.startTime, end:this.endTime}, this.refreshEvents)
-      }
-      
-    },
+    
     hideModal(){
         this.bookForAclient = false
         this.selectedChoice = false
@@ -665,6 +439,9 @@ export default {
       }
       return undefined
     },
+    updateEndTime(newEndTime){
+      this.endTime = newEndTime
+    },
       updateTimezone(selectedTimezone,initSave = false){
         this.selectedTimezone = selectedTimezone
         momenttz.tz.setDefault(selectedTimezone)
@@ -708,6 +485,11 @@ export default {
             this.timezone = initTimezone // staff timezone
             this.selectedTimezone = initTimezone // display timezone
           }
+
+          if(this.loadedAfter !== undefined) this.loadedAfter()
+          this.setFullCalOptions()
+      },
+      setFullCalOptions(){
           const intervalString = this.convertInterval()
           
           this.fullCalOption = {
@@ -761,7 +543,6 @@ export default {
             if(window.savedQueries !== undefined){
               this.fullCalOption.props.defaultDate = this.toMoment(window.savedQueries.start.replace(' ','+')).format()
             }
-            
       },
       loadAgain(){
         this.loaded({data:Object.assign({},this.viewData)}, true)
@@ -1115,7 +896,7 @@ export default {
         let appointment = this.findAppointmentById(eventId)
         this.$WapModal().confirm({
           title: 'Do you really want to confirm this appointment?',
-          content: window.wappointmentExtends.filter('ConfirmPopup', this.getAppointmentInfoHTML(appointment), appointment) 
+          content: window.wappointmentExtends.filter('ConfirmPopup', this.getAppointmentInfoHTML(appointment), {appointment, viewData:this.viewData}) 
         }).then((result) => {
           if(result === true){
               this.request(this.confirmEventRequest, eventId, this.refreshEvents)
@@ -1170,7 +951,7 @@ export default {
       },
 
       eventDragStart(event){
-        console.log('event drag', event)
+        //console.log('event drag', event)
         if(event.editable !== true) return false
         this.disableBgEvent = true
       },
@@ -1234,6 +1015,7 @@ export default {
       selectMethod(selectInfo) {
         
             this.startTime = this.toMoment(selectInfo.startStr)
+            this.realEndTime = this.toMoment(selectInfo.endStr)
             this.endTime = this.toMoment(selectInfo.endStr)
 
             /* this.startTime = momenttz.tz(start.format(), this.timezone)
@@ -1274,7 +1056,7 @@ export default {
                         if(timeblock[1]<24) this.maxHour = timeblock[1] + 1
                         else this.maxHour = 24
                     }
- 
+  
                 }
             }
             if( this.minHour > 0 ) this.minHour --
@@ -1349,15 +1131,6 @@ export default {
       async editEventRequest(params) {
           return await this.serviceEvent.call('patch', {id: params.eventId, start: params.start, end: params.end, timezone: this.displayTimezone})
       },
-      async setFreeRequest(params) {
-          return await this.serviceStatus.call('save', {start: params.start.format(), end: params.end.format(), timezone: this.displayTimezone, type: 'free'})
-      },
-      async setBusyRequest(params) {
-          return await this.serviceStatus.call('save', {start: params.start.format(), end: params.end.format(), timezone: this.displayTimezone, type: 'busy'})
-      },
-      async bookingRequest(params) {
-          return await this.serviceEvent.call('save', Object.assign({ start: params.start.unix(), end: params.end.unix(), timezone: this.displayTimezone}, this.bookingForm))
-      },
       
       isLoading(isLoading){
         
@@ -1420,18 +1193,12 @@ export default {
          this.refreshEvents()
          this.resetFirstDay()
       },
+      confirmedStatus(){
+        this.hideModal()
+        this.refreshEvents()
+      },
       refreshEvents(){
         this.$refs.calendar.fireMethod('refetchEvents');
-      },
-
-      resetModel() {
-
-        return this.model ={             
-          id: false,
-          url: '',
-          options: {
-          }
-        };
       },
 
     }

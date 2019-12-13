@@ -150,13 +150,20 @@
             overflow: hidden;
             font-size: .8em;
         }
-        .wap-front .isInvalid input{
+
+        .wap-booking-fields .isInvalid input[type="text"], 
+        .wap-booking-fields .isInvalid input[type="email"], 
+        .wap-booking-fields .isInvalid input[type="url"], 
+        .wap-booking-fields .isInvalid input[type="tel"]{
             border-right: 4px solid {{ hx_rgb(opts.colors.form.error) }} !important;
         }
-        .wap-front .isValid input{
+        .wap-booking-fields .isValid input[type="text"], 
+        .wap-booking-fields .isValid input[type="email"], 
+        .wap-booking-fields .isValid input[type="url"], 
+        .wap-booking-fields .isValid input[type="tel"]{
             border-right: 4px solid {{ hx_rgb(opts.colors.form.success) }} !important;
         }
-        .wap-front .field-required label::after {
+        .wap-booking-fields .field-required label::after {
             content:" *";
             color:{{ hx_rgb(opts.colors.form.error) }};
         }

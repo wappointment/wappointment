@@ -207,8 +207,9 @@ class Appointment
                     'oldAppointment' => $oldAppointment
                 ]
             );
+            return $appointment->toArraySpecial();
         }
-        return $result;
+        return false;
     }
 
     public static function tryCancel($edit_key)

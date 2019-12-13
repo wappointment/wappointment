@@ -37,7 +37,13 @@
                         
                         <button v-if="!isActivated(addon)" class="btn btn-primary" @click="activate(addon)">Activate</button>
                         <button v-else class="btn btn-secondary btn-sm" @click="deactivate(addon)">Deactivate</button>
-                        <button v-if="isActivated(addon)" class="btn btn-sm" :class="[requireSetup(addon)?'btn-primary':'btn-secondary']" @click="openWizardModal(addon)"><span class="dashicons dashicons-admin-generic"></span> Setup Addon</button>
+                        
+                        <button v-if="requireSetup(addon)" class="btn btn-sm" :class="['btn-primary']" @click="runInstallation(addon)">
+                          <span class="dashicons dashicons-admin-generic"></span> Run Installation
+                        </button>
+                        <button v-if="!requireSetup(addon) && hasWizard(addon)" class="btn btn-sm" :class="[hasWizard(addon)?'btn-primary':'btn-secondary']" @click="openWizardModal(addon)">
+                          <span class="dashicons dashicons-admin-generic"></span> Run Wizard
+                        </button>
                     </div>
                   </div>
                   
@@ -80,6 +86,8 @@ import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import abstractView from './Abstract'
 import HelpersPackages from '../Helpers/Packages'
 import AddonsWizard from '../Addons/Wizard'
+
+let services_install = window.wappointmentExtends.filter('AddonsServiceInstall', {})
 export default {
     extends: abstractView,
     mixins: [HelpersPackages],
@@ -89,14 +97,19 @@ export default {
         productKey: '',
         showModal: false,
         cantShowAddons: false,
-        addonWizard: null
+        addonWizard: null,
+        services_install: {},
+        currentServiceAddon:null,
     }),
     components: {SubscribeNewsletter, AddonsWizard},
     created(){
       this.serviceAddons = this.$vueService(new AddonsService)
+      this.services_install = services_install
+
       if(window.apiWappointment.allowed === true) {
         return this.request(this.loadAddons, false, this.loadedAddons)
       }
+      
       this.authorizeAddons()
     },
     computed:{
@@ -108,6 +121,19 @@ export default {
       }
     },
     methods: {
+      runInstallation(addon){
+        let solution_key = addon.solutions[0].namekey.replace('-','_')
+        if(this.services_install[solution_key] !== undefined){
+          this.currentServiceAddon = this.$vueService(this.services_install[solution_key]) 
+          this.request(this.installAddon, false, undefined,false, this.initialSetupSuccess)
+        }
+      },
+      initialSetupSuccess(e){
+        this.successActivate(e)
+      },
+      async installAddon(){
+          return await this.currentServiceAddon.call('install')
+        },
       openWizardModal(addon){
         this.addonWizard = addon
         this.openModal()
@@ -116,6 +142,9 @@ export default {
         this.showModal = true
       },
       requireSetup(addon){
+        return this.isActivated(addon) && addon.initial_install!==undefined && addon.initial_install
+      },
+      hasWizard(addon){
         return this.isActivated(addon) && addon.initial_setup!==undefined && addon.initial_setup
       },
       authorizeAddons(){
@@ -156,7 +185,7 @@ export default {
           return this.isRegistered(addon) && (addon.solutions.length > 1 || addon.activated)
         },
         isInstalled(addon){
-          return this.isRegistered(addon) && (addon.solutions.length > 1 || addon.installed)
+          return this.isRegistered(addon) && (addon.solutions.length > 0 || addon.installed)
         },
 
         checkLicence(){
@@ -177,6 +206,7 @@ export default {
             this.addonWizard = null
         },
 
+        
         async loadAddons(remember = false){
           return await this.serviceAddons.call('get', {remember: remember})
         },

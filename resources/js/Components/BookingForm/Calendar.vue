@@ -59,7 +59,7 @@ import calendar from '../../Plugins/calendar-js'
 import Dates from '../../Modules/Dates'
 import momenttz from '../../appMoment'
 export default {
-    props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration', 'viewData'],
+    props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration', 'viewData','rescheduling'],
     mixins: [Dates],
     components: {
         BookingButton,
@@ -261,7 +261,8 @@ export default {
               this.options.eventsBus.emits('stepChanged', 'form')
               return
             } 
-            this.$emit('selectSlot', 'BookingFormInputs', {selectedSlot: slot})
+            
+            this.$emit('selectSlot', this.rescheduling?'RescheduleConfirm':'BookingFormInputs', {selectedSlot: slot})
 
         },
         daySelected(daynumber, idweek){

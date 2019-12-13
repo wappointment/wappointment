@@ -12,8 +12,8 @@ use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Models\Status as Mstatus;
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Services\Appointment;
-use Wappointment\Services\Admin;
-use Wappointment\Validators\HttpRequest\BookingAdmin;
+
+
 
 class EventsController extends RestController
 {
@@ -48,19 +48,6 @@ class EventsController extends RestController
         throw new \WappointmentException('Error deleting appointment', 1);
     }
 
-    public function save(BookingAdmin $booking)
-    {
-        if ($booking->hasErrors()) {
-            return WPHelpers::restError('Review your fields', 500, $booking->getErrors());
-        }
-
-        $result = Admin::book($booking);
-        if (isset($result['errors'])) {
-            return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['errors']);
-        }
-
-        return ['message' => 'Appointment recorded'];
-    }
 
     public function put(Request $request)
     {

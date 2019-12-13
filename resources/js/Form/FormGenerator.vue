@@ -4,26 +4,28 @@
             <WLoader></WLoader>
         </div>
         <div class="fields-wrap" >
-            <template v-for="(element, keydi) in schema">
-                <div v-if="element.type == 'row'"  :class="getRowClass(element)">
-                    <div class="form-group"  v-for="(subelement, skeydi) in element.fields" 
-                    :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
-                        <div :class="{'d-none': visibles.indexOf(subelement.model) === -1}">
-                            <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" :parentErrors="errorsData" :parentModel="modelHolder"
-                            @loaded="loadedField(keydi, skeydi)"
-                            v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement.model)" :definition="subelement" :errors="getErrors(subelement)" />
+            <form @submit.prevent.stop >
+                <template v-for="(element, keydi) in schema">
+                    <div v-if="element.type == 'row'"  :class="getRowClass(element)">
+                        <div class="form-group"  v-for="(subelement, skeydi) in element.fields" 
+                        :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
+                            <div :class="{'d-none': visibles.indexOf(subelement.model) === -1}">
+                                <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" :parentErrors="errorsData" :parentModel="modelHolder"
+                                @loaded="loadedField(keydi, skeydi)"
+                                v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement.model)" :definition="subelement" :errors="getErrors(subelement)" />
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div v-else class="form-group"  :style="getStyle(element)" :class="getRowEachClass(element)">
-                    <div :class="{'d-none': visibles.indexOf(element.model) === -1}">
-                        <component :is="getFormComponent(element)" :value="getModelValue(element)" :parentErrors="errorsData" :parentModel="modelHolder"
-                    @loaded="loadedField(keydi)" :errors="getErrors(element)"
-                    v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element.model)" :definition="element"/>
+                    <div v-else class="form-group"  :style="getStyle(element)" :class="getRowEachClass(element)">
+                        <div :class="{'d-none': visibles.indexOf(element.model) === -1}">
+                            <component :is="getFormComponent(element)" :value="getModelValue(element)" :parentErrors="errorsData" :parentModel="modelHolder"
+                        @loaded="loadedField(keydi)" :errors="getErrors(element)"
+                        v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element.model)" :definition="element"/>
+                        </div>
+                        
                     </div>
-                    
-                </div>
-            </template>
+                </template>
+            </form>
             <slot></slot>
             <div v-if="buttons">
                 <button v-if="backbutton" class="btn btn-secondary" type="button" @click.prevent="$emit('back')">{{ backbuttonLabel }}</button>

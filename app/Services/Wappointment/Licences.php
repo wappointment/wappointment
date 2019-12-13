@@ -24,7 +24,7 @@ class Licences extends API
 
     public function check()
     {
-        if(!$this->hasLicenceInstalled()) return false;
+        if (!$this->hasLicenceInstalled()) return false;
         $response = $this->client->request('POST', $this->call('/api/site/check'), [
             'form_params' => $this->getParams()
         ]);
@@ -38,6 +38,17 @@ class Licences extends API
     {
         return WPHelpers::deleteOption('site_details');
     }
+
+    public function canUseAddon($addon_name)
+    {
+        $site_options = json_decode(WPHelpers::getOption('site_details'));
+
+        foreach ($site_options as $key => $option) {
+            if ($option->namekey == str_replace('_', '-', $addon_name)) return true;
+        }
+        return false;
+    }
+
     protected function recordDetails($data)
     {
         return WPHelpers::setOption('site_details', json_encode($data));
@@ -57,7 +68,7 @@ class Licences extends API
     protected function handle204Errors($response)
     {
 
-        if(!empty($response->getHeader('reason-reject')[0]) && !empty($response->getHeader('licence-clear')[0])){
+        if (!empty($response->getHeader('reason-reject')[0]) && !empty($response->getHeader('licence-clear')[0])) {
             $this->clear();
             throw new \WappointmentException('You have no valid licence for your site');
         }

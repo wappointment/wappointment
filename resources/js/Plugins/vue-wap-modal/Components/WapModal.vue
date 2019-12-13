@@ -73,7 +73,7 @@ export default {
   }),
   computed:{
       labelCancel(){
-          return this.options.cancel !== undefined ? this.options.cancel:'Cancel'
+          return this.options.cancel !== undefined ? this.options.cancel:'Back'
       },
       labelConfirm(){
           return this.options.confirm !== undefined ? this.options.confirm:'Confirm'

@@ -102,9 +102,14 @@ class Main extends AbstractRoutes
                     'method' => 'deactivate',
                     'controller' => 'AddonsController'
                 ],
-                '/clientsearch' => [
+                '/client/search' => [
                     'method' => 'search',
                     'controller' => 'ClientController'
+                ],
+                '/client/book' => [
+                    'method' => 'book',
+                    'controller' => 'ClientController',
+                    'hint' => 'BookingAdmin'
                 ],
                 '/events' => [
                     'method' => 'save',

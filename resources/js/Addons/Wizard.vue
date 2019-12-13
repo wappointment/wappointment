@@ -20,8 +20,15 @@ import Service from '../Views/Subpages/Service'
 import Widget from '../Views/Subpages/Widget'
 import abstractView from '../Views/Abstract'
 import RequestMaker from '../Modules/RequestMaker'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { faMapMarkedAlt, faPhone, faCalendarCheck } from '@fortawesome/free-solid-svg-icons'
+import { faSkype} from '@fortawesome/free-brands-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import AbstractListing from '../Views/AbstractListing'
+
+library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck)
 export default {
-  components: window.wappointmentExtends.filter('AddonsSettingsComponents', {Service, Widget}, {extends: abstractView, mixins: [RequestMaker]} ),
+  components: window.wappointmentExtends.filter('AddonsSettingsComponents', {Service, Widget, FontAwesomeIcon, AbstractListing}, {extends: abstractView, mixins: [RequestMaker]} ),
     props: ['addon'],
     data() {
         return {

@@ -1,6 +1,6 @@
 <script>
 export default {
-    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors'],
+    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr'],
     watch: {
         updatedValue(newVal, oldVal){
             if(this.definition!==undefined && this.definition.liveParse !== undefined) {
@@ -25,7 +25,7 @@ export default {
     },
     mounted(){
         if(this.waitForScript === false) this.$emit('loaded')
-        this.id = this._uid
+        this.id = this.id_ovr !== undefined ? this.id_ovr:this._uid
     },
     methods: {
         updateValueDelay(newVal){

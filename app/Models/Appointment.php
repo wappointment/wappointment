@@ -76,6 +76,16 @@ class Appointment extends Model
         return self::TYPE_SKYPE;
     }
 
+    public function toArraySpecial()
+    {
+        $array = parent::toArray();
+
+        $array['start_at'] = $this->start_at->timestamp;
+        $array['end_at'] = $this->end_at->timestamp;
+        $array['type'] = $this->getLocationSlug();
+        return $array;
+    }
+
     public function getDurationInSec()
     {
         return $this->end_at->timestamp - $this->start_at->timestamp;
@@ -165,6 +175,6 @@ class Appointment extends Model
 
     public function canStillCancel()
     {
-        return ($this->canCancelUntilTimestamp() - Carbon::now()->timestamp) > 0;
+        return $this->status !== self::STATUS_CONFIRMED || ($this->canCancelUntilTimestamp() - Carbon::now()->timestamp) > 0;
     }
 }

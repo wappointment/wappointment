@@ -30,7 +30,7 @@
             </div>
             <transition name="slide-fade">
                 <div v-if="selectedServiceType">
-                    <div class="booking-fields">
+                    <div class="wap-booking-fields">
                         <div v-if="physicalSelected" class="address-service">
                             <BookingAddress :service="service">
                                 <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
@@ -172,14 +172,15 @@ export default {
             }
             return true
         },
+        validators(){
+            return {
+                'isEmail': isEmail,
+                'isEmpty': isEmpty,
+            }
+        }
     },
     methods: {
-        isEmail(field){
-            return isEmail(field)
-        },
-        isEmpty(field){
-            return isEmpty(field)
-        },
+
         back(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'selection')
@@ -215,6 +216,7 @@ export default {
             let relationnext = window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, {result:result, service: this.service} )
             
             this.$emit('confirmed', relationnext , {
+                appointmentSavedData:result.data.appointment, 
                 isApprovalManual:(result.data.status == 0), 
                 appointmentSaved: true, 
                 appointmentKey: result.data.appointment.edit_key, 
@@ -290,12 +292,12 @@ export default {
     margin-left: .6em;
 }
 
-.wap-front .booking-fields {
+.wap-booking-fields {
     text-align: left;
     margin: .5em 0;
 }
 
-.wap-front .booking-fields label{
+.wap-booking-fields label{
     margin-bottom: 0;
     font-size: .9em;
 }

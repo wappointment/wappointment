@@ -3,9 +3,9 @@
         <div class="d-flex align-items-center inputs-row"  v-for="(valueObj,idx) in updatedValue" 
         :class="getRowClass(valueObj)" v-if="showActiveRowOrReview(valueObj)">
             <FormFieldInput :label="definition.definitionChild.label + ' ' +(idx+1)" :value="valueObj.label" 
-            :parentErrors="parentErrors" :parentModel="parentModel"
+            :parentErrors="parentErrors" :id_ovr="getModelValue(valueObj,idx)" :parentModel="parentModel"
                      :errors="errors" :model="getModelValue(valueObj,idx)"
-                     @change="changedValue" :definition="definition.definitionChild"
+                     @change="changedValue" @submitted="addValueToggleNext" :definition="definition.definitionChild"
                     ></FormFieldInput>
             <transition name="fade">
                 <button v-if="showControls && valueObj.delete === undefined" class="btn btn-white text-muted btn-xs" 
@@ -58,6 +58,13 @@ export default {
         }
     },
     methods: {
+        addValueToggleNext(e){
+            let input = this.addValue()
+            setTimeout(this.addValueDelay.bind(null,input) , 100);
+        },
+        addValueDelay(input){
+            document.getElementById(input.value).focus()
+        },
         getModelValue(valueObj,idx){
             return this.updatedValue[idx]['value']
         },
@@ -105,6 +112,7 @@ export default {
             }
 
             this.updatedValue.push(valueObj)
+            return valueObj
         },
 
         changedDuration(element,a){

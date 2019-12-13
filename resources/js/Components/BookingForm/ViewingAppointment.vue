@@ -6,27 +6,16 @@
                 <li>{{ client.name }} - {{ client.email }}</li>
                 <li><strong>{{ getMoment(selectedSlot, currentTz).format(fullDateFormat) }}</strong></li>
                 <li><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></li>
-                <li v-if="physicalSelected">
-                    <p>{{options.confirmation.physical}} </p>
-                    <p><a :href="getMapAdress" target="_blank">{{ service.address}}</a></p>
-                    <Iframe :height="200" :src="getIframeMap"></Iframe>
-                </li>
-                <li v-if="phoneSelected">
-                    {{options.confirmation.phone}} <strong>{{ clientPhone }}</strong>
-                </li>
-                <li v-if="skypeSelected">
-                    {{options.confirmation.skype}} <strong>{{ clientSkype}}</strong> 
-                </li>
             </ul>
             <div v-if="isSaveEventPage">
                 <div>
                     <p>{{options.confirmation.savetocal}}</p>
-                    <SaveButtons :selectedSlot="selectedSlot" :service="service"
+                    <SaveButtons :selectedSlot="selectedSlot" :service="service" :appointment="appointment"
                     :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected"></SaveButtons>
                 </div>
             </div>
             <div v-else>
-                <RescheduleForm v-if="showReschedule" :appointmentkey="appointmentkey" :options="options" ></RescheduleForm>
+                <RescheduleForm v-if="showReschedule" :appointmentkey="appointmentkey" :rescheduleData="rescheduleData" :options="options" ></RescheduleForm>
                 <div v-if="showCancelConfirmation">
                     <div v-if="appointmentCanceled">
                         <p class="h4">{{getText('confirmed')}}</p>
@@ -72,20 +61,22 @@ import Dates from '../../Modules/Dates'
 import abstractFront from '../../Views/abstractFront'
 import SaveButtons from './SaveButtons'
 import Iframe from '../Iframe'
-import Helpers from '../../Standalone/helpers'
+
 import AppointmentService from '../../Services/V1/Appointment'
 import DurationCell from './DurationCell'
-import RescheduleForm from '../RescheduleForm'
-
+import RescheduleForm from './RescheduleForm'
+import ViewingAppointmentMixin from './ViewingAppointmentMixin'
+let mixins = {ViewingAppointmentMixin:ViewingAppointmentMixin}
+mixins = window.wappointmentExtends.filter('ViewingAppointmentMixin', mixins)
 export default {
      
-    mixins: [Dates],
+    mixins: [Dates, mixins.ViewingAppointmentMixin],
     extends: abstractFront,
     components: {
         SaveButtons,
         Iframe,
         RescheduleForm,
-        DurationCell
+        DurationCell,
     }, 
     props: ['appointmentkey', 'view', 'options'],
     data: () => ({
@@ -107,7 +98,8 @@ export default {
         showCancelConfirmation: false,
         appointmentCanceled: false,
         errorLoading: '',
-        disabledButtons: false
+        disabledButtons: false,
+        rescheduleData: null
         
     }),
     created(){
@@ -133,34 +125,7 @@ export default {
         getText(textKey){
             return this.isCancelPage? this.options.cancel[textKey]:this.options.reschedule[textKey]
         },
-        loadAppointment(){
-            this.loading = true
-            this.loadAppointmentRequest()
-            .then(this.appointmentLoaded)
-            .catch(this.appointmentLoadingError)
-        },
-        async loadAppointmentRequest() {
-            let data = {}
-            data.appointmentkey = this.appointmentkey
-            return await this.serviceAppointment.call('get', data)
-        }, 
-
-        appointmentLoaded(d){
-            this.appointment = d.data.appointment
-            this.client = d.data.client
-            this.service = d.data.service
-            this.staff = d.data.staff
-            this.time_format = (new Helpers()).convertPHPToMomentFormat(d.data.time_format)
-            this.date_format = (new Helpers()).convertPHPToMomentFormat(d.data.date_format)
-            this.date_time_union = d.data.date_time_union
-            this.loadedAppointment = true
-            this.loading = false
-        },
-        appointmentLoadingError(e){
-            this.loading = false
-            this.errorLoading = e.response.data.message
-            //console.log('appointmentBookingError')
-        },
+        
 
         cancelAppointmentConfirmed(){
             if(this.disabledButtons) return false

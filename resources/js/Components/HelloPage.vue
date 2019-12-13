@@ -8,19 +8,19 @@
           <template slot="modal-body">
              <div>
                  <div class="d-flex" v-if="!experience">
-                    <div>
-                        <h1>{{ days }} days already!!</h1>
-                        <p class="h5">Thank you so much for your trust in Wappointment!</p>
-                        <p class="h5">It took us a full year of work to get that plugin in your hands.</p>
-                        <h3>How is your experience with Wappointment so far?</h3>
+                    <div class="contact-wrapper">
+                        <h2>{{ days }} days already!!</h2>
+                        <p class="h6">Thank you so much for your trust in Wappointment!</p>
+                        <p class="h6">It took us a full year of work to get that plugin in your hands.</p>
+                        <h6>How is your experience with Wappointment so far?</h6>
                         <HowYouFeel @changed="feelingChanged"/>
                         <div >
                             <button class="btn btn-link btn-sm" @click="dontShowAgain">Don't show again</button>
                         </div>
                     </div>
                     <div>
-                        <figure class="figure">
-                            <img :src="pathAssets('images/yeah.jpg')" class="img-fluid" height="200" alt="Our little team of 2">
+                        <figure class="m-2 mx-4 figure">
+                            <img :src="'https://ps.w.org/wappointment/assets/equipowappo.jpg?rev=2151020'" class="img-fluid rounded" height="200" alt="Our little team of 2">
                             <figcaption class="figure-caption text-right">Our little team of 2</figcaption>
                         </figure>
                     </div>
@@ -32,29 +32,29 @@
                         <div v-if="happy">
                             <div class="d-flex">
                                 <div>
-                                    <div v-if="!messageSent">
-                                        <p v-if="great" class="h1">Wow! Thank you so much!</p>
-                                        <p v-else class="h1">Glad to hear it's fun so far</p>
-                                        <p class="h5">We're trying to improve. Can you help?</p>
-                                        <p class="h5">We just want to know you a bit better.</p>
-                                        <p class="h5">Just saying "Hi" is plenty already.</p>
+                                    <div class="contact-wrapper" v-if="!messageSent">
+                                        <p v-if="great" class="h2">Wow! Thank you so much!</p>
+                                        <p v-else class="h2">Glad to hear it's fun so far</p>
+                                        <p class="h6">We're trying to improve. Can you help?</p>
+                                        <p class="h6">We just want to know you a bit better.</p>
+                                        <p class="h6">Just saying "Hi" is plenty already.</p>
                                         <p class="h6">But if you want to write a bit more about your site and yourself, that would be great!</p>
                                     </div>
                                     <Contact :autofill="autofillHappy" @sent="sent"></Contact>
                                 </div>
                                 <div>
-                                    <figure class="figure">
-                                        <img :src="pathAssets('images/yeah.jpg')" class="img-fluid" height="200" alt="Our little team of 2">
+                                    <figure class="m-2 mx-4 figure">
+                                        <img :src="'https://ps.w.org/wappointment/assets/equipowappo.jpg?rev=2151020'" class="img-fluid rounded" height="200" alt="Our little team of 2">
                                         <figcaption class="figure-caption text-right">Our little team of 2</figcaption>
                                     </figure>
                                 </div>
                             </div>
                         </div>
                         <div v-else>
-                            <div v-if="!messageSent">
-                                <p class="h1">Ouch! What happened?</p>
-                                <p class="h5">How could we make your experience better?</p>
-                                <p class="h5">Is it buggy? Is it slow? Is it lacking features you need? Be honnest!</p>
+                            <div class="contact-wrapper" v-if="!messageSent">
+                                <p class="h2">Ouch! What happened?</p>
+                                <p class="h6">How could we make your experience better?</p>
+                                <p class="h6">Is it buggy? Is it slow? Is it lacking features you need? Be honnest!</p>
                             </div>
                             <Contact :autofill="autofillUnHappy" @sent="sent"></Contact>
                         </div>

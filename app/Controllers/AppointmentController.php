@@ -21,11 +21,8 @@ class AppointmentController extends RestController
         if (empty($appointment)) {
             throw new \WappointmentException("Can't find appointment", 1);
         }
-        $appointmentData = [
-            'start_at' => $appointment->start_at->getTimestamp(),
-            'end_at' => $appointment->end_at->getTimestamp(),
-            'type' => $appointment->getLocationSlug(),
-        ];
+        $appointmentData = $appointment->toArraySpecial();
+
         if (Settings::get('allow_rescheduling')) {
             $appointmentData['canRescheduleUntil'] = $appointment->canRescheduleUntilTimestamp();
         }

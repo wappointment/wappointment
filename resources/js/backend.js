@@ -7,6 +7,7 @@ import FormGenerator from './Form/FormGenerator'
 import StickyBar from './Components/StickyBar'
 import RingLoader from './Components/Loaders/Ring'
 import WLoader from './Components/Loaders/BigCalendar'
+import DurationCell from './Components/BookingForm/DurationCell'
 import VueService from './Plugins/vue-service'
 import changeWPmenu from './Standalone/changeWPmenu'
 import parseQuery from './Standalone/parseQuery'
@@ -24,6 +25,7 @@ Vue.component('WAPFormGenerator', FormGenerator)
 Vue.component('StickyBar', StickyBar)
 Vue.component('RingLoader', RingLoader)
 Vue.component('WLoader', WLoader)
+Vue.component('DurationCell', DurationCell)
 Vue.use(VueRouter)
 
 const CalendarPage = () => import(/* webpackChunkName: "group-calendar" */ './Views/Calendar')

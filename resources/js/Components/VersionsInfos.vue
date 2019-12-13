@@ -80,6 +80,7 @@ export default {
             this.$emit('closed')
         },
         getImageLink(image){
+            return 'https://ps.w.org/wappointment/assets/'+image+'?rev=2151020'
             return this.pathAssets('images/'+image)
         },
         loaded(viewData){

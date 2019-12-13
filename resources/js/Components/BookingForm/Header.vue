@@ -39,6 +39,9 @@ export default {
             type: Boolean,
             default: false
         },
+        rescheduling:{
+            type: Boolean,
+        },
         options: {
             type:[Object]
         }

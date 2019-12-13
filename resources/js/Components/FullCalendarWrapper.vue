@@ -39,12 +39,13 @@
                 return this.calendarAPI
             },
         },
+        
         created(){
             this.configPrepared = this.config.props
             this.configPrepared.plugins = this.calendarPlugins
             this.eventsPrepared = this.config.events
-            
         },
+
         mounted() {
             this.calendarAPI = this.$refs.calendarcore.getApi()
             this.isReady = true
