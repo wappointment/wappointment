@@ -10,9 +10,6 @@
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
-A powerful and reliable appointment booking system, packing the simplest appointment booking process for your clients
-
-
 ## Description 
 
 A powerful and reliable **[appointment booking system](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**, packing the simplest appointment booking process for your clients.
