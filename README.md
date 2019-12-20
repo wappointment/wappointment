@@ -115,28 +115,28 @@ It requires work on your end but keeps your site safe and optimized.
 ## Screenshots 
 
 ### 1. Weekly Availability. First step of our initial setup wizard, simply drag and drop your recurrent availability.
-[missing image]
+![Weekly Availability](https://ps.w.org/wappointment/assets/screenshot-1.jpg?rev=2151020)
 
 ### 2. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or In Person.
-[missing image]
+![Service Setup](https://ps.w.org/wappointment/assets/screenshot-2.jpg?rev=2151020)
 
 ### 3. Booking Widget Editor. Quickly change all colors and texts of the customers' frontend Booking widget.
-[missing image]
+![Booking Widget Editor](https://ps.w.org/wappointment/assets/screenshot-3.jpg?rev=2151020)
 
 ### 4. Calendar Weekly View. Overview of your appointments and availability(punctual and recurrent).
-[missing image]
+![Calendar Weekly View](https://ps.w.org/wappointment/assets/screenshot-4.jpg?rev=2151020)
 
 ### 5. Calendar Admin Action. Book an appointment on behalf of a customer, create a punctual time where you are free or busy.
-[missing image]
+![Calendar Admin Action](https://ps.w.org/wappointment/assets/screenshot-5.jpg?rev=2151020)
 
 ### 6. Frontend Booking Widget. Your customers start the booking process by clicking a booking button.
-[missing image]
+![Frontend Booking Widget](https://ps.w.org/wappointment/assets/screenshot-6.jpg?rev=2151020)
 
 ### 7. Settings Panel. Modify all that you had setup in the wizard, manage the confirmations and reminders, etc...
-[missing image]
+![Settings Panel](https://ps.w.org/wappointment/assets/screenshot-7.jpg?rev=2151020)
 
 ### 8. Help Page. Have a question? Simply ask for it straight in there.
-[missing image]
+![Help Page](https://ps.w.org/wappointment/assets/screenshot-8.jpg?rev=2151020)
 
 
 
