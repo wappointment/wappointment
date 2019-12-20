@@ -27,7 +27,7 @@ export default {
       },
       finalCallbackWrapper(data){
         //console.log('final callback left',window.wapRequests.length)
-         if(window.wapRunning.finalCallback !== undefined) window.wapRunning.finalCallback(data)
+         if(window.wapRunning.finalCallback !== undefined && typeof(window.wapRunning.finalCallback) === 'function') window.wapRunning.finalCallback(data)
          window.wapRunning = false
          if(window.wapRequests.length > 0) this.queueExecuteOne()
       },

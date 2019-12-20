@@ -43,9 +43,12 @@ class Licences extends API
     {
         $site_options = json_decode(WPHelpers::getOption('site_details'));
 
-        foreach ($site_options as $key => $option) {
-            if ($option->namekey == str_replace('_', '-', $addon_name)) return true;
+        if (!empty($site_options) && count($site_options) > 0) {
+            foreach ($site_options as $key => $option) {
+                if ($option->namekey == str_replace('_', '-', $addon_name)) return true;
+            }
         }
+
         return false;
     }
 

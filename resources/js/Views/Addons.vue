@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid m-2">
+  <div >
     <div class="d-flex align-items-center">
       <h1 class="m-2">Addons</h1>
       <div v-if="dataLoaded">
@@ -13,49 +13,12 @@
       </div>
     </div>
     <div class="addons d-flex flex-wrap" v-if="dataLoaded">
-      <div v-for="(addon,id) in viewData.addons" 
-      class="addon addon-active d-flex flex-column align-self-start" 
-      :class="{registered: isRegistered(addon), installed: isInstalled(addon), activated: isActivated(addon), 'coming-soon': !isPublished(addon)}">
-          <h3 class="mb-3 text-center">{{ addon.options.name }}</h3>
-          <div class="text-muted mb-4" v-html="addon.options.description"></div>
-          <div v-if="isPublished(addon)">
-              <div v-if="!isRegistered(addon)" class="mt-auto d-flex align-items-center">
-                <div class="font-italic">
-                  <div>Price: <strong>{{ getRealPrice(getPrice(addon)) }}€</strong></div>
-                </div>
-                <div class="ml-auto pl-2"> 
-                  <a :href="buyAddonUrl(addon)" target="_blank" class="btn btn-outline-primary btn-block">Get it</a>
-                </div>
-              </div>
-              <div v-else class="mt-auto">
-                  <div>Licence <strong class="text-success">active</strong> until : <u class="small">{{ addon.expires_at }}</u></div>
-                  <div v-if="isPlugin(addon)" class="my-2">
-                    <div v-if="!isInstalled(addon)">
-                      <button class="btn btn-primary" @click="install(addon)">Install</button>
-                    </div>
-                    <div v-else>
-                        
-                        <button v-if="!isActivated(addon)" class="btn btn-primary" @click="activate(addon)">Activate</button>
-                        <button v-else class="btn btn-secondary btn-sm" @click="deactivate(addon)">Deactivate</button>
-                        
-                        <button v-if="requireSetup(addon)" class="btn btn-sm" :class="['btn-primary']" @click="runInstallation(addon)">
-                          <span class="dashicons dashicons-admin-generic"></span> Run Installation
-                        </button>
-                        <button v-if="!requireSetup(addon) && hasWizard(addon)" class="btn btn-sm" :class="[hasWizard(addon)?'btn-primary':'btn-secondary']" @click="openWizardModal(addon)">
-                          <span class="dashicons dashicons-admin-generic"></span> Run Wizard
-                        </button>
-                    </div>
-                  </div>
-                  
-              </div>
-          </div>
-          <div v-else>
-            <hr class="mt-0 mb-4">
-            <SubscribeNewsletter v-if="!isActivated(addon)" :list="addon.key" :defaultEmail="viewData.admin_email" :statuses="viewData.statuses" @updatedStatuses="updatedStatuses">
-              <p class="h6 font-italic">Want to know when it's out?</p>
-            </SubscribeNewsletter>
-          </div>
-      </div>
+      <template v-for="(addon,id) in viewData.addons"> 
+        <AddonPreview 
+        :apiSite="apiSite" :viewData="viewData" :addon="addon"
+        @openWizardModal="openWizardModal" @runInstallation="runInstallation" @install="install" />
+      </template>
+      
     </div>
     <div v-else>
       <div v-if="cantShowAddons" class="text-muted text-center bg-light p-4">
@@ -82,15 +45,13 @@
 
 <script>
 import AddonsService from '../Services/V1/Addons'
-import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
-import abstractView from './Abstract'
-import HelpersPackages from '../Helpers/Packages'
-import AddonsWizard from '../Addons/Wizard'
 
+import abstractView from './Abstract'
+import AddonsWizard from '../Addons/Wizard'
+import AddonPreview from '../Components/Addon'
 let services_install = window.wappointmentExtends.filter('AddonsServiceInstall', {})
 export default {
     extends: abstractView,
-    mixins: [HelpersPackages],
     data: () => ({
         serviceAddons: null,
         paramsBase: {},
@@ -101,7 +62,7 @@ export default {
         services_install: {},
         currentServiceAddon:null,
     }),
-    components: {SubscribeNewsletter, AddonsWizard},
+    components: {AddonPreview, AddonsWizard},
     created(){
       this.serviceAddons = this.$vueService(new AddonsService)
       this.services_install = services_install
@@ -141,12 +102,7 @@ export default {
       openModal(){
         this.showModal = true
       },
-      requireSetup(addon){
-        return this.isActivated(addon) && addon.initial_install!==undefined && addon.initial_install
-      },
-      hasWizard(addon){
-        return this.isActivated(addon) && addon.initial_setup!==undefined && addon.initial_setup
-      },
+      
       authorizeAddons(){
          //ask for connection confirmation
         this.$WapModal().confirm({
@@ -166,28 +122,11 @@ export default {
             this.request(this.loadAddons, response.remember, this.loadedAddons)
         })  
       },
-       buyAddonUrl(addon){
-         return this.apiSite + '/addons?addon=' + addon.key +'&origin=' + encodeURIComponent(window.location.href)
-       },
+       
         updatedStatuses(statuses){
           this.viewData.statuses = statuses
         },
-        isPublished(addon){
-            return addon.status > 0
-        },
-        isRegistered(addon){
-          return addon.expires_at !== undefined
-        },
-        isPlugin(addon){
-          return addon.plugin
-        },
-        isActivated(addon){
-          return this.isRegistered(addon) && (addon.solutions.length > 1 || addon.activated)
-        },
-        isInstalled(addon){
-          return this.isRegistered(addon) && (addon.solutions.length > 0 || addon.installed)
-        },
-
+        
         checkLicence(){
           this.$WapModal().request(this.checkLicenceRequest()).then(this.successInstalled).catch(this.failedCheckRequest)
             //this.request(this.checkLicenceRequest, false, this.loadedAddons)
@@ -319,17 +258,20 @@ export default {
 }
 
 
-.addons .addon.registered.installed.activated{
+.addons .addon.registered.installed-addon.activated{
   border: 1px solid #64cb86;
 }
 
-.addons .addon.registered.installed::before {
+.addons .addon.registered.installed-addon::before {
     border: 2px solid #6ed52d;
 }
-.addons .addon.registered.installed.activated::before {
+.addons .addon.registered.installed-addon.activated::before {
     background-color: #72ea9a;
 }
 
+.wappointment-wrap .addons p {
+    margin-bottom: .2rem;
+}
 </style>
 
 

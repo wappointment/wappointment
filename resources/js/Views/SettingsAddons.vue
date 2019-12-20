@@ -1,7 +1,7 @@
 <template>
   <div >
       <div class="reduced">
-          <div v-for="(addon, addonkey) in addons" class="card cardb p-2 px-3 d-flex flex-row justify-content-between" @click="editAddonSettings(addonkey)">
+          <div v-for="(addon, addonkey) in addonsWithSettings" class="card cardb p-2 px-3 d-flex flex-row justify-content-between" @click="editAddonSettings(addonkey)">
                 <span class="h5 my-1">
                   <span class="dashicons dashicons-admin-generic text-muted"></span>
                   {{ addon.name }}</span>
@@ -39,6 +39,18 @@ export default {
     },
     getAddon(){
       return this.activeAddon === true ? this.addons[this.activeAddonKey] : false
+    },
+    addonsWithSettings(){
+      let addonsWithSettings = {}
+      for (const key in this.addons) {
+        if (this.addons.hasOwnProperty(key)) {
+          const element = this.addons[key]
+          if(element.settings!== undefined){
+            addonsWithSettings[key] = element
+          }
+        }
+      }
+      return addonsWithSettings
     }
   },
   methods: {

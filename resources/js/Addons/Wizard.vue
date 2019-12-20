@@ -6,7 +6,7 @@
             </button>
         </div>
         <div>
-            <Service v-if="stepService" />
+            <Service :crumb="false" v-if="stepService" />
             <Widget v-if="stepWidgetEditor" />
             <div v-if="stepAddonsSettings">
                 <component :is="addon.settingKey"></component>

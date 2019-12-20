@@ -137,6 +137,9 @@ export default {
     }
 }
 
+.wappointment-wrap p{
+    font-size: 1rem;
+}
 /* hide elements */
 #update-nag, .update-nag{
     display: none !important;
