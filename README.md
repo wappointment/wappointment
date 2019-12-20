@@ -9,6 +9,7 @@
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
 ![Appointment Bookings for WordPress](https://ps.w.org/wappointment/assets/screenshot-1.jpg?rev=2151020)
+
 A powerful and reliable appointment booking system, packing the simplest appointment booking process for your clients
 
 
