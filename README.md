@@ -1,4 +1,5 @@
 # Appointment Booking Calendar by Wappointment 
+![Appointment Bookings for WordPress](https://ps.w.org/wappointment/assets/banner-772x250.png?rev=2151020)
 **Contributors:** wappointment, benheu  
 **Tags:** appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar  
 **Requires at least:** 4.7  
@@ -7,8 +8,6 @@
 **Stable tag:** 1.2.0  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
-
-![Appointment Bookings for WordPress](https://ps.w.org/wappointment/assets/screenshot-1.jpg?rev=2151020)
 
 A powerful and reliable appointment booking system, packing the simplest appointment booking process for your clients
 
