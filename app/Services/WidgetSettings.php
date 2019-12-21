@@ -185,6 +185,7 @@ class WidgetSettings
 
     public function __construct()
     {
+        array_key_first([]);
         $this->db_settings = WPHelpers::getOption($this->key_option, []);
         $this->merged_settings = empty($this->db_settings) ?
             $this->defaultSettings() : $this->merge($this->defaultSettings(), $this->db_settings);
