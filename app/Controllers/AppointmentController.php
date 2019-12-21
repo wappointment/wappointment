@@ -2,7 +2,6 @@
 
 namespace Wappointment\Controllers;
 
-
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Services\Settings;

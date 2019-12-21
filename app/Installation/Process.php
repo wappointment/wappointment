@@ -16,7 +16,9 @@ class Process extends AbstractProcess
 
     protected function isUpToDate()
     {
-        if (empty(WPHelpers::getOption('installation_completed'))) return false;
+        if (empty(WPHelpers::getOption('installation_completed'))) {
+            return false;
+        }
         return true;
     }
 

@@ -18,7 +18,10 @@ class WappointmentController extends RestController
         if ($result) {
             return [
                 'result' => $result,
-                'message' => $result === true ? 'Already subscribed' : (isset($result['response']->status) && $result['response']->status > 0 ? "Great, we'll keep you posted as soon as this is out!" : 'Great we\'ve sent you an email, just quickly check your inbox and confirm!')
+                'message' => $result === true ?
+                    'Already subscribed' : (isset($result['response']->status) && $result['response']->status > 0 ?
+                        "Great, we'll keep you posted as soon as this is out!" :
+                        'Great we\'ve sent you an email, just quickly check your inbox and confirm!')
             ];
         }
         throw new \WappointmentException("Couldn't subscribe you.", 1);

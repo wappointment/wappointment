@@ -59,8 +59,8 @@ class Settings
             'front_page' => 0,
             'approval_mode' => 1, // 1 stands for automatic
             'week_starts_on' => 1, // 1 stands for monday
-            'date_format' => WPHelpers::get_option('date_format'),
-            'time_format' => WPHelpers::get_option('time_format'),
+            'date_format' => WPHelpers::getWPOption('date_format'),
+            'time_format' => WPHelpers::getWPOption('time_format'),
             'date_time_union' => ' - ',
             'allow_cancellation' => true,
             'allow_rescheduling' => true,
@@ -108,13 +108,13 @@ class Settings
 
     public static function getHost()
     {
-        $parsed_url = parse_url(WPHelpers::get_option('home'));
+        $parsed_url = parse_url(WPHelpers::getWPOption('home'));
         return !empty($parsed_url['host']) ? $parsed_url['host'] : 'example.com';
     }
 
     public static function staffDefaults()
     {
-        $timezone = WPHelpers::get_option('timezone_string');
+        $timezone = WPHelpers::getWPOption('timezone_string');
         //if (empty($timezone)) $timezone = 'UTC';
         return [
             'regav' => [
@@ -421,7 +421,7 @@ class Settings
 
     protected static function activeStaffIdValid($value)
     {
-        return ($value > 0 && WPHelpers::get_user_by('id', $value) !== false) ? true : false;
+        return ($value > 0 && WPHelpers::getUserBy('id', $value) !== false) ? true : false;
     }
 
     protected static function activeStaffIdBeforeSave($newStaffId)

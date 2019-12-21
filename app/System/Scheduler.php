@@ -46,11 +46,10 @@ class Scheduler
         }
     }
     public static function checkLicence()
-    { 
+    {
         (new \Wappointment\Services\Licences)->check();
     }
     private function setWappointmentScheduler()
-    { }
-
-
+    {
+    }
 }

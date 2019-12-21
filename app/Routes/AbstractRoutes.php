@@ -8,7 +8,7 @@ abstract class AbstractRoutes
 
     public function __construct()
     {
-        add_action('rest_api_init', [$this, 'rest_api_init']);
+        add_action('rest_api_init', [$this, 'restApiInit']);
     }
 
     public function getRoutes()
@@ -23,7 +23,7 @@ abstract class AbstractRoutes
         ]];
     }
 
-    public function rest_api_init()
+    public function restApiInit()
     {
 
         foreach ($this->prepareRoutes() as $access => $actions) {
@@ -42,7 +42,11 @@ abstract class AbstractRoutes
                             'methods' => $http_method,
                             'callback' => [new $controller_name(), 'tryExecute'],
                             'permission_callback' => [$this, 'canExecute' . ucfirst($access)],
-                            'args' => (empty($controller_method_args['args'])) ? ['method' => $controller_method_args['method'], 'hint' => $controller_method_args['hint'] ?? false] : $controller_method_args['args'],
+                            'args' => (empty($controller_method_args['args'])) ?
+                                [
+                                    'method' => $controller_method_args['method'],
+                                    'hint' => $controller_method_args['hint'] ?? false
+                                ] : $controller_method_args['args'],
                         ]
                     );
                 }
@@ -57,12 +61,13 @@ abstract class AbstractRoutes
         $routes_loop = $this->get();
 
         foreach ($routes_loop as $routeObject) {
-
             foreach ($routeObject['routes'] as $access => $methodRoutes) {
                 foreach ($methodRoutes as $method => $routes) {
                     if ($method == 'RESOURCE') {
                         foreach ($routes as $uri_portion => $resourceObject) {
-                            if (empty($resourceObject['ns'])) $resourceObject['ns'] = $routeObject['ns'];
+                            if (empty($resourceObject['ns'])) {
+                                $resourceObject['ns'] = $routeObject['ns'];
+                            }
                             foreach ($resourceObject['methods'] as $resourceMethod) {
                                 $all_routes[$access][strtoupper($resourceMethod)][$uri_portion] = [
                                     'ns' => $resourceObject['ns'],
@@ -73,7 +78,9 @@ abstract class AbstractRoutes
                         }
                     } else {
                         foreach ($routes as $uri_portion => $resourceObject) {
-                            if (empty($resourceObject['ns'])) $resourceObject['ns'] = $routeObject['ns'];
+                            if (empty($resourceObject['ns'])) {
+                                $resourceObject['ns'] = $routeObject['ns'];
+                            }
                             $all_routes[$access][$method][$uri_portion] = $resourceObject;
                         }
                     }

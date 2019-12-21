@@ -2,7 +2,6 @@
 
 namespace Wappointment\Controllers;
 
-
 use Wappointment\Services\ViewsData;
 use Wappointment\ClassConnect\Request;
 

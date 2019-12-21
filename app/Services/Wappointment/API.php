@@ -21,10 +21,12 @@ abstract class API
 
     protected function getParams($params = [])
     {
-        if ($this->getSiteKey()) $params['Site-Key'] = $this->getSiteKey();
+        if ($this->getSiteKey()) {
+            $params['Site-Key'] = $this->getSiteKey();
+        }
 
         return array_merge([
-            'Site-Name' => WPHelpers::get_option('blogname'),
+            'Site-Name' => WPHelpers::getWPOption('blogname'),
             'Site-Url' => rest_url(),
             'Site-Wp-Version' => get_bloginfo('version'),
             'Site-Php-Version' => PHP_VERSION,
@@ -37,8 +39,12 @@ abstract class API
             throw new \WappointmentException('Error requesting Wappointment.com');
         }
         if ($response->getStatusCode() === 204) {
-            if (method_exists($this, 'handle204Errors')) return $this->handle204Errors($response);
-            throw new \WappointmentException($response->getHeader('reason-reject')[0] ?? 'Cannot connect to Wappointment.com');
+            if (method_exists($this, 'handle204Errors')) {
+                return $this->handle204Errors($response);
+            }
+            throw new \WappointmentException(
+                $response->getHeader('reason-reject')[0] ?? 'Cannot connect to Wappointment.com'
+            );
         }
         return json_decode($response->getBody()->getContents());
     }

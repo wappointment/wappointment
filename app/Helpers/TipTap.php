@@ -2,7 +2,6 @@
 
 namespace Wappointment\Helpers;
 
-
 class TipTap
 {
     public static function toHTML($tiptapArray, $parentTag = false)
@@ -19,7 +18,6 @@ class TipTap
                 $html .= self::toHTML($tiptapRow, $wrappingtag);
             }
         } else {
-
             if ($tiptapArray['type'] == 'customfield') {
                 $tiptapArray['text'] = '[' . $tiptapArray['attrs']['src'] . ':' . $tiptapArray['attrs']['alt'] . ']';
             }
@@ -101,7 +99,8 @@ class TipTap
         if (!empty($tiptapArray['marks'])) {
             foreach ($tiptapArray['marks'] as $key => $value) {
                 $type = self::getMarkTag($value['type']);
-                $markedString = '<' . $type . self::getMarkAttributes($value) . '>' . $markedString . '</' . $type . '>';
+                $markedString = '<' . $type .
+                    self::getMarkAttributes($value) . '>' . $markedString . '</' . $type . '>';
             }
         }
 
@@ -187,7 +186,11 @@ class TipTap
 
                 if (strpos($tag_to_use, ':') === false) {
                     //if must be a link since it noest a : separated values
-                    preg_match_all("/(\s+)(\S+)=[\"']?((?:.(?![\"']?\s+(?:\S+)=|[>\"']))+.)[\"']?/", $tag_to_use, $matches);
+                    preg_match_all(
+                        "/(\s+)(\S+)=[\"']?((?:.(?![\"']?\s+(?:\S+)=|[>\"']))+.)[\"']?/",
+                        $tag_to_use,
+                        $matches
+                    );
                     $attributeValues = [];
                     foreach ($matches[2] as $key => $attributeName) {
                         $attributeValues[$attributeName] = $matches[3][$key];

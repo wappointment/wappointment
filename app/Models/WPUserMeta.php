@@ -22,7 +22,10 @@ class WPUserMeta extends Model
         global $wpdb;
         $site_prefix = $wpdb->get_blog_prefix();
 
-        $result_user_ids = self::select('user_id')->where('meta_key', $site_prefix . 'capabilities')->whereIn('meta_value', $wp_capabilities)->get();
+        $result_user_ids = self::select('user_id')
+            ->where('meta_key', $site_prefix . 'capabilities')
+            ->whereIn('meta_value', $wp_capabilities)
+            ->get();
 
         $user_ids = [];
         foreach ($result_user_ids->toArray() as $array) {

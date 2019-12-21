@@ -11,10 +11,20 @@ class SettingsStaffController extends RestController
     public function save(Request $request)
     {
         if ($request->input('key') == 'viewed_updates') {
-            return WPHelpers::setStaffOption('viewed_updates', WAPPOINTMENT_VERSION, Settings::get('activeStaffId'), true);
+            return WPHelpers::setStaffOption(
+                'viewed_updates',
+                WAPPOINTMENT_VERSION,
+                Settings::get('activeStaffId'),
+                true
+            );
         }
         if ($request->input('key') == 'hello_page') {
-            return WPHelpers::setStaffOption('hello_page', $request->input('val'), Settings::get('activeStaffId'), true);
+            return WPHelpers::setStaffOption(
+                'hello_page',
+                $request->input('val'),
+                Settings::get('activeStaffId'),
+                true
+            );
         }
 
         $result = Settings::saveStaff($request->input('key'), $request->input('val'));

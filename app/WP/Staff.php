@@ -24,14 +24,17 @@ class Staff
         }
         $this->id = $staff_id;
 
-        $this->avatar = Settings::getStaff('avatarId') ? wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
+        $this->avatar = Settings::getStaff('avatarId') ?
+            wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] :
+            get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
         $this->name = $this->getUserDisplayName();
         $this->timezone = Settings::getStaff('timezone', $staff_id);
     }
 
     public function getUserDisplayName()
     {
-        return empty($this->wp_user->display_name) ? $this->wp_user->first_name . ' ' . $this->wp_user->last_name : $this->wp_user->display_name;
+        return empty($this->wp_user->display_name) ?
+            $this->wp_user->first_name . ' ' . $this->wp_user->last_name : $this->wp_user->display_name;
     }
 
     public function getAvailability()

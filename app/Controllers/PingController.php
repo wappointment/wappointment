@@ -2,7 +2,6 @@
 
 namespace Wappointment\Controllers;
 
-
 class PingController
 {
     public function ping()

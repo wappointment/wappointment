@@ -54,7 +54,10 @@ class Database extends \Wappointment\Installation\MethodsRunner
 
             if (!empty($cannot_do)) {
                 $db_config = new \Wappointment\WP\Database();
-                throw new \WappointmentException('It seems your SQL user "' . $db_config->getDbUser() . '" is missing privileges ' . implode(', ', $cannot_do) . ' to your database "' . $db_config->getDbName() . '"');
+                throw new \WappointmentException(
+                    'It seems your SQL user "' . $db_config->getDbUser() . '" is missing privileges ' .
+                        implode(', ', $cannot_do) . ' to your database "' . $db_config->getDbName() . '"'
+                );
             }
         } catch (\Throwable $th) {
             throw  $th;

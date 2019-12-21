@@ -89,17 +89,30 @@ class RestController
 
     protected function setError($error, $bag = 'default')
     {
-        if (is_string($error)) $this->errors[$bag][] = $error;
-        else  $this->errors[$bag] = $error;
+        if (is_string($error)) {
+            $this->errors[$bag][] = $error;
+        } else {
+            $this->errors[$bag] = $error;
+        }
     }
     private function hasOneErrorOnly()
     {
-        if (count($this->errors) > 1 || count($this->errors[array_key_first($this->errors)]) > 1) return false;
-        return $this->errors[array_key_first($this->errors)][0];
+        if (count($this->errors) > 1 || count($this->errors[$this->arrayKeyFirst($this->errors)]) > 1) {
+            return false;
+        }
+        return $this->errors[$this->arrayKeyFirst($this->errors)][0];
     }
     public function getErrors()
     {
         return $this->errors;
+    }
+
+    protected function arrayKeyFirst(array $arr)
+    {
+        foreach ($arr as $key => $unused) {
+            return $key;
+        }
+        return null;
     }
 
     public function prepareErrors()

@@ -17,7 +17,7 @@ class Helpers
 
     public static function getOption($option_name, $default = false)
     {
-        return self::get_option(self::$option_prefix . '_' . strtolower($option_name), $default);
+        return self::getWPOption(self::$option_prefix . '_' . strtolower($option_name), $default);
     }
 
     public static function setOption($option_name, $value, $autoload = false)
@@ -38,7 +38,7 @@ class Helpers
         return false;
     }
 
-    public static function get_user_by($field, $value)
+    public static function getUserBy($field, $value)
     {
         if (\WappointmentLv::function_exists('get_user_by')) {
             return get_user_by($field, $value);
@@ -121,7 +121,7 @@ class Helpers
         return '<a href="' . esc_url($link) . '">' . esc_html($label) . '</a>';
     }
 
-    public static function get_option($option_name, $default = false)
+    public static function getWPOption($option_name, $default = false)
     {
         if (\WappointmentLv::function_exists('get_option')) {
             return get_option($option_name, $default);
@@ -146,7 +146,11 @@ class Helpers
 
     public static function restError($error_string, $status = 500, $errors = [])
     {
-        return new \WP_Error(WAPPOINTMENT_SLUG . '_error_rest', $error_string, ['status' => $status, 'errors' => $errors]);
+        return new \WP_Error(
+            WAPPOINTMENT_SLUG . '_error_rest',
+            $error_string,
+            ['status' => $status, 'errors' => $errors]
+        );
     }
 
     public static function enqueueFrontScripts()
@@ -161,60 +165,4 @@ class Helpers
         wp_enqueue_script($scriptname);
         return $scriptname;
     }
-
-    public static function set_cron_schedules($param)
-    {
-        $frequencies = [
-            'wap_one_min' => [
-                'interval' => 60,
-                'display' => 'Once every minute'
-            ],
-            'wap_two_min' => [
-                'interval' => 120,
-                'display' => 'Once every two minutes'
-            ],
-            'wap_five_min' => [
-                'interval' => 300,
-                'display' => 'Once every five minutes'
-            ],
-            'wap_ten_min' => [
-                'interval' => 600,
-                'display' => 'Once every ten minutes',
-            ],
-            'wap_fifteen_min' => [
-                'interval' => 900,
-                'display' => 'Once every fifteen minutes',
-            ],
-            'wap_thirty_min' => [
-                'interval' => 1800,
-                'display' => 'Once every thirty minutes',
-            ],
-            'wap_two_hours' => [
-                'interval' => 7200,
-                'display' => 'Once every two hours',
-            ],
-        ];
-
-        return array_merge($param, $frequencies);
-    }
-
-    /*     public static function do_action($tag,  $arg = '')
-    {
-        return do_action($tag,  $arg);
-    }
-
-    public static function add_action($tag, $function_to_add, $priority = 10, $accepted_args = 1)
-    {
-        return add_action($tag, $function_to_add, $priority, $accepted_args);
-    }
-
-    public static function add_filter($tag, $function_to_add, $priority = 10, $accepted_args = 1)
-    {
-        return add_filter($tag, $function_to_add, $priority, $accepted_args);
-    }
-
-    public static function apply_filters($tag,  $value)
-    {
-        return apply_filters($tag,  $value);
-    } */
 }

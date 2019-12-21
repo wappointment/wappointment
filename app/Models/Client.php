@@ -59,7 +59,13 @@ class Client extends Model
         $type = (int) call_user_func('Wappointment\Models\Appointment::getType' . ucfirst($type));
 
         //test that this is bookable
-        $hasBeenBooked = AppointmentService::tryBook($this, $startTime, $startTime + ((int) $service['duration'] * 60), $type, $service);
+        $hasBeenBooked = AppointmentService::tryBook(
+            $this,
+            $startTime,
+            $startTime + ((int) $service['duration'] * 60),
+            $type,
+            $service
+        );
         if (!$hasBeenBooked) {
             throw new \WappointmentException('Error cannot book at this time', 1);
         }

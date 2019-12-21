@@ -78,7 +78,10 @@ class MimeDir extends \Sabre\VObject\Parser\MimeDir
                 if (is_null($lastParam)) {
                     continue;
                     //dd('throw'); //this is necessary to skip an event that is problematic
-                    throw new \Sabre\VObject\ParseException('Invalid Mimedir file. Line starting at ' . $this->startLine . ' did not follow iCalendar/vCard conventions');
+                    throw new \Sabre\VObject\ParseException(
+                        'Invalid Mimedir file. Line starting at ' .
+                            $this->startLine . ' did not follow iCalendar/vCard conventions'
+                    );
                 }
                 if (is_null($property['parameters'][$lastParam])) {
                     $property['parameters'][$lastParam] = $value;
@@ -120,7 +123,10 @@ class MimeDir extends \Sabre\VObject\Parser\MimeDir
             if ($this->options & self::OPTION_IGNORE_INVALID_LINES) {
                 return false;
             }
-            throw new \Sabre\VObject\ParseException('Invalid Mimedir file. Line starting at ' . $this->startLine . ' did not follow iCalendar/vCard conventions');
+            throw new \Sabre\VObject\ParseException(
+                'Invalid Mimedir file. Line starting at ' .
+                    $this->startLine . ' did not follow iCalendar/vCard conventions'
+            );
         }
 
         // vCard 2.1 states that parameters may appear without a name, and only
@@ -151,7 +157,7 @@ class MimeDir extends \Sabre\VObject\Parser\MimeDir
             $charset = $this->charset;
             if ($this->root->getDocumentType() === \Sabre\VObject\Document::VCARD21 && isset($propObj['CHARSET'])) {
                 // vCard 2.1 allows the character set to be specified per property.
-                $charset = (string)$propObj['CHARSET'];
+                $charset = (string) $propObj['CHARSET'];
             }
             switch (strtolower($charset)) {
                 case 'utf-8':
@@ -219,7 +225,7 @@ class MimeDir extends \Sabre\VObject\Parser\MimeDir
                         case '\'':
                             return '"';
 
-                    // @codeCoverageIgnoreStart
+                            // @codeCoverageIgnoreStart
                     }
                     // @codeCoverageIgnoreEnd
                 },
@@ -281,7 +287,8 @@ class MimeDir extends \Sabre\VObject\Parser\MimeDir
         if (3 <= strlen($line)
             && ord($line[0]) === 0xef
             && ord($line[1]) === 0xbb
-            && ord($line[2]) === 0xbf) {
+            && ord($line[2]) === 0xbf
+        ) {
             $line = substr($line, 3);
         }
 
@@ -314,7 +321,10 @@ class MimeDir extends \Sabre\VObject\Parser\MimeDir
 
         $name = strtoupper(substr($line, 4));
         if ($name !== $this->root->name) {
-            throw new \Sabre\VObject\ParseException('Invalid MimeDir file. expected: "END:' . $this->root->name . '" got: "END:' . $name . '"');
+            throw new \Sabre\VObject\ParseException(
+                'Invalid MimeDir file. expected: "END:' .
+                    $this->root->name . '" got: "END:' . $name . '"'
+            );
         }
     }
 }

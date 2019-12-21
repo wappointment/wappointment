@@ -31,5 +31,8 @@
         "psr-4": {
             "Tests\\": "tests/"
         }
+    },
+    "require-dev": {
+        "phpcompatibility/php-compatibility": "^9.3"
     }
 }

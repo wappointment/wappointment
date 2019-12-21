@@ -2,7 +2,6 @@
 
 namespace Wappointment\Validators;
 
-
 class RequiredIfFields extends \Rakit\Validation\Rules\Required
 {
     protected $implicit = true;
@@ -21,7 +20,6 @@ class RequiredIfFields extends \Rakit\Validation\Rules\Required
         $this->requireParameters(['field', 'values']);
 
         if ($this->isRequired($this->parameter('values'))) {
-
             $validator = $this->validation->getValidator();
             $required_validator = $validator('required');
 

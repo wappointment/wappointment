@@ -10,16 +10,16 @@ class InitPreinstall
         $this->plugin_file = WAPPOINTMENT_SLUG . DIRECTORY_SEPARATOR . 'index.php';
         register_activation_hook($this->plugin_file, [$this, 'activated']);
         add_action('admin_init', [$this, 'checkJustActivated']);
-        add_filter('plugin_row_meta', [$this, 'custom_plugin_row_meta'], 10, 2);
+        add_filter('plugin_row_meta', [$this, 'customPluginRowMeta'], 10, 2);
         new \Wappointment\Routes\Init();
     }
 
-    function activated()
+    public function activated()
     {
         add_option('wappo_plug_activated', 'wappointment');
     }
 
-    function checkJustActivated()
+    public function checkJustActivated()
     {
         if (get_option('wappo_plug_activated') == 'wappointment') {
             wp_enqueue_style(WAPPOINTMENT_SLUG . '-wap', plugins_url(WAPPOINTMENT_SLUG . '/dist/css/wappointment.css'));
@@ -40,11 +40,13 @@ class InitPreinstall
         echo $return;
     }
 
-    function custom_plugin_row_meta($links, $file)
+    public function customPluginRowMeta($links, $file)
     {
 
         if (strpos($file, $this->plugin_file) !== false) {
-            $buttonInit = '<a href="' . \Wappointment\WP\Helpers::adminUrl('wappointment_calendar') . '" class="button button-primary button-large" >Initial Setup</a>';
+            $buttonInit = '<a href="' .
+                \Wappointment\WP\Helpers::adminUrl('wappointment_calendar') .
+                '" class="button button-primary button-large" >Initial Setup</a>';
             $htmlWrap = '<div class="notice inline notice-info">
             <p>Alright! Thanks for activating me, now let\'s go through my initial setup ' . $buttonInit . '
             </p></div>';

@@ -4,7 +4,7 @@ namespace Wappointment\System;
 
 class Helpers
 {
-    public static function wappointment_link($medium = 'email', $campaign = 'daily_email')
+    public static function wappointmentLink($medium = 'email', $campaign = 'daily_email')
     {
         return 'https://wappointment.com?utm_source=plugin&utm_medium=' . $medium . '&utm_campaign=' . $campaign;
     }

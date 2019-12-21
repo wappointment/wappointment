@@ -11,13 +11,16 @@ abstract class AbstractJobRecordListener
     protected $jobs = [];
 
     protected function cancelPendingJobs($event)
-    { }
+    {
+    }
 
     protected function queueConfirmationEmail($event)
-    { }
+    {
+    }
 
     protected function queueAdminNotification($event)
-    { }
+    {
+    }
 
     public function handle(AppointmentBookedEvent $event)
     {

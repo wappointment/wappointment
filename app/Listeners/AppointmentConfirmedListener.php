@@ -2,7 +2,6 @@
 
 namespace Wappointment\Listeners;
 
-
 use Wappointment\Models\Reminder;
 use Wappointment\Services\Settings;
 
@@ -29,7 +28,13 @@ class AppointmentConfirmedListener extends AbstractJobAppointmentListener
                 $jobClass = ($reminder->event == Reminder::APPOINTMENT_STARTS) ? $this->reminderClass : $this->jobClass;
                 $appointment_id = !empty($params['appointment']->id) ? $params['appointment']->id : null;
 
-                $this->recordJob($jobClass, $params, 'client', $appointment_id, $this->sendReminderOnThe($reminder, $params));
+                $this->recordJob(
+                    $jobClass,
+                    $params,
+                    'client',
+                    $appointment_id,
+                    $this->sendReminderOnThe($reminder, $params)
+                );
             }
         }
     }

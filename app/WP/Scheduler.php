@@ -64,7 +64,11 @@ class Scheduler
             $scheduled_time = wp_next_scheduled($wappo_wp_scheduled_job);
             $time_record++;
             if ($scheduled_time === false) {
-                wp_schedule_event($time_record + self::getInterval($scheduledObject['frequency']), $scheduledObject['frequency'], $wappo_wp_scheduled_job);
+                wp_schedule_event(
+                    $time_record + self::getInterval($scheduledObject['frequency']),
+                    $scheduledObject['frequency'],
+                    $wappo_wp_scheduled_job
+                );
             } elseif ($scheduled_time - \time() < -300) {
                 $time_record++;
                 /* if (!empty($_GET['testcron'])) {
@@ -73,7 +77,11 @@ class Scheduler
                     echo '<br>NEXT ' . ($time_record + self::getInterval($scheduledObject['frequency']));
                 } */
                 wp_clear_scheduled_hook($wappo_wp_scheduled_job);
-                wp_schedule_event($time_record + self::getInterval($scheduledObject['frequency']), $scheduledObject['frequency'], $wappo_wp_scheduled_job);
+                wp_schedule_event(
+                    $time_record + self::getInterval($scheduledObject['frequency']),
+                    $scheduledObject['frequency'],
+                    $wappo_wp_scheduled_job
+                );
             }
 
 
@@ -81,7 +89,8 @@ class Scheduler
             add_action($wappo_wp_scheduled_job, ['\\Wappointment\\System\\Scheduler', $scheduledObject['method']]);
             /* if (!empty($_GET['testcron'])) {
                 echo 'now' . time();
-                echo ' Runs at : ' . $scheduled_time . ' ' . $wappo_wp_scheduled_job . ($scheduled_time - time()) . '<br>';
+                echo ' Runs at : ' . $scheduled_time .
+                 ' ' . $wappo_wp_scheduled_job . ($scheduled_time - time()) . '<br>';
             } */
         }
     }
@@ -113,7 +122,9 @@ class Scheduler
     public static function addFrequencies($schedules)
     {
         foreach (self::$registered_frequencies as $frequency_key => $frequency_object) {
-            if (empty($frequency_object->noregister)) $schedules[$frequency_key] = $frequency_object;
+            if (empty($frequency_object->noregister)) {
+                $schedules[$frequency_key] = $frequency_object;
+            }
         }
 
         return $schedules;
@@ -122,7 +133,9 @@ class Scheduler
     public static function clearScheduler()
     {
         foreach (self::$scheduled_jobs as $frequency_key => $frequency_object) {
-            if (empty($frequency_object->noregister)) wp_clear_scheduled_hook($frequency_key);
+            if (empty($frequency_object->noregister)) {
+                wp_clear_scheduled_hook($frequency_key);
+            }
         }
     }
 }

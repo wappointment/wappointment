@@ -26,7 +26,7 @@ class Contact extends API
 
     private function prepareData($data)
     {
-        //$data['options.sitedetails'] = $this->getSiteDetails(); 
+        //$data['options.sitedetails'] = $this->getSiteDetails();
         return $data;
     }
 

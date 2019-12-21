@@ -28,7 +28,9 @@ abstract class AbstractProcessor implements InterfaceProcessor
 
     public function getErrors()
     {
-        if ($this->autoResponse === true) return $this->errors;
+        if ($this->autoResponse === true) {
+            return $this->errors;
+        }
         return \Illuminate\Support\Arr::flatten($this->errors);
     }
 
@@ -53,7 +55,9 @@ abstract class AbstractProcessor implements InterfaceProcessor
 
         $this->validator = new \Rakit\Validation\Validator;
         $this->validator->setMessages($this->validationMessages());
-        if (method_exists($this, 'addValidators')) $this->addValidators();
+        if (method_exists($this, 'addValidators')) {
+            $this->addValidators();
+        }
 
         $validation = $this->validator->make($inputs, $this->validationRules());
         $validation->validate();

@@ -12,35 +12,35 @@ class WpMail extends Transport
     {
         $this->configSave = $config;
     }
-    public function wp_mail_from_name()
+    public function wpMailFromName()
     {
         return $this->configSave['from_name'];
     }
-    public function wp_mail_from()
+    public function wpMailFrom()
     {
         return $this->configSave['from_address'];
     }
-    public function wp_mail_content_type()
+    public function wpMailContentType()
     {
         return 'text/html';
     }
     public function setWpSettings()
     {
-        add_filter('wp_mail_from_name', [$this, 'wp_mail_from_name']);
-        add_filter('wp_mail_from', [$this, 'wp_mail_from']);
-        add_filter('wp_mail_content_type', [$this, 'wp_mail_content_type']);
+        add_filter('wpMailFromName', [$this, 'wpMailFromName']);
+        add_filter('wpMailFrom', [$this, 'wpMailFrom']);
+        add_filter('wpMailContentType', [$this, 'wpMailContentType']);
     }
 
     public function unsetWpSettings()
     {
-        remove_filter('wp_mail_from_name', [$this, 'wp_mail_from_name']);
-        remove_filter('wp_mail_from', [$this, 'wp_mail_from']);
-        remove_filter('wp_mail_content_type', [$this, 'wp_mail_content_type']);
+        remove_filter('wpMailFromName', [$this, 'wpMailFromName']);
+        remove_filter('wpMailFrom', [$this, 'wpMailFrom']);
+        remove_filter('wpMailContentType', [$this, 'wpMailContentType']);
     }
     public function send(WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
         $this->beforeSendPerformed($message);
-        
+
         $to = $this->getTo($message);
 
         $message->setBcc([]);
@@ -78,6 +78,4 @@ class WpMail extends Transport
             (array) $message->getBcc()
         );
     }
-
-  
 }

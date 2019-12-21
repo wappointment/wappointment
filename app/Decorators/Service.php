@@ -2,7 +2,6 @@
 
 namespace Wappointment\Decorators;
 
-
 class Service
 {
     public $service = [];

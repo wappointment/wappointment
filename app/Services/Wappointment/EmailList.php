@@ -1,6 +1,7 @@
 <?php
 
 namespace Wappointment\Services\Wappointment;
+
 use Wappointment\WP\Helpers as WPHelpers;
 
 class EmailList extends API
@@ -10,7 +11,7 @@ class EmailList extends API
     public function __construct()
     {
         $dbvalue = WPHelpers::getOption('subscribed_status');
-        $this->statuses = $dbvalue ===false ? []:$dbvalue;
+        $this->statuses = $dbvalue === false ? [] : $dbvalue;
         parent::__construct();
     }
 
@@ -23,14 +24,14 @@ class EmailList extends API
                 'email' => $email
             ]
         ]);
-        
-        if($this->isAlreadySubscribed($email, $list)){
+
+        if ($this->isAlreadySubscribed($email, $list)) {
             return true;
         }
 
         $result = $this->processResponse($response);
 
-        if($result) {
+        if ($result) {
             $this->recordSubscription($email, $list);
         }
 
@@ -40,8 +41,8 @@ class EmailList extends API
     {
         $emailStatus = $this->getEmailStatus($email);
 
-        if($emailStatus === false){
-            $emailStatus['status'] =['email' => $email, 'lists' => []];
+        if ($emailStatus === false) {
+            $emailStatus['status'] = ['email' => $email, 'lists' => []];
             $this->statuses[] = $emailStatus['status'];
             end($this->statuses);
             $emailStatus['key'] = key($this->statuses);
@@ -54,14 +55,14 @@ class EmailList extends API
     protected function isAlreadySubscribed($email, $list)
     {
         $status = $this->getEmailStatus($email);
-        return  !empty($status) && !empty($status['lists'][$list]) ? true:false;
+        return  !empty($status) && !empty($status['lists'][$list]) ? true : false;
     }
 
     protected function getEmailStatus($email)
     {
-        if(!empty($this->statuses)){
+        if (!empty($this->statuses)) {
             foreach ($this->statuses as $key => $statusEmail) {
-                if($statusEmail['email'] == $email){
+                if ($statusEmail['email'] == $email) {
                     return ['key' => $key, 'status' => $statusEmail];
                 }
             }

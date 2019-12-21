@@ -36,9 +36,14 @@ class SettingsController extends RestController
         if ($this->isTrueOrFail($resultEmail)) {
             Settings::save('mail_config', $request->input('data'));
             Settings::save('mail_status', true);
-            return ['message' => 'Configuration completed! Check your inbox for the test email just sent to your address.'];
+            return [
+                'message' => 'Configuration completed! Check your inbox for the test email just sent to your address.'
+            ];
         } else {
-            if (\Illuminate\Support\Str::contains($resultEmail['error'], ['username', 'password', 'login', 'user', 'credentials'])) {
+            if (\Wappointment\ClassConnect\Str::contains(
+                $resultEmail['error'],
+                ['username', 'password', 'login', 'user', 'credentials']
+            )) {
                 $this->setError('There seems to be a problem with the credentials you are using.');
                 $this->setError($resultEmail['error'], 'debug');
             } else {

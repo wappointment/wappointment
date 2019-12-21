@@ -2,7 +2,6 @@
 
 namespace Wappointment\Controllers;
 
-
 use Wappointment\ClassConnect\Request;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\Services\Settings;
@@ -12,8 +11,6 @@ use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Models\Status as Mstatus;
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Services\Appointment;
-
-
 
 class EventsController extends RestController
 {
@@ -103,14 +100,17 @@ class EventsController extends RestController
         $end_at_string = $ends_at_carbon->format(WAPPOINTMENT_DB_FORMAT);
         $events = [];
 
-        $appointments = apply_filters('wappointment_calendar_events_query', [], ['start_at' => $start_at_string, 'end_at' => $end_at_string]);
+        $appointments = apply_filters(
+            'wappointment_calendar_events_query',
+            [],
+            ['start_at' => $start_at_string, 'end_at' => $end_at_string]
+        );
 
         if (empty($appointments)) {
             $appointments = $this->getAppointments($start_at_string, $end_at_string);
         }
 
         foreach ($appointments as $event) {
-
             $addedEvent = [
                 'start' => $event->start_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
                 'end' => $event->end_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
@@ -195,8 +195,10 @@ class EventsController extends RestController
             $dayName = $daysOfTheWeek[$startDate->dayOfWeek];
 
             foreach ($this->regav[$dayName] as $dayTimeblock) {
-                $start = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))->hour($dayTimeblock[0]);
-                $end = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))->hour($dayTimeblock[1]);
+                $start = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))
+                    ->hour($dayTimeblock[0]);
+                $end = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))
+                    ->hour($dayTimeblock[1]);
 
                 $bg_events[] = [
                     'start' => $start->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),

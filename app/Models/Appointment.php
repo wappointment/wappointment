@@ -11,7 +11,8 @@ class Appointment extends Model
     protected $table = 'wappo_appointments';
 
     protected $fillable = [
-        'start_at', 'end_at', 'edit_key', 'client_id', 'status', 'type', 'staff_id', 'service_id', 'options', 'location_id'
+        'start_at', 'end_at', 'edit_key', 'client_id',
+        'status', 'type', 'staff_id', 'service_id', 'options', 'location_id'
     ];
     protected $casts = [
         'options' => 'array',
@@ -110,7 +111,9 @@ class Appointment extends Model
         if ($page_link == '') {
             $page_link = get_permalink(Settings::get('front_page'));
         }
-        return $page_link . ((strpos($page_link, '?') !== false) ? '&' : '?') . 'view=' . $view . '&appointmentkey=' . $this->edit_key;
+        return $page_link .
+            ((strpos($page_link, '?') !== false) ? '&' : '?')
+            . 'view=' . $view . '&appointmentkey=' . $this->edit_key;
     }
 
     public function getServiceName()
@@ -122,7 +125,11 @@ class Appointment extends Model
     {
         static $services = [];
         if (empty($services[$this->service_id])) {
-            $services[$this->service_id] = apply_filters('wappointment_get_appointment_service', \Wappointment\Services\Service::getObject(), $this->service_id);
+            $services[$this->service_id] = apply_filters(
+                'wappointment_get_appointment_service',
+                \Wappointment\Services\Service::getObject(),
+                $this->service_id
+            );
         }
         return $services[$this->service_id];
     }
@@ -175,6 +182,7 @@ class Appointment extends Model
 
     public function canStillCancel()
     {
-        return $this->status !== self::STATUS_CONFIRMED || ($this->canCancelUntilTimestamp() - Carbon::now()->timestamp) > 0;
+        return $this->status !== self::STATUS_CONFIRMED
+            || ($this->canCancelUntilTimestamp() - Carbon::now()->timestamp) > 0;
     }
 }

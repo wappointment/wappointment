@@ -2,7 +2,6 @@
 
 namespace Wappointment\WP;
 
-
 class Alerts
 {
     private $type;
@@ -54,7 +53,8 @@ class Alerts
             }
             if (!empty($group)) {
                 $finalMessages .= sprintf('<div class="d-flex align-items-center notice notice-%1$s">
-                <div class="notice-' . WAPPOINTMENT_SLUG . '"><span class="dashicons-before dashicons-wappointment text-primary"></span></div>
+                <div class="notice-' . WAPPOINTMENT_SLUG
+                    . '"><span class="dashicons-before dashicons-wappointment text-primary"></span></div>
                 <div class="ml-2 notice-text">%2$s</div>
                 <div class="clear"></div>
                 </div>', $type, $group);

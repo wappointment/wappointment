@@ -2,7 +2,6 @@
 
 namespace Wappointment\Installation\Steps;
 
-
 class CreateTables extends \Wappointment\Installation\MethodsRunner
 {
     protected function canRun()

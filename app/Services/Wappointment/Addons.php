@@ -23,8 +23,7 @@ class Addons extends API
         if (!empty($solutions)) {
             foreach ($data->addons as &$package) {
                 foreach ($solutions as $solution) {
-                    if (
-                        $solution->package_key == $package->key
+                    if ($solution->package_key == $package->key
                         || ($this->isAPlugin($package) && $this->getPluginDetails($package)->id == $solution->id)
                     ) {
                         $package->expires_at = (new Carbon($solution->expires_at))->format('d/m/Y');
@@ -36,7 +35,10 @@ class Addons extends API
                         $package->activated = $this->isPluginActivated($package);
                     }
                     if ($this->pluginNamekey($package)) {
-                        $package = apply_filters('wappointment_addon_wrapper_' . $this->pluginNamekey($package), $package);
+                        $package = apply_filters(
+                            'wappointment_addon_wrapper_' . $this->pluginNamekey($package),
+                            $package
+                        );
                     }
                 }
             }
@@ -71,7 +73,9 @@ class Addons extends API
     }
     private function getPluginDetails($package)
     {
-        if (empty($package->solutions[0])) throw new \WappointmentException("Cannot find addon", 1);
+        if (empty($package->solutions[0])) {
+            throw new \WappointmentException("Cannot find addon", 1);
+        }
         return (object) $package->solutions[0];
     }
     private function isAPlugin($package)
@@ -121,7 +125,11 @@ class Addons extends API
         $skin = new \WP_Ajax_Upgrader_Skin();
 
         $upgrader = new \Plugin_Upgrader($skin);
-        $result = $upgrader->install($this->call('/api/addons/package/' . $solutionToInstall->namekey . '/' . $this->getSiteKey()));
+        $result = $upgrader->install(
+            $this->call(
+                '/api/addons/package/' . $solutionToInstall->namekey . '/' . $this->getSiteKey()
+            )
+        );
 
         if (defined('WP_DEBUG') && WP_DEBUG) {
             $status['debug'] = $skin->get_upgrade_messages();
@@ -145,7 +153,9 @@ class Addons extends API
             $status['errorMessage'] = 'Unable to connect to the filesystem. Please confirm your credentials.';
 
             // Pass through the error from WP_Filesystem if one was raised.
-            if ($wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->has_errors()) {
+            if ($wp_filesystem instanceof \WP_Filesystem_Base &&
+                is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->has_errors()
+            ) {
                 $status['errorMessage'] = esc_html($wp_filesystem->errors->get_error_message());
             }
         }

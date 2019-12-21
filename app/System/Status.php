@@ -65,7 +65,8 @@ class Status
 
     public static function wizardComplete()
     {
-        return (int) WPHelpers::getOption('wizard_step') < 0 || (int) WPHelpers::getOption('wizard_step') == self::$last_step;
+        return (int) WPHelpers::getOption('wizard_step') < 0
+            || (int) WPHelpers::getOption('wizard_step') == self::$last_step;
     }
 
     public static function newUpdates()

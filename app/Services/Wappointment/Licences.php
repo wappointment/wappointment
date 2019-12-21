@@ -24,7 +24,9 @@ class Licences extends API
 
     public function check()
     {
-        if (!$this->hasLicenceInstalled()) return false;
+        if (!$this->hasLicenceInstalled()) {
+            return false;
+        }
         $response = $this->client->request('POST', $this->call('/api/site/check'), [
             'form_params' => $this->getParams()
         ]);
@@ -45,7 +47,9 @@ class Licences extends API
 
         if (!empty($site_options) && count($site_options) > 0) {
             foreach ($site_options as $key => $option) {
-                if ($option->namekey == str_replace('_', '-', $addon_name)) return true;
+                if ($option->namekey == str_replace('_', '-', $addon_name)) {
+                    return true;
+                }
             }
         }
 
@@ -75,6 +79,8 @@ class Licences extends API
             $this->clear();
             throw new \WappointmentException('You have no valid licence for your site');
         }
-        throw new \WappointmentException($response->getHeader('reason-reject')[0] ?? 'Cannot connect to Wappointment.com');
+        throw new \WappointmentException(
+            $response->getHeader('reason-reject')[0] ?? 'Cannot connect to Wappointment.com'
+        );
     }
 }

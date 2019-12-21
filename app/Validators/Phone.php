@@ -23,8 +23,7 @@ class Phone extends \Rakit\Validation\Rule
             return false;
         }
 
-        if (
-            !empty($this->countries) &&
+        if (!empty($this->countries) &&
             !in_array($phoneUtil->getRegionCodeForNumber($number), $this->countries)
         ) {
             return false;

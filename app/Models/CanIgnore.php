@@ -52,7 +52,8 @@ trait CanIgnore
             });
 
         $bindings = [];
-        $query = $command . ' into ' . Database::capsule()::getTablePrefix() . $model->getTable() . ' (' . $keys->implode(',') . ') values ';
+        $query = $command . ' into ' . Database::capsule()::getTablePrefix() .
+            $model->getTable() . ' (' . $keys->implode(',') . ') values ';
         $inserts = [];
         foreach ($attributes as $data) {
             $qs = [];

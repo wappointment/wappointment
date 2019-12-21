@@ -5,7 +5,6 @@ namespace Wappointment\Controllers;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Request;
 
-
 class WizardController extends RestController
 {
     private $last_step = 4;

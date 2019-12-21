@@ -18,7 +18,7 @@ register_activation_hook(WAPPOINTMENT_FILE, ['WappointmentLv', 'activating']);
  */
 function wappointment_booking_widget($attr, $return = false)
 {
-    $button_title = (is_array($attr) && isset($attr['button'])) ? $attr['button'] : !empty($attr) ? $attr : 'Book now!';
+    $button_title = (is_array($attr) && isset($attr['button'])) ? $attr['button'] : (!empty($attr) ? $attr : 'Book now!');
     $widget = \Wappointment\WP\Widget::baseHtml($button_title);
     if ($return) {
         return $widget;
@@ -35,7 +35,8 @@ function wappointment_booking_widget($attr, $return = false)
  * @method string getTraceAsString()
  */
 class WappointmentException extends \Exception
-{ }
+{
+}
 class WappointmentValidationException extends \Exception
 {
     public $validationErrors = [];

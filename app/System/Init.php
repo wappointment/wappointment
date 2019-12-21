@@ -85,7 +85,8 @@ class Init
         $return .= '/* Wappointment globals */ ' . "\n";
         $return .= '/* <![CDATA[ */ ' . "\n";
         $return .= 'var apiWappointment = ' . json_encode($variables) . ";\n";
-        $return .= 'var widgetWappointment = ' . json_encode((new \Wappointment\Services\WidgetSettings)->get()) . ";\n";
+        $return .= 'var widgetWappointment = '
+            . json_encode((new \Wappointment\Services\WidgetSettings)->get()) . ";\n";
         $return .= apply_filters('wappointment_js_vars', '');
         $return .= '/* ]]> */ ' . "\n";
 
