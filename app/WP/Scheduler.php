@@ -72,7 +72,7 @@ class Scheduler
             } elseif ($scheduled_time - \time() < -300) {
                 $time_record++;
                 /* if (!empty($_GET['testcron'])) {
-                    echo 'rescheduled <br/>';
+                    echo 'resched uled <br/>';
                     echo '<br>now ' . $time_record;
                     echo '<br>NEXT ' . ($time_record + self::getInterval($scheduledObject['frequency']));
                 } */

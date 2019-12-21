@@ -99,9 +99,9 @@ export default {
       this.refreshInitValue()
     },
     redirectReset(){
-        /* this.$WapModal()
+         this.$WapModal()
             .request(this.sleep(4000))
-          window.location = window.apiWappointment.base_admin + '?page=wappointment_calendar' */
+          window.location = window.apiWappointment.base_admin + '?page=wappointment_calendar'
     },
     
     changedWappointmentAllowed(){

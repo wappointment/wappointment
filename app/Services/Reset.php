@@ -41,7 +41,11 @@ class Reset
     {
         $migrate = new \Wappointment\Installation\Migrate();
         $migrate->rollback();
+
         Capsule::schema()->dropIfExists(Database::$prefix_self . '_migrations');
+        if (Capsule::schema()->hasTable(Database::$prefix_self . '_migrations')) {
+            throw new \WappointmentException("Error while DROPPING DB tables", 1);
+        }
     }
 
     private function removeCoreSettings()
