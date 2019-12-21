@@ -7,7 +7,8 @@ class Staff
     public static function getIds()
     {
         $multipleStaff = false;
-        if ($multipleStaff) { } else {
+        if ($multipleStaff) {
+        } else {
             return [Settings::get('activeStaffId')];
         }
     }

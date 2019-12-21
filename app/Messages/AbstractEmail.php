@@ -74,7 +74,15 @@ abstract class AbstractEmail extends AbstractMessage
         $replaceByReturnChar1 = '#< */ *(li|td|tr|div|p)[^>]*> *< *(li|td|tr|div|p)[^>]*>#Ui';
         $replaceByReturnChar = '#< */? *(br|p|h1|h2|legend|h3|li|ul|h4|h5|h6|tr|td|div)[^>]*>#Ui';
         $replaceLinks = '/< *a[^>]*href *= *"([^#][^"]*)"[^>]*>(.*)< *\/ *a *>/Uis';
-        $text = preg_replace([$removepictureslinks, $removeScript, $removeStyle, $removeStrikeTags, $replaceByTwoReturnChar, $replaceByStars, $replaceByReturnChar1, $replaceByReturnChar, $replaceLinks], ['', '', '', '', "\n\n", "\n* ", "\n", "\n", '${2} ( ${1} )'], $html);
+        $text = preg_replace(
+            [
+                $removepictureslinks, $removeScript, $removeStyle, $removeStrikeTags,
+                $replaceByTwoReturnChar, $replaceByStars, $replaceByReturnChar1,
+                $replaceByReturnChar, $replaceLinks
+            ],
+            ['', '', '', '', "\n\n", "\n* ", "\n", "\n", '${2} ( ${1} )'],
+            $html
+        );
         $text = str_replace(['Â ', '&nbsp;'], ' ', strip_tags($text));
         $text = trim(@html_entity_decode($text, ENT_QUOTES, 'UTF-8'));
         if ($fullConvert) {

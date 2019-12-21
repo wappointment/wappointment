@@ -28,7 +28,12 @@ class Reminder
         $validation->validate();
 
         if ($validation->fails()) {
-            throw new \WappointmentValidationException("Cannot save Reminder", 1, null, $validation->errors()->toArray());
+            throw new \WappointmentValidationException(
+                "Cannot save Reminder",
+                1,
+                null,
+                $validation->errors()->toArray()
+            );
         }
 
         if (isset($reminderData['id']) && $reminderData['id'] > 0) {
@@ -79,7 +84,8 @@ class Reminder
                     [
                         ['h3' => 'Dear [client:name],'],
                         ['p' => ''],
-                        ['p' => 'You have booked a [service:name] of [appointment:duration] long on [appointment:starts]'],
+                        ['p' =>
+                        'You have booked a [service:name] of [appointment:duration] long on [appointment:starts]'],
                         ['p' => 'It will be confirmed shortly, you will receive the confirmation by email.'],
                         ['p' => ''],
                         ['p' => 'Best,'],

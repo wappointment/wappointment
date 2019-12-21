@@ -15,7 +15,7 @@ class Status
         if ($statusObject && !empty($statusObject->source)) {
             $status = $statusObject->update(['muted' => 1]);
         } else {
-            do_action('wappointment_admin_status_deleted',  $id);
+            do_action('wappointment_admin_status_deleted', $id);
             $status = Mstatus::destroy($id);
         }
         if ($status) {
@@ -46,7 +46,7 @@ class Status
 
         if ($resultObject) {
             (new \Wappointment\Services\Availability())->regenerate();
-            do_action('wappointment_admin_status_created',  $resultObject, $request);
+            do_action('wappointment_admin_status_created', $resultObject, $request);
         }
 
         return $resultObject;
@@ -86,7 +86,6 @@ class Status
     private static function getNext($statusRecurrent, $from, $until)
     {
         if ($from < $until) {
-
             //$start_at = $statusRecurrent->start_at->timestamp < time() ? Carbon::now() : $statusRecurrent->start_at;
             $start_at =  $statusRecurrent->start_at;
             switch ($statusRecurrent->recur) {
@@ -137,14 +136,12 @@ class Status
         $i = 0;
         //while these conditions are not met we go to the next record to find a match
         while ($i < 50 && ($start_at->timestamp < $from || !in_array($start_at->dayOfWeek, $days_accepted))) {
-
             $start_at_copy = $start_at->copy();
 
             $start_at->addDay();
 
 
             if ($weekWhenEnter != $start_at->weekNumberInMonth && $interval > 1) {
-
                 if ($start_at->weekNumberInMonth != 1 && $start_at->weekNumberInMonth != 0) {
                     $start_at = $start_at_copy->addWeeks($interval)->startOfWeek()->copy();
                 }
@@ -154,16 +151,23 @@ class Status
             $i++;
         }
 
-        $origintimedate = Carbon::parse($statusRecurrent->options['origin_start'], $statusRecurrent->options['origin_tz']);
+        $origintimedate = Carbon::parse(
+            $statusRecurrent->options['origin_start'],
+            $statusRecurrent->options['origin_tz']
+        );
         $copyOriginTZ = $start_at->setTime($origintimedate->hour, $origintimedate->minute)->copy();
 
-        //if ($statusRecurrent->options['title'] == 'Test wonder') echo 'Origin ' . ' full date ' . $copyOriginTZ->toDayDateTimeString() . "\n";
+        /*
+        if ($statusRecurrent->options['title'] == 'Test wonder')
+        echo 'Origin ' . ' full date ' . $copyOriginTZ->toDayDateTimeString() . "\n";
+        */
         $start_at = $copyOriginTZ->tz('UTC')->copy();
 
         /*       if ($statusRecurrent->options['title'] == 'Test wonder') {
             echo $statusRecurrent->options['title'] . "\n";
             echo 'Origin UTC ' . ' full date ' . $copyOriginTZ->toDayDateTimeString() . "\n";
-            echo 'Day of week ' . $start_at->dayOfWeek . ' full date ' . $start_at->toDayDateTimeString() . "\n";
+            echo 'Day of week ' . $start_at->dayOfWeek .
+            ' full date ' . $start_at->toDayDateTimeString() . "\n";
             echo '---------------------------------------------'  . "\n";
         } */
 
@@ -227,10 +231,8 @@ class Status
         if (is_array($dayofthemonth)) {
             $i = 0;
             if ($dayofthemonth['each'] == 'last') {
-
                 $carbonNewStart->lastOfMonth($dayofthemonth['day']);
             } else {
-
                 $carbonNewStart->next($dayofthemonth['day']);
 
                 //$carbon->next($dayofthemonth['day']);
@@ -244,11 +246,13 @@ class Status
                 }
             }
         } else {
-
             $carbonNewStart->day = $dayofthemonth;
         }
 
-        $origintimedate = Carbon::parse($statusRecurrent->options['origin_start'], $statusRecurrent->options['origin_tz']);
+        $origintimedate = Carbon::parse(
+            $statusRecurrent->options['origin_start'],
+            $statusRecurrent->options['origin_tz']
+        );
         $carbonNewStart->hour = $origintimedate->hour;
         $carbonNewStart->minute = $origintimedate->minute;
 
@@ -282,8 +286,13 @@ class Status
 
 
         //new
-        $origintimedate = Carbon::parse($statusRecurrent->options['origin_start'], $statusRecurrent->options['origin_tz']);
-        $copyOriginTZ = $start_at->tz($statusRecurrent->options['origin_tz'])->setTime($origintimedate->hour, $origintimedate->minute)->copy();
+        $origintimedate = Carbon::parse(
+            $statusRecurrent->options['origin_start'],
+            $statusRecurrent->options['origin_tz']
+        );
+        $copyOriginTZ = $start_at->tz(
+            $statusRecurrent->options['origin_tz']
+        )->setTime($origintimedate->hour, $origintimedate->minute)->copy();
         $newCopy->start_at = $copyOriginTZ->tz('UTC')->copy();
 
         //old

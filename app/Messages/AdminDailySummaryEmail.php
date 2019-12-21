@@ -25,7 +25,9 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
         if (!empty($coverage)) {
             $contentBlock = [
                 '<center>' . 'Appointments: ' . count($this->sections->appointments) . '</center>',
-                '<center>' . 'Free slots: ' . $this->sections->getFreeSlots($serviceDurationInSeconds) . ' (duration ' . Service::get()['duration'] . 'min)</center>',
+                '<center>' . 'Free slots: ' .
+                    $this->sections->getFreeSlots($serviceDurationInSeconds)
+                    . ' (duration ' . Service::get()['duration'] . 'min)</center>',
                 '<center>' . 'Coverage: ' . $coverage . '</center>'
             ];
 
@@ -49,8 +51,10 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
         $appointmentSumarry = [];
 
         foreach ($this->sections->appointments as $appointment) {
-            $appointmentSumarry[] = '<hr/>' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format')) .
-                ' ' . $appointment->client->name . ' / ' . $appointment->getDuration() . '<br>' . $appointment->client->email;
+            $appointmentSumarry[] = '<hr/>' .
+                $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format')) .
+                ' ' . $appointment->client->name . ' / '
+                . $appointment->getDuration() . '<br>' . $appointment->client->email;
         }
         if (!empty($appointmentSumarry)) {
             array_unshift($appointmentSumarry, '<strong>' . $date_string . '</strong>');

@@ -2,7 +2,6 @@
 
 namespace Wappointment\Services;
 
-
 class Server
 {
 

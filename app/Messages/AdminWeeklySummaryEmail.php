@@ -2,7 +2,6 @@
 
 namespace Wappointment\Messages;
 
-
 use Wappointment\Services\Settings;
 use Wappointment\Services\Sections;
 use Wappointment\WP\Helpers as WPHelpers;
@@ -39,7 +38,9 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         if (!empty($coverage)) {
             $contentBlock = [
                 '<center>' . 'Appointments: ' . count($this->sections->appointments) . '</center>',
-                '<center>' . 'Free slots: ' . $this->sections->getFreeSlots($serviceDurationInSeconds) . ' (duration ' . Service::get()['duration'] . 'min)</center>',
+                '<center>' . 'Free slots: ' .
+                    $this->sections->getFreeSlots($serviceDurationInSeconds) .
+                    ' (duration ' . Service::get()['duration'] . 'min)</center>',
                 '<center>' . 'Coverage: ' . $coverage . '</center>'
             ];
 
@@ -52,7 +53,8 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
             }
         } else {
             $this->addRoundedSquare([
-                '<center>No availabilities for the week of ' . $date_start_string . ' - ' . $date_end_string . '</center>'
+                '<center>No availabilities for the week of '
+                    . $date_start_string . ' - ' . $date_end_string . '</center>'
             ], false);
             $this->addButton(
                 'Set availabilities for next week',
@@ -70,8 +72,10 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
             $appointmentSumarry[] = '<hr/>';
             if (isset($appointmentGroupedByDay[$startingDay->toDateString()])) {
                 foreach ($appointmentGroupedByDay[$startingDay->toDateString()] as $appointment) {
-                    $appointmentSumarry[] = $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format')) .
-                        ' ' . $appointment->client->name . ' / ' . $appointment->getDuration() . '<br>' . $appointment->client->email;
+                    $appointmentSumarry[] =
+                        $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format')) .
+                        ' ' . $appointment->client->name .
+                        ' / ' . $appointment->getDuration() . '<br>' . $appointment->client->email;
                 }
             } else {
                 $appointmentSumarry[] = '<small>No appointments for that day</small>';

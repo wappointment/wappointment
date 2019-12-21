@@ -153,7 +153,10 @@ class WidgetSettings
             'color' => ['label' => 'Primary Button Text'],
             'check_full' => ['label' => 'Full Width'],
             'check_bold' => ['label' => 'Bold'],
-            'slide_size' => ['label' => 'Text Size', 'options' => ['min' => .6, 'max' => 2.6, 'step' => .1, 'unit' => 'em']],
+            'slide_size' => [
+                'label' => 'Text Size',
+                'options' => ['min' => .6, 'max' => 2.6, 'step' => .1, 'unit' => 'em']
+            ],
         ],
         'selection' => [
             'header_co' => ['label' => 'Header text'],
@@ -183,7 +186,8 @@ class WidgetSettings
     public function __construct()
     {
         $this->db_settings = WPHelpers::getOption($this->key_option, []);
-        $this->merged_settings = empty($this->db_settings) ? $this->defaultSettings() : $this->merge($this->defaultSettings(), $this->db_settings);
+        $this->merged_settings = empty($this->db_settings) ?
+            $this->defaultSettings() : $this->merge($this->defaultSettings(), $this->db_settings);
         //$this->merged_settings = $this->merge($this->settings, $this->db_settings);
     }
     public function defaultSettings()
@@ -260,7 +264,9 @@ class WidgetSettings
 
     public function save($settings)
     {
-        if (!empty($settings['demoData'])) unset($settings['demoData']);
+        if (!empty($settings['demoData'])) {
+            unset($settings['demoData']);
+        }
         return WPHelpers::setOption($this->key_option, $settings, true);
     }
 
@@ -271,7 +277,7 @@ class WidgetSettings
         foreach ($array2 as $key => &$value) {
             if (is_array($value) && isset($merged[$key]) && is_array($merged[$key])) {
                 $merged[$key] = $this->merge($merged[$key], $value);
-            } else if (is_numeric($key)) {
+            } elseif (is_numeric($key)) {
                 if (!in_array($value, $merged)) {
                     $merged[] = $value;
                 }

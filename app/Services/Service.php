@@ -2,7 +2,6 @@
 
 namespace Wappointment\Services;
 
-
 use Wappointment\Validators\HasValues;
 use Wappointment\Validators\RequiredIfHas;
 
@@ -32,7 +31,12 @@ class Service
         $validation->validate();
 
         if ($validation->fails()) {
-            throw new \WappointmentValidationException("Cannot save Service", 1, null, $validation->errors()->toArray());
+            throw new \WappointmentValidationException(
+                "Cannot save Service",
+                1,
+                null,
+                $validation->errors()->toArray()
+            );
             return $validation->errors()->toArray();
         }
 
@@ -41,7 +45,7 @@ class Service
 
         $serviceData['options'] = array_merge($service['options'], $serviceData['options']);
         //dd($service, $serviceData);
-        $serviceData = apply_filters('wappointment_service_before_saved',  $serviceData, $service);
+        $serviceData = apply_filters('wappointment_service_before_saved', $serviceData, $service);
         //  return $serviceData;
         $resultSave = (bool) Settings::save('service', $serviceData);
 
@@ -49,7 +53,7 @@ class Service
             self::createdService($serviceData['type']);
         }
 
-        do_action('wappointment_service_saved',  $serviceData);
+        do_action('wappointment_service_saved', $serviceData);
         return $resultSave;
     }
 

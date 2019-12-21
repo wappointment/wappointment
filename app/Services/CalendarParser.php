@@ -52,8 +52,10 @@ class CalendarParser
             $recur = STATUS::RECUR_NOT;
             $carbon_end = $this->vcalDateToCarbon((string) $vevent->DTEND);
 
-            /*             echo 'Original: ' . (string)$vevent->DTEND . ' ' . $carbon_end->toRfc822String() . ' tz' . $this->timezone . "\n";
-                        echo 'Converted: ' . $carbon_end->copy()->tz('UTC')->toDateTimeString() . ' tz' . $this->timezone . "\n"; */
+            /*             echo 'Original: ' . (string)$vevent->DTEND . ' ' .
+            $carbon_end->toRfc822String() . ' tz' . $this->timezone . "\n";
+                        echo 'Converted: ' . $carbon_end->copy()->tz('UTC')->toDateTimeString()
+                        . ' tz' . $this->timezone . "\n"; */
             if ($vevent->RRULE) { // recurrent events
                 $until = $this->getUntil($vevent);
                 // skip recurring events that don't recurre anymore
@@ -71,9 +73,12 @@ class CalendarParser
             $start_at_record = $this->vcalDateToDbFormat((string) $vevent->DTSTART);
             $end_at_record = $this->getFormatedDate($carbon_end);
 
-            // when we have a recurring event that occurs the whole day and is of the type recurs every first monday
-            // we need to record it from midnight til midnight otherwise we have issues recurring it properly
-            /*$remainder = ($carbon_end->timestamp - $this->vcalDateToCarbon((string)$vevent->DTSTART)->timestamp) % 86400;
+            /* when we have a recurring event that occurs the whole day and is of
+            the type recurs every first monday
+                we need to record it from midnight til midnight otherwise we have
+                issues recurring it properly
+            $remainder = ($carbon_end->timestamp -
+            $this->vcalDateToCarbon((string)$vevent->DTSTART)->timestamp) % 86400;
              if ($recur > STATUS::RECUR_NOT && $remainder === 0) {
                 $start_at_record = $this->vcalDateToDbFormat((string)$vevent->DTSTART, 'Y-m-d 00:00');
                 $end_at_record = $this->getFormatedDate($carbon_end, 'Y-m-d 00:00');
@@ -114,12 +119,14 @@ class CalendarParser
 
     private function getUntil($vevent)
     {
-        return empty($vevent->RRULE->getParts()['UNTIL']) ? null : $this->vcalDateToCarbon($vevent->RRULE->getParts()['UNTIL']);
+        return empty($vevent->RRULE->getParts()['UNTIL']) ?
+            null : $this->vcalDateToCarbon($vevent->RRULE->getParts()['UNTIL']);
     }
 
     private function getRecur($vevent)
     {
-        return empty($vevent->RRULE->getParts()['FREQ']) ? STATUS::RECUR_NOT : $this->getFrequency($vevent->RRULE->getParts()['FREQ']);
+        return empty($vevent->RRULE->getParts()['FREQ']) ?
+            STATUS::RECUR_NOT : $this->getFrequency($vevent->RRULE->getParts()['FREQ']);
     }
 
     private function vcalDateToDbFormat(String $vcalDateTimeString, $format = WAPPOINTMENT_DB_FORMAT)
@@ -182,14 +189,16 @@ class CalendarParser
                 }
 
                 $options['origin_tz'] = $this->timezone;
-                $options['origin_start'] = $this->vcalDateToCarbon((string) $vevent->DTSTART)->format(WAPPOINTMENT_DB_FORMAT);
+                $options['origin_start'] = $this->vcalDateToCarbon((string) $vevent->DTSTART)
+                    ->format(WAPPOINTMENT_DB_FORMAT);
             }
 
-            /*$remainder = ($carbon_end->timestamp - $this->vcalDateToCarbon((string)$vevent->DTSTART)->timestamp) % 86400;
+            /*$remainder = ($carbon_end->timestamp -
+            $this->vcalDateToCarbon((string)$vevent->DTSTART)->timestamp) % 86400;
              if ($recur > STATUS::RECUR_NOT && $remainder === 0) {
                 $start_at_record = $this->vcalDateToDbFormat((string)$vevent->DTSTART, 'Y-m-d 00:00');
                 $end_at_record = $this->getFormatedDate($carbon_end, 'Y-m-d 00:00');
-            } 
+            }
             $options['fullday']
             */
         }

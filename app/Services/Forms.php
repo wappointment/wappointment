@@ -2,7 +2,6 @@
 
 namespace Wappointment\Services;
 
-
 class Forms
 {
     protected $fields = [];
@@ -55,7 +54,8 @@ class Forms
     {
         return '<p>' .
             '<label for="' . $field['id'] . '">' . $field['label'] . '</label>' .
-            '<input class="widefat" id="' . $field['id'] . '" name="' . $field['name'] . '" type="text" value="' . $field['value'] . '">' .
+            '<input class="widefat" id="' . $field['id']
+            . '" name="' . $field['name'] . '" type="text" value="' . $field['value'] . '">' .
             '</p>';
     }
 
@@ -64,7 +64,8 @@ class Forms
 
         $checked = !empty($field['value']) ? ' checked ' : '';
         return '<p>' .
-            '<input class="checkbox" type="checkbox" ' . $checked . ' id="' . $field['id'] . '" name="' . $field['name'] . '" />' .
+            '<input class="checkbox" type="checkbox" ' . $checked
+            . ' id="' . $field['id'] . '" name="' . $field['name'] . '" />' .
             '<label for="' . $field['id'] . '">' . $field['label'] . '</label>' .
             '</p>';
     }
@@ -78,7 +79,8 @@ class Forms
 
         foreach ($field['values'] as $key => $object) {
             $selected = $field['value'] == $object['value'] ? ' selected ' : '';
-            $dropdown .=  '<option value="' . $object['value'] .  '" ' . $selected . '>' . $object['label'] . '</option>';
+            $dropdown .=  '<option value="' . $object['value']
+                .  '" ' . $selected . '>' . $object['label'] . '</option>';
         }
 
         $dropdown .=  '</select>' .

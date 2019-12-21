@@ -24,7 +24,7 @@ class TestMail
             default:
                 return false;
         }
-        if($validator !== false){
+        if ($validator !== false) {
             self::$validator($mailerConfig);
             if (!empty(self::$errors)) {
                 return self::$errors;

@@ -25,13 +25,18 @@ class Appointment
 
     public static function confirm($id)
     {
-        $appointment = AppointmentModel::with('client')->where('id', $id)->where('status', AppointmentModel::STATUS_AWAITING_CONFIRMATION)->first();
+        $appointment = AppointmentModel::with('client')
+            ->where('id', $id)
+            ->where('status', AppointmentModel::STATUS_AWAITING_CONFIRMATION)->first();
         if (empty($appointment)) {
             throw new \WappointmentException("Can't find appointment", 1);
         } else {
             $result = $appointment->update(['status' => AppointmentModel::STATUS_CONFIRMED]);
             if ($result) {
-                Events::dispatch('AppointmentConfirmedEvent', ['appointment' => $appointment, 'client' => $appointment->client]);
+                Events::dispatch(
+                    'AppointmentConfirmedEvent',
+                    ['appointment' => $appointment, 'client' => $appointment->client]
+                );
             }
             return $result;
         }
@@ -135,7 +140,9 @@ class Appointment
         ) {
             throw new \WappointmentException('Slot already booked', 1);
         }
-        if ($is_admin === true) return true;
+        if ($is_admin === true) {
+            return true;
+        }
         //staff being booked
         $activeStaff = Settings::get('activeStaffId');
         //test that were in the booking availability
@@ -166,7 +173,11 @@ class Appointment
             } else {
                 $count_since_last_refresh = (int) WPHelpers::getStaffOption('since_last_refresh', false, 0) + 1;
                 WPHelpers::setStaffOption('since_last_refresh', $count_since_last_refresh);
-                \Wappointment\Services\Queue::tryPush('Wappointment\Jobs\AvailabilityRegenerate', ['staff_id' => Settings::get('activeStaffId')], 'availability');
+                \Wappointment\Services\Queue::tryPush(
+                    'Wappointment\Jobs\AvailabilityRegenerate',
+                    ['staff_id' => Settings::get('activeStaffId')],
+                    'availability'
+                );
             }
             //we immediately spawn a process to trigger availability regenerate in the back
             spawn_cron();
@@ -248,7 +259,8 @@ class Appointment
 
     protected static function getDefaultStatus($service)
     {
-        $default_status = ((int) Settings::get('approval_mode') === 1) ? AppointmentModel::STATUS_CONFIRMED : AppointmentModel::STATUS_AWAITING_CONFIRMATION;
+        $default_status = ((int) Settings::get('approval_mode') === 1) ?
+            AppointmentModel::STATUS_CONFIRMED : AppointmentModel::STATUS_AWAITING_CONFIRMATION;
 
         return apply_filters('wappointment_appointment_default_status', $default_status, $service);
     }

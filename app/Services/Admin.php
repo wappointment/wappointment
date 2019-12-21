@@ -2,7 +2,6 @@
 
 namespace Wappointment\Services;
 
-
 use Wappointment\Models\Client as MClient;
 use Wappointment\Validators\HttpRequest\BookingAdmin;
 
@@ -25,16 +24,24 @@ class Admin
             ]
         ];
 
-        if (!empty($booking->get('phone'))) $dataClient['options']['phone'] = $booking->get('phone');
-        if (!empty($booking->get('skype'))) $dataClient['options']['skype'] = $booking->get('skype');
+        if (!empty($booking->get('phone'))) {
+            $dataClient['options']['phone'] = $booking->get('phone');
+        }
+        if (!empty($booking->get('skype'))) {
+            $dataClient['options']['skype'] = $booking->get('skype');
+        }
 
         if (empty($client)) {
             $dataClient['email'] = $booking->get('email');
             $client = MClient::create($dataClient);
         } else {
             $options = $client->options;
-            if (!empty($booking->get('phone'))) $options['phone'] = $booking->get('phone');
-            if (!empty($booking->get('skype'))) $options['skype'] = $booking->get('skype');
+            if (!empty($booking->get('phone'))) {
+                $options['phone'] = $booking->get('phone');
+            }
+            if (!empty($booking->get('skype'))) {
+                $options['skype'] = $booking->get('skype');
+            }
             $client->options = $options;
             $client->save();
         }

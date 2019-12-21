@@ -23,7 +23,12 @@ class Segment
     {
         $intervals = [];
         foreach ($segments as $i => $segment) {
-            $intervals[$i] = \Achse\Math\Interval\Integer\IntegerIntervalFactory::create((int) $segment[0], false, (int) $segment[1], false);
+            $intervals[$i] = \Achse\Math\Interval\Integer\IntegerIntervalFactory::create(
+                (int) $segment[0],
+                false,
+                (int) $segment[1],
+                false
+            );
         }
         return $intervals;
     }
@@ -99,7 +104,9 @@ class Segment
     private function intersects(IntegerInterval $interval, IntegerInterval $interval_2)
     {
         //return $interval->isColliding($interval_2);
-        return ($interval->isColliding($interval_2) || $interval->isContaining($interval_2) || $interval_2->isContaining($interval));
+        return ($interval->isColliding($interval_2)
+            || $interval->isContaining($interval_2)
+            || $interval_2->isContaining($interval));
     }
 
     /**
@@ -112,7 +119,6 @@ class Segment
     private function inContact(IntegerInterval $interval, IntegerInterval $interval_2)
     {
 
-        //return $interval->isColliding($interval_2) || $interval->isFollowedBy($interval_2) || $interval_2->isFollowedBy($interval);
         return ($interval->isColliding($interval_2) || $interval->isFollowedBy($interval_2)
             || $interval->isContaining($interval_2) || $interval_2->isContaining($interval));
     }

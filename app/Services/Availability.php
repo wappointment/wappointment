@@ -50,8 +50,7 @@ class Availability
 
         $new_availability = [];
         foreach ($availabilities as $availability) {
-            if (
-                ($availability[0] >= $this->start_at && $availability[0] < $this->end_at)
+            if (($availability[0] >= $this->start_at && $availability[0] < $this->end_at)
                 || ($availability[1] > $this->start_at && $availability[1] <= $this->end_at)
             ) {
                 $new_availability[] = $availability;
@@ -89,7 +88,9 @@ class Availability
      */
     public function regenerate($staff_id = false, $days = 60)
     {
-        if ($staff_id === false) $staff_id = Settings::get('activeStaffId');
+        if ($staff_id === false) {
+            $staff_id = Settings::get('activeStaffId');
+        }
 
         // get regular avail and apply for x time from now
         $this->availabilities = $this->generateAvailabilityWithRA($staff_id, $days);
@@ -197,12 +198,17 @@ class Availability
             $dailyAvailability = $this->staff[$staff_id]['ra'][$dayName];
             //dd($this->staff[$staff_id]['ra']);
             foreach ($dailyAvailability as $dayTimeblock) {
-                $start = (new Carbon($now->format(WAPPOINTMENT_DB_FORMAT . ':00'), $staff_timezone))->hour($dayTimeblock[0]);
-                $end = (new Carbon($now->format(WAPPOINTMENT_DB_FORMAT . ':00'), $staff_timezone))->hour($dayTimeblock[1]);
-                if ($min_time->gte($end)) continue;
+                $start = (new Carbon($now->format(WAPPOINTMENT_DB_FORMAT . ':00'), $staff_timezone))
+                    ->hour($dayTimeblock[0]);
+                $end = (new Carbon($now->format(WAPPOINTMENT_DB_FORMAT . ':00'), $staff_timezone))
+                    ->hour($dayTimeblock[1]);
+                if ($min_time->gte($end)) {
+                    continue;
+                }
                 while ($min_time->gt($start)) {
                     $start = $start->addMinutes(Service::getObject()->duration);
-                    //echo $min_time->format(WAPPOINTMENT_DB_FORMAT.':00') . ' > ' . $start->format(WAPPOINTMENT_DB_FORMAT.':00') . "\n";
+                    /*echo $min_time->format(WAPPOINTMENT_DB_FORMAT.':00') . ' > ' .
+                    $start->format(WAPPOINTMENT_DB_FORMAT.':00') . "\n";*/
                     continue;
                 }
 
@@ -222,7 +228,8 @@ class Availability
     private function patch($staff_id, $start, $end, $busy = true)
     {
         // remove availability
-        if ($busy) { } else { //add availability
+        if ($busy) {
+        } else { //add availability
         }
     }
 }

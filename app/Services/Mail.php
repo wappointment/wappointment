@@ -2,7 +2,6 @@
 
 namespace Wappointment\Services;
 
-
 use WappoSwift_Mailer;
 use WappoSwift_Message;
 
@@ -144,8 +143,7 @@ class Mail
             return (new \Wappointment\Transports\Methods\MailgunEmail());
         } elseif ($this->config['method'] == 'smtp') {
             return new \Wappointment\Transports\Methods\SMTPEmail();
-        }
-        elseif ($this->config['method'] == 'wpmail') {
+        } elseif ($this->config['method'] == 'wpmail') {
             return new \Wappointment\Transports\Methods\WpMailEmail();
         }
     }

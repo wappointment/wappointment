@@ -41,7 +41,10 @@ class Sections
 
     public function setAvailabilities()
     {
-        $this->availabilities = (new Availability($this->start_at, $this->end_at))->getStaff(Settings::get('activeStaffId'));
+        $this->availabilities = (new Availability(
+            $this->start_at,
+            $this->end_at
+        ))->getStaff(Settings::get('activeStaffId'));
     }
 
     public function getFreeSlots(Int $duration = 0)
@@ -59,7 +62,7 @@ class Sections
         return $this->getSlots($duration, $appointmentsArray);
     }
 
-    private function getSlots(Int $duration = 0, $timestampsArray)
+    private function getSlots(Int $duration, $timestampsArray)
     {
         if ($duration < 1) {
             throw new \WappointmentException('Missing duration argument', 1);

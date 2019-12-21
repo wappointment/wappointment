@@ -22,7 +22,8 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
         $this->addRoundedSquare(
             [
                 'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
-                'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format')) . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
+                'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
+                    . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
                 'Service: ' . Service::get()['name'],
                 "Client's name: " . $client->name,
                 "Client's email: " . $client->email,
@@ -36,12 +37,17 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
 
         $buttonConfirm = true;
 
-        $buttonConfirm = apply_filters('wappointment_appointment_pending_email_button', $buttonConfirm, $appointment->options);
+        $buttonConfirm = apply_filters(
+            'wappointment_appointment_pending_email_button',
+            $buttonConfirm,
+            $appointment->options
+        );
 
         if ($buttonConfirm === true) {
             $this->addButton(
                 'Confirm appointment',
-                WPHelpers::adminUrl('wappointment_calendar&start=' . $st . '&end=' . $end . '&timezone=' . $tz . '&open_confirm=' . $appointment->id)
+                WPHelpers::adminUrl('wappointment_calendar&start=' .
+                    $st . '&end=' . $end . '&timezone=' . $tz . '&open_confirm=' . $appointment->id)
             );
         } else {
             $this->addLines($buttonConfirm);

@@ -22,7 +22,8 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
             [
                 '<u>New appointment</u>',
                 'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
-                'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format')) . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
+                'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
+                    . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
                 'Service: ' . Service::get()['name'],
                 "Client's name: " . $client->name,
                 "Client's email: " . $client->email,
@@ -32,7 +33,8 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
             [
                 '<u>Former appointment</u>',
                 'Date: ' . $oldAppointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
-                'Time: ' . $oldAppointment->start_at->setTimezone($tz)->format(Settings::get('time_format')) . ' - ' . $oldAppointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
+                'Time: ' . $oldAppointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
+                    . ' - ' . $oldAppointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
             ]
         );
     }

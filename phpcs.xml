@@ -6,6 +6,12 @@
 <rule ref="PHPCompatibility"/>
 <config name="testVersion" value="7.0-"/>     
 <file>app/</file>     
+<exclude-pattern>*/Messages/Template</exclude-pattern>  
+<exclude-pattern>*/Services/Settings.php</exclude-pattern>
+<exclude-pattern>*/Services/ViewsData.php</exclude-pattern>
+<exclude-pattern>*/System/Status.php</exclude-pattern>
+<exclude-pattern>*/Installation/Steps/SeedData.php</exclude-pattern>
+<exclude-pattern>*/required.php</exclude-pattern>
 <exclude-pattern>vendor</exclude-pattern>    
 <exclude-pattern>resources</exclude-pattern>    
 <exclude-pattern>database/</exclude-pattern>    

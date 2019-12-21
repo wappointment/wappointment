@@ -95,8 +95,8 @@ class EventsController extends RestController
     }
     private function events(Request $request)
     {
-        $ends_at_carbon = DateTime::TimeZToUtc($request->input('end'));
-        $start_at_string = DateTime::TimeZToUtc($request->input('start'))->format(WAPPOINTMENT_DB_FORMAT);
+        $ends_at_carbon = DateTime::timeZToUtc($request->input('end'));
+        $start_at_string = DateTime::timeZToUtc($request->input('start'))->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $ends_at_carbon->format(WAPPOINTMENT_DB_FORMAT);
         $events = [];
 

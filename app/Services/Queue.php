@@ -2,7 +2,6 @@
 
 namespace Wappointment\Services;
 
-
 use Wappointment\Models\Job;
 use Wappointment\Models\FailedJob;
 use Wappointment\Helpers\Debug;
@@ -54,7 +53,9 @@ class Queue
         if (!empty($params['staff_id'])) {
             $query->where('appointment_id', $params['staff_id']);
         }
-        if ($query->exists()) return;
+        if ($query->exists()) {
+            return;
+        }
         self::push($job, $params, $queue, $available_at);
     }
     public static function push($job, $params, $queue = 'default', $available_at = 0)
@@ -98,7 +99,10 @@ class Queue
         $interfaces = class_implements($jobClassName);
 
         if (!isset($interfaces['Wappointment\Jobs\JobInterface'])) {
-            throw new \WappointmentException('Job ' . $jobClassName . ' doesn\'t implement required interface', 1);
+            throw new \WappointmentException(
+                'Job ' . $jobClassName . ' doesn\'t implement required interface',
+                1
+            );
         }
 
         // process the job
@@ -164,7 +168,12 @@ class Queue
     {
         self::cancelDailyJob();
 
-        $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(Settings::get('daily_summary_time'), 0, 0, Settings::getStaff('timezone'));
+        $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
+            Settings::get('daily_summary_time'),
+            0,
+            0,
+            Settings::getStaff('timezone')
+        );
 
         if ($available_at->timestamp < time()) {
             $available_at->addDay();
@@ -183,7 +192,12 @@ class Queue
     {
         self::cancelWeeklyJob();
 
-        $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(Settings::get('weekly_summary_time'), 0, 0, Settings::getStaff('timezone'));
+        $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
+            Settings::get('weekly_summary_time'),
+            0,
+            0,
+            Settings::getStaff('timezone')
+        );
 
         while ($available_at->timestamp < time() || !$available_at->isDayOfWeek(Settings::get('weekly_summary_day'))) {
             $available_at->addDay();
