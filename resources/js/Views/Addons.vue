@@ -16,7 +16,11 @@
       <template v-for="(addon,id) in viewData.addons"> 
         <AddonPreview 
         :apiSite="apiSite" :viewData="viewData" :addon="addon"
-        @openWizardModal="openWizardModal" @runInstallation="runInstallation" @install="install" />
+        @openWizardModal="openWizardModal" 
+        @runInstallation="runInstallation" 
+        @install="install"
+        @activate="activate" 
+        @deactivate="deactivate" />
       </template>
       
     </div>

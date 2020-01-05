@@ -1,18 +1,12 @@
 <script>
 export default {
   methods: {
-    getPrice(packageObject){
-        return this.getPricePerNumberOfSites(packageObject.options.prices, 1)
+    getPrice(packageObject, number_of_sites){
+      return parseInt(packageObject.options.prices.find(element => element.number == number_of_sites).price)
     },
-    getPricePerNumberOfSites(prices, number){
-      let found = prices.filter((e) => e.number == number)
-      return found.length > 0? found[0].price:undefined
-    },
+
     roundToTwo(num) {    
         return num.toFixed(2)
-    },
-    getPackagePrice(packagekey){
-        return this.getRealPrice( this.getPrice( this.packageByKey(packagekey) ) )
     },
     getRealPrice(price){
         return this.roundToTwo(price/100)

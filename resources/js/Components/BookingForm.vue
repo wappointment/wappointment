@@ -428,6 +428,10 @@ export default {
     text-align: center;
     font-size: .75em;
 }
+.wap-front .calendarMonth .ddays {
+    min-height: 1.1em;
+}
+
 .wap-front .no-avail {
     color:#ccc;
 }

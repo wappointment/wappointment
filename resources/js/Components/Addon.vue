@@ -6,12 +6,12 @@
             <div class="text-muted mb-4" v-html="addon.options.description"></div>
             <div v-if="isPublished">
                 <div v-if="!isRegistered" class="mt-auto d-flex align-items-center">
-                <div class="font-italic">
-                    <div>Price: <strong>{{ getRealPrice(getPrice) }}€</strong></div>
-                </div>
-                <div class="ml-auto pl-2"> 
-                    <a :href="buyAddonUrl" target="_blank" class="btn btn-outline-primary btn-block">Get it</a>
-                </div>
+                    <div class="font-italic">
+                        <div>Price: <strong>{{ getRealPrice(getPriceSingle) }}€</strong></div>
+                    </div>
+                    <div class="ml-auto pl-2"> 
+                        <a :href="buyAddonUrl" target="_blank" class="btn btn-outline-primary btn-block">Get it</a>
+                    </div>
                 </div>
                 <div v-else class="mt-auto">
                     <div>Licence <strong class="text-success">active</strong> until : <u class="small">{{ addon.expires_at }}</u></div>
@@ -83,8 +83,8 @@ export default {
         isPlugin(){
           return this.addon.plugin
         },
-        getPrice(){
-            return this.addon.options.prices.find(element => element.number == 1).price
+        getPriceSingle(){
+            return this.getPrice(this.addon, 1)
         }
     },
     methods: {
