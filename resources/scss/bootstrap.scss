@@ -44,6 +44,10 @@
 /*  @import "~bootstrap/scss/print"; */
 @import "tooltips";
  
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+}
 .btn.btn-secondary {
     color: #626262;
 }

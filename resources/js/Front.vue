@@ -94,7 +94,7 @@ export default {
 </script>
 <style>
 .wap-wid{
-    max-width: 300px;
+    max-width: 320px;
     min-width: 200px;
 }
 .br-fixed .wap-wid .btn-booking{

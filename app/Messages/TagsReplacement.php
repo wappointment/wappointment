@@ -36,10 +36,10 @@ class TagsReplacement
                 '[service:address]',
             ],
             [
-                $this->client->name,
-                $this->client->email,
-                $this->client->getPhone(),
-                $this->client->getSkype(),
+                sanitize_text_field($this->client->name),
+                sanitize_text_field($this->client->email),
+                sanitize_text_field($this->client->getPhone()),
+                sanitize_text_field($this->client->getSkype()),
 
                 $this->appointment->getDuration(),
                 $this->appointment->getStartsDayAndTime($this->client->getTimezone()),
@@ -48,8 +48,8 @@ class TagsReplacement
                 $this->appointment->getLinkCancelEvent(),
                 $this->appointment->getLinkNewEvent(),
 
-                $this->appointment->getServiceName(),
-                $this->appointment->getServiceAddress(),
+                sanitize_text_field($this->appointment->getServiceName()),
+                sanitize_text_field($this->appointment->getServiceAddress()),
             ],
             $subject
         );

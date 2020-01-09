@@ -36,19 +36,19 @@
                                 <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
                             </BookingAddress>
                         </div>
-                        <div class="field-required" :class="hasError('name')">
+                        <div class="wap-field field-required" :class="hasError('name')">
                             <label for="name">{{options.form.fullname}}</label>
                             <p class="d-flex">
                                 <input class="form-control" id="name" type="text" v-model="bookingForm.name" :required="true">
                             </p>
                         </div>
-                        <div class="field-required" :class="hasError('email')">
+                        <div class="wap-field field-required" :class="hasError('email')">
                             <label for="email">{{options.form.email}}</label>
                             <p class="d-flex">
                                 <input type="email" id="email" class="form-control" v-model="bookingForm.email" :required="true">
                             </p>
                         </div>
-                        <div v-if="phoneSelected" class="field-required" :class="hasError('phone')">
+                        <div v-if="phoneSelected" class="wap-field field-required" :class="hasError('phone')">
                             <PhoneInput 
                             :label="options.form.phone"
                             :phone="bookingForm.phone"
@@ -56,7 +56,7 @@
                             @onInput="onInput" 
                             ></PhoneInput>
                         </div>
-                        <div v-if="skypeSelected" class="field-required" :class="hasError('skype')">
+                        <div v-if="skypeSelected" class="wap-field field-required" :class="hasError('skype')">
                             <label for="skype">{{options.form.skype}}</label>
                             <p class="d-flex">
                                 <input class="form-control" type="text" id="skype" v-model="bookingForm.skype">

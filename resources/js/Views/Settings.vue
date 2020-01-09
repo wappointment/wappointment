@@ -70,16 +70,30 @@ export default {
         activePage(){
             this.recordActiveTab()
             return this.$route.name
-        }
+        },
+       
     },
     created() {
-         if(window.wappointmentAdmin.addons !== undefined && Object.keys(window.wappointmentAdmin.addons).length > 0) {
+         if(window.wappointmentAdmin.addons !== undefined && this.addonsWithSettings.length > 0) {
             this.tabs['addonstab'] = { label: 'Addons'}
         }
         this.recordActiveTab()
     },
 
     methods: {
+         addonsWithSettings(){
+            let addonsWithSettings = {}
+            let addonscopy = window.wappointmentAdmin.addons
+            for (const key in addonscopy) {
+                if (addonscopy.hasOwnProperty(key)) {
+                    const element = addonscopy[key]
+                    if(element.settings!== undefined){
+                        addonsWithSettings[key] = element
+                    }
+                }
+            }
+            return Object.keys(addonsWithSettings)
+        },
         recordActiveTab(){
             let atab = this.$route.name
             this.activeTab = atab

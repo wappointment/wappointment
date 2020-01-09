@@ -23,7 +23,8 @@ class SettingsController extends RestController
             return $msg;
         } else {
             if ($request->input('key') == 'widget') {
-                return (new WidgetSettings)->save($request->input('val'));
+                (new WidgetSettings)->save($request->input('val'));
+                return ['message' => 'Settings saved'];
             } else {
                 return Settings::save($request->input('key'), $request->input('val'));
             }

@@ -7,7 +7,14 @@
           <template slot="modal-title">{{ days }} days already!!</template>
           <template slot="modal-body">
              <div>
-                 <div class="d-flex" v-if="!experience">
+                 <div class="d-flex flex-wrap" v-if="!experience">
+                     <div>
+                        <figure class="m-2 mx-4 figure">
+                            <img :src="'https://ps.w.org/wappointment/assets/equipowappo.jpg?rev=2151020'" 
+                            class="img-fluid rounded" height="200" alt="Our little team of 2">
+                            <figcaption class="figure-caption text-right">Our little team of 2</figcaption>
+                        </figure>
+                    </div>
                     <div class="contact-wrapper">
                         <h2>{{ days }} days already!!</h2>
                         <p class="h6">Thank you so much for your trust in Wappointment!</p>
@@ -17,12 +24,6 @@
                         <div >
                             <button class="btn btn-link btn-sm" @click="dontShowAgain">Don't show again</button>
                         </div>
-                    </div>
-                    <div>
-                        <figure class="m-2 mx-4 figure">
-                            <img :src="'https://ps.w.org/wappointment/assets/equipowappo.jpg?rev=2151020'" class="img-fluid rounded" height="200" alt="Our little team of 2">
-                            <figcaption class="figure-caption text-right">Our little team of 2</figcaption>
-                        </figure>
                     </div>
                 </div>
                 <div v-else>

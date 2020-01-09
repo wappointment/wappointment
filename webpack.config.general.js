@@ -15,9 +15,9 @@ module.exports = {
     front: ['./resources/js/babelpolyfill.js','./resources/js/front.js'],
   },
   output: {
-    filename: '[name].[hash].bundle.js',
+    filename: '[name].[contenthash].bundle.js',
     path: path.resolve(__dirname, 'dist'),
-    chunkFilename: '[name].[hash].bundle.js',
+    chunkFilename: '[name].[contenthash].bundle.js',
   },
 
   resolve: {

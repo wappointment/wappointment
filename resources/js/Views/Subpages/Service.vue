@@ -29,9 +29,11 @@ export default {
 
   methods: {
     initMethod(){
+      console.log('initMethod')
       this.request(this.initValueRequest,  undefined, this.loaded)
     },
     loaded(viewData){
+      console.log('loaded',viewData)
       this.viewData = viewData.data
         this.model = viewData.data.service
         this.model.duration = parseInt(this.model.duration)

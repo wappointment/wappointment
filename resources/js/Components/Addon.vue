@@ -5,7 +5,11 @@
           <h3 class="mb-3 text-center">{{ addon.options.name }}</h3>
             <div class="text-muted mb-4" v-html="addon.options.description"></div>
             <div v-if="isPublished">
+                <div v-if="hasGallery && !isRegistered" class="d-flex my-2">
+                    <img v-for="media in addon.media" :src="media" @click="showFullScreen(media)" class="img-gallery img-fluid"/>
+                </div>
                 <div v-if="!isRegistered" class="mt-auto d-flex align-items-center">
+                    
                     <div class="font-italic">
                         <div>Price: <strong>{{ getRealPrice(getPriceSingle) }}€</strong></div>
                     </div>
@@ -43,6 +47,7 @@
                     <p class="h6 font-italic">Want to know when it's out?</p>
                 </SubscribeNewsletter>
             </div>
+
     </div>
     
 </template>
@@ -80,6 +85,9 @@ export default {
         isRegistered(){
           return this.addon.expires_at !== undefined
         },
+        hasGallery(){
+             return this.addon.media !== undefined && this.addon.media.length > 0
+        },
         isPlugin(){
           return this.addon.plugin
         },
@@ -105,7 +113,27 @@ export default {
         },
         deactivate(){
             this.$emit('deactivate', this.addon)
+        },
+        showFullScreen(image){
+            this.$WapModalOn({
+                title: this.addon.options.name,
+                content: `<img src="${image}" class="img-fluid" />`,
+                screenshot:true
+            })
         }
     }
 }
 </script>
+<style>
+.img-gallery {
+    border: 1px solid #ccc;
+    border-radius: .4em;
+    cursor: pointer;
+    margin-right: .2em;
+}
+.img-gallery:hover {
+
+    border-color: #6664cb;
+
+}
+</style>

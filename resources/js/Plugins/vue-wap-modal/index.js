@@ -37,7 +37,7 @@ VueWapModal.install = function (Vue, options) {
     if(Vue.prototype.$WapModalContainerInstance === null) {
       Vue.prototype.$WapModalBoot()
     }
-    Vue.prototype.$WapModalContainerInstance.showModal(methodOptions.title, methodOptions.content)
+    Vue.prototype.$WapModalContainerInstance.showModal(methodOptions.title, methodOptions.content, methodOptions.screenshot !== undefined)
 
   }
 

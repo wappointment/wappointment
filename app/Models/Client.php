@@ -22,6 +22,10 @@ class Client extends Model
     {
         return $this->hasMany(Appointment::class);
     }
+    public function getEmailAttribute($value)
+    {
+        return sanitize_email($value);
+    }
     public function getFirstName()
     {
         return (strpos($this->name, ' ')) !== false ? substr($this->name, 0, strpos($this->name, ' ')) : $this->name;
@@ -74,6 +78,6 @@ class Client extends Model
 
     public function mailableAddress()
     {
-        return [$this->email => $this->name];
+        return [$this->email => sanitize_text_field($this->name)];
     }
 }

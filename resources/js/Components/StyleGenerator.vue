@@ -83,7 +83,8 @@
         .wap-front .wrap-calendar {
             border-top: none;
             text-align: center;
-            overflow: hidden;
+            overflow-y: scroll;
+            max-height: 500px;
             background-color: {{ hx_rgb(opts.colors.body.bg) }};
         }
 
@@ -150,7 +151,9 @@
             overflow: hidden;
             font-size: .8em;
         }
-
+        .wap-booking-fields .wap-field{
+            margin-bottom:.4em
+        }
         .wap-booking-fields .isInvalid input[type="text"], 
         .wap-booking-fields .isInvalid input[type="email"], 
         .wap-booking-fields .isInvalid input[type="url"], 

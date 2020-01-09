@@ -76,7 +76,7 @@ class ViewsData
     {
         return [
             'widget' => (new WidgetSettings)->get(),
-            'widgetDefault' => (new WidgetSettings)->default(),
+            'widgetDefault' => (new WidgetSettings)->defaultSettings(),
             'staff' => (new \Wappointment\WP\Staff())->toArray()
         ];
     }

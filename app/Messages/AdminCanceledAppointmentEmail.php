@@ -24,9 +24,9 @@ class AdminCanceledAppointmentEmail extends AbstractAdminEmail
                 'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
                 'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
                     . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
-                'Service: ' . Service::get()['name'],
-                "Client's name: " . $client->name,
-                "Client's email: " . $client->email,
+                'Service: ' . sanitize_text_field(Service::get()['name']),
+                "Client's name: " . sanitize_text_field($client->name),
+                "Client's email: " . sanitize_text_field($client->email),
             ]
         );
     }

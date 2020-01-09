@@ -14,7 +14,7 @@ class AdminEmailDailySummary extends AbstractEmailJob
         $emailObject = $this->generateEmail();
 
         $result = $this->mailer
-            ->to(Settings::get('email_notifications'))
+            ->to(sanitize_email(Settings::get('email_notifications')))
             ->send($emailObject);
 
         if (!$result) {

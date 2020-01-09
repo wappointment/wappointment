@@ -30,13 +30,12 @@ class TestMail
                 return self::$errors;
             }
         }
-
         try {
             $result = (new MailService($mailerConfig))->sendFast(
                 "Wappointment's test email",
                 'Yay! Emails are working!',
-                $recipient,
-                [$mailerConfig['from_address'] => $mailerConfig['from_name']]
+                sanitize_email($recipient),
+                [sanitize_email($mailerConfig['from_address']) => sanitize_text_field($mailerConfig['from_name'])]
             );
         } catch (\Exception $e) {
             $result = [];

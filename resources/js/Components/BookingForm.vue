@@ -415,8 +415,6 @@ export default {
 </script>
 <style>
 .wap-bf{
-    max-width: 300px;
-    
     transition: box-shadow ease-in-out .3s;
 }
 .wap-bf.show{
@@ -427,6 +425,7 @@ export default {
     width: 1.4em;
     text-align: center;
     font-size: .75em;
+    padding: .4em;
 }
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;

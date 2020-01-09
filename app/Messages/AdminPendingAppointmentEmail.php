@@ -24,9 +24,9 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
                 'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
                 'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
                     . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
-                'Service: ' . Service::get()['name'],
-                "Client's name: " . $client->name,
-                "Client's email: " . $client->email,
+                'Service: ' . sanitize_text_field(Service::get()['name']),
+                "Client's name: " . sanitize_text_field($client->name),
+                "Client's email: " . sanitize_text_field($client->email),
             ]
         );
         $this->addBr();
@@ -47,10 +47,10 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
             $this->addButton(
                 'Confirm appointment',
                 WPHelpers::adminUrl('wappointment_calendar&start=' .
-                    $st . '&end=' . $end . '&timezone=' . $tz . '&open_confirm=' . $appointment->id)
+                    $st . '&end=' . $end . '&timezone=' . $tz . '&open_confirm=' . (int) $appointment->id)
             );
         } else {
-            $this->addLines($buttonConfirm);
+            $this->addLines(sanitize_text_field($buttonConfirm));
         }
     }
 }
