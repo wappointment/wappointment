@@ -18,7 +18,7 @@ if (!defined('ABSPATH')) {
  * @package Wappointment
  * @author Wappointment
  * @since 1.0.0
- * 
+ *
  * Wappointment is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 2 of the License, or
@@ -42,7 +42,9 @@ require_once WAPPOINTMENT_PATH . 'app' . DIRECTORY_SEPARATOR . 'required.php';
 function get_wappointment_autoloader()
 {
     static $wappointment_loader = false;
-    if ($wappointment_loader !== false) return $wappointment_loader;
+    if ($wappointment_loader !== false) {
+        return $wappointment_loader;
+    }
     $wappointment_loader = require_once WAPPOINTMENT_PATH . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 }
 get_wappointment_autoloader();
