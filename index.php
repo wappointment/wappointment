@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Plugin Name: Wappointment
- * Version: 1.2.1
+ * Version: 1.2.3
  * Plugin URI: https://wappointment.com
  * Description: The reliable Appointment booking manager to get new clients simply
  * Author: Wappointment
@@ -30,7 +30,7 @@ if (!defined('ABSPATH')) {
  * GNU General Public License for more details.
  */
 
-define('WAPPOINTMENT_VERSION', '1.2.1');
+define('WAPPOINTMENT_VERSION', '1.2.3');
 define('WAPPOINTMENT_PHP_MIN', '7.0.0');
 define('WAPPOINTMENT_NAME', 'Wappointment');
 define('WAPPOINTMENT_SLUG', strtolower(WAPPOINTMENT_NAME));

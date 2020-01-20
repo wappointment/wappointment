@@ -211,7 +211,7 @@ export default {
     right: 0;
     bottom: 0;
     margin: 1rem;
-    z-index: 99;
+    z-index: 9999999;
 }
 
 .close-wid::after {

@@ -74,7 +74,7 @@ export default {
        
     },
     created() {
-         if(window.wappointmentAdmin.addons !== undefined && this.addonsWithSettings.length > 0) {
+         if(window.wappointmentAdmin.addons !== undefined && this.addonsWithSettings().length > 0) {
             this.tabs['addonstab'] = { label: 'Addons'}
         }
         this.recordActiveTab()

@@ -422,10 +422,10 @@ export default {
 }
 
 .wap-front .calendarMonth .ddays div {
-    width: 1.4em;
+    width: 2.4em;
     text-align: center;
     font-size: .75em;
-    padding: .4em;
+    padding: .2em .4em;
 }
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;
@@ -448,8 +448,9 @@ export default {
     padding-left: .5em !important;
 }
 .wap-front .slotsPane{
-    box-shadow: inset 0px 0px 10px rgba(0,0,0,.3);
+    box-shadow: inset 0px 0px 10px rgba(0,0,0,.14);
     transition: all .3s ease-in-out;
+    border-radius: .2em;
 }
 .wap-front [data-tt] {
   position: relative;
@@ -527,7 +528,7 @@ export default {
 .wap-front .dayselected{
     font-weight: bold;
     border-radius: .2em .2em 0 0;
-    box-shadow: 0px 0px 6px rgba(0,0,0,0.3);
+    box-shadow: 0px 0px 6px rgba(0,0,0,0.1);
 }
 
 .wap-front .dayselected span{

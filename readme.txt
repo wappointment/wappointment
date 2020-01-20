@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.3
 Requires PHP: 7.0
-Stable tag: 1.2.1
+Stable tag: 1.2.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -107,8 +107,15 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 1.2.3 - 2020-01-10 =
+* Fixed style frontend booking module
+
+= 1.2.2 - 2020-01-09 =
+* Reverting package to PHP 7.0 compatibility
+
 = 1.2.1 - 2020-01-08 =
-* Fixed compatibility issue with php 7
+* Fixed compatibility issue with PHP 7
+* Patching
 * Corrected a few minor visual issues
 
 = 1.2.0 - 2019-12-14 =
