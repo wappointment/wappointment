@@ -4,9 +4,9 @@
                 <transition :name="slideMonth">
                     <div v-if="currentMonth" class="calendarMonth">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span @click="prevMonth" class="btn btn-link" :class="{disabled : isCurrentMonth}" :disabled="isCurrentMonth"><</span> 
+                            <span @click="prevMonth" class="btn btn-link" :class="{'btn-disabled' : isCurrentMonth}" :disabled="isCurrentMonth"><</span> 
                             <div>{{ currentMonth.month + ' ' + currentMonth.year }}</div> 
-                            <span @click="nextMonth" class="btn btn-link" :class="{disabled : isLastMonth}" :disabled="isLastMonth" >></span>
+                            <span @click="nextMonth" class="btn btn-link" :class="{'btn-disabled' : isLastMonth}" :disabled="isLastMonth" >></span>
                         </div>
                         <div class="d-flex justify-content-between ddays" >
                             <div v-for="(dayH, idy) in weekHeader">

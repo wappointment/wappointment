@@ -129,6 +129,9 @@ export default {
   border-radius: 0.25em;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   margin: 0.2em;
+  background-color: transparent;
+  background: transparent;
+  height: auto;
 }
 
 
@@ -142,21 +145,21 @@ export default {
     outline: 0;
   }
 
-  .wap-front .btn.disabled, 
+  .wap-front .btn.btn-disabled, 
   .wap-front .btn:disabled {
     opacity: 0.65;
   }
 
-  .wap-front .btn:not(:disabled):not(.disabled) {
+  .wap-front .btn:not(:disabled):not(.btn-disabled) {
     cursor: pointer;
   }
 
-  .wap-front .btn:not(:disabled):not(.disabled):active, 
-  .wap-front .btn:not(:disabled):not(.disabled).active {
+  .wap-front .btn:not(:disabled):not(.btn-disabled):active, 
+  .wap-front .btn:not(:disabled):not(.btn-disabled).active {
     background-image: none;
   }
 
-  .wap-front a.btn.disabled,
+  .wap-front a.btn.btn-disabled,
   .wap-front fieldset:disabled a.btn {
     pointer-events: none;
   }

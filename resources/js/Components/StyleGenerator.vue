@@ -10,10 +10,11 @@
         .wap-front .btn.btn-primary,
         .wap-front .btn-primary:not(:disabled):not(.disabled):active, 
         .wap-front .btn-primary:not(:disabled):not(.disabled).active {
-        background-color: {{ hx_rgb(opts.colors.primary.bg) }};
-        border-color: {{ hx_rgb(opts.colors.primary.bg, .8) }};
-        color: {{ hx_rgb(opts.colors.primary.text) }};
-        box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .6) }};
+            background: {{ hx_rgb(opts.colors.primary.bg) }};
+            background-color: {{ hx_rgb(opts.colors.primary.bg) }};
+            border-color: {{ hx_rgb(opts.colors.primary.bg, .8) }};
+            color: {{ hx_rgb(opts.colors.primary.text) }};
+            box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .6) }};
         }
         .wap-front .btn.btn-primary:hover {
         background-color: {{ hx_rgb(opts.colors.primary.bg,.9) }};
@@ -54,6 +55,7 @@
         .wap-front .btn.btn-secondary,
         .wap-front .btn-secondary:not(:disabled):not(.disabled):active, 
         .wap-front .btn-secondary:not(:disabled):not(.disabled).active {
+            background: {{ hx_rgb(opts.colors.secondary.bg) }};
         background-color: {{ hx_rgb(opts.colors.secondary.bg) }};
         border-color: {{ hx_rgb(opts.colors.secondary.bg, .8) }};
         color: {{ hx_rgb(opts.colors.secondary.text) }};
