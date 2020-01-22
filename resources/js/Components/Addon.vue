@@ -2,9 +2,11 @@
     <div class="addon addon-active d-flex flex-column align-self-start" 
       :class="{registered: isRegistered, 'installed-addon': 
       isInstalled, activated: isActivated, 'coming-soon': !isPublished}">
-          <h3 class="mb-3 text-center">{{ addon.options.name }}</h3>
-            <div class="text-muted mb-4" v-html="addon.options.description"></div>
-            <div v-if="isPublished">
+            <div class="d-flex addon-header align-items-center">
+                <h2 class="mb-0 m-auto">{{ addon.options.name }}</h2>
+            </div>
+            <div class="text-muted px-4 pt-4" v-html="addon.options.description"></div>
+            <div v-if="isPublished" class="p-4">
                 <div v-if="hasGallery && !isRegistered" class="d-flex my-2">
                     <img v-for="media in addon.media" :src="media" @click="showFullScreen(media)" class="img-gallery img-fluid"/>
                 </div>
@@ -40,7 +42,7 @@
                     
                 </div>
             </div>
-            <div v-else>
+            <div v-else class="p-4">
                 <hr class="mt-0 mb-4">
                 <SubscribeNewsletter v-if="!isActivated" :list="addon.key" :defaultEmail="viewData.admin_email" :statuses="viewData.statuses"
                  @updatedStatuses="updatedStatuses">

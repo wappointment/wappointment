@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div class="px-4 py-2">
     <div class="d-flex align-items-center">
       <h1 class="m-2">Addons</h1>
       <div v-if="dataLoaded">
@@ -215,7 +215,7 @@ export default {
     background-color: #fcfcfc;
     border: 1px solid #f2f2f2;
     margin: 1rem;
-    padding: 2rem;
+    
     max-width: 320px;
 }
 
@@ -250,18 +250,12 @@ export default {
 .addons .addon.addon-active.coming-soon {
     border: 2px dashed #cacaca;
     background-color: #fbfbfb;
-    color: #a6a3a3 !important;
-}
-
- .coming-soon h2, .coming-soon .text-muted {
-    color: #a6a3a3 !important;
-}
-
-.coming-soon:hover, .coming-soon:hover h2, .coming-soon:hover .text-muted {
-    color: #515050 !important;
 }
 
 
+.addon.coming-soon .addon-header {
+    background-color:#777699;
+}
 .addons .addon.registered.installed-addon.activated{
   border: 1px solid #64cb86;
 }
@@ -275,6 +269,41 @@ export default {
 
 .wappointment-wrap .addons p {
     margin-bottom: .2rem;
+}
+.addon ul li{
+    padding-left: 0;
+    list-style: none;
+}
+        
+.addon ul li{
+    list-style-position: outside;
+    margin-left: 1.6rem;
+    position: relative;
+    font-size: .9rem;
+}
+        
+.addon ul li::before {
+    font-family: dashicons;
+    color: #6664cb;
+    content: "\f147";
+    font-weight: 900;
+    margin-right:.5rem !important;
+    position: absolute;
+    left: -1.4rem;
+}
+.addon h2{
+    color: #fff;
+    font-size: 1.8rem;
+}
+.addon .addon-header{
+    padding: 1rem 2rem;
+    background-color: #8684d9;
+    color: #fff;
+    border-radius: 1rem 1rem 0 0;
+    height: 100px;
+}
+.addon .addon-desc{
+  padding: 2rem;
 }
 </style>
 
