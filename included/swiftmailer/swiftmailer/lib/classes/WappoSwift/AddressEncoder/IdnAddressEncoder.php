@@ -52,7 +52,8 @@ class WappoSwift_AddressEncoder_IdnAddressEncoder implements WappoSwift_AddressE
     protected function idnToAscii(string $string): string
     {
         if (function_exists('idn_to_ascii')) {
-            return idn_to_ascii($string, 0, INTL_IDNA_VARIANT_UTS46);
+            $idnaVariant = defined('INTL_IDNA_VARIANT_UTS46') ? INTL_IDNA_VARIANT_UTS46 : 0;
+            return idn_to_ascii($string, 0, $idnaVariant);
         }
 
         if (class_exists('TrueBV\Punycode')) {
