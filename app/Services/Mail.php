@@ -31,10 +31,19 @@ class Mail
 
     public function send(\Wappointment\Messages\AbstractEmail $email)
     {
-        $this
-            ->subject($email->renderSubject())
-            ->body($email->renderBody())
-            ->alt($email->renderBodyText());
+        if ($this->isWpMail()) {
+            //only text version for wpmail
+            $this->bodyVersion = $this->altVersion;
+            $this
+                ->subject($email->renderSubject())
+                ->body($email->renderBodyText());
+        } else {
+            $this
+                ->subject($email->renderSubject())
+                ->body($email->renderBody())
+                ->alt($email->renderBodyText());
+        }
+
 
         return $this->sendTransport();
     }
@@ -143,8 +152,12 @@ class Mail
             return (new \Wappointment\Transports\Methods\MailgunEmail());
         } elseif ($this->config['method'] == 'smtp') {
             return new \Wappointment\Transports\Methods\SMTPEmail();
-        } elseif ($this->config['method'] == 'wpmail') {
+        } elseif ($this->isWpMail()) {
             return new \Wappointment\Transports\Methods\WpMailEmail();
         }
+    }
+    private function isWpMail()
+    {
+        return $this->config['method'] == 'wpmail';
     }
 }

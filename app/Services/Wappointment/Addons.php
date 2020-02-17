@@ -23,9 +23,7 @@ class Addons extends API
         if (!empty($solutions)) {
             foreach ($data->addons as &$package) {
                 foreach ($solutions as $solution) {
-                    if ($solution->package_key == $package->key
-                        || ($this->isAPlugin($package) && $this->getPluginDetails($package)->id == $solution->id)
-                    ) {
+                    if ($solution->package_key == $package->key || ($this->isAPlugin($package) && $this->getPluginDetails($package)->id == $solution->id)) {
                         $package->expires_at = (new Carbon($solution->expires_at))->format('d/m/Y');
                     }
                     $package->plugin = false;
@@ -153,7 +151,8 @@ class Addons extends API
             $status['errorMessage'] = 'Unable to connect to the filesystem. Please confirm your credentials.';
 
             // Pass through the error from WP_Filesystem if one was raised.
-            if ($wp_filesystem instanceof \WP_Filesystem_Base &&
+            if (
+                $wp_filesystem instanceof \WP_Filesystem_Base &&
                 is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->has_errors()
             ) {
                 $status['errorMessage'] = esc_html($wp_filesystem->errors->get_error_message());

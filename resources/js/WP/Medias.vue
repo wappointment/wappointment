@@ -69,7 +69,7 @@ export default {
             return this.selected == element.id
         },
         getMedia() {
-            this.request(this.getMediaRequest,  undefined, this.loadedMedias)
+            this.request(this.getMediaRequest,  undefined,undefined,false,  this.loadedMedias)
         },
         async getMediaRequest() {
             let params = {media_type: this.media_type}

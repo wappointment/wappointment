@@ -24,14 +24,16 @@
 <script>
 
 import RequestMaker from '../Modules/RequestMaker'
-
+import draggable from 'vuedraggable'
 export default {
     mixins: [RequestMaker],
     data: () => ({
         mainService: null,
         elements: [],
     }),
-
+    components: {
+        draggable,
+    },
     mounted(){
         this.loadElements()
     },

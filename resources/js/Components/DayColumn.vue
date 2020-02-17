@@ -4,12 +4,12 @@
         <div :id="daykey" :class=" active ? 'box-shadow active' : 'box-shadow'" :style="'height:'+getHeightColumn()+'px'"
             draggable="true" 
 
-            @mousedown.stop="dragging"
+            @mousedown.prevent.stop="dragging"
             @touchstart.prevent.stop="dragging"
             @mousemove="draggingMove"
-            @dragstart.self="startCreate"
+            @dragstart.prevent.self="startCreate"
             @mouseup.prevent.stop="stopCreate"
-            @touchend.self="stopCreate">
+            @touchend.prevent.self="stopCreate">
             
             <div class="drag-helper" :style="getWrapperGhostStyle"></div>
             <div class="ghost-wrapper" :style="getWrapperGhostStyle">
@@ -17,7 +17,7 @@
                     <strong class="timeText">{{ ghost[0] }}h - {{ ghost[1] }}h</strong>
                 </div>
             </div>
-            <div class="events">
+            <div class="events" v-if="!hiddenTimes">
                 
                 <timeBlock v-for="(timeBlock, tblockid) in openedTimes" :key="minHour+maxHour+daykey+tblockid+timeBlock[0]+timeBlock[1]" 
                 :tblockid="tblockid" :timeBlock="timeBlock" 
@@ -49,7 +49,8 @@ export default {
             ghost: [],
             lastLayerY: 0,
             active: false,
-            activeBlock: []
+            activeBlock: [],
+            hiddenTimes: false
         }
     },
     components: timeBlockComps, 
@@ -88,6 +89,7 @@ export default {
 
       stopCreate(e){
           if(this.isDragging) this.createBlock(e)
+          
           this.ghost = []
           this.deactiveDay()
       },
@@ -99,6 +101,7 @@ export default {
       },
 
       draggingMove(e){
+          
          //if(this.isDragging)console.log(e)
          if(!this.isDragging || !(e.target.className=='events' || e.target.className=='drag-helper' || e.target.className=='ghost')) return;
           if(e.target.className=='events' || e.target.className=='drag-helper' ) this.lastLayerY = e.layerY
@@ -166,8 +169,11 @@ export default {
           original[0] = hstart
           original[1] = hend
           openedTimes[tblockid] = original
-
+          this.hiddenTimes = true
           this.$emit('updatedSlots', this.daykey, openedTimes)
+           this.$nextTick()
+          this.hiddenTimes = false
+          this.$nextTick() 
       },
 
       editBlock(tblockid, hstart, hend, tblock){

@@ -72,7 +72,7 @@ export default {
       this.services_install = services_install
 
       if(window.apiWappointment.allowed === true) {
-        return this.request(this.loadAddons, false, this.loadedAddons)
+        return this.request(this.loadAddons, false,undefined,false,  this.loadedAddons)
       }
       
       this.authorizeAddons()
@@ -123,7 +123,7 @@ export default {
             if(response.remember) {
               window.apiWappointment.allowed = true
             }
-            this.request(this.loadAddons, response.remember, this.loadedAddons)
+            this.request(this.loadAddons, response.remember,undefined,false,  this.loadedAddons)
         })  
       },
        
@@ -137,7 +137,7 @@ export default {
         },
         failedCheckRequest(error){
           this.failedRequest(error)
-          this.request(this.loadAddons, false, this.loadedAddons)
+          this.request(this.loadAddons, false,undefined,false,  this.loadedAddons)
         },
  
         async checkLicenceRequest() {
@@ -166,7 +166,7 @@ export default {
         successInstalled(response){
 
           this.$WapModal().notifySuccess(response.data.message)
-          this.request(this.loadAddons, false, this.loadedAddons)
+          this.request(this.loadAddons, false,undefined,false,  this.loadedAddons)
         },
         successActivate(response){
           this.$WapModal().notifySuccess(response.data.message)
@@ -252,6 +252,18 @@ export default {
     background-color: #fbfbfb;
 }
 
+.addons .addon{
+  overflow:hidden;
+}
+
+.addons .addon{
+  overflow:hidden;
+}
+
+.addons .addon .footer{
+  background: #f7f7f7;
+}
+
 
 .addon.coming-soon .addon-header {
     background-color:#777699;
@@ -269,6 +281,10 @@ export default {
 
 .wappointment-wrap .addons p {
     margin-bottom: .2rem;
+}
+
+.addon ul{
+    margin-top: 1rem;
 }
 .addon ul li{
     padding-left: 0;

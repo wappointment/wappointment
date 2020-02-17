@@ -2,13 +2,7 @@
   <div
     class="vdr"
     :style="style"
-    :class="{
-      draggable: draggable,
-      resizable: resizable,
-      active: enabled,
-      dragging: dragging,
-      resizing: resizing
-    }"
+    :class="getClasses()"
     @mousedown.stop="elmDown"
     @touchstart.prevent.stop="elmDown"
     @dblclick="fillParent"
@@ -47,6 +41,9 @@ export default {
     },
     resizable: {
       type: Boolean, default: true
+    },
+    extraClasses:{
+      type: Array, default: () => []
     },
     w: {
       type: String,
@@ -196,6 +193,20 @@ export default {
   },
 
   methods: {
+    getClasses(){
+      let classes = {
+        draggable: this.draggable,
+        resizable: this.resizable,
+        active: this.enabled,
+        dragging: this.dragging,
+        resizing: this.resizing,
+      }
+      for (let i = 0; i < this.extraClasses.length; i++) {
+        classes[this.extraClasses[i]] = true
+        
+      }
+      return classes
+    },
     showControls(e){
           if(this.dragging || this.resizing) return;
           this.enabledFunc()

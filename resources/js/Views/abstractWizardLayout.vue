@@ -14,7 +14,7 @@ export default {
         },
         nextStep() {
             this.setPrevStep()
-            this.request(this.nextStepRequest, undefined, this.redirectNext)
+            this.request(this.nextStepRequest, undefined,undefined,false,  this.redirectNext)
         },
 
         async nextStepRequest() {
@@ -27,7 +27,7 @@ export default {
 
         prevStep() {
             this.setPrevStep()
-            this.request(this.prevStepRequest, undefined, this.redirectPrev)
+            this.request(this.prevStepRequest, undefined,undefined,false,  this.redirectPrev)
         },
 
         async prevStepRequest() {

@@ -21,7 +21,7 @@
                 </div>
                 
               </div>
-              <div class="mt-2"><button class="btn btn-secondary" @click="addReminder">Add reminder</button></div>
+              <div class="mt-2"><button class="btn btn-outline-primary my-2" @click="addReminder">Add reminder</button></div>
             
           </div>
 
@@ -221,13 +221,13 @@ export default {
       this.loading = true
       this.resetModel();
       //console.log('refreshInitvalue start 2 ')
-      if(this.remindersLoaded === false) this.request(this.initValueRequest, undefined, this.loaded)
+      if(this.remindersLoaded === false) this.request(this.initValueRequest, undefined,undefined,false,  this.loaded)
     },
     async initValueRequest() {
          return await this.serviceReminder.call('get')
     },
     toggledPublish(reminder){
-      this.request(this.togglePublishRequest, reminder, this.refreshInitValue)
+      this.request(this.togglePublishRequest, reminder,undefined,false,  this.refreshInitValue)
     },
     async togglePublishRequest(reminder) {
         return await this.serviceReminder.call('toggle', reminder)
@@ -239,7 +239,7 @@ export default {
     save() {
         this.$refs.vfgen.validate();
         if(!this.hasErrors()){
-          this.request(this.saveReminderRequest,  this.saved, this.closeAndRefresh)
+          this.request(this.saveReminderRequest,  this.saved,undefined,false,  this.closeAndRefresh)
         } 
     },
     async saveReminderRequest() {
@@ -277,7 +277,7 @@ export default {
         title: 'Do you really want to delete this reminder? ',
       }).then((result) => {
           if(result === true){
-              this.request(this.deleteReminderRequest,  reminder_id, this.deleted)
+              this.request(this.deleteReminderRequest,  reminder_id,undefined,false,  this.deleted)
           } 
       })      
     },

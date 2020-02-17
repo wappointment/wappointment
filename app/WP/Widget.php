@@ -13,15 +13,19 @@ class Widget extends WidgetAbstract
     {
         return empty($_REQUEST['wappo_module_off']);
     }
-    public static function baseHtml($button_title, $brfixed = false)
+    public static function baseHtml($instance = [])
     {
         if (!self::canShow()) {
             return;
         }
         \Wappointment\WP\Helpers::enqueueFrontScripts();
-        $brFixedString = !empty($brfixed) ? 'data-brfixed="true"' : '';
-        return '<div class="wappointment_widget" data-button-title="'
-            . esc_attr($button_title) . '" ' . $brFixedString . '></div>';
+        $htmlAttributes = !empty($brfixed) ? 'data-brfixed="true"' : '';
+        foreach ($instance as $attr => $val) {
+            if (!in_array($attr, ['title']) && (!is_bool($val) || (is_bool($val) && $val === true))) {
+                $htmlAttributes .= ' data-' . str_replace('_', '-', strtolower($attr)) . '="' . esc_attr($val) . '"';
+            }
+        }
+        return '<div class="wappointment_widget" ' . $htmlAttributes . '></div>';
     }
 
 
@@ -55,7 +59,7 @@ class Widget extends WidgetAbstract
             $widget_html .=
                 $args['before_title'] . apply_filters('widget_title', $instance['title']) . $args['after_title'];
         }
-        $widget_html .= static::baseHtml($instance['button_title'], $brfixed);
+        $widget_html .= static::baseHtml($instance);
         $widget_html .= $args['after_widget'];
 
 

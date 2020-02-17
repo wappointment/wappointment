@@ -17,6 +17,7 @@ class WidgetSettings
             'header' => [
                 'bg' => '#e6e6e6',
                 'text' => '#212529',
+                'durationbg' => '#eeeeee',
             ],
             'body' => [
                 'bg' => '#ffffff', //calendar_bg
@@ -106,6 +107,7 @@ class WidgetSettings
                 'fields' => [
                     'text' => ['label' => 'Text'],
                     'bg' => ['label' => 'Background'],
+                    'durationbg' => ['label' => 'Duration'],
                 ]
             ],
             'body' => [

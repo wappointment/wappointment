@@ -36,7 +36,7 @@ export default {
       },
       refreshInitValue(){
         if(this.viewName !== null){
-          this.request(this.initValueRequest, false, this.loaded)
+          this.request(this.initValueRequest, false,undefined,false,  this.loaded)
         } 
       },
       beforeRequest(){

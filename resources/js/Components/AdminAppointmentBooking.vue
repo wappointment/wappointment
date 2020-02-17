@@ -236,7 +236,7 @@ export default {
         },
         confirmNewBookingRequest(){
             if(this.readyToBook) {
-                this.request(this.bookingRequest,{start:this.startTime, end:this.endTime}, this.refreshEvents)
+                this.request(this.bookingRequest,{start:this.startTime, end:this.endTime},  undefined,false, this.refreshEvents)
             }
         
         },

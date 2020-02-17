@@ -44,7 +44,7 @@ export default {
     finallyGoNext(){
 
         this.setPrevStep()
-        this.request(this.nextStepRequest,  undefined, this.redirectNext)
+        this.request(this.nextStepRequest,  undefined,undefined,false,  this.redirectNext)
     }
   }  
 }

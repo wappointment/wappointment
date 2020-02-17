@@ -30,7 +30,7 @@ export default {
   methods: {
     initMethod(){
       console.log('initMethod')
-      this.request(this.initValueRequest,  undefined, this.loaded)
+      this.request(this.initValueRequest,  undefined,undefined,false,  this.loaded)
     },
     loaded(viewData){
       console.log('loaded',viewData)

@@ -24,7 +24,7 @@ import ckl from './Standalone/chunkloader.js'
 
 export default {
     mixins: [Colors, UrlParam],
-    props: ['classEl', 'buttonTitle', 'brFixed', 'options', 'step'],
+    props: ['classEl', 'options', 'step', 'attributesEl'],
     components: { 
         BookingButton,
         StyleGenerator,
@@ -38,14 +38,21 @@ export default {
         opts: null,
         elementId: '',
         disabledButtons: false,
+        buttonTitle: '',
+        brFixed: undefined,
     }),
     created(){
       this.elementId = 'wapfrontwrapper-' + Date.now()
       if(this.step !== undefined) this.currentStep = this.step
       this.opts = this.options === undefined ? widgetWappointment : Object.assign ({}, this.options)
       if(this.opts.demoData !== undefined){
-            this.disabledButtons = true
-        }
+          this.disabledButtons = true
+      }
+      if(Object.keys(this.attributesEl).length > 0){
+        if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
+        if(this.attributesEl.brcFloats !== undefined) this.brFixed = true
+        this.opts.attributesEl = this.attributesEl
+      }
     },
      watch:{
         step(val){

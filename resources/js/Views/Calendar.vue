@@ -899,7 +899,7 @@ export default {
           content: window.wappointmentExtends.filter('ConfirmPopup', this.getAppointmentInfoHTML(appointment), {appointment, viewData:this.viewData}) 
         }).then((result) => {
           if(result === true){
-              this.request(this.confirmEventRequest, eventId, this.refreshEvents)
+              this.request(this.confirmEventRequest, eventId, undefined,false,  this.refreshEvents)
           } 
         })
       },
@@ -909,7 +909,7 @@ export default {
           title: 'Do you really want to cancel this appointment?',
         }).then((result) => {
           if(result === true){
-            this.request(this.cancelEventRequest, eventId, this.refreshEvents)
+            this.request(this.cancelEventRequest, eventId,undefined,false,  this.refreshEvents)
           } 
         })
       },
@@ -927,7 +927,7 @@ export default {
         }
         this.$WapModal().confirm(popupData).then((result) => {
           if(result === true){
-              this.request(this.deleteStatusRequest, eventId, this.refreshEvents)
+              this.request(this.deleteStatusRequest, eventId,undefined,false,  this.refreshEvents)
           } 
           
         })
@@ -974,7 +974,7 @@ export default {
           content: this.getAppointmentInfoHTML(event,delta)
         }).then((result) => {
           if(result === true){
-             this.request(this.editEventRequest, {eventId: event.extendedProps.dbid, start: this.toMoment(event.start).unix(), end: this.toMoment(event.end).unix()}, this.refreshEvents)
+             this.request(this.editEventRequest, {eventId: event.extendedProps.dbid, start: this.toMoment(event.start).unix(), end: this.toMoment(event.end).unix()},undefined,false,  this.refreshEvents)
           }else {
             revertFunc()
           }  
@@ -1109,7 +1109,7 @@ export default {
         this.firstDay = params.start
 
         if(this.canLoadEvents){
-          this.request(this.getEventsRequest, params, this.callbackInternal)
+          this.request(this.getEventsRequest, params,undefined,false,  this.callbackInternal)
           this.canLoadEvents = false
         }
         

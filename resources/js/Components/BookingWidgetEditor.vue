@@ -33,12 +33,12 @@
                     <div class="d-flex">
                         <div class="d-flex align-items-center mb-2">
                             <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit"  @click="toggleColor">
-                                <span v-if="colorEdit"><FontAwesomeIcon :icon="['fas', 'edit']" size="lg"/> Edit Texts</span>
+                                <span v-if="colorEdit"><FontAwesomeIcon :icon="['fas', 'edit']" size="lg"/> Edit Steps</span>
                                 <span v-else><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Colors</span>
                             </button>
                             <div class="d-flex flex-wrap" v-if="!colorEdit"> 
                                 <button v-for="(stepObj,idx) in editionsSteps" class="btn btn-secondary btn-xs m-1" 
-                                :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key, getLabelForStep(stepObj.key))" :data-tt="stepObj.label"> Text Step {{ idx + 1 }}</button>
+                                :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key, getLabelForStep(stepObj.key))" :data-tt="stepObj.label"> Step {{ idx + 1 }}</button>
                             </div>
                         </div>
                         
@@ -359,7 +359,7 @@ export default {
         },
 
         preselection(){
-            return (new Date()).getTime()
+            return (new Date()).getTime() / 1000
         },
         toggleColor(){
             this.colorEdit=!this.colorEdit

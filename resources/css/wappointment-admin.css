@@ -1,7 +1,8 @@
 #wpbody-content > .error, 
 #wpbody-content > .notice-warning, 
 #wpbody-content > .notice-success,
-#wpbody-content > .updated {
+#wpbody-content > .updated, 
+#wpbody-content > .notice {
     display:none;
 }
 .wappointment-wrap .form-control::placeholder {

@@ -108,6 +108,12 @@
             padding: .4em;
             border-radius: {{ calendarRound }}em {{ calendarRound }}em 0 0;
         }
+
+        .wap-front .wap-head .duration {
+            background-color: {{ hx_rgb(opts.colors.header.durationbg) }};
+            border-color: {{ hx_rgb(opts.colors.header.durationbg) }};
+        }
+
         .wap-front .wap-head img{
             border-radius: {{ calendarRound }}em;
         }

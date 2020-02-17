@@ -1,18 +1,23 @@
 <template>
     <div v-if="dataLoaded">
-        <p class="h6 text-muted"><span class="bullet-wap">1</span> <span class="bullet-title"> Select the staff providing the service</span></p>
-        <div v-if="viewData" class="d-flex align-items-center mb-2">
-            <StaffPicture :src="viewData.activeStaffAvatar" :gravatar="viewData.activeStaffGravatar" @changed="changed"></StaffPicture>
-            <StaffSelector :staffs="viewData.staffs" :activeStaffId="viewData.activeStaffId" @updateStaff="updateStaff"></StaffSelector>
+        <div v-if="minimal === undefined">
+            <p class="h6 text-muted"><span class="bullet-wap">1</span> <span class="bullet-title"> Select the staff providing the service</span></p>
+            <div v-if="viewData" class="d-flex align-items-center mb-2">
+                <StaffPicture :src="viewData.activeStaffAvatar" :gravatar="viewData.activeStaffGravatar" @changed="changed"></StaffPicture>
+                <StaffSelector :staffs="viewData.staffs" :activeStaffId="viewData.activeStaffId" @updateStaff="updateStaff"></StaffSelector>
+            </div>
+            
+            <p class="h6 text-muted"><span class="bullet-wap">2</span> <span class="bullet-title"> Define the timezone in which you are operating</span></p>
+            <TimeZones v-if="viewData" classW="d-flex" :wizard="noback" :timezones="viewData.timezones_list" 
+            :defaultTimezone="viewData.timezone" @updateTimezone="updateTimezone" typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control"></TimeZones>
+            <hr>
         </div>
         
-        <p class="h6 text-muted"><span class="bullet-wap">2</span> <span class="bullet-title"> Define the timezone in which you are operating</span></p>
-        <TimeZones v-if="viewData" classW="d-flex" :wizard="noback" :timezones="viewData.timezones_list" 
-        :defaultTimezone="viewData.timezone" @updateTimezone="updateTimezone" typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control"></TimeZones>
-        <hr>
         <div v-if="hasRegav">
-            <p class="h6 text-muted">
-                <span class="bullet-wap">3</span> <span class="bullet-title"> Drag and drop the times you want to open for appointments</span></p>
+            <p v-if="minimal === undefined" class="h6 text-muted">
+                <span class="bullet-wap">3</span> 
+                <span class="bullet-title"> Drag and drop the times you want to open for appointments</span>
+            </p>
             <RegularAvailability :initValue="viewData.regav" :viewData="viewData" @updatedDays="updatedRA"></RegularAvailability>
         </div>
     </div>
@@ -29,7 +34,7 @@ import RequestMaker from '../../Modules/RequestMaker'
 export default {
   extends: abstractView,
   components: window.wappointmentExtends.filter('RegavComponents', {RegularAvailability,TimeZones,StaffSelector, StaffPicture},{'RequestMaker':RequestMaker} ), 
-  props:['noback'],
+  props:['noback', 'minimal'],
   data() {
       return {
           viewName: 'regav',

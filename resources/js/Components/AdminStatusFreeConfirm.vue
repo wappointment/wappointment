@@ -21,7 +21,7 @@ export default {
     
     methods:{
         confirmRequest(){
-            this.request(this.setRequest,{}, this.statusSaved)
+            this.request(this.setRequest,{}, undefined,false, this.statusSaved)
         },
         statusSaved(){
             this.$emit('confirmed')

@@ -33,7 +33,7 @@ export default {
 
       wizardStep1() {
           this.installationErrors = []
-          this.request(this.wizardStep1Request,  undefined, this.redirectWizardStep1)
+          this.request(this.wizardStep1Request,  undefined, undefined, false,  this.redirectWizardStep1, this.failedRequest)
       },
       failedRequest(e){
         if(e.response !== undefined){

@@ -222,6 +222,9 @@ export default {
         hasMethod() {
             return this.sendconfig.method != ''
         },
+        isWpMail() {
+            return ['wpmail'].indexOf(this.sendconfig.method) !== -1
+        },
         hasApi() {
             return ['mailgun'].indexOf(this.sendconfig.method) !== -1
         },
@@ -244,6 +247,10 @@ export default {
         
             if(['method'].indexOf(a.model)!==-1 ) return a
             
+            if(this.isWpMail && a.groupKey == 'wpmail' ) {
+                 return a
+            }
+
             if(this.hasApi && a.groupKey == 'mg' ) {
                  return a
             }
@@ -266,7 +273,7 @@ export default {
 
       sendTestEmail(){
           if(!this.canSend) return
-          this.request(this.sendTestEmailRequest, undefined, this.resultTestEmail)
+          this.request(this.sendTestEmailRequest, undefined,undefined,false,  this.resultTestEmail)
       },
       resultTestEmail(){
           this.mail_config_ok = true
@@ -297,8 +304,13 @@ export default {
                 },
                 {
                     type: "label",
+                    label: "You can only send text versioned email with WP mail",
+                    styleClasses: 'col-md-12',
+                    groupKey: 'wpmail'
+                },
+                {
+                    type: "label",
                     label: "Don't have a MailGun account? <a href='https://signup.mailgun.com/new/signup' target='_blank'>Create account for free</a>",
-                    placeholder: 'e.g.: mg.mydomain.com',
                     styleClasses: 'col-md-12',
                     groupKey: 'mg'
                 },

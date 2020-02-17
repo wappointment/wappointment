@@ -6,7 +6,7 @@
                 <h2 class="mb-0 m-auto">{{ addon.options.name }}</h2>
             </div>
             <div class="text-muted px-4 pt-4" v-html="addon.options.description"></div>
-            <div v-if="isPublished" class="p-4">
+            <div v-if="isPublished" class="footer p-4">
                 <div v-if="hasGallery && !isRegistered" class="d-flex my-2">
                     <img v-for="media in addon.media" :src="media" @click="showFullScreen(media)" class="img-gallery img-fluid"/>
                 </div>
@@ -37,12 +37,15 @@
                         :class="[wizardHasBeenRanAlready?'btn-secondary':'btn-primary']" @click="openWizardModal">
                             <span class="dashicons dashicons-admin-generic"></span> Run Wizard
                         </button>
+                        <div v-if="hasWarning" class="text-danger">
+                            {{ addon.warning }}
+                        </div>
                     </div>
                     </div>
                     
                 </div>
             </div>
-            <div v-else class="p-4">
+            <div v-else class="footer p-4">
                 <hr class="mt-0 mb-4">
                 <SubscribeNewsletter v-if="!isActivated" :list="addon.key" :defaultEmail="viewData.admin_email" :statuses="viewData.statuses"
                  @updatedStatuses="updatedStatuses">
@@ -68,6 +71,9 @@ export default {
         },
         hasWizard(){
             return this.isActivated && this.addon.instructions!==undefined && this.addon.instructions.length > 0
+        },
+        hasWarning(){
+            return this.addon.warning !== undefined
         },
         wizardHasBeenRanAlready(){
             return this.addon.initial_wizard || this.addon.settingKey === undefined //doesnt have settings

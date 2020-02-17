@@ -80,7 +80,7 @@ export default {
           content: 'All your data(appointments, settings, etc...) will be lost'
         }).then((result) => {
           if(result === true){
-              this.request(this.resetInstallation,  undefined, this.redirectReset)
+              this.request(this.resetInstallation,  undefined, undefined,false, this.redirectReset)
           } 
         })
     },

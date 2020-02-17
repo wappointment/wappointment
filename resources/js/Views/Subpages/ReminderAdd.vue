@@ -101,7 +101,7 @@ export default {
 
     this.serviceService = this.$vueService(new ServiceService)
     //console.log('refreshInitvalue start 3 ')
-    this.request(this.initValueRequest,  undefined, this.loaded)
+    this.request(this.initValueRequest,  undefined, undefined,false, this.loaded)
 
   },
   computed: {
@@ -117,7 +117,7 @@ export default {
     },
 
     save() {
-        this.request(this.saveReminderRequest,  undefined, this.saved)
+        this.request(this.saveReminderRequest,  undefined,undefined,false,  this.saved)
     },
     async saveServiceRequest() {
         return await this.serviceService.call('save', this.model)

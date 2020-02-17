@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.3
 Requires PHP: 7.0
-Stable tag: 1.2.3
+Stable tag: 1.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,14 @@ It requires work on your end but keeps your site safe and optimized.
 8. Help Page. Have a question? Simply ask for it straight in there.
 
 == Changelog ==
+
+= 1.2.4 - 2020-02-07 =
+* Fixed PHP 7.0 issue with frontend validation
+* Fixed PHP 7.0 issue with swiftmailer
+* Fixed errors catcher on install
+* Fixed dragging issue for regular availability
+* corrected addons page styling
+* Allow only text version email for WP mail
 
 = 1.2.3 - 2020-01-10 =
 * Fixed style frontend booking module
