@@ -151,10 +151,7 @@ class Addons extends API
             $status['errorMessage'] = 'Unable to connect to the filesystem. Please confirm your credentials.';
 
             // Pass through the error from WP_Filesystem if one was raised.
-            if (
-                $wp_filesystem instanceof \WP_Filesystem_Base &&
-                is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->has_errors()
-            ) {
+            if ($wp_filesystem instanceof \WP_Filesystem_Base && is_wp_error($wp_filesystem->errors) && $wp_filesystem->errors->has_errors()) {
                 $status['errorMessage'] = esc_html($wp_filesystem->errors->get_error_message());
             }
         }
