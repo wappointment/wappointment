@@ -8,7 +8,7 @@ class Scheduler
 {
     public function __construct()
     {
-        switch ((int)Settings::get('scheduler_mode')) {
+        switch ((int) Settings::get('scheduler_mode')) {
             case 1:
                 $this->setWappointmentScheduler();
                 break;
@@ -30,6 +30,9 @@ class Scheduler
     public static function processQueue()
     {
         \Wappointment\Services\Queue::process();
+    }
+    public static function checkPendingReminder()
+    {
     }
 
     public static function checkLostReservedJobs()
