@@ -138,9 +138,9 @@
         height: auto;
         vertical-align: middle;
     }
-    input[type="number"] {
+/*     input[type="number"] {
         height: 36px;
-    }
+    } */
     input[type="radio"]:checked::before {
         margin: 3px;
         @include media-breakpoint-up(md) {
@@ -155,5 +155,20 @@
         font: normal 20px/1 dashicons;
     }
 
+    //navs
+    .nav-tabs .nav-link:focus{
+        box-shadow: none;
     
+    }
+    .nav-tabs .nav-link.active{
+        cursor:default;
+        color:#000;
+    }
+    .nav-tabs .nav-link {
+        border-bottom: 1px solid #e3e3e3;
+        color:#595959;
+    }
+    .nav-tabs .nav-link:hover {
+        color: var(--primary);
+    }
 }

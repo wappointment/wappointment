@@ -10,15 +10,18 @@
                         <div class="form-group"  v-for="(subelement, skeydi) in element.fields" 
                         :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
                             <div :class="{'d-none': visibles.indexOf(subelement.model) === -1}">
-                                <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" :parentErrors="errorsData" :parentModel="modelHolder"
+                                <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" 
+                                :parentErrors="errorsData" :parentModel="modelHolder"
                                 @loaded="loadedField(keydi, skeydi)"
-                                v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement.model)" :definition="subelement" :errors="getErrors(subelement)" />
+                                v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement.model)" 
+                                :definition="subelement" :errors="getErrors(subelement)" />
                             </div>
                         </div>
                     </div>
-                    <div v-else class="form-group"  :style="getStyle(element)" :class="getRowEachClass(element)">
+                    <div v-else class="form-group" :class="{'d-none': visibles.indexOf(element.model) === -1}"  :style="getStyle(element)" >
                         <div :class="{'d-none': visibles.indexOf(element.model) === -1}">
-                            <component :is="getFormComponent(element)" :value="getModelValue(element)" :parentErrors="errorsData" :parentModel="modelHolder"
+                            <component :is="getFormComponent(element)" :value="getModelValue(element)" 
+                            :parentErrors="errorsData" :parentModel="modelHolder"
                         @loaded="loadedField(keydi)" :errors="getErrors(element)"
                         v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element.model)" :definition="element"/>
                         </div>
@@ -52,10 +55,11 @@ import FormFieldCountrySelector from './FormFieldCountrySelector'
 import FormFieldSelect from './FormFieldSelect'
 import FormFieldCheckImages from './FormFieldCheckImages'
 import FormFieldImageSelect from './FormFieldImageSelect'
+import FormFieldLabel from './FormFieldLabel'
 import eventsBus from '../eventsBus'
 let allComponents = {FormFieldInput,FormFieldInputs, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
         FormFieldStatus,FormFieldFile, FormFieldSelect,FormFieldCheckImages,
-        FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect}
+        FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect, FormFieldLabel}
 import DotKey from '../Modules/DotKey'
 export default {
     mixins: [DotKey],
@@ -128,6 +132,7 @@ export default {
             this.submitted = true
         }
         this.modelHolder = this.creating === false ? Object.assign({},this.data):{}
+
         this.verifyModel()
     },
 
@@ -144,7 +149,7 @@ export default {
     },
     methods: {
         getErrors(element){
-            if(this.hasErrors && (this.submitted || this.activated_fields.indexOf(element.model) !== -1)){
+            if(element.model !== undefined && this.hasErrors && (this.submitted || this.activated_fields.indexOf(element.model) !== -1)){
                 if(this.errorsData[element.model] !== undefined ) {
                     return this.errorsData[element.model]
                 }else{
@@ -300,6 +305,7 @@ export default {
          },
 
          validateElement(key, subkey = false){
+             
              let keyEl = subkey ? key+'.'+subkey:key
              let value = subkey ? this.modelHolder[key][subkey]:this.modelHolder[key]
              let elDefinition = this.getElementDefinition(keyEl)
@@ -308,7 +314,7 @@ export default {
                 if(elDefinition.validation !== undefined){
                     for (let i = 0; i < elDefinition.validation.length; i++) {
                         const validationType = elDefinition.validation[i]
-                        if(this.validateType(validationType, value)){
+                        if(this.validateType(validationType, value, elDefinition)){
                             this.setError(keyEl,validationType)
                             hasError = true
                             //return false
@@ -321,12 +327,15 @@ export default {
             }
             return !hasError
          },
-         validateType(type, value){
+         validateType(type, value, elDefinition){
              switch (type) {
                  case 'required':
                      return this.isEmptyValue(value)
                  case 'required2':
                      return this.isEmptyValue(value)
+                 case 'number':
+                     return this.isEmptyValue(value)
+                     return parseInt(value) >= elDefinition.min && parseInt(value) <= elDefinition.max
              }
          },
          runValidation(){
@@ -352,6 +361,7 @@ export default {
                     }
                 }
              }
+             this.$emit('ready',this.isValid)
 /* 
              for (const key in this.modelHolder) {
                  //console.log('runvaldiation key', key)
@@ -446,6 +456,10 @@ export default {
             this.$emit('changedValue',this.modelHolder)
         },
         getModelValue(element){
+            if(element.model === undefined){
+                return ''
+            }
+
             if(element.model.indexOf('.')!== -1){
                 let myarr = element.model.split('.')
                 if(this.modelHolder[myarr[0]]==undefined || this.modelHolder[myarr[0]][myarr[1]] === undefined){
@@ -478,6 +492,7 @@ export default {
         },
         getFormComponent(element){
             let fieldsTypes = {
+                'label': 'FormFieldLabel',
                 'input' : 'FormFieldInput',
                 'inputs' : 'FormFieldInputs',
                 'checkbox' : 'FormFieldCheckbox',

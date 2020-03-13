@@ -1,14 +1,18 @@
 <template>
     <div v-if="widgetData!==null">
-      <div class="d-flex my-4">
-        <div v-if="isTesting">
-            <span class="btn btn-lg btn-secondary selected"><span class="dashicons dashicons-edit"></span> 1 - Test it and Customize it</span>  
-            <button class="btn btn-lg btn-secondary" @click="toggleTesting"><span class="dashicons dashicons-layout"></span> 2 - Integrate it in your site</button>
-        </div>
-        <div v-else>
-            <button class="btn btn-lg btn-secondary" @click="toggleTesting"><span class="dashicons dashicons-edit"></span> 1 - Test it and Customize it</button>  
-            <span class="btn btn-lg btn-secondary selected"><span class="dashicons dashicons-layout"></span> 2 - Integrate it in your site</span>
-        </div>
+      <div class="d-flex mt-4">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class="nav-link" :class="{active:isTesting}" href="javascript:;" @click="showTesting">
+                    <span class="dashicons dashicons-edit"></span> 1 - Customize it
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" :class="{active:!isTesting}" href="javascript:;" @click="showIntegrate">
+                    <span class="dashicons dashicons-layout"></span> 2 - Integrate it
+                </a>
+            </li>
+        </ul>
             
       </div>  
       <div v-if="isTesting">
@@ -43,8 +47,11 @@ export default {
 
   components: { BookingWidgetEditor, WidgetInsert },
   methods: {
-      toggleTesting(){
-          this.isTesting = ! this.isTesting
+      showTesting(){
+          this.isTesting = true
+      },
+      showIntegrate(){
+          this.isTesting = false
       }
   },
   computed: {

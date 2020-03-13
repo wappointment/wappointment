@@ -1,119 +1,105 @@
 <template>
-    <div>
-        <NoticeButton :config="nb" @click="showConfiguration" v-if="!mail_config_ok"></NoticeButton>
-        <div v-else >
-            <div class="d-flex align-items-center">
-                <span class="dashicons dashicons-yes text-success mail_configured"></span>
-                <span>Email sending method configured</span>
-                <button class="ml-2 btn btn-sm btn-secondary" @click="showConfiguration">Reconfigure it</button>
+    <div class="reduced">
+        <ErrorList :errors="errorMessages" className="popupErrors"></ErrorList>
+        <FormGenerator v-if="showModal" ref="confmail" :schema="schema" :data="sendconfig" 
+        @submit="save" @back="$emit('back')" :buttons="false"  :key="formKey" 
+        labelButton="Save" @ready="readytosubmit">
+        </FormGenerator>
+        <div v-if="isSendmail" class="form-group valid col-md-12 field-input">
+            <a href="javascript:;" class="small" v-if="!clickedAdvanced" @click="clickedAdvanced=!clickedAdvanced">More configuration</a>
+            <div v-else >
+                <label for="sendmail-configuration" ><span>Sendmail command</span></label> 
+                <div class="field-wrap">
+                    <div class="wrapper">
+                        <input id="sendmail-configuration" v-model="sendconfig.sendmailcmd"  
+                        placeholder="e.g.: /usr/sbin/sendmail -bs" type="text" class="form-control">
+                    </div>
+                </div>
             </div>
-            <div class="small text-muted ml-2"><span class="text-dark">Please make sure you receive emails.</span> If you have deliverability issues, reconfigure it with Mailgun, it is free and it just works.</div>
         </div>
-         <WapModal id="configureMail" ref="configureMail" v-if="showModal" :show="showModal" @hide="hideModal">
-            <h4 slot="title" class="modal-title">{{titleModal}}</h4>
-            <ErrorList :errors="errorMessages" className="popupErrors"></ErrorList>
-            <form autocomplete="off" novalidate>
-            <vue-form-generator ref="confmail" :schema="schema" :model="sendconfig" :options="formOptions" @validated="onValidated"  ></vue-form-generator>
-            </form>
-            <div v-if="isSendmail" class="form-group valid col-md-12 field-input">
-                <a href="javascript:;" class="small" v-if="!clickedAdvanced" @click="clickedAdvanced=!clickedAdvanced">More configuration</a>
-                <div v-else >
-                    <label for="sendmail-configuration" ><span>Sendmail command</span></label> 
-                    <div class="field-wrap">
-                        <div class="wrapper">
-                            <input id="sendmail-configuration" v-model="sendconfig.sendmailcmd"  
-                            placeholder="e.g.: /usr/sbin/sendmail -bs" type="text" class="form-control">
-                        </div>
+        <!-- Ports links -->
+        <div v-if="showSmtpPorts" class="form-group valid col-md-12 field-radios">
+            <small class="field-wrap ">
+                Possible SMTP configurations:
+                <span v-for="(eports,encryption) in ports">
+                    <small>{{ encryption }}
+                        <span v-for="(port, index) in eports">
+                            <a data-tt="Apply configuration" href="javascript:;" @click="setNewConfig(encryption, port)" >{{ port }}</a><span v-if="index != eports.length - 1">, </span>
+                        </span> 
+                    </small>
+                </span>
+            </small> 
+        </div>
+        
+        <div v-if="hasMethod">
+            <hr>
+            <!-- From address setup -->
+            <div class="form-group valid required col-md-12 field-input">
+                
+                <div>
+                    <div v-if="showFrom" class="d-flex">
+                        <input class="form-control mr-2" type="text" v-model="sendconfig.from_name" >
+                        <input class="form-control mr-2" type="text" v-model="sendconfig.from_address" >
+                    </div>
+                    <div v-else class="d-flex align-items-center">
+                        <span class="m-0 mr-2">From Address: </span>
+                        <a href="javascript:;"  @mouseover="showEditFrom=true" 
+                        @mouseout="showEditFrom=false" title="Edit" class="text-dark" 
+                        @click="showFrom=!showFrom">{{ from_name }} <small class="text-muted"><{{from_address}}></small> </a>
+                        <span v-if="showEditFrom" class="text-primary small ml-2">Click to Edit</span>
                     </div>
                 </div>
             </div>
-            <div v-if="showSmtpPorts" class="form-group valid col-md-12 field-radios">
-                <small class="field-wrap ">
-                    Possible SMTP configurations:
-                    <span v-for="(eports,encryption) in ports">
-                        <small>{{ encryption }}
-                            <span v-for="(port, index) in eports">
-                                <a data-tt="Apply configuration" href="javascript:;" @click="setNewConfig(encryption, port)" >{{ port }}</a><span v-if="index != eports.length - 1">, </span>
-                            </span> 
-                        </small>
-                    </span>
-                </small> 
-            </div>
-            <div v-if="hasMethod">
-                <hr>
-                <div class="form-group valid required col-md-12 field-input">
+            <!-- Submit button -->
+            <div class="d-flex align-items-start">
+                <div class="ml-2 d-flex align-items-center">
                     
+                    <button type="button" class="btn  btn-primary mr-2" 
+                    :class="{disabled: !canSend}" 
+                    :disabled="!canSend" @click="sendTestEmail"><span class="dashicons dashicons-email"></span> Save and Send test email</button>
                     <div>
-                        <div v-if="showFrom" class="d-flex">
-                            <input class="form-control mr-2" type="text" v-model="sendconfig.from_name" >
-                            <input class="form-control mr-2" type="text" v-model="sendconfig.from_address" >
+                        <div v-if="showRecipient">
+                            <input id="preveiwemail" class="form-control mr-2" type="text" v-model="recipient" >
                         </div>
-                        <div v-else class="d-flex align-items-center">
-                            <span class="m-0 mr-2">From Address: </span>
-                            <a href="javascript:;"  @mouseover="showEditFrom=true" 
-                            @mouseout="showEditFrom=false" title="Edit" class="text-dark" 
-                            @click="showFrom=!showFrom">{{ from_name }} <small class="text-muted"><{{from_address}}></small> </a>
-                            <span v-if="showEditFrom" class="text-primary small ml-2">Click to Edit</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="d-flex align-items-start">
-                    <div class="ml-2 d-flex align-items-center">
-                        
-                        <button type="button" class="btn  btn-primary mr-2" 
-                        :class="{disabled: !canSend}" 
-                        :disabled="!canSend" @click="sendTestEmail"><span class="dashicons dashicons-email"></span> Save and Send test email</button>
-                        <div>
-                            <div v-if="showRecipient">
-                                <input id="preveiwemail" class="form-control mr-2" type="text" v-model="recipient" >
-                            </div>
-                            <div v-else>
-                                <a href="javascript:;"  @mouseover="showEdit=true" @mouseout="showEdit=false" title="Edit" class="text-muted" @click="showRecipient=!showRecipient">{{ recipient }}</a>
-                                <span v-if="showEdit" class="text-primary small">Click to Edit</span>
-                            </div>
+                        <div v-else>
+                            <a href="javascript:;"  @mouseover="showEdit=true" @mouseout="showEdit=false" title="Edit" class="text-muted" @click="showRecipient=!showRecipient">{{ recipient }}</a>
+                            <span v-if="showEdit" class="text-primary small">Click to Edit</span>
                         </div>
                     </div>
                 </div>
             </div>
-        </WapModal>
+        </div>
+         
     </div>
     
 </template>
 
 <script>
+import FormGenerator from '../Form/FormGenerator'
 import abstractView from '../Views/Abstract'
-import NoticeButton from './NoticeButton'
 import momenttz from '../appMoment'
 import Validation from '../Modules/Validation'
 export default {
   extends: abstractView,
   mixins: [Validation],
-  props: {
-      status: false
-  },
-  components: {
-    NoticeButton
-  },
-  mounted(){
-      if(this.status === false) this.mail_config_ok = false
-      else this.mail_config_ok = true
-  },
+  components:{FormGenerator},
+    mounted(){
+        this.refreshInitValue()
+    },
+    
   data() {
     return {
-        nb: {
-            title: 'No emails will be sent without configuring the sending method first',
-            button: 'Configure it now',
-            icon: 'dashicons dashicons-email mr-2'
-        },
+        
         other: null,
         showModal: false,
-        titleModal: 'Configure Emails sending method',
         viewName: 'settingsmailer',
         parentLoad: false,
         sendconfig: {
             method: '',
             mgkey: '',
             mgdomain: '',
+            sgkey:'',
+            sgkeyname:'',
             sendmailcmd: '',
             username: '',
             password: '', 
@@ -124,7 +110,6 @@ export default {
             from_address: '',
             from_name: '',
         },
-        mail_config_ok: false,
         recipient: '',
         showEdit: false,
         showRecipient: false,
@@ -133,10 +118,224 @@ export default {
         clickedAdvanced: false,
         ports: false,
         preset: '',
-        formOptions: {
-            validateAfterLoad: false,
-            validateAfterChanged: false,
-        },
+        formready: false,
+
+        formKey: 'formmailconfig',
+          schema: [
+/*             {
+              type: 'row',
+              class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
+              classEach: 'mr-2',
+              fields: [
+                {
+                    type: 'checkimages',
+                    label: 'How is it provided?',
+                    model: 'type',
+                    cast: Array,
+                    images: [
+                    { value: 'wpmail', name:'WP mail', icon: 'map-marked-alt', sub: 'Simple to setup, but can be unreliable', subclass:'tt-danger'}, 
+                    { value: 'mailgun', name:'Mailgun API', icon: 'map-marked-alt', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
+                    { value: 'sendgrid', name:'SendGrid API', icon: 'map-marked-alt', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
+                    { value: 'smtp', name:'SMTP', icon: 'map-marked-alt', sub: 'For experts only', subclass:'tt-info'},
+                    ],
+                    validation: ['required']
+                },
+
+              ]
+            }, */
+            // WP Mail
+            {
+                type: 'checkimages',
+                label: 'How is it provided?',
+                model: 'type',
+                radioMode: true,
+                cast: Array,
+                images: [
+                { value: 'wpmail', name:'WP mail', icon: 'map-marked-alt', sub: 'Simple to setup, but can be unreliable', subclass:'tt-danger'}, 
+                { value: 'mailgun', name:'Mailgun API', icon: 'map-marked-alt', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
+                { value: 'sendgrid', name:'SendGrid API', icon: 'map-marked-alt', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
+                { value: 'smtp', name:'SMTP', icon: 'map-marked-alt', sub: 'For experts only', subclass:'tt-info'},
+                ],
+                validation: ['required']
+            },
+            {
+                type: 'label',
+                model: 'txt1',
+                label: 'You can only send text versioned email with WP mail',
+                conditions: [
+                  { model:'type', values: ['wpmail'] }
+                ],
+            },
+
+            // MailGun API
+            {
+                type: 'label',
+                model: 'txt2',
+                label: "Don't have a MailGun account? <a href='https://signup.mailgun.com/new/signup' target='_blank'>Signup for free</a>",
+                conditions: [
+                  { model:'type', values: ['mailgun'] }
+                ],
+            },
+            {
+                type: 'checkimages',
+                label: 'Mailgun Area',
+                model: 'mgarea',
+                radioMode: true,
+                images: [
+                    { value: 'us', name:'United States'}, 
+                    { value: 'eu', name:'Europe'},
+                ],
+                cast: String,
+                validation: ['required'],
+                conditions: [
+                  { model:'type', values: ['mailgun'] }
+                ],
+            },
+            {
+                type: 'input',
+                label: 'API Domain',
+                model: 'mgdomain',
+                cast: String,
+                validation: ['required'],
+                conditions: [
+                  { model:'type', values: ['mailgun'] }
+                ],
+            },
+            {
+                type: 'input',
+                label: 'API Key',
+                model: 'mgkey',
+                cast: String,
+                validation: ['required'],
+                conditions: [
+                  { model:'type', values: ['mailgun'] }
+                ],
+            },
+
+
+            // SendGrid API
+            {
+                type: 'label',
+                label: "Don't have a SendGrid account? <a href='https://signup.sendgrid.com/' target='_blank'>Signup for free</a>",
+                model: 'txt3',
+                conditions: [
+                  { model:'type', values: ['sendgrid'] }
+                ],
+            },
+
+            {
+                type: 'input',
+                label: 'SendGrid Key name',
+                model: 'sgkeyname',
+                cast: String,
+                validation: ['required'],
+                conditions: [
+                  { model:'type', values: ['sendgrid'] }
+                ],
+            },
+            {
+                type: 'input',
+                label: 'SendGrid API Key',
+                model: 'sgkey',
+                cast: String,
+                validation: ['required'],
+                conditions: [
+                  { model:'type', values: ['sendgrid'] }
+                ],
+            },
+
+
+            // SMTP
+            {
+                type: 'checkimages',
+                model: "smtppreset",
+                radioMode: true,
+                values: [
+                { value: '', name:'Custom'},
+                { value: 'mailgun', name:'Mailgun'},
+                { value: 'sendgrid', name:'Sendgrid'},
+                ],
+                cast: String,
+                conditions: [
+                  { model:'type', values: ['smtp'] }
+                ],
+            },
+            {
+              type: 'row',
+              class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
+              classEach: 'mr-2',
+              fields: [
+                {
+                    type: "input",
+                    label: "Username",
+                    model: "username",
+                    required: true,
+                    cast: String,
+                    validation: ['required'],
+                    conditions: [
+                        { model:'type', values: ['smtp'] }
+                    ],
+                },
+                {
+                    type: "password",
+                    label: "Password",
+                    model: "password",
+                    required: true,
+                    cast: String,
+                    validation: ['required'],
+                    conditions: [
+                        { model:'type', values: ['smtp'] }
+                    ],
+                },
+
+              ]
+            },
+
+            {
+              type: 'row',
+              class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
+              classEach: 'mr-2',
+              fields: [
+                {
+                    type: "input",
+                    label: "Host",
+                    model: "host",
+                    required: true,
+                    cast: String,
+                    validation: ['required'],
+                    conditions: [
+                    { model:'type', values: ['smtp'] }
+                    ],
+                },
+                {
+                    type: "number",
+                    label: "Port",
+                    model: "port",
+                    required: true,
+                    min: 0,
+                    max: 65535,
+                    cast: String,
+                    validation: ['required','number'],
+                    conditions: [
+                    { model:'type', values: ['smtp'] }
+                    ],
+                },
+                {
+                    type: "select",
+                    labelDefault: 'Select encryption',
+                    model: "encryption",
+                    cast: String,
+                    elements: [{id:'', name: 'none'},{id:'ssl', name: 'ssl'},{id:'tls', name: 'tls'} ],
+                    labelKey: 'name',
+                    conditions: [
+                    { model:'type', values: ['smtp'] }
+                    ],
+                },
+
+              ]
+            },
+            
+        ]
         
     }
   },
@@ -198,8 +397,11 @@ export default {
             return this.sendconfig.from_name
         },
         canSend(){
+            return this.formready
             if(this.sendconfig.method == 'mailgun') {
                 if(this.sendconfig.mgkey != '' && this.sendconfig.mgdomain != '') return true
+            } else if(this.sendconfig.method == 'sendgrid') {
+                if(this.sendconfig.sgkey != '' && this.sendconfig.sgkeyname != '') return true
             } else if(this.sendconfig.method == 'smtp') {
                 if(this.sendconfig.username != '' && this.sendconfig.password != '' && this.sendconfig.host != '' && this.sendconfig.port >= 0) return true
             }else if(this.sendconfig.method == 'sendmail') {
@@ -212,7 +414,7 @@ export default {
         showSmtpPorts(){
             return this.sendconfig.method=='smtp' && this.ports !== false
         },
-        schema(){
+        schemas(){
             let originalCopy = this.originalSchema()
 
             originalCopy.fields = _.compact( _.map(originalCopy.fields, this.filterFields) ) ;
@@ -228,6 +430,9 @@ export default {
         hasApi() {
             return ['mailgun'].indexOf(this.sendconfig.method) !== -1
         },
+        isSendgrid() {
+            return ['sendgrid'].indexOf(this.sendconfig.method) !== -1
+        },
         isSendmail(){
             return ['sendmail'].indexOf(this.sendconfig.method) !== -1
         },
@@ -236,6 +441,9 @@ export default {
         },
     },
   methods: {
+      readytosubmit(ready){
+          this.formready = ready
+      },
       hideModal(){
           this.showModal = false
       },
@@ -252,6 +460,9 @@ export default {
             }
 
             if(this.hasApi && a.groupKey == 'mg' ) {
+                 return a
+            }
+            if(this.isSendgrid && a.groupKey == 'sg' ) {
                  return a
             }
 
@@ -275,15 +486,12 @@ export default {
           if(!this.canSend) return
           this.request(this.sendTestEmailRequest, undefined,undefined,false,  this.resultTestEmail)
       },
-      resultTestEmail(){
-          this.mail_config_ok = true
+      resultTestEmail(e){
           this.showModal = false
           this.$emit('mailConfigured')
+          this.successRequest(e)
       },
 
-      onValidated(isValid, errors) {
-        this.errors = errors
-      },
       originalSchema(){
         return {
                 fields: [
@@ -298,6 +506,7 @@ export default {
                     values: [
                     { value: 'wpmail', name:'WP mail', sub: 'Simple to setup, but can be unreliable', subclass:'tt-danger'}, 
                     { value: 'mailgun', name:'Mailgun API', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
+                    { value: 'sendgrid', name:'SendGrid API', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
                     { value: 'smtp', name:'SMTP', sub: 'For experts only', subclass:'tt-info'},
                     ],
                     styleClasses: 'col-md-12'
@@ -310,14 +519,25 @@ export default {
                 },
                 {
                     type: "label",
-                    label: "Don't have a MailGun account? <a href='https://signup.mailgun.com/new/signup' target='_blank'>Create account for free</a>",
+                    label: "Don't have a MailGun account? <a href='https://signup.mailgun.com/new/signup' target='_blank'>Signup for free</a>",
+                    styleClasses: 'col-md-12',
+                    groupKey: 'mg'
+                },
+                {
+                    type: "radios",
+                    model: "mgarea",
+                    label: "Area",
+                    values: [
+                    { value: '', name:'US'},
+                    { value: 'eu', name:'Europe'},
+                    ],
+                    required: true,
                     styleClasses: 'col-md-12',
                     groupKey: 'mg'
                 },
                 {
                     type: "input",
                     label: "API Domain",
-                    inputType: "text",
                     model: "mgdomain",
                     placeholder: 'e.g.: mg.mydomain.com',
                     required: true,
@@ -328,7 +548,6 @@ export default {
                 {
                     type: "input",
                     label: "API key",
-                    inputType: "text",
                     placeholder: 'e.g.: key-da7175885eecdffb1df2bc092d13ec33',
                     model: "mgkey",
                     required: true,
@@ -336,6 +555,33 @@ export default {
                     styleClasses: 'col-md-12',
                     groupKey: 'mg'
                 },
+                {
+                    type: "label",
+                    label: "Don't have a SendGrid account? <a href='https://signup.sendgrid.com/' target='_blank'>Signup for free</a>",
+                    styleClasses: 'col-md-12',
+                    groupKey: 'sg'
+                },
+                {
+                    type: "input",
+                    label: "SendGrid Key name",
+                    model: "sgkeyname",
+                    placeholder: 'e.g.: mykeyname',
+                    required: true,
+                    validator: ['string'],
+                    styleClasses: 'col-md-12',
+                    groupKey: 'sg'
+                },
+                {
+                    type: "input",
+                    label: "SendGrid API key",
+                    placeholder: 'e.g.: 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',
+                    model: "sgkey",
+                    required: true,
+                    validator: ['string'],
+                    styleClasses: 'col-md-12',
+                    groupKey: 'sg'
+                },
+                
                 {
                     type: "radios",
                     model: "smtppreset",
@@ -350,7 +596,6 @@ export default {
                 {
                     type: "input",
                     label: "Username",
-                    inputType: "text",
                     model: "username",
                     required: true,
                     validator: ['string'],
@@ -369,7 +614,6 @@ export default {
                 {
                     type: "input",
                     label: "Host",
-                    inputType: "text",
                     model: "host",
                     required: true,
                     validator: ['string'],
@@ -391,7 +635,6 @@ export default {
                 {
                     type: "select",
                     label: "Encryption",
-                    inputType: "text",
                     selectOptions: {
                         noneSelectedText: 'none'
                     },
@@ -406,12 +649,11 @@ export default {
                 
             };
         },
-      showConfiguration(){
-        this.refreshInitValue()
-      },
+      
       loaded(viewData){
           this.viewData = viewData.data
-          this.sendconfig = this.viewData.mail_config
+          
+          this.sendconfig = viewData.data.mail_config
           this.recipient = this.viewData.recipient
           this.showModal = true
       },

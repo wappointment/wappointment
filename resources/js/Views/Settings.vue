@@ -9,19 +9,19 @@
     </ul>
     <div class="tab-content" id="myTabContent" :data-active-page="activePage">
         <div class="tab-pane fade" :class="{'show active' : isActive('general')}" v-if="isActive('general')">
-            <settingsGeneral></settingsGeneral>
+            <settingsGeneral :tablabel="tabs.general.label"></settingsGeneral>
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('notifications')}" v-if="isActive('notifications')">
-            <settingsNotifications></settingsNotifications>
+            <settingsNotifications :tablabel="tabs.notifications.label"></settingsNotifications>
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('reminders')}" v-if="isActive('reminders')">
-            <settingsReminders></settingsReminders>
+            <settingsReminders :tablabel="tabs.reminders.label"></settingsReminders>
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('advanced')}" v-if="isActive('advanced')">
-            <settingsAdvanced></settingsAdvanced>
+            <settingsAdvanced :tablabel="tabs.advanced.label"></settingsAdvanced>
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('addonstab')}" v-if="isActive('addonstab')">
-            <settingsAddons></settingsAddons>
+            <settingsAddons ></settingsAddons>
         </div>
     </div>
     

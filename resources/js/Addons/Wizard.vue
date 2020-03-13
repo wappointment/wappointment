@@ -1,11 +1,13 @@
 <template>
     <div >
-        <div class="d-flex my-4" >
-            <button v-for="(instruction,idx) in addon.instructions" class="btn btn-secondary" 
-            :class="{selected: currentStep == instruction.step }" @click="showStep(instruction.step)">
-               {{ idx + 1 }} - {{ instruction.button }}
-            </button>
-        </div>
+        <ul class="my-4 nav nav-tabs">
+            <li class="nav-item"  v-for="(instruction,idx) in addon.instructions">
+                <a class="nav-link" :class="{active:currentStep == instruction.step}" href="javascript:;" @click="showStep(instruction.step)">
+                    {{ idx + 1 }} - {{ instruction.button }}
+                </a>
+            </li>
+        </ul>
+
         <div>
             <div v-if="currentInstruction.description !== undefined">{{ currentInstruction.description }}</div>
             <Service :crumb="false" v-if="stepService" />

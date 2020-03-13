@@ -12,7 +12,7 @@ class MailgunEmail implements InterfaceEmailTransport
             new \GuzzleHttp\Client(['connect_timeout' => 60]),
             $config['mgdomain'],
             $config['mgkey'],
-            isset($config['mgarea']) ? $config['mgarea'] : ''
+            isset($config['mgarea']) && $config['mgarea'] == 'eu' ? $config['mgarea'] : ''
         );
     }
 }

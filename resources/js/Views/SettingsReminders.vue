@@ -1,6 +1,11 @@
 <template>
-  <div>
-      <div class="reduced">
+  <div v-if="reminders!== undefined && reminders.length > 0">
+    
+      <BreadCrumbs v-if="crumbs.length>0" :crumbs="crumbs" @click="goTo"/>
+      <component v-if="currentView !== false" :is="currentView" :key="subCompKey" 
+      :subview="subview" v-bind="dynamicProps" @updateCrumb="updateCrumb"></component>
+      
+      <div class="reduced" v-else>
           <ErrorList :errors="errorMessages" ></ErrorList>
 
           <div v-if="remindersAreLoaded" class="mt-2">
@@ -31,9 +36,9 @@
             </div>
              
           </div>
-          <div class="mt-4" v-if="remindersLoaded">
-            <hr>
-            <MailConfig :status="mail_status" @status="mailConfigured"></MailConfig>
+          <div class="mt-4">
+            <hr/>
+            <NotificationEmail :status="mail_status" @configureEmail="goToMailConfig"/>
           </div>
       </div>
       
@@ -50,6 +55,7 @@
         </form>
         <div class="d-flex align-items-center">
           <button class="btn btn-primary" @click="save">Save</button>
+          
           <div class="ml-2 d-flex align-items-center" v-if="mail_status">
             <button class="btn btn-secondary mr-2" @click="sendPreview">Send Preview</button>
             <div>
@@ -60,7 +66,10 @@
             </div>
           </div>
           
-          <div class="bg-danger p-2 text-white rounded small ml-2" v-else> <span class="dashicons dashicons-email"></span> No emails will be sent without configuring the sending method first</div>
+          <div class="bg-danger p-2 text-white rounded small ml-2" v-else> 
+            <span class="dashicons dashicons-email"></span>
+            <span>No emails will be sent without configuring the sending method first</span>  
+          </div>
         </div>
        </WapModal>
     
@@ -68,6 +77,9 @@
 </template>
 
 <script>
+
+import hasBreadcrumbs from '../Mixins/hasBreadcrumbs'
+import NotificationEmail from '../Notification/Email'
 import ServiceReminder from '../Services/V1/Reminder' 
 import MailConfig from '../Components/MailConfig'
 import Scroll from '../Modules/Scroll'
@@ -92,8 +104,8 @@ Vue.component("field-bspassword", fieldBSPassword);
 
 export default {
   extends: abstractView,
-  mixins: [Scroll, Validation],
-  components: { MailConfig, Checkbox },
+  mixins: [Scroll, Validation, hasBreadcrumbs],
+  components: { MailConfig, Checkbox, NotificationEmail},
   data() {
       return {
         parentLoad: false,
@@ -122,7 +134,9 @@ export default {
       }
   },
 
+ props:['tablabel'],
   created(){
+    this.mainCrumbLabel = this.tablabel
 
     this.serviceReminder = this.$vueService(new ServiceReminder)
 
@@ -163,6 +177,9 @@ export default {
 
   },
   methods: {
+    goToMailConfig() {
+      this.setCrumb('MailConfig', 'Mail Config', 'goToMailConfig')
+    },
     mailConfigured(){
       this.mail_status = true
     },

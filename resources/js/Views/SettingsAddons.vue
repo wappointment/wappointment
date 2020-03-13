@@ -24,6 +24,7 @@ import abstractView from './Abstract'
 import RequestMaker from '../Modules/RequestMaker'
 export default {
   extends: abstractView,
+  props:['tablabel'],
   components: window.wappointmentExtends.filter('AddonsSettingsComponents', {}, {extends: abstractView, mixins: [RequestMaker]} ),
   data() {
     return {

@@ -62,6 +62,7 @@ import Sync from './Subpages/Sync'
 export default {
   extends: abstractView,
   mixins: [CalUrl],
+  props:['tablabel'],
   components: {Sync},
   data() {
     return {

@@ -1,7 +1,7 @@
 <template>
     <div :class="getClassWrapper">
         <LabelMaterial>
-            <input type="text" class="form-control" @keydown.prevent.stop.enter="catchEnterEvent"  :class="{'is-invalid':hasErrors}" :id="id" 
+            <input :type="getInputType" class="form-control" @keydown.prevent.stop.enter="catchEnterEvent"  :class="{'is-invalid':hasErrors}" :id="id" 
             @focusout="$emit('activated')" :placeholder="label" 
             v-model="updatedValue">
         </LabelMaterial>
@@ -25,6 +25,11 @@ export default {
             this.$emit('submitted',e)
         },
 
+    },
+    computed: {
+        getInputType(){
+            return this.definition.type != 'input' ? this.definition.type : 'text'
+        }
     }
 }
 </script>

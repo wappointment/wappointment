@@ -1,113 +1,111 @@
 <template>
-  <div>
-    <div  v-if="dataLoaded">
-      <div>
-          <BreadCrumbs v-if="crumbs.length>0" :crumbs="crumbs" @click="goTo"/>
-          <component v-if="currentView !== false" :is="currentView" :key="subCompKey" :subview="subview" v-bind="dynamicProps" @updateCrumb="updateCrumb"></component>
-          <div class="reduced" v-else>
-              <LargeButton @click="goToRegav" label="Weekly availability" :is_set="viewData.is_availability_set" ></LargeButton>
+  <div v-if="dataLoaded">
 
-              <LargeButton @click="goToService" :label="serviceBtnLabel" :is_set="viewData.is_service_set" ></LargeButton>
+    <BreadCrumbs v-if="crumbs.length>0" :crumbs="crumbs" @click="goTo"/>
+    <component v-if="currentView !== false" :is="currentView" :key="subCompKey" 
+    :subview="subview" v-bind="dynamicProps" @updateCrumb="updateCrumb"></component>
+    
+    <div class="reduced" v-else>
+        <LargeButton @click="goToRegav" label="Weekly availability" :is_set="viewData.is_availability_set" ></LargeButton>
 
-              <LargeButton @click="goToWidgetSetup" label="Booking Widget setup" :is_set="viewData.is_widget_set" ></LargeButton>
+        <LargeButton @click="goToService" :label="serviceBtnLabel" :is_set="viewData.is_service_set" ></LargeButton>
 
-              <div class="card p-2 px-3">
-                <div class="h5">Scheduling preferences</div>
-                <hr/>
-                <div>
-                  <div class="row my-2">
-                    <label for="approval-mode" class="col-sm-3">Approval mode</label>
-                    <div class="col-sm-4">
-                      <select class="form-control" id="approval-mode" @change="changed('approval_mode')" v-model="viewData.approval_mode">
-                        <option value="1">Automatic</option>
-                        <option value="2">Manual</option>
-                      </select>
-                    </div>
-                  </div>
+        <LargeButton @click="goToWidgetSetup" label="Booking Widget setup" :is_set="viewData.is_widget_set" ></LargeButton>
 
-                  <div class="row mb-2">
-                        <label for="date-format" class="col-sm-3 dateformatlabel"> Date format</label>
-     
-                        <div class="col-sm-9">
-                          <div class="d-flex">
-                            <div class="input-group input-group-sm">
-                              <div class="input-group-prepend" :class="{show: toggled('date_format')}">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" @click="toggle('date_format')">Date</button>
-                                <div class="dropdown-menu" :class="{show: toggled('date_format')}">
-                                  <span v-for="date in date_formats" class="dropdown-item" @click="changeDDP(date)">{{ date }} ({{ day_example(date) }})</span>
-                                </div>
-                              </div>
-                              <input id="date-format" class="form-control" v-model="viewData.date_format" @change="changed('date_format')" size="5" type="text">
-                            </div>
-
-                            <div class="input-group  input-group-sm">
-                              <input id="date-time-union" class="form-control" v-model="viewData.date_time_union" @change="changed('date_time_union')" size="3" type="text">
-                            </div>
-
-                            <div class="input-group  input-group-sm">
-                              <div class="input-group-prepend" :class="{show: toggled('time_format')}">
-                                <button class="btn btn-secondary dropdown-toggle" type="button" @click="toggle('time_format')">Time</button>
-                                <div class="dropdown-menu" :class="{show: toggled('time_format')}">
-                                  <span v-for="timef in time_formats" class="dropdown-item" @click="changeDDP(timef, 'time_format')">{{ timef }} ({{ time_example(timef) }})</span>
-                                </div>
-                              </div>
-                              <input id="time-format" class="form-control" v-model="viewData.time_format" @change="changed('time_format')" size="5" type="text">
-                            </div>
-                          </div>
-                          <div class="date-preview"> <span class="font-weight-bold small">{{ date_example }}</span> </div>
-                        </div>
-                  </div>
-                 <div class="d-flex mb-2">
-                  <div>
-                    <label for="week-starts-on" class="m-0">Week starts on</label>
-                    <div class="small text-muted">In Admin Calendar view</div>
-                  </div>
-                  <div class="ml-4">
-                      <weekDays id="week-starts-on" classN="form-control" :selected="viewData.week_starts_on" @changed="changedDay"></weekDays>
-                  </div>
-                </div> 
-                  <div class="mb-2">
-                    <label class="form-check-label" for="hrs-before-allowed">
-                     <div class="d-flex align-items-center">Appointments can be booked up to 
-                       <div class="input-group-sm mx-2">
-                         <input id="hrs-before-allowed" v-model="viewData.hours_before_booking_allowed" 
-                         @change="changed('hours_before_booking_allowed')" class="form-control min-field" size="2" type="text">
-                        </div> hrs before it starts</div>
-                    </label>
-                  </div>
-                  <div class="mb-2">
-                    
-                    <label class="form-check-label" for="allow-cancel">
-                      <div class="d-flex align-items-center">
-                        <input type="checkbox" v-model="viewData.allow_cancellation" id="allow-cancel" @change="changed('allow_cancellation')">
-                          Allow clients to cancel <a v-if="viewData.allow_cancellation" href="javascript:;" class="ml-2" @click="EditTextPage">edit page's text</a>
-                      </div>
-                    </label>
-                    <div class="d-flex align-items-center small text-muted ml-2" v-if="viewData.allow_cancellation">Let client cancel up to 
-                          <div class="input-group-sm mx-2">
-                            <input v-model="viewData.hours_before_cancellation_allowed"
-                            @change="changed('hours_before_cancellation_allowed')"  class="form-control min-field" size="2" type="text">
-                          </div> hrs before appointment</div>
-                  </div>
-                  <div class="mb-2">
-                    
-                    <label class="form-check-label" for="allow-reschedule">
-                        <div class="d-flex align-items-center">
-                          <input type="checkbox" v-model="viewData.allow_rescheduling" id="allow-reschedule" @change="changed('allow_rescheduling')">
-                          Allow clients to reschedule <a v-if="viewData.allow_rescheduling" href="javascript:;" class="ml-2" @click="EditTextPage">edit page's text</a>
-                        </div>
-                    </label>
-                    <div class="d-flex align-items-center small text-muted ml-2" v-if="viewData.allow_rescheduling">Let client reschedule up to 
-                          <div class="input-group-sm mx-2">
-                            <input v-model="viewData.hours_before_rescheduling_allowed" 
-                            @change="changed('hours_before_rescheduling_allowed')" class="form-control min-field" size="2" type="text">
-                      </div> hrs before appointment</div>
-                  </div>
-                </div>
+        <div class="card p-2 px-3">
+          <div class="h5">Scheduling preferences</div>
+          <hr/>
+          <div>
+            <div class="row my-2">
+              <label for="approval-mode" class="col-sm-3">Approval mode</label>
+              <div class="col-sm-4">
+                <select class="form-control" id="approval-mode" @change="changed('approval_mode')" v-model="viewData.approval_mode">
+                  <option value="1">Automatic</option>
+                  <option value="2">Manual</option>
+                </select>
               </div>
+            </div>
+
+            <div class="row mb-2">
+                  <label for="date-format" class="col-sm-3 dateformatlabel"> Date format</label>
+
+                  <div class="col-sm-9">
+                    <div class="d-flex">
+                      <div class="input-group input-group-sm">
+                        <div class="input-group-prepend" :class="{show: toggled('date_format')}">
+                          <button class="btn btn-secondary dropdown-toggle" type="button" @click="toggle('date_format')">Date</button>
+                          <div class="dropdown-menu" :class="{show: toggled('date_format')}">
+                            <span v-for="date in date_formats" class="dropdown-item" @click="changeDDP(date)">{{ date }} ({{ day_example(date) }})</span>
+                          </div>
+                        </div>
+                        <input id="date-format" class="form-control" v-model="viewData.date_format" @change="changed('date_format')" size="5" type="text">
+                      </div>
+
+                      <div class="input-group  input-group-sm">
+                        <input id="date-time-union" class="form-control" v-model="viewData.date_time_union" @change="changed('date_time_union')" size="3" type="text">
+                      </div>
+
+                      <div class="input-group  input-group-sm">
+                        <div class="input-group-prepend" :class="{show: toggled('time_format')}">
+                          <button class="btn btn-secondary dropdown-toggle" type="button" @click="toggle('time_format')">Time</button>
+                          <div class="dropdown-menu" :class="{show: toggled('time_format')}">
+                            <span v-for="timef in time_formats" class="dropdown-item" @click="changeDDP(timef, 'time_format')">{{ timef }} ({{ time_example(timef) }})</span>
+                          </div>
+                        </div>
+                        <input id="time-format" class="form-control" v-model="viewData.time_format" @change="changed('time_format')" size="5" type="text">
+                      </div>
+                    </div>
+                    <div class="date-preview"> <span class="font-weight-bold small">{{ date_example }}</span> </div>
+                  </div>
+            </div>
+            <div class="d-flex mb-2">
+            <div>
+              <label for="week-starts-on" class="m-0">Week starts on</label>
+              <div class="small text-muted">In Admin Calendar view</div>
+            </div>
+            <div class="ml-4">
+                <weekDays id="week-starts-on" classN="form-control" :selected="viewData.week_starts_on" @changed="changedDay"></weekDays>
+            </div>
+          </div> 
+            <div class="mb-2">
+              <label class="form-check-label" for="hrs-before-allowed">
+                <div class="d-flex align-items-center">Appointments can be booked up to 
+                  <div class="input-group-sm mx-2">
+                    <input id="hrs-before-allowed" v-model="viewData.hours_before_booking_allowed" 
+                    @change="changed('hours_before_booking_allowed')" class="form-control min-field" size="2" type="text">
+                  </div> hrs before it starts</div>
+              </label>
+            </div>
+            <div class="mb-2">
+              
+              <label class="form-check-label" for="allow-cancel">
+                <div class="d-flex align-items-center">
+                  <input type="checkbox" v-model="viewData.allow_cancellation" id="allow-cancel" @change="changed('allow_cancellation')">
+                    Allow clients to cancel <a v-if="viewData.allow_cancellation" href="javascript:;" class="ml-2" @click="EditTextPage">edit page's text</a>
+                </div>
+              </label>
+              <div class="d-flex align-items-center small text-muted ml-2" v-if="viewData.allow_cancellation">Let client cancel up to 
+                    <div class="input-group-sm mx-2">
+                      <input v-model="viewData.hours_before_cancellation_allowed"
+                      @change="changed('hours_before_cancellation_allowed')"  class="form-control min-field" size="2" type="text">
+                    </div> hrs before appointment</div>
+            </div>
+            <div class="mb-2">
+              
+              <label class="form-check-label" for="allow-reschedule">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.allow_rescheduling" id="allow-reschedule" @change="changed('allow_rescheduling')">
+                    Allow clients to reschedule <a v-if="viewData.allow_rescheduling" href="javascript:;" class="ml-2" @click="EditTextPage">edit page's text</a>
+                  </div>
+              </label>
+              <div class="d-flex align-items-center small text-muted ml-2" v-if="viewData.allow_rescheduling">Let client reschedule up to 
+                    <div class="input-group-sm mx-2">
+                      <input v-model="viewData.hours_before_rescheduling_allowed" 
+                      @change="changed('hours_before_rescheduling_allowed')" class="form-control min-field" size="2" type="text">
+                </div> hrs before appointment</div>
+            </div>
           </div>
-      </div>
-      
+        </div>
     </div>
 
   </div>
@@ -122,7 +120,7 @@ import Service from './Subpages/Service'
 import Widget from './Subpages/Widget'
 import EditCancelPage from './Subpages/EditCancelPage'
 import LargeButton from '../Components/LargeSettingsButton'
-import BreadCrumbs from '../Components/BreadCrumbs'
+import hasBreadcrumbs from '../Mixins/hasBreadcrumbs'
 import weekDays from "../Components/weekDays"
 import RequestMaker from '../Modules/RequestMaker'
 import AbstractListing from './AbstractListing'
@@ -135,14 +133,19 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck)
 export default {
   extends: abstractView,
+  
+  mixins: [ hasBreadcrumbs],
   components: window.wappointmentExtends.filter('SettingsGeneralComponents', { 
-    Service, Regav, Widget , EditCancelPage, LargeButton, BreadCrumbs, AbstractListing, FontAwesomeIcon, DurationCell, weekDays
+    Service, Regav, Widget , EditCancelPage, LargeButton, AbstractListing, FontAwesomeIcon, DurationCell, weekDays
     }, 
     {
       extends: abstractView, 
       mixins: [RequestMaker]
     } ),
-
+  props:['tablabel'],
+  created(){
+    this.mainCrumbLabel = this.tablabel
+  },
   data() {
     return {
       viewName: 'settingsgeneral',
@@ -151,11 +154,7 @@ export default {
       showService: false,
       showWidget: false,
       showEditPage: false,
-      currentView: false,
-      subview: '',
-      dynamicProps: {},
       serviceBtnLabel: window.wappointmentExtends.filter('serviceBtnLabel', 'Service setup' ),
-      crumbs: [],
       isToggled: {
         date_format : false,
         time_format : false,
@@ -182,15 +181,9 @@ export default {
       return momenttz().tz(this.viewData.timezone).format(
         (new Helpers()).convertPHPToMomentFormat(this.viewData.date_format + '['+this.viewData.date_time_union+']' + this.viewData.time_format))
     },
-    subCompKey(){
-      return this.currentView + this.subview
-    }
   },
   methods: {
-    goTo(crumb){
-      this[crumb.target]()
-      this.subview = (crumb.subview !== undefined) ? crumb.subview:''
-    },
+
     hideModal(){
       this.showModal = false
       this.showRegav = false
@@ -198,43 +191,18 @@ export default {
       this.showWidget = false
       this.showEditPage = false
     },
-    goToMain() {
-      this.currentView = false
-      this.crumbs = []
-    },
-    updateCrumb(crumbs, subview = '', props = {}) {
-      this.crumbs = crumbs  
-      this.subview = subview
-      this.dynamicProps = props
-    },
 
     goToRegav() {
-      this.currentView = 'Regav'
-      this.crumbs = [
-        { target: 'goToMain', label: 'General'},
-        { target: 'goToRegav', label: 'Weekly Availaibility', disabled:true},
-      ]
+      this.setCrumb('Regav', 'Weekly Availaibility', 'goToRegav')
     },
     goToService() {
-      this.currentView = 'Service'
-      this.crumbs = [
-        { target: 'goToMain', label: 'General'},
-        { target: 'goToService', label: this.serviceBtnLabel , disabled:true},
-      ]
+      this.setCrumb('Service', this.serviceBtnLabel, 'goToService')
     },
     goToWidgetSetup() {
-      this.currentView = 'Widget'
-      this.crumbs = [
-        { target: 'goToMain', label: 'General'},
-        { target: 'goToWidgetSetup', label: 'Booking Widget setup', disabled:true},
-      ]
+      this.setCrumb('Widget', 'Booking Widget setup', 'goToWidgetSetup')
     },
     EditTextPage(){
-      this.currentView = 'EditCancelPage'
-      this.crumbs = [
-        { target: 'goToMain', label: 'General'},
-        { target: 'EditTextPage', label: 'Edit Cancel/reschedule page', disabled:true},
-      ]
+      this.setCrumb('EditCancelPage', 'Edit Cancel/reschedule page', 'EditTextPage')
     },
     
     day_example(dformat){
