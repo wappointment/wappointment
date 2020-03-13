@@ -43,10 +43,11 @@ class Mailgun extends Transport
      * @param  string  $domain
      * @return void
      */
-    public function __construct(ClientInterface $client, $domain, $key)
+    public function __construct(ClientInterface $client, $domain, $key, $area)
     {
         $this->key = $key;
         $this->client = $client;
+        $this->url = !empty($area) ? 'https://api.eu.mailgun.net/v3/' : 'https://api.mailgun.net/v3/';
         $this->setDomain($domain);
     }
 
@@ -163,7 +164,7 @@ class Mailgun extends Transport
      */
     public function setDomain($domain)
     {
-        $this->url = 'https://api.mailgun.net/v3/' . $domain . '/messages.mime';
+        $this->url .= $domain . '/messages.mime';
 
         return $this->domain = $domain;
     }

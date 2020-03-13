@@ -11,7 +11,8 @@ class MailgunEmail implements InterfaceEmailTransport
         return new Mailgun(
             new \GuzzleHttp\Client(['connect_timeout' => 60]),
             $config['mgdomain'],
-            $config['mgkey']
+            $config['mgkey'],
+            isset($config['mgarea']) ? $config['mgarea'] : ''
         );
     }
 }

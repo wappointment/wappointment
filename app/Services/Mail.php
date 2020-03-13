@@ -142,7 +142,6 @@ class Mail
         if (self::$transportMethod !== false) {
             return;
         }
-
         self::$transportMethod = $this->getTransportMethod()->setMethod($this->config);
     }
 
