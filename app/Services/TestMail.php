@@ -18,6 +18,9 @@ class TestMail
             case 'mailgun':
                 $validator = 'validateMailgunApi';
                 break;
+            case 'sendgrid':
+                $validator = 'validateSendGridApi';
+                break;
             case 'smtp':
                 $validator = 'validateSMTP';
                 break;
@@ -44,11 +47,33 @@ class TestMail
         return $result;
     }
 
+    public static function validateSendGridApi($mailerConfig)
+    {
+        $validator = new \Rakit\Validation\Validator;
+        $validator->setMessages([
+            'sgkey' => 'Enter a valid SendGrid API key',
+        ]);
+
+        $validationRules = [
+            'sgkeyname' => 'required',
+            'sgkey' => 'required',
+        ];
+
+        $validation = $validator->make($mailerConfig, $validationRules);
+        $validation->validate();
+
+        if ($validation->fails()) {
+            self::$errors = $validation->errors()->toArray();
+        } else {
+            return true;
+        }
+    }
+
     public static function validateMailgunApi($mailerConfig)
     {
         $validator = new \Rakit\Validation\Validator;
         $validator->setMessages([
-            'mgkey' => 'Enter a valid mailgun API key',
+            'mgkey' => 'Enter a valid Mailgun API key',
         ]);
 
         $validationRules = [

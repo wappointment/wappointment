@@ -34,6 +34,7 @@ class SettingsController extends RestController
     public function sendPreviewEmail(Request $request)
     {
         $resultEmail = TestMail::send($request->input('data'), $request->input('recipient'));
+
         if ($this->isTrueOrFail($resultEmail)) {
             Settings::save('mail_config', $request->input('data'));
             Settings::save('mail_status', true);

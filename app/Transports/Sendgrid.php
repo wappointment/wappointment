@@ -1,120 +1,269 @@
 <?php
 
-namespace Wappointment\System;
+namespace Wappointment\Transports;
 
-class Sendgrid
+use WappoSwift_Mime_SimpleMessage;
+use WappoSwift_MimePart;
+use GuzzleHttp\ClientInterface;
+
+class Sendgrid extends Transport
 {
     /**
-     * Ressources : Connection to the elasticemail server
+     * Guzzle client instance.
+     *
+     * @var \GuzzleHttp\ClientInterface
      */
-    public $conn;
+    protected $client;
 
     /**
-     * String : Last error...
+     * The Mailgun API key.
+     *
+     * @var string
      */
-    public $error;
-    public $Username = '';
-    public $Password = '';
+    protected $key;
 
-    /* Function which permit to send an email based on the object's values.
-     * First, we do the test if we have enough credit to send emails.
+    /**
+     * The Sendgrid username.
+     *
+     * @var string
      */
-    public function sendMail(&$object)
+    protected $username;
+
+    /**
+     * The Mailgun API end-point.
+     *
+     * @var string
+     */
+    protected $url = 'https://api.sendgrid.com/v3/mail/send';
+
+    /**
+     * Create a new Mailgun transport instance.
+     *
+     * @param  \GuzzleHttp\ClientInterface  $client
+     * @param  string  $key
+     * @param  string  $username
+     * @return void
+     */
+    public function __construct(ClientInterface $client, $username, $key)
     {
-        $url = 'https://api.sendgrid.com';
+        $this->key = $key;
+        $this->client = $client;
+        $this->setUsername($username);
+    }
 
-        $to = array_merge([$object->to[0][0]], $object->cc, $object->bcc);
-        /*foreach($to as $oneRecipient){
-                $data .= '&to[]='.urlencode($object->AddrFormat($oneRecipient).";");
-        }*/
-        $replyToKey = key($object->ReplyTo);
+    /**
+     * {@inheritdoc}
+     */
+    public function send(WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
+    {
+        $this->beforeSendPerformed($message);
 
-        $params = [
-            'api_user' => $this->Username,
-            'api_key' => $this->Password,
-            'to' => array_filter($to),
-            'replyto' => $object->ReplyTo[$replyToKey][0],
-            'from' => $object->From,
-            'fromname' => $object->FromName,
+        $to = $this->getTo($message);
+
+        $message->setBcc([]);
+
+        $this->client->post($this->url, $this->payload($message, $to));
+
+        $this->sendPerformed($message);
+
+        return $this->numberOfRecipients($message);
+    }
+
+    /**
+     * Get the HTTP payload for sending the Mailgun message.
+     *
+     * @param  \WappoSwift_Mime_SimpleMessage  $message
+     * @param  string  $to
+     * @return array
+     */
+    protected function payload(WappoSwift_Mime_SimpleMessage $message, $to)
+    {
+        /* {"personalizations": [
+            {
+                "to": [{"email": "test@example.com"}]}
+            ],
+            "from": {"email": "test@example.com"},
+            "subject": "Sending with SendGrid is Fun",
+            "content": [
+                {"type": "text/plain", "value": "and easy to do anywhere, even with cURL"}
+                ]
+            } */
+        $data = [
+            'personalizations' => $this->getPersonalizations($message),
+            'from'             => $this->getFrom($message),
+            'subject'          => $message->getSubject(),
         ];
 
-        if (!empty($object->ReplyTo[$replyToKey][1])) {
-            $params['replytoname'] = $object->ReplyTo[$replyToKey][1];
+        if ($contents = $this->getContents($message)) {
+            $data['content'] = $contents;
         }
 
-        if (!empty($object->Subject)) {
-            $params['subject'] = $object->Subject;
+        if ($reply_to = $this->getReplyTo($message)) {
+            $data['reply_to'] = $reply_to;
         }
-
-        if (!empty($object->Sender)) {
-            $params['sender'] = $object->Sender;
-        }
-
-        if (!empty($object->sendHTML) || !empty($object->AltBody)) {
-            $params['html'] = $object->Body;
-            if (!empty($object->AltBody)) {
-                $params['text'] = $object->AltBody;
-            }
-        } else {
-            $params['text'] = $object->Body;
-        }
-
-        if ($object->attachment) {
-            $ArrayID = [];
-            foreach ($object->attachment as $oneAttachment) {
-                $params['files'][$oneAttachment[2]] = $oneAttachment[0];
+        return [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->key,
+                'Content-Type' => 'application/json',
+            ],
+            'json' => $data,
+        ];
+    }
+    private function getFrom(WappoSwift_Mime_SimpleMessage $message)
+    {
+        if ($message->getFrom()) {
+            foreach ($message->getFrom() as $email => $name) {
+                return ['email' => $email, 'name' => $name];
             }
         }
-
-        $header = [];
-        $header['Content-Type'] = 'application/x-www-form-urlencoded';
-        $header['Connection'] = 'Keep-Alive';
-        $header['Message-ID'] = $object->MessageID;
-
-        $params['headers'] = json_encode($header);
-        $request = $url . '/api/mail.send.json';
-
-        $this->error = '';
-
-        // Generate curl request
-        $session = curl_init($request);
-
-        // Tell curl to use HTTP POST
-        curl_setopt($session, CURLOPT_POST, true);
-
-        // Tell curl that this is the body of the POST
-        curl_setopt($session, CURLOPT_POSTFIELDS, http_build_query($params));
-
-        // Tell curl not to return headers, but do return the response
-        curl_setopt($session, CURLOPT_HEADER, false);
-        curl_setopt($session, CURLOPT_RETURNTRANSFER, true);
-
-        // Disable verification for misconfigured hosts :(
-        curl_setopt($session, CURLOPT_SSL_VERIFYHOST, false);
-        curl_setopt($session, CURLOPT_SSL_VERIFYPEER, false);
-
-        // obtain response
-        $result = curl_exec($session);
-
-        if (!$result) {
-            $this->error .= curl_error($session);
+        return [];
+    }
+    private function getReplyTo(WappoSwift_Mime_SimpleMessage $message)
+    {
+        if ($message->getReplyTo()) {
+            foreach ($message->getReplyTo() as $email => $name) {
+                return ['email' => $email, 'name' => $name];
+            }
         }
-
-        curl_close($session);
-
-        //We take the last value of the server's response which correspond of the file's ID.
-        $result = json_decode($result);
-
-        //If the ID is correct and we have no Errors
-        if (isset($result->message) && $result->message == 'success') {
-            return true;
-        } else {
-            if (isset($result->message) && $result->message == 'error') {
-                foreach ($result->errors as $msgError) {
-                    $this->error .= $msgError . "\n\r";
+        return null;
+    }
+    private function getPersonalizations(WappoSwift_Mime_SimpleMessage $message)
+    {
+        $setter = function (array $addresses) {
+            $recipients = [];
+            foreach ($addresses as $email => $name) {
+                $address = [];
+                $address['email'] = $email;
+                if ($name) {
+                    $address['name'] = $name;
                 }
+                $recipients[] = $address;
             }
-            return false;
+            return $recipients;
+        };
+
+        $personalization['to'] = $setter($message->getTo());
+
+        if ($cc = $message->getCc()) {
+            $personalization['cc'] = $setter($cc);
         }
+
+        if ($bcc = $message->getBcc()) {
+            $personalization['bcc'] = $setter($bcc);
+        }
+
+        return [$personalization];
+    }
+    private function getContents(WappoSwift_Mime_SimpleMessage $message)
+    {
+        $contentType = $message->getContentType();
+        switch ($contentType) {
+            case 'text/plain':
+                return [
+                    [
+                        'type'  => 'text/plain',
+                        'value' => $message->getBody(),
+
+                    ],
+                ];
+            case 'text/html':
+                return [
+                    [
+                        'type'  => 'text/html',
+                        'value' => $message->getBody(),
+                    ],
+                ];
+        }
+
+        // Following RFC 1341, text/html after text/plain in multipart
+        $content = [];
+        foreach ($message->getChildren() as $child) {
+            if ($child instanceof WappoSwift_MimePart && $child->getContentType() === 'text/plain') {
+                $content[] = [
+                    'type'  => 'text/plain',
+                    'value' => $child->getBody(),
+                ];
+            }
+        }
+
+        if (is_null($message->getBody())) {
+            return null;
+        }
+
+        $content[] = [
+            'type'  => 'text/html',
+            'value' => $message->getBody(),
+        ];
+        return $content;
+    }
+    /**
+     * Get the "to" payload field for the API request.
+     *
+     * @param  \WappoSwift_Mime_SimpleMessage  $message
+     * @return string
+     */
+    protected function getTo(WappoSwift_Mime_SimpleMessage $message)
+    {
+        return \WappointmentLv::collect($this->allContacts($message))->map(function ($display, $address) {
+            return $display ? $display . " <{$address}>" : $address;
+        })->values()->implode(',');
+    }
+
+    /**
+     * Get all of the contacts for the message.
+     *
+     * @param  \WappoSwift_Mime_SimpleMessage  $message
+     * @return array
+     */
+    protected function allContacts(WappoSwift_Mime_SimpleMessage $message)
+    {
+        return array_merge(
+            (array) $message->getTo(),
+            (array) $message->getCc(),
+            (array) $message->getBcc()
+        );
+    }
+
+    /**
+     * Get the API key being used by the transport.
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Set the API key being used by the transport.
+     *
+     * @param  string  $key
+     * @return string
+     */
+    public function setKey($key)
+    {
+        return $this->key = $key;
+    }
+
+    /**
+     * Get the username being used by the transport.
+     *
+     * @return string
+     */
+    public function getUsername()
+    {
+        return $this->username;
+    }
+
+    /**
+     * Set the username being used by the transport.
+     *
+     * @param  string  $username
+     * @return string
+     */
+    public function setUsername($username)
+    {
+
+        return $this->username = $username;
     }
 }

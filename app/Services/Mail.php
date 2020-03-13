@@ -148,8 +148,11 @@ class Mail
 
     private function getTransportMethod()
     {
+
         if ($this->config['method'] == 'mailgun') {
             return (new \Wappointment\Transports\Methods\MailgunEmail());
+        } elseif ($this->config['method'] == 'sendgrid') {
+            return (new \Wappointment\Transports\Methods\SendgridEmail());
         } elseif ($this->config['method'] == 'smtp') {
             return new \Wappointment\Transports\Methods\SMTPEmail();
         } elseif ($this->isWpMail()) {
