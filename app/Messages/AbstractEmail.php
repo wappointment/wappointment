@@ -3,6 +3,7 @@
 namespace Wappointment\Messages;
 
 use Wappointment\Messages\Templates\FoundationEmail;
+use Pelago\Emogrifier\CssInliner;
 
 abstract class AbstractEmail extends AbstractMessage
 {
@@ -51,7 +52,7 @@ abstract class AbstractEmail extends AbstractMessage
         if (method_exists($this, 'replaceTags')) {
             $this->replaceTags();
         }
-        return $this->renderer->wrapBoilerPlate($this->body);
+        return CssInliner::fromHtml($this->renderer->wrapBoilerPlate($this->body))->inlineCss()->render();
     }
 
     public function renderBodyText()

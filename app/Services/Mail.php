@@ -67,7 +67,7 @@ class Mail
 
     public function convertToText($htmlBody)
     {
-        return \soudasleep\Html2Text::convert($htmlBody);
+        return \Html2Text\Html2Text::convert($htmlBody);
     }
 
     public function getFrom()
