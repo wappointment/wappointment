@@ -21,8 +21,12 @@ class RestController
                 $this->setError('There was no identifiable response');
             } else {
                 foreach ($result as $field => $errors_field) {
-                    foreach ($errors_field as $error) {
-                        $this->setError($error, $field);
+                    if (is_array($errors_field)) {
+                        foreach ($errors_field as $error) {
+                            $this->setError($error, $field);
+                        }
+                    } else {
+                        $this->setError($errors_field);
                     }
                 }
             }
