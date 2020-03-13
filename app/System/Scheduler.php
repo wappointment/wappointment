@@ -50,7 +50,7 @@ class Scheduler
     }
     public static function checkLicence()
     {
-        (new \Wappointment\Services\Licences)->check();
+        (new \Wappointment\Services\Wappointment\Licences)->check();
     }
     private function setWappointmentScheduler()
     {
