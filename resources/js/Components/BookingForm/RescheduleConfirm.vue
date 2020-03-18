@@ -20,7 +20,7 @@ export default {
     props: ['options','selectedSlot','timeprops','relations','rescheduleData'],
     methods: {
         back(){
-            this.$emit('back', this.relations.prev, {selectedSlot:false, loading:true})
+            this.$emit('back', this.relations.prev, {selectedSlot:false})
         },
 
         confirm(){

@@ -11,7 +11,7 @@ class Widget extends WidgetAbstract
 
     public static function canShow()
     {
-        return empty($_REQUEST['wappo_module_off']);
+        return empty($_REQUEST['wappo_module_off']) && empty($_REQUEST['appointmentkey']);
     }
     public static function baseHtml($instance = [])
     {

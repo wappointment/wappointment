@@ -20,7 +20,8 @@ class FoundationEmail
 
   public function logo()
   {
-    return $this->wrapRow('<center><a class="text-center" href="' . Helpers::wappointmentLink('email', 'daily_email') . '"><img class="float-center" src="' .
+    return $this->wrapRow('<center><a class="text-center" href="' . Helpers::wappointmentLink('email', 'daily_email') . '">' .
+      '<img class="float-center" alt="wappointment.com" src="' .
       Helpers::pluginUrl('/dist/images/wappointment_80.png')
       . '" ></a> </center>', 'row collapsed wappointment', 'row body-border radius', '', '', false);
   }
