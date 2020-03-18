@@ -1,8 +1,8 @@
 <template>
-    <div class="reduced">
+    <div class="reduced" v-if="viewData!== null">
         <ErrorList :errors="errorMessages" className="popupErrors"></ErrorList>
-        <FormGenerator v-if="showModal" ref="confmail" :schema="schema" :data="sendconfig" 
-        @submit="save" @back="$emit('back')" :buttons="false"  :key="formKey" 
+        <FormGenerator ref="mcformgenerator" :schema="schema" :data="sendconfig" 
+        @submit="sendTestEmail" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
         labelButton="Save" @ready="readytosubmit">
         </FormGenerator>
         <div v-if="isSendmail" class="form-group valid col-md-12 field-input">
@@ -56,7 +56,7 @@
                     
                     <button type="button" class="btn  btn-primary mr-2" 
                     :class="{disabled: !canSend}" 
-                    :disabled="!canSend" @click="sendTestEmail"><span class="dashicons dashicons-email"></span> Save and Send test email</button>
+                    :disabled="!canSend" @click="$refs.mcformgenerator.submitTrigger()"><span class="dashicons dashicons-email"></span> Save and Send test email</button>
                     <div>
                         <div v-if="showRecipient">
                             <input id="preveiwemail" class="form-control mr-2" type="text" v-model="recipient" >
@@ -91,7 +91,6 @@ export default {
     return {
         
         other: null,
-        showModal: false,
         viewName: 'settingsmailer',
         parentLoad: false,
         sendconfig: {
@@ -122,32 +121,12 @@ export default {
 
         formKey: 'formmailconfig',
           schema: [
-/*             {
-              type: 'row',
-              class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
-              classEach: 'mr-2',
-              fields: [
-                {
-                    type: 'checkimages',
-                    label: 'How is it provided?',
-                    model: 'type',
-                    cast: Array,
-                    images: [
-                    { value: 'wpmail', name:'WP mail', icon: 'map-marked-alt', sub: 'Simple to setup, but can be unreliable', subclass:'tt-danger'}, 
-                    { value: 'mailgun', name:'Mailgun API', icon: 'map-marked-alt', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
-                    { value: 'sendgrid', name:'SendGrid API', icon: 'map-marked-alt', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
-                    { value: 'smtp', name:'SMTP', icon: 'map-marked-alt', sub: 'For experts only', subclass:'tt-info'},
-                    ],
-                    validation: ['required']
-                },
 
-              ]
-            }, */
             // WP Mail
             {
                 type: 'checkimages',
                 label: 'How is it provided?',
-                model: 'type',
+                model: 'method',
                 radioMode: true,
                 cast: Array,
                 images: [
@@ -163,7 +142,7 @@ export default {
                 model: 'txt1',
                 label: 'You can only send text versioned email with WP mail',
                 conditions: [
-                  { model:'type', values: ['wpmail'] }
+                  { model:'method', values: ['wpmail'] }
                 ],
             },
 
@@ -173,7 +152,7 @@ export default {
                 model: 'txt2',
                 label: "Don't have a MailGun account? <a href='https://signup.mailgun.com/new/signup' target='_blank'>Signup for free</a>",
                 conditions: [
-                  { model:'type', values: ['mailgun'] }
+                  { model:'method', values: ['mailgun'] }
                 ],
             },
             {
@@ -188,7 +167,7 @@ export default {
                 cast: String,
                 validation: ['required'],
                 conditions: [
-                  { model:'type', values: ['mailgun'] }
+                  { model:'method', values: ['mailgun'] }
                 ],
             },
             {
@@ -198,7 +177,7 @@ export default {
                 cast: String,
                 validation: ['required'],
                 conditions: [
-                  { model:'type', values: ['mailgun'] }
+                  { model:'method', values: ['mailgun'] }
                 ],
             },
             {
@@ -208,7 +187,7 @@ export default {
                 cast: String,
                 validation: ['required'],
                 conditions: [
-                  { model:'type', values: ['mailgun'] }
+                  { model:'method', values: ['mailgun'] }
                 ],
             },
 
@@ -219,7 +198,7 @@ export default {
                 label: "Don't have a SendGrid account? <a href='https://signup.sendgrid.com/' target='_blank'>Signup for free</a>",
                 model: 'txt3',
                 conditions: [
-                  { model:'type', values: ['sendgrid'] }
+                  { model:'method', values: ['sendgrid'] }
                 ],
             },
 
@@ -230,7 +209,7 @@ export default {
                 cast: String,
                 validation: ['required'],
                 conditions: [
-                  { model:'type', values: ['sendgrid'] }
+                  { model:'method', values: ['sendgrid'] }
                 ],
             },
             {
@@ -240,7 +219,7 @@ export default {
                 cast: String,
                 validation: ['required'],
                 conditions: [
-                  { model:'type', values: ['sendgrid'] }
+                  { model:'method', values: ['sendgrid'] }
                 ],
             },
 
@@ -257,7 +236,7 @@ export default {
                 ],
                 cast: String,
                 conditions: [
-                  { model:'type', values: ['smtp'] }
+                  { model:'method', values: ['smtp'] }
                 ],
             },
             {
@@ -273,7 +252,7 @@ export default {
                     cast: String,
                     validation: ['required'],
                     conditions: [
-                        { model:'type', values: ['smtp'] }
+                        { model:'method', values: ['smtp'] }
                     ],
                 },
                 {
@@ -284,7 +263,7 @@ export default {
                     cast: String,
                     validation: ['required'],
                     conditions: [
-                        { model:'type', values: ['smtp'] }
+                        { model:'method', values: ['smtp'] }
                     ],
                 },
 
@@ -304,7 +283,7 @@ export default {
                     cast: String,
                     validation: ['required'],
                     conditions: [
-                    { model:'type', values: ['smtp'] }
+                    { model:'method', values: ['smtp'] }
                     ],
                 },
                 {
@@ -317,7 +296,7 @@ export default {
                     cast: String,
                     validation: ['required','number'],
                     conditions: [
-                    { model:'type', values: ['smtp'] }
+                    { model:'method', values: ['smtp'] }
                     ],
                 },
                 {
@@ -328,7 +307,7 @@ export default {
                     elements: [{id:'', name: 'none'},{id:'ssl', name: 'ssl'},{id:'tls', name: 'tls'} ],
                     labelKey: 'name',
                     conditions: [
-                    { model:'type', values: ['smtp'] }
+                    { model:'method', values: ['smtp'] }
                     ],
                 },
 
@@ -441,12 +420,13 @@ export default {
         },
     },
   methods: {
+      changedValue(newSendConfig){
+          this.sendconfig = newSendConfig
+      },
       readytosubmit(ready){
           this.formready = ready
       },
-      hideModal(){
-          this.showModal = false
-      },
+
       setNewConfig(encryption, port) {
           this.sendconfig.encryption = encryption
           this.sendconfig.port = port
@@ -487,7 +467,6 @@ export default {
           this.request(this.sendTestEmailRequest, undefined,undefined,false,  this.resultTestEmail)
       },
       resultTestEmail(e){
-          this.showModal = false
           this.$emit('mailConfigured')
           this.successRequest(e)
       },
@@ -655,7 +634,6 @@ export default {
           
           this.sendconfig = viewData.data.mail_config
           this.recipient = this.viewData.recipient
-          this.showModal = true
       },
   },
 

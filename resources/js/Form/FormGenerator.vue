@@ -132,7 +132,6 @@ export default {
             this.submitted = true
         }
         this.modelHolder = this.creating === false ? Object.assign({},this.data):{}
-
         this.verifyModel()
     },
 
@@ -362,27 +361,6 @@ export default {
                 }
              }
              this.$emit('ready',this.isValid)
-/* 
-             for (const key in this.modelHolder) {
-                 //console.log('runvaldiation key', key)
-                 if (this.modelHolder.hasOwnProperty(key) ) {
-                     
-                     if(key == 'options'){
-                         for (const subkey in this.modelHolder[key]) {
-                             if (this.modelHolder[key].hasOwnProperty(subkey) ) {
-                                 if(!this.validateElement(key, subkey)){
-                                     return this.isValid = false
-                                 }
-                             }
-                         }
-                     }else{
-                         if(!this.validateElement(key)){
-                            return this.isValid = false
-                        }
-                     }
-                     
-                 }
-             } */
              
          },
          verifyModel(){

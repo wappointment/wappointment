@@ -17,17 +17,28 @@ class BookingAdmin extends AbstractProcessor
 
     protected function validationRules()
     {
-        return [
-            'name' => 'present|max:100',
-            'email' => 'present|email',
-            'type' => 'present|in:physical,phone,skype',
-            'phone' => 'required_if:type,phone|is_phone',
-            'skype' => 'required_if:type,skype|regex:/^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/',
-            'start' => 'required|min:' . time(),
-            'end' => 'required|min:' . time(),
-            'timezone' => '',
-            'clientid' => ''
-        ];
+        if (!empty($this->input('clientid'))) {
+            return [
+                'name' => 'required_if:type,phone|present|max:100',
+                'type' => 'present|in:physical,phone,skype',
+                'start' => 'required|min:' . time(),
+                'end' => 'required|min:' . time(),
+                'timezone' => '',
+                'clientid' => ''
+            ];
+        } else {
+            return [
+                'name' => 'required_if:type,phone|present|max:100',
+                'email' => 'present|email',
+                'type' => 'present|in:physical,phone,skype',
+                'phone' => 'required_if:type,phone|is_phone',
+                'skype' => 'required_if:type,skype|regex:/^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/',
+                'start' => 'required|min:' . time(),
+                'end' => 'required|min:' . time(),
+                'timezone' => '',
+                'clientid' => ''
+            ];
+        }
     }
 
     protected function addValidators()

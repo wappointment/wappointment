@@ -33,7 +33,10 @@ abstract class AbstractProcessor implements InterfaceProcessor
         }
         return \Illuminate\Support\Arr::flatten($this->errors);
     }
-
+    public function input($field)
+    {
+        return $this->request->input($field);
+    }
     public function get($field)
     {
         return $this->data[$field] ?? false;

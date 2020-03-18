@@ -9,7 +9,7 @@ class Admin
 {
     public static function book(BookingAdmin $booking)
     {
-        $client_id = $booking->get('clientid');
+        $client_id = (int) $booking->get('clientid');
 
         if ($client_id > 0) {
             $client = MClient::find($client_id);
