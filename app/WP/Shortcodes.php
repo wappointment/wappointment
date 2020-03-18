@@ -13,10 +13,9 @@ class Shortcodes
     public static function wapWidgetHandler($atts)
     {
         $a = shortcode_atts([
-            'button' => !empty($atts['title']) ?
+            'button_title' => !empty($atts['title']) ?
                 $atts['title'] : (new \Wappointment\Services\WidgetSettings)->get()['button']['title'],
         ], $atts);
-
-        return Widget::baseHtml($a['button']);
+        return Widget::baseHtml($a);
     }
 }
