@@ -139,6 +139,7 @@ export default {
   background-color: transparent;
   background: transparent;
   height: auto;
+  text-transform: none;
 }
 
 

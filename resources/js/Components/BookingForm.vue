@@ -510,7 +510,6 @@ export default {
   opacity: 1;
 }
 
-
 .wap-bf button {
     font-size: .7em;
 }
