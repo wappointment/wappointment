@@ -4,31 +4,29 @@
             <WLoader></WLoader>
         </div>
         <div class="fields-wrap" >
-            <form @submit.prevent.stop >
-                <template v-for="(element, keydi) in schema">
-                    <div v-if="element.type == 'row'"  :class="getRowClass(element)">
-                        <div class="form-group"  v-for="(subelement, skeydi) in element.fields" 
-                        :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
-                            <div :class="{'d-none': visibles.indexOf(subelement.model) === -1}">
-                                <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" 
-                                :parentErrors="errorsData" :parentModel="modelHolder"
-                                @loaded="loadedField(keydi, skeydi)"
-                                v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement.model)" 
-                                :definition="subelement" :errors="getErrors(subelement)" />
-                            </div>
-                        </div>
-                    </div>
-                    <div v-else class="form-group" :class="{'d-none': visibles.indexOf(element.model) === -1}"  :style="getStyle(element)" >
-                        <div :class="{'d-none': visibles.indexOf(element.model) === -1}">
-                            <component :is="getFormComponent(element)" :value="getModelValue(element)" 
+            <template v-for="(element, keydi) in schema">
+                <div v-if="element.type == 'row'"  :class="getRowClass(element)">
+                    <div class="form-group"  v-for="(subelement, skeydi) in element.fields" 
+                    :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
+                        <div :class="{'d-none': inVisibles(subelement)}">
+                            <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" 
                             :parentErrors="errorsData" :parentModel="modelHolder"
-                        @loaded="loadedField(keydi)" :errors="getErrors(element)"
-                        v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element.model)" :definition="element"/>
+                            @loaded="loadedField(keydi, skeydi)"
+                            v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement)" 
+                            :definition="subelement" :errors="getErrors(subelement)" />
                         </div>
-                        
                     </div>
-                </template>
-            </form>
+                </div>
+                <div v-else class="form-group" :class="{'d-none': inVisibles(element)}"  :style="getStyle(element)" >
+                    <div :class="{'d-none': inVisibles(element)}">
+                        <component :is="getFormComponent(element)" :value="getModelValue(element)" 
+                        :parentErrors="errorsData" :parentModel="modelHolder"
+                    @loaded="loadedField(keydi)" :errors="getErrors(element)"
+                    v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :definition="element"/>
+                    </div>
+                    
+                </div>
+            </template>
             <slot></slot>
             <div v-if="buttons">
                 <button v-if="backbutton" class="btn btn-secondary" type="button" @click.prevent="$emit('back')">{{ backbuttonLabel }}</button>
@@ -49,6 +47,7 @@ import FormFieldDuration from './FormFieldDuration'
 import FormFieldAddress from './FormFieldAddress'
 import FormFieldFile from './FormFieldFile'
 import FormFieldEditor from './FormFieldEditor'
+import FormFieldTipTap from './FormFieldTipTap'
 import FormFieldPrices from './FormFieldPrices'
 import FormFieldStatus from './FormFieldStatus'
 import FormFieldCountrySelector from './FormFieldCountrySelector'
@@ -59,7 +58,7 @@ import FormFieldLabel from './FormFieldLabel'
 import eventsBus from '../eventsBus'
 let allComponents = {FormFieldInput,FormFieldInputs, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
         FormFieldStatus,FormFieldFile, FormFieldSelect,FormFieldCheckImages,
-        FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect, FormFieldLabel}
+        FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect, FormFieldLabel, FormFieldTipTap}
 import DotKey from '../Modules/DotKey'
 export default {
     mixins: [DotKey],
@@ -124,6 +123,7 @@ export default {
         submitted: false,
         errorsData: {},
         visibles: [],
+        childrensHidden: [],
         activated_fields: []
     }),
     created(){
@@ -147,6 +147,32 @@ export default {
         },
     },
     methods: {
+        getFormComponent(element){
+            let fieldsTypes = {
+                'label': 'FormFieldLabel',
+                'input' : 'FormFieldInput',
+                'inputs' : 'FormFieldInputs',
+                'checkbox' : 'FormFieldCheckbox',
+                'file' : 'FormFieldFile',
+                'editor' : 'FormFieldEditor',
+                'prices' : 'FormFieldPrices',
+                'status' : 'FormFieldStatus',
+                'select' : 'FormFieldSelect',
+                'checkimages' : 'FormFieldCheckImages',
+                'address' : 'FormFieldAddress',
+                'duration' : 'FormFieldDuration',
+                'countryselector' : 'FormFieldCountrySelector',
+                'imageselect' : 'FormFieldImageSelect',
+                'tiptap': 'FormFieldTipTap'
+            }
+
+            fieldsTypes = window.wappointmentExtends.filter( 'FormGeneratorFieldsTypes', fieldsTypes, {mixins: [AbstractField,RequestMaker], components:{LabelMaterial}, allComponents:allComponents } )
+
+            return fieldsTypes[element.type]!== undefined ? fieldsTypes[element.type]:'FormFieldInput'
+        },
+        inVisibles(element){
+            return element.model !== undefined ? this.visibles.indexOf(element.model) === -1: true
+        },
         getErrors(element){
             if(element.model !== undefined && this.hasErrors && (this.submitted || this.activated_fields.indexOf(element.model) !== -1)){
                 if(this.errorsData[element.model] !== undefined ) {
@@ -166,7 +192,29 @@ export default {
             return false
         },
         getRowClass(row){
+            if(row.conditions !== undefined && !this.isVisible(row)) {
+                this.hideChildrenFields(row)
+                return 'd-none'
+            }
             return row.class!== undefined ? row.class: 'd-flex justify-content-between flex-wrap flex-sm-wrap'
+        },
+        hideChildrenFields(row){
+            for (let i = 0; i < row.fields.length; i++) {
+                const eldef = row.fields[i]
+                if(eldef !== undefined){
+                    this.removeFromVisible(eldef.model)
+                }
+                if( this.childrensHidden.indexOf(eldef.model)=== -1) {
+                    this.childrensHidden.push(eldef.model)
+                }
+                
+            } 
+        },
+        removeFromVisible(model){
+            const idx = this.visibles.indexOf(model)
+            if(idx !== -1){
+                this.visibles.splice(idx, 1)
+            }
         },
         getRowEachClass(row, sube){
             let classStr = row.classEach!== undefined ? row.classEach: ''
@@ -179,7 +227,11 @@ export default {
                 if(row.type !== undefined && row.type == 'row'){
                     for (let j = 0; j < row.fields.length; j++) {
                         if(row.fields[j].model == model){
-                            return row.fields[j]
+                            let field = row.fields[j]
+                            if(field.conditions === undefined && row.conditions !== undefined){
+                                field.conditions = Object.assign({},row.conditions)
+                            }
+                            return field
                         } 
                     }
                 }else{
@@ -192,30 +244,29 @@ export default {
         },
 
         isVisible(element){
-            
+            if(this.childrensHidden.indexOf(element.model) !== -1){
+                this.removeFromVisible(element.model)
+                return false
+            } 
             if(element.conditions !== undefined){
                 let conditions_failed = false
                 for (let i = 0; i < element.conditions.length; i++) {
                     const condition = element.conditions[i]
                     const modelValue = this.getModelValue(this.getElementDefinition(condition.model))
-                    
                     if(['array','object'].indexOf(typeof modelValue) !== -1){
-                        
                         conditions_failed = !this.atLeastOne(modelValue, condition)
                     }else{
-                        
                         if(condition.values.indexOf(modelValue) === -1){
                             conditions_failed = true
                         }
                     }
-                    
-                    
                 }
                 if(conditions_failed) return false
             }
-            this.visibles.push(element.model)
+            if(element.model!==undefined && this.visibles.indexOf(element.model) === -1) this.visibles.push(element.model)
             return true
         },
+
         atLeastOne(values, condition){
             let at_least_one = false
             for (let j = 0; j < values.length; j++) {
@@ -309,6 +360,7 @@ export default {
              let value = subkey ? this.modelHolder[key][subkey]:this.modelHolder[key]
              let elDefinition = this.getElementDefinition(keyEl)
              let hasError = false
+             
              if(elDefinition!== undefined && this.isVisible(elDefinition)) {
                 if(elDefinition.validation !== undefined){
                     for (let i = 0; i < elDefinition.validation.length; i++) {
@@ -402,8 +454,9 @@ export default {
             
             return objectProp
         },
-        wasActive(model){
-            if(this.activated_fields.indexOf(model) === -1)this.activated_fields.push(model)
+        wasActive(element){
+            if(element.model === undefined) return true
+            if(this.activated_fields.indexOf(element.model) === -1) this.activated_fields.push(element.model)
         },
         changedValue(newVal, model){
             this.setModelValue(newVal, model)
@@ -413,9 +466,23 @@ export default {
         },
         runningValidation(){
             this.visibles = []
+            this.childrensHidden = []
+            this.checkRowsVisibility()
             this.runValidation()
             this.testFormReady()
             this.pendingValidation = false
+        },
+
+        checkRowsVisibility(){
+            for (const key in this.schema) {
+                if (this.schema.hasOwnProperty(key)) {
+                    const row = this.schema[key]
+                    if(row.type=='row'){
+                        this.getRowClass(row)
+                    }
+                }
+            }
+            
         },
         submitTrigger(forceRequest = false){
             this.submitted = true
@@ -468,28 +535,7 @@ export default {
             if(this.modelHolder[myarr[0]] === undefined ) this.modelHolder[myarr[0]] = new Object
             this.modelHolder[myarr[0]][myarr[1]] = this.getDefaultCasted(element)
         },
-        getFormComponent(element){
-            let fieldsTypes = {
-                'label': 'FormFieldLabel',
-                'input' : 'FormFieldInput',
-                'inputs' : 'FormFieldInputs',
-                'checkbox' : 'FormFieldCheckbox',
-                'file' : 'FormFieldFile',
-                'editor' : 'FormFieldEditor',
-                'prices' : 'FormFieldPrices',
-                'status' : 'FormFieldStatus',
-                'select' : 'FormFieldSelect',
-                'checkimages' : 'FormFieldCheckImages',
-                'address' : 'FormFieldAddress',
-                'duration' : 'FormFieldDuration',
-                'countryselector' : 'FormFieldCountrySelector',
-                'imageselect' : 'FormFieldImageSelect',
-            }
-
-            fieldsTypes = window.wappointmentExtends.filter( 'FormGeneratorFieldsTypes', fieldsTypes, {mixins: [AbstractField,RequestMaker], components:{LabelMaterial}, allComponents:allComponents } )
-
-            return fieldsTypes[element.type]!== undefined ? fieldsTypes[element.type]:'FormFieldInput'
-        }
+        
     }
 }
 </script>

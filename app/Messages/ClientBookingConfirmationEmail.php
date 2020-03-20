@@ -6,6 +6,7 @@ use Wappointment\Models\Reminder;
 use Wappointment\Models\Client;
 use Wappointment\Models\Appointment;
 
+
 class ClientBookingConfirmationEmail extends AbstractEmail
 {
     use HasAppointmentFooterLinks;

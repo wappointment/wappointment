@@ -21,11 +21,9 @@
             </div>
             <div v-if="gallery" class="gallery">
                 <hr>
-                <WPMedias @selected="selectedFromGallery"></WPMedias>
+                <WPMedias @selected="selectedFromGallery" @confirmed="saveNewAvatar"></WPMedias>
                 <div class="bg-white pt-3">
                     <button class="btn btn-secondary" @click="close">Close</button>
-                    <button class="btn btn-primary" :class="[selectedId?'':'btn-disabled']" 
-                    :disabled="!selectedId" @click="saveNewAvatar">Confirm</button>
                 </div>
             </div>
         </div>
@@ -62,13 +60,13 @@ export default {
             this.edit = false
             this.gallery = false
         },
-        selectedFromGallery(id){
-            this.selectedId = id
+        selectedFromGallery(element){
+            this.selectedId = element.id
         },
         revertToGravatar(){
             this.saveGravatarRequest()
         },
-        saveNewAvatar(){
+        saveNewAvatar(format){
             if(!this.selectedId) return false
             this.saveNewAvatarRequest()
         },

@@ -4,6 +4,7 @@ namespace Wappointment\Messages;
 
 use Wappointment\Messages\Templates\FoundationEmail;
 use Pelago\Emogrifier\CssInliner;
+use Wappointment\Services\Settings;
 
 abstract class AbstractEmail extends AbstractMessage
 {
@@ -17,6 +18,27 @@ abstract class AbstractEmail extends AbstractMessage
     {
         $this->renderer = new FoundationEmail($this->admin);
         $this->loadEmail(...$params);
+        if ($this->admin === false && Settings::getStaff('email_logo')) {
+            $this->addLogo(Settings::getStaff('email_logo'), 'full');
+            /* $this->renderer->setColors([
+                'primary' => 'transparent',
+                'primaryLight' => '#7A78D5',
+                'separator' => 'transparent',
+            ]); */
+        }
+    }
+
+    public function addLogo($logo = [], $separator = 'body-border radius')
+    {
+        $this->addBlock('logo', $logo, $separator);
+    }
+    public function addBlock($type, $lines = [], $separator = 'body-border radius')
+    {
+        $this->messageBlocks[] = [
+            'type' => $type,
+            'content' => $lines,
+            'separator' => $separator
+        ];
     }
 
     public function renderSubject()
@@ -26,16 +48,39 @@ abstract class AbstractEmail extends AbstractMessage
 
     public function renderBody()
     {
-        if (!empty($this->body)) {
-            return $this->finalWrap();
-        }
-        //get the body as an array
-        $this->body = '';
+        if (!empty($this->body)) $this->addBlock('default', $this->body);
+        $this->body = $this->renderBlocks();
+        return $this->finalWrap();
+    }
+
+    public function renderBlocks()
+    {
+        $blocks = '';
         foreach ($this->messageBlocks as $block) {
-            $this->body .= $this->renderer->wrapRow($block);
+            switch ($block['type']) {
+                case 'button':
+                    $blocks .= $this->renderer->button($block['content'], $block['action']);
+                    break;
+                case 'roundedSquare':
+                    $blocks .= $this->renderer->wrapRoundedSquare($block['content'], $block['separator']);
+                    break;
+                case 'altRoundedSquare':
+                    $blocks .= $this->renderer->wrapAltRoundedSquare($block['content'], $block['separator']);
+                    break;
+                case 'logo':
+                    $blocks .= $this->renderer->logo($block['content']);
+                    break;
+                case 'spacer':
+                    $blocks .= $this->renderer->spacer();
+                    break;
+
+                default:
+                    $blocks .= $this->renderer->wrapRow(isset($block['content']) ? $block['content'] : $block);
+                    break;
+            }
         }
 
-        return $this->finalWrap();
+        return $blocks;
     }
 
     public function renderMessage()
@@ -45,10 +90,11 @@ abstract class AbstractEmail extends AbstractMessage
 
     public function finalWrap()
     {
-        $this->body = $this->renderer->wrapRow($this->body);
+
         if (method_exists($this, 'footerLinks')) {
-            $this->body .= $this->renderer->wrapFooter($this->footerLinks());
+            $this->body .= $this->footerLinks();
         }
+        $this->body = $this->renderer->wrapRow($this->body) . $this->renderer->wrapFooter('');
         if (method_exists($this, 'replaceTags')) {
             $this->replaceTags();
         }

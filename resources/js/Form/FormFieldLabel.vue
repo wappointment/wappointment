@@ -1,5 +1,5 @@
 <template>
-    <div :class="getClassWrapper" v-html="label"></div>
+    <div class="label-formgen" :class="getClassWrapper" v-html="label"></div>
 </template>
 
 <script>

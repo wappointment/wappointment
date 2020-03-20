@@ -2,21 +2,9 @@
     <div class="reduced" v-if="viewData!== null">
         <ErrorList :errors="errorMessages" className="popupErrors"></ErrorList>
         <FormGenerator ref="mcformgenerator" :schema="schema" :data="sendconfig" 
-        @submit="sendTestEmail" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
-        labelButton="Save" @ready="readytosubmit">
+            @submit="sendTestEmail" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
+            labelButton="Save" @ready="readytosubmit">
         </FormGenerator>
-        <div v-if="isSendmail" class="form-group valid col-md-12 field-input">
-            <a href="javascript:;" class="small" v-if="!clickedAdvanced" @click="clickedAdvanced=!clickedAdvanced">More configuration</a>
-            <div v-else >
-                <label for="sendmail-configuration" ><span>Sendmail command</span></label> 
-                <div class="field-wrap">
-                    <div class="wrapper">
-                        <input id="sendmail-configuration" v-model="sendconfig.sendmailcmd"  
-                        placeholder="e.g.: /usr/sbin/sendmail -bs" type="text" class="form-control">
-                    </div>
-                </div>
-            </div>
-        </div>
         <!-- Ports links -->
         <div v-if="showSmtpPorts" class="form-group valid col-md-12 field-radios">
             <small class="field-wrap ">
@@ -30,7 +18,7 @@
                 </span>
             </small> 
         </div>
-        
+ 
         <div v-if="hasMethod">
             <hr>
             <!-- From address setup -->
@@ -77,7 +65,6 @@
 <script>
 import FormGenerator from '../Form/FormGenerator'
 import abstractView from '../Views/Abstract'
-import momenttz from '../appMoment'
 import Validation from '../Modules/Validation'
 export default {
   extends: abstractView,
@@ -118,6 +105,7 @@ export default {
         ports: false,
         preset: '',
         formready: false,
+        method: '',
 
         formKey: 'formmailconfig',
           schema: [
@@ -243,6 +231,9 @@ export default {
               type: 'row',
               class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
               classEach: 'mr-2',
+              conditions: [
+                { model:'method', values: ['smtp'] }
+              ],
               fields: [
                 {
                     type: "input",
@@ -251,9 +242,6 @@ export default {
                     required: true,
                     cast: String,
                     validation: ['required'],
-                    conditions: [
-                        { model:'method', values: ['smtp'] }
-                    ],
                 },
                 {
                     type: "password",
@@ -262,9 +250,6 @@ export default {
                     required: true,
                     cast: String,
                     validation: ['required'],
-                    conditions: [
-                        { model:'method', values: ['smtp'] }
-                    ],
                 },
 
               ]
@@ -274,6 +259,9 @@ export default {
               type: 'row',
               class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
               classEach: 'mr-2',
+              conditions: [
+                { model:'method', values: ['smtp'] }
+              ],
               fields: [
                 {
                     type: "input",
@@ -282,9 +270,6 @@ export default {
                     required: true,
                     cast: String,
                     validation: ['required'],
-                    conditions: [
-                    { model:'method', values: ['smtp'] }
-                    ],
                 },
                 {
                     type: "number",
@@ -295,9 +280,6 @@ export default {
                     max: 65535,
                     cast: String,
                     validation: ['required','number'],
-                    conditions: [
-                    { model:'method', values: ['smtp'] }
-                    ],
                 },
                 {
                     type: "select",
@@ -306,9 +288,6 @@ export default {
                     cast: String,
                     elements: [{id:'', name: 'none'},{id:'ssl', name: 'ssl'},{id:'tls', name: 'tls'} ],
                     labelKey: 'name',
-                    conditions: [
-                    { model:'method', values: ['smtp'] }
-                    ],
                 },
 
               ]
@@ -377,31 +356,13 @@ export default {
         },
         canSend(){
             return this.formready
-            if(this.sendconfig.method == 'mailgun') {
-                if(this.sendconfig.mgkey != '' && this.sendconfig.mgdomain != '') return true
-            } else if(this.sendconfig.method == 'sendgrid') {
-                if(this.sendconfig.sgkey != '' && this.sendconfig.sgkeyname != '') return true
-            } else if(this.sendconfig.method == 'smtp') {
-                if(this.sendconfig.username != '' && this.sendconfig.password != '' && this.sendconfig.host != '' && this.sendconfig.port >= 0) return true
-            }else if(this.sendconfig.method == 'sendmail') {
-                return true
-            }else if(this.sendconfig.method == 'wpmail') {
-                return true
-            }
-            return false
         },
         showSmtpPorts(){
             return this.sendconfig.method=='smtp' && this.ports !== false
         },
-        schemas(){
-            let originalCopy = this.originalSchema()
 
-            originalCopy.fields = _.compact( _.map(originalCopy.fields, this.filterFields) ) ;
-
-            return {fields: _.compact(originalCopy.fields)};
-        },
         hasMethod() {
-            return this.sendconfig.method != ''
+            return [''].indexOf(this.method) === -1
         },
         isWpMail() {
             return ['wpmail'].indexOf(this.sendconfig.method) !== -1
@@ -422,6 +383,7 @@ export default {
   methods: {
       changedValue(newSendConfig){
           this.sendconfig = newSendConfig
+          this.method = newSendConfig.method
       },
       readytosubmit(ready){
           this.formready = ready
@@ -431,33 +393,7 @@ export default {
           this.sendconfig.encryption = encryption
           this.sendconfig.port = port
       },
-      filterFields(a) {
-        
-            if(['method'].indexOf(a.model)!==-1 ) return a
-            
-            if(this.isWpMail && a.groupKey == 'wpmail' ) {
-                 return a
-            }
-
-            if(this.hasApi && a.groupKey == 'mg' ) {
-                 return a
-            }
-            if(this.isSendgrid && a.groupKey == 'sg' ) {
-                 return a
-            }
-
-/*             if(this.isSendmail && a.groupKey == 'sendmail' ) {
-                return a;
-            } */
-            
-            if(this.isSmtp && a.groupKey == 'smtp' ) {
-                return a
-            }
-      },
-
-      save(){
-
-      },
+   
       async sendTestEmailRequest(){
           return await this.serviceSetting.call('sendtestemail', {data: this.sendconfig, recipient: this.recipient}) 
       },
@@ -470,168 +406,9 @@ export default {
           this.$emit('mailConfigured')
           this.successRequest(e)
       },
-
-      originalSchema(){
-        return {
-                fields: [
-                
-                {
-                    type: "bschecklist",
-                    label: "Sending method",
-                    model: "method",
-                    buttonMode: true,
-                    radioMode: true,
-                    required: true,
-                    values: [
-                    { value: 'wpmail', name:'WP mail', sub: 'Simple to setup, but can be unreliable', subclass:'tt-danger'}, 
-                    { value: 'mailgun', name:'Mailgun API', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
-                    { value: 'sendgrid', name:'SendGrid API', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
-                    { value: 'smtp', name:'SMTP', sub: 'For experts only', subclass:'tt-info'},
-                    ],
-                    styleClasses: 'col-md-12'
-                },
-                {
-                    type: "label",
-                    label: "You can only send text versioned email with WP mail",
-                    styleClasses: 'col-md-12',
-                    groupKey: 'wpmail'
-                },
-                {
-                    type: "label",
-                    label: "Don't have a MailGun account? <a href='https://signup.mailgun.com/new/signup' target='_blank'>Signup for free</a>",
-                    styleClasses: 'col-md-12',
-                    groupKey: 'mg'
-                },
-                {
-                    type: "radios",
-                    model: "mgarea",
-                    label: "Area",
-                    values: [
-                    { value: '', name:'US'},
-                    { value: 'eu', name:'Europe'},
-                    ],
-                    required: true,
-                    styleClasses: 'col-md-12',
-                    groupKey: 'mg'
-                },
-                {
-                    type: "input",
-                    label: "API Domain",
-                    model: "mgdomain",
-                    placeholder: 'e.g.: mg.mydomain.com',
-                    required: true,
-                    validator: ['string'],
-                    styleClasses: 'col-md-12',
-                    groupKey: 'mg'
-                },
-                {
-                    type: "input",
-                    label: "API key",
-                    placeholder: 'e.g.: key-da7175885eecdffb1df2bc092d13ec33',
-                    model: "mgkey",
-                    required: true,
-                    validator: ['string'],
-                    styleClasses: 'col-md-12',
-                    groupKey: 'mg'
-                },
-                {
-                    type: "label",
-                    label: "Don't have a SendGrid account? <a href='https://signup.sendgrid.com/' target='_blank'>Signup for free</a>",
-                    styleClasses: 'col-md-12',
-                    groupKey: 'sg'
-                },
-                {
-                    type: "input",
-                    label: "SendGrid Key name",
-                    model: "sgkeyname",
-                    placeholder: 'e.g.: mykeyname',
-                    required: true,
-                    validator: ['string'],
-                    styleClasses: 'col-md-12',
-                    groupKey: 'sg'
-                },
-                {
-                    type: "input",
-                    label: "SendGrid API key",
-                    placeholder: 'e.g.: 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',
-                    model: "sgkey",
-                    required: true,
-                    validator: ['string'],
-                    styleClasses: 'col-md-12',
-                    groupKey: 'sg'
-                },
-                
-                {
-                    type: "radios",
-                    model: "smtppreset",
-                    values: [
-                    { value: '', name:'Custom'},
-                    { value: 'mailgun', name:'Mailgun'},
-                    { value: 'sendgrid', name:'Sendgrid'},
-                    ],
-                    styleClasses: 'col-md-12',
-                    groupKey: 'smtp'
-                },
-                {
-                    type: "input",
-                    label: "Username",
-                    model: "username",
-                    required: true,
-                    validator: ['string'],
-                    styleClasses: 'col-md-6',
-                    groupKey: 'smtp'
-                },
-                {
-                    type: "bspassword",
-                    label: "Password",
-                    model: "password",
-                    required: true,
-                    validator: ['string'],
-                    styleClasses: 'col-md-6',
-                    groupKey: 'smtp'
-                },
-                {
-                    type: "input",
-                    label: "Host",
-                    model: "host",
-                    required: true,
-                    validator: ['string'],
-                    styleClasses: 'col-md-7',
-                    groupKey: 'smtp'
-                },
-                {
-                    type: "input",
-                    label: "Port",
-                    inputType: "number",
-                    model: "port",
-                    required: true,
-                    min: 0,
-                    max: 65535,
-                    validator: ['number'],
-                    styleClasses: 'col-md-2',
-                    groupKey: 'smtp'
-                },
-                {
-                    type: "select",
-                    label: "Encryption",
-                    selectOptions: {
-                        noneSelectedText: 'none'
-                    },
-                    model: "encryption",
-                    values: ['ssl', 'tls'],
-                    validator: ['string'],
-                    styleClasses: 'col-md-3',
-                    groupKey: 'smtp'
-                },
-                
-                ]
-                
-            };
-        },
       
       loaded(viewData){
           this.viewData = viewData.data
-          
           this.sendconfig = viewData.data.mail_config
           this.recipient = this.viewData.recipient
       },
@@ -664,7 +441,7 @@ export default {
     height: 40px;
     width: 40px;
 }
-.vue-form-generator .field-label label span {
+.form-wrapppo .label-formgen {
     display: block;
     width: 100%;
     margin-left: 0px;

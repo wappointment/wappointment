@@ -15,18 +15,23 @@ class ReminderController extends RestController
 
     public function save(Request $request)
     {
-        $requested = $request->all();
+        $requested = $request->except(['locked', 'email_logo']);
         $requested['published'] = true;
+        $this->saveImage($request);
         if ($this->isTrueOrFail(Reminder::save($requested))) {
             return ['message' => 'Reminder saved'];
         } else {
             throw new \WappointmentException('Couldn\'t save preview', 1);
         }
     }
-
+    protected function saveImage(Request $request)
+    {
+        Settings::saveStaff('email_logo', $request->input('email_logo'));
+    }
     public function patch(Request $request)
     {
-        if ($this->isTrueOrFail(Reminder::save($request->except(['locked'])))) {
+        $this->saveImage($request);
+        if ($this->isTrueOrFail(Reminder::save($request->except(['locked', 'email_logo'])))) {
             return ['message' => 'Reminder updated'];
         } else {
             throw new \WappointmentException('Couldn\'t update reminder', 1);
@@ -73,6 +78,7 @@ class ReminderController extends RestController
             'multiple_service_type' => \Wappointment\Helpers\Service::hasMultipleTypes(),
             'reminders' => $queryReminders->get(),
             'defaultReminder' => Reminder::getSeedReminder(),
+            'email_logo' => Settings::getStaff('email_logo'),
             'labels' => [
                 'types' => MReminder::$types,
                 'events' => MReminder::$events

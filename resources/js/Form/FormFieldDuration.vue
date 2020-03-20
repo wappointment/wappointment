@@ -23,7 +23,7 @@ export default {
     mixins: [AbstractField],
     computed:{
         formatedValue(){
-            return this.updatedValue + ' ' + this.definition.unit
+            return this.updatedValue + ' ' + (this.definition.unit !== undefined ? this.definition.unit:'')
         }
     },
     watch: {

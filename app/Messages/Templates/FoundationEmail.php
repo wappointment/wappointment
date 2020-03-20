@@ -13,17 +13,29 @@ class FoundationEmail
   ];
   private $includedStyles = ['core'];
 
+  public function setColors($colors)
+  {
+    $this->colors = $colors;
+  }
   public function wrapFooter($content)
   {
-    return $this->wrapRow('<small>' . $content . '</small>', 'row collapsed footer');
+    return $this->wrapRow('<small>' . $content . '</small>', 'row collapsed footer', 'footer');
   }
 
-  public function logo()
+  public function logo($logo = [])
   {
-    return $this->wrapRow('<center><a class="text-center" href="' . Helpers::wappointmentLink('email', 'daily_email') . '">' .
-      '<img class="float-center" alt="wappointment.com" src="' .
-      Helpers::pluginUrl('/dist/images/wappointment_80.png')
-      . '" ></a> </center>', 'row collapsed wappointment', 'row body-border radius', '', '', false);
+
+    if ($logo) {
+      return $this->wrapRow('<center><a class="text-center" href="' . site_url() . '">' .
+        '<img class="float-center" alt="' . site_url() . '" src="' .
+        esc_url($logo['src'])
+        . '" ></a> </center>', 'row collapsed', 'row', '', '', false, '');
+    } else {
+      return $this->wrapRow('<center><a class="text-center" href="' . Helpers::wappointmentLink('email', 'daily_email') . '">' .
+        '<img class="float-center" alt="wappointment.com" src="' .
+        Helpers::pluginUrl('/dist/images/wappointment_80.png')
+        . '" ></a> </center>', 'row collapsed wappointment', 'row body-border radius', '', '', false);
+    }
   }
 
   public function wrapRoundedSquare($content, $class = 'body-border radius')
@@ -36,7 +48,7 @@ class FoundationEmail
     return $this->wrapRow($content, 'row collapsed alt-rounded-square', $class);
   }
 
-  public function wrapRow($content_lines, $classRow = 'row', $tableClass = '', $columnClass = 'columns', $spacer = true)
+  public function wrapRow($content_lines, $classRow = 'row', $tableClass = '', $columnClass = 'columns', $spacer = true, $keepPadding = 'small-12 large-12')
   {
     if (empty($content_lines)) {
       return '';
@@ -50,7 +62,7 @@ class FoundationEmail
               <table class="' . $classRow . '">
                 <tbody>
                   <tr>
-                    <th class="small-12 large-12 ' . $columnClass . ' first last">
+                    <th class=" ' . $keepPadding . ' ' . $columnClass . ' first last">
                       <table>
                         <tr>
                           <th>
@@ -440,6 +452,10 @@ class FoundationEmail
                                 margin: 0 auto;
                                 Margin: 0 auto;
                                 text-align: inherit; }
+
+                                table.container.footer {
+                                  background: transparent;
+                                }
                               
                               table.row {
                                 padding: 0;
@@ -1555,6 +1571,7 @@ class FoundationEmail
                                   table.button.small-expanded center {
                                     min-width: 0; } }
                                   
+                                    .footer {background-color:transparent}
                                   .body-border {border: 5px solid ' . $this->getColor('primary') . '; padding:0 12px;} 
 
                                   .wappointment {background-color: ' . $this->getColor('primary') . ';}

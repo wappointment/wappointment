@@ -33,7 +33,7 @@
 import abstractView from './Abstract'
 import settingsGeneral from './SettingsGeneral'
 import settingsNotifications from './SettingsNotifications'
-import settingsReminders from './SettingsReminders'
+import settingsReminders from './SettingsReminders2'
 import settingsAdvanced from './SettingsAdvanced'
 import settingsAddons from './SettingsAddons'
 

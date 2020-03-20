@@ -28,8 +28,9 @@ export default {
       this.currentView = false
       this.crumbs = []
     },
-    setCrumb(newView, labelCrumb, methodCrumb){
+    setCrumb(newView, labelCrumb, methodCrumb, props={}){
         this.currentView = newView
+        this.dynamicProps = props
         this.crumbs = [
             { target: 'goToMain', label: this.mainCrumbLabel},
             { target: methodCrumb, label: labelCrumb, disabled:true},

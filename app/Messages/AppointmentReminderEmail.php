@@ -25,6 +25,7 @@ class AppointmentReminderEmail extends ClientBookingConfirmationEmail
                 return;
             }
 
+
             $this->subject = $email->subject;
             $this->body = $email->getHtmlBody($appointment);
         }

@@ -3,6 +3,7 @@ export default {
     props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr'],
     watch: {
         updatedValue(newVal, oldVal){
+            if(this.model === undefined ) return
             if(this.definition!==undefined && this.definition.liveParse !== undefined) {
                 const parsedVal = this.definition.liveParse(newVal)
                 if(newVal != parsedVal){

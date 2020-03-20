@@ -3,6 +3,21 @@
         <div v-if="elements.length > 0" class="d-flex flex-wrap">
             <div v-for="element in elements" class="media-cell" :class="[isSelected(element)?'selected':'']" @click="selectMedia(element)">
                 <MediaPreview :element="element" :selected="selectedImage"></MediaPreview>
+                <div class="btn-group" v-if="isSelected(element)">
+                    <button class="btn btn-primary" type="button"  @click.prevent.capture.stop="$emit('confirmed', selected)" >Confirm</button>
+                    <div class="dropdown">
+                        <button class="btn btn-primary dropdown-toggle" @click.prevent.capture.stop="showFormat = !showFormat" type="button" id="dropdownMenuButton">
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+                        <div class="dropdown-menu" :class="{'show':showFormat}" aria-labelledby="dropdownMenuButton">
+                            <a class="dropdown-item" 
+                            v-for="(image_details, image_size) in element.media_details.sizes" @click.prevent.capture.stop="$emit('confirmed', selected, image_size)" >
+                                {{ image_size }} ({{ image_details.width }}*{{ image_details.height }} )
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
         <div v-else>
@@ -44,7 +59,8 @@ export default {
             selected: false,
             total:0,
             pages:0,
-            page: 1
+            page: 1,
+            showFormat: false,
         } 
     },
     created(){
@@ -62,11 +78,11 @@ export default {
             this.getMedia()
         },
         selectMedia(element){
-            this.selected = element.id
-            this.$emit('selected', this.selected, element)
+            this.selected = element
+            this.$emit('selected', this.selected)
         },
         isSelected(element){
-            return this.selected == element.id
+            return this.selected.id == element.id
         },
         getMedia() {
             this.request(this.getMediaRequest,  undefined,undefined,false,  this.loadedMedias)

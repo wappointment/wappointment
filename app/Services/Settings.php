@@ -129,11 +129,13 @@ class Settings
             'calurl' => '',
             'timezone' => $timezone,
             'avatarId' => false,
-            'viewed_updates' => false
+            'viewed_updates' => false,
+            'email_logo' => false
         ];
     }
 
-    public static function default($key)
+    public static function
+    default($key)
     {
         $default_settings = static::allDefaults();
 
@@ -155,7 +157,7 @@ class Settings
             return $values[$setting_key];
         }
         return ($default !== null) ? $default : static::
-        default($setting_key);
+            default($setting_key);
     }
 
     public static function save($setting_key, $value)

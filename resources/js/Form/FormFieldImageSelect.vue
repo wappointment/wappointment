@@ -1,8 +1,12 @@
 <template>
     <div class="picture-edit">
-        <div @click="changePicture" class="text-center mr-2 preview-fimage">
+        <div @click="changePicture" class="text-center preview-fimage">
             <div class="fimage-edit">
-                <img v-if="hasImage" :src="updatedValue.src" class="img-fluid rounded" width="40">
+                <div v-if="hasImage">
+                    <div :style="'background-image: url(' + updatedValue.src + ');'" class="img-bg d-flex justify-content-center align-items-center">
+                        <div class="btn btn-secondary btn-lg">Change Picture</div>
+                    </div>
+                </div>
                 <i v-else class="dashicons dashicons-format-image"></i>
                 <span class="small text-primary" href="javascript:;">edit</span>
             </div>
@@ -10,14 +14,14 @@
         <div v-if="edit" class="fimage-selection">
             <div class="d-flex align-items-center" v-if="hasImage">
                 <div class="fimage-edit" >
-                    <img :src="updatedValue.src" class="img-fluid rounded" width="40">
+                    <img :src="updatedValue.src" class="img-fluid rounded" :width="preview.width">
                 </div>
                 <a class="btn btn-secondary btn-xs" href="javascript:;" @click="clearImage">Clear</a>
             </div>
             <span class="close close-gallery" @click="close"></span>
             <div class="gallery">
                 <hr>
-                <WPMedias @selected="selectedFromGallery" :selectedImage="selectedImage"></WPMedias>
+                <WPMedias @selected="selectedFromGallery" @confirmed="confirmSelection" :selectedImage="selectedImage"></WPMedias>
                 <div class="bg-white pt-3">
                     <button class="btn btn-secondary" @click.prevent="close">Close</button>
                 </div>
@@ -42,18 +46,25 @@ export default {
     },
     data() {
         return {
+            isHover:false,
             edit: false,
+            size: 'thumbnail',
+            preview: {
+                width: 40
+            }
         } 
     },
     created(){
         if(this.src)    this.updatedValue.src = this.src
+        this.size = this.definition.size !== undefined ? this.definition.size:this.size
+        this.preview = this.definition.preview !== undefined ? this.definition.preview:this.preview
     },
     computed:{
         hasImage(){
             return this.updatedValue !== undefined && this.updatedValue.src !== undefined
         },
         selectedImage(){
-            return this.updatedValue !== undefined && this.updatedValue.wp_id !== undefined ? this.updatedValue.wp_id:false
+            return this.updatedValue !== undefined && this.updatedValue.wp_id !== undefined ? this.updatedValue.wp_id:0
         }
     },
     methods:{
@@ -67,22 +78,32 @@ export default {
         close(){
             this.edit = false
         },
-        selectedFromGallery(id, element){
-            let wp_image = {wp_id: id, src: this.updatedValue.src }
-            if(element.media_details!== undefined && element.media_details.sizes.thumbnail!== undefined){
-                wp_image.src = element.media_details.sizes.thumbnail.source_url
-            }
-            this.updatedValue = wp_image
+        confirmSelection(element, format){
+            this.selectedFromGallery(element,format)
             this.close()
         },
-        selectImage(){
-            this.close()
-        }
+        selectedFromGallery(element, format){
+            let wp_image = {wp_id: element.id, src: this.updatedValue.src }
+            let selectedsize = format === undefined ? this.size:format
+            if(element.media_details!== undefined && element.media_details.sizes[selectedsize]!== undefined){
+                wp_image.src = element.media_details.sizes[selectedsize].source_url
+            }
+            this.updatedValue = wp_image
+            
+        },
+
     },
 
 }
 </script>
 <style >
+    .img-bg {
+        min-height: 100px;
+        background-size: auto;
+        background-repeat: no-repeat;
+        background-position: center top;
+    }
+
     .fimage-edit i.dashicons{
         width: 40px;
         height: 40px;
@@ -125,13 +146,17 @@ export default {
         border: 1px solid #eee;
         cursor: pointer;
         border-radius: 0.3rem;
-        width: 44px;
     }
     .preview-fimage:hover{
         border: 1px solid #6664cb;
     }
     .fimage-edit{
         position:relative;
+        max-height: 100px;
+        overflow: hidden;
+    }
+    .fimage-edit:hover {
+        max-height: 100%;
     }
     .fimage-edit span.text-primary{
         position: absolute;

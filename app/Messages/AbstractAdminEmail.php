@@ -6,12 +6,7 @@ abstract class AbstractAdminEmail extends AbstractEmail
 {
     protected $admin = true;
 
-    public function addLogo()
-    {
-        $this->addBlock('logo');
-    }
-
-    public function addRoundedSquare($lines, $separator = true)
+    public function addRoundedSquare($lines, $separator = 'body-border radius')
     {
         $this->addBlock('roundedSquare', $lines, $separator);
     }
@@ -25,14 +20,7 @@ abstract class AbstractAdminEmail extends AbstractEmail
         ];
     }
 
-    public function addBlock($type, $lines = [], $separator = true)
-    {
-        $this->messageBlocks[] = [
-            'type' => $type,
-            'content' => $lines,
-            'separator' => $separator ? 'body-border radius' : ''
-        ];
-    }
+
     public function addBr()
     {
         $this->messageBlocks[] = [
@@ -45,39 +33,5 @@ abstract class AbstractAdminEmail extends AbstractEmail
             'type' => 'content',
             'content' => $lines,
         ];
-    }
-
-    public function renderBody()
-    {
-        if (!empty($this->body)) {
-            return $this->finalWrap();
-        }
-        //get the body as an array
-        $this->body = '';
-        foreach ($this->messageBlocks as $block) {
-            switch ($block['type']) {
-                case 'button':
-                    $this->body .= $this->renderer->button($block['content'], $block['action']);
-                    break;
-                case 'roundedSquare':
-                    $this->body .= $this->renderer->wrapRoundedSquare($block['content'], $block['separator']);
-                    break;
-                case 'altRoundedSquare':
-                    $this->body .= $this->renderer->wrapAltRoundedSquare($block['content'], $block['separator']);
-                    break;
-                case 'logo':
-                    $this->body .= $this->renderer->logo();
-                    break;
-                case 'spacer':
-                    $this->body .= $this->renderer->spacer();
-                    break;
-
-                default:
-                    $this->body .= $this->renderer->wrapRow($block['content']);
-                    break;
-            }
-        }
-
-        return $this->finalWrap();
     }
 }
