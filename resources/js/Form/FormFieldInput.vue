@@ -2,7 +2,7 @@
     <div :class="getClassWrapper">
         <LabelMaterial>
             <input :type="getInputType" class="form-control" @keydown.prevent.stop.enter="catchEnterEvent"  :class="{'is-invalid':hasErrors}" :id="id" 
-            @focusout="$emit('activated')" :placeholder="label" 
+            @focusout="$emit('activated')" :placeholder="label" :autocomplete="autocomplete !== false?'on':'off'"
             v-model="updatedValue">
         </LabelMaterial>
         <div class="small text-danger" v-if="hasErrors">

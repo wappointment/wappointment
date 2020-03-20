@@ -3,21 +3,25 @@
         <div v-if="elements.length > 0" class="d-flex flex-wrap">
             <div v-for="element in elements" class="media-cell" :class="[isSelected(element)?'selected':'']" @click="selectMedia(element)">
                 <MediaPreview :element="element" :selected="selectedImage"></MediaPreview>
-                <div class="btn-group" v-if="isSelected(element)">
-                    <button class="btn btn-primary" type="button"  @click.prevent.capture.stop="$emit('confirmed', selected)" >Confirm</button>
-                    <div class="dropdown">
-                        <button class="btn btn-primary dropdown-toggle" @click.prevent.capture.stop="showFormat = !showFormat" type="button" id="dropdownMenuButton">
-                            <span class="sr-only">Toggle Dropdown</span>
-                        </button>
-                        <div class="dropdown-menu" :class="{'show':showFormat}" aria-labelledby="dropdownMenuButton">
-                            <a class="dropdown-item" 
-                            v-for="(image_details, image_size) in element.media_details.sizes" @click.prevent.capture.stop="$emit('confirmed', selected, image_size)" >
-                                {{ image_size }} ({{ image_details.width }}*{{ image_details.height }} )
-                            </a>
+                <div class="text-center" v-if="!sizeSelect">
+                    <button v-if="isSelected(element)" class="btn btn-primary" type="button"  @click.prevent.capture.stop="$emit('confirmed', selected)" >Confirm</button>
+                </div>
+                <div class="text-center" v-else>
+                    <div class="btn-group" v-if="isSelected(element)">
+                        <button class="btn btn-primary" type="button"  @click.prevent.capture.stop="$emit('confirmed', selected)" >Confirm</button>
+                        <div class="dropdown">
+                            <button class="btn btn-primary dropdown-toggle" @click.prevent.capture.stop="showFormat = !showFormat" type="button" id="dropdownMenuButton">
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                            <div class="dropdown-menu" :class="{'show':showFormat}" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item" 
+                                v-for="(image_details, image_size) in element.media_details.sizes" @click.prevent.capture.stop="$emit('confirmed', selected, image_size)" >
+                                    {{ image_size }} ({{ image_details.width }}*{{ image_details.height }} )
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-                
             </div>
         </div>
         <div v-else>
@@ -49,6 +53,10 @@ export default {
         selectedImage:{
             type: Number,
             default: 0
+        },
+        sizeSelect:{
+            type: Boolean,
+            default: true
         }
 
     },

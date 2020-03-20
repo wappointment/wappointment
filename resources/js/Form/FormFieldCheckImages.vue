@@ -6,7 +6,11 @@
         <div class="d-flex">
             <div v-for="(item, idx) in images" :key="idx" @click="onChanged(item)"  
             class="btn btn-secondary btn-cell" :class="{'is-invalid':hasErrors, selected: isItemChecked(item)}">
-                <FontAwesomeIcon v-if="item.icon !== undefined" :icon="item.icon" size="lg"/>
+                <div v-if="item.icon !== undefined">
+                    <FontAwesomeIcon v-if="item.icontype===undefined" :icon="item.icon" size="lg"/>
+                    <span v-if="item.icontype=='wp'" :class="'dashicons dashicons-' + item.icon"></span>
+                </div>
+                
                 <div>{{ item.name }}</div>
             </div>
         </div>
@@ -34,7 +38,7 @@ export default {
     props:{
         images:{
             type:Array,
-        }
+        },
     },
     computed: {
 

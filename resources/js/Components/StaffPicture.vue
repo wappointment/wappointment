@@ -21,7 +21,7 @@
             </div>
             <div v-if="gallery" class="gallery">
                 <hr>
-                <WPMedias @selected="selectedFromGallery" @confirmed="saveNewAvatar"></WPMedias>
+                <WPMedias @selected="selectedFromGallery" @confirmed="saveNewAvatar" :sizeSelect="false"></WPMedias>
                 <div class="bg-white pt-3">
                     <button class="btn btn-secondary" @click="close">Close</button>
                 </div>

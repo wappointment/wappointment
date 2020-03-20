@@ -1,6 +1,6 @@
 <script>
 export default {
-    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr'],
+    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr', 'autocomplete'],
     watch: {
         updatedValue(newVal, oldVal){
             if(this.model === undefined ) return

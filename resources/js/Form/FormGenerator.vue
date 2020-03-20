@@ -1,5 +1,5 @@
 <template>
-    <form @submit.prevent.stop="submitTrigger" class="form-wrapppo" :class="classWrapper">
+    <form @submit.prevent.stop="submitTrigger" class="form-wrapppo" :class="classWrapper" :autocomplete="autocomplete?'on':'off'">
         <div v-if="!formIsReady" class="loading-overlay d-flex align-items-center">
             <WLoader></WLoader>
         </div>
@@ -13,7 +13,7 @@
                             :parentErrors="errorsData" :parentModel="modelHolder"
                             @loaded="loadedField(keydi, skeydi)"
                             v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement)" 
-                            :definition="subelement" :errors="getErrors(subelement)" />
+                            :definition="subelement" :autocomplete="autocomplete" :errors="getErrors(subelement)" />
                         </div>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
                         <component :is="getFormComponent(element)" :value="getModelValue(element)" 
                         :parentErrors="errorsData" :parentModel="modelHolder"
                     @loaded="loadedField(keydi)" :errors="getErrors(element)"
-                    v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :definition="element"/>
+                    v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :autocomplete="autocomplete" :definition="element"/>
                     </div>
                     
                 </div>
@@ -112,6 +112,10 @@ export default {
         backbuttonLabel: {
             type: String,
         },
+        autocomplete: {
+            type: Boolean,
+            default:true
+        }
     },
     components: allComponents,
     data: () => ({

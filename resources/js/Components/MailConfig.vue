@@ -2,7 +2,7 @@
     <div class="reduced" v-if="viewData!== null">
         <FormGenerator ref="mcformgenerator" :schema="schema" :data="sendconfig" 
             @submit="sendTestEmail" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
-            labelButton="Save" @ready="readytosubmit">
+            labelButton="Save" @ready="readytosubmit" :autocomplete="false">
         </FormGenerator>
         <!-- Ports links -->
         <div v-if="showSmtpPorts" class="form-group valid col-md-12 field-radios">
@@ -115,10 +115,10 @@ export default {
                 radioMode: true,
                 cast: Array,
                 images: [
-                { value: 'wpmail', name:'WP mail', icon: 'map-marked-alt', sub: 'Simple to setup, but can be unreliable', subclass:'tt-danger'}, 
-                { value: 'mailgun', name:'Mailgun API', icon: 'map-marked-alt', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
-                { value: 'sendgrid', name:'SendGrid API', icon: 'map-marked-alt', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
-                { value: 'smtp', name:'SMTP', icon: 'map-marked-alt', sub: 'For experts only', subclass:'tt-info'},
+                { value: 'wpmail', name:'WP mail', icontype:'wp', icon:'wordpress-alt', sub: 'Simple to setup, but can be unreliable', subclass:'tt-danger'}, 
+                { value: 'mailgun', name:'Mailgun API', icontype: 'wp', icon:'rest-api', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
+                { value: 'sendgrid', name:'SendGrid API', icontype: 'wp', icon:'rest-api', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
+                { value: 'smtp', name:'SMTP', icontype:'wp', icon: 'admin-settings', sub: 'For experts only', subclass:'tt-info'},
                 ],
                 validation: ['required']
             },
