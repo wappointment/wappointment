@@ -1,6 +1,5 @@
 <template>
     <div class="reduced" v-if="viewData!== null">
-        <ErrorList :errors="errorMessages" className="popupErrors"></ErrorList>
         <FormGenerator ref="mcformgenerator" :schema="schema" :data="sendconfig" 
             @submit="sendTestEmail" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
             labelButton="Save" @ready="readytosubmit">
@@ -65,10 +64,8 @@
 <script>
 import FormGenerator from '../Form/FormGenerator'
 import abstractView from '../Views/Abstract'
-import Validation from '../Modules/Validation'
 export default {
   extends: abstractView,
-  mixins: [Validation],
   components:{FormGenerator},
     mounted(){
         this.refreshInitValue()
@@ -419,17 +416,13 @@ export default {
 }
 </script>
 <style>
-.vue-form-generator .form-control[type=number] {
-    padding: 0 .2rem;
-}
+
 .btn-lg .dashicons, .btn-lg .dashicons:before {
     width: auto;
     height: auto;
     font-size: 30px;
 }
-.vue-form-generator .text-primary {
-    color: #3773b4 !important;
-}
+
 .btn-secondary.disabled, .btn-secondary:disabled {
     cursor: not-allowed;
     background-color: #6c757d;

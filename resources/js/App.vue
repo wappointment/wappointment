@@ -60,19 +60,6 @@ export default {
     content: "\f147";
 }
 
-.vue-form-generator .field-radios .radio-list label {
-    display: inline-block;
-    margin-right: 1rem;
-}
-
-.vue-form-generator fieldset {
-    margin: 1rem 0;
-}
-
-.vue-form-generator .field-wrap {
-    display: block !important;
-}
-
  h1{
     margin-top: 1rem;
 }
@@ -89,16 +76,6 @@ export default {
 }
 .modal-dialog{
     max-width:590px;
-}
-.vue-form-generator fieldset {
-    margin: 0 !important;
-}
-.vue-form-generator .radio-list {
-    display: -ms-flexbox !important;
-    display: flex !important;
-}
-.vue-form-generator .radio-list label {
-    margin-right: 4px;
 }
 .text-success{
     color: #66b36d;

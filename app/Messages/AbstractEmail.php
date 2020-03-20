@@ -48,7 +48,9 @@ abstract class AbstractEmail extends AbstractMessage
 
     public function renderBody()
     {
-        if (!empty($this->body)) $this->addBlock('default', $this->body);
+        if (!empty($this->body)) {
+            $this->addBlock('default', $this->body);
+        }
         $this->body = $this->renderBlocks();
         return $this->finalWrap();
     }

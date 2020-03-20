@@ -42,8 +42,6 @@ const Wizard4Page = () => import(/* webpackChunkName: "group-wizard2" */ './View
 const RegavPage = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/Regav')
 const SyncPage = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/Sync')
 const ServicePage = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/Service')
-const ReminderAdd = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/ReminderAdd')
-
 
 const router = window.wappointmentrouter = new VueRouter({
   mode: 'history',
@@ -130,11 +128,6 @@ const router = window.wappointmentrouter = new VueRouter({
                 path: 'reminders',
                 name: 'reminders',
                 component: SettingsPage
-            },
-            {
-                path: 'addreminder',
-                name: 'addreminder',
-                component: ReminderAdd
             },
             {
                 path: 'advanced',

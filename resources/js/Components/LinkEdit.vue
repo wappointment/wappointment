@@ -51,14 +51,6 @@ export default {
   }
 }
 </script>
-<style scoped>
-.vue-form-generator .form-control:not([class*=" col-"]) {
-    width: 76px;
-}
-.vue-form-generator .btn-outline-secondary {
-    max-height: 31px;
-}
 
-</style>
 
 
