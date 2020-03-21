@@ -1,4 +1,4 @@
-=== Appointment Booking Calendar by Wappointment ===
+=== Wappointment - Appointments for WordPress ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
 Requires at least: 4.7
@@ -15,7 +15,7 @@ A powerful and reliable appointment booking system, packing the simplest appoint
 A powerful and reliable **[appointment booking system](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**, packing the simplest appointment booking process for your clients.
 The **booking solution for professionals**. Get booked 24/7 using our super **user-friendly booking form**.
 
-Our Appointment booking system is designed for anyone who provide services to customers (personal coach, estate agent, language teachers, therapists,  health professionals, beauty and wellness professionals, fitness professionals, etc...)
+Our system is designed for anyone who provide services to customers (personal coach, estate agent, language teachers, therapists, health professionals, beauty and wellness professionals, fitness professionals, etc…)
 
 Wappointment is free and will remain **free forever**.
 
