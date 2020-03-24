@@ -107,15 +107,14 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 1.3.0 - 2020-03-20 =
-* Added Sendgrid API for email sending
-* Added Mailgun Area (EU, US) for email reminders
+= 1.3.0 - 2020-03-24 =
+* Added SendGrid API for email sending
+* Added MailGun Area (EU, US) for email reminders
 * Added header logo selection for email reminders
-* Corrected rendering issues for emails works now in major emails providers
-* Corrected bug for shortcode insertion
-* Corrected appearing booking modules on rechedule cancel page
+* Corrected rendering issues for emails
+* Corrected bug for shortcode insertion of booking module
+* Corrected booking module appearing on reschedule  and cancel page
 * Dropped vue-form-generator
-
 
 = 1.2.4 - 2020-02-07 =
 * Fixed PHP 7.0 issue with frontend validation
