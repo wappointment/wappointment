@@ -3,7 +3,7 @@ export default {
     props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr', 'autocomplete'],
     watch: {
         updatedValue(newVal, oldVal){
-            if(this.model === undefined ) return
+            if(this.formGen !== false && this.model === undefined ) return
             if(this.definition!==undefined && this.definition.liveParse !== undefined) {
                 const parsedVal = this.definition.liveParse(newVal)
                 if(newVal != parsedVal){
@@ -18,7 +18,8 @@ export default {
         updatedValue: undefined,
         waitForScript: false,
         id: null,
-        eventEmit: 'change'
+        eventEmit: 'change',
+        formGen: false,
     }),
     created(){
         this.updatedValue = this.value

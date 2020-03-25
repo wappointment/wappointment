@@ -10,7 +10,7 @@
                     :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
                         <div :class="{'d-none': inVisibles(subelement)}">
                             <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" 
-                            :parentErrors="errorsData" :parentModel="modelHolder"
+                            :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true"
                             @loaded="loadedField(keydi, skeydi)"
                             v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement)" 
                             :definition="subelement" :autocomplete="autocomplete" :errors="getErrors(subelement)" />
@@ -20,7 +20,7 @@
                 <div v-else class="form-group" :class="{'d-none': inVisibles(element)}"  :style="getStyle(element)" >
                     <div :class="{'d-none': inVisibles(element)}">
                         <component :is="getFormComponent(element)" :value="getModelValue(element)" 
-                        :parentErrors="errorsData" :parentModel="modelHolder"
+                        :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true"
                     @loaded="loadedField(keydi)" :errors="getErrors(element)"
                     v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :autocomplete="autocomplete" :definition="element"/>
                     </div>
