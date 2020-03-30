@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.3
 Requires PHP: 7.0
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -106,6 +106,11 @@ It requires work on your end but keeps your site safe and optimized.
 8. Help Page. Have a question? Simply ask for it straight in there.
 
 == Changelog ==
+
+= 1.3.1 - 2020-03-30 =
+* Added Booking form auto-select first day with available slots
+* Fixed checkboxes issue in Booking Form Editor
+* Fixed month availability minor issue
 
 = 1.3.0 - 2020-03-24 =
 * Added SendGrid API for email sending

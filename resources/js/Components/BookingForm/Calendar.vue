@@ -96,12 +96,18 @@ export default {
         this.time_format = this.timeprops.time_format
         this.currentTz = this.timeprops.currentTz
 
-        this.setMonth(this.todayYear, this.todayMonth - 1)
+        this.setMonth(this.todayYear, this.todayMonth - 1, false)
         this.intervalsCollection = this.initIntervalsCollection
         this.resetIntervals()
        
         this.mounted = true
-        
+        let i = 0
+        while(this.totalSlots == 0 && !this.isLastMonth && i < 40){
+            this.changeMonth()
+            i++
+        }
+
+        this.selectFirstDayAvail()
         
     },
     updated: function () {
@@ -113,7 +119,8 @@ export default {
         }
     },
 
-    computed: {       
+    computed: {   
+
         isDemo(){
             return this.options.demoData !== undefined
         }, 
@@ -128,17 +135,17 @@ export default {
             let weekDays = startWeekDays.concat(endWeekDays)
             return weekDays
         },
-        realMonthNumber() {
+        realMonthNumber() { //month number go from 0 to 11 in momentjs
             return this.monthNumber + 1
         },
         firstDayMonth() {
-             return momenttz().tz(this.currentTz).year(this.yearNumber).month(this.realMonthNumber).startOf('month')
+             return momenttz().tz(this.currentTz).year(this.yearNumber).month(this.monthNumber).startOf('month')
         },
         lastDayMonth() {
             if(this.isCurrentMonth) {
                 return this.now.clone().endOf('month')
             } else {
-                return momenttz().tz(this.currentTz).year(this.yearNumber).month(this.realMonthNumber).endOf('month')
+                return momenttz().tz(this.currentTz).year(this.yearNumber).month(this.monthNumber).endOf('month')
             }
         },
         todayIs() {
@@ -221,7 +228,22 @@ export default {
         },
     },
     methods: {
-
+        selectFirstDayAvail(){
+            for (let i = 0; i < this.reorganiseDays.length; i++) {
+                const week = this.reorganiseDays[i]
+                for (let j = 0; j < week.length; j++) {
+                    const day = week[j]
+                    if(day>0){
+                        let daySlots = this.hasAvailability(day)
+                        if(daySlots !== undefined && daySlots > 0){
+                            return this.selectDay(day, i)
+                        }
+                    }
+                }
+                
+            }
+  
+        },
         getClassAvailability(day, idweek){
             if(this.isDemo && this.demoSelected.day == day){
                 this.demoSelected.week = idweek
@@ -271,36 +293,43 @@ export default {
             this.availableIntervals = this.getDayIntervals(daynumber)
         },
         
-        prevMonth(){
-            this.resetWeekSelection()
-            if(this.isCurrentMonth === true) return false
+        
+        decrementMonth(){
             let monthNumber = this.monthNumber - 1
             let yearNumber = this.yearNumber
             if(monthNumber < 0) {
                 monthNumber = 11
                 yearNumber = this.yearNumber - 1
             }
-            
-            this.sideMonth = 'left'
-            
-            setTimeout(this.setMonth.bind('', yearNumber, monthNumber), 100)
-            //this.setMonth(yearNumber, monthNumber)
+            return {month:monthNumber, year: yearNumber}
         },
-
-        nextMonth(){
-            if(this.isLastMonth === true ) return false
-            this.resetWeekSelection()
+        incrementMonth(){
             let monthNumber = this.monthNumber + 1
             let yearNumber = this.yearNumber
             if(monthNumber > 11) {
                 monthNumber = 0
                 yearNumber = this.yearNumber + 1
             }
-            
+            return {month:monthNumber, year: yearNumber}
+        },
+        changeMonth(increment = true, animate = false){
+            this.resetWeekSelection()
+            let newMonth = increment ===false ? this.decrementMonth():this.incrementMonth()
+            if(animate) {
+                setTimeout(this.setMonth.bind('', newMonth.year, newMonth.month), 100)
+            }else{
+                this.setMonth(newMonth.year, newMonth.month, false)
+            }
+        },
+        nextMonth(){
+            if(this.isLastMonth === true ) return false
             this.sideMonth = 'right'
-            
-            setTimeout(this.setMonth.bind('', yearNumber, monthNumber), 100)
-            //this.setMonth(yearNumber, monthNumber)
+            this.changeMonth(true, true)
+        },
+        prevMonth(){
+            if(this.isCurrentMonth === true) return false
+            this.sideMonth = 'left'
+            this.changeMonth(false, true)
         },
 
         resetIntervals(){
@@ -313,19 +342,19 @@ export default {
             }
         },
         setIntervals(start, end){
-
             this.currentIntervals = this.intervalsCollection.get(start, end)
             this.totalSlots = this.currentIntervals.splits(parseInt(this.duration)*60).totalSlots()
         },
-        setMonth(yearNumber, monthNumber){
+        setMonth(yearNumber, monthNumber, delay=true){
             this.monthNumber = monthNumber 
             this.yearNumber = yearNumber
             this.selectedDay = false
             this.currentMonth = false
-            setTimeout(this.monthSelected.bind('',yearNumber, monthNumber), 100)
-/*             this.currentMonth = calendar().of(yearNumber, monthNumber)
-            this.resetIntervals() */
-
+            if(delay) {
+                setTimeout(this.monthSelected.bind('',yearNumber, monthNumber), 100)
+            }else{
+                this.monthSelected(yearNumber, monthNumber)
+            }
         },
         monthSelected(yearNumber, monthNumber){
             this.currentMonth = calendar().of(yearNumber, monthNumber)
@@ -336,11 +365,10 @@ export default {
             return this.isCurrentMonth === true && this.todayDay > day
         },
         hasAvailability(daynumber){
-            if(this.isPast(daynumber)) return 0
+            if(this.isPast(daynumber) || daynumber < 1) return 0
             if(this.cachedSlots[daynumber] !== undefined) return this.cachedSlots[daynumber]
 
             let dayIntervals = this.getDayIntervals(daynumber)
-            
             this.cachedSlots[daynumber] = dayIntervals.splits(parseInt(this.duration)*60).totalSlots()
             if(this.isDemo && this.demoSelected.day == false && this.cachedSlots[daynumber] > 0){
                 
