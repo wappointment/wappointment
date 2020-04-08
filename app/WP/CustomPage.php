@@ -55,7 +55,8 @@ class CustomPage
             add_filter('wp_title', [$this, 'metaPageTitle']);
             add_filter('the_title', [$this, 'scanTitle']);
             add_filter('the_content', [$this, 'scanContent'], 98);
-            \Wappointment\WP\Helpers::enqueueFrontScripts();
+            add_action('init', ['\\Wappointment\\WP\\Helpers', 'enqueueFrontScripts'], 98);
+            //\Wappointment\WP\Helpers::enqueueFrontScripts();
         }
     }
 

@@ -104,6 +104,9 @@ export default {
     max-width: 320px;
     min-width: 200px;
 }
+.wap-bf.show{
+  max-width: 320px;
+}
 .br-fixed .wap-wid .btn-booking{
   float:right;
 }

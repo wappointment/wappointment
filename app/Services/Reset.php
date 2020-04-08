@@ -13,7 +13,7 @@ class Reset
     {
 
         do_action('wappointment_reset');
-
+        sleep(2); //giving time for revert on addons
         $this->removeStaffSettings();
 
         $this->dropTables();

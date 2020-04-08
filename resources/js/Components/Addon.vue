@@ -1,26 +1,31 @@
-<template>
+<template>                                                                       
     <div class="addon addon-active d-flex flex-column align-self-start" 
       :class="{registered: isRegistered, 'installed-addon': 
-      isInstalled, activated: isActivated, 'coming-soon': !isPublished}">
+      isInstalled, activated: isActivated, 'coming-soon': !isPublished, 'odd':!odd}">
             <div class="d-flex addon-header align-items-center">
-                <h2 class="mb-0 m-auto">{{ addon.options.name }}</h2>
+                <img :src="apiSite+'/images/addon-'+addon.key+'.svg'" class="img-fluid m-auto"/>
             </div>
-            <div class="text-muted px-4 pt-4" v-html="addon.options.description"></div>
+            <div class="content-addon">
+                <h2 class="pb-4 m-auto">{{ addon.options.name }}</h2>
+                <div class="addon-desc text-muted mb-0" v-html="addon.options.description"></div>
+            </div>
             <div v-if="isPublished" class="footer p-4">
                 <div v-if="hasGallery && !isRegistered" class="d-flex my-2">
                     <img v-for="media in addon.media" :src="media" @click="showFullScreen(media)" class="img-gallery img-fluid"/>
                 </div>
-                <div v-if="!isRegistered" class="mt-auto d-flex align-items-center">
-                    
-                    <div class="font-italic">
-                        <div>Price: <strong>{{ getRealPrice(getPriceSingle) }}€</strong></div>
-                    </div>
-                    <div class="ml-auto pl-2"> 
-                        <a :href="buyAddonUrl" target="_blank" class="btn btn-outline-primary btn-block">Get it</a>
+                <div v-if="!isRegistered" class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <a class="btn btn-outline-primary" :href="learnAddonUrl">Learn more</a>
                     </div>
                 </div>
+
                 <div v-else class="mt-auto">
-                    <div>Licence <strong class="text-success">active</strong> until : <u class="small">{{ addon.expires_at }}</u></div>
+                    <div class="d-flex align-items-center">
+                        <span class="indicator"></span>
+                        <span>
+                            Licence <strong class="text-success">active</strong> until: <u class="small">{{ addon.expires_at }}</u>
+                        </span>
+                        </div>
                     <div v-if="isPlugin" class="my-2">
                     <div v-if="!isInstalled">
                         <button class="btn btn-primary" @click="install">Install</button>
@@ -59,13 +64,17 @@
 
 <script>
 import HelpersPackages from '../Helpers/Packages'
-
+import AbstractListing from '../Views/AbstractListing'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
+
 export default {
     components: {SubscribeNewsletter},
     mixins: [HelpersPackages],
-    props: ['addon', 'viewData', 'apiSite'],
+    props: ['addon', 'viewData', 'apiSite', 'idx'],
     computed: {
+        odd(){
+            return this.idx%2 == 0
+        },
         requireSetup(){
             return this.isActivated && this.addon.initial_install!==undefined && this.addon.initial_install
         },
@@ -78,8 +87,12 @@ export default {
         wizardHasBeenRanAlready(){
             return this.addon.initial_wizard || this.addon.settingKey === undefined //doesnt have settings
         },
+        learnAddonUrl(){
+         return this.addon.options.product_page !== undefined ? this.addon.options.product_page : this.buyAddonUrl
+       },
+        
         buyAddonUrl(){
-         return this.apiSite + '/addons?addon=' + this.addon.key +'&origin=' + encodeURIComponent(window.location.href)
+         return this.apiSite + '/addons'
        },
        isActivated(){
           return this.isRegistered && (this.addon.solutions.length > 1 || this.addon.activated)
@@ -133,15 +146,126 @@ export default {
 }
 </script>
 <style>
-.img-gallery {
+.addons .addon {
+    border-radius: 1rem;
+    background-color: #fcfcfc;
+    border: 1px solid #f2f2f2;
+    margin: 1rem;
+    max-width: 420px;
+}
+
+.addons .addon.addon-active{
+    cursor: pointer;
+    transition: all .3s ease-in-out;
+    box-shadow: 0 0 0 0 rgba(0,0,0,.1);
+}
+.addons .addon.addon-active:hover{
+    box-shadow: 0 .4rem 1rem 0 rgba(0,0,0,.1);
+}
+
+.addons .addon .content-addon{
+  position:relative;
+}
+.addons .addon .footer .indicator {
+    height: .8rem;
+    width: .8rem;
+    display: inline-block;
+    margin-right: .5rem;
+    border-radius: 2rem;
+}
+
+.addons .addon.registered.installed-addon .footer .indicator {
+    background-color: #66c677;
+}
+
+
+.addons .addon.addon-active.coming-soon {
+    border: 2px dashed #cacaca;
+    background-color: #fbfbfb;
+}
+
+.addons .addon{
+  overflow:hidden;
+}
+
+.addons .addon .footer{
+  background: #f7f7f7;
+}
+
+
+.addon.coming-soon .addon-header {
+    background-color:#777699;
+}
+
+.addon .img-gallery {
     border: 1px solid #ccc;
     border-radius: .4em;
     cursor: pointer;
     margin-right: .2em;
 }
-.img-gallery:hover {
+.addon .img-gallery:hover {
 
     border-color: #6664cb;
 
 }
+.addon ul{
+    margin-top: 1rem;
+}
+.addon hr{
+  width: 100%;
+  border-top: 2px solid rgba(210, 210, 210, 0.4);
+}
+.addon ul li{
+    padding-left: 0;
+    list-style: none;
+}
+        
+.addon ul li{
+    list-style-position: outside;
+    margin-left: 1.6rem;
+    position: relative;
+    font-size: .9rem;
+}
+        
+.addon ul li::before {
+    font-family: dashicons;
+    background-color: #9393c8;
+    -webkit-mask: url('../wp-content/plugins/wappointment/dist/images/fa/toggle-off.svg') no-repeat center;
+    mask: url('../wp-content/plugins/wappointment/dist/images/fa/toggle-off.svg') no-repeat center;
+    content: " ";
+    font-weight: 900;
+    position: absolute;
+    left: -1.6rem;
+    width: 20px;
+    height: 16px;
+    color: #fff;
+    margin-top: .1rem;
+}
+
+.addon h2{
+    font-size: 1.8rem;
+    text-align: center;
+}
+.addon .btn-outline-primary {
+    color: #9393c8 !important;
+}
+.addon .addon-header{
+    padding: 1rem 2rem;
+    background: linear-gradient(130deg,#a7a6cc,#bc8f9e);
+    color: #fff;
+    border-radius: 1rem 1rem 0 0;
+    min-height: 100px;
+    max-height: 220px;
+}
+
+.addon .addon-header img{
+    max-width:300px;
+}
+.addon.odd .addon-header {
+    background: linear-gradient(130deg,#bc8f9e,#feecb1);
+}
+.addon .content-addon{
+  padding:2rem;
+}
+
 </style>

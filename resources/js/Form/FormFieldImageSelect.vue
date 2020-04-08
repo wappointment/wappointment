@@ -2,9 +2,9 @@
     <div class="picture-edit">
         <div @click="changePicture" class="text-center preview-fimage">
             <div class="fimage-edit">
-                <div v-if="hasImage">
+                <div v-if="hasImage" @mouseover="changeButtonOn = true" @mouseout="changeButtonOn = false">
                     <div :style="'background-image: url(' + updatedValue.src + ');'" class="img-bg d-flex justify-content-center align-items-center">
-                        <div class="btn btn-secondary btn-lg">Change Picture</div>
+                        <div v-if="changeButtonOn" class="btn btn-secondary btn-lg">Change Picture</div>
                     </div>
                 </div>
                 <i v-else class="dashicons dashicons-format-image"></i>
@@ -46,6 +46,7 @@ export default {
     },
     data() {
         return {
+            changeButtonOn: false,
             isHover:false,
             edit: false,
             size: 'thumbnail',
@@ -55,7 +56,7 @@ export default {
         } 
     },
     created(){
-        if(this.src)    this.updatedValue.src = this.src
+        if([undefined,''].indexOf(this.src) === -1)    this.updatedValue.src = this.src
         this.size = this.definition.size !== undefined ? this.definition.size:this.size
         this.preview = this.definition.preview !== undefined ? this.definition.preview:this.preview
     },
@@ -99,9 +100,10 @@ export default {
 <style >
     .img-bg {
         min-height: 100px;
-        background-size: auto;
+        background-size: cover;
         background-repeat: no-repeat;
         background-position: center top;
+        min-width: 100px;
     }
 
     .fimage-edit i.dashicons{

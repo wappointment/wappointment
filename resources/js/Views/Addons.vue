@@ -12,10 +12,10 @@
         <a href="javascript:;" v-if="debugIsOn" @click="checkLicence">checkLicence</a>
       </div>
     </div>
-    <div class="addons d-flex flex-wrap" v-if="dataLoaded">
+    <div class="addons d-flex flex-wrap pb-4" v-if="dataLoaded">
       <template v-for="(addon,id) in viewData.addons"> 
         <AddonPreview 
-        :apiSite="apiSite" :viewData="viewData" :addon="addon"
+        :apiSite="apiSite" :viewData="viewData" :idx="id" :addon="addon"
         @openWizardModal="openWizardModal" 
         @runInstallation="runInstallation" 
         @install="install"
@@ -210,117 +210,10 @@ export default {
 </script>
 <style>
 
-.addons .addon {
-    border-radius: 1rem;
-    background-color: #fcfcfc;
-    border: 1px solid #f2f2f2;
-    margin: 1rem;
-    
-    max-width: 320px;
-}
-
-.addons .addon.addon-active{
-    cursor: pointer;
-    transition: all .3s ease-in-out;
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(0,0,0,.1);
-}
-.addons .addon.addon-active:hover{
-    transform: scale(1.02);
-    box-shadow: 0 .4rem 1rem 0 rgba(0,0,0,.1);
-}
-.addon hr{
-  width: 100%;
-  border-top: 2px solid rgba(210, 210, 210, 0.4);
-}
-.addons .addon::before {
-    height: 1rem;
-    width: 1rem;
-    content: "";
-    border-radius: 2rem;
-    position: absolute;
-    right: 12px;
-    top: 12px;
-}
-
-.addons .addon.registered{
-  border: 1px solid #6664cb;
-}
-
-.addons .addon.addon-active.coming-soon {
-    border: 2px dashed #cacaca;
-    background-color: #fbfbfb;
-}
-
-.addons .addon{
-  overflow:hidden;
-}
-
-.addons .addon{
-  overflow:hidden;
-}
-
-.addons .addon .footer{
-  background: #f7f7f7;
-}
-
-
-.addon.coming-soon .addon-header {
-    background-color:#777699;
-}
-.addons .addon.registered.installed-addon.activated{
-  border: 1px solid #64cb86;
-}
-
-.addons .addon.registered.installed-addon::before {
-    border: 2px solid #6ed52d;
-}
-.addons .addon.registered.installed-addon.activated::before {
-    background-color: #72ea9a;
-}
-
 .wappointment-wrap .addons p {
     margin-bottom: .2rem;
 }
 
-.addon ul{
-    margin-top: 1rem;
-}
-.addon ul li{
-    padding-left: 0;
-    list-style: none;
-}
-        
-.addon ul li{
-    list-style-position: outside;
-    margin-left: 1.6rem;
-    position: relative;
-    font-size: .9rem;
-}
-        
-.addon ul li::before {
-    font-family: dashicons;
-    color: #6664cb;
-    content: "\f147";
-    font-weight: 900;
-    margin-right:.5rem !important;
-    position: absolute;
-    left: -1.4rem;
-}
-.addon h2{
-    color: #fff;
-    font-size: 1.8rem;
-}
-.addon .addon-header{
-    padding: 1rem 2rem;
-    background-color: #8684d9;
-    color: #fff;
-    border-radius: 1rem 1rem 0 0;
-    height: 100px;
-}
-.addon .addon-desc{
-  padding: 2rem;
-}
 </style>
 
 
