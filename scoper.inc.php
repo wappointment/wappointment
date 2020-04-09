@@ -18,7 +18,7 @@ return [
         Finder::create()
             ->files()
             ->ignoreVCS(true)
-            ->notName('/LICENSE|.*\\.md|.*\\.dist|Docker|README\\.markdown|Makefile|phpstan\\.neon|build\\.xml|phpunit\\.xml|composer\\.json|composer\\.lock/')
+            ->notName('/LICENSE|.*\\.md|.*\\.dist|Docker|README\\.markdown|Makefile|UPGRADE_TO_2_1|UPGRADE_TO_2_2|phpstan\\.neon|build\\.xml|phpunit\\.xml|composer\\.json|composer\\.lock/')
             ->exclude([
                 'doc',
                 'docs',
