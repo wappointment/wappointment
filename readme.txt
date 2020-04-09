@@ -83,6 +83,10 @@ Ask us on [https://wappointment.com/support](https://wappointment.com/support?ut
 
 Of course. You decide the duration of your appointments whether it's 5 minutes, 10 minutes, ..., 4 hours long. It's all up to you.
 
+**Why do reminders go out late sometimes?**
+
+It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
+
 == Installation ==
 
 = Minimum Requirements =
@@ -107,9 +111,11 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 1.3.12- 2020-04-09 =
+= 1.3.2 - 2020-04-09 =
+* Tested and compatible with WP 5.4
 * Fixed styling issue rescheduling form
-* Updated addons
+* Updated addons page
+* Fixed rescheduling issue
 
 = 1.3.1 - 2020-03-30 =
 * Added Booking form auto-select first day with available slots
