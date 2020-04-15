@@ -65,10 +65,9 @@ class Calendar
         $original_content = $body->getContents();
         $body_string = $this->cleanContent($original_content);
         $result = false;
-        $calendarProcess = [];
-        
+
         $this->log('last-checked', time());
-;
+
         if ($this->hasChanged($body_string)) {
             $parser = new CalendarParser($this->url, $original_content, $this->staff_id);
             $this->log('last-parser', $parser->handle());
@@ -84,7 +83,7 @@ class Calendar
 
     private function getCalendarLogs()
     {
-        if(empty($this->calendar_logs[$this->calendar_id])){
+        if (empty($this->calendar_logs[$this->calendar_id])) {
             return [
                 'last-checked' => false,
                 'last-hash' => false,
@@ -95,16 +94,16 @@ class Calendar
         }
         return $this->calendar_logs[$this->calendar_id];
     }
-    
+
     private function log($property, $value, $save = true)
     {
-        if(empty($this->calendar_logs[$this->calendar_id])){
+        if (empty($this->calendar_logs[$this->calendar_id])) {
             $this->calendar_logs[$this->calendar_id] = $this->getCalendarLogs();
         }
-        
+
         $this->calendar_logs[$this->calendar_id][$property] = $value;
-        
-        if($save) {
+
+        if ($save) {
             WPHelpers::setStaffOption('calendar_logs', $this->calendar_logs, $this->staff_id);
         }
     }

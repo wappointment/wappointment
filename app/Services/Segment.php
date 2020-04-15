@@ -162,7 +162,6 @@ class Segment
 
 
                 if (!$this->notInContact($free, $free2)) {
-                    if ($debug) echo 'In Contact ' . "?\n";
                     if ($this->inContact($free, $free2)) {
                         if ($free->isFollowedBy($free2)) {
                             $free2->getLeft()->asOpened();
