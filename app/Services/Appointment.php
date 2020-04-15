@@ -20,6 +20,10 @@ class Appointment
 
     public static function create($data)
     {
+        if (empty($data['options']) || !is_array($data['options'])) {
+            $data['options'] = [];
+        }
+        $data['options']['buffer_time'] = (int) Settings::get('buffer_time');
         return AppointmentModel::create($data);
     }
 
@@ -204,7 +208,7 @@ class Appointment
         $result = $appointment->update(
             [
                 'start_at' => static::unixToDb($start_at),
-                'end_at' => static::unixToDb($start_at + $appointment->getDurationInSec()),
+                'end_at' => static::unixToDb($start_at + $appointment->getFullDurationInSec()),
             ]
         );
         if ($result) {

@@ -7,11 +7,14 @@ export default {
             if(this.definition!==undefined && this.definition.liveParse !== undefined) {
                 const parsedVal = this.definition.liveParse(newVal)
                 if(newVal != parsedVal){
-                    setTimeout(this.updateValueDelay.bind(null,parsedVal), 100);
+                    setTimeout(this.updateValueDelay.bind(null,parsedVal), 100)
                 }
                 
             }
-            return this.$emit(this.eventEmit, newVal, this.model)
+
+            if(oldVal !== undefined) {
+                return this.$emit(this.eventEmit, newVal, this.model)
+            }
         }
     },
     data: () => ({

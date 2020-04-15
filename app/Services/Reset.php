@@ -14,6 +14,7 @@ class Reset
 
         do_action('wappointment_reset');
         sleep(2); //giving time for revert on addons
+
         $this->removeStaffSettings();
 
         $this->dropTables();
@@ -28,9 +29,8 @@ class Reset
         foreach (Staff::getIds() as $staff_id) {
             Settings::deleteStaff($staff_id);
             WPHelpers::deleteStaffOption('availability', $staff_id);
-            WPHelpers::deleteStaffOption('last-calendar-id', $staff_id);
-            WPHelpers::deleteStaffOption('last-calendar-checked', $staff_id);
-            WPHelpers::deleteStaffOption('last-calendar-parsed', $staff_id);
+            WPHelpers::deleteStaffOption('calendar_logs', $staff_id);
+            WPHelpers::deleteStaffOption('cal_urls', $staff_id);
             WPHelpers::deleteStaffOption('viewed_updates', $staff_id);
             WPHelpers::deleteStaffOption('hello_page', $staff_id);
         }
@@ -40,7 +40,12 @@ class Reset
     private function dropTables()
     {
         $migrate = new \Wappointment\Installation\Migrate();
-        $migrate->rollback();
+        try {
+            $migrate->rollback();
+        } catch (\Throwable $th) {
+            throw new \WappointmentException("Error while DROPPING DB tables", 1);
+        }
+        
 
         Capsule::schema()->dropIfExists(Database::$prefix_self . '_migrations');
         if (Capsule::schema()->hasTable(Database::$prefix_self . '_migrations')) {

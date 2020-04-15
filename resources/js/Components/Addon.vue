@@ -149,6 +149,7 @@ export default {
 }
 </script>
 <style>
+@import '../../css/addon.css';
 .addons .addon {
     border-radius: 1rem;
     background-color: #fcfcfc;
@@ -229,21 +230,7 @@ export default {
     position: relative;
     font-size: .9rem;
 }
-        
-.addon ul li::before {
-    font-family: dashicons;
-    background-color: #9393c8;
-    -webkit-mask: url('../wp-content/plugins/wappointment/dist/images/fa/toggle-off.svg') no-repeat center;
-    mask: url('../wp-content/plugins/wappointment/dist/images/fa/toggle-off.svg') no-repeat center;
-    content: " ";
-    font-weight: 900;
-    position: absolute;
-    left: -1.6rem;
-    width: 20px;
-    height: 16px;
-    color: #fff;
-    margin-top: .1rem;
-}
+    
 
 .addon h2{
     font-size: 1.8rem;

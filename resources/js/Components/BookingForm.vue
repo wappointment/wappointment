@@ -276,7 +276,8 @@ export default {
                 this.currentStep = 'BookingCalendar'
 
                 this.service = this.rescheduleData.service
-                this.duration = (this.rescheduleData.appointment.end_at - this.rescheduleData.appointment.start_at)/60
+                let buffer_time_sec = this.rescheduleData.appointment.options.buffer_time !== undefined ? parseInt(this.rescheduleData.appointment.options.buffer_time) *60:0
+                this.duration = (this.rescheduleData.appointment.end_at - this.rescheduleData.appointment.start_at - buffer_time_sec)/60
                 this.location = this.rescheduleData.location
 
             }else{
@@ -289,6 +290,7 @@ export default {
                 this.loadedInit(this.step)
             }
         },
+
         setServiceDurationLocation(){
             this.services = this.viewData.services
 

@@ -136,7 +136,7 @@ class Availability
         $collection = \WappointmentLv::collect($test)->sortBy(0)->values()->all();
 
 
-        $this->availabilities = $segmentService->flatten($collection);
+        $this->availabilities = $segmentService->flatten($collection, true);
 
         // substract busy times to availability
         $busy_status = $segmentService->convertModel($newBusyStatuses->all());
@@ -152,7 +152,7 @@ class Availability
 
         // substract appointments to availability
         $this->availabilities = $segmentService->substract($this->availabilities, $appointments);
-
+        //$this->availabilities = $segmentService->flatten($this->availabilities);
         $this->reOrder();
 
         WPHelpers::setStaffOption('since_last_refresh', 0, $staff_id);

@@ -125,7 +125,9 @@ class Segment
 
     private function notInContact(IntegerInterval $interval, IntegerInterval $interval_2)
     {
-        return $interval->getLeft() < $interval_2->getRight() || $interval->getRight() > $interval_2->getLeft();
+        return ($interval->getLeft() < $interval_2->getRight() && $interval->getRight() < $interval_2->getLeft())
+            ||
+            ($interval->getLeft() > $interval_2->getRight() && $interval->getRight() > $interval_2->getLeft());
     }
 
 
@@ -150,13 +152,17 @@ class Segment
                 if (empty($free2)) {
                     continue;
                 }
+
+
                 if ($debug) {
                     echo '[' . $ki . ']free ' . $this->debugSegment($free) . "\n";
                     echo '[' . $ki2 . ']free2 ' . $this->debugSegment($free2) . "\n";
                     echo 'Union ' . $ki . ' ' . $ki2 . "?\n";
                 }
 
+
                 if (!$this->notInContact($free, $free2)) {
+                    if ($debug) echo 'In Contact ' . "?\n";
                     if ($this->inContact($free, $free2)) {
                         if ($free->isFollowedBy($free2)) {
                             $free2->getLeft()->asOpened();

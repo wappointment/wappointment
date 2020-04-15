@@ -12,7 +12,7 @@ class AppointmentController extends RestController
 {
     public function get(Request $request)
     {
-        $appointment = AppointmentModel::select(['start_at', 'status', 'end_at', 'type', 'client_id'])
+        $appointment = AppointmentModel::select(['start_at', 'status', 'end_at', 'type', 'client_id', 'options'])
             ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
             ->where('edit_key', $request->input('appointmentkey'))
             ->first();

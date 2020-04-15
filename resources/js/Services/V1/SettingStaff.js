@@ -3,9 +3,9 @@ export default class SettingStaffService extends ApiV1 {
 
     endpoints() {
         return {
-            save: { // method name
-                method: 'post', // method to htpp request
-                route: '/settingsstaff' // route to call with method
+            save: { 
+                method: 'post', 
+                route: '/settingsstaff' 
             },
             delete: {
                 method: 'delete',
@@ -14,7 +14,19 @@ export default class SettingStaffService extends ApiV1 {
             get: {
                 method: 'get',
                 route: '/settingsstaff'
-            }
+            },
+            saveCal: { 
+                method: 'post', 
+                route: '/settingsstaff/savecal'
+            },
+            disconnectCal: { 
+                method: 'post', 
+                route: '/settingsstaff/disconnect'
+            },
+            refreshCalendars: { 
+                method: 'post', 
+                route: '/settingsstaff/refreshcalendars' 
+            },
         };
     }
 

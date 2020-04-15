@@ -55,6 +55,7 @@ class Settings
                 ]
             ],
             'wappointment_allowed' => false,
+            'buffer_time' => 0,
             'scheduler_mode' => 0,
             'front_page' => 0,
             'approval_mode' => 1, // 1 stands for automatic
@@ -432,28 +433,4 @@ class Settings
         WPHelpers::transferStaffOptions(Settings::get('activeStaffId'), $newStaffId);
     }
 
-    protected static function calurlValid($value, $staff_id)
-    {
-        // 1 is url
-        $validator = new \Rakit\Validation\Validator;
-
-        $validation = $validator->validate(['calurl' => $value], [
-            'calurl' => 'required|url:http,https'
-        ]);
-
-        if ($validation->fails()) {
-            throw new \WappointmentException('The URL is not valid');
-        }
-        // 2 is reachable
-        $result = false;
-        try {
-            //make sure we can process it fully again
-            WPHelpers::deleteStaffOption('last-calendar-id', $staff_id);
-            $result = (new \Wappointment\Services\Calendar($value, $staff_id))->fetch();
-        } catch (\Exception $e) {
-            throw new \WappointmentException($e->getMessage());
-        }
-
-        return true;
-    }
 }

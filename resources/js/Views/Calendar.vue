@@ -7,7 +7,8 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
                 <h1 class="h2 align-self-center"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
-                <span class="d-none d-md-block badge badge-secondary align-self-center ml-3" >Free slots {{ totalSlots }}</span>
+                <span v-if="!viewingFreeSlot" @click="getFreeSlots" class="tt-below d-none d-md-block badge badge-secondary align-self-center ml-3 btn btn-link" data-tt="View free slots">Free slots {{ totalSlots }}</span>
+                <span v-else class="tt-below btn btn-link" @click="getEdition">Back to edition</span>
               </div>
               <div class="d-flex">
                 <TimeZones v-if="viewData!==null" :timezones="viewData.timezones_list" :staffTimezone="viewData.timezone" classW="align-self-center pr-2" 
@@ -23,7 +24,7 @@
             
             <div class="calendar-overflow" v-if="fullCalOption!==undefined">
               <div id="calendar">
-                <FullCalendarWrapper ref="calendar" @isReady="fcIsReady=true" :config="fullCalOption" />
+                <FullCalendarWrapper ref="calendar" @isReady="fcalReady" :config="fullCalOption" />
               </div>
             </div>
 
@@ -32,7 +33,10 @@
             <div v-if="fcIsReady">
                 <WapModal v-if="bookForAclient" :show="bookForAclient" @hide="hideModal" noscroll>
                   <h4 slot="title" class="modal-title">Choose an action</h4>
-                  <h5 v-if="selectionSingleDay"> {{ startDayDisplay }} - <span class="text-muted">From {{ startTimeDisplay }} until {{ endTimeDisplay }}</span></h5>
+                  <h5 v-if="selectionSingleDay"> {{ startDayDisplay }} - 
+                    <span class="text-muted">From {{ startTimeDisplay }} until {{ endTimeDisplay }}</span>
+                    <span class="small text-muted" v-if="viewData.buffer_time > 0">includes {{ viewData.buffer_time }}min buffer</span>
+                  </h5>
                   <h5 v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h5>
                   <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!selectedChoice">
                     
@@ -129,6 +133,7 @@ export default {
     observer: undefined,
     canLoadEvents: true,
     callback: undefined,
+    viewingFreeSlot: false,
     currentView: 'timeGridWeek',
     
     showRegularAv: false,
@@ -166,6 +171,7 @@ export default {
     serviceEvent: null,
     serviceStatus: null,
     openconfirm: false,
+    hasBeenSetCalProps: false
   }),
 
   created(){
@@ -174,6 +180,7 @@ export default {
     if(window.savedQueries!== undefined && [null,undefined].indexOf(window.savedQueries.open_confirm) === -1 && window.savedQueries.open_confirm > 0) {
       this.openconfirm = window.savedQueries.open_confirm
     }
+    
   },
 
  watch: {
@@ -296,6 +303,17 @@ export default {
     },
  },
   methods: {
+    fcalReady(){
+      this.fcIsReady=true
+    },
+    getFreeSlots(){
+      this.viewingFreeSlot = true
+      this.refreshEvents()
+    },
+    getEdition(){
+      this.viewingFreeSlot = false
+      this.refreshEvents()
+    },
     selectIsWithin(element){
       let selStart = momenttz.tz(this.startTime.format(), this.timezone)
       let selEnd = momenttz.tz(this.endTime.format(), this.timezone)
@@ -488,6 +506,19 @@ export default {
 
           if(this.loadedAfter !== undefined) this.loadedAfter()
           this.setFullCalOptions()
+          
+      },
+      setTodayAsPast(){
+        if(momenttz.tz(this.viewData.now,this.viewData.timezone).hour() >= this.maxHour){
+
+              let all = document.querySelectorAll('.fc-today')
+              for (let i = 0; i < all.length; i++) {
+                all[i].classList.add('fc-past')
+              }
+
+          }
+        
+
       },
       setFullCalOptions(){
           const intervalString = this.convertInterval()
@@ -558,7 +589,9 @@ export default {
         let daysProperties = []
         window.jQuery('.fc-day.fc-widget-content').each(function( index ) {
           if(window.jQuery(this).hasClass('fc-past') ) daysProperties.push('fc-past')
-          else daysProperties.push('')
+          else{
+            daysProperties.push('')
+          } 
         })
         this.daysProperties = daysProperties
       },
@@ -579,76 +612,85 @@ export default {
         })
       },
       isParentInThePast(element){
+        if(this.hasBeenSetCalProps){
+          return
+        }
         this.setDaysProperties()
         this.setSkeletonProperties()
+        this.setTodayAsPast()
+        this.hasBeenSetCalProps = true
       },
 
       eventRender(renderInfo){
+        
         let event = renderInfo.event
         let eventExt = event.extendedProps
+
+        
         let element = window.jQuery(renderInfo.el)
         this.isParentInThePast(element)
          //'.fc-content-skeleton tr td'
+
+        element.attr('data-id', eventExt.dbid)
+        element.attr('id', 'event-'+eventExt.type+event.id)
+        element.attr('data-rendering', event.rendering)
+
         
-          element.attr('data-id', eventExt.dbid)
-          element.attr('id', 'event-'+eventExt.type+event.id)
-          element.attr('data-rendering', event.rendering)
-
+        if(eventExt.onlyDelete!==undefined){
+          element.attr('data-only-delete', 1)
+        }
+        if(eventExt.past !== undefined && eventExt.past === true) {
+          element.addClass('past-event')
           
-          if(eventExt.onlyDelete!==undefined){
-            element.attr('data-only-delete', 1)
-          }
-          if(eventExt.past !== undefined && eventExt.past === true) {
-            element.addClass('past-event')
-            
-            if(this.isAppointmentEvent(event.rendering)){
-                element.find('.fc-time').html(this.getAppointmentHtml(event,element))
-                element.append('<div class="fc-bg"></div>')
-                element.click(this.cancelClick)
-                element.mouseenter(this.EOver)
-                element.mouseleave(this.EOut)
-              }
-          }else{
-
-            if(event.rendering =='background'){
-              element.mousedown(this.bgEOut)
-              if(eventExt.title !== undefined){
-                element.innerhtml = this.getCalendarSyncHtml(event)
-              }
-              
+          if(this.isAppointmentEvent(event.rendering)){
+              element.find('.fc-time').html(this.getAppointmentHtml(event,element))
+              element.append('<div class="fc-bg"></div>'+this.getBufferHtml(event))
               element.click(this.cancelClick)
-              element.mouseenter(this.bgEOverDelay)
-              element.mouseleave(this.bgEOut)
-            }else{
-              if(this.isAppointmentEvent(event.rendering)){
-                element.find('.fc-time').html(this.getAppointmentHtml(event,element))
-                element.append('<div class="fc-bg"></div>')
-                element.click(this.cancelClick)
-                element.mouseenter(this.EOver)
-                element.mouseleave(this.EOut)
-              }
+              element.mouseenter(this.EOver)
+              element.mouseleave(this.EOut)
+            }
+        }else{
+
+          if(event.rendering =='background'){
+            element.mousedown(this.bgEOut)
+            if([undefined,null].indexOf(eventExt.options)  === -1  && eventExt.options.title !== undefined){
+              element.attr('data-calendar-title', eventExt.options.title)
+            }
+            
+            element.click(this.cancelClick)
+            element.mouseenter(this.bgEOverDelay)
+            element.mouseleave(this.bgEOut)
+          }else{
+            if(this.isAppointmentEvent(event.rendering)){
+              element.find('.fc-time').html(this.getAppointmentHtml(event,element))
+              element.append('<div class="fc-bg"></div>'+this.getBufferHtml(event))
+              element.click(this.cancelClick)
+              element.mouseenter(this.EOver)
+              element.mouseleave(this.EOut)
             }
           }
+        }
 
       },
-      getCalendarSyncHtml(event){
-        return '<div>'+event.extendedProps.title+'</div>'
-      },
-      
 
       EOver(event){
-        if(this.disableBgEvent) return false
+        if(this.disableBgEvent) {
+          return false
+        }
 
         this.disableSelectClick = true
         
         this.attachEvent( window.jQuery(event.currentTarget))
         
       },
+
       EOut(event){
         
         this.disableSelectClick = false
 
-        if(this.disableBgEvent) return false;
+        if(this.disableBgEvent) {
+          return false
+        }
 
         /*window.jQuery(event.target).parent().css('z-index',2)*/
         let el = window.jQuery(event.currentTarget)
@@ -656,16 +698,18 @@ export default {
         el.find('.fill-event').remove()
 
       },
+
       bgEDown(event){ 
         this.hasBeenClicked = window.jQuery(event.currentTarget).attr('data-id')
-        event.stopPropagation();
+        event.stopPropagation()
       },
 
       modifyRegav(event){
         //this.$router.push({ name: 'regav'})
-        this.showRegularAv = true;
-        event.stopPropagation();
+        this.showRegularAv = true
+        event.stopPropagation()
       },
+
       isAppointmentEvent(datarendering){
         return ['appointment-confirmed', 'appointment-pending'].indexOf(datarendering) !== -1
       },
@@ -693,7 +737,11 @@ export default {
                 }else{
                   innerhtml += '<div class="crib orange">Personal Calendar</div>'
                 }
-                
+                if(el.attr('data-calendar-title')!== undefined){
+                    if(el.children('.cal-title').length == 0){
+                      innerhtml += '<div class="cal-title">'+el.attr('data-calendar-title')+'</div>'
+                    }
+                }
               }
               
             }
@@ -733,11 +781,14 @@ export default {
           }
           
         }else{
-          let innerhtml = '<div class="fill-event"><div class="crib grey">Weekly Availability</div>'
-          innerhtml += '<div class="d-flex justify-content-center align-items-center mx-4 ctrlbar"><button class="btn btn-xs btn-light modifyRegav" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-edit"></span></button></div>'
-          innerhtml += '</div>' // endfill-event
-          el.append(innerhtml)
-          el.find('.modifyRegav').on( "click", this.modifyRegav)
+          if(el.hasClass('opening')){
+            let innerhtml = '<div class="fill-event"><div class="crib grey">Weekly Availability</div>'
+            innerhtml += '<div class="d-flex justify-content-center align-items-center mx-4 ctrlbar"><button class="btn btn-xs btn-light modifyRegav" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-edit"></span></button></div>'
+            innerhtml += '</div>' // endfill-event
+            el.append(innerhtml)
+            el.find('.modifyRegav').on( "click", this.modifyRegav)
+          }
+          
         }
         let heightTarget = el.height()
 
@@ -751,19 +802,24 @@ export default {
         
       },
       bgEOverDelay(event){
-        this.cancelbgOver = setTimeout(this.bgEOver.bind('',event),200)
+        this.cancelbgOver = setTimeout(this.bgEOver.bind('',event),100)
       },
+      
       bgEOver(event,fsdfsd){
         let el =  window.jQuery(event.target)
         //return;
-        if(!el.hasClass('fc-bgevent')) return;
+        if(!el.hasClass('fc-bgevent')) {
+          return
+        }
         this.parentAttach = el.parent()
 
-        if(this.disableBgEvent) return false;
+        if(this.disableBgEvent) {
+          return false
+        }
 
         if(this.parentAttach.parent('.fc-content-col').find('.fc-highlight-container .fc-highlight').length>0) {
           this.disableBgEvent = true
-          return false;
+          return false
         }
         this.activeBgOverId = el.attr('data-id')
         window.jQuery('[data-id="' + this.activeBgOverId + '"]').addClass('hover')
@@ -780,6 +836,7 @@ export default {
         
 
       },
+
       bgEOut(event){
         window.jQuery('[data-id="' + this.activeBgOverId + '"]').removeClass('hover')
         this.activeBgOverId = false
@@ -790,13 +847,16 @@ export default {
         }
         if(event.type=='mousedown' && window.jQuery(event.target).hasClass('btn-secondary')) {
           this.$refs.calendar.fireMethod('unselect')
-          return false;
+          return false
         }
         this.disableSelectClick = false
 
-        if(this.disableBgEvent) return false;
+        if(this.disableBgEvent) {
+          return false
+        }
 
         let el = window.jQuery(event.target)
+        el.innterHtml = ''
         if(el.attr('data-parent-class') !== undefined){
           this.reAttach(el)
         }else{
@@ -811,6 +871,7 @@ export default {
         this.parentAttach = undefined
 
       },
+
       reAttach(el){
           el.appendTo(el.parent().find('.'+el.attr('data-parent-class')))
         
@@ -821,8 +882,8 @@ export default {
       },
       
       cancelClick(event){
-          event.stopPropagation();
-          return false;
+          event.stopPropagation()
+          return false
       },
       bgEClick(event){
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
@@ -1074,9 +1135,12 @@ export default {
 
             this.events[key].dbid = this.events[key].delId
             this.events[key].id = this.events[key].type+'-'+this.events[key].id
+            
             if( momenttz.tz(this.viewData.now,this.viewData.timezone).unix() > momenttz.tz(this.events[key].end, this.selectedTimezone).unix() ) {
               this.events[key].allowedit = false
               this.events[key].past = true
+              
+
             }else{
               this.events[key].allowedit = true
               this.events[key].past = false
@@ -1112,11 +1176,14 @@ export default {
           this.request(this.getEventsRequest, params,undefined,false,  this.callbackInternal)
           this.canLoadEvents = false
         }
-        
       },
 
       async getEventsRequest(params) {
-          return await this.serviceEvent.call('get', {start: params.start.format(), end: params.end.format(), timezone:params.timezone, view: this.currentView})
+        let p = {start: params.start.format(), end: params.end.format(), timezone:params.timezone, view: this.currentView}
+        if(this.viewingFreeSlot){
+          p.viewingFreeSlot = true
+        }
+          return await this.serviceEvent.call('get', p)
       },
       
       async cancelEventRequest(eventId) {
@@ -1149,7 +1216,7 @@ export default {
       nextWeek(){
         this.daysProperties = false
         this.firstDay = this.$refs.calendar.next(this.lastDay)
-        
+        this.hasBeenSetCalProps = false
         //this.resetFirstDay()
         this.writeHistory()
         
@@ -1158,6 +1225,7 @@ export default {
       prevWeek(){
         this.daysProperties = false
         this.firstDay = this.$refs.calendar.prev(this.firstDay)
+        this.hasBeenSetCalProps = false
         //this.resetFirstDay()
         this.writeHistory()
       },
@@ -1198,6 +1266,7 @@ export default {
         this.refreshEvents()
       },
       refreshEvents(){
+        this.hasBeenSetCalProps = false
         this.$refs.calendar.fireMethod('refetchEvents');
       },
 
@@ -1232,6 +1301,9 @@ export default {
   .fc-event, .fc-bgevent{
     transition: all .3s ease-in-out;
   }
+  .fc-bgevent{
+    overflow:hidden;
+  }
   .fc-event.past-event .fc-resizer{
     display: none;
   }
@@ -1247,7 +1319,7 @@ export default {
 
   .fc-event-container .fc-event:hover {
     position: absolute;
-    min-height: 60px;
+    min-height: 84px;
     z-index: 3 !important;
   }
   .btn-default {
@@ -1328,6 +1400,14 @@ export default {
     z-index: 1;
   }
 
+  .fc-bgevent.debugging{
+    opacity: 1;
+    border-radius: 0.5rem;
+    z-index: 1;
+    background-color: #94d576;
+  }
+
+
   .fc-bgevent.opening.extra {
       background-color: rgb(242, 242, 242);
       border: 2px dashed #dadada;
@@ -1338,9 +1418,17 @@ export default {
   .fc-bgevent.busy, .fc-bgevent.calendar {
       z-index: 4;
       border-radius: 0.5rem;
-      background-color:#fff;
+      background-color:rgb(242, 242, 242);
       border: 2px dashed #dadada;
       background-size: auto auto;
+      
+  }
+  .past-event,
+  .fc-bg .fc-day.fc-past,
+  .fc-time-grid .fc-now-indicator-line,
+  .fc-bgevent.busy, .fc-bgevent.calendar,
+  .striped-bg{
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 20 20'%3E%3Cg %3E%3Cpolygon fill='%23ffffff' points='20 10 10 0 0 0 20 20'/%3E%3Cpolygon fill='%23ffffff' points='0 10 0 20 10 20'/%3E%3C/g%3E%3C/svg%3E") !important;
   }
   .fc-bgevent.calendar {
       z-index: 3;
@@ -1369,20 +1457,22 @@ export default {
     background-color: #fff;
     border: 1px solid #eaeaea;
   }
-  
+  .fc-bg .fc-day.fc-today.fc-past{
+    background-color: #f9f9f9;
+
+  }
+
   .fc-bg .fc-day.fc-past{
     border: 2px solid #f3f3f3;
       z-index: 3;
       border-radius: 0.5rem;
       background-color: #f9f9f9;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 20 20'%3E%3Cg %3E%3Cpolygon fill='%23ffffff' points='20 10 10 0 0 0 20 20'/%3E%3Cpolygon fill='%23ffffff' points='0 10 0 20 10 20'/%3E%3C/g%3E%3C/svg%3E");
       background-size: auto auto;
   }
   .fc-bgevent.past-event{
     display: none;
   }
   .past-event{
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 20 20'%3E%3Cg %3E%3Cpolygon fill='%23ffffff' points='20 10 10 0 0 0 20 20'/%3E%3Cpolygon fill='%23ffffff' points='0 10 0 20 10 20'/%3E%3C/g%3E%3C/svg%3E")  !important;
     background-size: auto auto !important;
     opacity: .6 !important;
     background-color: rgb(240, 239, 239) !important;
@@ -1540,7 +1630,6 @@ export default {
   z-index: 3;
   border-radius: 0.5rem;
   background-color: #f9f9f9;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 20 20'%3E%3Cg %3E%3Cpolygon fill='%23ffffff' points='20 10 10 0 0 0 20 20'/%3E%3Cpolygon fill='%23ffffff' points='0 10 0 20 10 20'/%3E%3C/g%3E%3C/svg%3E");
   background-size: auto auto;
 }
 
@@ -1564,6 +1653,7 @@ export default {
   height: 14px;
   max-width: 50%;
   padding: .3rem .8rem;
+  box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,.3);
 }
 
 .fc-event .fill-event:hover .crib, 
@@ -1712,5 +1802,25 @@ export default {
 .svg-inline--fa {
     width: 1.125em;
 }
+.buffer{
+  border: 1px dashed rgb(147, 144, 144);
+  background-color: rgb(255, 255, 255);
+  border-radius: 0 0 1rem 1rem;
+  text-align: center;
+  margin-top: .2rem;
+  position: absolute;
+  bottom: -1px;
+  width: 100%;
+  left: -1px;
+  color: #6d6d6d;
+}
+.cal-title{
+  font-size: .8rem;
+  padding: .2rem;
+  padding-left: 2rem;
+  background-color: #d1683f;
+  color: #fff;
+}
+
   
 </style>

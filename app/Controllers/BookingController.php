@@ -27,9 +27,6 @@ class BookingController extends RestController
 
     public function reschedule(Request $request)
     {
-        $result = Appointment::reschedule($request->input('appointmentkey'), $request->input('time'));
-
-
-        return $result;
+        return Appointment::reschedule($request->input('appointmentkey'), $request->input('time'));
     }
 }

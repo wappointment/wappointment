@@ -34,13 +34,12 @@ class Mail
         if ($this->isWpMail()) {
             //only text version for wpmail
             $this->bodyVersion = $this->altVersion;
-            $this
-                ->subject($email->renderSubject())
-                ->body($email->renderBodyText());
+            $this->body($email->renderBodyText(true))
+                ->subject($email->renderSubject());
         } else {
             $this
-                ->subject($email->renderSubject())
                 ->body($email->renderBody())
+                ->subject($email->renderSubject())
                 ->alt($email->renderBodyText());
         }
 

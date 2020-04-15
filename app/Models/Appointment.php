@@ -87,9 +87,15 @@ class Appointment extends Model
         return $array;
     }
 
-    public function getDurationInSec()
+    public function getFullDurationInSec()
     {
         return $this->end_at->timestamp - $this->start_at->timestamp;
+    }
+
+    public function getDurationInSec()
+    {
+        $buffer_time = isset($this->options) && isset($this->options['buffer_time']) ? ((int) $this->options['buffer_time']) * 60 : 0;
+        return $this->getFullDurationInSec() - $buffer_time;
     }
 
     public function getDuration()

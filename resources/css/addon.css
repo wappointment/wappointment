@@ -1,0 +1,14 @@
+.addon ul li::before {
+    font-family: dashicons;
+    background-color: #9393c8;
+    -webkit-mask: url('../images/fa/toggle-off.svg') no-repeat center;
+    mask: url('../images/fa/toggle-off.svg') no-repeat center;
+    content: " ";
+    font-weight: 900;
+    position: absolute;
+    left: -1.6rem;
+    width: 20px;
+    height: 16px;
+    color: #fff;
+    margin-top: .1rem;
+}

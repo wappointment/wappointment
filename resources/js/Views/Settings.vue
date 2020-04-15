@@ -17,6 +17,9 @@
         <div class="tab-pane fade" :class="{'show active' : isActive('reminders')}" v-if="isActive('reminders')">
             <settingsReminders :tablabel="tabs.reminders.label"></settingsReminders>
         </div>
+        <div class="tab-pane fade" :class="{'show active' : isActive('sync')}" v-if="isActive('sync')">
+            <settingsSync :tablabel="tabs.advanced.label"></settingsSync>
+        </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('advanced')}" v-if="isActive('advanced')">
             <settingsAdvanced :tablabel="tabs.advanced.label"></settingsAdvanced>
         </div>
@@ -34,6 +37,7 @@ import abstractView from './Abstract'
 import settingsGeneral from './SettingsGeneral'
 import settingsNotifications from './SettingsNotifications'
 import settingsReminders from './SettingsReminders'
+import SettingsSync from './SettingsSync'
 import settingsAdvanced from './SettingsAdvanced'
 import settingsAddons from './SettingsAddons'
 
@@ -52,6 +56,9 @@ export default {
             notifications:{
                 label: 'Admin notifications'
             },
+            sync:{
+                label: 'Sync'
+            },
             advanced:{
                 label: 'Advanced'
             },
@@ -63,6 +70,7 @@ export default {
       settingsNotifications,
       settingsReminders,
       settingsAdvanced,
+      SettingsSync,
       settingsAddons
     },
 

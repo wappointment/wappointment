@@ -5,11 +5,14 @@
             :min="definition.min"
             :max="definition.max"
             :step="definition.step"
-            v-model="updatedValue" 
+            :value="updatedValue"
+            @input="updateTemp" 
+            @change="dragEnd" 
             :maxlength="definition.max"
             :readonly="definition.readonly">
         </range-slider> 
-        <small>{{ formatedValue }}</small>
+        <small v-if="! editableInput" data-tt="Click to edit" @click="editableInput=true">{{ formatedValue }}</small>
+        <input v-else v-model="updatedValue" type="number" size="2"/>
         <small id="emailHelp" v-if="tip" class="form-text text-muted">{{ tip }}</small>
     </div>
 </template>
@@ -19,31 +22,62 @@ import AbstractField from './AbstractField'
 import RangeSlider from 'vue-range-slider'
 import 'vue-range-slider/dist/vue-range-slider.css'
 export default {
-    components: {RangeSlider},
-    mixins: [AbstractField],
-    computed:{
-        formatedValue(){
-            return this.updatedValue + ' ' + (this.definition.unit !== undefined ? this.definition.unit:'')
+    props:{
+        definition:{
+            type: Object,
+            default:() => {
+                return {
+                    min:0,
+                    max:60,
+                    step:5,
+                    int:true,
+                    unit: 'min'
+                }
+            }
         }
     },
-    watch: {
-        updatedValue: function (val) {
-            if(this.definition.int === undefined )this.value = parseFloat(val).toFixed(1)
-        },
+    components: {RangeSlider},
+    mixins: [AbstractField],
+    data:() => ({
+        editableInput: false,
+        tempVal: '',
+    }),
+    computed:{
+        formatedValue(){
+            return this.tempVal + ' ' + (this.definition.unit !== undefined ? this.definition.unit:'')
+        }
     },
+    watch:{
+        updatedValue(newVal, oldVal){
+            this.tempVal = newVal
+        }
+    },
+
+    methods: {
+        updateTemp(tempval){
+            this.tempVal = tempval
+        },
+        dragEnd(newval){
+            if(this.definition.int === undefined ){
+                newval = parseFloat(newval).toFixed(1)
+            } 
+            this.updatedValue = newval
+        }
+    },
+
     mounted() {
         if(this.updatedValue === undefined || this.updatedValue == ''){
             if(this.definition.default !== undefined && this.definition.default > this.definition.min ) this.updatedValue = this.definition.default
             else this.updatedValue = this.definition.min
-        } 
+        }
     },
 }
 </script>
 <style>
 .slider {
-  width: 78%;
+    width: 78%;
 }
 .field-wrap {
     display: block;
-  }
+}
 </style> 

@@ -31,6 +31,7 @@ export default {
 </script>
 <style>
     .card{
+        margin-top: .6rem;
         max-width: none;
         border-radius: .225rem;
         border-color: #e8e8e8;

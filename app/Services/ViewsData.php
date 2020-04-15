@@ -11,10 +11,11 @@ class ViewsData
 {
     public function load($key)
     {
+        $values = [];
         if (method_exists($this, $key)) {
-            return $this->$key();
+            $values = $this->$key();
         }
-        return apply_filters('wappointment_viewdata_' . $key, []);
+        return apply_filters('wappointment_viewdata_' . $key, $values);
     }
 
     private function regav()
@@ -99,6 +100,7 @@ class ViewsData
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'preferredCountries' => Service::getObject()->getCountries(),
+            'buffer_time' => Settings::get('buffer_time'),
             'widgetOptions' => (new \Wappointment\Services\WidgetSettings)->get()
         ]);
     }
@@ -152,16 +154,24 @@ class ViewsData
 
     private function settingssync()
     {
+        $calurl = WPHelpers::getStaffOption('cal_urls');
         return [
-            'is_calendar_sync_set' => empty(Settings::getStaff('calurl')) ? false : true,
+            'is_calendar_sync_set' => empty($calurl) ? false : true,
             'timezone' => Settings::getStaff('timezone'),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
-            'wappointment_allowed' => Settings::get('wappointment_allowed'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
-            'last_checked' => WPHelpers::getStaffOption('last-calendar-checked'),
-            'last_parsed' => WPHelpers::getStaffOption('last-calendar-parsed'),
-            'last_process' => WPHelpers::getStaffOption('last-calendar-process')
+            'calendar_logs' => WPHelpers::getStaffOption('calendar_logs'),
+            'calendar_url' => $calurl,
+            'oldcal' => empty(Settings::getStaff('calurl')) ? false : true
+        ];
+    }
+
+    private function settingsadvanced()
+    {
+        return [
+            'buffer_time' => Settings::get('buffer_time'),
+            'wappointment_allowed' => Settings::get('wappointment_allowed'),
         ];
     }
     private function wizardinit()
@@ -212,6 +222,7 @@ class ViewsData
             'min_bookable' => Settings::get('hours_before_booking_allowed'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'now' => (new Carbon())->format('Y-m-d\TH:i:00'),
+            'buffer_time' => Settings::get('buffer_time'),
             'services' => Service::all()
         ]);
     }

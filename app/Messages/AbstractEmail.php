@@ -103,8 +103,11 @@ abstract class AbstractEmail extends AbstractMessage
         return CssInliner::fromHtml($this->renderer->wrapBoilerPlate($this->body))->inlineCss()->render();
     }
 
-    public function renderBodyText()
+    public function renderBodyText($replaceTags = false)
     {
+        if ($replaceTags && method_exists($this, 'replaceTags')) {
+            $this->replaceTags();
+        }
         return $this->convertHtmlToText($this->body);
     }
 

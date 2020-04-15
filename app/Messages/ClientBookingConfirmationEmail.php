@@ -34,5 +34,6 @@ class ClientBookingConfirmationEmail extends AbstractEmail
     public function replaceTags()
     {
         $this->body = (new TagsReplacement($this->client, $this->appointment))->replace($this->body);
+        $this->subject = (new TagsReplacement($this->client, $this->appointment))->replace($this->subject);
     }
 }

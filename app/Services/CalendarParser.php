@@ -50,7 +50,7 @@ class CalendarParser
             }
             $until = null;
             $recur = STATUS::RECUR_NOT;
-            $carbon_end = $this->vcalDateToCarbon((string) $vevent->DTEND);
+            $carbon_end = $this->vcalDateToCarbon((string) $vevent->DTEND, $vevent);
 
             /*             echo 'Original: ' . (string)$vevent->DTEND . ' ' .
             $carbon_end->toRfc822String() . ' tz' . $this->timezone . "\n";
@@ -91,7 +91,8 @@ class CalendarParser
                 'source' => $this->source,
                 'type' => STATUS::TYPE_BUSY,
                 'eventkey' => md5($this->source . (string) $vevent->UID . (string) $vevent->CREATED),
-                'options' => $this->getOptions($vevent, $until, $recur)
+                'options' => $this->getOptions($vevent, $until, $recur),
+                'staff_id' => Settings::get('activeStaffId')
             ];
 
             $this->statusEvents->push($dataInsert);
@@ -120,7 +121,7 @@ class CalendarParser
     private function getUntil($vevent)
     {
         return empty($vevent->RRULE->getParts()['UNTIL']) ?
-            null : $this->vcalDateToCarbon($vevent->RRULE->getParts()['UNTIL']);
+            null : $this->vcalDateToCarbon($vevent->RRULE->getParts()['UNTIL'], $vevent);
     }
 
     private function getRecur($vevent)
@@ -134,9 +135,18 @@ class CalendarParser
         return $this->getFormatedDate($this->vcalDateToCarbon($vcalDateTimeString), $format);
     }
 
-    private function vcalDateToCarbon($vcalDateTimeString)
+    private function vcalDateToCarbon($vcalDateTimeString, $vevent = false)
     {
-        return Carbon::parse($vcalDateTimeString, $this->timezone);
+        $timezone = '';
+        if (empty($this->timezone)) {
+            if ($vevent !== false) {
+                $this->timezone = $timezone = $vevent->DTSTART['TZID']->getValue();
+            }
+        } else {
+            $timezone = $this->timezone;
+        }
+
+        return Carbon::parse($vcalDateTimeString, $timezone);
     }
 
     private function getFormatedDate($carbonTime, $format = WAPPOINTMENT_DB_FORMAT)
@@ -189,7 +199,7 @@ class CalendarParser
                 }
 
                 $options['origin_tz'] = $this->timezone;
-                $options['origin_start'] = $this->vcalDateToCarbon((string) $vevent->DTSTART)
+                $options['origin_start'] = $this->vcalDateToCarbon((string) $vevent->DTSTART, $vevent)
                     ->format(WAPPOINTMENT_DB_FORMAT);
             }
 

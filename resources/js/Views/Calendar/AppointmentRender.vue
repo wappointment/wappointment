@@ -62,6 +62,18 @@ export default {
                     <div class="small font-italic">${this.displayTimezone}</div>
                 </div>`
         },
+      getBuffer(event){
+        return [undefined,null].indexOf(event.extendedProps)===-1  && 
+        [undefined,null].indexOf(event.extendedProps.options)===-1 && 
+        event.extendedProps.options.buffer_time !== undefined ? event.extendedProps.options.buffer_time:0
+      },
+      getBufferHtml(event){
+        return this.getBuffer(event) > 0 ?`<div class="buffer">Buffer: ${this.getBuffer(event)}min</div>`:''
+      },
+      getService(event){
+        let duration = (this.toMoment(event.end).unix()-this.toMoment(event.start).unix()- (this.getBuffer(event)*60))/60
+        return `<div>${this.viewData.service.name} : ${duration}min </div>`
+      },
 
         // appointment cell
       getAppointmentHtml(event){

@@ -443,4 +443,11 @@ export default {
     border-radius: .25em;
     box-shadow: 0px 8px 10px 0 rgba(0,0,0,.08);
 }
+
+.br-fixed .phone-field-wrap .dropdown.open {
+    position: relative;
+}
+.phone-field-wrap .dropdown.open li {
+    margin: .5rem 0;
+}
 </style>

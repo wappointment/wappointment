@@ -2,27 +2,30 @@
 import Dates from "./Dates"
 export default {
   mixins: [Dates],
-  computed: {
-    lastChecked(){
-      return this.unixToDateTime(this.viewData.last_checked, this.viewData.timezone)
+  methods: {
+    getPropertyCal(keyprop, calendar_id){
+      return this.viewData.calendar_logs[calendar_id] !== undefined && this.viewData.calendar_logs[calendar_id][keyprop] !== undefined ? this.viewData.calendar_logs[calendar_id][keyprop]:false
     },
-    lastChanged(){
-      return this.unixToDateTime(this.viewData.last_parsed, this.viewData.timezone)
+    lastChecked(calendar_id){
+      return this.unixToDateTime(this.getPropertyCal('last-checked', calendar_id), this.viewData.timezone)
     },
-    calDuration(){
-      return this.viewData.last_process.duration+'s'
+    lastChanged(calendar_id){
+      return this.unixToDateTime(this.getPropertyCal('last-parsed', calendar_id), this.viewData.timezone)
     },
-    calInserted(){
-      return this.viewData.last_process.parser.inserted
+    calDuration(calendar_id){
+      return this.getPropertyCal('last-duration', calendar_id)+'s'
     },
-    calIgnored(){
+    calInserted(calendar_id){
+      return this.getPropertyCal('last_parser', calendar_id).inserted
+    },
+    calIgnored(calendar_id){
       return this.calDetected - this.calInserted
     },
-    calDeleted(){
-      return this.viewData.last_process.parser.deleted
+    calDeleted(calendar_id){
+      return this.getPropertyCal('last_parser', calendar_id).deleted
     },
-    calDetected(){
-      return this.viewData.last_process.parser.detected
+    calDetected(calendar_id){
+      return this.getPropertyCal('last_parser', calendar_id).detected
     },
   },
 };

@@ -128,6 +128,19 @@ class Main extends AbstractRoutes
                     'controller' => 'SettingsStaffController',
                     'method' => 'save',
                 ],
+                '/settingsstaff/savecal' => [
+                    'controller' => 'SettingsStaffController',
+                    'method' => 'saveCal',
+                ],
+                '/settingsstaff/disconnect' => [
+                    'controller' => 'SettingsStaffController',
+                    'method' => 'disconnectCal',
+                ],
+                '/settingsstaff/refreshcalendars' => [
+                    'controller' => 'SettingsStaffController',
+                    'method' => 'refreshCalendars',
+                ],
+
                 '/reminderpreview' => [
                     'controller' => 'ReminderController',
                     'method' => 'preview'

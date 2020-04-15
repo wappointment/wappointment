@@ -40,7 +40,6 @@ const Wizard3Page = () => import(/* webpackChunkName: "group-wizard2" */ './View
 const Wizard4Page = () => import(/* webpackChunkName: "group-wizard2" */ './Views/Subpages/Wizard4')
 
 const RegavPage = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/Regav')
-const SyncPage = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/Sync')
 const ServicePage = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/Service')
 
 const router = window.wappointmentrouter = new VueRouter({
@@ -105,11 +104,6 @@ const router = window.wappointmentrouter = new VueRouter({
               component: RegavPage
             },
             {
-                path: 'sync',
-                name: 'sync',
-                component: SyncPage
-            },
-            {
                 path: 'service',
                 name: 'servicepage',
                 component: ServicePage
@@ -127,6 +121,11 @@ const router = window.wappointmentrouter = new VueRouter({
             {
                 path: 'reminders',
                 name: 'reminders',
+                component: SettingsPage
+            },
+            {
+                path: 'sync',
+                name: 'sync',
                 component: SettingsPage
             },
             {

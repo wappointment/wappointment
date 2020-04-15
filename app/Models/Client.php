@@ -66,7 +66,7 @@ class Client extends Model
         $hasBeenBooked = AppointmentService::tryBook(
             $this,
             $startTime,
-            $startTime + ((int) $service['duration'] * 60),
+            $startTime + $this->getRealDuration($service),
             $type,
             $service
         );
@@ -74,6 +74,11 @@ class Client extends Model
             throw new \WappointmentException('Error cannot book at this time', 1);
         }
         return $hasBeenBooked;
+    }
+
+    protected function getRealDuration($service)
+    {
+        return ((int) $service['duration'] + (int) Settings::get('buffer_time')) * 60;
     }
 
     public function mailableAddress()

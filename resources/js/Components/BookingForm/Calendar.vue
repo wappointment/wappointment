@@ -341,9 +341,12 @@ export default {
                 this.setIntervals(this.firstDayMonth, this.lastDayMonth)
             }
         },
+        realSlotDuration(){
+            return (parseInt(this.duration) + parseInt(this.viewData.buffer_time)) *60
+        },
         setIntervals(start, end){
             this.currentIntervals = this.intervalsCollection.get(start, end)
-            this.totalSlots = this.currentIntervals.splits(parseInt(this.duration)*60).totalSlots()
+            this.totalSlots = this.currentIntervals.splits(this.realSlotDuration()).totalSlots()
         },
         setMonth(yearNumber, monthNumber, delay=true){
             this.monthNumber = monthNumber 
@@ -369,7 +372,7 @@ export default {
             if(this.cachedSlots[daynumber] !== undefined) return this.cachedSlots[daynumber]
 
             let dayIntervals = this.getDayIntervals(daynumber)
-            this.cachedSlots[daynumber] = dayIntervals.splits(parseInt(this.duration)*60).totalSlots()
+            this.cachedSlots[daynumber] = dayIntervals.splits(this.realSlotDuration()).totalSlots()
             if(this.isDemo && this.demoSelected.day == false && this.cachedSlots[daynumber] > 0){
                 
                 this.demoSelected.day = daynumber
@@ -401,11 +404,11 @@ export default {
         },
        
         daySlots(segment) {
-            let end = segment.end - this.duration * 60
+            let end = segment.end - this.realSlotDuration()
             let allslots = []
             while (end >= segment.start) {
                 allslots.push(end)
-                end -= this.duration * 60
+                end -= this.realSlotDuration()
             }
             allslots.reverse()
             return allslots

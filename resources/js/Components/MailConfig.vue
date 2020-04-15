@@ -125,7 +125,8 @@ export default {
             {
                 type: 'label',
                 model: 'txt1',
-                label: 'You can only send text versioned email with WP mail',
+                label: 'With WP mail, you can only send simple emails(no HTML). Also it can be unreliable',
+                classWrapper: 'text-danger',
                 conditions: [
                   { model:'method', values: ['wpmail'] }
                 ],
@@ -135,6 +136,7 @@ export default {
             {
                 type: 'label',
                 model: 'txt2',
+                classWrapper: 'primary',
                 label: "Don't have a MailGun account? <a href='https://signup.mailgun.com/new/signup' target='_blank'>Signup for free</a>",
                 conditions: [
                   { model:'method', values: ['mailgun'] }
@@ -182,6 +184,7 @@ export default {
                 type: 'label',
                 label: "Don't have a SendGrid account? <a href='https://signup.sendgrid.com/' target='_blank'>Signup for free</a>",
                 model: 'txt3',
+                classWrapper: 'primary',
                 conditions: [
                   { model:'method', values: ['sendgrid'] }
                 ],
@@ -439,8 +442,11 @@ export default {
     width: 100%;
     margin-left: 0px;
     padding: .6rem;
-    background-color: #f3f4f4;
+    background-color: #f5f5f5;
     border-radius: .4rem;
     font-size: .9rem;
+}
+.form-wrapppo .label-formgen.primary {
+    border: 1px dashed var(--primary);
 }
 </style>

@@ -10,7 +10,7 @@
                 <label for="calurl">Paste your calendar URL</label>
                 <div class="input-group input-group-sm ">
                     
-                    <input type="text" id="calurl" v-model="calurl" class="form-control" placeholder="http://" >
+                    <input type="text" id="calurl" v-model="calurl" class="form-control" placeholder="http://" @keyup.enter.prevent="saveCal" >
                     <div class="input-group-append">
                         <button @click="saveCal" class="btn btn-primary btn-sm" type="button">Save Calendar</button>
                     </div>
@@ -101,24 +101,23 @@ export default {
         },
         loaded(viewData){
             this.viewData = viewData.data
-            this.calurl = viewData.data.calurl
         },
-        saveCal(){
-            this.settingStaffSave('calurl', this.calurl)
-            //this.request(this.saveCalRequest)
-        },
-
-        afterSuccess(response){
-            this.viewData = false
-            this.calurl = response.data.calurl
-            this.viewData = response.data
-            this.$emit('savedSync')
-        },
+        
         skipStep(){
             this.$emit('skipStep')
         },
-        async saveCalRequest() {
-            this.settingStaffSave('calurl', this.calurl) 
+
+        saveCal(){
+            this.request(this.saveCalRequest, {calurl: this.calurl}, null ,false,this.saveCalSuccess,this.saveCalError)
+        },
+        saveCalError(error){
+            this.$emit('errorSaving',error)
+        },
+        saveCalSuccess(response){
+            this.$emit('savedSync', response)
+        },
+        async saveCalRequest(params) {
+            return await this.serviceSettingStaff.call('saveCal', params) 
         },
 
   }  

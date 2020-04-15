@@ -158,15 +158,16 @@ export default {
     methods:{
         changedFormValue(newValue) {
             this.errorsOnFields = {}
-            if(newValue.email!== undefined && newValue.email.length > 4 && newValue.email.indexOf('@')!== -1 && this.prevEmail != newValue.email){
-            this.searchClient(newValue.email)
-            this.prevEmail = newValue.email
+            if(newValue.email!== undefined && newValue.email.length > 4 
+            && newValue.email.indexOf('@')!== -1 && this.prevEmail != newValue.email){
+                this.searchClient(newValue.email)
+                this.prevEmail = newValue.email
             }
 
-            if(isEmpty(newValue.name) ) this.errorsOnFields.name = true
-            if(isEmpty(newValue.email) || !isEmail(newValue.email)) this.errorsOnFields.email = true
-            if(this.phoneSelected && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
-            if(this.skypeSelected && (isEmpty(newValue.skype) || !this.skypeValid)) this.errorsOnFields.skype = true
+            if(newValue.name!== undefined && isEmpty(newValue.name) ) this.errorsOnFields.name = true
+            if(newValue.email!== undefined && isEmpty(newValue.email) || !isEmail(newValue.email)) this.errorsOnFields.email = true
+            if(newValue.phone!== undefined && this.phoneSelected && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
+            if(newValue.skype!== undefined && this.skypeSelected && (isEmpty(newValue.skype) || !this.skypeValid)) this.errorsOnFields.skype = true
 
         },
         

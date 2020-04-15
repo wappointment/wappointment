@@ -20,7 +20,7 @@ class Service
 
         $validationRules = [
             'name' => 'required',
-            'duration' => 'required|numeric|between:5,240',
+            'duration' => 'required|numeric',
             'type' => 'required|array|hasvalues:physical,phone,skype',
             'address' => 'required_if_has:type,physical',
             'options' => '',

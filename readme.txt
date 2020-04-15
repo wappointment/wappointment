@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.4
 Requires PHP: 7.0
-Stable tag: 1.3.2
+Stable tag: 1.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -83,9 +83,21 @@ Ask us on [https://wappointment.com/support](https://wappointment.com/support?ut
 
 Of course. You decide the duration of your appointments whether it's 5 minutes, 10 minutes, ..., 4 hours long. It's all up to you.
 
+**Can I sync multiple calendar besides of my Google calendar?**
+
+Sure you can, we allow up to 4 calendars in the ics format to be synched from. It can be personal calendar(gmail, Outlook, iCal, etc..) or from external applications handling part of your schedule
+
+**How often my Google calendar is being checked for sync?**
+
+Every 5 minutes we download your calendar and check for changes, we don't do it more often as it could be a heavy task depending on how big is your calendar.
+
 **Why do reminders go out late sometimes?**
 
 It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
+
+**I want my 25min appointments to start on the dot at 00 and 30, how can I do that?**
+
+We've created a buffer time for that particular case, you can define it in the advanced settings. In your case, set your appointment's duration to 25min and set the buffer time to 5min this way each reservation will take a whole 30min in your availability.
 
 == Installation ==
 
@@ -110,6 +122,17 @@ It requires work on your end but keeps your site safe and optimized.
 8. Help Page. Have a question? Simply ask for it straight in there.
 
 == Changelog ==
+
+= 1.4.0 - 2020-04-15 =
+* Added Buffer Time, time to prepare next appointment not included in appointment's duration, but removed from availability
+* Added possibility to Sync more than 1 external calendar to calculate your availability
+* Added tag replacement on subject of booking reminder or confirmation
+* Added possibility to disconnect a calendar
+* Fixed issue on calendar sync
+* Fixed tag replacement in email reminders when using WP Mail
+* Fixed issue on phone input missing flags
+* Fixed issue on booking appointment from admin dashboard
+
 
 = 1.3.2 - 2020-04-09 =
 * Tested and compatible with WP 5.4

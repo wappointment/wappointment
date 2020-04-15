@@ -71,6 +71,9 @@
                 this.getApi.refetchEvents()
                 return prevweek
             },
+            refresh(){
+                this.getApi.refetchEvents()
+            },
             fireMethod(...options) {
                 if(!this.apiReady()) {
                     //console.log('API not ready for call fireMethod', ...options)

@@ -19,8 +19,8 @@ class EventsController extends RestController
     private function TESTprocessAvail($avails)
     {
         foreach ($avails as &$avail) {
-            $avail[0] = Carbon::createFromTimestamp($avail[0])->setTimezone($this->timezone)->format('Y-m-d\TH:i:00 T');
-            $avail[1] = Carbon::createFromTimestamp($avail[1])->setTimezone($this->timezone)->format('Y-m-d\TH:i:00 T');
+            $avail[0] = Carbon::createFromTimestamp($avail[0]);
+            $avail[1] = Carbon::createFromTimestamp($avail[1]);
         }
         return $avails;
     }
@@ -28,10 +28,30 @@ class EventsController extends RestController
     public function get(Request $request)
     {
         $this->timezone = $request->input('timezone');
+        if ((bool) $request->input('viewingFreeSlot')) {
+            return $this->debugAvailability();
+        } else {
+            return [
+                'events' => array_merge($this->events($request), $this->regavToBgEvent($request)),
+                'availability' => WPHelpers::getStaffOption('availability'), //$this->TESTprocessAvail(Settings::getStaff('availability')),
+                'now' => (new Carbon())->setTimezone($this->timezone)->format('Y-m-d\TH:i:00')
+            ];
+        }
+    }
+
+    private function debugAvailability()
+    {
+        $availability = WPHelpers::getStaffOption('availability');
+        $times = $this->TESTprocessAvail($availability);
+        $bg_events = [];
+        foreach ($times as $key => $timeslot) {
+            $bg_events[] = $this->setBgEvent($timeslot[0], $timeslot[1], 'debugging');
+        }
+
 
         return [
-            'events' => array_merge($this->events($request), $this->regavToBgEvent($request)),
-            'availability' => WPHelpers::getStaffOption('availability'), //$this->TESTprocessAvail(Settings::getStaff('availability')),
+            'availability' => $availability,
+            'events' => $bg_events, //$this->TESTprocessAvail(Settings::getStaff('availability')),
             'now' => (new Carbon())->setTimezone($this->timezone)->format('Y-m-d\TH:i:00')
         ];
     }
@@ -118,6 +138,7 @@ class EventsController extends RestController
                 'delId' => $event->id,
                 'location' => $event->getLocationSlug(),
                 'status' => $event->status,
+                'options' => $event->options,
                 'client' => $this->prepareClient($event->client),
                 'type' => 'appointment',
                 'onlyDelete' => true,
@@ -200,18 +221,24 @@ class EventsController extends RestController
                 $end = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))
                     ->hour($dayTimeblock[1]);
 
-                $bg_events[] = [
-                    'start' => $start->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
-                    'end' => $end->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
-                    'rendering' => 'background',
-                    'className' => 'opening',
-                    'type' => 'ra'
-                ];
+                $bg_events[] = $this->setBgEvent($start, $end);
             }
 
             unset($daysOfTheWeek[$startDate->dayOfWeek]);
             $startDate->addDay(1);
         }
         return $bg_events;
+    }
+
+    private function setBgEvent($start, $end, $className = 'opening')
+    {
+        $format = 'Y-m-d\TH:i:00';
+        return [
+            'start' => $start->setTimezone($this->timezone)->format($format),
+            'end' => $end->setTimezone($this->timezone)->format($format),
+            'rendering' => 'background',
+            'className' => $className,
+            'type' => 'ra'
+        ];
     }
 }
