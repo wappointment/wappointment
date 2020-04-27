@@ -1,19 +1,17 @@
 <template>
     <div>
-        <FormGenerator ref="formgenerator" :schema="schemaParsed" :data="modelHolder" 
+        <WAPFormGenerator ref="formgenerator" :schema="schemaParsed" :data="modelHolder" 
         @submit="save" @back="$emit('back')" :errors="errorsPassed" :key="formKey" labelButton="Save" v-bind="extraOptions">
-        </FormGenerator>
+        </WAPFormGenerator>
     </div>
 
 </template>
 
 <script>
-import FormGenerator from '../../Form/FormGenerator'
 import ServiceService from '../../Services/V1/Service'
 import abstractView from '../Abstract'
 export default {
   extends: abstractView,
-  components:{FormGenerator},
   props:['dataPassed', 'servicesService', 'extraOptions'],
   data() {
       return {
@@ -25,7 +23,8 @@ export default {
             type: '',
             address: '',
             options: {
-              countries: []
+              countries: [],
+              phone_required: false
             }
           },
           errors:{},
@@ -73,6 +72,16 @@ export default {
                 validation: ['required']
             },
             {
+                type: 'checkbox',
+                label: 'Ask for phone',
+                model: 'options.phone_required',
+                cast: Boolean,
+                validation: ['required'],
+                conditions: [
+                  { model:'type', notin:true ,values: ['phone'] }
+                ],
+            },
+            {
                 type: 'address',
                 label: 'Address',
                 model: 'address',
@@ -88,10 +97,15 @@ export default {
                 model: 'options.countries',
                 cast: Array,
                 conditions: [
-                  { model:'type', values: ['phone'] }
+                  {
+                    type: 'or',
+                    conda: { model:'type', values: ['phone'] },
+                    condb: { model:'options.phone_required', values: [true] }
+                  }
                 ],
                 validation: ['required']
             },
+            
 
         ]
 

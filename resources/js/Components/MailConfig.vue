@@ -1,9 +1,9 @@
 <template>
     <div class="reduced" v-if="viewData!== null">
-        <FormGenerator ref="mcformgenerator" :schema="schema" :data="sendconfig" 
+        <WAPFormGenerator ref="mcformgenerator" :schema="schema" :data="sendconfig" 
             @submit="sendTestEmail" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
             labelButton="Save" @ready="readytosubmit" :autocomplete="false">
-        </FormGenerator>
+        </WAPFormGenerator>
         <!-- Ports links -->
         <div v-if="showSmtpPorts" class="form-group valid col-md-12 field-radios">
             <small class="field-wrap ">
@@ -62,11 +62,9 @@
 </template>
 
 <script>
-import FormGenerator from '../Form/FormGenerator'
 import abstractView from '../Views/Abstract'
 export default {
   extends: abstractView,
-  components:{FormGenerator},
     mounted(){
         this.refreshInitValue()
     },

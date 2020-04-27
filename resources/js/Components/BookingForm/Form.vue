@@ -1,6 +1,6 @@
 <template>
     <transition name="slide-fade">
-        <div v-if="mounted">
+        <div v-if="mounted" class="max400">
             <div class="text-center">
                 <ul class="li-unstyled my-2">
                     <li><strong>{{options.form.header}}</strong></li>
@@ -48,7 +48,7 @@
                                 <input type="email" id="email" class="form-control" v-model="bookingForm.email" :required="true">
                             </p>
                         </div>
-                        <div v-if="phoneSelected" class="wap-field field-required" :class="hasError('phone')">
+                        <div v-if="requirePhoneInput" class="wap-field field-required" :class="hasError('phone')">
                             <PhoneInput 
                             :label="options.form.phone"
                             :phone="bookingForm.phone"
@@ -118,7 +118,7 @@ export default {
 
                 if(isEmpty(newValue.name) ) this.errorsOnFields.name = true
                 if(isEmpty(newValue.email) || !isEmail(newValue.email)) this.errorsOnFields.email = true
-                if(this.phoneSelected && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
+                if(this.requirePhoneInput && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
                 if(this.skypeSelected && (isEmpty(newValue.skype) || !this.skypeValid)) this.errorsOnFields.skype = true
                 if(this.disabledButtons) {
                     this.options.eventsBus.emits('dataDemoChanged', newValue)
@@ -148,6 +148,9 @@ export default {
     computed: {
         canSubmit(){
             return this.selectedServiceType && Object.keys(this.errorsOnFields).length < 1 && !this.dataEmpty
+        },
+        requirePhoneInput(){
+            return this.phoneSelected || [undefined,false].indexOf(this.service.options.phone_required) === -1 
         },
         phoneSelected(){
             return this.selectedServiceType == 'phone'
@@ -301,5 +304,6 @@ export default {
     margin-bottom: 0;
     font-size: .9em;
 }
+
 
 </style>

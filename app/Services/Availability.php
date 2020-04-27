@@ -83,20 +83,21 @@ class Availability
      * Regenerate all  by default ?
      *
      * @param boolean $staff_id
-     * @param integer $days
      * @return void
      */
-    public function regenerate($staff_id = false, $days = 60)
+    public function regenerate($staff_id = false)
     {
         if ($staff_id === false) {
             $staff_id = Settings::get('activeStaffId');
         }
+        $days = (int) Settings::getStaff('availaible_booking_days');
 
         // get regular avail and apply for x time from now
         $this->availabilities = $this->generateAvailabilityWithRA($staff_id, $days);
 
         // get busy and free time
         $today = Carbon::today();
+
         $end = $today->copy()->addDays($days);
         $start_at_string = $today->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $end->format(WAPPOINTMENT_DB_FORMAT);
@@ -136,7 +137,7 @@ class Availability
         $collection = \WappointmentLv::collect($test)->sortBy(0)->values()->all();
 
 
-        $this->availabilities = $segmentService->flatten($collection, true);
+        $this->availabilities = $segmentService->flatten($collection);
 
         // substract busy times to availability
         $busy_status = $segmentService->convertModel($newBusyStatuses->all());

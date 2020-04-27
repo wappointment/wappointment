@@ -13,7 +13,9 @@
         <div v-if="showPost">
             <div  class="form-max">
                 <p class="m-0">Copy the shortcode below: </p>
-                <ClickCopy :value="shortcode"></ClickCopy>
+                <label><input type="checkbox" v-model="large"> Large?</label>
+                <label><input type="checkbox" v-model="open"> Auto-Open Calendar?</label>
+                <ClickCopy :value="getShortCode"></ClickCopy>
             </div>
             <div class="mt-4">
                 <VideoIframe src="https://www.youtube.com/embed/VMi2Ry-JrGA" />
@@ -38,7 +40,9 @@ export default {
     components: {ClickCopy, VideoIframe}, 
     data: () => ({
         area: '',
-        shortcode: ''
+        shortcode: '',
+        large:false,
+        open:false
     }),
     computed: {
         showWidget(){
@@ -50,9 +54,12 @@ export default {
         showTheme(){
             return this.area == 'theme'
         },
-    },
-    mounted(){
-        this.shortcode = '[wap_widget title="'+this.title+'"]'
+        getShortCode(){
+            let shortcode = 'wap_widget title="'+this.title+'"'
+            shortcode += this.large? ' large ':'' 
+            shortcode += this.open? ' open ':''
+            return '['+shortcode+']'
+        }
     },
 
     methods: {

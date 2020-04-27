@@ -1,9 +1,9 @@
 <template>
     <div class="reduced" v-if="viewData!== null">
-        <FormGenerator ref="mcformgenerator" :schema="schema" :data="model" 
+        <WAPFormGenerator ref="mcformgenerator" :schema="schema" :data="model" 
         @submit="save" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
         labelButton="Save" @ready="readytosubmit">
-        </FormGenerator>
+        </WAPFormGenerator>
 
         <div class="d-flex align-items-center">
           <button class="btn btn-primary" :class="{disabled: !canSend}" 
@@ -29,12 +29,10 @@
 
 <script>
 import abstractView from '../Views/Abstract'
-import FormGenerator from '../Form/FormGenerator'
 import isReminder from '../Mixins/isReminder'
 export default {
     extends: abstractView,
     mixins: [isReminder],
-    components:{FormGenerator},
     props:['reminder', 'passedViewData'],
     data() {
       return {

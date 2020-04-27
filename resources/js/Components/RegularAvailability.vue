@@ -1,28 +1,35 @@
 <template>
-    <div class="commands-frame d-flex" @mouseover="showControls=true" @mouseout="showControls=false">
-        <div class="scroll-top" v-if="isMounted && controlsShown">
-            <div v-if="scrolledAtTheEnd" class="btn btn-link btn-xs" @click="scrollToStart"><< Start</div>
-            <div v-if="widthWeekWrapper < 389 && !scrolledAtTheStart" class="btn btn-link btn-xs" @click="scrollToPrev">< Prev</div>
-            <div v-if="widthWeekWrapper < 389 && !scrolledAtTheEnd" class="btn btn-link btn-xs" @click="scrollToNext">Next ></div>
-            <div v-if="!scrolledAtTheEnd" class="btn btn-link btn-xs" @click="scrollToEnd">End >></div>
+    <div>
+        <div class="d-flex w100">
+            <div class="columnTitle">Available Booking Days</div> <ClickRevealSlider :alwaysShow="true" 
+            :value="viewData.availaible_booking_days" @change="changedCRS" />
         </div>
-        
-        <hourColumn  :heightUnit="heightUnit" :openingTimes="openingTimes" 
-        @addMin="addMin" @addMax="addMax" 
-        @removeMin="removeMin" @removeMax="removeMax"></hourColumn>
-        <div id="regav-wrapper" ref="regavwrap" @scroll="scrolledTrigger" class="regular-availability d-flex" >
-            <template v-for="(openedTimes, daykey) in openedDays">     
-                <dayColumn  :key="daykey" :class="classColumn" :heightUnit="heightUnit" :daykey="daykey" 
-                :openedTimes="openedTimes" :minHour="minHour" :maxHour="maxHour" @updatedSlots="updatedSlots" @editBlock="editBlock"></dayColumn>
-            </template>
+        <div class="commands-frame d-flex" @mouseover="showControls=true" @mouseout="showControls=false">
+            
+            <div class="scroll-top" v-if="isMounted && controlsShown">
+                <div v-if="scrolledAtTheEnd" class="btn btn-link btn-xs" @click="scrollToStart"><< Start</div>
+                <div v-if="widthWeekWrapper < 389 && !scrolledAtTheStart" class="btn btn-link btn-xs" @click="scrollToPrev">< Prev</div>
+                <div v-if="widthWeekWrapper < 389 && !scrolledAtTheEnd" class="btn btn-link btn-xs" @click="scrollToNext">Next ></div>
+                <div v-if="!scrolledAtTheEnd" class="btn btn-link btn-xs" @click="scrollToEnd">End >></div>
+            </div>
+            
+            <hourColumn  :heightUnit="heightUnit" :openingTimes="openingTimes" 
+            @addMin="addMin" @addMax="addMax" 
+            @removeMin="removeMin" @removeMax="removeMax"></hourColumn>
+            <div id="regav-wrapper" ref="regavwrap" @scroll="scrolledTrigger" class="regular-availability d-flex" >
+                <template v-for="(openedTimes, daykey) in openedDays">     
+                    <dayColumn  :key="daykey" :class="classColumn" :heightUnit="heightUnit" :daykey="daykey" 
+                    :openedTimes="openedTimes" :minHour="minHour" :maxHour="maxHour" @updatedSlots="updatedSlots" @editBlock="editBlock"></dayColumn>
+                </template>
+            </div>
         </div>
     </div>
-    
 </template>
 
 <script>
 import dayColumn from '../Components/DayColumn'
 import hourColumn from '../Components/HourColumn'
+import ClickRevealSlider from '../Fields/ClickRevealSlider'
 import orderBy from 'lodash/orderBy'
 export default {
     props: ['initValue','viewData'],
@@ -45,7 +52,7 @@ export default {
             
         }
     },
-    components: { dayColumn, hourColumn }, 
+    components: { dayColumn, hourColumn, ClickRevealSlider }, 
     created(){
         this.openedDays = this.initValue
         this.setMinAndMax()
@@ -77,6 +84,9 @@ export default {
     },
     
     methods: {
+        changedCRS(value){
+            this.$emit('changedABD', value)  
+        },
         editBlock(){
 
         },

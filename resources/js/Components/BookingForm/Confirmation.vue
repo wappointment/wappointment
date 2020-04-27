@@ -1,5 +1,5 @@
 <template>
-    <div class="confirmation-cell">
+    <div class="confirmation-cell max400">
         <div class="success d-flex align-items-center">
             <div class="bigicon"><FontAwesomeIcon icon="calendar-check" /> </div>
             <div class="text-conf">{{options.confirmation.confirmation}}</div>

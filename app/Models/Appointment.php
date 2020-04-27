@@ -177,7 +177,6 @@ class Appointment extends Model
 
     public function canCancelUntilTimestamp()
     {
-
         return $this->start_at->getTimestamp() - ((int) Settings::get('hours_before_cancellation_allowed') * 60 * 60);
     }
 

@@ -4,7 +4,7 @@ namespace Wappointment\Controllers;
 
 use Wappointment\WP\Helpers as WPHelpers;
 
-class RestController
+abstract class RestController
 {
     private $errors = [];
 

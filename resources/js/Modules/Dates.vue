@@ -14,5 +14,5 @@ export default {
         return momenttz.unix(date).tz(tz)
     }
   }
-};
+}
 </script>

@@ -25,6 +25,10 @@ class WidgetSettings
                 'active_links' => '#212529', //calendar_coactive
                 'disabled_links' => '#cccccc' //calendar_codisabled
             ],
+            'selected_day' => [
+                'bg' => '#a0a0a0', //back_bg
+                'text' => '#ffffff', //back_color
+            ],
             'secondary' => [
                 'bg' => '#e6e6e6', //back_bg
                 'bg_selected' => '#949494', //back_sel_bg
@@ -53,6 +57,10 @@ class WidgetSettings
         'selection' => [
             'title' => '[total_slots] free slots',
             'timezone' => 'Timezone: [timezone]',
+            'morning' => 'Morning',
+            'afternoon' => 'Afternoon',
+            'evening' => 'Evening',
+            'check_viewweek' => false,
         ],
         'form' => [
             'header' => 'Confirm Appointment',
@@ -119,6 +127,13 @@ class WidgetSettings
                     'disabled_links' => ['label' => 'Disabled links'],
                 ]
             ],
+            'selected_day' => [
+                'label' => 'Selected day',
+                'fields' => [
+                    'text' => ['label' => 'Text'],
+                    'bg' => ['label' => 'Background'],
+                ]
+            ],
             'secondary' => [
                 'label' => 'Secondary Button',
                 'fields' => [
@@ -167,6 +182,7 @@ class WidgetSettings
             'calendar_cotext' => ['label' => 'Body text'],
             'calendar_coactive' => ['label' => 'Active links'],
             'calendar_codisabled' => ['label' => 'Disabled links'],
+            'check_viewweek' => ['label' => 'Week View'],
         ],
         'form' => [
             'back_bg' => ['label' => 'Secondary Button background'],

@@ -1,13 +1,13 @@
 <template>
     <div v-if="dataLoaded">
         <div v-if="minimal === undefined">
-            <p class="h6 text-muted"><span class="bullet-wap">1</span> <span class="bullet-title"> Select the staff providing the service</span></p>
+            <p class="h6 text-muted"><span class="bullet-wap">1</span> <span class="bullet-title"> Set who provides the appointments </span></p>
             <div v-if="viewData" class="d-flex align-items-center mb-2">
                 <StaffPicture :src="viewData.activeStaffAvatar" :gravatar="viewData.activeStaffGravatar" @changed="changed"></StaffPicture>
                 <StaffSelector :staffs="viewData.staffs" :activeStaffId="viewData.activeStaffId" @updateStaff="updateStaff"></StaffSelector>
             </div>
             
-            <p class="h6 text-muted"><span class="bullet-wap">2</span> <span class="bullet-title"> Define the timezone in which you are operating</span></p>
+            <p class="h6 text-muted"><span class="bullet-wap">2</span> <span class="bullet-title"> Set your timezone</span></p>
             <TimeZones v-if="viewData" classW="d-flex" :wizard="noback" :timezones="viewData.timezones_list" 
             :defaultTimezone="viewData.timezone" @updateTimezone="updateTimezone" typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control"></TimeZones>
             <hr>
@@ -16,9 +16,11 @@
         <div v-if="hasRegav">
             <p v-if="minimal === undefined" class="h6 text-muted">
                 <span class="bullet-wap">3</span> 
-                <span class="bullet-title"> Drag and drop the times you want to open for appointments</span>
+                <span class="bullet-title"> Click and drag your standard weekly schedule</span>
             </p>
-            <RegularAvailability :initValue="viewData.regav" :viewData="viewData" @updatedDays="updatedRA"></RegularAvailability>
+            <RegularAvailability :initValue="viewData.regav" :viewData="viewData" 
+            @updatedDays="updatedRA"
+            @changedABD="changedABD"></RegularAvailability>
         </div>
     </div>
 </template>
@@ -53,6 +55,10 @@ export default {
     updatedRA(openeDays){
         this.settingStaffSave('regav', openeDays) 
     },
+    changedABD(value){
+        console.log('changed abd ', value)
+        this.settingStaffSave('availaible_booking_days', value) 
+    },
 
     updateTimezone(selectedTimezone){
         this.settingStaffSave('timezone', selectedTimezone)
@@ -65,8 +71,8 @@ export default {
     afterSuccess(result) {
         //console.log('regav after success')
         if(result.config.data.indexOf('timezone')!==-1 || this.reload) {
-            this.refreshInitValue()
-            this.reload = false
+            //this.refreshInitValue()
+            //this.reload = false
         }
         
     }

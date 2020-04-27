@@ -256,19 +256,50 @@ export default {
                 let conditions_failed = false
                 for (let i = 0; i < element.conditions.length; i++) {
                     const condition = element.conditions[i]
-                    const modelValue = this.getModelValue(this.getElementDefinition(condition.model))
-                    if(['array','object'].indexOf(typeof modelValue) !== -1){
-                        conditions_failed = !this.atLeastOne(modelValue, condition)
+                    if(condition.type !== undefined && condition.type == 'or'){
+                        conditions_failed = !(this.passedCondition(condition.conda) || this.passedCondition(condition.condb))
                     }else{
-                        if(condition.values.indexOf(modelValue) === -1){
-                            conditions_failed = true
-                        }
+                        conditions_failed = !this.passedCondition(condition)
                     }
+                    
                 }
                 if(conditions_failed) return false
             }
             if(element.model!==undefined && this.visibles.indexOf(element.model) === -1) this.visibles.push(element.model)
             return true
+        },
+
+        passedCondition(condition){
+            const elDefinition = this.getElementDefinition(condition.model)
+            let modelValue = undefined
+            let failed = false
+            if(elDefinition !== undefined){
+                modelValue = this.getModelValue(elDefinition)
+            }else{
+                if(this.modelHolder[condition.model] !== undefined){
+                    modelValue = this.modelHolder[condition.model]
+                }else{
+                    failed = true
+                }
+            }
+            if(['array','object'].indexOf(typeof modelValue) !== -1){
+                if(condition.notempty !== undefined){
+                    failed = this.isEmptyValue(modelValue)
+                }else{
+                    if(condition.notin !== undefined){
+                        failed = this.atLeastOne(modelValue, condition)
+                    }else{
+                        failed = !this.atLeastOne(modelValue, condition)
+                    }
+                }
+                
+                
+            }else{
+                if(condition.values.indexOf(modelValue) === -1){
+                    failed = true
+                }
+            }
+            return !failed
         },
 
         atLeastOne(values, condition){
@@ -297,10 +328,14 @@ export default {
                 if (this.schema.hasOwnProperty(key)) {
                     if(this.schema[key].type == 'row'){
                         for(var i = 0, length1 = this.schema[key].fields.length; i < length1; i++){
-                            if(this.isVisible(this.schema[key].fields[i]) && this.schema[key].fields[i].loaded === false) return
+                            if(this.isVisible(this.schema[key].fields[i]) && this.schema[key].fields[i].loaded === false){
+                                 return
+                            }
                         }
                     }else{
-                        if(this.isVisible(this.schema[key]) && this.schema[key].loaded === false) return
+                        if(this.isVisible(this.schema[key]) && this.schema[key].loaded === false){
+                             return
+                        }
                     }
                     
                 }

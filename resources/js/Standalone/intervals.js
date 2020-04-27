@@ -46,6 +46,7 @@ export default class Intervals {
 
                     newCollection.push({start:element.start, end:element.end, duration:(element.end - element.start),llave:'a'})
                 }else{
+                    //console.log('aContainsB', false)
                     let newt = {}
                     if(DummyInterval.start > element.start){
                         if(DummyInterval.end < element.end){
@@ -58,28 +59,18 @@ export default class Intervals {
                         
                         
                         if(DummyInterval.end <= element.end){
-                            if(from.unix() === 1575673200){
-                                console.log('in <= ')
-                            }
 
                             newt = {start:element.start, end:DummyInterval.end, duration:(DummyInterval.end - element.start),llave:'c'}
                         }else{
                             newt = {start:element.start, end:element.end, duration:(element.end - element.start),llave:'c'}
                         }
-      
-                        if(from.unix() === 1575673200){
-                            console.log('mine details', newt, DummyInterval, element)
-                            console.log('details',DummyInterval.end, element.end)
-                        }
-                    }
-                    if(Object.keys(newt).length < 2){
-                        console.log('intersection new', newt, DummyInterval, element)
-
                     }
                     
 
                     newCollection.push(newt)
                 }
+             }else{
+                //console.log('intersecting', false)
              }
 
         }

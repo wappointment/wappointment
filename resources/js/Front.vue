@@ -1,5 +1,5 @@
 <template>
-    <div class="wap-front" :class="{'br-fixed': isBottomRight}" :id="elementId">
+    <div class="wap-front" :class="{'br-fixed': isBottomRight, 'large-version': largeVersion}" :id="elementId">
         <StyleGenerator :options="opts" :wrapper="elementId"></StyleGenerator>
         <div v-if="isPage">
             <BookingForm v-if="isBookingPage" :options="opts"></BookingForm>
@@ -11,6 +11,7 @@
             <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :passedDataSent="dataSent"></BookingForm>
             <BookingButton v-else @click="toggleBookForm" class="btn btn-booking btn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
         </div>
+        <div class="wap-bg" v-if="bookForm"></div>
     </div>
 </template>
 
@@ -40,6 +41,7 @@ export default {
         disabledButtons: false,
         buttonTitle: '',
         brFixed: undefined,
+        largeVersion: false
     }),
     created(){
       this.elementId = 'wapfrontwrapper-' + Date.now()
@@ -51,6 +53,9 @@ export default {
       if(Object.keys(this.attributesEl).length > 0){
         if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
         if(this.attributesEl.brcFloats !== undefined) this.brFixed = true
+        if([undefined,false].indexOf(this.attributesEl.largeVersion) === -1) this.largeVersion = true
+        if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) this.bookForm = true
+        
         this.opts.attributesEl = this.attributesEl
       }
     },
@@ -100,13 +105,14 @@ export default {
 }
 </script>
 <style>
+.large-version .wap-wid{
+    max-width: 100%;
+}
 .wap-wid{
     max-width: 320px;
     min-width: 200px;
 }
-.wap-bf.show{
-  max-width: 320px;
-}
+
 .br-fixed .wap-wid .btn-booking{
   float:right;
 }
@@ -114,7 +120,6 @@ export default {
     min-height: 68px;
 }
 .wap-front{
-    font-size: 18px;  
     font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
 }
 
@@ -260,6 +265,14 @@ right: 0;
 }
 
 @media only screen and (max-width: 500px) {
+  .wap-front.br-fixed .wap-bg{
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, .7);
+    top: 0;
+    z-index: -1;
+  }
   .wap-front.br-fixed{
     width: 100%;
     margin: 0;

@@ -5,7 +5,7 @@
         </div>
         <div v-else>
           <h4 v-if="title">{{ title }}</h4>
-          <FormGenerator v-if="dataLoaded" :schema="schema" :data="modelHolder" 
+          <WAPFormGenerator v-if="dataLoaded" :schema="schema" :data="modelHolder" 
           @submit="submitMessage" labelButton="Send Message" classWrapper="contact-wrapper" >
             <div class="mb-2">
               <a href="javascript:;" @click="hiddenData = !hiddenData" class="small">Show data sent with message</a>
@@ -16,20 +16,18 @@
                 </div>
               </div>
             </div>
-          </FormGenerator>
+          </WAPFormGenerator>
         </div>
     </transition>
 </template>
 
 <script>
-import FormGenerator from '../Form/FormGenerator'
 import WappointmentService from '../Services/V1/Wappointment'
 import BrowserInfo from 'browser-info'
 import abstractview from '../Views/Abstract'
 let inputStyle = {'max-width':'200px'}
 export default {
   extends: abstractview,
-  components:{FormGenerator},
     props: {
         type: {
             type: String,

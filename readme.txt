@@ -1,18 +1,18 @@
-=== Wappointment - Appointments for WordPress ===
+=== Appointments Bookings ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
 Requires at least: 4.7
 Tested up to: 5.4
 Requires PHP: 7.0
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A powerful and reliable appointment booking system, packing the simplest appointment booking process for your clients
+A powerful and reliable appointment booking system, packing the simplest booking process for your clients
 
 == Description ==
 
-A powerful and reliable **[appointment booking system](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**, packing the simplest appointment booking process for your clients.
+A powerful and reliable **[appointment booking system](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**, packing the simplest booking process for your clients.
 The **booking solution for professionals**. Get booked 24/7 using our super **user-friendly booking form**.
 
 Our system is designed for anyone who provide services to customers (personal coach, estate agent, language teachers, therapists, health professionals, beauty and wellness professionals, fitness professionals, etc…)
@@ -122,6 +122,16 @@ It requires work on your end but keeps your site safe and optimized.
 8. Help Page. Have a question? Simply ask for it straight in there.
 
 == Changelog ==
+
+= 1.4.1 - 2020-04-27 =
+* Added Week view in booking form instead of full month
+* Added day section when selecting a slot (morning, afternoon, evening)
+* Added shortcode options large to have the booking form fill up the whole space where inserted
+* Added shortcode option Auto open calendar so that when inserted in your booking page it show the available slots immediately
+* Added localization of dates in the frontend booking form, auto display in your client's browser language
+* Added phone input requirement
+* Improved style of the selected day in booking form
+* Fixed bug when booking error message appearing
 
 = 1.4.0 - 2020-04-15 =
 * Added Buffer Time, time to prepare next appointment not included in appointment's duration, but removed from availability

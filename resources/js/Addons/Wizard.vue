@@ -1,6 +1,6 @@
 <template>
     <div >
-        <ul class="my-4 nav nav-tabs">
+        <ul class="my-4 nav nav-tabs" v-if="addon.instructions.length > 1">
             <li class="nav-item"  v-for="(instruction,idx) in addon.instructions">
                 <a class="nav-link" :class="{active:currentStep == instruction.step}" href="javascript:;" @click="showStep(instruction.step)">
                     {{ idx + 1 }} - {{ instruction.button }}

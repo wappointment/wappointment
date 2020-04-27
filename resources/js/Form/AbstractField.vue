@@ -11,7 +11,6 @@ export default {
                 }
                 
             }
-
             if(oldVal !== undefined) {
                 return this.$emit(this.eventEmit, newVal, this.model)
             }

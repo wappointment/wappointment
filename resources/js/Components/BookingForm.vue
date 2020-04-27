@@ -246,6 +246,7 @@ export default {
 
         refreshClick() {
             if(!this.isStepSlotSelection) return false
+            this.currentStep = ''
             this.loading = true
             this.refreshInitValue()
         },
@@ -427,7 +428,7 @@ export default {
     width: 2.4em;
     text-align: center;
     font-size: .75em;
-    padding: .2em .4em;
+    padding: .6em .1em .4em .1em;
 }
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;
@@ -529,12 +530,13 @@ export default {
 
 .wap-front .dayselected{
     font-weight: bold;
-    border-radius: .2em .2em 0 0;
-    box-shadow: 0px 0px 6px rgba(0,0,0,0.1);
+    border-radius: 1.2em 1.2em 0 0;
+    box-shadow: 0px 0px 6px rgba(0,0,0,.1);
 }
 
 .wap-front .dayselected span{
-    text-decoration: none;
+    text-decoration: none !important;
+    color:#fff;
 }
 
 .wap-front .w100{
@@ -580,9 +582,6 @@ export default {
   opacity: 0;
 }
 
-.saveButtons span {
-    width: 80px;
-}
 .wap-bf .field-required inoput{
     transition: border-right ease-in-out .3s;
 }
@@ -660,5 +659,8 @@ export default {
 .wap-front .hide-loading{
     display:none;
 }
-
+.wap-front .max400{
+    max-width:400px;
+    margin:0 auto;
+}
 </style>

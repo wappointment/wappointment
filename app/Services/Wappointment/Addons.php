@@ -34,7 +34,7 @@ class Addons extends API
                     }
                     if ($this->pluginNamekey($package)) {
                         $package = apply_filters(
-                            'wappointment_addon_wrapper_' . $this->pluginNamekey($package),
+                            'wappointment_addon_wrapper_' . str_replace('-', '_', $this->pluginNamekey($package)),
                             $package
                         );
                     }

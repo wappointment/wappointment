@@ -35,7 +35,7 @@ class SettingsStaffController extends RestController
 
         $result = Settings::saveStaff($request->input('key'), $request->input('val'));
 
-        if ($request->input('key') == 'regav') {
+        if (in_array($request->input('key'), ['regav', 'availaible_booking_days'])) {
             (new \Wappointment\Services\Availability())->regenerate();
         }
 

@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex w-100">
+    <div class="d-flex w-100" :class="getClassWrapper">
         <range-slider
             class="slider"
             :min="definition.min"
@@ -11,8 +11,8 @@
             :maxlength="definition.max"
             :readonly="definition.readonly">
         </range-slider> 
-        <small v-if="! editableInput" data-tt="Click to edit" @click="editableInput=true">{{ formatedValue }}</small>
-        <input v-else v-model="updatedValue" type="number" size="2"/>
+        <small v-if="!editableInput" data-tt="Click to edit" @click="editableInput=true">{{ formatedValue }}</small>
+        <input v-else @keyup.enter.prevent="updateValueInput" v-model="tempVal" type="number" size="2"/>
         <small id="emailHelp" v-if="tip" class="form-text text-muted">{{ tip }}</small>
     </div>
 </template>
@@ -54,6 +54,10 @@ export default {
     },
 
     methods: {
+        updateValueInput(){
+            this.editableInput = false
+            this.updatedValue = this.tempVal
+        },
         updateTemp(tempval){
             this.tempVal = tempval
         },

@@ -41,9 +41,7 @@ class Booking extends AbstractProcessor
 
     public function prepareInputs($inputs): array
     {
-        if ($inputs['type'] != 'phone') {
-            unset($inputs['phone']);
-        }
+
         if ($inputs['type'] != 'skype') {
             unset($inputs['skype']);
         }

@@ -127,6 +127,7 @@ class Settings
                 'saturday' => [],
                 'sunday' => []
             ],
+            'availaible_booking_days' => 60,
             'calurl' => '',
             'timezone' => $timezone,
             'avatarId' => false,
@@ -161,12 +162,12 @@ class Settings
             default($setting_key);
     }
 
-    public static function save($setting_key, $value)
+    protected static function prepareSave($setting_key, $value)
     {
         if (!static::$valid || static::valid($setting_key, $value)) {
-            $values = static::getValues();
+            $updatedValues = static::getValues();
 
-            $values[$setting_key] = $value;
+            $updatedValues[$setting_key] = $value;
 
             //before save
             $method = $setting_key . 'BeforeSave';
@@ -174,16 +175,32 @@ class Settings
                 static::$method($value);
             }
 
-            static::updateLocalSettings($values);
+            static::updateLocalSettings($updatedValues);
 
             $method = $setting_key . 'Saved';
             if (method_exists(__CLASS__, $method)) {
                 static::$method($setting_key, $value);
             }
-
-            WPHelpers::setOption(static::$key_option, $values, true);
+            return $updatedValues;
+        }
+        return false;
+    }
+    public static function save($setting_key, $value)
+    {
+        $updatedValues = static::prepareSave($setting_key, $value);
+        if ($updatedValues !== false) {
+            WPHelpers::setOption(static::$key_option, $updatedValues, true);
             return ['message' => 'Setting saved'];
         }
+    }
+
+    public static function saveMultiple($settings)
+    {
+        foreach ($settings as $key => $value) {
+            $updatedValues = static::prepareSave($key, $value);
+        }
+        WPHelpers::setOption(static::$key_option, $updatedValues, true);
+        return ['message' => 'Settings saved'];
     }
 
     public static function delete()
@@ -432,5 +449,4 @@ class Settings
         //dd('current ' . Settings::get('activeStaffId'), 'old ' . $newStaffId);
         WPHelpers::transferStaffOptions(Settings::get('activeStaffId'), $newStaffId);
     }
-
 }

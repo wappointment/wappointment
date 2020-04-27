@@ -15,6 +15,7 @@ class ViewsData
         if (method_exists($this, $key)) {
             $values = $this->$key();
         }
+
         return apply_filters('wappointment_viewdata_' . $key, $values);
     }
 
@@ -24,6 +25,7 @@ class ViewsData
 
         return apply_filters('wappointment_back_regav', [
             'regav' => Settings::getStaff('regav'),
+            'availaible_booking_days' => Settings::getStaff('availaible_booking_days'),
             'staffs' => WPUser::whereIn('ID', WPUserMeta::getUserIdWithRoles())->get(),
             'activeStaffId' => Settings::get('activeStaffId'),
             'activeStaffAvatar' => Settings::getStaff('avatarId') ?

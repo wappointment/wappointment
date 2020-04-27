@@ -85,7 +85,7 @@
         .wap-front .wrap-calendar {
             border-top: none;
             text-align: center;
-            overflow-y: scroll;
+            overflow: hidden scroll;
             max-height: 500px;
             background-color: {{ hx_rgb(opts.colors.body.bg) }};
         }
@@ -107,6 +107,12 @@
             background-color: {{ hx_rgb(opts.colors.header.bg) }};
             padding: .4em;
             border-radius: {{ calendarRound }}em {{ calendarRound }}em 0 0;
+        }
+        .wap-front .dayselected{
+            background-color: {{ hx_rgb(opts.colors.selected_day.bg) }};
+        }
+        .wap-front .wrap-calendar .dayselected span.avail{
+            color: {{ hx_rgb(opts.colors.selected_day.text) }};
         }
 
         .wap-front .wap-head .duration {
@@ -186,8 +192,8 @@
             padding: .3em;
             margin: .5em 0;
         }
-
-        .wap-front {
+        /** wrapper tag **/
+        {{ '#'+wrapper }}.wap-front {
             font-size: {{ baseFontSize }};
         }
         
@@ -202,7 +208,7 @@ export default {
     data:() => ({
         opts: null,
         widthWrapper: false,
-        baseFontSize: '18px',
+        baseFontSize: '22px',
         calendarRound: .6,
     }),
     created(){
@@ -219,6 +225,18 @@ export default {
     },
     mounted(){
         this.widthWrapper = document.getElementById(this.wrapper).clientWidth
+        if(this.widthWrapper < '620'){
+            this.baseFontSize = '21px'
+        }
+        if(this.widthWrapper < '520'){
+            this.baseFontSize = '20px'
+        }
+        if(this.widthWrapper < '420'){
+            this.baseFontSize = '19px'
+        }
+        if(this.widthWrapper < '320'){
+            this.baseFontSize = '18px'
+        }
         if(this.widthWrapper < '230'){
             this.baseFontSize = '17px'
         }
