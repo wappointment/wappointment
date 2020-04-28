@@ -20,15 +20,8 @@ class Scheduler
 
     public static function syncCalendar()
     {
-
         foreach (\Wappointment\Services\Staff::getIds() as $staff_id) {
-            $calendar_urls = WPHelpers::getStaffOption('cal_urls');
-            if (empty($calendar_urls)) {
-                $calendar_url_old = Settings::getStaff('calurl', $staff_id);
-                $calendar_urls[md5($calendar_url_old)] = $calendar_url_old;
-                WPHelpers::setStaffOption('cal_urls', $calendar_urls);
-                Settings::saveStaff('calurl', false);
-            }
+            $calendar_urls = self::getUrlsToScan($staff_id);
             $hasChanged = false;
             foreach ($calendar_urls as $calurl) {
                 if ((new \Wappointment\Services\Calendar($calurl, $staff_id))->fetch()) {
@@ -40,6 +33,38 @@ class Scheduler
                 (new \Wappointment\Services\Availability())->regenerate();
             }
         }
+    }
+
+    private static function getUrlsToScan($staff_id)
+    {
+        $calendar_urls = WPHelpers::getStaffOption('cal_urls', $staff_id);
+        return self::upgradingUrls($calendar_urls, $staff_id);
+    }
+
+    private static function upgradingUrls($calendar_urls, $staff_id)
+    {
+        $require_save = false;
+        if (empty($calendar_urls)) {
+            $calendar_url_old = Settings::getStaff('calurl', $staff_id);
+            if (!empty($calendar_url_old)) {
+                $calendar_urls[md5($calendar_url_old)] = $calendar_url_old;
+                $require_save = true;
+                Settings::saveStaff('calurl', false, $staff_id);
+            }
+        }
+
+        foreach ($calendar_urls as $key => $calurl) {
+            if (empty($calurl)) {
+                unset($calendar_urls[$key]);
+                $require_save = true;
+            }
+        }
+
+        if ($require_save) {
+            WPHelpers::setStaffOption('cal_urls', $calendar_urls, $staff_id);
+        }
+
+        return $calendar_urls;
     }
 
     public static function processQueue()

@@ -1,4 +1,4 @@
-=== Appointments Bookings ===
+=== Appointments Bookings - Wappointment ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
 Requires at least: 4.7
@@ -8,35 +8,32 @@ Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-A powerful and reliable appointment booking system, packing the simplest booking process for your clients
+Appointments booking system for personal coaches, teachers, therapists and service professionals of all kind
 
 == Description ==
 
-A powerful and reliable **[appointment booking system](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**, packing the simplest booking process for your clients.
+A simple and reliable **[appointment booking system](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**, packing the simplest booking process for your clients.
 The **booking solution for professionals**. Get booked 24/7 using our super **user-friendly booking form**.
 
-Our system is designed for anyone who provide services to customers (personal coach, estate agent, language teachers, therapists, health professionals, beauty and wellness professionals, fitness professionals, etc…)
+It has been designed for any professional providing services to clients (personal coach, estate agent, language teachers, therapists, health professionals, beauty and wellness professionals, fitness professionals, etc…)
 
 Wappointment is free and will remain **free forever**.
 
 https://www.youtube.com/watch?v=jUkiyejbuzg
 
-== Our Booking Calendar's Benefits ==
+== The Benefits ==
 
 = Increase your Bookings =
 Convert visitors into customers with a simple call to action. **Get booked 24/7**, Wappointment is basically a **booking assistant which never sleeps**.
 
-= Improve Customer Satisfaction =
-Because your clients need to book you somehow, make sure their experience is great. Wappointment is all about smooth user experience, no questions only certainties.
-
-= Simplify Your Booking Process =
-Our super **user friendly booking widget** gives your clients a quick overview of your availability.
-
-= Reduce No-Shows =
-Your clients receive **appointment confirmations and reminders**. You easily define when they receive them.
-
 = Avoid double bookings =
 Our centralize system updates your availability on each action making sure you cannot get booked twice at the same time.
+
+= Simplify Your Booking Process =
+Our **user friendly booking form** gives your clients a quick overview of your availability, making the booking process a breeze.
+
+= Reduce No-Shows =
+Your clients receive **appointment confirmations and reminders**. You easily define when and how many of them do they receive (1 day before appointment, 1 hour before appointment).
 
 ==  Our Appointment Booking System features ==
 * Unlimited bookings
