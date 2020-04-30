@@ -1,9 +1,14 @@
 <template>
     <div :class="getClassWrapper">
         <LabelMaterial>
-            <input :type="getInputType" class="form-control" @keydown.prevent.stop.enter="catchEnterEvent"  :class="{'is-invalid':hasErrors}" :id="id" 
-            @focusout="$emit('activated')" :placeholder="label" :autocomplete="autocomplete !== false?'on':'off'"
+            <input @keydown.prevent.stop.enter="catchEnterEvent"  
+             :id="id"
+             :type="getInputType" class="form-control" :class="{'is-invalid':hasErrors}"
+            @focusout="$emit('activated')" :placeholder="label" :autocomplete="autocomplete"
             v-model="updatedValue">
+            <span v-if="definition.type == 'password'"  
+            class="dashicons" :class="[passwordShow?'dashicons-hidden':'dashicons-visibility']" 
+            @click="passwordShow=!passwordShow"></span>
         </LabelMaterial>
         <div class="small text-danger" v-if="hasErrors">
             <div v-for="error in errors">
@@ -20,16 +25,45 @@ import LabelMaterial from '../Fields/LabelMaterial'
 export default {
     components: {LabelMaterial},
     mixins: [AbstractField],
+    data(){
+        return {
+            passwordShow: false
+        }
+    },
     methods:{
         catchEnterEvent(e){
             this.$emit('submitted',e)
         },
-
     },
     computed: {
         getInputType(){
+            if(this.passwordShow === true) return 'text'
             return this.definition.type != 'input' ? this.definition.type : 'text'
-        }
+        },
+        getClassWrapper(){
+            let classes = {}
+            classes['input-'+this.definition.type] = true
+            if(this.definition.classWrapper !== undefined){
+                classes[this.definition.classWrapper] = true
+            }
+            return classes
+        },
     }
 }
 </script>
+<style>
+.input-password .dashicons{
+    position: absolute;
+    top: 16px;
+    font-size: 18px;
+    color: #484747;
+    display: block;
+    right: 10px;
+    width: 25px;
+    background-color: #fff;
+    text-align: center;
+    box-shadow: 0 .4rem 1rem 0 rgba(0,0,0,.05);
+    border-radius: 3.2rem;
+    cursor: pointer;
+}
+</style>

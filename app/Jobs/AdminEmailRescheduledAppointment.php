@@ -2,29 +2,17 @@
 
 namespace Wappointment\Jobs;
 
-use Wappointment\Services\Settings;
 use Wappointment\Models\Appointment;
 
 class AdminEmailRescheduledAppointment extends AbstractAppointmentEmailJob
 {
-    const EMAIL = '\\Wappointment\\Messages\\AdminRescheduledAppointmentEmail';
+    use IsAdminAppointmentJob;
 
-    public function handle()
+    const CONTENT = '\\Wappointment\\Messages\\AdminRescheduledAppointmentEmail';
+
+    protected function generateContent()
     {
-        $emailObject = $this->generateEmail();
-
-        $result = $this->mailer
-            ->to(sanitize_email(Settings::get('email_notifications')))
-            ->send($emailObject);
-
-        if (!$result) {
-            throw new \WappointmentException('Error while sending email', 1);
-        }
-    }
-
-    protected function generateEmail()
-    {
-        $emailClass = static::EMAIL;
+        $emailClass = static::CONTENT;
         return new $emailClass($this->client, $this->appointment, new Appointment($this->params['oldAppointment']));
     }
 }

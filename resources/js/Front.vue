@@ -1,6 +1,6 @@
 <template>
     <div class="wap-front" :class="{'br-fixed': isBottomRight, 'large-version': largeVersion}" :id="elementId">
-        <StyleGenerator :options="opts" :wrapper="elementId"></StyleGenerator>
+        <StyleGenerator :options="opts" :wrapper="elementId" :largeVersion="largeVersion"></StyleGenerator>
         <div v-if="isPage">
             <BookingForm v-if="isBookingPage" :options="opts"></BookingForm>
             <ViewingAppointment v-else  :options="opts" :view="getParameterByName('view')" :appointmentkey="getParameterByName('appointmentkey')"></ViewingAppointment>

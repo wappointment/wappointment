@@ -1,4 +1,4 @@
-import VueTelInput from './vue-tel-input.vue';
+import VueTelInput from './vue-tel-input.vue'
 
 export default {
   ...VueTelInput,

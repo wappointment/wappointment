@@ -34,7 +34,7 @@
                 ></span>
               </button>
 
-              <div class="dropdown">
+              <div class="dropdown" v-if="!simpleVersion">
                 <button
                   class="btn btn-secondary dropdown-toggle"
                   :class="{ 'active': (nodes.paragraph.active()|| nodes.heading.active({level: 1}) || nodes.heading.active({level: 2})|| nodes.heading.active({level: 3})) }"
@@ -125,7 +125,10 @@
       <div>{{ value }}</div>
     </editor>
     <div class="footer-reminder" >
-      <div class="p-0 d-flex align-items-center">
+      <div v-if="simpleVersion">
+        Total characters: {{ characterCount }}
+      </div>
+      <div class="p-0 d-flex align-items-center" v-else>
         <LinkEdit :fieldValue="definition.save_appointment_text_link" fieldKey="save_appointment_text_link"></LinkEdit>
         <div class="text-muted mx-2" v-if="definition.allow_cancellation || definition.allow_rescheduling"> | </div>
         <LinkEdit v-if="definition.allow_rescheduling" :fieldValue="definition.reschedule_link" fieldKey="reschedule_link"></LinkEdit>
@@ -183,6 +186,7 @@ export default {
         position: false,
         linkUrl: null,
         writingUrl: false,
+        characterCount:0,
         toolbar: [
             {
             mark: "bold",
@@ -286,185 +290,198 @@ export default {
         };
     },
     computed: {
-    styleLinkContainer() {
-      if (this.position) {
-        let topPos = Math.round(this.position.top - this.position.height);
-        let leftPos = Math.round(32);
-        if (this.$refs.editor.state.ranges !== undefined) {
-          leftPos +=
-            this.$refs.editor.state.ranges[0].$from.pos -
-            this.$refs.editor.state.ranges[0].$to.pos;
-        }
-        let position = "fixed";
-        if (this.position.top == 0) {
-          topPos = 0;
-          leftPos = 0;
-          position = "absolute";
-          return "";
-        }
+      styleLinkContainer() {
+        if (this.position) {
+          let topPos = Math.round(this.position.top - this.position.height);
+          let leftPos = Math.round(32);
+          if (this.$refs.editor.state.ranges !== undefined) {
+            leftPos +=
+              this.$refs.editor.state.ranges[0].$from.pos -
+              this.$refs.editor.state.ranges[0].$to.pos;
+          }
+          let position = "fixed";
+          if (this.position.top == 0) {
+            topPos = 0;
+            leftPos = 0;
+            position = "absolute";
+            return "";
+          }
 
-        return (
-          "display:block !important;position:" +
-          position +
-          ";" +
-          "top:" +
-          topPos +
-          "px;left:" +
-          leftPos +
-          "px;"
-        );
+          return (
+            "display:block !important;position:" +
+            position +
+            ";" +
+            "top:" +
+            topPos +
+            "px;left:" +
+            leftPos +
+            "px;"
+          );
+        }
+        return "";
       }
-      return "";
+  },
+  created(){
+    this.simpleVersion = this.definition.simple !== undefined && this.definition.simple === true
+    if(this.simpleVersion){
+      this.toolbar=[]
+      this.extensions=[new CustomFieldNode(),
+            new ConditionalPhoneBlockNode(),
+            new ConditionalSkypeBlockNode(),
+            new ConditionalPhysicalBlockNode()
+        ]
     }
   },
     methods:{
-        updateModel({ getJSON, getHTML }) {
-            this.updatedValue = getJSON();
-        },
-        getSelectionDimensions() {
-      var sel = document.selection,
-        range;
-      var width = 0,
-        height = 0;
-      if (window.getSelection) {
-        sel = window.getSelection();
-        if (sel.rangeCount) {
-          range = sel.getRangeAt(0).cloneRange();
-          if (range.getBoundingClientRect) {
-            var rect = range.getBoundingClientRect();
-            width = rect.right - rect.left;
-            height = rect.bottom - rect.top;
-            return {
-              width: width,
-              height: height,
-              top: rect.top,
-              left: rect.left,
-              right: rect.right,
-              bottom: rect.bottom
-            };
+      updateModel({ getJSON, getHTML }) {
+          this.updatedValue = getJSON()
+          this.characterCount = this.$refs.editor.state.doc.content.size - 2
+          console.log('count',this.characterCount)
+      },
+      getSelectionDimensions() {
+        var sel = document.selection,
+          range;
+        var width = 0,
+          height = 0;
+        if (window.getSelection) {
+          sel = window.getSelection();
+          if (sel.rangeCount) {
+            range = sel.getRangeAt(0).cloneRange();
+            if (range.getBoundingClientRect) {
+              var rect = range.getBoundingClientRect();
+              width = rect.right - rect.left;
+              height = rect.bottom - rect.top;
+              return {
+                width: width,
+                height: height,
+                top: rect.top,
+                left: rect.left,
+                right: rect.right,
+                bottom: rect.bottom
+              };
+            }
           }
         }
-      }
-      return { width: 0, height: 0, top: 0, left: 0, right: 0, bottom: 0 };
-    },
+        return { width: 0, height: 0, top: 0, left: 0, right: 0, bottom: 0 };
+      },
 
-    showLinkInput(marks, nodes) {
-      if (!this.writingUrl) {
-        this.setLink(
-          marks["link"].attrs.href !== undefined ? marks["link"].attrs.href : ""
-        );
-      }
-    },
-    getActiveState(marks, nodes, mark) {
-      if (marks[mark] !== undefined) {
-        if (mark == "link") {
-          if (marks[mark].active()) {
-            if (!this.writingUrl && marks[mark].attrs.href != this.linkUrl) {
+      showLinkInput(marks, nodes) {
+        if (!this.writingUrl) {
+          this.setLink(
+            marks["link"].attrs.href !== undefined ? marks["link"].attrs.href : ""
+          );
+        }
+      },
+      getActiveState(marks, nodes, mark) {
+        if (marks[mark] !== undefined) {
+          if (mark == "link") {
+            if (marks[mark].active()) {
+              if (!this.writingUrl && marks[mark].attrs.href != this.linkUrl) {
+                this.resetLink();
+              }
+              if (this.styleLinkContainer == "") {
+                this.showLinkInput(marks, nodes);
+              }
+            } else {
               this.resetLink();
             }
-            if (this.styleLinkContainer == "") {
-              this.showLinkInput(marks, nodes);
-            }
+          }
+
+          return marks[mark].active();
+        }
+        if (nodes[mark] !== undefined) {
+          return nodes[mark].active();
+        }
+      },
+
+      confirmLinkMark(marks, nodes) {
+        let attrs = { href: this.linkUrl };
+        marks["link"].command(attrs);
+        this.resetLink();
+        this.writingUrl = false;
+      },
+
+      removeLinkMark(marks, nodes) {
+        let attrs = { href: "" };
+        marks["link"].command(attrs);
+        this.resetLink();
+        this.writingUrl = false;
+      },
+
+      setLink(linkvalue = "") {
+        this.linkUrl = linkvalue;
+        this.position = this.getSelectionDimensions();
+      },
+
+      resetLink() {
+        this.linkUrl = "";
+        this.position = false;
+      },
+
+      getCommand(marks, nodes, mark) {
+        if (marks[mark] !== undefined) {
+          if (mark == "link") {
+            marks["link"].command({ href: "http://" });
           } else {
-            this.resetLink();
+            return marks[mark].command();
+          }
+        }
+        if (nodes[mark] !== undefined) {
+          return nodes[mark].command();
+        }
+      },
+      setContent() {
+        // set content for json object
+        this.$refs.editor.setContent(
+          JSON.parse(JSON.stringify(this.value)),
+          true
+        );
+
+        this.$refs.editor.focus();
+      },
+
+      toggleDDP(ddpName) {
+        let newVal = true;
+        if (this[ddpName] == true) newVal = false;
+        this.hideDropDowns();
+        this[ddpName] = newVal;
+      },
+
+      hideDropDowns() {
+        this.ddph = false;
+        this.ddpf = false;
+        this.ddpc = false;
+      },
+
+      insertCfield(nodes, model, key) {
+        this.hideDropDowns();
+        return nodes.customfield.command({ src: model, alt: key });
+      },
+
+      wrapHeaders(nodes, n = false) {
+        if (n === false) nodes.paragraph.command();
+        else nodes.heading.command({ level: n });
+        this.hideDropDowns();
+      },
+
+      conditionalBlock(nodes, activateCondition) {
+        let cblocks = ["cblockphone", "cblockskype", "cblockphysical"];
+        let rerun = true;
+        for (let index = 0; index < cblocks.length; index++) {
+          const condition = cblocks[index];
+          if (nodes[condition].active()) {
+            nodes[condition].command();
+            if (activateCondition == condition) rerun = false;
           }
         }
 
-        return marks[mark].active();
+        if (rerun) nodes[activateCondition].command();
+        this.hideDropDowns();
       }
-      if (nodes[mark] !== undefined) {
-        return nodes[mark].active();
-      }
-    },
-
-    confirmLinkMark(marks, nodes) {
-      let attrs = { href: this.linkUrl };
-      marks["link"].command(attrs);
-      this.resetLink();
-      this.writingUrl = false;
-    },
-
-    removeLinkMark(marks, nodes) {
-      let attrs = { href: "" };
-      marks["link"].command(attrs);
-      this.resetLink();
-      this.writingUrl = false;
-    },
-
-    setLink(linkvalue = "") {
-      this.linkUrl = linkvalue;
-      this.position = this.getSelectionDimensions();
-    },
-
-    resetLink() {
-      this.linkUrl = "";
-      this.position = false;
-    },
-
-    getCommand(marks, nodes, mark) {
-      if (marks[mark] !== undefined) {
-        if (mark == "link") {
-          marks["link"].command({ href: "http://" });
-        } else {
-          return marks[mark].command();
-        }
-      }
-      if (nodes[mark] !== undefined) {
-        return nodes[mark].command();
-      }
-    },
-    setContent() {
-      // set content for json object
-      this.$refs.editor.setContent(
-        JSON.parse(JSON.stringify(this.value)),
-        true
-      );
-
-      this.$refs.editor.focus();
-    },
-
-    toggleDDP(ddpName) {
-      let newVal = true;
-      if (this[ddpName] == true) newVal = false;
-      this.hideDropDowns();
-      this[ddpName] = newVal;
-    },
-
-    hideDropDowns() {
-      this.ddph = false;
-      this.ddpf = false;
-      this.ddpc = false;
-    },
-
-    insertCfield(nodes, model, key) {
-      this.hideDropDowns();
-      return nodes.customfield.command({ src: model, alt: key });
-    },
-
-    wrapHeaders(nodes, n = false) {
-      if (n === false) nodes.paragraph.command();
-      else nodes.heading.command({ level: n });
-      this.hideDropDowns();
-    },
-
-    conditionalBlock(nodes, activateCondition) {
-      let cblocks = ["cblockphone", "cblockskype", "cblockphysical"];
-      let rerun = true;
-      for (let index = 0; index < cblocks.length; index++) {
-        const condition = cblocks[index];
-        if (nodes[condition].active()) {
-          nodes[condition].command();
-          if (activateCondition == condition) rerun = false;
-        }
-      }
-
-      if (rerun) nodes[activateCondition].command();
-      this.hideDropDowns();
-    }
     },
     mounted() {
-    this.setContent();
-  },
+      this.setContent();
+    },
 }
 </script>
 <style>

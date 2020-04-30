@@ -22,7 +22,6 @@ export default {
     },
     created(){
         this.serviceReminder = this.$vueService(new ServiceReminder)
-
     },
     methods: {
 

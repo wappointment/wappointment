@@ -101,7 +101,7 @@ export default {
     },
     autocomplete: {
       type: String,
-      default: 'on',
+      default: 'tel',
     },
 /*     dropdownOptions: {
       type: Object,

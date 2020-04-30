@@ -10,9 +10,10 @@ class SeedData extends \Wappointment\Installation\MethodsRunner
 {
     public function remindersToSeed()
     {
+        $email_type = MReminder::getType('email');
         return [
             [
-                'type' => MReminder::TYPE_EMAIL,
+                'type' => $email_type,
                 'event' => MReminder::APPOINTMENT_PENDING,
                 'subject' => 'Your appointment is pending',
                 'published' => 1,
@@ -31,7 +32,7 @@ class SeedData extends \Wappointment\Installation\MethodsRunner
                 ],
             ],
             [
-                'type' => MReminder::TYPE_EMAIL,
+                'type' => $email_type,
                 'event' => MReminder::APPOINTMENT_RESCHEDULED,
                 'subject' => 'Your appointment has been rescheduled',
                 'published' => 1,
@@ -50,7 +51,7 @@ class SeedData extends \Wappointment\Installation\MethodsRunner
                 ],
             ],
             [
-                'type' => MReminder::TYPE_EMAIL,
+                'type' => $email_type,
                 'event' => MReminder::APPOINTMENT_CANCELLED,
                 'subject' => 'Your appointment has been cancelled',
                 'published' => 1,

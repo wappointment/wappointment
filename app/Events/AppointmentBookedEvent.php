@@ -2,6 +2,8 @@
 
 namespace Wappointment\Events;
 
+use Wappointment\Models\Reminder;
+
 class AppointmentBookedEvent extends AbstractEvent
 {
     const NAME = 'appointment.booked';
@@ -9,6 +11,7 @@ class AppointmentBookedEvent extends AbstractEvent
     protected $appointment;
     protected $client;
     protected $oldAppointment;
+    protected $reminders;
 
     public function __construct($args)
     {
@@ -17,6 +20,10 @@ class AppointmentBookedEvent extends AbstractEvent
         if (!empty($args['oldAppointment'])) {
             $this->oldAppointment = $args['oldAppointment'];
         }
+
+        $this->reminders = Reminder::select('id', 'event', 'type', 'options')->where('published', 1)
+            ->whereIn('event', [Reminder::APPOINTMENT_STARTS, Reminder::APPOINTMENT_CONFIRMED])
+            ->get();
     }
 
     public function getClient()
@@ -32,5 +39,10 @@ class AppointmentBookedEvent extends AbstractEvent
     public function getOldAppointment()
     {
         return $this->oldAppointment;
+    }
+
+    public function getReminders()
+    {
+        return $this->reminders;
     }
 }

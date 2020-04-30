@@ -108,7 +108,7 @@ export default {
             // WP Mail
             {
                 type: 'checkimages',
-                label: 'How is it provided?',
+                label: 'How do you want to send emails?',
                 model: 'method',
                 radioMode: true,
                 cast: Array,
@@ -123,7 +123,7 @@ export default {
             {
                 type: 'label',
                 model: 'txt1',
-                label: 'With WP mail, you can only send simple emails(no HTML). Also it can be unreliable',
+                label: 'Warning: sending emails with this method can be unreliable, emails may go straight to SPAM. Also you can only send text emails(no style). ',
                 classWrapper: 'text-danger',
                 conditions: [
                   { model:'method', values: ['wpmail'] }
@@ -235,7 +235,7 @@ export default {
               fields: [
                 {
                     type: "input",
-                    label: "Username",
+                    label: "SMTP User",
                     model: "username",
                     required: true,
                     cast: String,
@@ -243,7 +243,7 @@ export default {
                 },
                 {
                     type: "password",
-                    label: "Password",
+                    label: "SMTP Password",
                     model: "password",
                     required: true,
                     cast: String,

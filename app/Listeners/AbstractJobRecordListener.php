@@ -2,39 +2,26 @@
 
 namespace Wappointment\Listeners;
 
-use Wappointment\Events\AppointmentBookedEvent;
 use Wappointment\Services\Queue;
-use Wappointment\Services\Settings;
 
 abstract class AbstractJobRecordListener
 {
     protected $jobs = [];
+    protected $admin = false;
+    protected $data_job  = [];
 
-    protected function cancelPendingJobs($event)
+    protected function addToJobs($event)
     {
-    }
-
-    protected function queueConfirmationEmail($event)
-    {
-    }
-
-    protected function queueAdminNotification($event)
-    {
-    }
-
-    public function handle(AppointmentBookedEvent $event)
-    {
-
-        $this->cancelPendingJobs($event);
-
-        // there is only something to queue if email is configured
-        if ((bool)Settings::get('mail_status')) {
-            $this->queueConfirmationEmail($event);
-
-            $this->queueAdminNotification($event);
-
-            $this->queueJobs();
+        if (empty($this->jobClass)) {
+            throw new \WappointmentException('jobClass not defined', 1);
         }
+
+        $this->recordJob(
+            $this->jobClass,
+            $this->data_job,
+            $this->admin ? 'admin' : 'client',
+            $event->getAppointment()->id
+        );
     }
 
     protected function recordJob($jobClass, $params, $queue = 'default', $appointment_id = 0, $available_at = 0)
@@ -51,10 +38,18 @@ abstract class AbstractJobRecordListener
         ];
     }
 
-    private function queueJobs()
+    protected function queueJobs()
     {
         if (!empty($this->jobs)) {
             Queue::pushMultiple($this->jobs);
         }
+    }
+
+    public function handle($event)
+    {
+
+        $this->addToJobs($event);
+
+        $this->queueJobs();
     }
 }

@@ -1,6 +1,6 @@
 <script>
 export default {
-    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr', 'autocomplete'],
+    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr'],
     watch: {
         updatedValue(newVal, oldVal){
             if(this.formGen !== false && this.model === undefined ) return
@@ -42,6 +42,9 @@ export default {
         },
         hasErrors(){
             return this.errors !== undefined && Object.keys(this.errors).length > 0
+        },
+        autocomplete(){
+            return this.definition.autocomplete === undefined ? 'off':this.definition.autocomplete
         }
     },
 

@@ -52,6 +52,13 @@ class Reminder
     public static function preview($id, $recipient)
     {
         $reminder = MReminder::find($id);
+        $transport = apply_filters('wappointment_reminder_transport', ['email' => [__CLASS__, 'sendPreview']]);
+
+        return call_user_func_array($transport[$reminder->getTypeLabel()], [$reminder, $recipient]);
+    }
+
+    public static function sendPreview($reminder, $recipient)
+    {
         return (new Mail())
             ->to($recipient)
             ->send($reminder->toMailable(new Appointment));
@@ -73,8 +80,9 @@ class Reminder
 
     public static function baseSeeds($arraySeeds)
     {
+        $email_type = MReminder::getType('email');
         $arraySeeds[] = [
-            'type' => MReminder::TYPE_EMAIL,
+            'type' => $email_type,
             'event' => MReminder::APPOINTMENT_PENDING,
             'subject' => 'Your appointment is pending',
             'published' => 1,
@@ -95,7 +103,7 @@ class Reminder
             ],
         ];
         $arraySeeds[] = [
-            'type' => MReminder::TYPE_EMAIL,
+            'type' => $email_type,
             'event' => MReminder::APPOINTMENT_RESCHEDULED,
             'subject' => 'Your appointment has been rescheduled',
             'published' => 1,
@@ -115,7 +123,7 @@ class Reminder
             ],
         ];
         $arraySeeds[] = [
-            'type' => MReminder::TYPE_EMAIL,
+            'type' => $email_type,
             'event' => MReminder::APPOINTMENT_CANCELLED,
             'subject' => 'Your appointment has been cancelled',
             'published' => 1,
@@ -175,10 +183,10 @@ class Reminder
             $email_confirmed[] = $footerRow;
             $email_reminder[] = $footerRow;
         }
-
+        $email_type = MReminder::getType('email');
         return [
             [
-                'type' => MReminder::TYPE_EMAIL,
+                'type' => $email_type,
                 'event' => MReminder::APPOINTMENT_CONFIRMED,
                 'subject' => 'Your appointment has been confirmed',
                 'locked' => 1,
@@ -188,7 +196,7 @@ class Reminder
                 ],
             ],
             [
-                'type' => MReminder::TYPE_EMAIL,
+                'type' => $email_type,
                 'event' => MReminder::APPOINTMENT_STARTS,
                 'locked' => 0,
                 'published' => 1,

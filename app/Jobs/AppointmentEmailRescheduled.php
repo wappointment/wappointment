@@ -4,5 +4,5 @@ namespace Wappointment\Jobs;
 
 class AppointmentEmailRescheduled extends AppointmentEmailConfirmed
 {
-    const EMAIL = '\\Wappointment\\Messages\\AppointmentRescheduledEmail';
+    const CONTENT = '\\Wappointment\\Messages\\AppointmentRescheduledEmail';
 }

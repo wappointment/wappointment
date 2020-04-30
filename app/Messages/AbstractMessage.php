@@ -4,10 +4,21 @@ namespace Wappointment\Messages;
 
 abstract class AbstractMessage implements InterfaceMessage
 {
-    public $messageLines = [];
-
-    public function line($line)
+    public $body = '';
+    public function __construct(...$params)
     {
-        return $this->messageLines[] = $line;
+        $this->loadEmail(...$params);
+    }
+
+    public function returnBody()
+    {
+        return $this->body;
+    }
+
+    protected function finalProcess()
+    {
+        if (method_exists($this, 'replaceTags')) {
+            $this->replaceTags();
+        }
     }
 }

@@ -1,14 +1,19 @@
 <template>
     <div @click="changed" class="icon hovercursor" :class="getPassedClass" >
-        <span title="email" class="dashicons" 
+        <span :title="title" class="dashicons" 
         :class="[isPublished ? 'dashicons-yes' : 'dashicons-no' ]" ></span>
-        <span class="dashicons dashicons-email-alt"></span>
+        <span class="dashicons " :class="getClassLabel()"></span>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['element', 'value', 'passedClass'],
+    props: ['element', 'value', 'passedClass', 'labels'],
+    data(){
+      return {
+        title: ''
+      }
+    },
     computed: {
         isPublished(){
             if(this.value !== undefined){
@@ -25,6 +30,21 @@ export default {
         }
     },
     methods: {
+        getClassLabel(){
+          let classes = {}
+          if(this.labels === undefined){
+            return {'dashicons-email-alt':true}
+          }
+          for (let i = 0; i < this.labels.types.length; i++) {
+            const element = this.labels.types[i]
+            if(element.code == this.element.type){
+              this.title = element.name
+              classes[element.icon] = true
+            }
+          }
+          return classes
+        },
+        
         changed(){
             this.$emit('changed', this.value !== undefined ? !this.isPublished : Object.assign(this.element,{ published: !this.isPublished }))
         },

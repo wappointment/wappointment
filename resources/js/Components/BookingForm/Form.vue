@@ -39,13 +39,13 @@
                         <div class="wap-field field-required" :class="hasError('name')">
                             <label for="name">{{options.form.fullname}}</label>
                             <p class="d-flex">
-                                <input class="form-control" id="name" type="text" v-model="bookingForm.name" :required="true">
+                                <input class="form-control" id="name" type="text" autocomplete="name" v-model="bookingForm.name" :required="true">
                             </p>
                         </div>
                         <div class="wap-field field-required" :class="hasError('email')">
                             <label for="email">{{options.form.email}}</label>
                             <p class="d-flex">
-                                <input type="email" id="email" class="form-control" v-model="bookingForm.email" :required="true">
+                                <input type="email" id="email" class="form-control" autocomplete="email" v-model="bookingForm.email" :required="true">
                             </p>
                         </div>
                         <div v-if="requirePhoneInput" class="wap-field field-required" :class="hasError('phone')">

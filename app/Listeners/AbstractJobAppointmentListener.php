@@ -6,9 +6,11 @@ use Wappointment\Services\Queue;
 
 abstract class AbstractJobAppointmentListener extends AbstractJobRecordListener
 {
-    protected $jobClass = '';
 
-    protected function queueConfirmationEmail($event)
+    protected $jobClass = '';
+    protected $cancel = false;
+
+    protected function addToJobs($event)
     {
         if (empty($this->jobClass)) {
             throw new \WappointmentException('jobClass not defined', 1);
@@ -18,7 +20,7 @@ abstract class AbstractJobAppointmentListener extends AbstractJobRecordListener
             $this->jobClass,
             [
                 'appointment' => $event->getAppointment(),
-                'client' => $event->getClient()
+                'client' => $event->getClient(),
             ],
             'client',
             $event->getAppointment()->id
@@ -28,5 +30,16 @@ abstract class AbstractJobAppointmentListener extends AbstractJobRecordListener
     protected function cancelRelatedAppointmentJob($event)
     {
         Queue::cancelAppointmentJob($event->getAppointment()->id);
+    }
+
+    public function handle($event)
+    {
+        if ($this->cancel) {
+            $this->cancelRelatedAppointmentJob($event);
+        }
+
+        $this->addToJobs($event);
+
+        $this->queueJobs();
     }
 }

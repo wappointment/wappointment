@@ -67,22 +67,27 @@ class ReminderController extends RestController
         if ((int) Settings::get('allow_cancellation') != 1) {
             $queryReminders->whereNotIn('event', [MReminder::APPOINTMENT_CANCELLED]);
         }
-        return [
-            'mail_status' => (bool) Settings::get('mail_status'),
-            'allow_cancellation' => (bool) Settings::get('allow_cancellation'),
-            'allow_rescheduling' => (bool) Settings::get('allow_rescheduling'),
-            'reschedule_link' => Settings::get('reschedule_link'),
-            'cancellation_link' => Settings::get('cancellation_link'),
-            'save_appointment_text_link' => Settings::get('save_appointment_text_link'),
-            'recipient' => (new \Wappointment\WP\Staff())->emailAddress(),
-            'multiple_service_type' => \Wappointment\Helpers\Service::hasMultipleTypes(),
-            'reminders' => $queryReminders->get(),
-            'defaultReminder' => Reminder::getSeedReminder(),
-            'email_logo' => Settings::getStaff('email_logo'),
-            'labels' => [
-                'types' => MReminder::$types,
-                'events' => MReminder::$events
+        return apply_filters(
+            'wappointment_settings_reminders_get',
+            [
+                'mail_status' => (bool) Settings::get('mail_status'),
+                'allow_cancellation' => (bool) Settings::get('allow_cancellation'),
+                'allow_rescheduling' => (bool) Settings::get('allow_rescheduling'),
+                'reschedule_link' => Settings::get('reschedule_link'),
+                'cancellation_link' => Settings::get('cancellation_link'),
+                'save_appointment_text_link' => Settings::get('save_appointment_text_link'),
+                'recipient' => (new \Wappointment\WP\Staff())->emailAddress(),
+                'multiple_service_type' => \Wappointment\Helpers\Service::hasMultipleTypes(),
+                'reminders' => $queryReminders->get(),
+                'defaultReminders' => [
+                    'email' => Reminder::getSeedReminder()
+                ],
+                'email_logo' => Settings::getStaff('email_logo'),
+                'labels' => [
+                    'types' => MReminder::getTypes(),
+                    'events' => MReminder::getEvents()
+                ]
             ]
-        ];
+        );
     }
 }

@@ -11,6 +11,10 @@ import DurationCell from './Components/BookingForm/DurationCell'
 import VueService from './Plugins/vue-service'
 import changeWPmenu from './Standalone/changeWPmenu'
 import parseQuery from './Standalone/parseQuery'
+
+import InputPh from './Fields/InputLabelMaterial'
+window.wappointmentExtends.store('commons', {InputPh})
+
 window.wappoChangeWPmenu = changeWPmenu
 
 Vue.use(VueWapModal)
@@ -27,6 +31,7 @@ Vue.component('RingLoader', RingLoader)
 Vue.component('WLoader', WLoader)
 Vue.component('DurationCell', DurationCell)
 Vue.use(VueRouter)
+
 
 const CalendarPage = () => import(/* webpackChunkName: "group-calendar" */ './Views/Calendar')
 const SettingsPage = () => import(/* webpackChunkName: "group-settings" */ './Views/Settings')

@@ -18,7 +18,7 @@ class AppointmentReminderEmail extends ClientBookingConfirmationEmail
         if ($reminder_id) {
             $email = Reminder::where('id', $reminder_id)
                 ->where('published', 1)
-                ->where('type', Reminder::TYPE_EMAIL)
+                ->where('type', Reminder::getType('email'))
                 ->where('event', static::EVENT)
                 ->first();
             if (!$email) {

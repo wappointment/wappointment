@@ -5,10 +5,10 @@
         </div>
         <div class="d-flex">
             <div v-for="(item, idx) in images" :key="idx" @click="onChanged(item)"  
-            class="btn btn-secondary btn-cell" :class="{'is-invalid':hasErrors, selected: isItemChecked(item)}">
+            class="btn btn-secondary btn-cell" :class="getClassesImage(item)" :data-tt="item.sub">
                 <div v-if="item.icon !== undefined">
                     <FontAwesomeIcon v-if="item.icontype===undefined" :icon="item.icon" size="lg"/>
-                    <span v-if="item.icontype=='wp'" :class="'dashicons dashicons-' + item.icon"></span>
+                    <span v-if="item.icontype=='wp'" :class="'dashicons ' + getWPicon(item)"></span>
                 </div>
                 
                 <div>{{ item.name }}</div>
@@ -61,7 +61,16 @@ export default {
     },
 
     methods: {
-
+        getWPicon(item){
+            return item.icon.indexOf('dashicons-') === -1?'dashicons-'+item.icon:item.icon
+        },
+        getClassesImage(item){
+            let classes = {}
+            if(this.hasErrors) classes['is-invalid'] = true
+            if(this.isItemChecked(item)) classes['selected'] = true
+            if(item.subclass !== undefined) classes[item.subclass] = true
+            return classes
+        },
         getItemValue(item) {
             if (isObject(item)){
                 if (typeof this.definition["checklistOptions"] !== "undefined" && typeof this.definition["checklistOptions"]["value"] !== "undefined") {

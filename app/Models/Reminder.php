@@ -12,14 +12,15 @@ class Reminder extends Model
     protected $fillable = [
         'subject', 'type', 'event', 'locked', 'options', 'published'
     ];
+
     protected $casts = [
         'options' => 'array',
         'locked' => 'boolean',
         'published' => 'boolean'
     ];
-    const TYPE_EMAIL = 1;
-    const TYPE_SMS = 2;
-    const APPOINTMENT_STARTS = 1; // appointment start
+
+
+    const APPOINTMENT_STARTS = 1;
     const APPOINTMENT_CONFIRMED = 2;
     const APPOINTMENT_RESCHEDULED = 3;
     const APPOINTMENT_CANCELLED = 4;
@@ -29,31 +30,47 @@ class Reminder extends Model
     const WHEN_UNIT_HOURS = 2;
     const WHEN_UNIT_DAYS = 3;
 
-    public static $types = [
-        self::TYPE_EMAIL => 'email',
-        self::TYPE_SMS => 'sms'
-    ];
-    public static $events = [
-        self::APPOINTMENT_STARTS => 'appointment_starts',
-        self::APPOINTMENT_CONFIRMED => 'appointment_confirmed',
-        self::APPOINTMENT_RESCHEDULED => 'appointment_rescheduled',
-        self::APPOINTMENT_CANCELLED => 'appointment_cancelled',
-        self::APPOINTMENT_PENDING => 'appointment_pending'
-    ];
-
-    public static function getTypeCode($key)
+    public static function getType($type)
     {
-        return self::getPropCode($key, self::$types);
+        $types = self::getTypes();
+        foreach ($types as $type_infos) {
+            if ($type_infos['name'] == $type) {
+                return $type_infos['code'];
+            }
+        }
+        return 1;
     }
 
-    public static function getEventCode($key)
+    public static function getTypes()
     {
-        return self::getPropCode($key, self::$events);
+        return apply_filters('wappointment_reminder_types', [
+            [
+                'code' => 1,
+                'name' => 'email',
+                'icon' => 'dashicons-email-alt'
+            ]
+        ]);
     }
 
-    public static function getPropCode($key, $array)
+    public function getTypeLabel()
     {
-        return array_search($key, $array);
+        $types = self::getTypes();
+        foreach ($types as $type_infos) {
+            if ($type_infos['code'] == $this->type) {
+                return $type_infos['name'];
+            }
+        }
+    }
+
+    public static function getEvents()
+    {
+        return [
+            self::APPOINTMENT_STARTS => 'appointment_starts',
+            self::APPOINTMENT_CONFIRMED => 'appointment_confirmed',
+            self::APPOINTMENT_RESCHEDULED => 'appointment_rescheduled',
+            self::APPOINTMENT_CANCELLED => 'appointment_cancelled',
+            self::APPOINTMENT_PENDING => 'appointment_pending'
+        ];
     }
 
     public function getDelay()

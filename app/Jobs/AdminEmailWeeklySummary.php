@@ -2,26 +2,14 @@
 
 namespace Wappointment\Jobs;
 
-use Wappointment\Services\Settings;
 use Wappointment\Services\Queue;
 
 class AdminEmailWeeklySummary extends AbstractEmailJob
 {
-    const EMAIL = '\\Wappointment\\Messages\\AdminWeeklySummaryEmail';
+    const CONTENT = '\\Wappointment\\Messages\\AdminWeeklySummaryEmail';
 
-    public function handle()
+    public function afterHandled()
     {
-        $emailObject = $this->generateEmail();
-
-        $result = $this->mailer
-            ->to(sanitize_email(Settings::get('email_notifications')))
-            ->send($emailObject);
-
-        if (!$result) {
-            throw new \WappointmentException('Error while sending email', 1);
-        } else {
-            //insert a new job for tomorrow
-            Queue::queueWeeklyJob();
-        }
+        Queue::queueWeeklyJob();
     }
 }

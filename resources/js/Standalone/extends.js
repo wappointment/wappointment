@@ -6,12 +6,14 @@ class Extends {
     constructor() {
         this.callbacks = {}
         this.baseUrl = window.apiWappointment.baseUrl
+        this.storage = {}
     }
 
     add(extendName, callBack) {
         if(this.callbacks[extendName] === undefined) this.callbacks[extendName] = []
         this.callbacks[extendName].push(callBack)
     }
+    
 
     filter(extendName, extendParams, extraParams, cloning = true){
         
@@ -26,10 +28,12 @@ class Extends {
         }
         
     }
-
-   /* loadComponent(name,componentFile){
-        return externalComponent(name, this.baseUrl+componentFile)
-    }*/
+    store(extendName, objects){
+        this.storage[extendName] = objects
+    }
+    get(extendName) {
+        return this.storage[extendName]
+    }
 }
 
 export default new Extends

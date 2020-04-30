@@ -13,7 +13,7 @@
                             :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true"
                             @loaded="loadedField(keydi, skeydi)"
                             v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement)" 
-                            :definition="subelement" :autocomplete="autocomplete" :errors="getErrors(subelement)" />
+                            :definition="subelement"  :errors="getErrors(subelement)" />
                         </div>
                     </div>
                 </div>
@@ -22,7 +22,7 @@
                         <component :is="getFormComponent(element)" :value="getModelValue(element)" 
                         :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true"
                     @loaded="loadedField(keydi)" :errors="getErrors(element)"
-                    v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :autocomplete="autocomplete" :definition="element"/>
+                    v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :definition="element"/>
                     </div>
                     
                 </div>
@@ -287,6 +287,7 @@ export default {
                     failed = this.isEmptyValue(modelValue)
                 }else{
                     if(condition.notin !== undefined){
+                        
                         failed = this.atLeastOne(modelValue, condition)
                     }else{
                         failed = !this.atLeastOne(modelValue, condition)
@@ -295,9 +296,17 @@ export default {
                 
                 
             }else{
-                if(condition.values.indexOf(modelValue) === -1){
-                    failed = true
+                
+                if(condition.notin !== undefined){
+                    if(condition.values.indexOf(modelValue) !== -1){
+                        failed = true
+                    }
+                }else{
+                    if(condition.values.indexOf(modelValue) === -1){
+                        failed = true
+                    }
                 }
+                
             }
             return !failed
         },

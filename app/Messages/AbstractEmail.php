@@ -9,22 +9,19 @@ use Wappointment\Services\Settings;
 abstract class AbstractEmail extends AbstractMessage
 {
     public $subject = '';
-    public $body = '';
     protected $renderer = null;
     protected $messageBlocks = [];
     protected $admin = false;
+    public $replacing = ['subject', 'body'];
 
     public function __construct(...$params)
     {
+        parent::__construct(...$params);
+
         $this->renderer = new FoundationEmail($this->admin);
-        $this->loadEmail(...$params);
+
         if ($this->admin === false && Settings::getStaff('email_logo')) {
             $this->addLogo(Settings::getStaff('email_logo'), 'full');
-            /* $this->renderer->setColors([
-                'primary' => 'transparent',
-                'primaryLight' => '#7A78D5',
-                'separator' => 'transparent',
-            ]); */
         }
     }
 
@@ -97,16 +94,16 @@ abstract class AbstractEmail extends AbstractMessage
             $this->body .= $this->footerLinks();
         }
         $this->body = $this->renderer->wrapRow($this->body) . $this->renderer->wrapFooter('');
-        if (method_exists($this, 'replaceTags')) {
-            $this->replaceTags();
-        }
+
+        $this->finalProcess();
+
         return CssInliner::fromHtml($this->renderer->wrapBoilerPlate($this->body))->inlineCss()->render();
     }
 
     public function renderBodyText($replaceTags = false)
     {
-        if ($replaceTags && method_exists($this, 'replaceTags')) {
-            $this->replaceTags();
+        if ($replaceTags) {
+            $this->finalProcess();
         }
         return $this->convertHtmlToText($this->body);
     }

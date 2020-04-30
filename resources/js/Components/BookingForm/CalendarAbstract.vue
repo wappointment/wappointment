@@ -40,9 +40,9 @@ export default {
     mounted(){
         this.time_format = this.timeprops.time_format
         this.currentTz = this.timeprops.currentTz
-
-        this.setMonth(this.todayYear, this.todayMonth - 1, false)
         this.intervalsCollection = this.initIntervalsCollection
+        
+        this.setMonth(this.todayYear, this.todayMonth - 1, false)
         this.resetIntervals()
        
         this.mounted = true
@@ -315,13 +315,16 @@ export default {
             this.sideMonth = 'left'
             this.changeMonth(false, true)
         },
-
+        nowNextHour(){
+            let now = this.now
+            return now.add(1,'h').startOf('hour')
+        },
         resetIntervals(){
             if(this.intervalsCollection === null) return false
             this.cachedSlots = {}
 
             if(this.isCurrentMonth) {
-                this.setIntervals(this.now, this.lastDayMonth)
+                this.setIntervals(this.nowNextHour(), this.lastDayMonth)
             } else {
                 this.setIntervals(this.firstDayMonth, this.lastDayMonth)
             }

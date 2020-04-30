@@ -6,9 +6,9 @@ if (!defined('ABSPATH')) {
 
 /**
  * Plugin Name: Wappointment
- * Version: 1.4.1
+ * Version: 1.4.2
  * Plugin URI: https://wappointment.com
- * Description: The reliable Appointment booking manager to get new clients simply
+ * Description: Appointment booking system for personal coaches, teachers, therapists and service professionals of all kind
  * Author: Wappointment
  * Requires at least: 4.7
  * Tested up to: 5.4
@@ -30,7 +30,7 @@ if (!defined('ABSPATH')) {
  * GNU General Public License for more details.
  */
 
-define('WAPPOINTMENT_VERSION', '1.4.1');
+define('WAPPOINTMENT_VERSION', '1.4.2');
 define('WAPPOINTMENT_PHP_MIN', '7.0.0');
 define('WAPPOINTMENT_NAME', 'Wappointment');
 define('WAPPOINTMENT_SLUG', strtolower(WAPPOINTMENT_NAME));
@@ -46,6 +46,7 @@ function get_wappointment_autoloader()
         return $wappointment_loader;
     }
     $wappointment_loader = require_once WAPPOINTMENT_PATH . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+    do_action('wappointments_autoload_init');
 }
 get_wappointment_autoloader();
 new \Wappointment\System\Init();

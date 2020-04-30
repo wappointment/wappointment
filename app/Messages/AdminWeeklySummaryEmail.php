@@ -64,7 +64,7 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
 
         $appointmentSumarry = [];
 
-        $appointmentGroupedByDay = $this->sections->appointments->mapToGroups(function ($item, $key) {
+        $appointmentGroupedByDay = $this->sections->appointments->mapToGroups(function ($item, $key) use ($tz) {
             return [$item->start_at->setTimezone($tz)->toDateString() => $item];
         });
         while ($startingDay->lessThanOrEqualTo($endDay)) {

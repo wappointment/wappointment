@@ -2,22 +2,9 @@
 
 namespace Wappointment\Jobs;
 
-use Wappointment\Services\Settings;
-
 class AdminEmailCanceledAppointment extends AbstractAppointmentEmailJob
 {
-    const EMAIL = '\\Wappointment\\Messages\\AdminCanceledAppointmentEmail';
+    use IsAdminAppointmentJob;
 
-    public function handle()
-    {
-        $emailObject = $this->generateEmail();
-
-        $result = $this->mailer
-            ->to(sanitize_email(Settings::get('email_notifications')))
-            ->send($emailObject);
-
-        if (!$result) {
-            throw new \WappointmentException('Error while sending email', 1);
-        }
-    }
+    const CONTENT = '\\Wappointment\\Messages\\AdminCanceledAppointmentEmail';
 }

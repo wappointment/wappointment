@@ -7,10 +7,10 @@
       
       <div class="reduced" v-else>
           <div v-if="remindersAreLoaded" class="mt-2">
-              <div v-for="reminder in reminders" class="p-2 lrow" :class="{'unpublished' : !isPublished(reminder)}">
+              <div v-if="!addingReminder" v-for="reminder in reminders" class="p-2 lrow" :class="{'unpublished' : !isPublished(reminder)}">
                 <div class="d-flex align-items-center justify-content-between">
                   <div class="d-flex align-items-center">
-                    <Checkbox :element="reminder" @changed="toggledPublish"></Checkbox>
+                    <Checkbox :element="reminder" :labels="labels" @changed="toggledPublish"></Checkbox>
                     <div>
                       <div>{{ reminder.subject }}</div>
                       <div class="text-muted small">{{ getReminderLabel(reminder) }}</div>
@@ -24,16 +24,21 @@
                 </div>
                 
               </div>
-              <div class="mt-2"><button class="btn btn-outline-primary my-2" @click="addReminder">Add reminder</button></div>
-            
+              <div class="mt-2">
+                <button v-if="!addingReminder" class="btn btn-outline-primary my-2" @click="addingReminder=true">Add reminder</button>
+                <div v-else>
+                  <button v-for="label in labels.types" class="btn btn-secondary m-2" @click="addReminder(label.name)" > 
+                    <span :class="'mr-2 dashicons '+label.icon"></span>{{label.name}}</button>
+                </div>
+              </div>
           </div>
           <div v-else >
-            <div class="card" v-if="!loading"e>
-              <p class="h6 m-0">You don't have any reminders <button class="btn btn-secondary btn-sm" @click="addReminder">Add one</button></p>
+            <div class="card" v-if="!loading">
+              <p class="h6 m-0">You don't have any reminders <button class="btn btn-secondary btn-sm" @click="addReminder('email')">Add one</button></p>
             </div>
           </div>
 
-          <div class="mt-4">
+          <div class="mt-4" v-if="!addingReminder">
             <hr/>
             <NotificationEmail :status="mail_status" @configureEmail="goToMailConfig"/>
           </div>
@@ -52,17 +57,18 @@ import MailConfig from '../Components/MailConfig'
 import Scroll from '../Modules/Scroll'
 import Checkbox from '../Fields/Checkbox'
 import abstractView from './Abstract'
-
+import reminderTypeLabel from '../Mixins/reminderTypeLabel'
 
 export default {
   extends: abstractView,
-  mixins: [Scroll, hasBreadcrumbs, isReminder], 
+  mixins: [Scroll, hasBreadcrumbs, isReminder, reminderTypeLabel], 
   components: { MailConfig, NotificationEmail, EditReminders,Checkbox},
   data() {
       return {
         multiple_service_type: false,
         showModal: false,
         errors: null,
+        addingReminder: false
       }
   },
 
@@ -83,6 +89,7 @@ export default {
   methods: {
     goToMain() {
       this.currentView = false
+      this.addingReminder = false
       this.crumbs = []
       this.refreshInitValue()
     },
@@ -124,15 +131,17 @@ export default {
         this.multiple_service_type = d.data.multiple_service_type
         this.remindersLoaded = true
         this.loading = false
-        this.emptyModel = d.data.defaultReminder
-        this.emptyModel.email_logo = this.viewData.email_logo
+        this.emptyModel = d.data.defaultReminders
+        this.emptyModel.email.email_logo = this.viewData.email_logo
     },
     refreshInitValue() {
       this.remindersLoaded = false
       this.loading = true
       this.resetModel();
       //console.log('refreshInitvalue start 2 ')
-      if(this.remindersLoaded === false) this.request(this.initValueRequest, undefined,undefined,false,  this.loaded)
+      if(this.remindersLoaded === false) {
+        this.request(this.initValueRequest, undefined,undefined,false,  this.loaded)
+      }
     },
     async initValueRequest() {
          return await this.serviceReminder.call('get')
@@ -146,7 +155,9 @@ export default {
     
     resetModel() {
       this.model = null
-      this.model = this.emptyModel
+      if(this.emptyModel!==null && this.emptyModel['email']!==undefined){
+        this.model = this.emptyModel['email']
+      }
     },
     deleted() {
       this.refreshInitValue()
@@ -162,15 +173,19 @@ export default {
       })      
     },
 
-    addReminder() {
-      this.goToEditReminder({reminder: this.emptyModel})
+    addReminder(name) {
+      this.goToEditReminder({reminder: this.emptyModel[name]})
     },
 
     editReminder(reminder) {
       
       this.model = reminder
+      let labelType = this.typeLabel(reminder.type, this.labels.types)
       if(this.model.options === null) {
-        this.model.options = this.emptyModel.options
+        this.model.options = this.emptyModel[labelType].options
+      }
+      if(this.model.ignore === undefined && this.emptyModel[labelType].ignore !== undefined) {
+        this.model.ignore = this.emptyModel[labelType].ignore
       }
       this.model.email_logo = this.viewData.email_logo
       return this.goToEditReminder({reminder: this.model})

@@ -79,8 +79,9 @@
             color: {{ hx_rgb(opts.colors.header.text) }};
         }
         .wap-front .wrap-calendar .timezone {
-            text-align: left;
-            font-size: .8em;
+            text-align: center;
+            font-size: .75em;
+            background-color: {{ hx_rgb(opts.colors.body.bg) }};
         }
         .wap-front .wrap-calendar {
             border-top: none;
@@ -204,7 +205,7 @@
 import Colors from '../Modules/Colors'
 export default {
     mixins: [Colors],
-    props: ['options', 'wrapper'],
+    props: ['options', 'wrapper', 'largeVersion'],
     data:() => ({
         opts: null,
         widthWrapper: false,
@@ -225,15 +226,18 @@ export default {
     },
     mounted(){
         this.widthWrapper = document.getElementById(this.wrapper).clientWidth
-        if(this.widthWrapper < '620'){
-            this.baseFontSize = '21px'
+        if(this.largeVersion){
+            if(this.widthWrapper < '620'){
+                this.baseFontSize = '21px'
+            }
+            if(this.widthWrapper < '520'){
+                this.baseFontSize = '20px'
+            }
+            if(this.widthWrapper < '420'){
+                this.baseFontSize = '19px'
+            }
         }
-        if(this.widthWrapper < '520'){
-            this.baseFontSize = '20px'
-        }
-        if(this.widthWrapper < '420'){
-            this.baseFontSize = '19px'
-        }
+        
         if(this.widthWrapper < '320'){
             this.baseFontSize = '18px'
         }

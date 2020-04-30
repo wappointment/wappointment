@@ -1,6 +1,6 @@
 <template>
     <div @mouseover="showText=true" 
-             @mouseout="showText=false" >
+             @mouseout="showText=false" class="slots-panel" >
         <small class="timezone" :class="[showText?'show-section':'hide-section']">{{ timezoneDisplay(currentTz) }}</small>
         <div class="d-flex" v-if="ready">
             <div v-for="(slots, part) in dayParts" class="day-section">
@@ -63,6 +63,9 @@ export default {
         getLabel(section){
             return this.options.selection[section] !== undefined ? this.options.selection[section]:section
         },
+        nowUnix(){
+            return Date.now() /1000
+        },
         convertIntervalsToSlots(){
             for (let i = 0; i < this.intervals.length; i++) {
                 const segment = this.intervals[i]
@@ -79,11 +82,11 @@ export default {
         identifySlot(slotStart){
             let hour = this.getMoment(slotStart, this.currentTz).hour()
             if(hour >= 12 && hour < 18){
-                this.dayParts.afternoon.push(slotStart)
+                if(this.dayParts.afternoon.indexOf(slotStart) === -1) this.dayParts.afternoon.push(slotStart)
             }else if(hour >= 18 && hour <= 23 ){
-                this.dayParts.evening.push(slotStart)
+                if(this.dayParts.evening.indexOf(slotStart) === -1) this.dayParts.evening.push(slotStart)
             }else if(hour >=0){
-                this.dayParts.morning.push(slotStart)
+                if(this.dayParts.morning.indexOf(slotStart) === -1) this.dayParts.morning.push(slotStart)
             }
         },
         timezoneDisplay(timezoneString){
@@ -101,6 +104,9 @@ export default {
 }
 </script>
 <style>
+.slots-panel{
+    position:relative;
+}
 .btn.btn-slot {
     width: 100%;
 }
@@ -116,6 +122,10 @@ export default {
 }
 .timezone{
     transition: all .3s ease-in-out;
+    position: absolute;
+    left: 0;
+    width: 100%;
+    padding-bottom: .3em;
 }
 </style>
 

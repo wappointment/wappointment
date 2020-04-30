@@ -50,9 +50,9 @@ class Init
 
     public function initInstalled()
     {
-        new Scheduler();
+        //new Scheduler();
 
-        //Scheduler::processQueue();
+        Scheduler::processQueue();
     }
 
 

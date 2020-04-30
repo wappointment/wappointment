@@ -40,7 +40,7 @@ class Mail
             $this
                 ->body($email->renderBody())
                 ->subject($email->renderSubject())
-                ->alt($email->renderBodyText());
+                ->alt($email->renderBodyText()); //tags already replace in renderBody
         }
 
 

@@ -8,7 +8,7 @@ use Wappointment\Models\Appointment;
 
 class ClientBookingConfirmationEmail extends AbstractEmail
 {
-    use HasAppointmentFooterLinks;
+    use HasAppointmentFooterLinks, HasTagsToReplace;
     protected $client = null;
     protected $appointment = null;
     const EVENT = Reminder::APPOINTMENT_CONFIRMED;
@@ -19,7 +19,7 @@ class ClientBookingConfirmationEmail extends AbstractEmail
         $this->appointment = $appointment;
 
         $email = Reminder::where('published', 1)
-            ->where('type', Reminder::TYPE_EMAIL)
+            ->where('type', Reminder::getType('email'))
             ->where('event', static::EVENT)
             ->first();
 
@@ -29,11 +29,5 @@ class ClientBookingConfirmationEmail extends AbstractEmail
 
         $this->subject = $email->subject;
         $this->body = $email->getHtmlBody($appointment);
-    }
-
-    public function replaceTags()
-    {
-        $this->body = (new TagsReplacement($this->client, $this->appointment))->replace($this->body);
-        $this->subject = (new TagsReplacement($this->client, $this->appointment))->replace($this->subject);
     }
 }
