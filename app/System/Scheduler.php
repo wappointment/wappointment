@@ -69,8 +69,14 @@ class Scheduler
 
     public static function processQueue()
     {
-        \Wappointment\Services\Queue::process();
+        $lock = new \Wappointment\Services\Lock;
+        if (!$lock->alreadySet()) {
+            $lock->set();
+            \Wappointment\Services\Queue::process();
+            $lock->release();
+        }
     }
+
     public static function checkPendingReminder()
     {
     }

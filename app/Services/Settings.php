@@ -171,14 +171,14 @@ class Settings
 
             //before save
             $method = $setting_key . 'BeforeSave';
-            if (method_exists(__CLASS__, $method)) {
+            if (method_exists(static::class, $method)) {
                 static::$method($value);
             }
 
             static::updateLocalSettings($updatedValues);
 
             $method = $setting_key . 'Saved';
-            if (method_exists(__CLASS__, $method)) {
+            if (method_exists(static::class, $method)) {
                 static::$method($setting_key, $value);
             }
             return $updatedValues;
@@ -254,7 +254,7 @@ class Settings
 
             //dd($values[$setting_key]);
             $methodAfterSaved = $setting_key . 'Saved';
-            if (method_exists(__CLASS__, $methodAfterSaved)) {
+            if (method_exists(static::class, $methodAfterSaved)) {
                 static::$methodAfterSaved($staff_id);
             }
 
@@ -274,7 +274,7 @@ class Settings
     protected static function valid($setting_key, $value, $staff_id = false)
     {
         $method = $setting_key . 'Valid';
-        if (method_exists(__CLASS__, $method)) {
+        if (method_exists(static::class, $method)) {
             return static::$method($value, $staff_id);
         }
 

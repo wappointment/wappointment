@@ -9,7 +9,7 @@ class AppointmentReminderListener extends AbstractJobAppointmentListener
     use IsReminder;
 
     protected $jobClass = '\Wappointment\Jobs\AppointmentEmailReminder';
-
+    protected $is_reminder = true;
     protected function addToJobs($event)
     {
         $params = [

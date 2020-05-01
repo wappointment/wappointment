@@ -45,7 +45,7 @@ class Events
     {
         $className = $full_namespace ? $className : '\\Wappointment\\' . $type . '\\' . $className;
         if (!class_exists($className)) {
-            throw new \WappointmentException('Cannot load ' . $type . ' instance', 1);
+            throw new \WappointmentException('Cannot load ' . $type . ' instance ' . $className, 1);
         }
 
         if (empty($args)) {

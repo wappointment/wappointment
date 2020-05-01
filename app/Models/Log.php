@@ -28,4 +28,14 @@ class Log extends Model
             ]
         );
     }
+    public static function data($data)
+    {
+        return self::create(
+            [
+                'type' => self::TYPE_APPOINTMENT_CANCELLED,
+                'options' => $data,
+                'created_at' => \Carbon\Carbon::now()->format(WAPPOINTMENT_DB_FORMAT)
+            ]
+        );
+    }
 }

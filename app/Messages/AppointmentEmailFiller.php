@@ -6,7 +6,7 @@ class AppointmentEmailFiller extends AbstractEmail
 {
     use HasAppointmentFooterLinks;
 
-    protected function loadEmail($subject, $body)
+    protected function loadContent($subject, $body)
     {
         $this->subject = $subject;
         $this->body = $body;

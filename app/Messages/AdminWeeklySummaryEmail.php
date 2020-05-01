@@ -21,7 +21,7 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         return $this->tomorrowCarbon()->addDays(6);
     }
 
-    public function loadEmail()
+    public function loadContent()
     {
         $this->loadNextWeekData();
         $startingDay = $this->startWeek();

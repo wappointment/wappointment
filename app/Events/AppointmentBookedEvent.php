@@ -22,7 +22,6 @@ class AppointmentBookedEvent extends AbstractEvent
         }
 
         $this->reminders = Reminder::select('id', 'event', 'type', 'options')->where('published', 1)
-            ->whereIn('event', [Reminder::APPOINTMENT_STARTS, Reminder::APPOINTMENT_CONFIRMED])
             ->get();
     }
 

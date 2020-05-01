@@ -2,9 +2,20 @@
 
 namespace Wappointment\Messages;
 
+use Wappointment\Services\Settings;
+
 abstract class AbstractAdminEmail extends AbstractEmail
 {
     protected $admin = true;
+
+    public function __construct(...$params)
+    {
+        parent::__construct(...$params);
+
+        if (Settings::getStaff('email_logo')) {
+            $this->addLogo(Settings::getStaff('email_logo'), 'full');
+        }
+    }
 
     public function addRoundedSquare($lines, $separator = 'body-border radius')
     {

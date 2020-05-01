@@ -12,7 +12,7 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
     protected $client = null;
     protected $appointment = null;
 
-    public function loadEmail(Client $client, Appointment $appointment, Appointment $oldAppointment)
+    public function loadContent(Client $client, Appointment $appointment, Appointment $oldAppointment)
     {
         $this->subject = 'Rescheduled appointment';
         $this->addLogo();

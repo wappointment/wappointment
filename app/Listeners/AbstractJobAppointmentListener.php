@@ -9,6 +9,7 @@ abstract class AbstractJobAppointmentListener extends AbstractJobRecordListener
 
     protected $jobClass = '';
     protected $cancel = false;
+    protected $is_reminder = false;
 
     protected function addToJobs($event)
     {
@@ -23,7 +24,7 @@ abstract class AbstractJobAppointmentListener extends AbstractJobRecordListener
                 'client' => $event->getClient(),
             ],
             'client',
-            $event->getAppointment()->id
+            $this->is_reminder ? $event->getAppointment()->id : null
         );
     }
 

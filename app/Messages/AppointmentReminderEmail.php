@@ -10,7 +10,7 @@ class AppointmentReminderEmail extends ClientBookingConfirmationEmail
 {
     const EVENT = \Wappointment\Models\Reminder::APPOINTMENT_STARTS;
 
-    public function loadEmail(Client $client, Appointment $appointment, $reminder_id = false)
+    public function loadContent(Client $client, Appointment $appointment, $reminder_id = false)
     {
         $this->client = $client;
         $this->appointment = $appointment;

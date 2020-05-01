@@ -12,7 +12,7 @@ class AdminNewAppointmentEmail extends AbstractAdminEmail
     protected $client = null;
     protected $appointment = null;
 
-    public function loadEmail(Client $client, Appointment $appointment, $reminder_id = false)
+    public function loadContent(Client $client, Appointment $appointment, $reminder_id = false)
     {
         $this->subject = 'New appointment';
         $this->addLogo();

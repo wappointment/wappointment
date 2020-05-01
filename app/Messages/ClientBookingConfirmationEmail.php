@@ -13,7 +13,7 @@ class ClientBookingConfirmationEmail extends AbstractEmail
     protected $appointment = null;
     const EVENT = Reminder::APPOINTMENT_CONFIRMED;
 
-    public function loadEmail(Client $client, Appointment $appointment, $reminder_id = false)
+    public function loadContent(Client $client, Appointment $appointment, $reminder_id = false)
     {
         $this->client = $client;
         $this->appointment = $appointment;

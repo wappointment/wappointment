@@ -11,7 +11,7 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
 {
     private $sections = null;
 
-    public function loadEmail()
+    public function loadContent()
     {
         $this->loadTomorrowData();
         $date_string = $this->tomorrowCarbon()->format(Settings::get('date_format'));

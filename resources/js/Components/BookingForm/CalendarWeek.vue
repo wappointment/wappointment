@@ -94,7 +94,7 @@ export default {
                     return this.selectDay(day,this.selectedWeek)
                 }
             }
-            this.nextWeek()
+            this.sideWeek?this.nextWeek():this.prevWeek()
             
         },
 

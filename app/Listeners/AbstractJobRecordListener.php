@@ -20,7 +20,7 @@ abstract class AbstractJobRecordListener
             $this->jobClass,
             $this->data_job,
             $this->admin ? 'admin' : 'client',
-            $event->getAppointment()->id
+            null
         );
     }
 

@@ -31,18 +31,18 @@ class Mail
 
     public function send(\Wappointment\Messages\AbstractEmail $email)
     {
+        $message = $email->renderMessage();
         if ($this->isWpMail()) {
             //only text version for wpmail
             $this->bodyVersion = $this->altVersion;
-            $this->body($email->renderBodyText(true))
-                ->subject($email->renderSubject());
+            $this->body($message['body_text'])
+                ->subject($message['subject']);
         } else {
             $this
-                ->body($email->renderBody())
-                ->subject($email->renderSubject())
-                ->alt($email->renderBodyText()); //tags already replace in renderBody
+                ->body($message['body'])
+                ->subject($message['subject'])
+                ->alt($message['body_text']); //tags already replace in renderBody
         }
-
 
         return $this->sendTransport();
     }
