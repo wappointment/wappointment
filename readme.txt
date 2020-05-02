@@ -148,10 +148,12 @@ It requires work on your end but keeps your site safe and optimized.
 
 
 = 1.4.2 - 2020-04-28 =
+* Improved Booking form style and animation
+* Refactored email sending transport
 * Fixed calendar synch list
 * Fixed booking form relative size to container
 * Fixed Timezone appearance in booking form
-* Fixed Added guides on selecting the right email sending method
+* Fixed Added tips to select simplify the email sending method choice
 
 = 1.4.1 - 2020-04-27 =
 * Added Week view in booking form instead of full month

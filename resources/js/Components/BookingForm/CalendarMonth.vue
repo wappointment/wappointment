@@ -4,9 +4,9 @@
                 <transition :name="slideMonth">
                     <div v-if="currentMonth" class="calendarMonth">
                         <div class="d-flex justify-content-between align-items-center">
-                            <span @click="prevMonth" class="btn btn-link" :class="{'btn-disabled' : isCurrentMonth}" :disabled="isCurrentMonth"><</span> 
+                            <span @click="prevMonth" class="btn-secondary btn btn-round" :class="{'btn-disabled' : isCurrentMonth}" :disabled="isCurrentMonth"><</span> 
                             <div>{{ getMonthYear() }}</div> 
-                            <span @click="nextMonth" class="btn btn-link" :class="{'btn-disabled' : isLastMonth}" :disabled="isLastMonth" >></span>
+                            <span @click="nextMonth" class="btn-secondary btn btn-round" :class="{'btn-disabled' : isLastMonth}" :disabled="isLastMonth" >></span>
                         </div>
                         <div class="d-flex justify-content-between ddays" >
                             <div v-for="(dayH, idy) in weekHeader">
@@ -54,5 +54,10 @@
 import CalendarAbstract from './CalendarAbstract'
 export default {
     extends: CalendarAbstract,
+    methods:{
+        afterMonthSelected(){
+            this.selectFirstDayAvail()
+        },
+    }
 }
 </script>

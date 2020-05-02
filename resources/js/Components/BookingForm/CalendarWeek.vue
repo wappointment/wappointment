@@ -2,9 +2,9 @@
     
         <div v-if="currentMonth" class="calendarMonth">
             <div class="d-flex justify-content-between align-items-center">
-                <span @click="prevWeek" class="btn btn-link" :class="{'btn-disabled' : isCurrentWeek}" :disabled="isCurrentWeek"><</span> 
+                <span @click="prevWeek" class="btn-secondary btn btn-round" :class="{'btn-disabled' : isCurrentWeek}" :disabled="isCurrentWeek"><</span> 
                 <div>{{ getMonthYear()}}</div> 
-                <span @click="nextWeek" class="btn btn-link" :class="{'btn-disabled' : isLastWeek}" :disabled="isLastWeek" >></span>
+                <span @click="nextWeek" class="btn-secondary btn btn-round" :class="{'btn-disabled' : isLastWeek}" :disabled="isLastWeek" >></span>
             </div>
             <div class="d-flex justify-content-between ddays" >
                 <div v-for="(dayH, idy) in weekHeader">
@@ -94,9 +94,11 @@ export default {
                     return this.selectDay(day,this.selectedWeek)
                 }
             }
-            this.sideWeek?this.nextWeek():this.prevWeek()
-            
+            //this.autoSkipToWeekWithAvailability()
         },
+       /*  autoSkipToWeekWithAvailability(){
+            this.sideWeek=='right' ? this.nextWeek():this.prevWeek()
+        } */
 
 
         changeWeek(increment = true, animate = false){
@@ -124,7 +126,7 @@ export default {
             return this.isCurrentMonth === true && this.todayWeek === this.selectedWeek
         },
         todayWeek() {
-            return parseInt(this.now.format('M'))
+            return parseInt(Math.ceil(this.now.date() / 7) - 1)
         },
         isLastWeek(){
             return this.isLastMonth && this.selectedWeek == this.reorganiseDays.length -1

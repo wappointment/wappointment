@@ -123,7 +123,7 @@ export default {
             {
                 type: 'label',
                 model: 'txt1',
-                label: 'Warning: sending emails with this method can be unreliable, emails may go straight to SPAM. Also you can only send text emails(no style). ',
+                label: 'Warning: sending emails with this method can be unreliable, emails may go straight to SPAM. Also you can only send text emails(no formatting). ',
                 classWrapper: 'text-danger',
                 conditions: [
                   { model:'method', values: ['wpmail'] }
@@ -166,7 +166,7 @@ export default {
                 ],
             },
             {
-                type: 'input',
+                type: 'password',
                 label: 'API Key',
                 model: 'mgkey',
                 cast: String,
@@ -199,7 +199,7 @@ export default {
                 ],
             },
             {
-                type: 'input',
+                type: 'password',
                 label: 'SendGrid API Key',
                 model: 'sgkey',
                 cast: String,

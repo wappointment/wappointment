@@ -1,9 +1,9 @@
 <template>
     <div @mouseover="showText=true" 
              @mouseout="showText=false" class="slots-panel" >
-        <small class="timezone" :class="[showText?'show-section':'hide-section']">{{ timezoneDisplay(currentTz) }}</small>
+        <small class="timezone" :class="[showText?'show-tz':'hide-tz']">{{ timezoneDisplay(currentTz) }}</small>
         <div class="d-flex" v-if="ready">
-            <div v-for="(slots, part) in dayParts" class="day-section">
+            <div v-for="(slots, part) in dayParts" :class="'hello '+getSectionClass">
                 <small class="day-part">{{getLabel(part)}}</small>
                 <BookingButton @click="$emit('selected', slot)" 
                 v-for="(slot, slid) in slots" 
@@ -43,11 +43,7 @@ export default {
     },
     data: () => ({
         ready: false,
-        dayParts: {
-            morning:[],
-            afternoon: [],
-            evening:[],
-        },
+        dayParts: {},
         showText: false
     }),
     components: {
@@ -60,6 +56,7 @@ export default {
     },
     
     methods: {
+        
         getLabel(section){
             return this.options.selection[section] !== undefined ? this.options.selection[section]:section
         },
@@ -82,12 +79,17 @@ export default {
         identifySlot(slotStart){
             let hour = this.getMoment(slotStart, this.currentTz).hour()
             if(hour >= 12 && hour < 18){
-                if(this.dayParts.afternoon.indexOf(slotStart) === -1) this.dayParts.afternoon.push(slotStart)
+                this.insertSlotToDayPart(slotStart, 'afternoon')
             }else if(hour >= 18 && hour <= 23 ){
-                if(this.dayParts.evening.indexOf(slotStart) === -1) this.dayParts.evening.push(slotStart)
+                this.insertSlotToDayPart(slotStart, 'evening')
             }else if(hour >=0){
-                if(this.dayParts.morning.indexOf(slotStart) === -1) this.dayParts.morning.push(slotStart)
+                this.insertSlotToDayPart(slotStart, 'morning')
             }
+        },
+
+        insertSlotToDayPart(slotStart, section){
+            if(this.dayParts[section] === undefined ) this.dayParts[section] = []
+            if(this.dayParts[section].indexOf(slotStart) === -1) this.dayParts[section].push(slotStart)
         },
         timezoneDisplay(timezoneString){
             return this.getTzString.replace('[timezone]', timezoneString + ' [' + this.now.format('Z') + ']')
@@ -98,6 +100,10 @@ export default {
         getTzString(){
             return (this.options!== undefined && this.options.selection.timezone!== undefined) ? this.options.selection.timezone: ''
         },
+
+        getSectionClass(){
+            return 'd-section ds-'+ Object.keys(this.dayParts).length
+        }
     },
 
 
@@ -106,26 +112,46 @@ export default {
 <style>
 .slots-panel{
     position:relative;
+    overflow: hidden;
+}
+.d-section {
+    margin: 0 .2em;
+}
+.ds-1{
+    width: 100%;
+}
+.ds-2{
+    width: 48%;
+}
+.ds-3{
+    width: 31%;
 }
 .btn.btn-slot {
     width: 100%;
+    overflow: hidden;
 }
-.day-section{
-    width: 32%;
-    margin: 0 .2em;
+.ds-1 .btn.btn-slot {
+    width: 31%;
 }
-.show-section{
-    opacity: 1;
+
+.day-part{
+    display:block;
 }
-.hide-section{
-    opacity: 0;
-}
+
 .timezone{
     transition: all .3s ease-in-out;
     position: absolute;
     left: 0;
     width: 100%;
     padding-bottom: .3em;
+}
+.show-tz{
+    opacity: 1;
+    top: 0 !important;
+}
+.hide-tz{
+    opacity: 0;
+    top: -45px;
 }
 </style>
 

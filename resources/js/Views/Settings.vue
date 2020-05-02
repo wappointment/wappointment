@@ -116,9 +116,6 @@ export default {
 }
 </script>
 <style>
-#myTab .nav-link {
-    cursor:pointer;
-}
 
 .updated.error ol{
   margin-top: 1rem;

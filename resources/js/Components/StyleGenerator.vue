@@ -81,7 +81,11 @@
         .wap-front .wrap-calendar .timezone {
             text-align: center;
             font-size: .75em;
-            background-color: {{ hx_rgb(opts.colors.body.bg) }};
+            background-color: {{ hx_rgb(opts.colors.body.bg, .9) }};
+        }
+        .wap-front.large-version .wrap-calendar {
+            overflow: auto;
+            max-height: none;
         }
         .wap-front .wrap-calendar {
             border-top: none;
@@ -209,7 +213,7 @@ export default {
     data:() => ({
         opts: null,
         widthWrapper: false,
-        baseFontSize: '22px',
+        baseFontSize: '18px',
         calendarRound: .6,
     }),
     created(){
@@ -227,6 +231,9 @@ export default {
     mounted(){
         this.widthWrapper = document.getElementById(this.wrapper).clientWidth
         if(this.largeVersion){
+            if(this.widthWrapper > '620'){
+                this.baseFontSize = '22px'
+            }
             if(this.widthWrapper < '620'){
                 this.baseFontSize = '21px'
             }

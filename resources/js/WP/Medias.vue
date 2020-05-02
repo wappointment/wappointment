@@ -50,6 +50,14 @@ export default {
             type: String,
             default: 'image'
         },
+        per_page: {
+            type: Number,
+            default: 10
+        },
+        search: {
+            type: String,
+            default: ''
+        },
         selectedImage:{
             type: Number,
             default: 0
@@ -57,7 +65,7 @@ export default {
         sizeSelect:{
             type: Boolean,
             default: true
-        }
+        },
 
     },
     data() {
@@ -96,7 +104,11 @@ export default {
             this.request(this.getMediaRequest,  undefined,undefined,false,  this.loadedMedias)
         },
         async getMediaRequest() {
-            let params = {media_type: this.media_type}
+            let params = {
+                media_type: this.media_type,
+                per_page: this.per_page
+            }
+            if(this.search !='') params['search'] = this.search
             if(this.page) params['page'] = this.page
             return await this.serviceWPMedia.call('get', params)
         },

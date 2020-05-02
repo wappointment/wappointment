@@ -10,6 +10,7 @@ if (!defined('ABSPATH')) {
  * Plugin URI: https://wappointment.com
  * Description: Appointment booking system for personal coaches, teachers, therapists and service professionals of all kind
  * Author: Wappointment
+ * Author URI: https://wappointment.com
  * Requires at least: 4.7
  * Tested up to: 5.4
  *

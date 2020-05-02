@@ -52,7 +52,7 @@ export default {
             i++
         }
 
-        this.selectFirstDayAvail()
+        
         this.getLocalWeekDays()
         
     },
@@ -433,4 +433,19 @@ export default {
 }
 </script>
 
+<style >
+.wap-front .btn-round {
+    border-radius: 2em;
+    width: 2.3em;
+    height: 2.3em;
+}
+
+.wap-front .btn.btn-secondary.btn-round.btn-disabled, 
+.wap-front .btn-round.btn-disabled:hover {
+    background-color: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+</style>
 

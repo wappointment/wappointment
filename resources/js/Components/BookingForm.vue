@@ -429,6 +429,7 @@ export default {
     text-align: center;
     font-size: .75em;
     padding: .6em .1em .4em .1em;
+    transition: all .3s ease-in-out;
 }
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;
@@ -452,8 +453,8 @@ export default {
 }
 .wap-front .slotsPane{
     box-shadow: inset 0px 0px 10px rgba(0,0,0,.14);
-    transition: all .3s ease-in-out;
     border-radius: .2em;
+    overflow: hidden;
 }
 .wap-front [data-tt] {
   position: relative;
@@ -487,7 +488,7 @@ export default {
   margin-left: -8px;
 }
 .wap-front .ddays div:last-child [data-tt]:before {
-  margin-left: -85px;
+  margin-left: -72px;
 }
 
 
@@ -547,31 +548,41 @@ export default {
     font-size: 1em;
 }
 
-.slide-fade-enter-active, .slide-fade-sm-enter-active, 
-.slide-fade-side-sm-right-enter-active, .slide-fade-side-sm-right-leave-active,
-.slide-fade-side-sm-left-leave-active,  .slide-fade-side-sm-left-leave-active{
+.slide-fade-enter-active, 
+.slide-fade-leave-active, 
+.slide-fade-sm-enter-active, 
+.slide-fade-sm-leave-active, 
+.slide-fade-side-sm-right-enter-active, 
+.slide-fade-side-sm-right-leave-active,
+.slide-fade-side-sm-left-enter-active,  
+.slide-fade-side-sm-left-leave-active{
   transition: all .3s ease;
 }
 
-.slide-fade-leave-active, .slide-fade-sm-leave-active{
-  transition: all .1s cubic-bezier(1.0, 0.5, 0.8, 1.0);
-}
-
-.slide-fade-enter, .slide-fade-leave-to {
+.slide-fade-enter, 
+.slide-fade-leave-to {
   transform: translateY(100px);
   opacity: 0;
 }
 
-.slide-fade-sm-enter, .slide-fade-sm-leave-to {
-  transform: translateY(10px);
-  opacity: 0;
+.slide-fade-sm-enter-to, 
+.slide-fade-sm-leave {
+  max-height: 100vh;
+  opacity:1;
+}
+.slide-fade-sm-enter, 
+.slide-fade-sm-leave-to {
+  max-height: 0;
+  opacity:0;
 }
 
-.slide-fade-side-sm-right-enter, .slide-fade-side-sm-left-leave-to  {
+.slide-fade-side-sm-right-leave-to, 
+.slide-fade-side-sm-left-enter  {
   transform: translateX(40px);
   opacity: 0;
 }
-.slide-fade-side-sm-right-leave-to, .slide-fade-side-sm-left-enter  {
+.slide-fade-side-sm-right-enter, 
+.slide-fade-side-sm-left-leave-to  {
   transform: translateX(-40px);
   opacity: 0;
 }

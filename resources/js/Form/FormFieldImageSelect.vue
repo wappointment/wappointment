@@ -11,22 +11,43 @@
                 <span class="small text-primary" href="javascript:;">edit</span>
             </div>
         </div>
-        <div v-if="edit" class="fimage-selection">
-            <div class="d-flex align-items-center" v-if="hasImage">
-                <div class="fimage-edit" >
-                    <img :src="updatedValue.src" class="img-fluid rounded" :width="preview.width">
+        <WapModal :show="edit" @hide="close" large>
+            <div>
+                <div v-if="selected_image !== null">
+                    <div class="btn btn-secondary" 
+                    v-for="(image_size, thumbkey) in getImagesThumb(selected_image.media_details.sizes)"  @click="changeSize(image_size)">
+                        <div class="text-center">
+                            <img :src="image_size.source_url" :width="setImageWidth(image_size)" />
+                            <div>
+                                {{ image_size.width }}px * {{ image_size.height }}px
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <a class="btn btn-secondary btn-xs" href="javascript:;" @click="clearImage">Clear</a>
-            </div>
-            <span class="close close-gallery" @click="close"></span>
-            <div class="gallery">
-                <hr>
-                <WPMedias @selected="selectedFromGallery" @confirmed="confirmSelection" :selectedImage="selectedImage"></WPMedias>
-                <div class="bg-white pt-3">
-                    <button class="btn btn-secondary" @click.prevent="close">Close</button>
+                <div class="d-flex align-items-center" v-if="hasImage">
+                    <div class="mr-4">
+                        <img :src="updatedValue.src" class="img-fluid rounded" :width="preview.width">
+                    </div>
+                    <div>
+                        <a class="btn btn-secondary btn-xs" href="javascript:;" @click="clearImage">Clear</a>
+                        <a class="btn btn-primary btn-xs" href="javascript:;" @click="confirmSelectedImage">Confirm</a>
+                    </div>
                 </div>
+                <div class="gallery" v-if="galleryShow && selected_image === null">
+                    <div>
+                        <input type="text" v-model="search_term">
+                        <button class="btn btn-secondary" @click.prevent.stop="refreshGallery">Search</button>
+                    </div>
+                    <hr>
+                    <WPMedias @selected="selectedFromGallery" @confirmed="confirmSelection" 
+                    :search="search_term" :per_page="showing_images" :selectedImage="selectedImage"></WPMedias>
+                    <div class="bg-white pt-3">
+                        <button class="btn btn-secondary" @click.prevent="close">Close</button>
+                    </div>
+                </div>
+                
             </div>
-        </div>
+        </WapModal>
     </div>
 
 </template>
@@ -52,7 +73,12 @@ export default {
             size: 'thumbnail',
             preview: {
                 width: 40
-            }
+            },
+            galleryShow: true,
+            search_term: '',
+            showing_images: 21,
+            selected_image: null,
+            selected_size: null
         } 
     },
     created(){
@@ -69,8 +95,35 @@ export default {
         }
     },
     methods:{
+        confirmSelectedImage(){
+            this.close()
+        },
+        getImagesThumb(sizes){
+            let sizesv = Object.values(sizes)
+            let keysv = Object.keys(sizes)
+            for (let i = 0; i < sizesv.length; i++) {
+                sizesv[i].key = keysv[i]
+            }
+            return sizesv.sort((a, b) => a.width > b.width ? 1 : -1)
+        },
+        changeSize(size){
+            console.log('imagesize',size)
+            this.selected_size = size
+            this.updatedValue.src =size.source_url
+        },
+        setImageWidth(image){
+            return image.width /5
+        },
+        refreshGallery(){
+            this.galleryShow = false
+            setTimeout(this.galleryOn, 100)
+        },
+        galleryOn(){
+            this.galleryShow = true
+        },
         clearImage(){
             this.updatedValue = ''
+            this.selected_image = null
         },
         changePicture(){
             this.edit = true
@@ -78,12 +131,14 @@ export default {
 
         close(){
             this.edit = false
+            this.selected_image = null
         },
         confirmSelection(element, format){
             this.selectedFromGallery(element,format)
             this.close()
         },
         selectedFromGallery(element, format){
+            this.selected_image = element
             let wp_image = {wp_id: element.id, src: this.updatedValue.src }
             let selectedsize = format === undefined ? this.size:format
             if(element.media_details!== undefined && element.media_details.sizes[selectedsize]!== undefined){
@@ -118,14 +173,12 @@ export default {
         margin-right: 1rem;
     }
     .fimage-selection{
-        position: absolute;
         background-color: #fff;
         z-index: 9;
         border-radius: .6rem;
         box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,.08);
         border: 1px solid #ececec;
         padding: 2rem;
-        max-width: 730px;
     }
     .gallery{
             background-color: #eee;
