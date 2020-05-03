@@ -155,7 +155,7 @@ export default {
 <style >
     .img-bg {
         min-height: 100px;
-        background-size: cover;
+        background-size: auto;
         background-repeat: no-repeat;
         background-position: center top;
         min-width: 100px;

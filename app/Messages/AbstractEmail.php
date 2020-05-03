@@ -4,6 +4,7 @@ namespace Wappointment\Messages;
 
 use Wappointment\Messages\Templates\FoundationEmail;
 use Pelago\Emogrifier\CssInliner;
+use Wappointment\Services\Settings;
 
 abstract class AbstractEmail extends AbstractMessage
 {
@@ -20,6 +21,10 @@ abstract class AbstractEmail extends AbstractMessage
         parent::__construct(...$params);
 
         $this->renderer = new FoundationEmail();
+
+        if (Settings::getStaff('email_logo')) {
+            $this->addLogo(Settings::getStaff('email_logo'), 'full');
+        }
     }
 
     public function addLogo($logo = [], $separator = 'body-border radius')
