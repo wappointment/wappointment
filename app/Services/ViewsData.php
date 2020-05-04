@@ -217,7 +217,6 @@ class ViewsData
         return apply_filters('wappointment_front_availability', [
             'staffs' => $staffs,
             'availability' => $staff_availability,
-            'timezones_list' => DateTime::tz(),
             'week_starts_on' => Settings::get('week_starts_on'),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
