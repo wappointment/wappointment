@@ -90,7 +90,8 @@
         .wap-front .wrap-calendar {
             border-top: none;
             text-align: center;
-            overflow: hidden scroll;
+            overflow-y: scroll;
+            overflow-x: hidden;
             max-height: 500px;
             background-color: {{ hx_rgb(opts.colors.body.bg) }};
         }

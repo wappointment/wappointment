@@ -154,6 +154,7 @@ It requires work on your end but keeps your site safe and optimized.
 * Fixed booking form relative size to container
 * Fixed Timezone appearance in booking form
 * Fixed Added tips to select simplify the email sending method choice
+* Fixed visual issue on iPhone
 
 = 1.4.1 - 2020-04-27 =
 * Added Week view in booking form instead of full month
