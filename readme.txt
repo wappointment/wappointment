@@ -147,7 +147,7 @@ It requires work on your end but keeps your site safe and optimized.
 == Changelog ==
 
 
-= 1.4.2 - 2020-04-28 =
+= 1.4.2 - 2020-05-04 =
 * Improved Booking form style and animation
 * Refactored email sending transport
 * Improved scheduling system avoiding double event trigger

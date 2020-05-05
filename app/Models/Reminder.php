@@ -41,15 +41,25 @@ class Reminder extends Model
         return 1;
     }
 
-    public static function getTypes()
+    public static function getTypes($col = false)
     {
-        return apply_filters('wappointment_reminder_types', [
+        $types = apply_filters('wappointment_reminder_types', [
             [
                 'code' => 1,
                 'name' => 'email',
                 'icon' => 'dashicons-email-alt'
             ]
         ]);
+        return $col === false ? $types : self::getCol($types, $col);
+    }
+
+    protected static function getCol($types, $col)
+    {
+        $types_codes = [];
+        foreach ($types as $type) {
+            $types_codes[] = $type[$col];
+        }
+        return $types_codes;
     }
 
     public function getTypeLabel()

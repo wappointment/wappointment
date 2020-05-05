@@ -7,10 +7,10 @@
         <div class="commands-frame d-flex" @mouseover="showControls=true" @mouseout="showControls=false">
             
             <div class="scroll-top" v-if="isMounted && controlsShown">
-                <div v-if="scrolledAtTheEnd" class="btn btn-link btn-xs" @click="scrollToStart"><< Start</div>
-                <div v-if="widthWeekWrapper < 389 && !scrolledAtTheStart" class="btn btn-link btn-xs" @click="scrollToPrev">< Prev</div>
-                <div v-if="widthWeekWrapper < 389 && !scrolledAtTheEnd" class="btn btn-link btn-xs" @click="scrollToNext">Next ></div>
-                <div v-if="!scrolledAtTheEnd" class="btn btn-link btn-xs" @click="scrollToEnd">End >></div>
+                <div v-if="scrolledAtTheEnd" class="btn btn-link btn-xs" role="button" @click="scrollToStart"><< Start</div>
+                <div v-if="widthWeekWrapper < 389 && !scrolledAtTheStart" role="button" class="btn btn-link btn-xs" @click="scrollToPrev">< Prev</div>
+                <div v-if="widthWeekWrapper < 389 && !scrolledAtTheEnd" role="button" class="btn btn-link btn-xs" @click="scrollToNext">Next ></div>
+                <div v-if="!scrolledAtTheEnd" class="btn btn-link btn-xs" role="button" @click="scrollToEnd">End >></div>
             </div>
             
             <hourColumn  :heightUnit="heightUnit" :openingTimes="openingTimes" 

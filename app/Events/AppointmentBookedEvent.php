@@ -21,7 +21,9 @@ class AppointmentBookedEvent extends AbstractEvent
             $this->oldAppointment = $args['oldAppointment'];
         }
 
-        $this->reminders = Reminder::select('id', 'event', 'type', 'options')->where('published', 1)
+        $this->reminders = Reminder::select('id', 'event', 'type', 'options')
+            ->where('published', 1)
+            ->whereIn('type', Reminder::getTypes('code'))
             ->get();
     }
 

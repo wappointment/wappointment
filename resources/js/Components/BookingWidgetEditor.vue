@@ -267,8 +267,8 @@ export default {
         },
         getLabel(section, key, subkey=false){
             let fieldInfos = this.getFieldAdminInfos(section,key)
-            if(subkey!== false){
-                return  fieldInfos !== false && fieldInfos.fields[subkey].label !== undefined ? fieldInfos.fields[subkey].label:subkey
+            if(subkey!== false && this.hasFieldKey(fieldInfos, subkey)){
+                return  fieldInfos.fields[subkey].label !== undefined ? fieldInfos.fields[subkey].label:subkey
             }else{
                 return  fieldInfos !== false ? fieldInfos.label:key
             }
@@ -278,10 +278,13 @@ export default {
             let fieldInfos = this.getFieldAdminInfos(section,key)
             return  fieldInfos !== false ? fieldInfos.options:null
         },
+        hasFieldKey(fieldInfos, subkey){
+            return fieldInfos !== false && fieldInfos.fields[subkey] !== undefined
+        },
         getVisibility(section, key, subkey=false){
             let fieldInfos = this.getFieldAdminInfos(section, key)
-            if(subkey!== false){
-                return  fieldInfos !== false && fieldInfos.fields[subkey].hidden !== undefined  ? false:true
+            if(subkey!== false && this.hasFieldKey(fieldInfos, subkey)){
+                return fieldInfos.fields[subkey].hidden !== undefined  ? false:true
             }else{
                 return  fieldInfos !== false && fieldInfos.hidden !== undefined ? false:true
             }

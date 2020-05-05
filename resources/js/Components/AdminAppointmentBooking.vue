@@ -17,7 +17,7 @@
                     <small>{{ clientSelected.email }}</small>
                     </div>
                 </div>
-                <small class="btn btn-link btn-sm" @click="clearClientSelection">Change client</small>
+                <small class="btn btn-link btn-sm" role="button" @click="clearClientSelection">Change client</small>
             </div>
             <div v-else>
                 <div class="mb-3">
@@ -30,7 +30,7 @@
                     <div>
                         <div class="dd-search-results" v-if="showDropdown" >
                         <div v-if="clientsResults.length>0">
-                            <div class="btn btn-light d-flex align-items-center" v-for="client in clientsResults" @click="selectClient(client)">
+                            <div class="btn btn-light d-flex align-items-center" role="button" v-for="client in clientsResults" @click="selectClient(client)">
                                 <div class="mr-2">
                                 <img class="rounded-circle" :src="client.avatar" :title="client.name">
                                 </div>

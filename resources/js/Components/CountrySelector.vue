@@ -6,7 +6,7 @@
         <label v-if="label" for="search-field">{{ label }}</label>
         <div v-if="selectedCountries.length>0">
             <div class="d-flex flex-wrap countryselected">
-                <div @click="clearSelection" class="btn btn-secondary btn-xs"><span class="dashicons dashicons-trash"></span> Clear selection</div>
+                <div @click="clearSelection" class="btn btn-secondary btn-xs" role="button" ><span class="dashicons dashicons-trash"></span> Clear selection</div>
                 <div v-for="iso2 in selectedCountries" class="flg m-2" :data-tt="getCountryName(iso2)" :class="iso2.toLowerCase()">
                     <span @click.prevent="removeCountry(iso2)" class="dashicons dashicons-dismiss"></span>
                 </div>

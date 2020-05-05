@@ -426,24 +426,23 @@ export default {
 
 .wap-front .calendarMonth .ddays div {
     width: 2.4em;
+    height: 2.4em;
     text-align: center;
     font-size: .75em;
-    padding: .6em .1em .4em .1em;
+    padding: .5em;
     transition: all .3s ease-in-out;
+    margin: 0;
 }
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;
-}
-
-.wap-front .no-avail {
-    color:#ccc;
+    margin: .4em 0;
 }
 
 .wap-front .mr-2{
-    margin-right: .3em;
+    margin-right: .3em !important;
 }
 .wap-front .mb-2{
-    margin-bottom: .3em;
+    margin-bottom: .3em !important;
 }
 .wap-front .p-2 {
     padding: .5em !important;
@@ -462,7 +461,6 @@ export default {
   cursor: pointer;
 }
 
-
 .wap-front [data-tt]:before,
 .wap-front [data-tt]:after {
   visibility: hidden;
@@ -477,18 +475,20 @@ export default {
   margin-bottom: -5px;
   margin-left: -48px;
   padding: 7px;
-  width: 80px;
+  width: auto;
   border-radius: 3px;
   content: attr(data-tt);
   text-align: center;
   font-size: 14px;
   line-height: 1.2;
 }
-.wap-front .ddays div:first-child [data-tt]:before {
-  margin-left: -8px;
+.wap-front .first-day[data-tt]::before {
+  left: calc( 100% + 100%/3);
+  right: auto;
 }
-.wap-front .ddays div:last-child [data-tt]:before {
-  margin-left: -72px;
+.wap-front .last-day[data-tt]::before {
+  right: calc( -100% /3 );
+  left: auto;
 }
 
 
@@ -531,7 +531,7 @@ export default {
 
 .wap-front .dayselected{
     font-weight: bold;
-    border-radius: 1.2em 1.2em 0 0;
+    border-radius: 2em;
     box-shadow: 0px 0px 6px rgba(0,0,0,.1);
 }
 
@@ -550,13 +550,17 @@ export default {
 
 .slide-fade-enter-active, 
 .slide-fade-leave-active, 
-.slide-fade-sm-enter-active, 
-.slide-fade-sm-leave-active, 
 .slide-fade-side-sm-right-enter-active, 
 .slide-fade-side-sm-right-leave-active,
 .slide-fade-side-sm-left-enter-active,  
 .slide-fade-side-sm-left-leave-active{
   transition: all .3s ease;
+}
+
+.slide-fade-sm-enter-active, 
+.slide-fade-sm-leave-active 
+{
+  transition: all .6s ease;
 }
 
 .slide-fade-enter, 
@@ -661,10 +665,8 @@ export default {
     margin-right: 0 !important;
 }
 
-.wap-front .li-unstyled {
-    padding-left: 0;
-    list-style: none;
-    font-size: 1em;
+.wap-front .m-0 {
+    margin: 0 !important;
 }
 
 .wap-front .hide-loading{

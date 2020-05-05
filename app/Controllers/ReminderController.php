@@ -67,6 +67,7 @@ class ReminderController extends RestController
         if ((int) Settings::get('allow_cancellation') != 1) {
             $queryReminders->whereNotIn('event', [MReminder::APPOINTMENT_CANCELLED]);
         }
+        $queryReminders->whereIn('type', MReminder::getTypes('code'));
         return apply_filters(
             'wappointment_settings_reminders_get',
             [

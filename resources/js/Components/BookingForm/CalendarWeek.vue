@@ -1,51 +1,31 @@
 <template>
-    
-        <div v-if="currentMonth" class="calendarMonth">
-            <div class="d-flex justify-content-between align-items-center">
-                <span @click="prevWeek" class="btn-secondary btn btn-round" :class="{'btn-disabled' : isCurrentWeek}" :disabled="isCurrentWeek"><</span> 
-                <div>{{ getMonthYear()}}</div> 
-                <span @click="nextWeek" class="btn-secondary btn btn-round" :class="{'btn-disabled' : isLastWeek}" :disabled="isLastWeek" >></span>
-            </div>
-            <div class="d-flex justify-content-between ddays" >
-                <div v-for="(dayH, idy) in weekHeader">
-                    {{ initial(dayH) }}
-                </div>
-            </div>
-            <transition :name="slideWeek">
-                <div v-if="!changingWeek" >
-                    <div class="d-flex justify-content-between ddays" >
-                        <div v-for="(day, idday) in reorganiseDays[selectedWeek]" :class="{dayselected: isSelected(day)}">
-                            <template v-if="day > 0">
-                                <span v-if="noAvailability(day)"
-                                    class="no-avail">
-                                    {{ day }}
-                                </span>
-                                <span v-else
-                                    :class="getClassAvailability(day,selectedWeek)"
-                                    :data-tt="hasTooltip(day)" @click="selectDay(day,selectedWeek)">
-                                    {{ day }}
-                                </span>
-                            </template>
-                            
-                        </div>
-                        
-                    </div>
-                    <transition name="slide-fade-sm">
-                        <div class="slotsPane p-2" v-if="dayWeekSelected(selectedWeek) && selectedDay">
-                            <DaySlots 
-                            :intervals="availableIntervals.intervals" 
-                            :duration="realSlotDuration()" 
-                            :currentTz="currentTz"
-                            :time_format="time_format"
-                            :options="options"
-                            :now="now"
-                            @selected="selectSlot" />
-                        </div>
-                    </transition>
-                </div>
-            </transition>
+    <div v-if="currentMonth" class="calendarMonth">
+        <div class="d-flex justify-content-between align-items-center">
+            <span @click="prevWeek" class="btn-secondary btn btn-round" role="button" :class="{'btn-disabled' : isCurrentWeek}" :disabled="isCurrentWeek"><</span> 
+            <div>{{ getMonthYear()}}</div> 
+            <span @click="nextWeek" class="btn-secondary btn btn-round" role="button" :class="{'btn-disabled' : isLastWeek}" :disabled="isLastWeek" >></span>
         </div>
-    
+        <weekHeader :weekHeader="weekHeader"/>
+        <transition :name="'slide-fade-side-sm-' + sideWeek">
+            <div v-if="!changingWeek" >
+                <DaysOfWeek :idweek="selectedWeek" :week="reorganiseDays[selectedWeek]" :tooltip="getSlotTooltip" :selectedDay="selectedDay"
+                :demoSelected="demoSelected" :cachedSlots="cachedSlots" :isDemo="isDemo" @selectDay="selectDay"/>
+
+                <transition :name="slotsAnimation">
+                    <div class="slotsPane p-2" v-if="dayWeekSelected(selectedWeek) && selectedDay">
+                        <DaySlots 
+                        :intervals="availableIntervals.intervals" 
+                        :duration="realSlotDuration()" 
+                        :currentTz="currentTz"
+                        :time_format="time_format"
+                        :options="options"
+                        :now="now"
+                        @selected="selectSlot" />
+                    </div>
+                </transition>
+            </div>
+        </transition>
+    </div>
 </template>
 <script>
 
@@ -54,7 +34,7 @@ export default {
     extends: CalendarAbstract,
     data: () => ({
         prevMth: false,
-        sideWeek: 'right',
+        sideWeek: 'left',
         changingWeek: false
     }),
     methods:{
@@ -73,25 +53,27 @@ export default {
             }
 
         },
-        afterMonthSelected(){
-            if(this.reorganiseDays[this.reorganiseDays.length -1].reduce(
-                (accumulateur, valeurCourante) => accumulateur + valeurCourante) === 0)
-                {
+        cleanWeek(){
+            //if the last week is empty we pop it
+            if(this.reorganiseDays[this.reorganiseDays.length -1].reduce((sumvalue, current) => sumvalue + current) === 0)
+            {
                 this.reorganiseDays.pop()
             }
-            if(this.prevMth){
-                this.selectedWeek = this.reorganiseDays.length -1
-            }else{
-                this.selectedWeek = 0
-            }
+        },
+        afterMonthSelected(){
+            //clean inexisting final week
+            this.cleanWeek()
+            this.selectedWeek = this.prevMth? this.reorganiseDays.length -1 : 0
+
+            this.demoSelected.week = this.selectedWeek
             this.selectFirstDayAvailOfWeek()
         },
         selectFirstDayAvailOfWeek(){
             let currentWeek = this.reorganiseDays[this.selectedWeek]
             for (let i = 0; i < currentWeek.length; i++) {
                 const day = currentWeek[i]
-                if(!this.noAvailability(day)){
-                    return this.selectDay(day,this.selectedWeek)
+                if(this.hasAvailability(day)){
+                    return this.selectDay(day,this.selectedWeek, false)
                 }
             }
             //this.autoSkipToWeekWithAvailability()
@@ -101,25 +83,34 @@ export default {
         } */
 
 
-        changeWeek(increment = true, animate = false){
+        changeWeek(increment = true){
+            this.sideWeek = increment? 'left': 'right'
             this.changingWeek = true
             let newWeek = increment ===false ? this.selectedWeek -1:this.selectedWeek +1
-            if(animate) {
-                setTimeout(this.setWeek.bind('',newWeek ), 100)
-            }else{
-                this.setWeek(newWeek, false)
-            }
+            setTimeout(this.setWeek.bind('',newWeek ), 600)
         },
         nextWeek(){
             if(this.isLastWeek === true ) return false
-            this.sideWeek = 'right'
-            this.changeWeek(true, true)
+
+            this.triggerWeekChange()
+            
         },
         prevWeek(){
             if(this.isCurrentWeek === true) return false
-            this.sideWeek = 'left'
-            this.changeWeek(false, true)
+            this.triggerWeekChange( false)
         },
+
+        triggerWeekChange(next = true){
+            let timeout = 0
+            //we only close the drawer if there are intervals
+            if(this.availableIntervals.intervals !== undefined){
+                this.resetDaySelection() // close drawer
+                timeout = 600
+            }
+
+            setTimeout(this.changeWeek.bind('',next ), timeout)
+        },
+        
     },
     computed: {
         isCurrentWeek(){
@@ -130,9 +121,6 @@ export default {
         },
         isLastWeek(){
             return this.isLastMonth && this.selectedWeek == this.reorganiseDays.length -1
-        },
-        slideWeek(){
-            return 'slide-fade-side-sm-' + this.sideWeek
         },
     }
 }

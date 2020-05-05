@@ -3,11 +3,13 @@ import calendar from '../../Plugins/calendar-js'
 import Dates from '../../Modules/Dates'
 import momenttz from '../../appMoment'
 import DaySlots from './DaySlots'
+import DaysOfWeek from './DaysOfWeek'
+import WeekHeader from './WeekHeader'
 export default {
     props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration', 'viewData'],
     mixins: [Dates],
     components: {
-        DaySlots,
+        DaySlots, DaysOfWeek, WeekHeader
     }, 
     data: () => ({
         currentTz: '',
@@ -25,7 +27,8 @@ export default {
         availableIntervals: {},
         selectedWeek: false,
         selectedDay: false,
-        sideMonth: 'left',
+        sideMonth: 'right',
+        slotsAnimation: 'slide-fade-sm',
         mounted: false,
         demoSelected: {
             week: false,
@@ -33,8 +36,8 @@ export default {
             init: false
         },
         disabledButtons: false,
-        object_days: {}
-
+        object_days: {},
+        weekHeader: []
     }),
 
     mounted(){
@@ -44,17 +47,13 @@ export default {
         
         this.setMonth(this.todayYear, this.todayMonth - 1, false)
         this.resetIntervals()
-       
+        
         this.mounted = true
-        let i = 0
-        while(this.totalSlots == 0 && !this.isLastMonth && i < 40){
-            this.changeMonth()
-            i++
-        }
-
+        
+        this.findFirstMonthwithAvail()
         
         this.getLocalWeekDays()
-        
+        this.setWeekHeader()
     },
     updated: function () {
         if(this.isDemo && this.demoSelected.init == false && this.demoSelected.day !== false){
@@ -73,20 +72,7 @@ export default {
         now() {
             return momenttz().tz(this.currentTz)
         },
-        weekHeader() {
-            let endWeekDays = this.currentMonth.weekdays.slice(0,this.startDay)
-            let startWeekDays  = this.currentMonth.weekdays.slice(this.startDay);
-            let orderedDays = []
-            let startingDay = this.startDay
-            let weekDays = startWeekDays.concat(endWeekDays)
-            let localeweekdays = []
-            for (let i = 0; i < weekDays.length; i++) {
-                const element = weekDays[i]
-                localeweekdays[i] = this.getLocaleDay(element)
-            }
-            
-            return localeweekdays
-        },
+        
         
         realMonthNumber() { //month number go from 0 to 11 in momentjs
             return this.monthNumber + 1
@@ -120,12 +106,15 @@ export default {
         todayYear() {
             return parseInt(this.now.format('YYYY'))
         },
+
         todayDay() {
             return parseInt(this.now.format('DD'))
         },
+
         todayMonth() {
             return parseInt(this.now.format('M'))
         },
+
         reorganiseDays() {
             let newCalendar = []
             for (let weekIndex = 0; weekIndex < this.currentMonth.calendar.length; weekIndex++) {
@@ -159,9 +148,7 @@ export default {
                     }
                 }
 
-
                 newCalendar.push(week)
-                
             }
 
             return newCalendar
@@ -176,11 +163,31 @@ export default {
            }
            return undefined
         },
-        slideMonth(){
-            return 'slide-fade-side-sm-' + this.sideMonth
-        },
+
     },
     methods: {
+
+        findFirstMonthwithAvail(){
+            let i = 0
+            while(this.totalSlots == 0 && !this.isLastMonth && i < 40){
+                this.changeMonth()
+                i++
+            }
+        },
+        setWeekHeader() {
+            let endWeekDays = this.currentMonth.weekdays.slice(0,this.startDay)
+            let startWeekDays  = this.currentMonth.weekdays.slice(this.startDay)
+            let orderedDays = []
+            let startingDay = this.startDay
+            let weekDays = startWeekDays.concat(endWeekDays)
+            
+            let localeweekdays = []
+            for (let i = 0; i < weekDays.length; i++) {
+                localeweekdays[i] = this.getLocaleDay(weekDays[i])
+            }
+            
+            this.weekHeader = localeweekdays
+        },
         getMonthYear() {
             let objDate = new Date()
             objDate.setDate(1)
@@ -189,19 +196,22 @@ export default {
             month = month[0].toUpperCase() + month.substring(1)
             return month +' '+ this.yearNumber
         },
+
         getBrowserLang(){
             return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en-US'
         },
+
         getLocaleDay(dayname){
             for (const key in this.object_days) {
                 if (this.object_days.hasOwnProperty(key)) {
-                    const element = this.object_days[key];
+                    const element = this.object_days[key]
                     if(dayname.toLowerCase() === element.en.toLowerCase()){
                         return element.locale
                     }
                 }
             }
         },
+
         getLocalWeekDays(){
 
             let tomorrow = new Date()
@@ -214,6 +224,7 @@ export default {
             }
 
         },
+
         selectFirstDayAvail(){
             for (let i = 0; i < this.reorganiseDays.length; i++) {
                 const week = this.reorganiseDays[i]
@@ -222,46 +233,41 @@ export default {
                     if(day>0){
                         let daySlots = this.hasAvailability(day)
                         if(daySlots !== undefined && daySlots > 0){
-                            return this.selectDay(day, i)
+                            return this.selectDay(day, i, false)
                         }
                     }
                 }
                 
             }
-  
         },
-        getClassAvailability(day, idweek){
-            if(this.isDemo && this.demoSelected.day == day){
-                this.demoSelected.week = idweek
-            }
-            return {
-            'no-avail': this.noAvailability(day),
-            'avail': this.hasAvailability(day),
-            'last-avail': this.lastAvailability(day),
-            'few-avail': this.fewAvailability(day),
-            'enough-avail': this.enoughAvailability(day),
-            'plenty-avail': this.plentyAvailability(day),
-            'hover':(this.isDemo && this.isSelected(day))
-            }
-        },
-        
-        hasTooltip(daynumber){
-            let avail = this.hasAvailability(daynumber)
-            return avail > 0 ?  this.getSlotTooltip.replace('[total_slots]', avail) : false
-        },
+
         resetWeekSelection() {
             this.selectedWeek = false
+            this.resetDaySelection()
+            this.slotsAnimation = 'slide-fade-sm'
+        },
+        resetDaySelection() {
             this.availableIntervals = {}
             this.selectedDay = false
-            
         },
-        selectDay(daynumber, idweek){
-            this.resetWeekSelection()
+
+        selectDay(daynumber, idweek, manual = true){
+            
+            let timeout = manual? 100:600
+            if(idweek === this.selectedWeek ) { // week didnt change, only the day
+                this.slotsAnimation = manual? 'fade':'slide-fade-sm'
+                this.resetDaySelection()
+            }else {
+                this.slotsAnimation = 'slide-fade-sm'
+                timeout = 600
+                this.resetWeekSelection()
+            }
             if(this.cachedSlots[daynumber] < 1 || this.isPast(daynumber)){
                  return false
             }
-            setTimeout(this.daySelected.bind('', daynumber, idweek), 100)
+            setTimeout(this.daySelected.bind('', daynumber, idweek), timeout)
         },
+
         selectSlot(slot){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'form')
@@ -269,8 +275,8 @@ export default {
             } 
             
             this.$emit('selectSlot', slot)
-
         },
+
         daySelected(daynumber, idweek){
             this.selectedWeek = idweek
             this.selectedDay = daynumber
@@ -287,6 +293,7 @@ export default {
             }
             return {month:monthNumber, year: yearNumber}
         },
+
         incrementMonth(){
             let monthNumber = this.monthNumber + 1
             let yearNumber = this.yearNumber
@@ -296,29 +303,34 @@ export default {
             }
             return {month:monthNumber, year: yearNumber}
         },
+
         changeMonth(increment = true, animate = false){
             this.resetWeekSelection()
             let newMonth = increment ===false ? this.decrementMonth():this.incrementMonth()
             if(animate) {
-                setTimeout(this.setMonth.bind('', newMonth.year, newMonth.month), 100)
+                setTimeout(this.setMonth.bind('', newMonth.year, newMonth.month), 600)
             }else{
                 this.setMonth(newMonth.year, newMonth.month, false)
             }
         },
+
         nextMonth(){
             if(this.isLastMonth === true ) return false
-            this.sideMonth = 'right'
+            this.sideMonth = 'left'
             this.changeMonth(true, true)
         },
+
         prevMonth(){
             if(this.isCurrentMonth === true) return false
-            this.sideMonth = 'left'
+            this.sideMonth = 'right'
             this.changeMonth(false, true)
         },
+        
         nowNextHour(){
             let now = this.now
             return now.add(1,'h').startOf('hour')
         },
+        
         resetIntervals(){
             if(this.intervalsCollection === null) return false
             this.cachedSlots = {}
@@ -329,13 +341,33 @@ export default {
                 this.setIntervals(this.firstDayMonth, this.lastDayMonth)
             }
         },
+
         realSlotDuration(){
             return (parseInt(this.duration) + parseInt(this.viewData.buffer_time)) *60
         },
+
         setIntervals(start, end){
             this.currentIntervals = this.intervalsCollection.get(start, end)
             this.totalSlots = this.currentIntervals.splits(this.realSlotDuration()).totalSlots()
+
+            this.cacheAvailability()
         },
+
+        cacheAvailability(){
+            //cache availability
+            for (const idweek in this.reorganiseDays) {
+                if (this.reorganiseDays.hasOwnProperty(idweek)) {
+                    const week = this.reorganiseDays[idweek]
+                    for (const idday in week) {
+                        if (week.hasOwnProperty(idday)) {
+                            const day = week[idday]
+                            this.hasAvailability(day)
+                        }
+                    }
+                }
+            }
+        },
+
         setMonth(yearNumber, monthNumber, delay=true){
             this.monthNumber = monthNumber 
             this.yearNumber = yearNumber
@@ -347,6 +379,7 @@ export default {
                 this.monthSelected(yearNumber, monthNumber)
             }
         },
+
         monthSelected(yearNumber, monthNumber){
             this.currentMonth = calendar().of(yearNumber, monthNumber)
             this.resetIntervals()
@@ -356,6 +389,7 @@ export default {
         isPast(day) {
             return this.isCurrentMonth === true && this.todayDay > day
         },
+
         hasAvailability(daynumber){
             if(this.isPast(daynumber) || daynumber < 1) return 0
             if(this.cachedSlots[daynumber] !== undefined) return this.cachedSlots[daynumber]
@@ -369,29 +403,6 @@ export default {
             }
             return this.cachedSlots[daynumber]
         },
-        
-        isSelected(day){
-            return this.selectedDay !== false && this.selectedDay == day
-        },
-        noAvailability(day){
-            return this.hasAvailability(day) < 1
-        },
-        lastAvailability(day){
-            return this.hasAvailability(day) === 1
-        },
-        fewAvailability(day){
-            let avail = this.hasAvailability(day)
-            return avail > 1 && avail <= 3
-        },
-        enoughAvailability(day){
-            let avail = this.hasAvailability(day)
-            return avail > 3 && avail <= 10
-        },
-        plentyAvailability(day){
-            let avail = this.hasAvailability(day)
-            return avail > 10
-        },
-       
         
         
         dayWeekSelected(idweek) {
@@ -422,12 +433,11 @@ export default {
             let dayIntervals = this.currentIntervals.get(start, until)
             return this.prepareDayInterval(dayIntervals, start,until)
         },
+
         prepareDayInterval(dayIntervals, start,until){
             return dayIntervals
         },
-        initial(string){
-            return string.toUpperCase().substring(0, 1)
-        },
+
     }
 
 }

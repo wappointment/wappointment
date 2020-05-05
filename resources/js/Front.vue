@@ -46,11 +46,11 @@ export default {
     created(){
       this.elementId = 'wapfrontwrapper-' + Date.now()
       if(this.step !== undefined) this.currentStep = this.step
-      this.opts = this.options === undefined ? widgetWappointment : Object.assign ({}, this.options)
+      this.opts = this.options === undefined ? window.widgetWappointment : Object.assign ({}, this.options)
       if(this.opts.demoData !== undefined){
           this.disabledButtons = true
       }
-      if(Object.keys(this.attributesEl).length > 0){
+      if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){
         if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
         if(this.attributesEl.brcFloats !== undefined) this.brFixed = true
         if([undefined,false].indexOf(this.attributesEl.largeVersion) === -1) this.largeVersion = true
@@ -231,6 +231,7 @@ export default {
     bottom: 0;
     margin: 1rem;
     z-index: 9999999;
+    min-width: 320px;
 }
 
 .close-wid::after {

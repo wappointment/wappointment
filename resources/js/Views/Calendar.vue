@@ -480,7 +480,7 @@ export default {
       },
       convertInterval(){
         let hours = this.intervals.hours
-        let minutes = this.intervals.minutes
+        let minutes = this.intervals.minutes + this.viewData.buffer_time
         if(hours >= 1 ) hours = (hours < 10) ? '0' + hours : hours
         else hours = '00'
         minutes = (minutes < 10) ? '0' + minutes : minutes

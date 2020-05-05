@@ -60,6 +60,7 @@
         border-color: {{ hx_rgb(opts.colors.secondary.bg, .8) }};
         color: {{ hx_rgb(opts.colors.secondary.text) }};
         box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.secondary.bg, .6) }};
+        margin:0;
         }
         .wap-front .btn.btn-secondary:hover {
         background-color: {{ hx_rgb(opts.colors.secondary.bg,.9) }};
@@ -100,12 +101,6 @@
             color: {{ hx_rgb(opts.colors.body.disabled_links) }};
         }
 
-        .wap-front .wrap-calendar .avail,  .wap-front .wrap-calendar .btn-link{
-            color: {{ hx_rgb(opts.colors.body.active_links) }};
-        }
-        .wap-front .wrap-calendar .avail{
-            text-decoration: underline;
-        }
         .wap-front .wrap-calendar  {
             color: {{ hx_rgb(opts.colors.body.text) }};
         }
@@ -114,7 +109,8 @@
             padding: .4em;
             border-radius: {{ calendarRound }}em {{ calendarRound }}em 0 0;
         }
-        .wap-front .dayselected{
+        
+        .wap-front .btn.btn-secondary.dayselected{
             background-color: {{ hx_rgb(opts.colors.selected_day.bg) }};
         }
         .wap-front .wrap-calendar .dayselected span.avail{

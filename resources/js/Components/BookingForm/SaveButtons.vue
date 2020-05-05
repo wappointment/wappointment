@@ -1,16 +1,16 @@
 
 <template>
     <div class="saveButtons">
-        <span class="btn-secondary btn googlecal" @click="goToUrl(saveToGoogle)">
+        <span class="btn-secondary btn googlecal" role="button" @click="goToUrl(saveToGoogle)">
             <FontAwesomeIcon :icon="['fab', 'google']" size="lg"/> Google
         </span>
-        <span class="btn-secondary btn outlook" @click="goToUrl(saveToIcal)">
+        <span class="btn-secondary btn outlook" role="button" @click="goToUrl(saveToIcal)">
             <FontAwesomeIcon :icon="['fab', 'windows']" size="lg"/> Outlook
         </span>
-        <span class="btn-secondary btn" @click="goToUrl(saveToIcal)">
+        <span class="btn-secondary btn" role="button" @click="goToUrl(saveToIcal)">
             <FontAwesomeIcon :icon="['fab', 'apple']" size="lg"/> iCal
         </span>
-        <span class="btn-secondary btn" @click="goToUrl(saveToYahoo)">
+        <span class="btn-secondary btn" role="button" @click="goToUrl(saveToYahoo)">
             <FontAwesomeIcon :icon="['fab', 'yahoo']" size="lg"/> Yahoo
         </span>
     </div>

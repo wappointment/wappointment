@@ -2,10 +2,10 @@
     <transition name="slide-fade">
         <div v-if="mounted" class="max400">
             <div class="text-center">
-                <ul class="li-unstyled my-2">
-                    <li><strong>{{options.form.header}}</strong></li>
-                    <li><strong>{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></li>
-                </ul>
+                <div class=" my-2">
+                    <div><strong>{{options.form.header}}</strong></div>
+                    <div><strong>{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></div>
+                </div>
                 <div class="wappointment-errors" v-if="errors.length > 0">
                     <div v-for="error in errors">
                         {{ error }}
@@ -13,15 +13,15 @@
                 </div>
                 
                 <div v-if="serviceHasTypes">
-                    <div v-if="allowedType('physical')" @click="selectType('physical')" class="btn btn-secondary btn-cell" :class="{selected: physicalSelected}">
+                    <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="btn btn-secondary btn-cell" :class="{selected: physicalSelected}">
                         <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
                         <div>{{options.form.inperson}}</div>
                     </div>
-                    <div v-if="allowedType('phone')" @click="selectType('phone')" class="btn btn-secondary btn-cell" :class="{selected: phoneSelected}">
+                    <div v-if="allowedType('phone')" @click="selectType('phone')" role="button" class="btn btn-secondary btn-cell" :class="{selected: phoneSelected}">
                         <FontAwesomeIcon icon="phone" size="lg"/>
                         <div>{{options.form.byphone}}</div>
                     </div>
-                    <div v-if="allowedType('skype')" @click="selectType('skype')" class="btn btn-secondary btn-cell" :class="{selected: skypeSelected}">
+                    <div v-if="allowedType('skype')" @click="selectType('skype')" role="button" class="btn btn-secondary btn-cell" :class="{selected: skypeSelected}">
                         <FontAwesomeIcon :icon="['fab', 'skype']" size="lg"/>
                         <div>{{options.form.byskype}}</div>
                     </div>
@@ -65,10 +65,10 @@
                     </div>
                 </div>
             </transition>
-            <div class="d-flex btn-confirm">
-                <div class="mr-2"><span class="btn-secondary btn" @click="back">{{options.form.back}}</span></div>
-                <span  v-if="canSubmit" class="btn-primary btn flex-fill mr-0" @click="confirm">{{options.form.confirm}}</span>
-                <span v-else class="btn-primary btn btn-disabled flex-fill mr-0" disabled>{{options.form.confirm}}</span>
+            <div class="d-flex btn-confirm my-2">
+                <span class="btn-secondary btn mr-2" role="button" @click="back">{{options.form.back}}</span>
+                <span v-if="canSubmit" class="btn-primary btn flex-fill m-0" role="button" @click="confirm">{{options.form.confirm}}</span>
+                <span v-else class="btn-primary btn btn-disabled flex-fill m-0" role="button" disabled>{{options.form.confirm}}</span>
             </div>
             <CountryStyle/>
         </div>

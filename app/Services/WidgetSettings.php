@@ -22,7 +22,6 @@ class WidgetSettings
             'body' => [
                 'bg' => '#ffffff', //calendar_bg
                 'text' => '#212529', //calendar_cotext
-                'active_links' => '#212529', //calendar_coactive
                 'disabled_links' => '#cccccc' //calendar_codisabled
             ],
             'selected_day' => [
@@ -123,8 +122,7 @@ class WidgetSettings
                 'fields' => [
                     'text' => ['label' => 'Text'],
                     'bg' => ['label' => 'Background'],
-                    'active_links' => ['label' => 'Active links'],
-                    'disabled_links' => ['label' => 'Disabled links'],
+                    'disabled_links' => ['label' => 'Disabled day'],
                 ]
             ],
             'selected_day' => [
@@ -180,8 +178,7 @@ class WidgetSettings
             'header_bg' => ['label' => 'Header background'],
             'calendar_bg' => ['label' => 'Body background'],
             'calendar_cotext' => ['label' => 'Body text'],
-            'calendar_coactive' => ['label' => 'Active links'],
-            'calendar_codisabled' => ['label' => 'Disabled links'],
+            'calendar_codisabled' => ['label' => 'Disabled day'],
             'check_viewweek' => ['label' => 'Week View'],
         ],
         'form' => [

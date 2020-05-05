@@ -4,10 +4,10 @@
             <div class="bigicon"><FontAwesomeIcon icon="calendar-check" /> </div>
             <div class="text-conf">{{options.confirmation.confirmation}}</div>
         </div>
-        <ul class="li-unstyled my-2">
-            <li><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></li>
-            <li><strong>{{ getMoment(appointment.start_at, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></li>
-        </ul>
+        <div class="my-2">
+            <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
+            <div><strong>{{ getMoment(appointment.start_at, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></div>
+        </div>
         <p v-if="isApprovalManual">{{options.confirmation.pending}}</p>
         <div v-if="physicalSelected">
             <p>{{options.confirmation.physical}} </p>
@@ -25,21 +25,14 @@
         <div v-if="skypeSelected">
             <p>{{options.confirmation.skype}} <strong>{{ getClientSkype }}</strong> </p>
         </div>
-        <div >
-            <div v-if="!showSaveButtons">
-                <transition name="slide-fade">
-                    <span class="btn-secondary btn" @click="showSaveButtons=true">
-                        <FontAwesomeIcon icon="calendar-alt" size="lg"/> {{options.confirmation.savetocal}}
-                    </span>
-                </transition>
-            </div>
-            
-            <div  v-else>
-                <transition name="slide-fade">
-                    <SaveButtons :service="service" :showResult="showResult" :appointment="appointment"
-                    :staff="staff" :currentTz="timeprops.currentTz" :physicalSelected="physicalSelected"></SaveButtons>
-                </transition>
-            </div>
+        <div class="mb-2">
+            <transition name="slide-fade">
+                <SaveButtons v-if="showSaveButtons" :service="service" :showResult="showResult" :appointment="appointment"
+                :staff="staff" :currentTz="timeprops.currentTz" :physicalSelected="physicalSelected"></SaveButtons>
+                <span v-else class="btn-secondary btn" @click="showSaveButtons=true">
+                    <FontAwesomeIcon icon="calendar-alt" size="lg"/> {{options.confirmation.savetocal}}
+                </span>
+            </transition>
         </div>
     </div>
 </template>
@@ -48,7 +41,7 @@
 import BookingAddress from './Address'
 import DurationCell from './DurationCell'
 import SaveButtons from './SaveButtons'
-import Dates from "../../Modules/Dates"
+import Dates from '../../Modules/Dates'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMapMarkedAlt, faPhone, faCalendarCheck, faCalendarAlt } from '@fortawesome/free-solid-svg-icons'
 import { faSkype } from '@fortawesome/free-brands-svg-icons'
