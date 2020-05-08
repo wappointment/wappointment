@@ -3,7 +3,7 @@
       :class="{registered: isRegistered, 'installed-addon': 
       isInstalled, activated: isActivated, 'coming-soon': !isPublished, 'odd':!odd}">
             <div class="d-flex addon-header align-items-center">
-                <img :src="siteUrl+'/images/addon-'+addon.key+'.svg'" class="img-fluid m-auto"/>
+                <img :src="'//cdn.wappointment.com/images/addon-'+addon.key+'.svg'" class="img-fluid m-auto"/>
             </div>
             <div class="content-addon">
                 <h2 class="pb-4 m-auto">{{ addon.options.name }}</h2>

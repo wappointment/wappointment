@@ -173,7 +173,6 @@ class ViewsData
     {
         return [
             'buffer_time' => Settings::get('buffer_time'),
-            'wappointment_allowed' => Settings::get('wappointment_allowed'),
         ];
     }
     private function wizardinit()

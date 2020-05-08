@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.4
 Requires PHP: 7.0
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -135,17 +135,24 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Screenshots ==
 
-1. Weekly Availability. First step of our initial setup wizard, simply drag and drop your recurrent availability.
-2. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or In Person.
-3. Booking Widget Editor. Quickly change all colors and texts of the customers' frontend Booking widget.
-4. Calendar Weekly View. Overview of your appointments and availability(punctual and recurrent).
-5. Calendar Admin Action. Book an appointment on behalf of a customer, create a punctual time where you are free or busy.
-6. Frontend Booking Widget. Your customers start the booking process by clicking a booking button.
-7. Settings Panel. Modify all that you had setup in the wizard, manage the confirmations and reminders, etc...
-8. Help Page. Have a question? Simply ask for it straight in there.
+1. Booking an appointment on mobile phone
+2. Viewing appointment and changing quickly availability
+3. Receiving email branded reminders on mobile phone
+4. Editing booking widget's style through simple interfaces
+5. Weekly Availability. First step of our initial setup wizard, simply drag and drop your recurrent availability.
+6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or In Person.
 
 == Changelog ==
 
+= 1.4.3 - 2020-05-08 =
+* Refactored bits of code
+* Corrected style in frontend booking form
+* Async availability requests made lighter
+* Fixed Calendar admin view when buffer time is set
+* Fixed slots appearing in today's date when not supposed to
+* Fixed bug publish unpublish of reminder drops the email header
+* Fixed bug loading media gallery before needing it when editing reminders
+* Fixed bug at the end of the day showing calendar slot of tomorrow in today
 
 = 1.4.2 - 2020-05-04 =
 * Improved Booking form style and animation

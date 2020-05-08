@@ -6,6 +6,7 @@
           <button v-else class="btn btn-sm btn-outline-primary my-3" 
           :class="{'disabled':calendarCountExceeded}" @click="goToSync" 
           >Add Personal Calendar</button> <span v-if="calendarCountExceeded" class="text-danger">4 calendars syncing max allowed</span>
+          <div><small>Your calendar(s) will be refreshed every 5 minutes and your availability will be updated accordingly</small></div>
             <div v-if="viewData.is_calendar_sync_set"class="card cardb p-2 px-3 mt-1 unclickable" v-for="(calendar, calendar_id) in viewData.calendar_url" >
                 <div class="d-flex flex-row justify-content-between">
                   <div>

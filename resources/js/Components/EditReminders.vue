@@ -134,6 +134,7 @@ export default {
             model: "options.body",
             simple: true,
             required: true,
+            sms: true,
             validation: ['required'],
             multiple_service_type: this.passedViewData.multiple_service_type,
         })
@@ -165,8 +166,13 @@ export default {
       
 
         changedValue(newReminder){
+          let needsaving = this.model.email_logo != newReminder.email_logo
+
             this.model = newReminder
             this.schema[0].label = this.getReminderLabel(this.model)
+            if(needsaving){
+              this.save()
+            }
         },
         readytosubmit(ready){
             this.formready = ready

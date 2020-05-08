@@ -93,7 +93,7 @@ export default {
             },
             {
                 type: 'countryselector',
-                label: 'Countries you will provide phone service for',
+                label: 'Phone numbers accepted countries',
                 model: 'options.countries',
                 cast: Array,
                 conditions: [

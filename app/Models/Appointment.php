@@ -24,8 +24,6 @@ class Appointment extends Model
     const TYPE_PHYSICAL = 0;
     const TYPE_PHONE = 1;
     const TYPE_SKYPE = 2;
-    /* const STATUS_ADMIN_CANCELLED = -2;
-    const STATUS_CANCELLED = -1; */
     const STATUS_AWAITING_CONFIRMATION = 0;
     const STATUS_CONFIRMED = 1;
 

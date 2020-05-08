@@ -26,7 +26,9 @@ class ReminderController extends RestController
     }
     protected function saveImage(Request $request)
     {
-        Settings::saveStaff('email_logo', $request->input('email_logo'));
+        if ($request->has('email_logo')) {
+            Settings::saveStaff('email_logo', $request->input('email_logo'));
+        }
     }
     public function patch(Request $request)
     {

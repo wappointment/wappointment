@@ -1536,8 +1536,8 @@ export default {
 
   .fc-event-container .fc-event, 
   .fc-container .fc-event {
-    background-color: #5b447b;
-    border-color: #5b447b;
+    background-color: #4b6c97;
+    border-color: #4b6c97;
   }
 
 .fc-event-container.fc-mirror-container .fc-event{

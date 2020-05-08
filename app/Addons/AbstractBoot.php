@@ -13,6 +13,7 @@ abstract class AbstractBoot implements Boot
     public static $has_settings;
     public static $has_back_setup;
     public static $has_front_script;
+    public static $has_js_var;
 
     public static function getAddonSlug()
     {
@@ -81,7 +82,9 @@ abstract class AbstractBoot implements Boot
     {
         // needed when not installed yet
         add_filter('wappointment_active_addons', [static::$name_space . 'Boot', 'registerAddon']);
-        add_filter('wappointment_js_vars', [static::$name_space . 'Boot', 'jsVariables']);
+        if (static::$has_js_var) {
+            add_filter('wappointment_js_vars', [static::$name_space . 'Boot', 'jsVariables']);
+        }
         add_action('admin_init', [static::$name_space . 'Boot', 'adminInit'], 11);
     }
 

@@ -1,7 +1,7 @@
 <template>
-    <div @click="changed" class="icon hovercursor" :class="getPassedClass" >
+    <div @click="changed" class="icon hovercursor" :class="getPassedClass" :data-tt="[isPublished ? 'Unpublish' : 'Publish' ]" >
         <span :title="title" class="dashicons" 
-        :class="[isPublished ? 'dashicons-yes' : 'dashicons-no' ]" ></span>
+        :class="[isPublished ? 'dashicons-yes' : 'dashicons-no' ]"  ></span>
         <span class="dashicons " :class="getClassLabel()"></span>
     </div>
 </template>

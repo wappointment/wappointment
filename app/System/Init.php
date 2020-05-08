@@ -80,7 +80,6 @@ class Init
             $parsed = parse_url(WPHelpers::adminUrl('admin.php'));
             $variables['base_admin'] = !empty($parsed['path']) ? $parsed['path'] : '/wp-admin/admin.php';
         }
-
         $return = '<script type="text/javascript">' . "\n";
         $return .= '/* Wappointment globals */ ' . "\n";
         $return .= '/* <![CDATA[ */ ' . "\n";

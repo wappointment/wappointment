@@ -3,7 +3,7 @@
         <div @click="changePicture" class="text-center preview-fimage">
             <div class="fimage-edit">
                 <div v-if="hasImage" @mouseover="changeButtonOn = true" @mouseout="changeButtonOn = false">
-                    <div :style="'background-image: url(' + updatedValue.src + ');'" class="img-bg d-flex justify-content-center align-items-center">
+                    <div :style="'background-image: url(' + wp_image.src + ');'" class="img-bg d-flex justify-content-center align-items-center">
                         <div v-if="changeButtonOn" class="btn btn-secondary btn-lg">Change Picture</div>
                     </div>
                 </div>
@@ -26,23 +26,23 @@
                 </div>
                 <div class="d-flex align-items-center" v-if="hasImage">
                     <div class="mr-4">
-                        <img :src="updatedValue.src" class="img-fluid rounded" :width="preview.width">
+                        <img :src="wp_image.src" class="img-fluid rounded" :width="preview.width">
                     </div>
                     <div>
-                        <a class="btn btn-secondary btn-xs" href="javascript:;" @click="clearImage">Clear</a>
-                        <a class="btn btn-primary btn-xs" href="javascript:;" @click="confirmSelectedImage">Confirm</a>
+                        <a class="btn btn-secondary btn-xs" href="javascript:;" @click.prevent.stop="clearImage">Clear</a>
+                        <a class="btn btn-primary btn-xs" href="javascript:;" @click.prevent.stop="confirmSelectedImage">Confirm</a>
                     </div>
                 </div>
                 <div class="gallery" v-if="galleryShow && selected_image === null">
-                    <div>
+                    <div class="pt-4 px-4">
                         <input type="text" v-model="search_term">
-                        <button class="btn btn-secondary" @click.prevent.stop="refreshGallery">Search</button>
+                        <button class="btn btn-outline-primary" @click.prevent.stop="refreshGallery">Search</button>
                     </div>
                     <hr>
-                    <WPMedias @selected="selectedFromGallery" @confirmed="confirmSelection" 
+                    <WPMedias v-if="edit" @selected="selectedFromGallery" @confirmed="confirmSelection" 
                     :search="search_term" :per_page="showing_images" :selectedImage="selectedImage"></WPMedias>
                     <div class="bg-white pt-3">
-                        <button class="btn btn-secondary" @click.prevent="close">Close</button>
+                        <button class="btn btn-secondary" @click.prevent.stop="close">Close</button>
                     </div>
                 </div>
                 
@@ -74,29 +74,32 @@ export default {
             preview: {
                 width: 40
             },
-            galleryShow: true,
+            galleryShow: false,
             search_term: '',
             showing_images: 21,
             selected_image: null,
-            selected_size: null
+            selected_size: null,
+            wp_image: {}
         } 
     },
     created(){
-        if([undefined,''].indexOf(this.src) === -1)    this.updatedValue.src = this.src
+        if([undefined,''].indexOf(this.src) === -1)    this.wp_image.src = this.src
+        if(Object.keys(this.wp_image).length == 0) this.wp_image = Object.assign({},this.value)
         this.size = this.definition.size !== undefined ? this.definition.size:this.size
         this.preview = this.definition.preview !== undefined ? this.definition.preview:this.preview
     },
     computed:{
         hasImage(){
-            return this.updatedValue !== undefined && this.updatedValue.src !== undefined
+            return this.wp_image !== undefined && this.wp_image.src !== undefined
         },
         selectedImage(){
-            return this.updatedValue !== undefined && this.updatedValue.wp_id !== undefined ? this.updatedValue.wp_id:0
+            return this.wp_image !== undefined && this.wp_image.wp_id !== undefined ? this.wp_image.wp_id:0
         }
     },
     methods:{
         confirmSelectedImage(){
             this.close()
+            this.updatedValue = this.wp_image
         },
         getImagesThumb(sizes){
             let sizesv = Object.values(sizes)
@@ -107,9 +110,8 @@ export default {
             return sizesv.sort((a, b) => a.width > b.width ? 1 : -1)
         },
         changeSize(size){
-            console.log('imagesize',size)
             this.selected_size = size
-            this.updatedValue.src =size.source_url
+            this.wp_image.src = size.source_url
         },
         setImageWidth(image){
             return image.width /5
@@ -122,16 +124,18 @@ export default {
             this.galleryShow = true
         },
         clearImage(){
-            this.updatedValue = ''
+            this.wp_image = {}
             this.selected_image = null
         },
         changePicture(){
             this.edit = true
+            this.galleryOn()
         },
 
         close(){
-            this.edit = false
             this.selected_image = null
+            this.edit = false
+            
         },
         confirmSelection(element, format){
             this.selectedFromGallery(element,format)
@@ -139,12 +143,11 @@ export default {
         },
         selectedFromGallery(element, format){
             this.selected_image = element
-            let wp_image = {wp_id: element.id, src: this.updatedValue.src }
+            this.wp_image = {wp_id: element.id, src: this.wp_image.src }
             let selectedsize = format === undefined ? this.size:format
             if(element.media_details!== undefined && element.media_details.sizes[selectedsize]!== undefined){
-                wp_image.src = element.media_details.sizes[selectedsize].source_url
+                this.wp_image.src = element.media_details.sizes[selectedsize].source_url
             }
-            this.updatedValue = wp_image
             
         },
 

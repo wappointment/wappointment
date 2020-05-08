@@ -17,18 +17,11 @@
 
               </div>
 
-              <div class="d-flex mb-2">
-                  <label class="form-check-label w-100" for="allow-wappointment">
-                    <div class="d-flex align-items-center">
-                      <input type="checkbox" v-model="viewData.wappointment_allowed" id="allow-wappointment" @change="changedWappointmentAllowed()">
-                      <div>Allow connection to wappointment.com</div>
-                    </div>
-                    <div class="small text-muted">Used to display the Addons page</div>
-                  </label>
-              </div>
               <hr/>
               <div class="mt-3">
-                <button class="btn btn-secondary btn-sm" @click="startResetConfirm"><span class="dashicons dashicons-image-rotate"></span> Reset Installation</button>
+                <button class="btn btn-secondary btn-sm" @click="startResetConfirm">
+                  <span class="dashicons dashicons-image-rotate"></span> Uninstall
+                </button>
               </div>
             </div>
       </div>
@@ -54,7 +47,7 @@ export default {
     },
     startResetConfirm() {
         this.$WapModal().confirm({
-          title: 'Do you really want to reset Wappointment?',
+          title: 'Do you really want to uninstall Wappointment?',
           content: 'All your data(appointments, settings, etc...) will be lost'
         }).then((result) => {
           if(result === true){
@@ -81,11 +74,6 @@ export default {
       this.refreshInitValue()
     },
 
-    changedWappointmentAllowed(){
-      
-      this.changed(this.viewData.wappointment_allowed, 'wappointment_allowed')
-      window.apiWappointment.allowed = this.viewData.wappointment_allowed
-    },
     changed(value, key) {
       this.settingSave(key, value)
     },

@@ -408,7 +408,7 @@ export default {
 
 @media (min-width: 1410px) { 
     .widget-wraper{
-        width: 750px !important;
+        width: 770px !important;
     }
 }
 

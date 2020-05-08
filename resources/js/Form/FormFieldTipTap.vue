@@ -126,7 +126,14 @@
     </editor>
     <div class="footer-reminder" >
       <div v-if="simpleVersion">
-        Total characters: {{ characterCount }}
+        <div>Total characters:  {{ characterCount }}</div>
+        <div v-if="definition.sms">
+          <span v-if="characterCount > 160" class="small text-danger">
+            {{ characterCount > 306 ? Math.ceil(characterCount/153):2 }} SMS will be sent </span> 
+            <div>
+              <span v-if="hasShortcodes.length>0" class="small text-muted">shortcodes <span v-for="short in hasShortcodes"> {{ short }}  </span> will increase your character count invariably</span>
+            </div>
+        </div> 
       </div>
       <div class="p-0 d-flex align-items-center" v-else>
         <LinkEdit :fieldValue="definition.save_appointment_text_link" fieldKey="save_appointment_text_link"></LinkEdit>
@@ -187,6 +194,7 @@ export default {
         linkUrl: null,
         writingUrl: false,
         characterCount:0,
+        hasShortcodes: [],
         toolbar: [
             {
             mark: "bold",
@@ -335,8 +343,21 @@ export default {
     methods:{
       updateModel({ getJSON, getHTML }) {
           this.updatedValue = getJSON()
+          this.hasShortcodes = this.getShortcodes(this.$refs.editor.state.doc.content)
           this.characterCount = this.$refs.editor.state.doc.content.size - 2
-          console.log('count',this.characterCount)
+      },
+      getShortcodes(content){
+        let customfields = []
+        if(content.content[0] !== undefined && content.content[0].content !== undefined && content.content[0].content.content !== undefined){
+          for (let i = 0; i < content.content[0].content.content.length; i++) {
+            const element = content.content[0].content.content[i]
+            if(element.attrs.class !== undefined && element.attrs.class=='customfield'){
+              customfields.push('['+element.attrs.src+':'+element.attrs.alt+']')
+            }
+            
+          }
+        }
+        return customfields
       },
       getSelectionDimensions() {
         var sel = document.selection,

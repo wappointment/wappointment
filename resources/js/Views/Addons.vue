@@ -1,5 +1,24 @@
 <template>
-  <div class="px-4 py-2">
+  <div class="px-4 pb-2">
+    <transition name="slide-fade-top">
+      <div id="screen-meta" v-if="showSettings" class="metabox-prefs" >
+          <div id="screen-options-wrap" >
+            <div class="d-flex mb-2">
+                <label class="form-check-label w-100" for="allow-wappointment">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.wappointment_allowed" id="allow-wappointment" @change="changedWappointmentAllowed()">
+                    <div>Allow connection to wappointment.com</div>
+                  </div>
+                </label>
+            </div>
+          </div>
+      </div>
+    </transition>
+    <div id="screen-meta-links">
+        <div id="screen-options-link-wrap" class="hide-if-no-js screen-meta-toggle" style="">
+          <button @click="showSettings = !showSettings" type="button" id="show-settings-link" class="button show-settings" aria-controls="screen-options-wrap" aria-expanded="false">Screen Options</button>
+        </div>
+    </div>
     <div class="d-flex align-items-center">
       <h1 class="m-2">Addons</h1>
       <div v-if="dataLoaded">
@@ -12,6 +31,7 @@
         <a href="javascript:;" v-if="debugIsOn" @click="checkLicence">checkLicence</a>
       </div>
     </div>
+      
     <div class="addons d-flex flex-wrap pb-4" v-if="dataLoaded">
       <template v-for="(addon,id) in viewData.addons"> 
         <AddonPreview 
@@ -65,6 +85,7 @@ export default {
         addonWizard: null,
         services_install: {},
         currentServiceAddon:null,
+        showSettings: false
     }),
     components: {AddonPreview, AddonsWizard},
     created(){
@@ -86,6 +107,14 @@ export default {
       }
     },
     methods: {
+      changedWappointmentAllowed(){
+      
+        this.changed(this.viewData.wappointment_allowed, 'wappointment_allowed')
+        window.apiWappointment.allowed = this.viewData.wappointment_allowed
+      },
+      changed(value, key) {
+        this.settingSave(key, value)
+      },
       runInstallation(addon){
         let solution_key = addon.solutions[0].namekey.replace('-','_')
         if(this.services_install[solution_key] !== undefined){
@@ -212,6 +241,9 @@ export default {
 
 .wappointment-wrap .addons p {
     margin-bottom: .2rem;
+}
+.wappointment-wrap #screen-meta{
+  display:block;
 }
 
 </style>

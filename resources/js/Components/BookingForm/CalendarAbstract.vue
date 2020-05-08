@@ -327,8 +327,7 @@ export default {
         },
         
         nowNextHour(){
-            let now = this.now
-            return now.add(1,'h').startOf('hour')
+            return this.now.clone().add(1,'h').startOf('hour')
         },
         
         resetIntervals(){
@@ -395,6 +394,7 @@ export default {
             if(this.cachedSlots[daynumber] !== undefined) return this.cachedSlots[daynumber]
     
             let dayIntervals = this.getDayIntervals(daynumber)
+
             this.cachedSlots[daynumber] = dayIntervals.splits(this.realSlotDuration()).totalSlots()
             if(this.isDemo && this.demoSelected.day == false && this.cachedSlots[daynumber] > 0){
                 
@@ -415,11 +415,18 @@ export default {
             let until = null
             if(this.isCurrentMonth && daynumber === this.todayDay) {
                 today = true
-                start = momenttz.tz(this.now, this.currentTz).add(parseInt(this.viewData.min_bookable),'hours')
+                
+                start = momenttz.tz(this.now.clone(), this.currentTz).add(parseInt(this.viewData.min_bookable),'hours')
+
+                if(start.day() != this.now.day()){ //exception when today changes to tomorrow with the adition of min_bookable
+                    //that means that's the end of the day and there is nothing new
+                    start = momenttz.tz(this.now.clone(), this.currentTz)
+                }
                 until = start.clone().add(1, 'day').startOf('day')
-                //console.log('Today is ', this.todayDay, start.format())
+/*                 console.log('now',this.now.format() )
+                console.log('Today is ', this.todayDay, start.format()) */
                 //let dayIntervals = this.intervalsCollection.get(start, start.clone().endOf('day'), true)
-                //console.log(start.format(), start.clone().endOf('day').format(),dayIntervals)
+               //console.log(start.format(), until.format())
             }else {
                 let prefixDay = ''
                 let prefixMonth = ''

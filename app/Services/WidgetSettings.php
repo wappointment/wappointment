@@ -216,7 +216,6 @@ class WidgetSettings
 
     public function get()
     {
-        //dd($this->merged_settings);
         return $this->merged_settings;
     }
 
@@ -279,10 +278,16 @@ class WidgetSettings
 
     public function save($settings)
     {
-        if (!empty($settings['demoData'])) {
-            unset($settings['demoData']);
-        }
-        return WPHelpers::setOption($this->key_option, $settings, true);
+        return WPHelpers::setOption($this->key_option, $this->filterSettings($settings), true);
+    }
+
+    public function filterSettings($settings)
+    {
+        $accepted = array_keys($this->settings);
+
+        return (\WappointmentLv::collect($settings))->reject(function ($value, $key) use ($accepted) {
+            return !in_array($key, $accepted);
+        });
     }
 
     private function merge($array1, $array2)
