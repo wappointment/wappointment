@@ -9,7 +9,7 @@
                 </div>
                 <div class="buttons align-self-center">
                     <button class="btn btn-secondary btn-xs" @click="emitBack">Back</button>
-                    <button v-if="nextEnabled" class="btn btn-primary btn-xs" @click="emitNext">Next</button>
+                    <button class="btn btn-primary btn-xs" :class="{'disabled':!nextEn}" :disabled="!nextEn" @click="emitNext">Next</button>
                 </div>
             </div>
         </div>
@@ -22,7 +22,7 @@
                 </div>
                 <div class="buttons align-self-center">
                     <button class="btn btn-secondary btn-xl" @click="emitBack">Back</button>
-                    <button v-if="nextEnabled" class="btn btn-primary btn-xl" @click="emitNext">Next</button>
+                    <button  class="btn btn-primary btn-xl" :class="{'disabled':!nextEn}" :disabled="!nextEn" @click="emitNext">Next</button>
                 </div>
                 <ContactButton subject="Installation Wizard" buttonClass="btn btn-secondary btn-sm" buttonLabel="Help" />
             </div>
@@ -40,22 +40,27 @@ export default {
       total:0,
       nextEnabled:  {
         type: Boolean,
-        default: true
+        default: false
     },
   },
   data() {
       return {
-          pstep: 0
+          pstep: 0,
+          nextEn: false
       } 
   },
 
   mounted(){
       this.pstep = window.prevStep
+      this.nextEn = this.nextEnabled === true
       setTimeout(this.delayMounted , 50);
   },
   
 
   methods: {
+      toggleNext(enable){
+          this.nextEn = enable
+      },
       delayMounted(){
         this.pstep = this.step
       },
@@ -64,6 +69,7 @@ export default {
       },
 
       emitNext(){
+          if(this.nextEn === false) return 
           this.$emit('next')
       },
      

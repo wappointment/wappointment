@@ -272,8 +272,7 @@ export default {
         border-radius: .6rem;
     }
     .box-shadow .draggable{
-        border: 2px dashed #f2f2f2;
-        background-color: rgb(242, 242, 242);
+        background-color: rgb(162, 195, 204);
         transition: transform .3s ease-in-out;
         padding: 0;
     }
@@ -292,23 +291,23 @@ export default {
         height: 20px;
         left: 32px;
         margin-left: 0;
-        color: #888;
-        background-color: rgba(0,0,0,.1);
+        color: #fff;
+        background-color: rgb(134, 174, 185);
         border: none;
         text-align: center;
         margin: 0 auto;
     }
 
     .box-shadow .draggable .handle:hover{
-        background-color: rgba(15, 15, 15, 0.3);
+        background-color: rgb(134, 174, 185, .8);
     }
 
     .box-shadow .draggable .handle-tm {
-        top: -22px;
+        top: -20px;
         border-radius: 6px 6px 0 0;
     }
     .box-shadow .draggable .handle-bm {
-        bottom: -22px;
+        bottom: -20px;
         border-radius: 0 0  6px 6px;
     }
 

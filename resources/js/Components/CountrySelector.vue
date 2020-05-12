@@ -19,7 +19,7 @@
         >
         <span class="selection d-flex">
             <input ref="search" @keypress="detectKey" id="search-field" class="form-control search flex-fill" :class="{'show':open, 'is-invalid':hasErrors}" placeholder="Select countries" type="text" v-model="search" >
-            <span @click.stop="clickedOutside" class="dashicons dashicons-dismiss"></span>
+            <span v-if="open" @click.stop="clickedOutside" class="dashicons dashicons-dismiss"></span>
         </span>
             <ul v-show="open" ref="list" @click.stop>
 
@@ -103,40 +103,25 @@ export default {
         getRegions(){
             return [
                 {
-                    name: 'All Countries',
+                    name: 'All World',
                     fn: 'selectAll',
                 },
+
                 {
                     l:1,
-                    name: 'All Africa',
-                    fn: 'selectAfrica',
+                    name: 'All Europe',
+                    fn: 'selectEurope',
                 },
                 {
                     l:2,
-                    name: 'Eastern Africa',
-                    fn: 'selectEasternAfrica',
+                    name: 'European Union',
+                    fn: 'selectEU',
                 },
-                {
+                {   
                     l:2,
-                    name: 'Central Africa',
-                    fn: 'selectCentralAfrica',
+                    name: 'Europe outside EU',
+                    fn: 'selectNonEU',
                 },
-                {
-                    l:2,
-                    name: 'Northern Africa',
-                    fn: 'selectNorthernAfrica',
-                },
-                {
-                    l:2,
-                    name: 'Southern Africa',
-                    fn: 'selectSouthernAfrica',
-                },
-                {
-                    l:2,
-                    name: 'Western Africa',
-                    fn: 'selectWesternAfrica',
-                },
-
                 {
                     l:1,
                     name: 'All America',
@@ -179,21 +164,40 @@ export default {
                     fn: 'selectWestAsia',
                 },
 
+
                 {
                     l:1,
-                    name: 'All Europe',
-                    fn: 'selectEurope',
+                    name: 'All Africa',
+                    fn: 'selectAfrica',
                 },
                 {
                     l:2,
-                    name: 'European Union',
-                    fn: 'selectEU',
+                    name: 'Eastern Africa',
+                    fn: 'selectEasternAfrica',
                 },
-                {   
+                {
                     l:2,
-                    name: 'Europe outside EU',
-                    fn: 'selectNonEU',
+                    name: 'Central Africa',
+                    fn: 'selectCentralAfrica',
                 },
+                {
+                    l:2,
+                    name: 'Northern Africa',
+                    fn: 'selectNorthernAfrica',
+                },
+                {
+                    l:2,
+                    name: 'Southern Africa',
+                    fn: 'selectSouthernAfrica',
+                },
+                {
+                    l:2,
+                    name: 'Western Africa',
+                    fn: 'selectWesternAfrica',
+                },
+
+                
+                
 
                 {
                     l:1,

@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid" v-if="dataLoaded">
-      <ServiceModulable :dataPassed="model"/>
+      <ServiceModulable :dataPassed="model" :buttons="true"/>
     </div>
 </template>
 

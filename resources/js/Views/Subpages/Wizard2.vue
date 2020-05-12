@@ -1,6 +1,6 @@
 <template>
   <div class="hasTopPane">
-    <topPane @next="nextStep" @back="prevStep" :step="currentStep" :total="totalStep" :nextEnabled="enabledNext"></topPane>
+    <topPane @next="nextStep" @back="prevStep" :step="currentStep" :total="totalStep" :nextEnabled="true"></topPane>
       <div class="container-fluid">
         <div class="col-12">
           <div>
@@ -29,7 +29,6 @@ export default {
       return {
           currentStep: 1,
           totalStep: 3,
-          enabledNext: true,
       } 
   },
 

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <topPane @next="nextStep" @back="prevStep" :step="currentStep" :total="totalStep"></topPane>
+    <topPane :nextEnabled="true" @next="nextStep" @back="prevStep" :step="currentStep" :total="totalStep"></topPane>
     <div class="container-fluid">
         <div class="col-12">
             <h1 class="wp-heading-inline">Booking Widget setup</h1>

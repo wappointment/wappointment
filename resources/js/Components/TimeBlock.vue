@@ -106,8 +106,8 @@ export default {
 
 .controls .dashicons{
     cursor:pointer;
-    color: #626262;
-    font-size: 1rem;
+    color: #fff;
+    font-size: 1.2rem;
 }
 
 .controls .dashicons:hover{

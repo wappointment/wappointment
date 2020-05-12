@@ -144,6 +144,10 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 1.4.4 - 2020-05-?? =
+* Corrected wizard back button
+* Corrected issues in MultiSite during installation
+
 = 1.4.3 - 2020-05-08 =
 * Refactored bits of code
 * Corrected style in frontend booking form

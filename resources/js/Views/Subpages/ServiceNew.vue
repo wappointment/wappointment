@@ -1,7 +1,7 @@
 <template>
     <div>
-        <WAPFormGenerator ref="formgenerator" :schema="schemaParsed" :data="modelHolder" 
-        @submit="save" @back="$emit('back')" :errors="errorsPassed" :key="formKey" labelButton="Save" v-bind="extraOptions">
+        <WAPFormGenerator ref="formgenerator" :buttons="false" :schema="schemaParsed" :data="modelHolder" 
+        @submit="save" @back="$emit('back')" @ready="isReady" :errors="errorsPassed" :key="formKey" labelButton="Save" v-bind="extraOptions">
         </WAPFormGenerator>
     </div>
 
@@ -12,7 +12,7 @@ import ServiceService from '../../Services/V1/Service'
 import abstractView from '../Abstract'
 export default {
   extends: abstractView,
-  props:['dataPassed', 'servicesService', 'extraOptions'],
+  props:['dataPassed', 'servicesService', 'extraOptions', 'buttons'],
   data() {
       return {
           
@@ -72,16 +72,6 @@ export default {
                 validation: ['required']
             },
             {
-                type: 'checkbox',
-                label: 'Ask for phone',
-                model: 'options.phone_required',
-                cast: Boolean,
-                validation: ['required'],
-                conditions: [
-                  { model:'type', notin:true ,values: ['phone'] }
-                ],
-            },
-            {
                 type: 'address',
                 label: 'Address',
                 model: 'address',
@@ -91,9 +81,18 @@ export default {
                 ],
                 validation: ['required']
             },
+             {
+                type: 'checkbox',
+                label: "Require client's phone",
+                model: 'options.phone_required',
+                cast: Boolean,
+                conditions: [
+                  { model:'type', notin:true ,values: ['phone'] }
+                ],
+            },
             {
                 type: 'countryselector',
-                label: 'Phone numbers accepted countries',
+                label: 'Phone field accepted countries',
                 model: 'options.countries',
                 cast: Array,
                 conditions: [
@@ -128,12 +127,11 @@ export default {
     }
   },
   methods: {
+    isReady(ready){
+      this.$emit('ready', ready)
+    },
     initMethod(){
-      if(this.servicesService!==undefined){
-        this.serviceService = this.servicesService
-      }else{
-        this.serviceService = this.$vueService(new ServiceService)
-      }
+      this.serviceService = this.servicesService!==undefined ? this.servicesService:this.$vueService(new ServiceService)
     },
 
     saveExternal(){

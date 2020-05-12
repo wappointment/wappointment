@@ -189,7 +189,7 @@ export default {
 </script>
 <style>
     .ghost{
-        background-color: rgba(62, 162, 179,.6);
+        background-color: rgb(185, 206, 212);
         position: absolute;
         width: 100%;
         border-radius:.6rem;
@@ -209,13 +209,17 @@ export default {
         width: 100%;
     }
     .timeText{
-        color:#626262;
+        color:#fff;
+        font-size: 1rem;
     }
     .columnTitle{
         font-size: .9rem;
         text-transform: capitalize;
         font-weight: normal;
-        color:#727272;
+        color:#acacac;
+    }
+    .day-column .columnTitle{
+        font-weight: bold;
     }
     @media (max-width: 769px) { 
         .columnTitle{

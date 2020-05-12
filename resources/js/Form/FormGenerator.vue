@@ -72,7 +72,6 @@ export default {
             default: () =>{
                 return {}
             }
-
         },
         data: {
             type: Object,
@@ -461,7 +460,6 @@ export default {
                 }
              }
              this.$emit('ready',this.isValid)
-             
          },
          verifyModel(){
             for (const key in this.schema) {
