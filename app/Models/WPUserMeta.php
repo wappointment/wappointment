@@ -11,6 +11,7 @@ class WPUserMeta extends Model
     protected $fillable = [
         'user_id', 'meta_key', 'meta_value'
     ];
+    protected $connection = 'ms';
 
     public static function getUserIdWithRoles($roles = ['administrator', 'author',  'editor', 'contributor'])
     {

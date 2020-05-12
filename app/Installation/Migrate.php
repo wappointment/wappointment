@@ -3,12 +3,15 @@
 namespace Wappointment\Installation;
 
 use Wappointment\Config\Database;
+use Wappointment\ClassConnect\Capsule;
 
 class Migrate extends \Illuminate\Database\Migrations\Migration
 {
     public $capsule;
     public $migrationRepo;
     protected $migrations_folders = false;
+
+
 
     public function __construct($migrations_folder = false)
     {
@@ -24,12 +27,19 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
         }
         $this->setMigrationFolders($migrations_folder);
     }
+
+    protected function getForeignName($name)
+    {
+        return Capsule::connection()->getTablePrefix() . $name;
+    }
+
     protected function setMigrationFolders($migrations_folder = false)
     {
         $migrations_folder = $migrations_folder === false ?
             WAPPOINTMENT_PATH . 'database' . DIRECTORY_SEPARATOR . 'migrations' : $migrations_folder;
         $this->addFolder($migrations_folder);
     }
+
     protected function addFolder($folder = false)
     {
         if ($folder) {

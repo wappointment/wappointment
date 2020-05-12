@@ -158,6 +158,7 @@ class Helpers
         self::enqueue('front');
         do_action('wappointment_enqueue_front');
     }
+
     public static function enqueue($script, $requires = [])
     {
         $scriptname = WAPPOINTMENT_SLUG . '_' . $script;

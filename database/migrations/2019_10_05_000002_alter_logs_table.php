@@ -2,7 +2,6 @@
 
 use Wappointment\ClassConnect\Capsule;
 use Wappointment\Config\Database;
-use Wappointment\Models\Status;
 
 class AlterLogsTable extends Wappointment\Installation\Migrate
 {
@@ -13,9 +12,10 @@ class AlterLogsTable extends Wappointment\Installation\Migrate
      */
     public function up()
     {
-        Capsule::schema()->table(Database::$prefix_self . '_logs', function ($table) {
+        $foreignName = $this->getForeignName(Database::$prefix_self . '_logs' . '_' . 'client_id_foreign');
+        Capsule::schema()->table(Database::$prefix_self . '_logs', function ($table) use ($foreignName) {
             $table->unsignedInteger('client_id')->nullable()->default(null)->change();
-            $table->foreign('client_id')->references('id')->on(Database::$prefix_self . '_clients');
+            $table->foreign('client_id', $foreignName)->references('id')->on(Database::$prefix_self . '_clients');
         });
     }
 
@@ -26,8 +26,9 @@ class AlterLogsTable extends Wappointment\Installation\Migrate
      */
     public function down()
     {
-        Capsule::schema()->table(Database::$prefix_self . '_logs', function ($table) {
-            $table->dropForeign(['client_id']);
+        $foreignName = $this->getForeignName(Database::$prefix_self . '_logs' . '_' . 'client_id_foreign');
+        Capsule::schema()->table(Database::$prefix_self . '_logs', function ($table) use ($foreignName) {
+            $table->dropForeign($foreignName);
         });
     }
 }

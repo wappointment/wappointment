@@ -218,7 +218,8 @@ class WappointmentLv
     public static function activating()
     {
         if (version_compare(PHP_VERSION, WAPPOINTMENT_PHP_MIN) < 0) {
-            die('Your website\'s PHP version(' . PHP_VERSION . ') is lower to our minimum requirement ' . WAPPOINTMENT_PHP_MIN . '. Contact us at <a href="https://wappointment.com/support?php_too_low=1" target="_blank">https://wappointment.com/support</a> for help.');
+            /* translators: %s - PHP Version number. */
+            die(sprintf(esc_html__('Minimum PHP version required %s', 'wappointment'), WAPPOINTMENT_PHP_MIN));
         }
     }
 }

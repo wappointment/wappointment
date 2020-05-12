@@ -13,6 +13,7 @@ class Database
             self::$capsule = new \Illuminate\Database\Capsule\Manager();
 
             self::$capsule->addConnection(self::config());
+            self::$capsule->addConnection(self::configms(), 'ms');
 
             self::$capsule->setAsGlobal();
             self::$capsule->bootEloquent();
@@ -24,7 +25,6 @@ class Database
     private static function config()
     {
         $db = new \Wappointment\WP\Database();
-
         return [
             'driver' => 'mysql',
             'host' => $db->getHost(),
@@ -38,5 +38,15 @@ class Database
             'strict' => true,
             'engine' => null,
         ];
+    }
+    private static function configms()
+    {
+
+        $db = new \Wappointment\WP\Database();
+        $config =  self::config();
+        if (defined('BLOG_ID_CURRENT_SITE')) {
+            $config['prefix'] = $db->getMainPrefix();
+        }
+        return $config;
     }
 }
