@@ -1,7 +1,8 @@
 <template>
     <div>
-        <WAPFormGenerator ref="formgenerator" :buttons="false" :schema="schemaParsed" :data="modelHolder" 
-        @submit="save" @back="$emit('back')" @ready="isReady" :errors="errorsPassed" :key="formKey" labelButton="Save" v-bind="extraOptions">
+        <WAPFormGenerator ref="formgenerator" :buttons="buttons" :schema="schemaParsed" :data="modelHolder" 
+        @submit="save" @back="$emit('back')" @ready="isReady" :errors="errorsPassed" :key="formKey" 
+        labelButton="Save" v-bind="extraOptions">
         </WAPFormGenerator>
     </div>
 

@@ -150,7 +150,7 @@ export default {
             return this.selectedServiceType && Object.keys(this.errorsOnFields).length < 1 && !this.dataEmpty
         },
         requirePhoneInput(){
-            return this.phoneSelected || [undefined,false].indexOf(this.service.options.phone_required) === -1 
+            return this.phoneSelected || [undefined,false,''].indexOf(this.service.options.phone_required) === -1 
         },
         phoneSelected(){
             return this.selectedServiceType == 'phone'
