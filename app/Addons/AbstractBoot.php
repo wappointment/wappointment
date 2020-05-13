@@ -14,6 +14,9 @@ abstract class AbstractBoot implements Boot
     public static $has_back_setup;
     public static $has_front_script;
     public static $has_js_var;
+    public static $has_installation;
+    public static $setting_key;
+    public static $instructions;
 
     public static function getAddonSlug()
     {
@@ -22,13 +25,32 @@ abstract class AbstractBoot implements Boot
 
     public static function init()
     {
-        add_filter('wappointment_addon_wrapper_' . static::$addon_key, [static::$name_space . 'Services\\Addon', 'filterWrapper']);
+        add_filter('wappointment_addon_wrapper_' . static::$addon_key, [static::$name_space . 'Boot', 'addonStatusWrapper']);
+        //add_filter('wappointment_addon_wrapper_' . static::$addon_key, [static::$name_space . 'Services\\Addon', 'filterWrapper']);
         if (!\Wappointment\System\Status::isInstalled() || !static::canRun()) {
             return;
         }
 
         //only triggerred once the plugin is ready to be used
         static::installedFilters();
+    }
+
+    public static function addonStatusWrapper($package)
+    {
+        if(static::isInstalled()){
+            $package->initial_wizard = static::isSetup();
+            if(is_array(static::$instructions) && count(static::$instructions) > 0) {
+                $package->instructions = static::$instructions;
+            }
+            if(static::$setting_key !== false) {
+                $package->settingKey = static::$setting_key;
+            }
+        }else{
+            if (static::$has_installation) {
+                $package->initial_install = true;
+            }
+        }
+        return $package;
     }
 
     public static function canRun()
@@ -39,7 +61,6 @@ abstract class AbstractBoot implements Boot
     public static function isInstalled()
     {
         return call_user_func(static::$name_space . 'Services\\Settings::get', 'installed_at');
-        //return Settings::get('installed_at');
     }
 
     public static function backSetup()
@@ -68,6 +89,11 @@ abstract class AbstractBoot implements Boot
     public static function frontEnqueue()
     {
         wp_enqueue_script(static::$addon_key . '_front', plugins_url(static::getAddonSlug() . '/dist/front.js'), [], static::$addon_version, true);
+    }
+
+    public static function getMainSettings($data)
+    {
+        return $data;
     }
 
     public static function hooksAndFiltersWhenInstalled()
@@ -105,6 +131,12 @@ abstract class AbstractBoot implements Boot
             'installed_at' => static::isInstalled(),
         ];
 
-        return $var .= 'var wappointment' . static::$addon_key . ' = ' . json_encode($variables) . ";\n";
+        return $var .= 'var ' . static::$addon_key . ' = ' . json_encode($variables) . ";\n";
     }
+
+    public static function isSetup()
+    {
+        return false;
+    }
+
 }

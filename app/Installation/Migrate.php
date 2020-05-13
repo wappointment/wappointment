@@ -30,7 +30,7 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
 
     protected function getForeignName($name)
     {
-        return Capsule::connection()->getTablePrefix() . $name;
+        return defined('BLOG_ID_CURRENT_SITE') ? Capsule::connection()->getTablePrefix() . $name : false;
     }
 
     protected function setMigrationFolders($migrations_folder = false)

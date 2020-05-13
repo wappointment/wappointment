@@ -3,7 +3,7 @@
         .wap-front .btn.btn-primary.btn-booking,
         .wap-front .btn-primary.btn-booking:not(:disabled):not(.disabled):active, 
         .wap-front .btn-primary.btn-booking:not(:disabled):not(.disabled).active {
-        font-size: {{ opts.button.slide_size+'em' }};
+        font-size: {{ opts.button.slide_size+'em' }} !important;
         {{ buttonIsBold }}
         {{ buttonIsFull }}
         }

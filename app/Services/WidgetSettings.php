@@ -283,11 +283,11 @@ class WidgetSettings
 
     public function filterSettings($settings)
     {
-        $accepted = array_keys($this->settings);
+        $accepted = array_keys($this->defaultSettings());
 
         return (\WappointmentLv::collect($settings))->reject(function ($value, $key) use ($accepted) {
             return !in_array($key, $accepted);
-        });
+        })->toArray();
     }
 
     private function merge($array1, $array2)

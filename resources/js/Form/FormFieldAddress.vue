@@ -16,7 +16,7 @@
             </div>
         </div>
       </div>
-      <div>
+      <div v-if="definition.address !== false">
           <wapIframe :height="200" :src="getIframeMap"></wapIframe>
       </div>
     </div>

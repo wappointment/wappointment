@@ -20,7 +20,11 @@ class AlterAppointmentsTable extends Wappointment\Installation\Migrate
             $table->unsignedInteger('staff_id')->nullable()->default(null)->change();
             $table->unsignedInteger('service_id')->nullable()->default(null)->change();
             $table->unsignedInteger('client_id')->nullable()->default(null)->change();
-            $table->foreign('client_id', $foreignName)->references('id')->on(Database::$prefix_self . '_clients');
+            if ($foreignName === false) {
+                $table->foreign('client_id')->references('id')->on(Database::$prefix_self . '_clients');
+            } else {
+                $table->foreign('client_id', $foreignName)->references('id')->on(Database::$prefix_self . '_clients');
+            }
         });
 
         Appointment::where('staff_id', 0)->where('service_id', 0)->update([
@@ -40,7 +44,11 @@ class AlterAppointmentsTable extends Wappointment\Installation\Migrate
     {
         $foreignName = $this->getForeignName(Database::$prefix_self . '_appointments' . '_' . 'client_id_foreign');
         Capsule::schema()->table(Database::$prefix_self . '_appointments', function ($table) use ($foreignName) {
-            $table->dropForeign($foreignName);
+            if ($foreignName === false) {
+                $table->dropForeign(['client_id']);
+            } else {
+                $table->dropForeign($foreignName);
+            }
         });
     }
 }
