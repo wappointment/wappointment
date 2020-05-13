@@ -37,15 +37,15 @@ abstract class AbstractBoot implements Boot
 
     public static function addonStatusWrapper($package)
     {
-        if(static::isInstalled()){
+        if (static::isInstalled()) {
             $package->initial_wizard = static::isSetup();
-            if(is_array(static::$instructions) && count(static::$instructions) > 0) {
+            if (is_array(static::$instructions) && count(static::$instructions) > 0) {
                 $package->instructions = static::$instructions;
             }
-            if(static::$setting_key !== false) {
+            if (static::$setting_key !== false) {
                 $package->settingKey = static::$setting_key;
             }
-        }else{
+        } else {
             if (static::$has_installation) {
                 $package->initial_install = true;
             }
@@ -138,5 +138,4 @@ abstract class AbstractBoot implements Boot
     {
         return false;
     }
-
 }
