@@ -16,7 +16,7 @@ class Database
         $this->host = DB_HOST;
         $this->port = '3306';
         $this->prefix = $wpdb->prefix;
-        if (defined('BLOG_ID_CURRENT_SITE')) {
+        if (is_multisite() && defined('BLOG_ID_CURRENT_SITE')) {
             $this->mainprefix = $wpdb->get_blog_prefix(BLOG_ID_CURRENT_SITE);
         }
 

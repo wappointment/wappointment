@@ -13,7 +13,9 @@ class Database
             self::$capsule = new \Illuminate\Database\Capsule\Manager();
 
             self::$capsule->addConnection(self::config());
-            self::$capsule->addConnection(self::configms(), 'ms');
+            if (is_multisite()) {
+                self::$capsule->addConnection(self::configms(), 'ms');
+            }
 
             self::$capsule->setAsGlobal();
             self::$capsule->bootEloquent();
@@ -44,9 +46,7 @@ class Database
 
         $db = new \Wappointment\WP\Database();
         $config =  self::config();
-        if (defined('BLOG_ID_CURRENT_SITE')) {
-            $config['prefix'] = $db->getMainPrefix();
-        }
+        $config['prefix'] = $db->getMainPrefix();
         return $config;
     }
 }

@@ -11,7 +11,14 @@ class WPUserMeta extends Model
     protected $fillable = [
         'user_id', 'meta_key', 'meta_value'
     ];
-    protected $connection = 'ms';
+
+    public function __construct(array $attributes = array())
+    {
+        parent::__construct($attributes);
+        if (is_multisite()) {
+            $this->connection = 'ms';
+        }
+    }
 
     public static function getUserIdWithRoles($roles = ['administrator', 'author',  'editor', 'contributor'])
     {
