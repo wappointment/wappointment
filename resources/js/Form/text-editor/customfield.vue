@@ -44,9 +44,9 @@ export default {
   border-radius: .4rem;
   padding: .2rem .2rem;
   background-color: #fff;
-  color: #2d2d2d;
+  color: var(--primary);
   cursor: grab;
-  border: 1px dashed #ccc;
+  border: 1px dashed var(--primary);
 }
 </style>
 

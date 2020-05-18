@@ -12,15 +12,18 @@
                 :demoSelected="demoSelected" :cachedSlots="cachedSlots" :isDemo="isDemo" @selectDay="selectDay"/>
 
                 <transition :name="slotsAnimation">
-                    <div class="slotsPane p-2" v-if="dayWeekSelected(selectedWeek) && selectedDay">
-                        <DaySlots 
-                        :intervals="availableIntervals.intervals" 
-                        :duration="realSlotDuration()" 
-                        :currentTz="currentTz"
-                        :time_format="time_format"
-                        :options="options"
-                        :now="now"
-                        @selected="selectSlot" />
+                    <div v-if="dayWeekSelected(selectedWeek) && selectedDay">
+                        <small class="timezone">{{ timezoneDisplay(currentTz) }}</small>
+                        <div class="slotsPane p-2" >
+                            <DaySlots 
+                            :intervals="availableIntervals.intervals" 
+                            :duration="realSlotDuration()" 
+                            :currentTz="currentTz"
+                            :time_format="time_format"
+                            :options="options"
+                            :now="now"
+                            @selected="selectSlot" />
+                        </div>
                     </div>
                 </transition>
             </div>
@@ -38,7 +41,17 @@ export default {
         changingWeek: false
     }),
     methods:{
-        setWeek(newWeek, delay=true){
+        autoRunOnMount(){
+            this.findFirstMonthwithAvail()
+            let i= 0
+            while(this.availableIntervals.intervals === undefined && i < 10){
+                this.changeWeek(true, true)
+                i++
+            }
+            
+        },
+
+        setWeek(newWeek){
             this.selectedDay = false
             this.changingWeek = false
             if(newWeek < 0 ){
@@ -76,18 +89,19 @@ export default {
                     return this.selectDay(day,this.selectedWeek, false)
                 }
             }
-            //this.autoSkipToWeekWithAvailability()
+            
         },
-       /*  autoSkipToWeekWithAvailability(){
+        autoSkipToWeekWithAvailability(){
             this.sideWeek=='right' ? this.nextWeek():this.prevWeek()
-        } */
+        },
 
 
-        changeWeek(increment = true){
+        changeWeek(increment = true, auto = false){
             this.sideWeek = increment? 'left': 'right'
             this.changingWeek = true
             let newWeek = increment ===false ? this.selectedWeek -1:this.selectedWeek +1
-            setTimeout(this.setWeek.bind('',newWeek ), 600)
+  
+            auto ? this.setWeek(newWeek):setTimeout(this.setWeek.bind('',newWeek ), 600)
         },
         nextWeek(){
             if(this.isLastWeek === true ) return false
@@ -101,13 +115,14 @@ export default {
         },
 
         triggerWeekChange(next = true){
+
             let timeout = 0
             //we only close the drawer if there are intervals
             if(this.availableIntervals.intervals !== undefined){
                 this.resetDaySelection() // close drawer
                 timeout = 600
             }
-
+            
             setTimeout(this.changeWeek.bind('',next ), timeout)
         },
         

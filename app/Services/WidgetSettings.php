@@ -73,6 +73,9 @@ class WidgetSettings
             'address' => 'Address:',
             'back' => 'Back',
             'confirm' => 'Confirm',
+            'check_terms' => false,
+            'terms' => 'See how [link]we process your data[/link]',
+            'terms_link' => '',
         ],
         'confirmation' => [
             'confirmation' => 'Appointment Booked',
@@ -107,7 +110,8 @@ class WidgetSettings
                 'fields' => [
                     'text' => ['label' => 'Text'],
                     'bg' => ['label' => 'Background'],
-                ]
+                ],
+                'main' => true
             ],
             'header' => [
                 'label' => 'Header Color',
@@ -115,7 +119,8 @@ class WidgetSettings
                     'text' => ['label' => 'Text'],
                     'bg' => ['label' => 'Background'],
                     'durationbg' => ['label' => 'Duration'],
-                ]
+                ],
+                'main' => true
             ],
             'body' => [
                 'label' => 'Body Colors',
@@ -123,7 +128,8 @@ class WidgetSettings
                     'text' => ['label' => 'Text'],
                     'bg' => ['label' => 'Background'],
                     'disabled_links' => ['label' => 'Disabled day'],
-                ]
+                ],
+                'main' => true
             ],
             'selected_day' => [
                 'label' => 'Selected day',
@@ -188,6 +194,7 @@ class WidgetSettings
             'back_sel_co' => ['label' => 'Secondary Button text(selected)'],
             'success_co' => ['label' => 'Success color'],
             'error_co' => ['label' => 'Error color'],
+            'check_terms' => ['label' => 'Add data proccessing notice'],
         ],
         'confirmation' => [
             'header_co' => ['label' => 'Header Confirmatiom Text'],
@@ -200,6 +207,9 @@ class WidgetSettings
 
     public function __construct()
     {
+        $ppolicy = get_privacy_policy_url();
+
+        $this->settings['form']['terms_link'] = empty($ppolicy) ? 'http://' : $ppolicy;
         $this->db_settings = WPHelpers::getOption($this->key_option, []);
         $this->merged_settings = empty($this->db_settings) ?
             $this->defaultSettings() : $this->merge($this->defaultSettings(), $this->db_settings);

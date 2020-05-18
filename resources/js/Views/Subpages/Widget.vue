@@ -3,13 +3,18 @@
       <div class="d-flex mt-4">
         <ul class="nav nav-tabs">
             <li class="nav-item">
-                <a class="nav-link" :class="{active:isTesting}" href="javascript:;" @click="showTesting">
-                    <span class="dashicons dashicons-edit"></span> 1 - Customize it
+                <a class="nav-link" :class="{active:isTesting && !editing}" href="javascript:;" @click="showPreview">
+                    <span class="dashicons dashicons-visibility"></span> 1 - Preview
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" :class="{active:isTesting && editing}" href="javascript:;" @click="showTesting">
+                    <span class="dashicons dashicons-edit"></span> 2 - Customize
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link" :class="{active:!isTesting}" href="javascript:;" @click="showIntegrate">
-                    <span class="dashicons dashicons-layout"></span> 2 - Integrate it
+                    <span class="dashicons dashicons-layout"></span> 3 - Insert
                 </a>
             </li>
         </ul>
@@ -17,7 +22,7 @@
       </div>  
       <div v-if="isTesting">
           <transition name="slide-fade-top">
-            <BookingWidgetEditor  :bgcolor="getBgColor" :widgetFields="widgetFields" 
+            <BookingWidgetEditor  :bgcolor="getBgColor" :editingMode="editing" :widgetFields="widgetFields" 
             :config="viewData.config" :preoptions="widgetData" :defaultSettings="widgetDefault" :frontAvailability="frontAvailability" />
           </transition>
       </div>
@@ -41,13 +46,19 @@ export default {
       return {
           colors: '#ffffff',
           viewName: 'widget',
-          isTesting: true
+          isTesting: true,
+          editing:false
       } 
   },
 
   components: { BookingWidgetEditor, WidgetInsert },
   methods: {
+      showPreview(){
+          this.showTesting()
+          this.editing = false
+      },
       showTesting(){
+          this.editing = true
           this.isTesting = true
       },
       showIntegrate(){

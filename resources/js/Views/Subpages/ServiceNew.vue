@@ -38,7 +38,7 @@ export default {
               fields: [
                 {
                     type: 'input',
-                    label: 'Service',
+                    label: 'Name',
                     model: 'name',
                     cast: String,
                     styles: {'max-width':'200px'},
@@ -62,7 +62,7 @@ export default {
             },
             {
                 type: 'checkimages',
-                label: 'How is it provided?',
+                label: 'Service Delivery',
                 model: 'type',
                 cast: Array,
                 images: [
@@ -87,9 +87,6 @@ export default {
                 label: "Require client's phone",
                 model: 'options.phone_required',
                 cast: Boolean,
-                conditions: [
-                  { model:'type', notin:true ,values: ['phone'] }
-                ],
             },
             {
                 type: 'countryselector',

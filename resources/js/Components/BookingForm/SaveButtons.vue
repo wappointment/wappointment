@@ -142,5 +142,9 @@ export default {
     }
 }
 </script>
-
+<style>
+.saveButtons .btn-secondary{
+    margin: .2em 0 !important;
+}
+</style>
 

@@ -1552,19 +1552,18 @@ export default {
 
   .fc-event-container .fc-event.appointment-pending, 
   .fc-container .fc-event.appointment-pending {
-    background-color: #917ae0;
-    background-image: linear-gradient(45deg, transparent 25%, #ccabf5 25%, #ccabf5 50%, transparent 50%, transparent 75%, #ccabf5 75%, #ccabf5 100%);
+    background-color: #4b6c97;
+    background-image: linear-gradient(45deg, transparent 25%, #92aaca 25%, #92aaca 50%, transparent 50%, transparent 75%, #92aaca 75%, #92aaca 100%);
     background-size: 30px 30px;
-    border: 2px dashed #dc49e0;
   }
 
   .fc-event.past-event {
-    background-color: #bda7cc !important;
+    background-color: #4b6c97 !important;
     cursor:default;
     background-image: none !important;
   }
   .fc-event.past-event:hover {
-    background-color: #5b447b !important;
+    background-color: #4b6c97 !important;
   }
 
   .fc-bg .fc-day, .fc-unthemed td.fc-day.fc-today, .fc-bgevent.opening, .fc-time-grid .fc-event, .fc-event{

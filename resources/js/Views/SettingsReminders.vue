@@ -19,15 +19,15 @@
                   <div>
                     <button class="btn btn-xs" @click="editReminder(reminder)"><span class="dashicons dashicons-edit"></span></button>
                     <button v-if="isUnlocked(reminder)" class="btn btn-xs" @click="deleteReminder(reminder.id)"><span class="dashicons dashicons-trash"></span></button>
-                    <button v-else class="btn btn-xs disabled" disabled aria-disabled="true" title="Impossible to delete this message, you can unpublish it though"><span class="dashicons dashicons-trash"></span></button>
+                    <button v-else class="btn btn-xs disabled" disabled aria-disabled="true" title="You can unpublish it this message, but not delete it"><span class="dashicons dashicons-trash"></span></button>
                   </div>
                 </div>
                 
               </div>
               <div class="mt-2">
-                <button v-if="!addingReminder" class="btn btn-outline-primary my-2" @click="addingReminder=true">Add reminder</button>
+                <button v-if="!addingReminder" class="btn btn-outline-primary my-2" @click="addingReminderStep2">Add reminder</button>
                 <div v-else>
-                  <button v-for="label in labels.types" class="btn btn-secondary m-2" @click="addReminder(label.name)" > 
+                  <button v-for="label in labels.types" class="btn btn-secondary m-2 align-items-center d-flex" @click="addReminder(label.name)" > 
                     <span :class="'mr-2 dashicons '+label.icon"></span>{{label.name}}</button>
                 </div>
               </div>
@@ -87,6 +87,13 @@ export default {
 
   },
   methods: {
+    addingReminderStep2(){
+      if(this.labels.types.length == 1){
+        return this.addReminder('email') 
+      }
+      this.addingReminder = true
+      
+    },
     goToMain() {
       this.currentView = false
       this.addingReminder = false

@@ -1,53 +1,58 @@
 <template>
-    <div class="picture-edit">
-        <div @click="changePicture" class="text-center preview-fimage">
-            <div class="fimage-edit">
-                <div v-if="hasImage" @mouseover="changeButtonOn = true" @mouseout="changeButtonOn = false">
-                    <div :style="'background-image: url(' + wp_image.src + ');'" class="img-bg d-flex justify-content-center align-items-center">
-                        <div v-if="changeButtonOn" class="btn btn-secondary btn-lg">Change Picture</div>
-                    </div>
-                </div>
-                <i v-else class="dashicons dashicons-format-image"></i>
-                <span class="small text-primary" href="javascript:;">edit</span>
-            </div>
+    <div>
+        <div @click="changePicture" style="cursor:pointer" v-if="[undefined,''].indexOf(label) === -1">
+            {{ label}}
         </div>
-        <WapModal :show="edit" @hide="close" large>
-            <div>
-                <div v-if="selected_image !== null">
-                    <div class="btn btn-secondary" 
-                    v-for="(image_size, thumbkey) in getImagesThumb(selected_image.media_details.sizes)"  @click="changeSize(image_size)">
-                        <div class="text-center">
-                            <img :src="image_size.source_url" :width="setImageWidth(image_size)" />
-                            <div>
-                                {{ image_size.width }}px * {{ image_size.height }}px
+        <div class="picture-edit">
+            <div @click="changePicture" class="text-center preview-fimage">
+                <div class="fimage-edit">
+                    <div v-if="hasImage" @mouseover="changeButtonOn = true" @mouseout="changeButtonOn = false">
+                        <div :style="'background-image: url(' + wp_image.src + ');'" class="img-bg d-flex justify-content-center align-items-center">
+                            <div v-if="changeButtonOn" class="btn btn-secondary btn-lg">Change Picture</div>
+                        </div>
+                    </div>
+                    <i v-else class="dashicons dashicons-format-image"></i>
+                    <span class="small text-primary" href="javascript:;">edit</span>
+                </div>
+            </div>
+            <WapModal :show="edit" @hide="close" large>
+                <div>
+                    <div v-if="selected_image !== null">
+                        <div class="btn btn-secondary" 
+                        v-for="(image_size, thumbkey) in getImagesThumb(selected_image.media_details.sizes)"  @click="changeSize(image_size)">
+                            <div class="text-center">
+                                <img :src="image_size.source_url" :width="setImageWidth(image_size)" />
+                                <div>
+                                    {{ image_size.width }}px * {{ image_size.height }}px
+                                </div>
                             </div>
                         </div>
                     </div>
+                    <div class="d-flex align-items-center" v-if="hasImage">
+                        <div class="mr-4">
+                            <img :src="wp_image.src" class="img-fluid rounded" :width="preview.width">
+                        </div>
+                        <div>
+                            <a class="btn btn-secondary" href="javascript:;" @click.prevent.stop="clearImage">Clear</a>
+                            <a class="btn btn-primary" href="javascript:;" @click.prevent.stop="confirmSelectedImage">Confirm</a>
+                        </div>
+                    </div>
+                    <div class="gallery" v-if="galleryShow && selected_image === null">
+                        <div class="pt-4 px-4">
+                            <input type="text" v-model="search_term">
+                            <button class="btn btn-outline-primary" @click.prevent.stop="refreshGallery">Search</button>
+                        </div>
+                        <hr>
+                        <WPMedias v-if="edit" @selected="selectedFromGallery" @confirmed="confirmSelection" 
+                        :search="search_term" :per_page="showing_images" :selectedImage="selectedImage"></WPMedias>
+                        <div class="bg-white pt-3">
+                            <button class="btn btn-secondary" @click.prevent.stop="close">Close</button>
+                        </div>
+                    </div>
+                    
                 </div>
-                <div class="d-flex align-items-center" v-if="hasImage">
-                    <div class="mr-4">
-                        <img :src="wp_image.src" class="img-fluid rounded" :width="preview.width">
-                    </div>
-                    <div>
-                        <a class="btn btn-secondary btn-xs" href="javascript:;" @click.prevent.stop="clearImage">Clear</a>
-                        <a class="btn btn-primary btn-xs" href="javascript:;" @click.prevent.stop="confirmSelectedImage">Confirm</a>
-                    </div>
-                </div>
-                <div class="gallery" v-if="galleryShow && selected_image === null">
-                    <div class="pt-4 px-4">
-                        <input type="text" v-model="search_term">
-                        <button class="btn btn-outline-primary" @click.prevent.stop="refreshGallery">Search</button>
-                    </div>
-                    <hr>
-                    <WPMedias v-if="edit" @selected="selectedFromGallery" @confirmed="confirmSelection" 
-                    :search="search_term" :per_page="showing_images" :selectedImage="selectedImage"></WPMedias>
-                    <div class="bg-white pt-3">
-                        <button class="btn btn-secondary" @click.prevent.stop="close">Close</button>
-                    </div>
-                </div>
-                
-            </div>
-        </WapModal>
+            </WapModal>
+        </div>
     </div>
 
 </template>

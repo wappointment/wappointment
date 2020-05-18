@@ -1,11 +1,15 @@
 <template>
     <div v-if="dataLoaded">
         <div v-if="minimal === undefined">
-            <p class="h6 text-muted"><span class="bullet-wap">1</span> <span class="bullet-title"> Set who provides the appointments </span></p>
+            <p class="h6 text-muted"><span class="bullet-wap">1</span> 
+                <span class="bullet-title" v-if="viewData.staffs.length > 1"> Set who provides the appointments </span>
+                <span class="bullet-title" v-else> Modify your picture </span>
+            </p>
             <div v-if="viewData" class="d-flex align-items-center mb-2">
                 <StaffPicture :src="viewData.activeStaffAvatar" :gravatar="viewData.activeStaffGravatar" @changed="changed"></StaffPicture>
                 <StaffSelector :staffs="viewData.staffs" :activeStaffId="viewData.activeStaffId" @updateStaff="updateStaff"></StaffSelector>
             </div>
+            <small class="text-muted" v-if="viewData.staffs.length == 1"> In order to change the email and name, simply <a href="users.php" target="_blank">add a WordPress user</a> or edit the current one  </small>
             
             <p class="h6 text-muted"><span class="bullet-wap">2</span> <span class="bullet-title"> Set your timezone</span></p>
             <TimeZones v-if="viewData" classW="d-flex" :wizard="noback" :timezones="viewData.timezones_list" 
@@ -16,7 +20,7 @@
         <div v-if="hasRegav">
             <p v-if="minimal === undefined" class="h6 text-muted">
                 <span class="bullet-wap">3</span> 
-                <span class="bullet-title"> Click and drag your standard weekly schedule</span>
+                <span class="bullet-title"> Set your standard weekly schedule</span>
             </p>
             <RegularAvailability :initValue="viewData.regav" :viewData="viewData" 
             @updatedDays="updatedRA"
@@ -56,7 +60,6 @@ export default {
         this.settingStaffSave('regav', openeDays) 
     },
     changedABD(value){
-        console.log('changed abd ', value)
         this.settingStaffSave('availaible_booking_days', value) 
     },
 
@@ -82,30 +85,20 @@ export default {
 <style >
 .bullet-title{
     color: #777;
-
-border-bottom: 1px solid #c2c1cc;
+    border-bottom: 1px solid #c2c1cc;
+    font-weight: bold;
 }
 .bullet-wap{
     border: 1px solid var(--primary);
-
-padding: .35rem;
-
-border-radius: 1.2rem;
-
-height: 2rem;
-
-width: 2rem;
-
-display: inline-block;
-
-text-align: center;
-
-font-size: 1rem;
-
-color: var(--primary);
-
-margin-right: .5rem;
-
-background-color: #fff;
+    padding: .35rem;
+    border-radius: 1.2rem;
+    height: 2rem;
+    width: 2rem;
+    display: inline-block;
+    text-align: center;
+    font-size: 1rem;
+    color: var(--primary);
+    margin-right: .5rem;
+    background-color: #fff;
 }
 </style>

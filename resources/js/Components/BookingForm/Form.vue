@@ -62,6 +62,8 @@
                                 <input class="form-control" type="text" id="skype" v-model="bookingForm.skype">
                             </p>
                         </div>
+
+                        <div v-if="termsIsOn" class="wap-terms" v-html="getTerms"></div>
                     </div>
                 </div>
             </transition>
@@ -78,8 +80,9 @@
 <script>
 import abstractFront from '../../Views/abstractFront'
 import BookingAddress from './Address'
-import Dates from "../../Modules/Dates"
+import Dates from '../../Modules/Dates'
 import PhoneInput from './PhoneInput'
+import Strip from '../../Helpers/Strip'
 import {isEmail, isEmpty} from 'validator'
 
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -90,7 +93,7 @@ library.add(faMapMarkedAlt, faPhone, faSkype)
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../CountryStyle')
 export default {
     extends: abstractFront,
-    mixins: [Dates],
+    mixins: [Dates, Strip],
     props: ['service','selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations'],
     components: {
         BookingAddress,
@@ -146,6 +149,12 @@ export default {
         }
     },
     computed: {
+        getTerms(){
+            return this.strip(this.options.form.terms).replace('[link]', '<a href="'+this.options.form.terms_link+'" target="_blank">').replace('[/link]', '</a>')
+        },
+        termsIsOn(){
+            return this.options.form.check_terms === true
+        },
         canSubmit(){
             return this.selectedServiceType && Object.keys(this.errorsOnFields).length < 1 && !this.dataEmpty
         },
@@ -305,5 +314,9 @@ export default {
     font-size: .9em;
 }
 
+.wap-terms{
+    font-size: .7em;
+    text-align: left;
+}
 
 </style>

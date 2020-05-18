@@ -50,8 +50,7 @@ export default {
         
         this.mounted = true
         
-        this.findFirstMonthwithAvail()
-        
+        this.autoRunOnMount()
         this.getLocalWeekDays()
         this.setWeekHeader()
     },
@@ -163,10 +162,17 @@ export default {
            }
            return undefined
         },
-
+        getTzString(){
+            return (this.options!== undefined && this.options.selection.timezone!== undefined) ? this.options.selection.timezone: ''
+        },
     },
     methods: {
-
+        timezoneDisplay(timezoneString){
+            return this.getTzString.replace('[timezone]', timezoneString + ' [' + this.now.format('Z') + ']')
+        },
+        autoRunOnMount(){
+            this.findFirstMonthwithAvail()
+        },
         findFirstMonthwithAvail(){
             let i = 0
             while(this.totalSlots == 0 && !this.isLastMonth && i < 40){
@@ -253,7 +259,7 @@ export default {
 
         selectDay(daynumber, idweek, manual = true){
             
-            let timeout = manual? 100:600
+            let timeout = 100
             if(idweek === this.selectedWeek ) { // week didnt change, only the day
                 this.slotsAnimation = manual? 'fade':'slide-fade-sm'
                 this.resetDaySelection()
@@ -265,7 +271,7 @@ export default {
             if(this.cachedSlots[daynumber] < 1 || this.isPast(daynumber)){
                  return false
             }
-            setTimeout(this.daySelected.bind('', daynumber, idweek), timeout)
+            manual ? setTimeout(this.daySelected.bind('', daynumber, idweek), timeout): this.daySelected(daynumber, idweek)
         },
 
         selectSlot(slot){
@@ -340,7 +346,10 @@ export default {
                 this.setIntervals(this.firstDayMonth, this.lastDayMonth)
             }
         },
-
+        
+        /**
+         * service slot duration in seconds
+         */
         realSlotDuration(){
             return (parseInt(this.duration) + parseInt(this.viewData.buffer_time)) *60
         },
@@ -408,7 +417,16 @@ export default {
         dayWeekSelected(idweek) {
             return idweek === this.selectedWeek
         },
-        
+        getTodayStart(){
+            let nowmin = momenttz.tz(this.now.clone(), this.currentTz).add(parseInt(this.viewData.min_bookable),'hours')
+            let nowcopy = nowmin.clone().startOf('hour')
+            let i=0
+            while (nowcopy.unix() < nowmin.unix() && i <20) {
+                nowcopy.add( this.realSlotDuration(), 'seconds')
+                i++
+            }
+            return nowcopy
+        },
         getDayIntervals(daynumber){
             let start = null
             let today = false
@@ -416,8 +434,8 @@ export default {
             if(this.isCurrentMonth && daynumber === this.todayDay) {
                 today = true
                 
-                start = momenttz.tz(this.now.clone(), this.currentTz).add(parseInt(this.viewData.min_bookable),'hours')
-
+                start = this.getTodayStart()
+    
                 if(start.day() != this.now.day()){ //exception when today changes to tomorrow with the adition of min_bookable
                     //that means that's the end of the day and there is nothing new
                     start = momenttz.tz(this.now.clone(), this.currentTz)

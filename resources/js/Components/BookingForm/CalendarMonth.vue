@@ -12,15 +12,18 @@
                     <DaysOfWeek :idweek="idweek" :week="week" :tooltip="getSlotTooltip" :selectedDay="selectedDay"
                     :demoSelected="demoSelected" :cachedSlots="cachedSlots" :isDemo="isDemo" @selectDay="selectDay"/>
                     <transition :name="slotsAnimation">
-                        <div class="slotsPane p-2" v-if="dayWeekSelected(idweek) && selectedDay">
-                            <DaySlots 
-                            :intervals="availableIntervals.intervals" 
-                            :duration="realSlotDuration()" 
-                            :currentTz="currentTz"
-                            :time_format="time_format"
-                            :options="options"
-                            :now="now"
-                            @selected="selectSlot" />
+                        <div v-if="dayWeekSelected(idweek) && selectedDay">
+                            <small class="timezone">{{ timezoneDisplay(currentTz) }}</small>
+                            <div class="slotsPane p-2" >
+                                <DaySlots 
+                                :intervals="availableIntervals.intervals" 
+                                :duration="realSlotDuration()" 
+                                :currentTz="currentTz"
+                                :time_format="time_format"
+                                :options="options"
+                                :now="now"
+                                @selected="selectSlot" />
+                            </div>
                         </div>
                     </transition>
                 </div>

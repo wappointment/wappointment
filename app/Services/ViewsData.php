@@ -4,8 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
-use Wappointment\Models\WPUser;
-use Wappointment\Models\WPUserMeta;
+use Wappointment\Services\Staff;
 
 class ViewsData
 {
@@ -26,7 +25,7 @@ class ViewsData
         return apply_filters('wappointment_back_regav', [
             'regav' => Settings::getStaff('regav'),
             'availaible_booking_days' => Settings::getStaff('availaible_booking_days'),
-            'staffs' => WPUser::whereIn('ID', WPUserMeta::getUserIdWithRoles())->get(),
+            'staffs' => Staff::getWP(),
             'activeStaffId' => Settings::get('activeStaffId'),
             'activeStaffAvatar' => Settings::getStaff('avatarId') ?
                 wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,

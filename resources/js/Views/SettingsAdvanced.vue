@@ -3,8 +3,7 @@
       <div class="reduced">
 
           <div class="card p-2 px-3">
-              <div class="h5">Advanced settings</div>
-              <hr/>
+
               <div class="d-flex mb-2">
                   
                   <label class="form-check-label w-100" for="buffer_time">
@@ -19,7 +18,7 @@
 
               <hr/>
               <div class="mt-3">
-                <button class="btn btn-secondary btn-sm" @click="startResetConfirm">
+                <button class="btn btn-danger btn-sm" @click="startResetConfirm">
                   <span class="dashicons dashicons-image-rotate"></span> Uninstall
                 </button>
               </div>
@@ -88,5 +87,8 @@ export default {
 <style>
 .min-label{
   min-width : 20%;
+}
+.btn-danger{
+  color: #fff;
 }
 </style>

@@ -1,19 +1,24 @@
 <template>
-    <div class="d-flex w-100" :class="getClassWrapper">
-        <range-slider
-            class="slider"
-            :min="definition.min"
-            :max="definition.max"
-            :step="definition.step"
-            :value="updatedValue"
-            @input="updateTemp" 
-            @change="dragEnd" 
-            :maxlength="definition.max"
-            :readonly="definition.readonly">
-        </range-slider> 
-        <small v-if="!editableInput" data-tt="Click to edit" @click="editableInput=true">{{ formatedValue }}</small>
-        <input v-else @keyup.enter.prevent="updateValueInput" v-model="tempVal" type="number" size="2"/>
-        <small id="emailHelp" v-if="tip" class="form-text text-muted">{{ tip }}</small>
+    <div class="w-100">
+        <div class="pl-2"v-if="[undefined,''].indexOf(label) === -1">
+            {{ label}}
+        </div>
+        <div class="d-flex" :class="getClassWrapper">
+            <range-slider
+                class="slider"
+                :min="definition.min"
+                :max="definition.max"
+                :step="definition.step"
+                :value="updatedValue"
+                @input="updateTemp" 
+                @change="dragEnd" 
+                :maxlength="definition.max"
+                :readonly="definition.readonly">
+            </range-slider> 
+            <small v-if="!editableInput" data-tt="Click to edit" @click="editableInput=true">{{ formatedValue }}</small>
+            <input v-else @keyup.enter.prevent="updateValueInput" v-model="tempVal" type="number" size="2"/>
+            <small id="emailHelp" v-if="tip" class="form-text text-muted">{{ tip }}</small>
+        </div>
     </div>
 </template>
 

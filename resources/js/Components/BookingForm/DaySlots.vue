@@ -1,7 +1,5 @@
 <template>
-    <div @mouseover="showText=true" 
-             @mouseout="showText=false" class="slots-panel" >
-        <small class="timezone" :class="[showText?'show-tz':'hide-tz']">{{ timezoneDisplay(currentTz) }}</small>
+    <div class="slots-panel">
         <div class="d-flex" v-if="ready">
             <div v-for="(slots, part) in dayParts" :class="'hello '+getSectionClass">
                 <small class="day-part">{{getLabel(part)}}</small>
@@ -11,7 +9,6 @@
                     {{ getMoment(slot, currentTz).format(time_format) }}
                 </BookingButton>
             </div>
-
         </div>
     </div>
 </template>
@@ -44,7 +41,6 @@ export default {
     data: () => ({
         ready: false,
         dayParts: {},
-        showText: false
     }),
     components: {
         BookingButton,
@@ -91,15 +87,10 @@ export default {
             if(this.dayParts[section] === undefined ) this.dayParts[section] = []
             if(this.dayParts[section].indexOf(slotStart) === -1) this.dayParts[section].push(slotStart)
         },
-        timezoneDisplay(timezoneString){
-            return this.getTzString.replace('[timezone]', timezoneString + ' [' + this.now.format('Z') + ']')
-        },
+        
 
     },
     computed: {
-        getTzString(){
-            return (this.options!== undefined && this.options.selection.timezone!== undefined) ? this.options.selection.timezone: ''
-        },
 
         getSectionClass(){
             return 'd-section ds-'+ Object.keys(this.dayParts).length
@@ -139,19 +130,9 @@ export default {
 }
 
 .timezone{
-    transition: all .3s ease-in-out;
-    position: absolute;
-    left: 0;
     width: 100%;
     padding-bottom: .3em;
 }
-.show-tz{
-    opacity: 1;
-    top: 0 !important;
-}
-.hide-tz{
-    opacity: 0;
-    top: -45px;
-}
+
 </style>
 

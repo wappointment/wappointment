@@ -28,7 +28,8 @@ Convert visitors into customers with a simple call to action. **Get booked 24/7*
 
 = Avoid Double Bookings =
 Keep your availability updated using our powerful centralized system . 
-Your availability gets refreshed whenever something change in your schedule: 
+Your availability gets refreshed whenever something changes in your schedule: 
+
     * when a new client books you
     * when a client cancels his appointment
     * when you manually set time slots during which you are busy or free 
@@ -80,6 +81,7 @@ Quickly define when and how many of them do they receive (1 day before appointme
 = Have a Question? =
 Our plugin is free, and easy to install. Try it first :)
 And for any question or doubt, you can reach us:
+
 * Straight from the plugin in *Wappointment > Help*
 * Here on the [WordPress' forum](https://wordpress.org/support/plugin/wappointment/) 
 * From our contact page on [wappointment.com](https://wappointment.com/support?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
@@ -94,33 +96,33 @@ We provide a very simple editor in which you can change the texts, colors and fe
 
 Of course. You decide the duration of your appointments whether it's 5 minutes, 10 minutes, ..., 4 hours long. It's all up to you.
 
-**Can I set a limit to when an appointment can be cancelled or rescheduled?**
+**Can I set time limits for cancelling and rescheduling appointments?**
 
-You can set both values in hours from the settings page *Wappointment > Settings > General* 
+You decided when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
 
 **Why do reminders go out late sometimes?**
 
 It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
 
-**Why is the booking form opening my schedule for the next 2months only?**
+**Why clients can book me 2 months ahead only?**
 
-By default your schedule is opened for the next 60 days, but you can change that value in *Wappointment > Settings > General > Weekly Availability*. You decide which is the value your schedule should be made available for bookings, this said for performance reason we recommend keeping it as low as possible. Just figure what value is right for your activity.
+By default your schedule is opened for the next 60 days, but you can change that value in *Wappointment > Settings > General > Weekly Availability*. For performance reason we recommend keeping it as low as possible. Just figure which value is right for your activity.
 
 **Why does nobody receive my confirmations or reminders emails?**
 
 Your emails most likely go straight to SPAM or don't event reach your inbox. *Change the email sending method* in *Wappointment > Settings > Confirmations & Reminders* just go for the easy and reliable solution, [create a free account at SendGrid (100emails/day are free)](https://signup.sendgrid.com/) and configure Wappointment with the *SendGrid API*
 
-**Can I sync multiple calendar besides of my Google calendar?**
+**Can I sync multiple calendars besides of my Google calendar?**
 
-Sure you can, we allow up to 4 calendars in the ics format to be synched from. It can be personal calendar(gmail, Outlook, iCal, etc..) or from external applications handling part of your schedule
+Sure you can, we allow up to 4 calendars in the ics format to be synched from. It can be personal calendar(Google, Outlook, iCal, etc..) or from external applications handling part of your schedule
 
 **How often my Google calendar is being checked for sync?**
 
 Every 5 minutes we download your calendar and check for changes, we don't do it more often as it could be a heavy task depending on how big is your calendar.
 
-**I want my 25min appointments to start on the dot at 00 and 30, how can I do that?**
+**I need 10 minutes to prepare between 2 appointments, how do I proceed?**
 
-We've created a buffer time for that particular case, you can define it in the advanced settings. In your case, set your appointment's duration to 25min and set the buffer time to 5min this way each reservation will take a whole 30min in your availability.
+You can set buffer time for that particular case, you can define it in the *Wappointment > Settings > Advanced*. When someone books you, you will become unavailable during the time of the appointment + buffer time
 
 == Installation ==
 
@@ -130,7 +132,7 @@ We've created a buffer time for that particular case, you can define it in the a
 * PHP version 7.0(or greater)
 * MySQL version 5.5(or greater) or MariaDB 10.0(or greater)
 
-We recommend you to always keep your softwares updated to the latest version available.
+Always keep your softwares updated.
 It requires work on your end but keeps your site safe and optimized.
 
 == Screenshots ==
@@ -140,13 +142,17 @@ It requires work on your end but keeps your site safe and optimized.
 3. Receiving email branded reminders on mobile phone
 4. Editing booking widget's style through simple interfaces
 5. Weekly Availability. First step of our initial setup wizard, simply drag and drop your recurrent availability.
-6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or In Person.
+6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
 
-= 1.4.4 - 2020-05-?? =
-* Corrected wizard back button
+= 1.4.4 - 2020-05-18 =
+* Added option for data protection link in booking form
+* Added plenty of UI improvements and text corrections
 * Corrected issues in MultiSite during installation
+* Corrected calculation of today's first available slot(increased precision)
+* Corrected wizard back button
+* Corrected bug on phone field in the frontend
 
 = 1.4.3 - 2020-05-08 =
 * Refactored bits of code

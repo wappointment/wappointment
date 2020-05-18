@@ -26,7 +26,6 @@ abstract class AbstractBoot implements Boot
     public static function init()
     {
         add_filter('wappointment_addon_wrapper_' . static::$addon_key, [static::$name_space . 'Boot', 'addonStatusWrapper']);
-        //add_filter('wappointment_addon_wrapper_' . static::$addon_key, [static::$name_space . 'Services\\Addon', 'filterWrapper']);
         if (!\Wappointment\System\Status::isInstalled() || !static::canRun()) {
             return;
         }

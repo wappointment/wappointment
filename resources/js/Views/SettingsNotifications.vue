@@ -9,7 +9,7 @@
             <div class="d-flex align-items-center">
                 <LabelMaterial>
                   <input class="form-control" id="email-notifications" v-model="viewData.email_notifications" 
-                  placeholder="Email notifications" type="email" @change="changed('email_notifications')">
+                  placeholder="Email notifications are sent to" type="email" @change="changed('email_notifications')">
                 </LabelMaterial>
             </div>
             <div class="d-flex align-items-center mt-2">

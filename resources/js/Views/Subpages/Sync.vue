@@ -4,7 +4,7 @@
             <h1>Connect Personal Calendar</h1>
         </div>
         
-        <p class="h6 text-muted">Connect your personal calendar, to automatically lock times where you're already busy</p>
+        <p class="h6 text-muted">Connect your personal calendar, to automatically lock times when you're already busy</p>
         <div id="buttons-block">
             <div>
                 <label for="calurl">Paste your calendar URL</label>

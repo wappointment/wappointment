@@ -20,7 +20,7 @@ class SeedData extends \Wappointment\Installation\MethodsRunner
                 'options' => [
                     'body' => TipTap::simpleArrayToTipTap(
                         [
-                            ['h3' => 'Dear [client:name],'],
+                            ['p' => 'Dear [client:name],'],
                             ['p' => ''],
                             ['p' => 'You have booked a [service:name] of [appointment:duration] long on [appointment:starts]'],
                             ['p' => 'It will be confirmed shortly, you will receive the confirmation by email.'],
@@ -39,7 +39,7 @@ class SeedData extends \Wappointment\Installation\MethodsRunner
                 'options' => [
                     'body' => TipTap::simpleArrayToTipTap(
                         [
-                            ['h3' => 'Dear [client:name],'],
+                            ['p' => 'Dear [client:name],'],
                             ['p' => ''],
                             ['p' => 'Your appointment has been rescheduled.'],
                             ['p' => 'Your new appointment will start on [appointment:starts]'],
@@ -58,7 +58,7 @@ class SeedData extends \Wappointment\Installation\MethodsRunner
                 'options' => [
                     'body' => TipTap::simpleArrayToTipTap(
                         [
-                            ['h3' => 'Dear [client:name],'],
+                            ['p' => 'Dear [client:name],'],
                             ['p' => ''],
                             ['p' => 'Your appointment taking place the [appointment:starts] has been cancelled.'],
                             ['p' => 'If you want to book a new appointment with us, [ label="click here" link="linkNew"].'],

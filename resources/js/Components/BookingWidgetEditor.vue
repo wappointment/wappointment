@@ -18,18 +18,12 @@
                 </div>
             </div>
 
-            <div id="editor-bar" class="align-self-start">
-                <div class="mb-2">
-                    <button class="btn btn-secondary mr-2"  @click="toggleEditingMode">
-                        <span v-if="!editingMode"><span class="dashicons dashicons-edit"></span> Edit</span>
-                        <span v-else><span class="dashicons dashicons-visibility"></span> Preview</span>
-                    </button>
+            <div id="editor-bar" class="align-self-start" v-if="editingMode">
+                <div class="mb-2" >
                     <button class="btn btn-primary" :class="{disabled: !canSave}" @click="saveChanges"><FontAwesomeIcon :icon="['fas', 'save']" size="lg"/> Save changes</button>
                 </div>
                 
-                
-                
-                <div class="widget-fields-wrapper" v-if="editingMode">
+                <div class="widget-fields-wrapper" >
                     <div class="d-flex">
                         <div class="d-flex align-items-center mb-2">
                             <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit"  @click="toggleColor">
@@ -46,7 +40,7 @@
                     <div>
                         <transition name="slide-fade-top">
                             <div class="colors-fields" v-if="colorEdit" >
-                                <fieldset v-for="(groupData, group_key) in options.colors">
+                                <fieldset v-for="(groupData, group_key) in options.colors" v-if="isMain('colors', group_key) || showAdvancedColors">
                                     <legend>{{ getLabel('colors', group_key) }}</legend>
                                     <template v-for="(inputvalue, input_key) in groupData">
                                         <component  v-if="isComponentTypeActive(inputvalue,'colors',group_key, input_key, true)" :key="input_key"  
@@ -60,6 +54,7 @@
                                             allowReset></component>
                                     </template>
                                 </fieldset>
+                                <a class="my-2 small" href="javascript:;" v-if="!showAdvancedColors" @click="showAdvancedColors=true">Edit more colors</a>
                             </div>
                         </transition>
                     </div>
@@ -119,16 +114,15 @@ export default {
         FontAwesomeIcon,
     },
     mixins: [Colors, SettingsSave],
-    props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability'],
+    props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability', 'editingMode'],
     data: () => ({
         step: 'button',
         stepPassed: 'button',
-        
+        showAdvancedColors: false,
         options: null,
         tbgcolor: '#fff',
         colorEdit: false,
         textEdit: true,
-        editingMode: false,
         canSave: false,
         showAllText: false,
         labelActiveStep: '',
@@ -175,6 +169,8 @@ export default {
         this.tbgcolor = this.bgcolor
         eventsBus.listens('stepChanged', this.stepChanged)
         eventsBus.listens('dataDemoChanged', this.dataChanged)
+
+        this.stepChanged('button')
 
     },
 
@@ -246,10 +242,7 @@ export default {
                 this.$refs.editorbar.classList.add('stick-to-top')
             }
         },
-        toggleEditingMode(){
-            this.editingMode = !this.editingMode
-            this.stepChanged('button')
-        },
+
         stepChanged(step){
             
             this.setStep(step, this.getLabelForStep(step))
@@ -273,6 +266,10 @@ export default {
                 return  fieldInfos !== false ? fieldInfos.label:key
             }
             
+        },
+        isMain(section, key){
+            let fieldInfos = this.getFieldAdminInfos(section,key)
+            return fieldInfos.main === true
         },
         getOptions(section, key){
             let fieldInfos = this.getFieldAdminInfos(section,key)

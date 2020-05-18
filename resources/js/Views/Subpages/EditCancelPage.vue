@@ -15,7 +15,7 @@
               <div class="row no-gutters">
                   <transition name="fade">
                       <div class="col-12 p-0">
-                          <div class="d-flex step-skip "> 
+                          <div class="d-flex step-skip justify-content-between"> 
                               <button v-for="(stepObj,idx) in editionsSteps" class="btn btn-secondary btn-xs mr-2" 
                               :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key)" >{{ stepObj.label }}</button>
                           </div>
@@ -27,11 +27,8 @@
                     <InputPh v-model="viewData.widget.cancel.page_title" :ph="widgetDefault.cancel.page_title" allowReset/>
                     <InputPh v-model="viewData.widget.cancel.title" :ph="widgetDefault.cancel.title" allowReset/>
                     <InputPh v-model="viewData.widget.cancel.button" :ph="widgetDefault.cancel.button" allowReset/>
-                    
-                    <hr>
                     <InputPh v-model="viewData.widget.cancel.confirmation" :ph="widgetDefault.cancel.confirmation" allowReset/>
                     <InputPh v-model="viewData.widget.cancel.confirm" :ph="widgetDefault.cancel.confirm" allowReset/>
-
                     <InputPh v-model="viewData.widget.cancel.confirmed" :ph="widgetDefault.cancel.confirmed" allowReset/>
                     <InputPh v-model="viewData.widget.cancel.toolate" :ph="widgetDefault.cancel.toolate" allowReset/>
                 </div>
@@ -41,7 +38,6 @@
                     <InputPh v-model="viewData.widget.reschedule.page_title" :ph="widgetDefault.reschedule.page_title" allowReset/>
                     <InputPh v-model="viewData.widget.reschedule.title" :ph="widgetDefault.reschedule.title" allowReset/>
                     <InputPh v-model="viewData.widget.reschedule.button" :ph="widgetDefault.reschedule.button" allowReset/>
-                    <hr>
                     <InputPh v-model="viewData.widget.reschedule.toolate" :ph="widgetDefault.reschedule.toolate" allowReset/>
                 </div>
               </transition>

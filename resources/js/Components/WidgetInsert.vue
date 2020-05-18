@@ -13,9 +13,16 @@
         <div v-if="showPost">
             <div  class="form-max">
                 <p class="m-0">Copy the shortcode below: </p>
-                <label><input type="checkbox" v-model="large"> Large?</label>
-                <label><input type="checkbox" v-model="open"> Auto-Open Calendar?</label>
                 <ClickCopy :value="getShortCode"></ClickCopy>
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <div><label><input type="checkbox" v-model="large"> Large version?</label></div>
+                        <div><label><input type="checkbox" v-model="open"> Auto-Open Calendar?</label></div>
+                    </div>
+                    <div>
+                        <img :src="previewSCimg" class="img-fluid" width="100">
+                    </div>
+                </div>
             </div>
             <div class="mt-4">
                 <VideoIframe src="https://www.youtube.com/embed/VMi2Ry-JrGA" />
@@ -42,9 +49,13 @@ export default {
         area: '',
         shortcode: '',
         large:false,
-        open:false
+        open:false,
     }),
     computed: {
+        previewSCimg(){
+            let image = 'widget_' + (this.open ? 'cal_':'') + (this.large ? 'lg':'sm') + '.svg'
+            return window.apiWappointment.resourcesUrl +'images/' + image
+        },
         showWidget(){
             return this.area == 'widget'
         },

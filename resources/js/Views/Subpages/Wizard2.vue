@@ -7,7 +7,7 @@
               <div class="d-flex">
                   <h1>Weekly Availability</h1>
               </div>
-              <p class="h6 text-muted">This is you recurring availability, you can change it again at anytime</p>
+              <p class="h6 text-muted">This is you recurring availability, you can change it anytime</p>
               <hr>
           </div>
           <Regav noback></Regav>

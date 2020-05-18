@@ -90,7 +90,7 @@ class Reminder
             'options' => [
                 'body' => TipTap::simpleArrayToTipTap(
                     [
-                        ['h3' => 'Dear [client:name],'],
+                        ['p' => 'Dear [client:name],'],
                         ['p' => ''],
                         ['p' =>
                         'You have booked a [service:name] of [appointment:duration] long on [appointment:starts]'],
@@ -111,7 +111,7 @@ class Reminder
             'options' => [
                 'body' => TipTap::simpleArrayToTipTap(
                     [
-                        ['h3' => 'Dear [client:name],'],
+                        ['p' => 'Dear [client:name],'],
                         ['p' => ''],
                         ['p' => 'Your appointment has been rescheduled.'],
                         ['p' => 'Your new appointment will start on [appointment:starts]'],
@@ -131,7 +131,7 @@ class Reminder
             'options' => [
                 'body' => TipTap::simpleArrayToTipTap(
                     [
-                        ['h3' => 'Dear [client:name],'],
+                        ['p' => 'Dear [client:name],'],
                         ['p' => ''],
                         ['p' => 'Your appointment taking place the [appointment:starts] has been cancelled.'],
                         ['p' => 'If you want to book a new appointment with us, [ label="click here" link="linkNew"].'],
@@ -153,12 +153,12 @@ class Reminder
             ['p' => \WappointmentLv::blogname()]
         ];
         $email_confirmed = [
-            ['h3' => 'Dear [client:name],'],
+            ['p' => 'Dear [client:name],'],
             ['p' => ''],
             ['p' => 'You have booked a [service:name] of [appointment:duration] long on [appointment:starts]'],
         ];
         $email_reminder = [
-            ['h3' => 'Dear [client:name],'],
+            ['p' => 'Dear [client:name],'],
             ['p' => ''],
             ['p' => 'We remind you that you have an appointment on [appointment:starts]'],
         ];

@@ -7,7 +7,6 @@
           <div class="d-flex">
               <h1>Service Setup</h1>
           </div>
-          <p class="h6 text-muted">The service visitors will book you for</p>
           <ServicePage v-if="viewData!==null" ref="servicepage" :buttons="false"
            :dataPassed="viewData.service" @saved="finallyGoNext" @ready="ready"></ServicePage>
         </div>

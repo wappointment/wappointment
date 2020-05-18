@@ -12,8 +12,10 @@ import VueService from './Plugins/vue-service'
 import changeWPmenu from './Standalone/changeWPmenu'
 import parseQuery from './Standalone/parseQuery'
 
+import ClickCopy from './Fields/ClickCopy'
 import InputPh from './Fields/InputLabelMaterial'
-window.wappointmentExtends.store('commons', {InputPh})
+import VideoIframe from './Components/VideoIframe'
+window.wappointmentExtends.store('commons', {InputPh, ClickCopy, VideoIframe})
 
 window.wappoChangeWPmenu = changeWPmenu
 

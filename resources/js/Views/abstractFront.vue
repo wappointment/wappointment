@@ -34,7 +34,7 @@ export default {
       Loader
   }, 
   methods: {
-
+      
       refreshInitValue(){
         this.loading = true
         this.initValueRequest()

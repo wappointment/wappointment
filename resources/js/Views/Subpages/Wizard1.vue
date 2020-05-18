@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid m-4">
     <h1>Welcome to Wappointment</h1>
-    <p class="h6 text-muted">Let's start with a quick initial setup</p>
+    <p class="h6 text-muted">Let's start with a quick setup</p>
     <p class="mt-4">
        <button class="btn btn-primary btn-xl" @click="wizardStep1">Start setup</button>
     </p>

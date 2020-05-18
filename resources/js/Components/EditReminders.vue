@@ -54,7 +54,7 @@ export default {
                   
                   {
                       type: 'duration',
-                      label: 'Duration',
+                      label: 'When is the reminder sent? (before the appointment)',
                       model: 'options.when_number',
                       cast: String,
                       class: 'w-100',
@@ -90,7 +90,7 @@ export default {
                   validation: ['required'],
               },
               {
-                  label: "Email header image",
+                  label: "Header image",
                   type: 'imageselect',
                   model: "email_logo",
                   size: 'full',
