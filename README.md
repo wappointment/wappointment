@@ -1,5 +1,5 @@
 # Appointments for WordPress
-![Appointment Bookings for WordPress](https://ps.w.org/wappointment/assets/banner-1544x500.png?rev=2151020)
+![Appointment Bookings for WordPress](https://ps.w.org/wappointment/assets/banner-1544x500.gif)
 
 **Contributors:** wappointment, benheu  
 **Tags:** appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar  
@@ -12,40 +12,37 @@
 
 ## Description 
 
-A powerful and reliable **[appointment booking system](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**, packing the simplest appointment booking process for your clients.
-The **booking solution for professionals**. Get booked 24/7 using our super **user-friendly booking form**.
-
-Our Appointment booking system is designed for anyone who provide services to customers (personal coach, estate agent, language teachers, therapists,  health professionals, beauty and wellness professionals, fitness professionals, etc...)
+A simple and reliable **[appointment booking system](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**, for personal coaches, teachers, therapists and service professionals of all kind.
 
 Wappointment is free and will remain **free forever**.
 
 https://www.youtube.com/watch?v=jUkiyejbuzg
 
 
-## Our Booking Calendar's Benefits 
+## The Benefits
 
 
-### Increase your Bookings 
-Convert visitors into customers with a simple call to action. **Get booked 24/7**, Wappointment is basically a **booking assistant which never sleeps**.
+### Avoid Double Bookings
+Keep your availability updated using our powerful centralized system . 
+Your availability gets refreshed whenever something changes in your schedule: 
 
-
-### Improve Customer Satisfaction 
-Because your clients need to book you somehow, make sure their experience is great. Wappointment is all about smooth user experience, no questions only certainties.
+* when a new client books you
+* when a client cancels his appointment
+* when you manually set time slots during which you are busy or free 
+* when a new event gets created on your synched personal calendar (Google Calendar, Ical, Outlook Calendar)
 
 
 ### Simplify Your Booking Process 
-Our super **user friendly booking widget** gives your clients a quick overview of your availability.
+Our **user friendly booking form** gives your clients a quick overview of your availability, making the booking process a breeze.
 
 
 ### Reduce No-Shows 
-Your clients receive **appointment confirmations and reminders**. You easily define when they receive them.
+Your clients receive **appointment confirmations and reminders**. 
+Quickly define when and how many of them do they receive (1 day before appointment, 1 hour before appointment).
 
 
-### Avoid double bookings 
-Our centralize system updates your availability on each action making sure you cannot get booked twice at the same time.
 
-
-##  Our Appointment Booking System features 
+##  The features 
 * Unlimited bookings
 * User-friendly and intuitive interfaces with no coding involved
 
@@ -88,14 +85,51 @@ Our centralize system updates your availability on each action making sure you c
 
 
 ### Have a Question? 
-Ask us on [https://wappointment.com/support](https://wappointment.com/support?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+Our plugin is free, and easy to install. Try it first :)
+And for any question or doubt, you can reach us:
+
+* Straight from the plugin in *Wappointment > Help*
+* Here on the [WordPress' forum](https://wordpress.org/support/plugin/wappointment/) 
+* From our contact page on [wappointment.com](https://wappointment.com/support?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 
 ## Frequently Asked Questions 
 
+**Can I customize the look and feel of the booking form?**
+
+We provide a very simple editor in which you can change the texts, colors and few other parameters of each step of the booking process. We plan on adding several templates in the future, meanwhile simply use css to make it exactly the way you want.
+
 **Can I set the duration of my appointment?**
 
 Of course. You decide the duration of your appointments whether it's 5 minutes, 10 minutes, ..., 4 hours long. It's all up to you.
+
+**Can I set time limits for cancelling and rescheduling appointments?**
+
+You decided when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
+
+**Can I sync multiple calendars besides of my Google calendar?**
+
+Sure you can, we allow up to 4 calendars in the ics format to be synched from. It can be personal calendar(Google, Outlook, iCal, etc..) or from external applications handling part of your schedule
+
+**How often my Google calendar is being checked for sync?**
+
+Every 5 minutes we download your calendar and check for changes, we don't do it more often as it could be a heavy task depending on how big is your calendar.
+
+**I need 10 minutes to prepare between 2 appointments, how do I proceed?**
+
+You can set buffer time for that particular case, you can define it in the *Wappointment > Settings > Advanced*. When someone books you, you will become unavailable during the time of the appointment + buffer time
+
+**Why do reminders go out late sometimes?**
+
+It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
+
+**Why clients can book me 2 months ahead only?**
+
+By default your schedule is opened for the next 60 days, but you can change that value in *Wappointment > Settings > General > Weekly Availability*. For performance reason we recommend keeping it as low as possible. Just figure which value is right for your activity.
+
+**Why does nobody receive my confirmations or reminders emails?**
+
+Your emails most likely go straight to SPAM or don't event reach your inbox. *Change the email sending method* in *Wappointment > Settings > Confirmations & Reminders* just go for the easy and reliable solution, [create a free account at SendGrid (100emails/day are free)](https://signup.sendgrid.com/) and configure Wappointment with the *SendGrid API*
 
 
 ## Installation 
@@ -107,33 +141,26 @@ Of course. You decide the duration of your appointments whether it's 5 minutes, 
 * PHP version 7.0(or greater)
 * MySQL version 5.5(or greater) or MariaDB 10.0(or greater)
 
-We recommend you to always keep your softwares updated to the latest version available.
+Always keep your softwares updated.
 It requires work on your end but keeps your site safe and optimized.
 
 
 ## Screenshots 
 
-### 1. Weekly Availability. First step of our initial setup wizard, simply drag and drop your recurrent availability.
-![Weekly Availability](https://ps.w.org/wappointment/assets/screenshot-1.jpg?rev=2151020)
+### 1. Booking an appointment on mobile phone
+![Mobile appointment booking form](https://ps.w.org/wappointment/assets/screenshot-1.gif)
 
-### 2. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or In Person.
-![Service Setup](https://ps.w.org/wappointment/assets/screenshot-2.jpg?rev=2151020)
+### 2. Viewing appointment and changing quickly availability
+![Admin Calendar schedule management](https://ps.w.org/wappointment/assets/screenshot-2.gif)
 
-### 3. Booking Widget Editor. Quickly change all colors and texts of the customers' frontend Booking widget.
-![Booking Widget Editor](https://ps.w.org/wappointment/assets/screenshot-3.jpg?rev=2151020)
+### 3. Receiving branded email reminders on mobile phone
+![Appointment email reminders on mobile phone](https://ps.w.org/wappointment/assets/screenshot-3.gif)
 
-### 4. Calendar Weekly View. Overview of your appointments and availability(punctual and recurrent).
-![Calendar Weekly View](https://ps.w.org/wappointment/assets/screenshot-4.jpg?rev=2151020)
+### 4. Editing booking widget's style through simple interfaces
+![Booking form editor](https://ps.w.org/wappointment/assets/screenshot-4.gif)
 
-### 5. Calendar Admin Action. Book an appointment on behalf of a customer, create a punctual time where you are free or busy.
-![Calendar Admin Action](https://ps.w.org/wappointment/assets/screenshot-5.jpg?rev=2151020)
+### 5. Weekly Availability. First step of our initial setup wizard, simply drag and drop your recurrent availability.
+![Weekly availability](https://ps.w.org/wappointment/assets/screenshot-5.jpg)
 
-### 6. Frontend Booking Widget. Your customers start the booking process by clicking a booking button.
-![Frontend Booking Widget](https://ps.w.org/wappointment/assets/screenshot-6.jpg?rev=2151020)
-
-### 7. Settings Panel. Modify all that you had setup in the wizard, manage the confirmations and reminders, etc...
-![Settings Panel](https://ps.w.org/wappointment/assets/screenshot-7.jpg?rev=2151020)
-
-### 8. Help Page. Have a question? Simply ask for it straight in there.
-![Help Page](https://ps.w.org/wappointment/assets/screenshot-8.jpg?rev=2151020)
-
+### 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
+![Service Setup](https://ps.w.org/wappointment/assets/screenshot-6.jpg)

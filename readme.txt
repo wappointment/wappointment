@@ -30,10 +30,10 @@ Convert visitors into customers with a simple call to action. **Get booked 24/7*
 Keep your availability updated using our powerful centralized system . 
 Your availability gets refreshed whenever something changes in your schedule: 
 
-    * when a new client books you
-    * when a client cancels his appointment
-    * when you manually set time slots during which you are busy or free 
-    * when a new event gets created on your synched personal calendar (Google Calendar, Ical, Outlook Calendar)
+* when a new client books you
+* when a client cancels his appointment
+* when you manually set time slots during which you are busy or free 
+* when a new event gets created on your synched personal calendar (Google Calendar, Ical, Outlook Calendar)
 
 = Simplify your Booking Process =
 Our **user friendly booking form** gives your clients a quick overview of your availability, making the booking process a breeze.
@@ -100,18 +100,6 @@ Of course. You decide the duration of your appointments whether it's 5 minutes, 
 
 You decided when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
 
-**Why do reminders go out late sometimes?**
-
-It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
-
-**Why clients can book me 2 months ahead only?**
-
-By default your schedule is opened for the next 60 days, but you can change that value in *Wappointment > Settings > General > Weekly Availability*. For performance reason we recommend keeping it as low as possible. Just figure which value is right for your activity.
-
-**Why does nobody receive my confirmations or reminders emails?**
-
-Your emails most likely go straight to SPAM or don't event reach your inbox. *Change the email sending method* in *Wappointment > Settings > Confirmations & Reminders* just go for the easy and reliable solution, [create a free account at SendGrid (100emails/day are free)](https://signup.sendgrid.com/) and configure Wappointment with the *SendGrid API*
-
 **Can I sync multiple calendars besides of my Google calendar?**
 
 Sure you can, we allow up to 4 calendars in the ics format to be synched from. It can be personal calendar(Google, Outlook, iCal, etc..) or from external applications handling part of your schedule
@@ -123,6 +111,18 @@ Every 5 minutes we download your calendar and check for changes, we don't do it 
 **I need 10 minutes to prepare between 2 appointments, how do I proceed?**
 
 You can set buffer time for that particular case, you can define it in the *Wappointment > Settings > Advanced*. When someone books you, you will become unavailable during the time of the appointment + buffer time
+
+**Why do reminders go out late sometimes?**
+
+It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
+
+**Why clients can book me 2 months ahead only?**
+
+By default your schedule is opened for the next 60 days, but you can change that value in *Wappointment > Settings > General > Weekly Availability*. For performance reason we recommend keeping it as low as possible. Just figure which value is right for your activity.
+
+**Why does nobody receive my confirmations or reminders emails?**
+
+Your emails most likely go straight to SPAM or don't event reach your inbox. *Change the email sending method* in *Wappointment > Settings > Confirmations & Reminders* just go for the easy and reliable solution, [create a free account at SendGrid (100emails/day are free)](https://signup.sendgrid.com/) and configure Wappointment with the *SendGrid API*
 
 == Installation ==
 
@@ -139,7 +139,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 1. Booking an appointment on mobile phone
 2. Viewing appointment and changing quickly availability
-3. Receiving email branded reminders on mobile phone
+3. Receiving branded email reminders on mobile phone
 4. Editing booking widget's style through simple interfaces
 5. Weekly Availability. First step of our initial setup wizard, simply drag and drop your recurrent availability.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
