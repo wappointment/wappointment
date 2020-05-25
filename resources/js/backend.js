@@ -1,5 +1,10 @@
 __webpack_public_path__ = apiWappointment.resourcesUrl;
 import Vue from './appVue'
+import ClickCopy from './Fields/ClickCopy'
+import InputPh from './Fields/InputLabelMaterial'
+import VideoIframe from './Components/VideoIframe'
+window.wappointmentExtends.store('commons', {InputPh, ClickCopy, VideoIframe})
+
 import VueRouter from 'vue-router'
 import App from './App'
 import VueWapModal from './Plugins/vue-wap-modal'
@@ -12,10 +17,7 @@ import VueService from './Plugins/vue-service'
 import changeWPmenu from './Standalone/changeWPmenu'
 import parseQuery from './Standalone/parseQuery'
 
-import ClickCopy from './Fields/ClickCopy'
-import InputPh from './Fields/InputLabelMaterial'
-import VideoIframe from './Components/VideoIframe'
-window.wappointmentExtends.store('commons', {InputPh, ClickCopy, VideoIframe})
+
 
 window.wappoChangeWPmenu = changeWPmenu
 
@@ -97,8 +99,7 @@ const router = window.wappointmentrouter = new VueRouter({
               path: 'wizard4',
               name: 'wizard4',
               component: Wizard4Page
-            },
-            
+            },            
           ]
       },
       {

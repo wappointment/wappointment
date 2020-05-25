@@ -44,7 +44,7 @@
             <div class="d-flex align-items-center mt-2">
               <Checkbox :value="viewData.notify_rescheduled_appointments"  @changed="changedCheck('notify_rescheduled_appointments')"></Checkbox>
               <label class="form-check-label">
-              Reschedulled Appointments 
+              Rescheduled Appointments 
               </label>
             </div>
           </div>

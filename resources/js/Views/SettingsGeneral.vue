@@ -10,7 +10,7 @@
 
         <LargeButton @click="goToService" :label="serviceBtnLabel" :is_set="viewData.is_service_set" ></LargeButton>
 
-        <LargeButton @click="goToWidgetSetup" label="Booking Widget setup" :is_set="viewData.is_widget_set" ></LargeButton>
+        <LargeButton @click="goToWidgetSetup" label="Booking Widget Editor" :is_set="viewData.is_widget_set" ></LargeButton>
 
         <div class="card p-2 px-3">
           <div class="h5">Scheduling preferences</div>

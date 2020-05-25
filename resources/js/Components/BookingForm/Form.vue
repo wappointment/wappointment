@@ -317,6 +317,7 @@ export default {
 .wap-terms{
     font-size: .7em;
     text-align: left;
+    line-height: 1.4;
 }
 
 </style>

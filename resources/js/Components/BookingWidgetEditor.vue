@@ -5,7 +5,7 @@
             <div class="widget-wraper p-3 mr-3"  :style="getStyleThemeBg" >
                 <div class="clear pt-2" >
                     <div v-if="!editingMode">
-                        <Front :options="preoptions"  classEl="wappointment_widget" ></Front>
+                        <Front :options="preoptions"  classEl="wappointment_widget" :attributesEl="shortcodeParams" ></Front>
                     </div>
                     <div v-if="editingMode && frontAvailability!==undefined" class="d-flex flex-wrap preview">
                         <div  v-for="(stepObj,idx) in editionsSteps" class="bordered" :class="orderedClass(stepObj,idx)" :data-tt="stepObj.key==step?labelActiveStep:false">
@@ -100,21 +100,21 @@ import BookingFormDemo from './BookingFormDemo'
 import Colors from '../Modules/Colors'
 import SettingsSave from '../Modules/SettingsSave'
 import CountrySelector from './CountrySelector'
-import InputPh from '../Fields/InputLabelMaterial'
 import eventsBus from '../eventsBus'
+
 export default {
     components: {
         Front,
         FrontDemo,
         ColorPicker,
         CountrySelector,
-        InputPh,
+        InputPh: window.wappoGet('InputPh'),
         FormFieldCheckbox,
         FormFieldSlider,
         FontAwesomeIcon,
     },
     mixins: [Colors, SettingsSave],
-    props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability', 'editingMode'],
+    props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability', 'editingMode', 'shortcodeParams'],
     data: () => ({
         step: 'button',
         stepPassed: 'button',

@@ -51,23 +51,7 @@ class Sendgrid extends Transport
         $this->setUsername($username);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function send(WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
-    {
-        $this->beforeSendPerformed($message);
 
-        $to = $this->getTo($message);
-
-        $message->setBcc([]);
-
-        $this->client->post($this->url, $this->payload($message, $to));
-
-        $this->sendPerformed($message);
-
-        return $this->numberOfRecipients($message);
-    }
 
     /**
      * Get the HTTP payload for sending the Mailgun message.
@@ -78,16 +62,7 @@ class Sendgrid extends Transport
      */
     protected function payload(WappoSwift_Mime_SimpleMessage $message, $to)
     {
-        /* {"personalizations": [
-            {
-                "to": [{"email": "test@example.com"}]}
-            ],
-            "from": {"email": "test@example.com"},
-            "subject": "Sending with SendGrid is Fun",
-            "content": [
-                {"type": "text/plain", "value": "and easy to do anywhere, even with cURL"}
-                ]
-            } */
+
         $data = [
             'personalizations' => $this->getPersonalizations($message),
             'from'             => $this->getFrom($message),
@@ -109,6 +84,7 @@ class Sendgrid extends Transport
             'json' => $data,
         ];
     }
+
     private function getFrom(WappoSwift_Mime_SimpleMessage $message)
     {
         if ($message->getFrom()) {
@@ -118,6 +94,7 @@ class Sendgrid extends Transport
         }
         return [];
     }
+
     private function getReplyTo(WappoSwift_Mime_SimpleMessage $message)
     {
         if ($message->getReplyTo()) {
@@ -127,6 +104,7 @@ class Sendgrid extends Transport
         }
         return null;
     }
+
     private function getPersonalizations(WappoSwift_Mime_SimpleMessage $message)
     {
         $setter = function (array $addresses) {
@@ -195,54 +173,6 @@ class Sendgrid extends Transport
             'value' => $message->getBody(),
         ];
         return $content;
-    }
-    /**
-     * Get the "to" payload field for the API request.
-     *
-     * @param  \WappoSwift_Mime_SimpleMessage  $message
-     * @return string
-     */
-    protected function getTo(WappoSwift_Mime_SimpleMessage $message)
-    {
-        return \WappointmentLv::collect($this->allContacts($message))->map(function ($display, $address) {
-            return $display ? $display . " <{$address}>" : $address;
-        })->values()->implode(',');
-    }
-
-    /**
-     * Get all of the contacts for the message.
-     *
-     * @param  \WappoSwift_Mime_SimpleMessage  $message
-     * @return array
-     */
-    protected function allContacts(WappoSwift_Mime_SimpleMessage $message)
-    {
-        return array_merge(
-            (array) $message->getTo(),
-            (array) $message->getCc(),
-            (array) $message->getBcc()
-        );
-    }
-
-    /**
-     * Get the API key being used by the transport.
-     *
-     * @return string
-     */
-    public function getKey()
-    {
-        return $this->key;
-    }
-
-    /**
-     * Set the API key being used by the transport.
-     *
-     * @param  string  $key
-     * @return string
-     */
-    public function setKey($key)
-    {
-        return $this->key = $key;
     }
 
     /**

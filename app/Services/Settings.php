@@ -78,9 +78,9 @@ class Settings
             'notify_canceled_appointments' => false,
             'notify_rescheduled_appointments' => false,
             'email_notifications' => '',
-            'mail_status' => false,
+            'mail_status' => true,
             'mail_config' => [
-                'provider' => '',
+                'method' => 'wpmail',
                 'from_address' => self::getFromEmail(),
                 'from_name' => self::getFromName(),
                 'mgdomain' => '',
@@ -94,6 +94,7 @@ class Settings
             'cancellation_link' => 'Cancel',
             'save_appointment_text_link' => 'Save to calendar',
             'new_booking_link' => 'Book a new appointment',
+            'booking_page' => false
         ];
     }
 

@@ -5,6 +5,8 @@ namespace Wappointment\Services;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\Services\Staff;
+use Wappointment\WP\WidgetAPI;
+
 
 class ViewsData
 {
@@ -55,6 +57,15 @@ class ViewsData
     {
         return [
             'service' => Service::get()
+        ];
+    }
+
+    private function wizardwidget()
+    {
+        $bpageid = Settings::get('booking_page');
+        return [
+            'booking_page_id' => Settings::get('booking_page'),
+            'widget' => (new WidgetSettings)->get(),
         ];
     }
 
@@ -174,6 +185,7 @@ class ViewsData
             'buffer_time' => Settings::get('buffer_time'),
         ];
     }
+
     private function wizardinit()
     {
         return [
@@ -181,6 +193,16 @@ class ViewsData
             'admin_name' => wp_get_current_user()->display_name,
         ];
     }
+
+    private function wizardlast()
+    {
+        return [
+            'areas' => WidgetAPI::getSidebars(),
+            'widgets' => WidgetAPI::getWidgets(),
+        ];
+    }
+
+
 
     private function settingsmailer()
     {

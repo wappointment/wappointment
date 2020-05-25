@@ -50,15 +50,10 @@ export default {
       if(this.opts.demoData !== undefined){
           this.disabledButtons = true
       }
-      if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){
-        if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
-        if(this.attributesEl.brcFloats !== undefined) this.brFixed = true
-        if([undefined,false].indexOf(this.attributesEl.largeVersion) === -1) this.largeVersion = true
-        if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) this.bookForm = true
-        
-        this.opts.attributesEl = this.attributesEl
-      }
+
+      this.processShortcode()
     },
+
      watch:{
         step(val){
             this.currentStep = val
@@ -95,6 +90,16 @@ export default {
 
     },
     methods: {
+        processShortcode(){
+          if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){
+            if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
+            if(this.attributesEl.brcFloats !== undefined) this.brFixed = true
+            if([undefined,false].indexOf(this.attributesEl.largeVersion) === -1) this.largeVersion = true
+            if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) this.bookForm = true
+            
+            this.opts.attributesEl = this.attributesEl
+          }
+        },
         backToButton(){
           this.bookForm = false
         },

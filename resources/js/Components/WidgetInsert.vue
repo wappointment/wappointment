@@ -13,16 +13,8 @@
         <div v-if="showPost">
             <div  class="form-max">
                 <p class="m-0">Copy the shortcode below: </p>
-                <ClickCopy :value="getShortCode"></ClickCopy>
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <div><label><input type="checkbox" v-model="large"> Large version?</label></div>
-                        <div><label><input type="checkbox" v-model="open"> Auto-Open Calendar?</label></div>
-                    </div>
-                    <div>
-                        <img :src="previewSCimg" class="img-fluid" width="100">
-                    </div>
-                </div>
+                <ClickCopy :value="shortcode"></ClickCopy>
+                <ShortcodeGenerator @change="updateShortCode" :title="title"/>
             </div>
             <div class="mt-4">
                 <VideoIframe src="https://www.youtube.com/embed/VMi2Ry-JrGA" />
@@ -39,23 +31,19 @@
 
 <script>
 import ClickCopy from '../Fields/ClickCopy'
+import ShortcodeGenerator from './Widget/ShortcodeGenerator'
 import Helpers from '../Modules/Helpers'
 import VideoIframe from './VideoIframe'
 export default {
     mixins: [Helpers], 
     props:['title'],  
-    components: {ClickCopy, VideoIframe}, 
+    components: {ClickCopy, VideoIframe, ShortcodeGenerator}, 
     data: () => ({
         area: '',
         shortcode: '',
-        large:false,
-        open:false,
     }),
     computed: {
-        previewSCimg(){
-            let image = 'widget_' + (this.open ? 'cal_':'') + (this.large ? 'lg':'sm') + '.svg'
-            return window.apiWappointment.resourcesUrl +'images/' + image
-        },
+        
         showWidget(){
             return this.area == 'widget'
         },
@@ -65,15 +53,13 @@ export default {
         showTheme(){
             return this.area == 'theme'
         },
-        getShortCode(){
-            let shortcode = 'wap_widget title="'+this.title+'"'
-            shortcode += this.large? ' large ':'' 
-            shortcode += this.open? ' open ':''
-            return '['+shortcode+']'
-        }
+        
     },
-
+    
     methods: {
+        updateShortCode(shortcode){
+            this.shortcode = shortcode
+        },
         showArea(area){
             this.area = area
         },

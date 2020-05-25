@@ -54,13 +54,13 @@
 <script>
 import SettingsSave from '../../Modules/SettingsSave'
 import abstractView from '../Abstract';
-import InputPh from '../../Fields/InputLabelMaterial'
 import Front from '../../Front'
 export default {
   extends: abstractView,
   mixins: [SettingsSave],
   components: {
-        InputPh, Front
+        InputPh: window.wappoGet('InputPh'), 
+        Front
     },
   data() {
       return {

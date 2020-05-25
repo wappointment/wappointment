@@ -4,6 +4,7 @@ namespace Wappointment\Controllers;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Request;
+use Wappointment\Services\Settings;
 
 class WizardController extends RestController
 {
@@ -26,9 +27,14 @@ class WizardController extends RestController
             //regenerate the availability
             (new \Wappointment\Services\Availability())->regenerate();
         }
+
         WPHelpers::setOption('wizard_step', $request->input('step'));
+
         if ($this->last_step == $request->input('step')) {
-            return ['message' => 'The initial setup is over. Have fun!'];
+            if (!empty($request->input('booking_page_id'))) {
+                Settings::save('booking_page', $request->input('booking_page_id'));
+            }
+            return ['message' => 'Done with the setup. Let\'s get booked!'];
         }
 
         return true;

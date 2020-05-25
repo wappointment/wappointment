@@ -12,10 +12,10 @@ Appointment booking system for personal coaches, teachers, therapists and servic
 
 == Description ==
 
-A simple and reliable **[appointment booking system](https://wappointment.com/?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)**, for personal coaches, teachers, therapists and service professionals of all kind.
+A simple and reliable **appointment booking system**, for personal coaches, teachers, therapists and service professionals of all kind.
 Get booked 24/7 with a really **intuitive booking form**.
 
-It has been designed for any professional providing services to clients (personal coach, estate agent, language teachers, therapists, health professionals, beauty and wellness professionals, fitness professionals, etc…)
+It is made for anyone willing to provide appointments to their clients.
 
 Wappointment is free and will remain **free forever**.
 
@@ -27,13 +27,13 @@ https://www.youtube.com/watch?v=jUkiyejbuzg
 Convert visitors into customers with a simple call to action. **Get booked 24/7**, Wappointment is basically a **booking assistant which never sleeps**.
 
 = Avoid Double Bookings =
-Keep your availability updated using our powerful centralized system . 
+Keep your availability updated using our powerful centralized system. 
 Your availability gets refreshed whenever something changes in your schedule: 
 
 * when a new client books you
 * when a client cancels his appointment
-* when you manually set time slots during which you are busy or free 
-* when a new event gets created on your synched personal calendar (Google Calendar, Ical, Outlook Calendar)
+* when you manually create new time slots during which you are busy or free 
+* when a new event gets created on your synched personal calendar (Google Calendar, Apple iCal, Outlook Calendar)
 
 = Simplify your Booking Process =
 Our **user friendly booking form** gives your clients a quick overview of your availability, making the booking process a breeze.
@@ -63,8 +63,8 @@ Quickly define when and how many of them do they receive (1 day before appointme
 * Connect your personal calendar to the booking system and automatically block time where you are busy
 * Set the date and time format 
 
-= Make the Booking Widget Blend =
-* Quickly customize colors and texts for your booking widget 
+= Make the Booking Form Blend =
+* Quickly customize colors and texts for your booking form 
 * 4-steps booking process, each step is editable
 
 = Booking an Appointment as a Customer =
@@ -137,8 +137,8 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Screenshots ==
 
-1. Booking an appointment on mobile phone
-2. Viewing appointment and changing quickly availability
+1. Booking an appointment from a mobile phone
+2. Monitoring upcoming appointments and modifying availability
 3. Receiving branded email reminders on mobile phone
 4. Editing booking widget's style through simple interfaces
 5. Weekly Availability. First step of our initial setup wizard, simply drag and drop your recurrent availability.

@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetData!==null">
-      <div class="d-flex mt-4">
+      <div class="d-flex mt-4" v-if="!wizard">
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a class="nav-link" :class="{active:isTesting && !editing}" href="javascript:;" @click="showPreview">
@@ -22,7 +22,7 @@
       </div>  
       <div v-if="isTesting">
           <transition name="slide-fade-top">
-            <BookingWidgetEditor  :bgcolor="getBgColor" :editingMode="editing" :widgetFields="widgetFields" 
+            <BookingWidgetEditor  :bgcolor="getBgColor" :editingMode="editing" :widgetFields="widgetFields" :shortcodeParams="params"
             :config="viewData.config" :preoptions="widgetData" :defaultSettings="widgetDefault" :frontAvailability="frontAvailability" />
           </transition>
       </div>
@@ -42,12 +42,22 @@ import BookingWidgetEditor from '../../Components/BookingWidgetEditor'
 import WidgetInsert from '../../Components/WidgetInsert'
 export default {
   extends: wizardLayout,
+  props:{
+      wizard: {
+          type: Boolean,
+          default: false
+      },
+      params:{
+          type:Object,
+          default: undefined
+      }
+  },
   data() {
       return {
           colors: '#ffffff',
           viewName: 'widget',
           isTesting: true,
-          editing:false
+          editing:false,
       } 
   },
 

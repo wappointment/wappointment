@@ -25,8 +25,8 @@
                 
                 <div>
                     <div v-if="showFrom" class="d-flex">
-                        <input class="form-control mr-2" type="text" v-model="sendconfig.from_name" >
-                        <input class="form-control mr-2" type="text" v-model="sendconfig.from_address" >
+                        <InputPh v-model="sendconfig.from_name" ph="From name" allowReset/>
+                        <InputPh v-model="sendconfig.from_address" ph="From email" allowReset/>
                     </div>
                     <div v-else class="d-flex align-items-center">
                         <span class="m-0 mr-2">From Address: </span>
@@ -46,7 +46,7 @@
                     :disabled="!canSend" @click="$refs.mcformgenerator.submitTrigger()"><span class="dashicons dashicons-email"></span> Save and Send test email</button>
                     <div>
                         <div v-if="showRecipient">
-                            <input id="preveiwemail" class="form-control mr-2" type="text" v-model="recipient" >
+                            <InputPh v-model="recipient" ph="Sending preview to" allowReset/>
                         </div>
                         <div v-else>
                             <a href="javascript:;"  @mouseover="showEdit=true" @mouseout="showEdit=false" title="Edit" class="text-muted" @click="showRecipient=!showRecipient">{{ recipient }}</a>
@@ -68,7 +68,9 @@ export default {
     mounted(){
         this.refreshInitValue()
     },
-    
+    components:{
+        InputPh: window.wappoGet('InputPh')
+    },
   data() {
     return {
         
@@ -379,6 +381,7 @@ export default {
         },
     },
   methods: {
+
       changedValue(newSendConfig){
           this.sendconfig = newSendConfig
           this.method = newSendConfig.method
@@ -409,6 +412,10 @@ export default {
           this.viewData = viewData.data
           this.sendconfig = viewData.data.mail_config
           this.recipient = this.viewData.recipient
+          this.method = this.sendconfig.method
+          if(this.method != ''){
+              this.formready = true
+          }
       },
   },
 

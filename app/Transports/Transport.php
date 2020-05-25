@@ -107,4 +107,73 @@ abstract class Transport implements WappoSwift_Transport
             (array) $message->getBcc()
         ));
     }
+
+
+    /**
+     * Get the "to" payload field for the API request.
+     *
+     * @param  \WappoSwift_Mime_SimpleMessage  $message
+     * @return string
+     */
+    protected function getTo(WappoSwift_Mime_SimpleMessage $message)
+    {
+        return \WappointmentLv::collect($this->allContacts($message))->map(function ($display, $address) {
+            return $display ? $display . " <{$address}>" : $address;
+        })->values()->implode(',');
+    }
+
+    /**
+     * Get all of the contacts for the message.
+     *
+     * @param  \WappoSwift_Mime_SimpleMessage  $message
+     * @return array
+     */
+    protected function allContacts(WappoSwift_Mime_SimpleMessage $message)
+    {
+        return array_merge(
+            (array) $message->getTo(),
+            (array) $message->getCc(),
+            (array) $message->getBcc()
+        );
+    }
+
+
+    /**
+     * Get the API key being used by the transport.
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        return $this->key;
+    }
+
+    /**
+     * Set the API key being used by the transport.
+     *
+     * @param  string  $key
+     * @return string
+     */
+    public function setKey($key)
+    {
+        return $this->key = $key;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function send(WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
+    {
+        $this->beforeSendPerformed($message);
+
+        $to = $this->getTo($message);
+
+        $message->setBcc([]);
+
+        $this->client->post($this->url, $this->payload($message, $to));
+
+        $this->sendPerformed($message);
+
+        return $this->numberOfRecipients($message);
+    }
 }

@@ -9,9 +9,9 @@
             @mouseover="showRecipient=true" 
             @click="showRecipient=!showRecipient">to {{ dataRecipient }}</a>
         </div>
-        </div>
+    </div>
         
-        <div class="bg-danger p-2 text-white rounded small ml-2" v-else> 
+    <div class="bg-danger p-2 text-white rounded small ml-2" v-else> 
         <span class="dashicons dashicons-email"></span>
         <span>No emails will be sent without configuring the sending method first</span>  
     </div>

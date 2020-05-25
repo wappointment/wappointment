@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="d-flex w100">
-            <div class="columnTitle">Available Booking Days</div> <ClickRevealSlider :alwaysShow="true" 
+            <div class="columnTitle" data-tt="Number of days in the future where your schedule is open for new bookings">Available Booking Days</div> <ClickRevealSlider :alwaysShow="true" 
             :value="viewData.availaible_booking_days" @change="changedCRS" />
         </div>
         <div class="commands-frame d-flex" @mouseover="showControls=true" @mouseout="showControls=false">
