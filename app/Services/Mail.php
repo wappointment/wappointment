@@ -16,6 +16,7 @@ class Mail
     private $bodyVersion = 'text/html';
     private $alt = '';
     private $altVersion = 'text/plain';
+    public $attachments = [];
 
     public function __construct($configOverride = false)
     {
@@ -32,7 +33,7 @@ class Mail
     public function send(\Wappointment\Messages\AbstractEmail $email)
     {
         $message = $email->renderMessage();
-        if ($this->isWpMail()) {
+        /*         if ($this->isWpMail()) {
             //only text version for wpmail
             $this->bodyVersion = $this->altVersion;
             $this->body($message['body_text'])
@@ -42,9 +43,20 @@ class Mail
                 ->body($message['body'])
                 ->subject($message['subject'])
                 ->alt($message['body_text']); //tags already replace in renderBody
-        }
+        } */
+
+        $this->body($message['body'])
+            ->subject($message['subject'])
+            ->alt($message['body_text']); //tags already replace in renderBody
+
+        $this->setAttachments($email);
 
         return $this->sendTransport();
+    }
+
+    protected function setAttachments(\Wappointment\Messages\AbstractEmail $email)
+    {
+        $this->attachments = $email->attachments;
     }
 
     public function sendFast($subject, $body, $recipient, $from = false, $version = 'text/plain')
@@ -129,6 +141,13 @@ class Mail
         if (!empty($this->alt)) {
             $message->addPart($this->alt, $this->altVersion);
         }
+
+        if (!empty($this->attachments)) {
+            foreach ($this->attachments as $attachment) {
+                $message->attach($attachment);
+            }
+        }
+
         // Send the message
         if ($mailer->send($message) !== 0) {
             return true;
@@ -157,6 +176,7 @@ class Mail
             return new \Wappointment\Transports\Methods\WpMailEmail();
         }
     }
+
     private function isWpMail()
     {
         return $this->config['method'] == 'wpmail';

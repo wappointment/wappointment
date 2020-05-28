@@ -154,13 +154,13 @@ class FoundationEmail
         </table>';
   }
 
-  public function button($title, $action, $styleButton = '')
+  public function button($title, $action, $center = true, $styleButton = '')
   {
     $this->includeStyle('button.primary');
     if (!empty($styleButton)) {
       $this->includeStyle($styleButton);
     }
-    return '<center><table class="button radius float-center">
+    return $center ? '<center><table class="button radius float-center">
         <tbody><tr>
         <td>
         <table>
@@ -172,23 +172,18 @@ class FoundationEmail
         </tbody></table>
         </td>
          </tr>
-        </tbody></table></center>';
-    return '<table class="button float-center">
-        <tbody><tr>
-        <td>
-        <table>
-        <tbody><tr>
-        <td>
-        <center data-parsed="">
-        <a class="float-center" href="' . $action . '">' . $title . '</a>
-        </center>
-        </td>
+        </tbody></table></center>' :
+      '<table class="button small-expanded">
+        <tr>
+          <td>
+            <table>
+              <tr>
+                <td><a href="' . $action . '">' . $title . '</a></td>
+              </tr>
+            </table>
+          </td>
         </tr>
-        </tbody></table>
-        </td>
-        <td class="expander"></td>
-         </tr>
-        </tbody></table>';
+      </table>';
   }
 
   private function cssEnqueue()

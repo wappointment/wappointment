@@ -9,55 +9,77 @@ use Wappointment\Services\Service;
 
 class AdminDailySummaryEmail extends AbstractAdminEmail
 {
-    private $sections = null;
+    use AttachesIcs;
+
+    protected $sections = null;
+    protected $date_string = '';
+    protected $tz = '';
 
     public function loadContent()
     {
         $this->loadTomorrowData();
-        $date_string = $this->tomorrowCarbon()->format(Settings::get('date_format'));
-        $this->subject = 'Daily summary for ' . $date_string;
+        $this->date_string = $this->tomorrowCarbon()->format(Settings::get('date_format'));
+        $this->tz = Settings::getStaff('timezone');
+
+        $this->subject = 'Daily summary for ' . $this->date_string;
         $this->addLogo();
         $this->addBr();
-        $tz = Settings::getStaff('timezone');
+
         $serviceDurationInSeconds = Service::get()['duration'] * 60;
         $coverage = $this->sections->getCoverage($serviceDurationInSeconds);
 
-        if (!empty($coverage)) {
-            $contentBlock = [
-                '<center>' . 'Appointments: ' . count($this->sections->appointments) . '</center>',
-                '<center>' . 'Free slots: ' .
-                    $this->sections->getFreeSlots($serviceDurationInSeconds)
-                    . ' (duration ' . Service::get()['duration'] . 'min)</center>',
-                '<center>' . 'Coverage: ' . $coverage . '</center>'
-            ];
+        $staff = new \Wappointment\WP\Staff;
+        $lines = [
+            'Hi ' . $staff->getFirstName() . ', ',
+            'Here is a summary of your appointments for ' . $this->date_string
+        ];
 
-            $this->addRoundedSquare($contentBlock, false);
-            if ($this->sections->getFreeSlots($serviceDurationInSeconds) == 0) {
-                $this->addButton(
-                    'Set new availabilities for tomorrow',
-                    WPHelpers::adminUrl('wappointment_calendar')
-                );
-            }
+        if (!empty($coverage)) {
+            $newlines = [
+                'New Appointments: ' . count($this->sections->appointments),
+                'Available Slots: ' . $this->sections->getFreeSlots($serviceDurationInSeconds) . ' (duration ' . Service::get()['duration'] . 'min)',
+                'Coverage: ' . $coverage
+            ];
         } else {
-            $this->addRoundedSquare([
-                '<center>No availabilities for ' . $date_string . '</center>'
-            ], false);
+            $newlines = [
+                'No availabilities for ' . $this->date_string
+            ];
+        }
+
+        $this->addLines(array_merge($lines, $newlines));
+
+        if ($this->sections->getFreeSlots($serviceDurationInSeconds) == 0) {
             $this->addButton(
-                'Set availabilities for tomorrow',
-                WPHelpers::adminUrl('wappointment_calendar')
+                'Open new slots',
+                WPHelpers::adminUrl('wappointment_calendar'),
+                false
             );
         }
 
+        $this->getAppointmentsList();
+
+        $this->addLines([
+            'Have a great day!',
+            '',
+            'Ps: An .ics file with all your appointments is attached'
+        ]);
+
+        $this->attachIcs($this->sections->appointments, 'daily_appointments', true);
+    }
+
+    public function getAppointmentsList()
+    {
         $appointmentSumarry = [];
 
         foreach ($this->sections->appointments as $appointment) {
             $appointmentSumarry[] = '<hr/>' .
-                $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format')) .
+                $appointment->start_at->setTimezone($this->tz)->format(Settings::get('time_format')) .
                 ' ' . $appointment->client->name . ' / '
                 . $appointment->getDuration() . '<br>' . $appointment->client->email;
         }
+
         if (!empty($appointmentSumarry)) {
-            array_unshift($appointmentSumarry, '<strong>' . $date_string . '</strong>');
+            array_unshift($appointmentSumarry, '<strong>' . $this->date_string . '</strong>');
             $this->addRoundedSquare($appointmentSumarry);
         }
     }

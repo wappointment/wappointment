@@ -9,6 +9,7 @@ class AppointmentConfirmedListener extends AbstractJobAppointmentListener
     protected $jobClass = '\Wappointment\Jobs\AppointmentEmailConfirmed';
     protected $delay = 0;
     protected $event_trigger = Reminder::APPOINTMENT_CONFIRMED;
+
     protected function addToJobs($event)
     {
 
@@ -23,7 +24,7 @@ class AppointmentConfirmedListener extends AbstractJobAppointmentListener
 
                 $this->recordJob(
                     $this->jobClass,
-                    $params,
+                    array_merge($params, $this->data_job),
                     'client',
                     null,
                     $this->delay

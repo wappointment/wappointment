@@ -62,7 +62,7 @@ class ViewsData
 
     private function wizardwidget()
     {
-        $bpageid = Settings::get('booking_page');
+
         return [
             'booking_page_id' => Settings::get('booking_page'),
             'widget' => (new WidgetSettings)->get(),

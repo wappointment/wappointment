@@ -9,6 +9,8 @@ use Wappointment\Services\Service;
 
 class AdminNewAppointmentEmail extends AbstractAdminEmail
 {
+    use AttachesIcs;
+
     protected $client = null;
     protected $appointment = null;
 
@@ -18,6 +20,12 @@ class AdminNewAppointmentEmail extends AbstractAdminEmail
         $this->addLogo();
         $this->addBr();
         $tz = Settings::getStaff('timezone');
+
+        $this->addLines([
+            'Hi ' . $appointment->getStaff()->getFirstName() . ', ',
+            'Great news! You just got booked! '
+        ]);
+
         $this->addRoundedSquare(
             [
                 'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
@@ -28,5 +36,13 @@ class AdminNewAppointmentEmail extends AbstractAdminEmail
                 "Client's email: " . sanitize_text_field($client->email),
             ]
         );
+
+        $this->addLines([
+            'Have a great day!',
+            '',
+            'Ps: An .ics file with the appointment\'s details is attached'
+        ]);
+
+        $this->attachIcs([$appointment], 'appointment', true);
     }
 }

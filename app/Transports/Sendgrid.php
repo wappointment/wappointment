@@ -4,6 +4,7 @@ namespace Wappointment\Transports;
 
 use WappoSwift_Mime_SimpleMessage;
 use WappoSwift_MimePart;
+use WappoSwift_Attachment;
 use GuzzleHttp\ClientInterface;
 
 class Sendgrid extends Transport
@@ -76,6 +77,12 @@ class Sendgrid extends Transport
         if ($reply_to = $this->getReplyTo($message)) {
             $data['reply_to'] = $reply_to;
         }
+
+        $attachments = $this->getAttachments($message);
+        if (count($attachments) > 0) {
+            $data['attachments'] = $attachments;
+        }
+
         return [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->key,
@@ -83,6 +90,24 @@ class Sendgrid extends Transport
             ],
             'json' => $data,
         ];
+    }
+
+    private function getAttachments(WappoSwift_Mime_SimpleMessage $message)
+    {
+        $attachments = [];
+        foreach ($message->getChildren() as $attachment) {
+            if (!$attachment instanceof WappoSwift_Attachment) {
+                continue;
+            }
+            $attachments[] = [
+                'content'     => base64_encode($attachment->getBody()),
+                'filename'    => $attachment->getFilename(),
+                'type'        => $attachment->getContentType(),
+                'disposition' => $attachment->getDisposition(),
+                'content_id'  => $attachment->getId(),
+            ];
+        }
+        return $this->attachments = $attachments;
     }
 
     private function getFrom(WappoSwift_Mime_SimpleMessage $message)

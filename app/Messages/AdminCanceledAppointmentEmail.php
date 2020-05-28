@@ -9,6 +9,8 @@ use Wappointment\Services\Service;
 
 class AdminCanceledAppointmentEmail extends AbstractAdminEmail
 {
+    use AttachesIcs;
+
     protected $client = null;
     protected $appointment = null;
 
@@ -18,6 +20,12 @@ class AdminCanceledAppointmentEmail extends AbstractAdminEmail
         $this->addLogo();
         $this->addBr();
         $tz = Settings::getStaff('timezone');
+
+        $this->addLines([
+            'Hi ' . $appointment->getStaff()->getFirstName() . ', ',
+            'Unfortunately a client cancelled his appointment.'
+        ]);
+
         $this->addRoundedSquare(
             [
                 '<u>Cancelled appointment</u>',
@@ -29,5 +37,13 @@ class AdminCanceledAppointmentEmail extends AbstractAdminEmail
                 "Client's email: " . sanitize_text_field($client->email),
             ]
         );
+
+        $this->addLines([
+            'Have a great day!',
+            '',
+            'Ps: An .ics file with the appointment\'s details is attached'
+        ]);
+
+        $this->attachCancelled([$appointment], 'cancelled_appointment');
     }
 }

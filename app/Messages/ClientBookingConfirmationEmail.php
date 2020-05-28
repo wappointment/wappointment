@@ -8,26 +8,23 @@ use Wappointment\Models\Appointment;
 
 class ClientBookingConfirmationEmail extends AbstractEmail
 {
-    use HasAppointmentFooterLinks, HasTagsToReplace;
+    use HasAppointmentFooterLinks, HasTagsToReplace, AttachesIcs, PreparesClientEmail;
+
     protected $client = null;
     protected $appointment = null;
+    protected $icsRequired = true;
+
     const EVENT = Reminder::APPOINTMENT_CONFIRMED;
 
-    public function loadContent(Client $client, Appointment $appointment, $reminder_id = false)
+    public function loadContent(Client $client, Appointment $appointment)
     {
-        $this->client = $client;
-        $this->appointment = $appointment;
 
-        $email = Reminder::where('published', 1)
-            ->where('type', Reminder::getType('email'))
-            ->where('event', static::EVENT)
-            ->first();
-
-        if (!$email) {
-            return;
+        if (!$this->prepareClientEmail($client, $appointment, static::EVENT)) {
+            return false;
         }
 
-        $this->subject = $email->subject;
-        $this->body = $email->getHtmlBody($appointment);
+        if ($this->icsRequired) {
+            $this->attachIcs([$appointment], 'appointment');
+        }
     }
 }

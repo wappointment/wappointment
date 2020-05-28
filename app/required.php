@@ -57,6 +57,10 @@ use Wappointment\ClassConnect\HigherOrderTapProxy;
 
 class WappointmentLv
 {
+    public static function isTest()
+    {
+        return substr(WAPPOINTMENT_SITE, -5) === '.test';
+    }
     public static function blank($value)
     {
         if (is_null($value)) {

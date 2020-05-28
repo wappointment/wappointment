@@ -69,11 +69,16 @@ class Scheduler
 
     public static function processQueue()
     {
-        $lock = new \Wappointment\Services\Lock;
-        if (!$lock->alreadySet()) {
-            $lock->set();
+
+        if (\WappointmentLv::isTest()) {
             \Wappointment\Services\Queue::process();
-            $lock->release();
+        } else {
+            $lock = new \Wappointment\Services\Lock;
+            if (!$lock->alreadySet()) {
+                $lock->set();
+                \Wappointment\Services\Queue::process();
+                $lock->release();
+            }
         }
     }
 

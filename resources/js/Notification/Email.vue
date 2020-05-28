@@ -11,7 +11,7 @@
             </div>
             <div class="small text-muted ml-2">
                 <span class="text-dark">Please make sure you receive emails.</span> 
-                <span>If you have deliverability issues, reconfigure it with Mailgun, it is free and it just works.</span>
+                <span>If you have deliverability issues, reconfigure it with SendGrid, it is free and it just works.</span>
             </div>
         </div>
     </div>

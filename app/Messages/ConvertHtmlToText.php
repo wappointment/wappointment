@@ -30,10 +30,13 @@ trait ConvertHtmlToText
         );
         $text = str_replace(['Â ', '&nbsp;'], ' ', strip_tags($text));
         $text = trim(@html_entity_decode($text, ENT_QUOTES, 'UTF-8'));
+
         if ($fullConvert) {
             $text = preg_replace('# +#', ' ', $text);
             $text = preg_replace('#\n *\n\s+#', "\n\n", $text);
         }
-        return $text;
+        $text = str_replace(chr(194) . chr(160), '', $text);
+
+        return trim($text);
     }
 }

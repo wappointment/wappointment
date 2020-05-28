@@ -11,15 +11,15 @@ abstract class AbstractAdminEmail extends AbstractEmail
         $this->addBlock('roundedSquare', $lines, $separator);
     }
 
-    public function addButton($title, $action)
+    public function addButton($title, $action, $center = true)
     {
         $this->messageBlocks[] = [
             'type' => 'button',
             'content' => $title,
-            'action' => $action
+            'action' => $action,
+            'center' => $center
         ];
     }
-
 
     public function addBr()
     {
@@ -27,6 +27,7 @@ abstract class AbstractAdminEmail extends AbstractEmail
             'type' => 'spacer',
         ];
     }
+
     public function addLines($lines = [])
     {
         $this->messageBlocks[] = [

@@ -8,6 +8,12 @@ use Wappointment\ClassConnect\Request;
 
 class Staff
 {
+    public static function getById($staff_id)
+    {
+        $staff_id = empty($staff_id) ? Settings::get('activeStaffId') : $staff_id;
+        return (new \Wappointment\WP\Staff($staff_id));
+    }
+
     public static function get()
     {
         $staffs = [];

@@ -205,10 +205,12 @@ class Appointment
         if (!$appointment->canStillReschedule()) {
             throw new \WappointmentException("Can't reschedule appointment anymore", 1);
         }
+
         $result = $appointment->update(
             [
                 'start_at' => static::unixToDb($start_at),
                 'end_at' => static::unixToDb($start_at + $appointment->getFullDurationInSec()),
+                'options' => $appointment->getIncrementedSequenceOptions()
             ]
         );
         if ($result) {
@@ -252,6 +254,7 @@ class Appointment
 
         $client = $appointment->client()->first();
         $staff_id_regenerate = $appointment->getStaffId();
+        $appointment->incrementSequence();
         $result = $appointment->destroy($appointment->id);
 
         if ($result) {

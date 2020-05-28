@@ -50,9 +50,11 @@ class Init
 
     public function initInstalled()
     {
-        new Scheduler();
-
-        //Scheduler::processQueue();;
+        if (\WappointmentLv::isTest() === false) {
+            new Scheduler();
+        } else {
+            Scheduler::processQueue();
+        }
     }
 
 

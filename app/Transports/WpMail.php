@@ -3,27 +3,34 @@
 namespace Wappointment\Transports;
 
 use WappoSwift_Mime_SimpleMessage;
+use WappoSwift_MimePart;
+use WappoSwift_Attachment;
 
 class WpMail extends Transport
 {
+    use WpMailPatched;
     private $configSave = [];
 
     public function __construct($config)
     {
         $this->configSave = $config;
     }
+
     public function wpMailFromName()
     {
         return $this->configSave['from_name'];
     }
+
     public function wpMailFrom()
     {
         return $this->configSave['from_address'];
     }
+
     public function wpMailContentType()
     {
         return 'text/html';
     }
+
     public function setWpSettings()
     {
         add_filter('wpMailFromName', [$this, 'wpMailFromName']);
@@ -37,6 +44,7 @@ class WpMail extends Transport
         remove_filter('wpMailFrom', [$this, 'wpMailFrom']);
         remove_filter('wpMailContentType', [$this, 'wpMailContentType']);
     }
+
     public function send(WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
         $this->beforeSendPerformed($message);
@@ -45,11 +53,45 @@ class WpMail extends Transport
 
         $message->setBcc([]);
         $this->setWpSettings();
-        wp_mail($to, $message->getSubject(), $message->getBody(), $message->getHeaders());
+        add_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
+        $this->wpMail($to, $message->getSubject(), $this->multipartBody($message), $message->getHeaders(), $this->getAttachments($message));
+        remove_filter('wp_mail_content_type', 'setHtmlContentType');
         $this->unsetWpSettings();
         return true;
     }
 
+    public function getAttachments($message)
+    {
+        $attachments = [];
+        foreach ($message->getChildren() as $child) {
+            if ($child instanceof WappoSwift_Attachment) {
+                $attachments[] = [
+                    'body' => $child->getBody(),
+                    'type' => 'text/calendar',
+                    'name' => 'appointments.ics',
+                ];
+            }
+        }
+
+        return $attachments;
+    }
+
+    public function multipartBody($message)
+    {
+        $content = ['text/html' => $message->getBody()];
+        foreach ($message->getChildren() as $child) {
+            if ($child instanceof WappoSwift_MimePart && $child->getContentType() === 'text/plain') {
+                $content['text/plain'] = $child->getBody();
+            }
+        }
+
+        return $content;
+    }
+
+    public function setHtmlContentType()
+    {
+        return 'multipart/alternative';
+    }
 
     /**
      * Get the "to" payload field for the API request.

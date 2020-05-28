@@ -19,6 +19,8 @@ class Staff
             $staff_id = Settings::get('activeStaffId');
         }
         $this->wp_user = get_userdata($staff_id);
+        unset($this->wp_user->data->user_pass);
+        unset($this->wp_user->data->user_activation_key);
         if (empty($this->wp_user)) {
             throw new \WappointmentException("Can't load staff information", 1);
         }
@@ -35,6 +37,11 @@ class Staff
     {
         return empty($this->wp_user->display_name) ?
             $this->wp_user->first_name . ' ' . $this->wp_user->last_name : $this->wp_user->display_name;
+    }
+
+    public function getFirstName()
+    {
+        return $this->wp_user->first_name;
     }
 
     public function getAvailability()

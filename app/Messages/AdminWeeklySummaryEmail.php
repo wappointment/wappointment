@@ -9,7 +9,8 @@ use Wappointment\Services\Service;
 
 class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
 {
-    private $sections = null;
+
+    protected $sections = null;
 
     public function startWeek()
     {
@@ -31,39 +32,53 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         $this->subject = 'Weekly summary ' . $date_start_string . ' - ' . $date_end_string;
         $this->addLogo();
         $this->addBr();
-        $tz = Settings::getStaff('timezone');
+        $this->tz = Settings::getStaff('timezone');
         $serviceDurationInSeconds = Service::get()['duration'] * 60;
         $coverage = $this->sections->getCoverage($serviceDurationInSeconds);
 
-        if (!empty($coverage)) {
-            $contentBlock = [
-                '<center>' . 'Appointments: ' . count($this->sections->appointments) . '</center>',
-                '<center>' . 'Free slots: ' .
-                    $this->sections->getFreeSlots($serviceDurationInSeconds) .
-                    ' (duration ' . Service::get()['duration'] . 'min)</center>',
-                '<center>' . 'Coverage: ' . $coverage . '</center>'
-            ];
+        $staff = new \Wappointment\WP\Staff;
+        $lines = [
+            'Hi ' . $staff->getFirstName() . ', ',
+            'Here is a summary of your appointments for this week: ' . $date_start_string . ' - ' . $date_end_string
+        ];
 
-            $this->addRoundedSquare($contentBlock, false);
-            if ($this->sections->getFreeSlots($serviceDurationInSeconds) == 0) {
-                $this->addButton(
-                    'Set new availabilities for next week',
-                    WPHelpers::adminUrl('wappointment_calendar')
-                );
-            }
+        if (!empty($coverage)) {
+            $newlines = [
+                'New Appointments: ' . count($this->sections->appointments),
+                'Available Slots: ' . $this->sections->getFreeSlots($serviceDurationInSeconds) . ' (duration ' . Service::get()['duration'] . 'min)',
+                'Coverage: ' . $coverage
+            ];
         } else {
-            $this->addRoundedSquare([
-                '<center>No availabilities for the week of '
-                    . $date_start_string . ' - ' . $date_end_string . '</center>'
-            ], false);
+            $newlines = [
+                'No availabilities for this week'
+            ];
+        }
+
+        $this->addLines(array_merge($lines, $newlines));
+
+
+        if ($this->sections->getFreeSlots($serviceDurationInSeconds) == 0) {
             $this->addButton(
-                'Set availabilities for next week',
-                WPHelpers::adminUrl('wappointment_calendar')
+                'Open new slots',
+                WPHelpers::adminUrl('wappointment_calendar'),
+                false
             );
         }
 
-        $appointmentSumarry = [];
+        $this->getAppointmentsListWeek($startingDay, $endDay);
 
+        $this->addLines([
+            'Have a great week!',
+            '',
+            'Ps: An .ics file with all your appointments is attached'
+        ]);
+        $this->attachIcs($this->sections->appointments, 'weekly_appointments', true);
+    }
+
+    public function getAppointmentsListWeek($startingDay, $endDay)
+    {
+        $appointmentSumarry = [];
+        $tz = $this->tz;
         $appointmentGroupedByDay = $this->sections->appointments->mapToGroups(function ($item, $key) use ($tz) {
             return [$item->start_at->setTimezone($tz)->toDateString() => $item];
         });
@@ -73,7 +88,7 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
             if (isset($appointmentGroupedByDay[$startingDay->toDateString()])) {
                 foreach ($appointmentGroupedByDay[$startingDay->toDateString()] as $appointment) {
                     $appointmentSumarry[] =
-                        $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format')) .
+                        $appointment->start_at->setTimezone($this->tz)->format(Settings::get('time_format')) .
                         ' ' . $appointment->client->name .
                         ' / ' . $appointment->getDuration() . '<br>' . $appointment->client->email;
                 }

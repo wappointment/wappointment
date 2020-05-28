@@ -19,6 +19,13 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
         $this->addLogo();
         $this->addBr();
         $tz = Settings::getStaff('timezone');
+
+        $this->addLines([
+            'Hi ' . $appointment->getStaff()->getFirstName() . ', ',
+            'Great news! You just got booked! ',
+            'Please confirm the appointment.'
+        ]);
+
         $this->addRoundedSquare(
             [
                 'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
@@ -52,5 +59,8 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
         } else {
             $this->addLines(sanitize_text_field($buttonConfirm));
         }
+        $this->addLines([
+            'Have a great day!',
+        ]);
     }
 }

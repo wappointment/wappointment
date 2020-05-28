@@ -5,6 +5,7 @@ namespace Wappointment\Messages;
 use Wappointment\Messages\Templates\FoundationEmail;
 use Pelago\Emogrifier\CssInliner;
 use Wappointment\Services\Settings;
+use WappoSwift_Attachment;
 
 abstract class AbstractEmail extends AbstractMessage
 {
@@ -12,9 +13,10 @@ abstract class AbstractEmail extends AbstractMessage
 
     public $subject = '';
     protected $renderer = null;
-    protected $messageBlocks = [];
+    public $messageBlocks = [];
     protected $admin = false;
     public $replacing = ['subject', 'body'];
+    public $attachments = [];
 
     public function __construct(...$params)
     {
@@ -61,7 +63,7 @@ abstract class AbstractEmail extends AbstractMessage
         foreach ($this->messageBlocks as $block) {
             switch ($block['type']) {
                 case 'button':
-                    $blocks .= $this->renderer->button($block['content'], $block['action']);
+                    $blocks .= $this->renderer->button($block['content'], $block['action'], $block['center']);
                     break;
                 case 'roundedSquare':
                     $blocks .= $this->renderer->wrapRoundedSquare($block['content'], $block['separator']);
@@ -110,5 +112,47 @@ abstract class AbstractEmail extends AbstractMessage
     public function renderBodyText()
     {
         return $this->convertHtmlToText($this->body);
+    }
+
+    public function attach($file, array $options = [])
+    {
+        $attachment = $this->createAttachmentFromPath($file);
+
+        $this->addAttachment($attachment, $options);
+    }
+
+    public function attachData($data, $name, array $options = [])
+    {
+        $attachment = $this->createAttachmentFromData($data, $name);
+
+        $this->addAttachment($attachment, $options);
+    }
+
+    protected function createAttachmentFromPath($file)
+    {
+        if (!file_exists($file)) {
+            throw new \WappointmentException("Error Processing Request", 1);
+        }
+        return WappoSwift_Attachment::fromPath($file);
+    }
+
+
+    protected function createAttachmentFromData($data, $name)
+    {
+        return new WappoSwift_Attachment($data, $name);
+    }
+
+    protected function addAttachment($attachment, $options = [])
+    {
+
+        if (!empty($options['mime'])) {
+            $attachment->setContentType($options['mime']);
+        }
+
+        if (!empty($options['as'])) {
+            $attachment->setFilename($options['as']);
+        }
+
+        $this->attachments[] = $attachment;
     }
 }

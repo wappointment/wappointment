@@ -9,6 +9,8 @@ use Wappointment\Services\Service;
 
 class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
 {
+    use AttachesIcs;
+
     protected $client = null;
     protected $appointment = null;
 
@@ -18,6 +20,12 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
         $this->addLogo();
         $this->addBr();
         $tz = Settings::getStaff('timezone');
+
+        $this->addLines([
+            'Hi ' . $appointment->getStaff()->getFirstName() . ', ',
+            'A client rescheduled his appointment, find the details below.',
+        ]);
+
         $this->addRoundedSquare(
             [
                 '<u>New appointment</u>',
@@ -37,5 +45,12 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
                     . ' - ' . $oldAppointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
             ]
         );
+        $this->addLines([
+            'Have a great day!',
+            '',
+            'Ps: An .ics file with the appointment\'s details is attached'
+        ]);
+        $this->attachIcs([$appointment], 'appointment', true);
+        //$this->attachCancelled([$oldAppointment], 'cancelled_appointment', true);
     }
 }

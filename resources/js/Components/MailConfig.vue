@@ -25,8 +25,8 @@
                 
                 <div>
                     <div v-if="showFrom" class="d-flex">
-                        <InputPh v-model="sendconfig.from_name" ph="From name" allowReset/>
-                        <InputPh v-model="sendconfig.from_address" ph="From email" allowReset/>
+                        <InputPh v-model="sendconfig.from_name" ph="From name" />
+                        <InputPh v-model="sendconfig.from_address" ph="From email" />
                     </div>
                     <div v-else class="d-flex align-items-center">
                         <span class="m-0 mr-2">From Address: </span>
@@ -46,7 +46,7 @@
                     :disabled="!canSend" @click="$refs.mcformgenerator.submitTrigger()"><span class="dashicons dashicons-email"></span> Save and Send test email</button>
                     <div>
                         <div v-if="showRecipient">
-                            <InputPh v-model="recipient" ph="Sending preview to" allowReset/>
+                            <InputPh v-model="recipient" ph="Sending preview to" />
                         </div>
                         <div v-else>
                             <a href="javascript:;"  @mouseover="showEdit=true" @mouseout="showEdit=false" title="Edit" class="text-muted" @click="showRecipient=!showRecipient">{{ recipient }}</a>
@@ -125,7 +125,7 @@ export default {
             {
                 type: 'label',
                 model: 'txt1',
-                label: 'Warning: sending emails with this method can be unreliable, emails may go straight to SPAM. Also you can only send text emails(no formatting). ',
+                label: 'WPmail can be unreliable, emails may go straight to SPAM and the FROM address cannot be changed.',
                 classWrapper: 'text-danger',
                 conditions: [
                   { model:'method', values: ['wpmail'] }

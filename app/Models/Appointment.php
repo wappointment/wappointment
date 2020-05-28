@@ -12,13 +12,13 @@ class Appointment extends Model
 
     protected $fillable = [
         'start_at', 'end_at', 'edit_key', 'client_id',
-        'status', 'type', 'staff_id', 'service_id', 'options', 'location_id'
+        'status', 'type', 'staff_id', 'service_id', 'options', 'location_id', 'created_at', 'updated_at'
     ];
     protected $casts = [
         'options' => 'array',
     ];
     protected $dates = [
-        'start_at', 'end_at'
+        'start_at', 'end_at', 'created_at', 'updated_at',
     ];
 
     const TYPE_PHYSICAL = 0;
@@ -28,6 +28,10 @@ class Appointment extends Model
     const STATUS_CONFIRMED = 1;
 
 
+    public function getStaff()
+    {
+        return \Wappointment\Services\Staff::getById($this->staff_id);
+    }
     public function getLocationSlug()
     {
         switch ($this->type) {
@@ -37,6 +41,36 @@ class Appointment extends Model
                 return 'phone';
             case self::TYPE_SKYPE:
                 return 'skype';
+        }
+    }
+
+    public function getSequence()
+    {
+        return empty($this->options['sequence']) ? 0 : $this->options['sequence'];
+    }
+
+    public function incrementSequence()
+    {
+        $this->options = $this->getIncrementedSequenceOptions();
+        return $this->save();
+    }
+
+    public function getIncrementedSequenceOptions()
+    {
+        $options = $this->options;
+        $options['sequence'] = $this->getSequence() + 1;
+        return $options;
+    }
+
+    public function getLocation()
+    {
+        switch ($this->type) {
+            case self::TYPE_PHYSICAL:
+                return 'Address: ' . $this->getServiceAddress();
+            case self::TYPE_PHONE:
+                return 'By Phone';
+            case self::TYPE_SKYPE:
+                return 'By Skype';
         }
     }
 
@@ -183,9 +217,30 @@ class Appointment extends Model
         return ($this->canRescheduleUntilTimestamp() - Carbon::now()->timestamp) > 0;
     }
 
+    public function isConfirmed()
+    {
+        return $this->status === self::STATUS_CONFIRMED;
+    }
+
     public function canStillCancel()
     {
-        return $this->status !== self::STATUS_CONFIRMED
-            || ($this->canCancelUntilTimestamp() - Carbon::now()->timestamp) > 0;
+        return !$this->isConfirmed() || ($this->canCancelUntilTimestamp() - Carbon::now()->timestamp) > 0;
+    }
+
+    public function cancelLimit()
+    {
+        return Carbon::createFromTimestamp($this->canCancelUntilTimestamp())
+            ->setTimezone($this->client->getTimezone())->format($this->longFormat());
+    }
+
+    public function rescheduleLimit()
+    {
+        return Carbon::createFromTimestamp($this->canRescheduleUntilTimestamp())
+            ->setTimezone($this->client->getTimezone())->format($this->longFormat());
+    }
+
+    protected function longFormat()
+    {
+        return Settings::get('date_format') . Settings::get('date_time_union') . Settings::get('time_format');
     }
 }
