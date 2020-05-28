@@ -42,6 +42,7 @@ return [
     // Paths are relative to the configuration file unless if they are already absolute
     'files-whitelist' => [
         'app/required.php',
+        'app/Transports/WpMailPatched.php',
     ],
 
     // When scoping PHP files, there will be scenarios where some of the code being scoped indirectly references the

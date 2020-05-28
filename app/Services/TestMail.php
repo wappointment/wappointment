@@ -34,12 +34,22 @@ class TestMail
             }
         }
         try {
-            $result = (new MailService($mailerConfig))->sendFast(
-                "Wappointment's test email",
-                'Yay! Emails are working!',
-                sanitize_email($recipient),
-                [sanitize_email($mailerConfig['from_address']) => sanitize_text_field($mailerConfig['from_name'])]
-            );
+            if ($mailerConfig['method'] && !empty($mailerConfig['wpmail_html'])) {
+                $result = (new MailService($mailerConfig))->sendFast(
+                    "Wappointment's test email",
+                    '<h2>Yay! Emails are working!</h2>',
+                    sanitize_email($recipient),
+                    [sanitize_email($mailerConfig['from_address']) => sanitize_text_field($mailerConfig['from_name'])],
+                    'text/html'
+                );
+            } else {
+                $result = (new MailService($mailerConfig))->sendFast(
+                    "Wappointment's test email",
+                    'Yay! Emails are working!',
+                    sanitize_email($recipient),
+                    [sanitize_email($mailerConfig['from_address']) => sanitize_text_field($mailerConfig['from_name'])]
+                );
+            }
         } catch (\Exception $e) {
             $result = [];
             $result['error'] = $e->getMessage();

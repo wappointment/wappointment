@@ -33,15 +33,15 @@ class IcsGenerator
         return $this->vcalendar->serialize();
     }
 
-    public function event(Appointment $appointment, Client $client, $extra = [])
+    public function event(Appointment $appointment, Client $client, $mergeparams = [])
     {
         $staff = $appointment->getStaff();
-        $calparams = [
+        $addparams = [
             'ORGANIZER' => ['name' => $staff->getUserDisplayName(), 'email' =>  $staff->emailAddress()],
             'ATTENDEE' => ['name' => $client->name, 'email' =>  $client->email],
         ];
 
-        $this->generateEvent($appointment, $client, $staff, array_merge($calparams, $extra));
+        $this->generateEvent($appointment, $client, $staff, $addparams, $mergeparams);
     }
 
     public function cancelled(Appointment $appointment, Client $client)
@@ -62,7 +62,7 @@ class IcsGenerator
         }
     }
 
-    protected function generateEvent(Appointment $appointment, Client $client, $staff, $extra = [])
+    protected function generateEvent(Appointment $appointment, Client $client, $staff, $addparams = [], $mergeparams = [])
     {
         $title = $this->getTitle($appointment, $staff);
 
@@ -72,26 +72,36 @@ class IcsGenerator
             'CATEGORIES' => $category,
             'LOCATION' => $this->getLocation($appointment),
             'SUMMARY' => $title,
-            'DTSTART' => $appointment->start_at,
-            'DTEND' =>  $appointment->end_at->format($this->ics_date),
+            'DTSTART' => $this->getFormattedDate($appointment->start_at),
+            'DTEND' =>  $this->getFormattedDate($appointment->end_at),
             'DESCRIPTION' => $this->getDescription($appointment),
             'STATUS' => $appointment->isConfirmed() ? 'CONFIRMED' : 'TENTATIVE',
-            'DTSTAMP' => $appointment->created_at->format($this->ics_date),
-            'CREATED' => $appointment->created_at->format($this->ics_date),
-            'LAST-MODIFIED' => $appointment->updated_at->format($this->ics_date),
+            'DTSTAMP' => $this->getFormattedDate($appointment->created_at),
+            'CREATED' => $this->getFormattedDate($appointment->created_at),
+            'LAST-MODIFIED' => $this->getFormattedDate($appointment->updated_at),
             'TRANSP' => 'OPAQUE',
             'SEQUENCE' => $appointment->getSequence()
         ];
 
-        $vevent = $this->vcalendar->add('VEVENT', $event_data);
+        $vevent = $this->vcalendar->add('VEVENT', array_merge($event_data, $mergeparams));
 
-        $vevent = $this->addExtra($vevent, $extra);
+        $vevent = $this->addExtra($vevent, $addparams);
 
         $vevent->add('VALARM', [
             'ACTION' => 'DISPLAY',
             'DESCRIPTION' => $title,
             'TRIGGER' => '-PT1H',
         ]);
+    }
+
+    protected function getFormattedDate($date)
+    {
+        return $this->getCarbonDate($date)->format($this->ics_date);
+    }
+
+    protected function getCarbonDate($date)
+    {
+        return $date instanceof \Wappointment\ClassConnect\Carbon ? $date : new Carbon($date);
     }
 
     protected function addExtra($vevent, $extras = [])

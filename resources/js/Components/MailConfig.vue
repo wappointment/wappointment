@@ -92,6 +92,7 @@ export default {
             smtppreset: '',
             from_address: '',
             from_name: '',
+            wpmail_html: false
         },
         recipient: '',
         showEdit: false,
@@ -123,14 +124,26 @@ export default {
                 validation: ['required']
             },
             {
+                type: 'checkbox',
+                label: 'Allow HTML prettier emails',
+                model: 'wpmail_html',
+                cast: String,
+                conditions: [
+                  { model:'method', values: ['wpmail'] }
+                ],
+            },
+
+            {
                 type: 'label',
                 model: 'txt1',
-                label: 'WPmail can be unreliable, emails may go straight to SPAM and the FROM address cannot be changed.',
+                label: 'WPmail can be unreliable, delivery can be slow, emails may go straight to SPAM and the FROM address cannot be changed.',
                 classWrapper: 'text-danger',
                 conditions: [
                   { model:'method', values: ['wpmail'] }
                 ],
             },
+
+            
 
             // MailGun API
             {

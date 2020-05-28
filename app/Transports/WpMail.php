@@ -53,9 +53,15 @@ class WpMail extends Transport
 
         $message->setBcc([]);
         $this->setWpSettings();
-        add_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
-        $this->wpMail($to, $message->getSubject(), $this->multipartBody($message), $message->getHeaders(), $this->getAttachments($message));
-        remove_filter('wp_mail_content_type', 'setHtmlContentType');
+
+        if (!empty($this->configSave['wpmail_html'])) {
+            add_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
+            $this->wpMail($to, $message->getSubject(), $this->multipartBody($message), $message->getHeaders(), $this->getAttachments($message));
+            remove_filter('wp_mail_content_type', 'setHtmlContentType');
+        } else {
+            wp_mail($to, $message->getSubject(), $message->getBody(), $message->getHeaders());
+        }
+
         $this->unsetWpSettings();
         return true;
     }
