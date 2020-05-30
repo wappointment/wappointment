@@ -3,6 +3,7 @@
 namespace Wappointment\Installation;
 
 use Wappointment\WP\Helpers as WPHelpers;
+use \Wappointment\Services\Settings;
 
 class Process extends AbstractProcess
 {
@@ -28,8 +29,15 @@ class Process extends AbstractProcess
 
         $this->complete = true;
 
-        \Wappointment\Services\Settings::save('activeStaffId', WPHelpers::userId());
-        \Wappointment\Services\Settings::save('email_notifications', WPHelpers::currentUserEmail());
+        $mail_config = Settings::get('mail_config');
+        $mail_config['wpmail_html'] = true;
+
+        Settings::saveMultiple([
+            'mail_config' => $mail_config,
+            'show_welcome' => true,
+            'activeStaffId' => WPHelpers::userId(),
+            'email_notifications' => WPHelpers::currentUserEmail(),
+        ]);
         \Wappointment\System\Status::dbVersionUpdateComplete();
         return WPHelpers::setOption('installation_completed', (int) current_time('timestamp'), true);
     }

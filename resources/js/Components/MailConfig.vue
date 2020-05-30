@@ -136,7 +136,7 @@ export default {
             {
                 type: 'label',
                 model: 'txt1',
-                label: 'WPmail can be unreliable, delivery can be slow, emails may go straight to SPAM and the FROM address cannot be changed.',
+                label: 'WPmail can be unreliable, delivery can be slow and emails may go straight to SPAM.',
                 classWrapper: 'text-danger',
                 conditions: [
                   { model:'method', values: ['wpmail'] }

@@ -1,6 +1,6 @@
 <template>
     <div id="wrapperAdmin">
-        <StyleGenerator :options="viewData.widgetOptions" wrapper="wrapperAdmin"></StyleGenerator>
+        <StyleGenerator :options="viewData.widget" wrapper="wrapperAdmin"></StyleGenerator>
         <div class="mb-2">
         <h3>Book an appointment for your client</h3>
         <div>

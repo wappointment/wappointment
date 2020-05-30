@@ -4,8 +4,11 @@ namespace Wappointment\Controllers;
 
 use Wappointment\Services\Wappointment\EmailList;
 use Wappointment\Services\Wappointment\Contact;
+use Wappointment\Services\Wappointment\BookingTest as BookingTestAPI;
+use Wappointment\Services\BookingTest;
 use Wappointment\Validators\HttpRequest\SubscribeAdmin;
 use Wappointment\Validators\HttpRequest\ContactAdmin;
+use Wappointment\Services\Settings;
 
 class WappointmentController extends RestController
 {
@@ -39,5 +42,33 @@ class WappointmentController extends RestController
             ];
         }
         throw new \WappointmentException("Couldn't send your message.", 1);
+    }
+
+    public function sendTestBooking($request)
+    {
+        (new BookingTestAPI)->record($request);
+        $result = (new BookingTest)->send();
+        if ($result) {
+            Settings::save('show_welcome', false);
+            return [
+                'result' => false,
+                'message' => "Couldn't run request"
+            ];
+        }
+        return [
+            'result' => true,
+            'message' => "Alright we just created a test appointment"
+        ];
+    }
+
+    public function sendIgnoreBooking()
+    {
+
+        Settings::save('show_welcome', false);
+
+        return [
+            'result' => true,
+            'message' => "Have fun!"
+        ];
     }
 }

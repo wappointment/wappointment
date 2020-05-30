@@ -5,6 +5,7 @@ namespace Wappointment\Messages;
 use Wappointment\Models\Reminder;
 use Wappointment\Models\Client;
 use Wappointment\Models\Appointment;
+use Wappointment\Services\Settings;
 
 class ClientBookingConfirmationEmail extends AbstractEmail
 {
@@ -13,6 +14,7 @@ class ClientBookingConfirmationEmail extends AbstractEmail
     protected $client = null;
     protected $appointment = null;
     protected $icsRequired = true;
+    public $test = false;
 
     const EVENT = Reminder::APPOINTMENT_CONFIRMED;
 
@@ -21,6 +23,11 @@ class ClientBookingConfirmationEmail extends AbstractEmail
 
         if (!$this->prepareClientEmail($client, $appointment, static::EVENT)) {
             return false;
+        }
+
+        if (!empty($client->options['test_appointment'])) {
+            $this->subject = '[TEST_EMAIL]' . $this->subject;
+            $this->test = true;
         }
 
         if ($this->icsRequired) {

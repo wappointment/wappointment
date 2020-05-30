@@ -23,6 +23,7 @@ trait PreparesClientEmail
         }
 
         $this->subject = $email->subject;
+
         $this->body = $email->getHtmlBody($appointment);
         return true;
     }

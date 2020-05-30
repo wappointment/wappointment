@@ -43,6 +43,7 @@ return [
     'files-whitelist' => [
         'app/required.php',
         'app/Transports/WpMailPatched.php',
+        'app/Services/IcsGenerator.php',
     ],
 
     // When scoping PHP files, there will be scenarios where some of the code being scoped indirectly references the

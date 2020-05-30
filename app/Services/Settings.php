@@ -89,18 +89,20 @@ class Settings
                 'port' => '',
                 'username' => '',
                 'password' => '',
+                'wpmail_html' => false
             ],
             'reschedule_link' => 'Reschedule',
             'cancellation_link' => 'Cancel',
             'save_appointment_text_link' => 'Save to calendar',
             'new_booking_link' => 'Book a new appointment',
-            'booking_page' => false
+            'booking_page' => 0,
+            'show_welcome' => false
         ];
     }
 
     public static function getFromName()
     {
-        return ucfirst(WPHelpers::currentUserName()) . ' from ' . \WappointmentLv::blogname();
+        return ucfirst(WPHelpers::currentUserName());
     }
 
     public static function getFromEmail()

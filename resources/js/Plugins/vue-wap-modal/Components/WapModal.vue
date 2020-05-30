@@ -117,7 +117,7 @@ export default {
   height: 33px;
   width: 4px;
   position: absolute;
-  background-color: #fff;
+  background-color: #484848;
 }
 .wapmodal-content .wapmodal-header .close:before {
   transform: translateX(15px) rotate(45deg);

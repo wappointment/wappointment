@@ -32,7 +32,7 @@ class WizardController extends RestController
 
         if ($this->last_step == $request->input('step')) {
             if (!empty($request->input('booking_page_id'))) {
-                Settings::save('booking_page', $request->input('booking_page_id'));
+                Settings::save('booking_page', (int) $request->input('booking_page_id'));
             }
             return ['message' => 'Done with the setup. Let\'s get booked!'];
         }

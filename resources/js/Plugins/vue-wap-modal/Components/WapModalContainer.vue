@@ -11,7 +11,7 @@
       <WapModal v-if="show" :show="show" 
       :loader="loader" :screenshot="screenshot" :options="options" :prompt="prompt" 
       @hide="hideModal"  @canceled="canceled" @confirmed="confirmed">
-            <h4 class="modal-title text-white" slot="title">{{ title }}</h4>
+            <h4 class="modal-title" slot="title">{{ title }}</h4>
             <div v-if="content" v-html="content"></div>
       </WapModal>
     </div>

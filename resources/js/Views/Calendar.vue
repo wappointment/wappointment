@@ -84,6 +84,55 @@
                 <Regav noback></Regav>
                 <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">Close</button>
               </WapModal>
+
+              <WapModal :show="showWelcomePopup" @hide="hideWelcome">
+                <h1 slot="title" class="modal-title">Yeahhhh! You're done!</h1>
+                <div v-if="!welcomeComplete">
+                  <h2 class="text-center">Congrats!</h2>
+                  <h5 class="text-center" v-if="viewData.booking_page_id">You are ready to get booked</h5>
+                  <h5 class="text-center" v-else>You are almost set, only you need to setup your booking widget</h5>
+                  <div class="card d-flex flex-row justify-content-between">
+                    <div class="h5 my-1 d-flex align-items-center">
+                      <span class="dashicons dashicons-yes-alt text-success mr-2"></span> 
+                      <span>Availability is set, you have <strong>{{ totalSlots }} slots available</strong> this week</span>
+                    </div> 
+                  </div>
+                  <div class="card d-flex flex-row justify-content-between">
+                    <div class="h5 my-1 d-flex align-items-center">
+                      <span class="dashicons dashicons-yes-alt text-success mr-2"></span> 
+                      <span>You provide <strong>{{ viewData.service.name }}</strong> lasting {{ viewData.service.duration }}min</span>
+                    </div> 
+                  </div>
+                  <BookingPageButton v-if="showWelcomePopup" :title="getTitleShowWelcome" :viewData="viewData" @saved="savedPage"/>
+                  <div class="card d-flex flex-row justify-content-between">
+                    <div class=" my-1 d-flex align-items-center">
+                      <span class="dashicons dashicons-testimonial text-muted d-none d-sm-block"></span> 
+                      <div>
+                        <h3>One last thing!</h3>
+                        <p>You need to test that emails are working, either you can try to book yourself on your own or we can test it for you.</p>
+                        <div>
+                            <InputPh v-model="viewData.subscribe_email" ph="Send result to email"/>
+                            <button type="button"  class="btn btn-primary align-self-start" @click.prevent.stop="sendTestBooking">Send test email to Wappointment</button>
+                            <div class="ml-2 small text-muted">
+                              We will generate a test booking and will reply to the confirmation email if we receive it.
+                            </div>
+                            <div class="ml-2 small text-muted">We will send you the result on this email : {{ viewData.subscribe_email }}</div>
+                        </div>
+                        <div class="my-2">
+                          <button type="button" class="btn btn-secondary btn-sm" @click.prevent.stop="sendIgnore">Ignore</button>
+                        </div>
+                      </div>
+                    </div> 
+                  </div>
+                </div>
+                <div v-else>
+                  <div class="text-center mt-4 bg-light rounded p-3 border-secondary">
+                    <div class="h6">The next page you will see, is central in Wappointment, that's where you will see your new appointments and manage your availability</div>
+                    <img src="https://ps.w.org/wappointment/assets/screenshot-2.gif?rev=2301252" class="text-center rounded">
+                  </div>
+                </div>
+                
+              </WapModal>
             </div>
       </div>
     </div>
@@ -93,6 +142,8 @@
 import Regav from './Subpages/Regav'
 import EventService from '../Services/V1/Event'
 import StatusService from '../Services/V1/Status'
+import WappointmentService from '../Services/V1/Wappointment'
+
 import Intervals from '../Standalone/intervals'
 import Helpers from '../Standalone/helpers'
 import TimeZones from '../Components/TimeZones'
@@ -101,8 +152,10 @@ import FullCalendarWrapper from '../Components/FullCalendarWrapper'
 import AdminAppointmentBooking from '../Components/AdminAppointmentBooking'
 import AdminStatusBusyConfirm from '../Components/AdminStatusBusyConfirm'
 import AdminStatusFreeConfirm from '../Components/AdminStatusFreeConfirm'
+import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import abstractView from './Abstract'
 import momenttz from '../appMoment'
+import BookingPageButton from '../Components/Widget/BookingPageButton'
 
 import AppointmentRender from './Calendar/AppointmentRender'
 let mixins_object = window.wappointmentExtends.filter('BackendCalendarMixins', {AppointmentRender:AppointmentRender})
@@ -114,6 +167,9 @@ for (const key in mixins_object) {
 }
 
 let calendar_components = window.wappointmentExtends.filter('BackendCalendarComponents', {
+      InputPh: window.wappoGet('InputPh'),
+      SubscribeNewsletter,
+      BookingPageButton,
       TimeZones,
       ControlBar,
       Regav,
@@ -135,7 +191,7 @@ export default {
     callback: undefined,
     viewingFreeSlot: false,
     currentView: 'timeGridWeek',
-    
+    showWelcomePopup: false,
     showRegularAv: false,
     clientSelected: false,
     viewName: 'calendar',
@@ -170,13 +226,17 @@ export default {
     daysProperties: false,
     serviceEvent: null,
     serviceStatus: null,
+    serviceWappointment: null,
     openconfirm: false,
-    hasBeenSetCalProps: false
+    hasBeenSetCalProps: false,
+    welcomeComplete: false,
   }),
 
   created(){
     this.serviceEvent = this.$vueService(new EventService)
     this.serviceStatus = this.$vueService(new StatusService)
+    this.serviceWappointment = this.$vueService(new WappointmentService)
+    
     if(window.savedQueries!== undefined && [null,undefined].indexOf(window.savedQueries.open_confirm) === -1 && window.savedQueries.open_confirm > 0) {
       this.openconfirm = window.savedQueries.open_confirm
     }
@@ -196,6 +256,9 @@ export default {
   },
  
  computed: {
+   getTitleShowWelcome(){
+     return this.viewData.booking_page_id === 0? 'Booking page missing':'Your booking page has been created'
+   },
     isToday(){
       return this.firstDay!== undefined && this.lastDay !== undefined && this.firstDay.unix() < momenttz().unix() && this.lastDay.unix() > momenttz().unix()
     },
@@ -303,6 +366,28 @@ export default {
     },
  },
   methods: {
+    sendTestBooking(){
+      this.request(this.sendTestBookingRequest, false, undefined,false,  this.closeAndRefreshWelcome)
+    },
+    async sendTestBookingRequest() {
+        return await this.serviceWappointment.call('sendtestbooking', {email: this.viewData.subscribe_email})
+    },
+    sendIgnore(){
+      this.request(this.sendIgnoreRequest, false, undefined,false,  this.closeAndRefreshWelcome)
+    },
+    async sendIgnoreRequest() {
+        return await this.serviceWappointment.call('sendignore')
+    },
+
+    closeAndRefreshWelcome(e){
+      this.welcomeComplete = true
+      this.refreshEvents()
+    },
+    
+    savedPage(page_id){
+      this.settingSave('booking_page', page_id)
+      this.refreshInitValue()
+    },
     fcalReady(){
       this.fcIsReady=true
     },
@@ -358,6 +443,11 @@ export default {
       this.showRegularAv = false
       this.refreshEvents()
     },
+
+    hideWelcome(){
+      this.showWelcomePopup = false
+    },
+
 
     hoverIndicatorRegister(){
       let selectedTz = this.selectedTimezone 
@@ -502,6 +592,7 @@ export default {
             let initTimezone = (window.savedQueries !== undefined)? window.savedQueries.timezone:this.viewData.timezone
             this.timezone = initTimezone // staff timezone
             this.selectedTimezone = initTimezone // display timezone
+            this.showWelcomePopup = this.viewData.showWelcome
           }
 
           if(this.loadedAfter !== undefined) this.loadedAfter()
@@ -1822,5 +1913,24 @@ export default {
   color: #fff;
 }
 
+
+.calendar-wrap .card {
+  padding: .5em 1em;
+  max-width: 100%;
+  border-radius: 2rem;
+}
+
+.calendar-wrap .dashicons-testimonial{
+  font-size: 5rem;
+  width: 8rem;
+  height: 100%;
+  padding: 3rem 0;
+  border-radius: 1rem;
+  margin: 0 1rem;
+}
+
+.calendar-wrap .welcome-list li{
+  margin-bottom:0;
+}
   
 </style>

@@ -16,6 +16,7 @@
                 </div>
             </div>
             <WapModal :show="edit" @hide="close" large>
+                <h4 slot="title" class="modal-title">Select an Image</h4>
                 <div>
                     <div v-if="selected_image !== null">
                         <div class="btn btn-secondary" 

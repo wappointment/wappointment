@@ -30,18 +30,19 @@
     animation-name: slideInTop;
     animation-duration: .4s;
     min-width: 600px;
-    border: 1px solid #929292;
-    overflow: auto;
+    overflow: hidden;
+    border-radius: 2rem;
   }
   .wapmodal-content.large {
     width: 90%;
     height: 90%;
+    border-radius: 2rem;
   }
 
-  .wapmodal-content.standard.noscroll {
+/*   .wapmodal-content.standard.noscroll {
     overflow: unset !important;
     border-radius: 0 0 0 0;
-  }
+  } */
 
   .wapmodal-content.screenshot {
     position: absolute;
@@ -52,6 +53,8 @@
     max-height: 80%;
     animation-name: slideIn;
     animation-duration: .4s;
+    overflow: auto;
+    border-radius: 2rem;
   }
 
   @media only screen and (max-width: 600px) {
@@ -75,19 +78,21 @@
   
   .wapmodal .wapmodal-header {
     padding: 2px 32px;
-    background-color: #484848;
-    color: #fff;
+    background-color: #dbdbdb;
+    color: #4d4d4d;
   }
   .wapmodal .wapmodal-header .modal-title {
     text-align: center;
     margin: .6rem 0;
-    color: #fff;
+    color: #4d4d4d;
   }
   
   .wapmodal .wapmodal-body {
-      padding: 2px 16px;
+      padding: 1rem;
       overflow: auto;
       background-color: #fff;
+      overflow: scroll;
+      height: 80%;
   }
 
   

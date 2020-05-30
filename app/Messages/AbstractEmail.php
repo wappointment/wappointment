@@ -24,7 +24,7 @@ abstract class AbstractEmail extends AbstractMessage
 
         $this->renderer = new FoundationEmail();
 
-        if (Settings::getStaff('email_logo')) {
+        if ($this->admin === false && Settings::getStaff('email_logo')) {
             $this->addLogo(Settings::getStaff('email_logo'), 'full');
         }
     }

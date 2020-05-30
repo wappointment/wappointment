@@ -64,7 +64,7 @@ class ViewsData
     {
 
         return [
-            'booking_page_id' => Settings::get('booking_page'),
+            'booking_page_id' => (int) Settings::get('booking_page'),
             'widget' => (new WidgetSettings)->get(),
         ];
     }
@@ -113,7 +113,12 @@ class ViewsData
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'preferredCountries' => Service::getObject()->getCountries(),
             'buffer_time' => Settings::get('buffer_time'),
-            'widgetOptions' => (new \Wappointment\Services\WidgetSettings)->get()
+            'widget' => (new \Wappointment\Services\WidgetSettings)->get(),
+            'booking_page_id' => (int) Settings::get('booking_page'),
+            'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
+            'showWelcome' => Settings::get('show_welcome'),
+            'subscribe_email' => Settings::get('email_notifications'),
+            'welcome_site' => get_site_url()
         ]);
     }
 
@@ -138,6 +143,8 @@ class ViewsData
             'hours_before_rescheduling_allowed' => Settings::get('hours_before_rescheduling_allowed'),
             'timezone' => Settings::getStaff('timezone'),
             'widget' => (new WidgetSettings)->get(),
+            'booking_page_id' => (int) Settings::get('booking_page'),
+            'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
             'config' => [
                 'service' => Service::get(),
                 'approval_mode' => Settings::get('approval_mode'),

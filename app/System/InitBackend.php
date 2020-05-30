@@ -3,6 +3,7 @@
 namespace Wappointment\System;
 
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Services\Settings;
 
 class InitBackend
 {
@@ -20,6 +21,7 @@ class InitBackend
         if ($isInstalledAndUpdated) {
             add_action('admin_menu', [$this, 'registerMenuSubs']);
             add_action('admin_init', [$this, 'enqueueBackendAlways']);
+            add_filter('display_post_states', [$this, 'addDisplayPostStates'], 12, 2);
         }
         if (WPHelpers::isPluginPage()) {
             add_action('admin_init', [$this, 'enqueueBackendPlugin']);
@@ -27,6 +29,16 @@ class InitBackend
         }
     }
 
+
+    public function addDisplayPostStates($post_states, $post)
+    {
+
+        if ($post->ID === Settings::get('booking_page')) {
+            $post_states['wappo_booking_page'] = 'Wappointment Booking Page';
+        }
+
+        return $post_states;
+    }
     public function registerMenuRoot()
     {
         $this->menus = new Menus();

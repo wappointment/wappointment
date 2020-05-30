@@ -90,6 +90,14 @@ class Main extends AbstractRoutes
                     'controller' => 'WappointmentController',
                     'hint' => 'SubscribeAdmin'
                 ],
+                '/wappointment/sendtestbooking' => [
+                    'method' => 'sendTestBooking',
+                    'controller' => 'WappointmentController',
+                ],
+                '/wappointment/sendignore' => [
+                    'method' => 'sendIgnoreBooking',
+                    'controller' => 'WappointmentController',
+                ],
                 '/addons/install' => [
                     'method' => 'install',
                     'controller' => 'AddonsController'

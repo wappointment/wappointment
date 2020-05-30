@@ -1,11 +1,17 @@
 <template>
-  <div class="container-fluid m-4">
+  <div class="container m-4">
     <h1>Welcome to Wappointment</h1>
     <p class="h6 text-muted">Let's start with a quick setup</p>
+    
     <p class="mt-4">
        <button class="btn btn-primary btn-xl" @click="wizardStep1">Start setup</button>
     </p>
+    
     <Notifications :messages="installationErrors" :title="mainInstallationError"></Notifications>
+    <div class="small">
+      <div>Please, contact us if a problem occurs during the installation.</div>
+      <div>You can reach us at <a href="https://wappointment.com/support" target="_blank">https://wappointment.com/support</a></div>
+    </div>
   </div>
 </template>
 

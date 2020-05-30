@@ -2,11 +2,16 @@
 export default {
     methods:{
         getClientAppointment(appointment){
+          let testAppointment = ''
+          if(appointment.extendedProps.client.options !== undefined && appointment.extendedProps.client.options.test_appointment !== undefined){
+            testAppointment = 'This is a test appointment, you can delete it safely'
+          }
             return`<div>
                     <div>${this.getClientAvatarName(appointment)} </div>
                     <div>Email: ${appointment.extendedProps.client.email} </div>
-                    ${this.getAllAppointmentOptions(appointment)}
-                    </div>`
+                    ${this.getAllAppointmentOptions(appointment)}`+
+                    (testAppointment == '' ? '':`<div class="text-primary">${testAppointment}</div>`)
+                   +`</div>`
 
         },
         getAppointmentInfoHTML(appointment, delta = false){
@@ -79,6 +84,7 @@ export default {
       getAppointmentHtml(event){
 
         if(event.extendedProps.client === null) return ''
+        
         return `<div class="d-flex">
                   <div> ${this.getClientAvatarSize(event)} </div>
                   <div class="ml-1">

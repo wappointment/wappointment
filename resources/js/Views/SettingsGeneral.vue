@@ -12,10 +12,13 @@
 
         <LargeButton @click="goToWidgetSetup" label="Booking Widget Editor" :is_set="viewData.is_widget_set" ></LargeButton>
 
+        <BookingPageButton :viewData="viewData" @saved="savedPage"/>
+        
         <div class="card p-2 px-3">
           <div class="h5">Scheduling preferences</div>
           <hr/>
           <div>
+            
             <div class="row my-2">
               <label for="approval-mode" class="col-sm-3">Approval mode</label>
               <div class="col-sm-4">
@@ -125,6 +128,7 @@ import weekDays from "../Components/weekDays"
 import RequestMaker from '../Modules/RequestMaker'
 import AbstractListing from './AbstractListing'
 import DurationCell from '../Components/BookingForm/DurationCell'
+import BookingPageButton from '../Components/Widget/BookingPageButton'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMapMarkedAlt, faPhone, faCalendarCheck } from '@fortawesome/free-solid-svg-icons'
 import { faSkype} from '@fortawesome/free-brands-svg-icons'
@@ -136,7 +140,7 @@ export default {
   
   mixins: [ hasBreadcrumbs],
   components: window.wappointmentExtends.filter('SettingsGeneralComponents', { 
-    Service, Regav, Widget , EditCancelPage, LargeButton, AbstractListing, FontAwesomeIcon, DurationCell, weekDays
+     BookingPageButton, Service, Regav, Widget , EditCancelPage, LargeButton, AbstractListing, FontAwesomeIcon, DurationCell, weekDays
     }, 
     {
       extends: abstractView, 
@@ -183,7 +187,10 @@ export default {
     },
   },
   methods: {
-
+    savedPage(page_id){
+      this.settingSave('booking_page', page_id)
+      this.refreshInitValue()
+    },
     hideModal(){
       this.showModal = false
       this.showRegav = false
@@ -228,7 +235,7 @@ export default {
       this.isToggled[element] = !this.isToggled[element]
     },
     changed(key) {
-      this.settingSave(key, this.viewData[key]);
+      this.settingSave(key, this.viewData[key])
     },
    
   }

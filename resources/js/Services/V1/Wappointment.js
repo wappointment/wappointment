@@ -11,6 +11,15 @@ export default class WappointmentService extends ApiV1 {
                 method: 'post',
                 route: '/wappointment/contact',
             },
+            sendtestbooking: { 
+                method: 'post',
+                route: '/wappointment/sendtestbooking',
+            },
+            sendignore: { 
+                method: 'post',
+                route: '/wappointment/sendignore',
+            },
+            
         };
     }
 
