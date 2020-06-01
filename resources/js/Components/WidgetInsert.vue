@@ -33,7 +33,7 @@
 import ClickCopy from '../Fields/ClickCopy'
 import ShortcodeGenerator from './Widget/ShortcodeGenerator'
 import Helpers from '../Modules/Helpers'
-import VideoIframe from './VideoIframe'
+import VideoIframe from '../Ne/VideoIframe'
 export default {
     mixins: [Helpers], 
     props:['title'],  

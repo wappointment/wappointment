@@ -81,6 +81,7 @@ class InitBackend
             $varJs = array_merge($varJs, [
                 'updatePages' => Status::newUpdates(),
                 'helloIgnore' => Status::helloPage(),
+                'defaultEmail' => wp_get_current_user()->user_email,
                 'days' => Status::installedForXDays(),
                 'addons' =>  \Wappointment\Services\Addons::getActive()
             ]);

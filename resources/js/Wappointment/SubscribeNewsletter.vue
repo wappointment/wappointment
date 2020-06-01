@@ -68,6 +68,7 @@ export default {
             return !this.isSubscribed || this.changeEmail === true
         },
         isSubscribed() {
+            if(!this.statuses) return false
             let emailStatus = this.defaultEmailList
             return emailStatus!== false && emailStatus['lists'][this.list] !== undefined
         },

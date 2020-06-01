@@ -49,7 +49,7 @@
 <script>
 import abstractView from '../Abstract'
 import CalUrl from "../../Modules/CalUrl"
-import VideoIframe from '../../Components/VideoIframe'
+import VideoIframe from '../../Ne/VideoIframe'
 export default {
   extends: abstractView,
   mixins: [CalUrl],

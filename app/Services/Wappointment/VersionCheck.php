@@ -13,20 +13,16 @@ class VersionCheck extends API
 
     public function sitePluginsVersionCheckTriggerred($transient, $deux)
     {
-
         if ($transient === false || !isset($transient->response)) {
             return $transient;
         }
 
-        $plugins_slugs = ['wappointment-woocommerce']; //TODO cannot be hardcoded
-
-        foreach ($plugins_slugs as $plugin) {
+        foreach ($this->getWappointmentActiveSlugs() as $plugin) {
             $plugin_file = $plugin . '/index.php';
+
             if (is_plugin_active($plugin_file) && !isset($transient->response[$plugin_file])) {
                 $latestVersion = $this->latestVersion($plugin);
-                if ($latestVersion !== false &&
-                    version_compare($latestVersion, $this->getActivePluginVersion($plugin), '>')
-                ) {
+                if ($latestVersion !== false && version_compare($latestVersion, $this->getActivePluginVersion($plugin), '>')) {
                     //then there needs to be an update on that plugin
                     $transient->response[$plugin_file] = $this->pluginData($plugin, $latestVersion);
                 }
@@ -36,18 +32,31 @@ class VersionCheck extends API
         return $transient;
     }
 
+    protected function getWappointmentActiveSlugs()
+    {
+        $plugins_slugs = [];
+        foreach (array_keys(\Wappointment\Services\Addons::getActive()) as $plugin_key) {
+            $plugins_slugs[] = str_replace('_', '-', $plugin_key);
+        }
+
+        return $plugins_slugs;
+    }
+
     public function getActivePluginVersion($plugin)
     {
         $version_constant = strtoupper(str_replace('-', '_', $plugin)) . '_VERSION';
         return defined($version_constant) ? constant($version_constant) : 0;
     }
+
     public function pluginData($plugin_slug = null, $new_version = false)
     {
+        $id_url = $this->call('/' . $plugin_slug);
         $data = new \stdClass;
-        $data->id      = $this->call($plugin_slug);
+        $data->id      = $id_url;
         $data->slug    = $plugin_slug;
+        $data->plugin    = $plugin_slug . '/index.php';
         $data->package = $this->call('/api/addons/package/' . $plugin_slug . '/' . $this->getSiteKey());
-        $data->url = $this->call($plugin_slug);
+        $data->url = $id_url;
 
         if ($new_version !== false) {
             $data->new_version = (string) $new_version;

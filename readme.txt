@@ -146,6 +146,11 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 1.5.1 - 2020-06-?? =
+* Fixed update notifications
+* Corrected addons update issue
+* added spread the word section
+
 = 1.5.0 - 2020-05-29 =
 * Improved wizard and onboarding
 * Creating a booking page during onboarding is now a breeze

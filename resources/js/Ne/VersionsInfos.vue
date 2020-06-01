@@ -27,8 +27,8 @@
 </template>
 <script>
 import abstractView from '../Views/Abstract'
-import SlideIn from './SlideIn'
-import Count from './Count'
+import SlideIn from '../PopPanels/SlideIn'
+import Count from '../Components/Count'
 import Helpers from '../Modules/Helpers'
 export default {
     extends: abstractView,

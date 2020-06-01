@@ -19,8 +19,8 @@
 
 <script>
 import Contact from '../Wappointment/Contact'
-import abstractview from './Abstract'
-import VersionsInfos from '../Components/VersionsInfos'
+import abstractview from '../Views/Abstract'
+import VersionsInfos from './VersionsInfos'
 export default {
   extends: abstractview,
     components: {Contact, VersionsInfos},

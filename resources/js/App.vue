@@ -14,9 +14,9 @@
 </template>
 
 <script>
-import VersionsInfos from './Components/VersionsInfos'
-import HelloPage from './Components/HelloPage'
-import PendingDBUpdate from './Components/PendingDBUpdate'
+import VersionsInfos from './Ne/VersionsInfos'
+import HelloPage from './Ne/HelloPage'
+import PendingDBUpdate from './Ne/PendingDBUpdate'
 export default {
     components: {VersionsInfos, HelloPage, PendingDBUpdate},
     data: () => ({

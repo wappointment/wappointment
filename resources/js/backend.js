@@ -2,7 +2,7 @@ __webpack_public_path__ = apiWappointment.resourcesUrl;
 import Vue from './appVue'
 import ClickCopy from './Fields/ClickCopy'
 import InputPh from './Fields/InputLabelMaterial'
-import VideoIframe from './Components/VideoIframe'
+import VideoIframe from './Ne/VideoIframe'
 window.wappointmentExtends.store('commons', {InputPh, ClickCopy, VideoIframe})
 
 import VueRouter from 'vue-router'
@@ -40,7 +40,7 @@ Vue.use(VueRouter)
 const CalendarPage = () => import(/* webpackChunkName: "group-calendar" */ './Views/Calendar')
 const SettingsPage = () => import(/* webpackChunkName: "group-settings" */ './Views/Settings')
 const AddonsPage = () => import(/* webpackChunkName: "group-addons" */ './Views/Addons')
-const HelpPage = () => import(/* webpackChunkName: "group-help" */ './Views/Help')
+const HelpPage = () => import(/* webpackChunkName: "group-help" */ './Ne/Help')
 
 const WizardPage = () => import(/* webpackChunkName: "group-wizard" */ './Views/Subpages/Wizard')
 const Wizard1Page = () => import(/* webpackChunkName: "group-wizard" */ './Views/Subpages/Wizard1')
