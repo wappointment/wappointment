@@ -7,8 +7,8 @@
        <button class="btn btn-primary btn-xl" @click="wizardStep1">Start setup</button>
     </p>
     
-    <Notifications :messages="installationErrors" :title="mainInstallationError"></Notifications>
-    <div class="small">
+    <Notifications v-if="installationErrors.length > 0" :messages="installationErrors" :title="mainInstallationError"></Notifications>
+    <div v-else class="small">
       <div>Please, contact us if a problem occurs during the installation.</div>
       <div>You can reach us at <a href="https://wappointment.com/support" target="_blank">https://wappointment.com/support</a></div>
     </div>

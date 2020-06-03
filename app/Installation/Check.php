@@ -6,10 +6,15 @@ class Check
 {
     public function getErrors()
     {
-        return array_merge(
+        $errors = array_merge(
             (new \Wappointment\Installation\Checks\Php())->getErrors(),
             (new \Wappointment\Installation\Checks\Database())->getErrors(),
             (new \Wappointment\Installation\Checks\Files())->getErrors()
         );
+        if (empty($errors)) {
+            return (new \Wappointment\Installation\Checks\DatabasePrivileges())->getErrors();
+        }
+
+        return $errors;
     }
 }

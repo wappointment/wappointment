@@ -1,7 +1,8 @@
 <template>
     <div class="d-flex justify-content-between ddays" >
         <div v-for="(day, idday) in week" 
-        :class="getClassAvailability(day,idweek, idday)" role="button"  @click="$emit('selectDay',day,idweek)" :data-tt="hasTooltip(day)">
+        :class="getClassAvailability(day,idweek, idday)" role="button"  
+        @click="$emit('selectDay',day,idweek)" :data-tt="hasTooltip(day)">
             <template v-if="day > 0">
                 <span v-if="noAvailability(day)"
                     class="no-avail">
@@ -11,6 +12,7 @@
                     {{ day }}
                 </span>
             </template>
+            <span v-else></span>
         </div>
     </div>
 </template>
@@ -78,8 +80,14 @@ export default {
 }
 </script>
 <style>
-.btn.no-avail span, .btn.avail span {
-    position: relative;
-    bottom: 2px;
+.btn.no-avail span, 
+.btn.avail span, 
+.btn-secondary.btn-round span {
+    display: block;
+    line-height: 1.5em;
+    height: 1.5em;
+    width: 1.5em;
+    padding:0;
+    margin:0;
 }
 </style>

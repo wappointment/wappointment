@@ -1,9 +1,11 @@
 <template>
     <div v-if="mounted" class="calendarMonth">
         <div class="d-flex justify-content-between align-items-center">
-            <span @click="prevMonth" class="btn-secondary btn btn-round" role="button" :class="{'btn-disabled' : isCurrentMonth}" :disabled="isCurrentMonth"><</span> 
+            <span @click="prevMonth" class="btn-secondary btn btn-round btn-top" 
+            role="button" :class="{'btn-disabled' : isCurrentMonth}" :disabled="isCurrentMonth"><span><</span></span> 
             <div>{{ getMonthYear() }}</div> 
-            <span @click="nextMonth" class="btn-secondary btn btn-round" role="button" :class="{'btn-disabled' : isLastMonth}" :disabled="isLastMonth" >></span>
+            <span @click="nextMonth" class="btn-secondary btn btn-round btn-top" role="button" 
+            :class="{'btn-disabled' : isLastMonth}" :disabled="isLastMonth" ><span>></span></span>
         </div>
         <weekHeader :weekHeader="weekHeader"/>
         <transition :name="'slide-fade-side-sm-' + sideMonth">

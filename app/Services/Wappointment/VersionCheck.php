@@ -51,16 +51,16 @@ class VersionCheck extends API
     public function pluginData($plugin_slug = null, $new_version = false)
     {
         $id_url = $this->call('/' . $plugin_slug);
+
         $data = new \stdClass;
+        if ($new_version !== false) {
+            $data->new_version = (string) $new_version;
+        }
         $data->id      = $id_url;
         $data->slug    = $plugin_slug;
         $data->plugin    = $plugin_slug . '/index.php';
         $data->package = $this->call('/api/addons/package/' . $plugin_slug . '/' . $this->getSiteKey());
         $data->url = $id_url;
-
-        if ($new_version !== false) {
-            $data->new_version = (string) $new_version;
-        }
 
         return $data;
     }

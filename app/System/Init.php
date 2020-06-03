@@ -14,7 +14,13 @@ class Init
         $this->is_installed = $this->isInstalledAndUpdated();
 
         WPHelpers::requestCapture();
-        Database::capsule();
+        if (defined('WAPPOINTMENT_PDO_FAIL')) {
+            //Database::capsule();
+            // maybe we should find a way to run without pdo_mysql
+        } else {
+            Database::capsule();
+        }
+
 
         if ($this->is_installed) {
             Listeners::init();

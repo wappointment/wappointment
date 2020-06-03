@@ -469,10 +469,27 @@ export default {
 </script>
 
 <style >
-.wap-front .btn-round {
+
+.wap-front .btn-round,
+.wap-front .calendarMonth .ddays div {
+    min-width: 1.5em;
+    min-height: 1.5em;
     border-radius: 2em;
-    width: 2.3em;
-    height: 2.3em;
+    text-align: center;
+    font-size: .75em;
+    padding: .5em;
+    transition: all .3s ease-in-out;
+    margin: 0;
+}
+
+.wap-front .btn-top.btn-round {
+    min-width: 1em;
+    min-height: 1em;
+}
+.wap-front .btn-top.btn-round span {
+    width: 1em;
+    height: 1em;
+    line-height: 1em;
 }
 
 .wap-front .btn.btn-secondary.btn-round.btn-disabled, 

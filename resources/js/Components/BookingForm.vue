@@ -424,15 +424,7 @@ export default {
     box-shadow: 0px 8px 10px 0 rgba(0,0,0,.08);
 }
 
-.wap-front .calendarMonth .ddays div {
-    width: 2.4em;
-    height: 2.4em;
-    text-align: center;
-    font-size: .75em;
-    padding: .5em;
-    transition: all .3s ease-in-out;
-    margin: 0;
-}
+
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;
     margin: .4em 0;

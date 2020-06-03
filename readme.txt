@@ -149,6 +149,8 @@ It requires work on your end but keeps your site safe and optimized.
 = 1.5.1 - 2020-06-?? =
 * Fixed update notifications
 * Corrected addons update issue
+* improved style compatibility booking form
+* added error detection on installation
 * added spread the word section
 
 = 1.5.0 - 2020-05-29 =

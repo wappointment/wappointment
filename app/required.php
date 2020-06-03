@@ -5,9 +5,6 @@ define('WAPPOINTMENT_DB_FORMAT', 'Y-m-d H:i');
 
 
 
-register_activation_hook(WAPPOINTMENT_FILE, ['WappointmentLv', 'activating']);
-
-
 
 /**
  * Simple widget insertion in php code useful for custom made versions
@@ -219,11 +216,56 @@ class WappointmentLv
     {
         return html_entity_decode($string, ENT_QUOTES);
     }
-    public static function activating()
+
+
+    public static function minRequirements()
     {
+        $fails = [];
+        if (!extension_loaded('pdo')) {
+            $fails[] = 'PDO extension missing in your PHP configuration';
+            if (!defined('WAPPOINTMENT_PDO_FAIL')) {
+                define('WAPPOINTMENT_PDO_FAIL', true);
+            }
+        }
+
         if (version_compare(PHP_VERSION, WAPPOINTMENT_PHP_MIN) < 0) {
             /* translators: %s - PHP Version number. */
-            die(sprintf(esc_html__('Minimum PHP version required %s', 'wappointment'), WAPPOINTMENT_PHP_MIN));
+            $fails[] = sprintf(esc_html__('Minimum PHP version required %s', 'wappointment'), WAPPOINTMENT_PHP_MIN);
+            if (!defined('WAPPOINTMENT_PHP_FAIL')) {
+                define('WAPPOINTMENT_PHP_FAIL', true);
+            }
         }
+        return $fails;
+    }
+}
+
+
+$installed_at = get_option('wappointment_installation_time');
+
+if (empty($installed_at)) {
+    $fails_min_req = WappointmentLv::minRequirements();
+
+    function wappo_setup_error_write()
+    {
+        echo wappo_get_error_message();
+    }
+
+    function wappo_get_error_message()
+    {
+        $fails_min_req = WappointmentLv::minRequirements();
+        $messagehtml = '';
+        if (!empty($fails_min_req)) {
+
+            $messagehtml = '<div class="notice notice-error"> Error Installing Wappointment';
+            foreach ($fails_min_req as $message) {
+                $messagehtml .= '<div>' . $message . '</div>';
+            }
+            $messagehtml .= '<div>You can ask for help here <a href="http://wappointment.com/support" target="_blank">http://wappointment.com/support</a></div></div>';
+        }
+        return $messagehtml;
+    }
+
+    if (defined('WAPPOINTMENT_PHP_FAIL') && strpos($_SERVER['REQUEST_URI'], '/wp-admin/plugins.php') !== false) {
+        add_action('admin_notices', 'wappo_setup_error_write');
     }
 }

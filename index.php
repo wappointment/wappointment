@@ -40,14 +40,24 @@ define('WAPPOINTMENT_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
 require_once WAPPOINTMENT_PATH . 'app' . DIRECTORY_SEPARATOR . 'required.php';
 
+add_action('wappointments_autoload_init', 'wappointment_starts');
+
 function get_wappointment_autoloader()
 {
     static $wappointment_loader = false;
     if ($wappointment_loader !== false) {
         return $wappointment_loader;
     }
-    $wappointment_loader = require_once WAPPOINTMENT_PATH . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-    do_action('wappointments_autoload_init');
+
+    if (!defined('WAPPOINTMENT_PHP_FAIL')) {
+        $wappointment_loader = require_once WAPPOINTMENT_PATH . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
+        do_action('wappointments_autoload_init');
+    }
 }
+
 get_wappointment_autoloader();
-new \Wappointment\System\Init();
+
+function wappointment_starts()
+{
+    new \Wappointment\System\Init();
+}

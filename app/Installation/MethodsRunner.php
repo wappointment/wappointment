@@ -21,7 +21,7 @@ class MethodsRunner
             if (\WappointmentLv::starts_with($methodName, 'can')) {
                 try {
                     $this->$methodName();
-                } catch (\WappointmentException $e) {
+                } catch (\Exception $e) {
                     $this->setError($e->getMessage(), $class->name);
                 }
             }
