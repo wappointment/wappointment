@@ -185,7 +185,7 @@ export default {
 .contact-wrapper {
   padding: 2rem;
   border: 2px solid #eee;
-  max-width: 500px;
+  min-width: 580px;
 }
 
 .hidden-data {
