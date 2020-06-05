@@ -149,7 +149,7 @@ export default {
   line-height: 1.5;
   border-radius: 0.25em;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-  margin: 0.2em;
+  margin: 0;
   background-color: transparent;
   background: transparent;
   height: auto;

@@ -121,6 +121,12 @@ export default {
     width: 100%;
     overflow: hidden;
 }
+.btn.btn-slot,
+.btn.btn-slot:not(:disabled):not(.disabled):active, 
+.btn.btn-slot:not(:disabled):not(.disabled).active{
+    margin: 0.2em;
+}
+
 .ds-1 .btn.btn-slot {
     width: 31%;
 }
