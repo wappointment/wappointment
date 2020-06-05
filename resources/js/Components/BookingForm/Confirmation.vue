@@ -25,7 +25,7 @@
         <div v-if="skypeSelected">
             <p>{{options.confirmation.skype}} <strong>{{ getClientSkype }}</strong> </p>
         </div>
-        <div class="mb-2">
+        <div class="my-2">
             <transition name="slide-fade">
                 <SaveButtons v-if="showSaveButtons" :service="service" :showResult="showResult" :appointment="appointment"
                 :staff="staff" :currentTz="timeprops.currentTz" :physicalSelected="physicalSelected"></SaveButtons>

@@ -1,10 +1,10 @@
-=== Appointments Bookings - Wappointment ===
+=== Appointment Booking for WordPress - Wappointment ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
 Requires at least: 4.7
 Tested up to: 5.4
 Requires PHP: 7.0
-Stable tag: 1.5.0
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -146,11 +146,12 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 1.5.1 - 2020-06-?? =
+= 1.5.1 - 2020-06-05 =
 * Fixed update notifications
 * Corrected addons update issue
 * improved style compatibility booking form
-* added error detection on installation
+* improved weekly and daily appointments notifications for admins
+* improved error detection on installation
 * added spread the word section
 
 = 1.5.0 - 2020-05-29 =

@@ -186,6 +186,7 @@ export default {
   padding: 2rem;
   border: 2px solid #eee;
   min-width: 580px;
+  max-width: 600px;
 }
 
 .hidden-data {

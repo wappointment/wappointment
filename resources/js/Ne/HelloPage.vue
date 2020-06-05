@@ -40,7 +40,7 @@
                                         <div class="d-flex align-items-center my-4 justify-content-between">
                                             <div><strong data-tt="Make us stronger for new users">1 - Rate us on WordPress.org</strong></div>
                                             <div>
-                                                <a data-tt="Give us exposure" class="btn btn-outline-secondary text-dark ml-2" 
+                                                <a class="btn btn-outline-secondary text-dark ml-2" 
                                                 href="https://wordpress.org/support/plugin/wappointment/reviews/#new-post" target="_blank">
                                                     <span class="dashicons dashicons-star-filled"></span>
                                                     <span class="dashicons dashicons-star-filled"></span>
@@ -78,7 +78,7 @@
                                             <div>
                                                 <div>Nobody talks better about us than our own users.</div> 
                                                 <div>Have a blog, or a vlog? Want to write a full review about Wappointment? </div>
-                                                <div><a href="https://wappointment.com/support" target="_blank">Contact us</a> we will give you a licence for the rest of our addons.</div>
+                                                <div><a href="https://wappointment.com/support" target="_blank">Contact us</a> we will give you a licence for our whole addons' suite.</div>
                                             </div>
                                         </div>
                                     </div>

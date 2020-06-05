@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Plugin Name: Wappointment
- * Version: 1.5.0
+ * Version: 1.5.1
  * Plugin URI: https://wappointment.com
  * Description: Appointment booking system for personal coaches, teachers, therapists and service professionals of all kind
  * Author: Wappointment
@@ -31,7 +31,7 @@ if (!defined('ABSPATH')) {
  * GNU General Public License for more details.
  */
 
-define('WAPPOINTMENT_VERSION', '1.5.0');
+define('WAPPOINTMENT_VERSION', '1.5.1');
 define('WAPPOINTMENT_PHP_MIN', '7.0.0');
 define('WAPPOINTMENT_NAME', 'Wappointment');
 define('WAPPOINTMENT_SLUG', strtolower(WAPPOINTMENT_NAME));

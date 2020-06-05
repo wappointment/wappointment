@@ -33,11 +33,11 @@
             <div v-if="fcIsReady">
                 <WapModal v-if="bookForAclient" :show="bookForAclient" @hide="hideModal" noscroll>
                   <h4 slot="title" class="modal-title">Choose an action</h4>
-                  <h5 v-if="selectionSingleDay"> {{ startDayDisplay }} - 
+                  <h3 class="mb-4" v-if="selectionSingleDay"> {{ startDayDisplay }} - 
                     <span class="text-muted">From {{ startTimeDisplay }} until {{ endTimeDisplay }}</span>
                     <span class="small text-muted" v-if="viewData.buffer_time > 0">includes {{ viewData.buffer_time }}min buffer</span>
-                  </h5>
-                  <h5 v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h5>
+                  </h3>
+                  <h3 class="mb-4" v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h3>
                   <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!selectedChoice">
                     
                     <div class="btn btn-secondary mr-md-2  align-items-center" @click="confirmNewBooking" :class="{'fdisabled' :!selectionSingleDay}">
@@ -445,7 +445,12 @@ export default {
     },
 
     hideWelcome(){
-      this.showWelcomePopup = false
+      if(!this.welcomeComplete){
+        this.sendIgnore()
+      }else{
+        this.showWelcomePopup = false
+      }
+      
     },
 
 

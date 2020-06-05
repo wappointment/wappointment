@@ -33,6 +33,7 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
                 'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
                     . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
                 'Service: ' . Service::get()['name'],
+                'Location: ' . $appointment->getLocation(),
                 "Client's name: " . $client->name,
                 "Client's email: " . $client->email,
             ]
