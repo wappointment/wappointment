@@ -47,8 +47,8 @@ export default {
       for (const key in this.addons) {
         if (this.addons.hasOwnProperty(key)) {
           const element = this.addons[key]
-          if(element.settings!== undefined){
-            addonsWithSettings[key] = element
+         if([undefined,false].indexOf(element.settings)=== -1){
+              addonsWithSettings[key] = element
           }
         }
       }

@@ -38,7 +38,7 @@ export default {
               fields: [
                 {
                     type: 'input',
-                    label: 'Name',
+                    label: 'Service Name',
                     model: 'name',
                     cast: String,
                     styles: {'max-width':'200px'},

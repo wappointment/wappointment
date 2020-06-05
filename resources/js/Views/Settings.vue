@@ -95,7 +95,7 @@ export default {
             for (const key in addonscopy) {
                 if (addonscopy.hasOwnProperty(key)) {
                     const element = addonscopy[key]
-                    if(element.settings!== undefined){
+                    if([undefined,false].indexOf(element.settings)=== -1){
                         addonsWithSettings[key] = element
                     }
                 }
