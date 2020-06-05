@@ -3,7 +3,7 @@
       <div v-if="!show_already" class="wappo-slide-in" :class="{show: appear && disappear!==true, 'd-flex align-items-center':flex}"   :data-route="routerPath">
         <button class="btn btn-white" @click="check"><slot name="intro" ></slot></button>
       </div>
-      <WapModal :screenshot="true" :show="show" @hide="hideModal">
+      <WapModal :screenshot="true" :right="true" :show="show" @hide="hideModal">
           <h4 slot="title" class="modal-title"><slot name="modal-title"></slot></h4>
           <slot name="modal-body"></slot>
     </WapModal>
