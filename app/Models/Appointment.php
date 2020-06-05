@@ -64,14 +64,19 @@ class Appointment extends Model
 
     public function getLocation()
     {
+        $location = '';
         switch ($this->type) {
             case self::TYPE_PHYSICAL:
-                return 'Address: ' . $this->getServiceAddress();
+                $location = 'Address: ' . $this->getServiceAddress();
+                break;
             case self::TYPE_PHONE:
-                return 'By Phone';
+                $location = 'By Phone';
+                break;
             case self::TYPE_SKYPE:
-                return 'By Skype';
+                $location = 'By Skype';
+                break;
         }
+        return apply_filters('wappointment_service_location', $location, $this);
     }
 
     public function getStaffId()
@@ -174,7 +179,7 @@ class Appointment extends Model
 
     public function getServiceAddress()
     {
-        return $this->getService()->address;
+        return apply_filters('wappointment_get_service_address', $this->getService()->address, $this);
     }
 
     public function getLinkAddEventToCalendar()
