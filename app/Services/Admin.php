@@ -20,7 +20,7 @@ class Admin
         $dataClient = [
             'name' => $booking->get('name'),
             'options' => [
-                'tz' => $booking->get('timezone'),
+                'tz' => $booking->get('timezone') ?: Settings::getStaff('timezone'),
             ]
         ];
 

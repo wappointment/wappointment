@@ -8,6 +8,7 @@ class VersionCheck extends API
     public function __construct()
     {
         parent::__construct();
+        //testing version check set_site_transient('update_plugins', null);
         add_filter('pre_set_site_transient_update_plugins', [$this, 'sitePluginsVersionCheckTriggerred'], 10, 2);
     }
 
