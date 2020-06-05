@@ -26,6 +26,7 @@ class TagsReplacement
                 '[client:skype]',
 
                 '[appointment:duration]',
+                '[appointment:location]',
                 '[appointment:starts]',
                 '[appointment:linkAddEventToCalendar]',
                 '[appointment:linkRescheduleEvent]',
@@ -42,6 +43,7 @@ class TagsReplacement
                 sanitize_text_field($this->client->getSkype()),
 
                 $this->appointment->getDuration(),
+                $this->appointment->getLocation(),
                 $this->appointment->getStartsDayAndTime($this->client->getTimezone()),
                 $this->appointment->getLinkAddEventToCalendar(),
                 $this->appointment->getLinkRescheduleEvent(),

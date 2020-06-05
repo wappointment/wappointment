@@ -84,13 +84,9 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         });
         while ($startingDay->lessThanOrEqualTo($endDay)) {
             $appointmentSumarry[] = '<strong>' . $startingDay->format('D Y-m-d') . '</strong>';
-            $appointmentSumarry[] = '<hr/>';
             if (isset($appointmentGroupedByDay[$startingDay->toDateString()])) {
                 foreach ($appointmentGroupedByDay[$startingDay->toDateString()] as $appointment) {
-                    $appointmentSumarry[] =
-                        $appointment->start_at->setTimezone($this->tz)->format(Settings::get('time_format')) .
-                        ' ' . $appointment->client->name .
-                        ' / ' . $appointment->getDuration() . '<br>' . $appointment->client->email;
+                    $appointmentSumarry[] = $this->getAppointmentFormatted($appointment);
                 }
             } else {
                 $appointmentSumarry[] = '<small>No appointments for that day</small>';

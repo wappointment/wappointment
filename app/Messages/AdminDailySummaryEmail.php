@@ -72,16 +72,21 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
         $appointmentSumarry = [];
 
         foreach ($this->sections->appointments as $appointment) {
-            $appointmentSumarry[] = '<hr/>' .
-                $appointment->start_at->setTimezone($this->tz)->format(Settings::get('time_format')) .
-                ' ' . $appointment->client->name . ' / '
-                . $appointment->getDuration() . '<br>' . $appointment->client->email;
+            $appointmentSumarry[] = $this->getAppointmentFormatted($appointment);
         }
 
         if (!empty($appointmentSumarry)) {
             array_unshift($appointmentSumarry, '<strong>' . $this->date_string . '</strong>');
             $this->addRoundedSquare($appointmentSumarry);
         }
+    }
+
+    public function getAppointmentFormatted($appointment)
+    {
+        return '<hr/>' .
+            $appointment->start_at->setTimezone($this->tz)->format(Settings::get('time_format')) .
+            ' ' . $appointment->client->name . ' / '
+            . $appointment->getDuration() . ' - ' . $appointment->getLocation() . '<br>' . $appointment->client->email;
     }
 
     protected function tomorrowCarbon()

@@ -32,6 +32,7 @@ class AdminNewAppointmentEmail extends AbstractAdminEmail
                 'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
                     . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
                 'Service: ' . sanitize_text_field(Service::get()['name']),
+                'Location: ' . $appointment->getLocation(),
                 "Client's name: " . sanitize_text_field($client->name),
                 "Client's email: " . sanitize_text_field($client->email),
             ]
