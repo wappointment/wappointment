@@ -46,7 +46,7 @@ class Client extends Model
 
     public function getTimezone()
     {
-        return empty($this->options['tz']) ? '' : $this->options['tz'];
+        return empty($this->options['tz']) ? Settings::getStaff('timezone') : $this->options['tz'];
     }
 
     public function book($bookingRequest)
