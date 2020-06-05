@@ -8,13 +8,6 @@
           <template slot="modal-body">
              <div>
                  <div class="d-flex flex-wrap" v-if="!experience">
-                     <div>
-                        <figure class="m-2 mx-4 figure">
-                            <img :src="'https://ps.w.org/wappointment/assets/equipowappo.jpg?rev=2151020'" 
-                            class="img-fluid rounded" height="200" alt="Our little team of 2">
-                            <figcaption class="figure-caption text-right">Our little team of 2</figcaption>
-                        </figure>
-                    </div>
                     <div class="contact-wrapper">
                         <h2>{{ days }} days already!!</h2>
                         <p class="h6">Thank you so much for your trust in Wappointment!</p>
@@ -35,18 +28,17 @@
                                 <div>
                                     <div class="contact-wrapper" v-if="!messageSent">
                                         <div>
-                                            <div class="h3 text-center" data-tt="We need you!">Have some love? <strong>Help us grow!</strong></div>
-                                            
-                                            <div class="h2 bg-primary text-white text-center">
-                                                <div class="d-flex paralelo" style="position: relative;">
-                                                    <div class="in"></div>
-                                                    <div class="paralellogram">"And spread the word!"</div>
-                                                    <div class="out"></div>
-                                                </div>
+                                            <div class="h1 text-center" data-tt="We need you!"><strong>Help us grow!</strong></div>
+                                            <div class="text-center">   
+                                                <img :src="'https://ps.w.org/wappointment/assets/equipowappo.jpg?rev=2151020'" class="img-fluid rounded" height="200" alt="Our little team of 2">
+                                                <div>Elena and Ben Wireframing Wappointment</div>
+                                            </div>
+                                            <div class="h1 bg-primary text-white text-center m-4">
+                                                "And spread the word!"
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center my-4 justify-content-between">
-                                            <div><strong>1 - Rate us on WordPress.org</strong></div>
+                                            <div><strong data-tt="Make us stronger for new users">1 - Rate us on WordPress.org</strong></div>
                                             <div>
                                                 <a data-tt="Give us exposure" class="btn btn-outline-secondary text-dark ml-2" 
                                                 href="https://wordpress.org/support/plugin/wappointment/reviews/#new-post" target="_blank">
@@ -60,7 +52,7 @@
                                             </div>
                                         </div>
                                         <div class="d-flex align-items-center my-4 justify-content-between">
-                                            <div><strong>2 - Follow us, Like us</strong></div>
+                                            <div><strong data-tt="Give us exposure">2 - Follow us and Like us</strong></div>
                                             <div>
                                                 <div id="fb-root"></div>
                                                 <script type="application/javascript" async defer crossorigin="anonymous" src="https://connect.facebook.net/fr_FR/sdk.js#xfbml=1&version=v7.0&appId=243075756791687&autoLogAppEvents=1"></script>
@@ -77,24 +69,19 @@
                                             <script type="application/javascript" async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
                                         </div>
                                         <div class="my-2">
-                                            <div><strong>3 - Subscribe to our newsletter</strong></div>
+                                            <div><strong data-tt="You might learn a bit">3 - Subscribe to our newsletter</strong></div>
+                                            <div class="small text-muted">We'll only write you once in a while to tell you about new features, updates and tips</div>
                                             <SubscribeNewsletter list="main" :defaultEmail="getEmail" />
                                         </div>
                                         <div class="my-2">
-                                            <div><strong>4 - Talk about us</strong></div>
+                                            <div><strong data-tt="Be our hero">4 - Talk about us</strong></div>
                                             <div>
                                                 <div>Nobody talks better about us than our own users.</div> 
                                                 <div>Have a blog, or a vlog? Want to write a full review about Wappointment? </div>
-                                                <div><a href="https://wappointment.com/support" target="_blank">Contact us</a> we will give you a free licence on all of our addons so you can test them all.</div>
+                                                <div><a href="https://wappointment.com/support" target="_blank">Contact us</a> we will give you a licence for the rest of our addons.</div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div>   
-                                    <figure class="m-2 mx-4 figure">
-                                        <img :src="'https://ps.w.org/wappointment/assets/equipowappo.jpg?rev=2151020'" class="img-fluid rounded" height="200" alt="Our little team of 2">
-                                        <figcaption class="figure-caption text-right">Elena and Ben Wireframing Wappointment</figcaption>
-                                    </figure>
                                 </div>
                             </div>
                         </div>
@@ -219,25 +206,4 @@ export default {
     color:#ffb900;
 }
 
-.paralelo .in{
-    width: 35px;
-    background: #fff;
-    transform: rotate(14deg);
-    position: absolute;
-    height: 50px;
-    left: -30px;
-    top: -8px;
-}
-.paralelo .out{
-    width: 35px;
-    background: #fff;
-    transform: rotate(14deg);
-    position: absolute;
-    height: 50px;
-    right: -8px;
-    top: -4px;
-}
-.paralelo .paralellogram{
-    margin: 0 25px;
-}
 </style>
