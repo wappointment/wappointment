@@ -257,6 +257,11 @@ export default {
             },
             {
             model: "appointment",
+            key: "location",
+            label: "Appointment location"
+            },
+            {
+            model: "appointment",
             key: "starts",
             label: "Appointment date and time"
             },
