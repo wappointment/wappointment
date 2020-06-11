@@ -10,6 +10,7 @@ class Queue
 {
     const MAX_FAILURE = 3;
     const DELAY_AFTER_FAIL = 120; //in seconds
+    const DELAY_TIMEOUT_RETRY = 120;
 
     public static function process($take = 10)
     {
@@ -58,6 +59,7 @@ class Queue
         }
         self::push($job, $params, $queue, $available_at);
     }
+
     public static function push($job, $params, $queue = 'default', $available_at = 0)
     {
         $jobInsert = [
@@ -75,6 +77,23 @@ class Queue
         }
 
         return Job::create($jobInsert);
+    }
+
+    public static function resetTimedoutJobs()
+    {
+
+        $jobsTimedOut = Job::where('reserved_at', '>', 0)->where('reserved_at', '<', time() - static::DELAY_TIMEOUT_RETRY)->get();
+
+        foreach ($jobsTimedOut as $key => $job) {
+            $job->attempts++;
+            if ($job->attempts >= self::MAX_FAILURE) {
+                self::jobFailed($job, ['timedout' => 'timedout']);
+            } else {
+                $job->reserved_at = 0;
+                $job->available_at = time() + self::DELAY_AFTER_FAIL;
+                $job->save();
+            }
+        }
     }
 
     public static function pushAndRun($job, $params)
@@ -117,29 +136,33 @@ class Queue
 
     private static function whenJobFails(Job $job, \Exception $e)
     {
-        $payload = $job->payload;
         $attempts = $job->attempts + 1;
 
         if ($attempts >= self::MAX_FAILURE) {
             // MAX_FAILURE reached we keep a record in the failures table and delete the original job
-            $failed_job = [
-                'queue' => $job->queue,
-                'payload' => $payload,
-                'exception' => Debug::convertExceptionToArray($e)
-            ];
-            if (!empty($job->appointment_id)) {
-                $failed_job['appointment_id'] = $job->appointment_id;
-            }
-            FailedJob::create($failed_job);
-            $job->delete();
+            self::jobFailed($job, Debug::convertExceptionToArray($e));
         } else {
             $job->update([
                 'attempts' => $attempts,
-                'payload' => $payload,
+                'payload' => $job->payload,
                 'reserved_at' => 0,
                 'available_at' => time() + self::DELAY_AFTER_FAIL
             ]);
         }
+    }
+
+    protected static function jobFailed(Job $job, $arrayException)
+    {
+        $failed_job = [
+            'queue' => $job->queue,
+            'payload' => $job->payload,
+            'exception' => $arrayException
+        ];
+        if (!empty($job->appointment_id)) {
+            $failed_job['appointment_id'] = $job->appointment_id;
+        }
+        FailedJob::create($failed_job);
+        $job->delete();
     }
 
     public static function loadAndRun($jobId)

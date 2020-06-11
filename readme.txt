@@ -1,10 +1,10 @@
-=== Appointment Booking for WordPress - Wappointment ===
+=== Appointments Bookings - Wappointment ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
 Requires at least: 4.7
 Tested up to: 5.4
 Requires PHP: 7.0
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -145,6 +145,12 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 1.5.2 - 2020-06-?? =
+* Added option to turn the cancellation rescheduling page into a proper WordPress page so you can control the style
+* Fixed edge case when permalinks are not turned on or server badly configured
+* Fixed issue with recurring event on calendar sync
+* Fixed issue dealing with failed jobs
 
 = 1.5.1 - 2020-06-05 =
 * Fixed update notifications

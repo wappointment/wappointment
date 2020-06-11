@@ -15,7 +15,14 @@
                   </label>
 
               </div>
-
+              <div class="mt-3">
+                <a v-if="viewData.front_page_type == 'page'" :href="'post.php?post='+viewData.front_page_id+'&action=edit'" target="_blank">
+                  Edit Reschedule/Cancel page
+                </a>
+                <button v-else class="btn btn-secondary btn-sm" @click="updatePage" data-tt="Only if you don't like the default page template for cancellation and rescheduling">
+                   Make Reschedule/Cancel page editable
+                </button>
+              </div>
               <hr/>
               <div class="mt-3">
                 <button class="btn btn-danger btn-sm" @click="startResetConfirm">
@@ -44,6 +51,16 @@ export default {
     async resetInstallation() {
         return await this.service.call('freshinstall')
     },
+    updatePage(){
+      this.request(this.updatePageRequest,  undefined, undefined,false, this.updateViewData)
+    },
+    updateViewData(response){
+      this.viewData = response.data
+    },
+    async updatePageRequest() {
+        return await this.service.call('updatepage')
+    },
+
     startResetConfirm() {
         this.$WapModal().confirm({
           title: 'Do you really want to uninstall Wappointment?',

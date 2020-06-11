@@ -3,6 +3,10 @@ export default class AppService extends ApiV1{
 
     endpoints() {
         return {
+            updatepage: {
+                method: 'post',
+                route: 'updatepage',
+            },
             freshinstall: {
                 method: 'post',
                 route: 'freshinstall',

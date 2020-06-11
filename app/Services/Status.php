@@ -85,6 +85,7 @@ class Status
 
     private static function getNext($statusRecurrent, $from, $until)
     {
+
         if ($from < $until) {
             //$start_at = $statusRecurrent->start_at->timestamp < time() ? Carbon::now() : $statusRecurrent->start_at;
             $start_at =  $statusRecurrent->start_at;
@@ -123,8 +124,8 @@ class Status
     private static function getNextWeekly($statusRecurrent, $start_at, $from, $until)
     {
         $interval = self::getInterval($statusRecurrent);
-        $days_accepted = $statusRecurrent->options['byday'];
 
+        $days_accepted = empty($statusRecurrent->options['byday']) ? [] : $statusRecurrent->options['byday'];
 
         $daysAdded = $start_at->timestamp > time() ? 0 : Carbon::now()->diffInDays($start_at);
 
@@ -185,22 +186,41 @@ class Status
 
         $interval = self::getInterval($statusRecurrent);
         $dayofthemonth = self::getMonthDay($statusRecurrent);
+
         if (!$dayofthemonth) {
             $dayofthemonth = self::getByDay($statusRecurrent);
         }
+
+        if (!$dayofthemonth) {
+            $dayofthemonth = $start_at->day;
+        }
+
 
         $diffInSeconds = $start_at->timestamp > time() ? 0 : Carbon::now()->diffInSeconds($start_at);
 
         if ($diffInSeconds > 0) {
             $start_at->addSeconds($diffInSeconds);
-            $start_at = self::setDayOfTheMonth($start_at, $dayofthemonth, $statusRecurrent);
+            if ($dayofthemonth !== false) {
+                $start_at = self::setDayOfTheMonth($start_at, $dayofthemonth, $statusRecurrent);
+            }
         }
 
-
+        $i = 0;
         while ($start_at->timestamp < $from) {
-            $start_at->tz($statusRecurrent->options['origin_tz'])->addMonths($interval)->startOfMonth();
+            //echo 'mini inter ' . $interval . ' : ' . $i . ' ' . $start_at->toDateTimeString() . "\n";
 
-            $start_at = self::setDayOfTheMonth($start_at, $dayofthemonth, $statusRecurrent);
+            $start_at->tz($statusRecurrent->options['origin_tz'])
+                ->addMonths($interval)
+                ->startOfMonth();
+
+            if ($dayofthemonth !== false) {
+                $start_at = self::setDayOfTheMonth($start_at, $dayofthemonth, $statusRecurrent);
+            }
+
+            if ($i > 30) { // fail safe
+                throw new \WappointmentException("Error handling recurrent event", 1);
+            }
+            $i++;
         }
         if ($start_at->timestamp > $until) {
             return false;
@@ -241,7 +261,7 @@ class Status
 
                     $i++;
                     if ($i > 20) {
-                        dd('gone baby gone');
+                        throw new \WappointmentException("Error handling recurrent event2", 1);
                     }
                 }
             }
@@ -249,16 +269,16 @@ class Status
             $carbonNewStart->day = $dayofthemonth;
         }
 
-        $origintimedate = Carbon::parse(
+        /*  $origintimedate = Carbon::parse(
             $statusRecurrent->options['origin_start'],
             $statusRecurrent->options['origin_tz']
         );
         $carbonNewStart->hour = $origintimedate->hour;
-        $carbonNewStart->minute = $origintimedate->minute;
+        $carbonNewStart->minute = $origintimedate->minute; */
+        $carbonNewStart->hour = $hour;
+        $carbonNewStart->minute = $minute;
 
-        $carbon  = $carbonNewStart->tz('UTC')->copy();
-
-        return $carbon;
+        return $carbonNewStart->tz('UTC')->copy();
     }
 
     private static function getNextYearly($statusRecurrent, $start_at, $from, $until)

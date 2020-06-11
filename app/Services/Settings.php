@@ -74,7 +74,7 @@ class Settings
             'weekly_summary_time' => 10,
             'daily_summary' => false,
             'daily_summary_time' => 10,
-            'notify_new_appointments' => false,
+            'notify_new_appointments' => true,
             'notify_canceled_appointments' => false,
             'notify_rescheduled_appointments' => false,
             'email_notifications' => '',
@@ -96,7 +96,8 @@ class Settings
             'save_appointment_text_link' => 'Save to calendar',
             'new_booking_link' => 'Book a new appointment',
             'booking_page' => 0,
-            'show_welcome' => false
+            'show_welcome' => false,
+            'force_ugly_permalinks' => false
         ];
     }
 

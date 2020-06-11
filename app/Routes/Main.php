@@ -128,6 +128,10 @@ class Main extends AbstractRoutes
                     'controller' => 'DebugController',
                     'method' => 'freshInstall',
                 ],
+                '/updatepage' => [
+                    'controller' => 'DebugController',
+                    'method' => 'updatePage',
+                ],
                 '/settings' => [
                     'controller' => 'SettingsController',
                     'method' => 'save',

@@ -15,20 +15,32 @@ class CustomPage
     {
         $page_exist_already = get_page_by_path($this->slug, OBJECT, $this->slug);
         if (empty($page_exist_already)) {
-            $wappointmentPage = [
-                'post_status' => 'publish',
-                'post_type' => $this->slug,
-                'post_author' => 1,
-                'post_content' => $this->page_content,
-                'post_title' => $this->page_title,
-                'post_name' => $this->slug
-            ];
-            $page_id = wp_insert_post($wappointmentPage);
+            $page_id = wp_insert_post($this->dataPage());
         } else {
             $page_id = $page_exist_already->ID;
         }
 
         Settings::save('front_page', $page_id, true);
+    }
+
+    protected function dataPage()
+    {
+        return [
+            'post_status' => 'publish',
+            'post_type' => $this->slug,
+            'post_author' => 1,
+            'post_content' => $this->page_content,
+            'post_title' => $this->page_title,
+            'post_name' => $this->slug
+        ];
+    }
+
+    public function makeEditablePage()
+    {
+        $dataPage = $this->dataPage();
+        $dataPage['post_type'] = 'page';
+        $pageid = wp_insert_post($dataPage);
+        Settings::save('front_page', $pageid);
     }
 
     public function boot()
@@ -62,6 +74,9 @@ class CustomPage
 
     public function isDisplayed()
     {
+        if (!empty(WPHelpers::requestGet()->input('appointmentkey'))) {
+            return true;
+        }
         return empty(WPHelpers::requestGet()->input($this->slug)) ? false : true;
     }
 
@@ -108,19 +123,16 @@ class CustomPage
 
     public function metaPageTitle($title)
     {
-        $title = str_replace($this->page_title, $this->getPageTitle(), $title);
-        return $title;
+        return str_replace($this->page_title, $this->getPageTitle(), $title);
     }
 
     public function scanTitle($title)
     {
-        $title = str_replace($this->page_title, $this->getPageTitle(), $title);
-        return $title;
+        return str_replace($this->page_title, $this->getPageTitle(), $title);
     }
 
     public function scanContent($content)
     {
-        $content = str_replace($this->page_content, $this->getPageContent(), $content);
-        return $content;
+        return str_replace($this->page_content, $this->getPageContent(), $content);
     }
 }

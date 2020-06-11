@@ -88,7 +88,7 @@ class Scheduler
 
     public static function checkLostReservedJobs()
     {
-        \Wappointment\Services\Queue::lostReserved();
+        \Wappointment\Services\Queue::resetTimedoutJobs();
     }
 
     public static function dailyProcess()
