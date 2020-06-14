@@ -4,12 +4,11 @@ namespace Wappointment\Messages;
 
 use Wappointment\Models\Client;
 use Wappointment\Models\Appointment;
-use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
-use Wappointment\Services\Service;
 
 class AdminPendingAppointmentEmail extends AbstractAdminEmail
 {
+    use AdminGeneratesDefault;
     protected $client = null;
     protected $appointment = null;
 
@@ -18,7 +17,7 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
         $this->subject = 'Pending appointment';
         $this->addLogo();
         $this->addBr();
-        $tz = Settings::getStaff('timezone');
+
 
         $this->addLines([
             'Hi ' . $appointment->getStaff()->getFirstName() . ', ',
@@ -26,16 +25,8 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
             'Please confirm the appointment.'
         ]);
 
-        $this->addRoundedSquare(
-            [
-                'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
-                'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
-                    . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
-                'Service: ' . sanitize_text_field(Service::get()['name']),
-                "Client's name: " . sanitize_text_field($client->name),
-                "Client's email: " . sanitize_text_field($client->email),
-            ]
-        );
+        $this->addRoundedSquare($this->getEmailContent($client, $appointment));
+
         $this->addBr();
         $formatString = 'Y-m-d\T00:00:00';
 

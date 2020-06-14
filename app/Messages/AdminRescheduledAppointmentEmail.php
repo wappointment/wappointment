@@ -5,11 +5,10 @@ namespace Wappointment\Messages;
 use Wappointment\Models\Client;
 use Wappointment\Models\Appointment;
 use Wappointment\Services\Settings;
-use Wappointment\Services\Service;
 
 class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
 {
-    use AttachesIcs;
+    use AttachesIcs, AdminGeneratesDefault;
 
     protected $client = null;
     protected $appointment = null;
@@ -26,18 +25,8 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
             'A client rescheduled his appointment, find the details below.',
         ]);
 
-        $this->addRoundedSquare(
-            [
-                '<u>New appointment</u>',
-                'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
-                'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
-                    . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
-                'Service: ' . Service::get()['name'],
-                'Location: ' . $appointment->getLocation(),
-                "Client's name: " . $client->name,
-                "Client's email: " . $client->email,
-            ]
-        );
+        $this->addRoundedSquare($this->getEmailContent($client, $appointment));
+
         $this->addRoundedSquare(
             [
                 '<u>Former appointment</u>',
