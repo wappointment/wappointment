@@ -148,6 +148,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 = 1.5.2 - 2020-06-?? =
 * Added option to turn the cancellation rescheduling page into a proper WordPress page so you can control the style
+* Added client's phone number to Admin notifications when present
 * Fixed edge case when permalinks are not turned on or server badly configured
 * Fixed issue with recurring event on calendar sync
 * Fixed issue dealing with failed jobs

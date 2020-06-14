@@ -75,8 +75,8 @@ class Settings
             'daily_summary' => false,
             'daily_summary_time' => 10,
             'notify_new_appointments' => true,
-            'notify_canceled_appointments' => false,
-            'notify_rescheduled_appointments' => false,
+            'notify_canceled_appointments' => true,
+            'notify_rescheduled_appointments' => true,
             'email_notifications' => '',
             'mail_status' => true,
             'mail_config' => [
