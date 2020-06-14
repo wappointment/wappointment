@@ -162,7 +162,7 @@ class Helpers
     public static function enqueue($script, $requires = [])
     {
         $scriptname = WAPPOINTMENT_SLUG . '_' . $script;
-        wp_register_script($scriptname, \Wappointment\System\Helpers::assetUrl($script . '.js'), $requires, null, true);
+        wp_register_script($scriptname, \Wappointment\System\Helpers::assetUrl($script . '.js'), $requires, WAPPOINTMENT_VERSION, true);
         wp_enqueue_script($scriptname);
         return $scriptname;
     }
