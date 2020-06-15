@@ -45,10 +45,12 @@ class SettingsStaffController extends RestController
     public function saveCal(Request $request)
     {
         $calurl = $request->input('calurl');
+
         $result = $this->calurlValid($calurl);
         if (!$result) {
             throw new \WappointmentException('Cannot save calendar verify it respects the Ical ics format');
         }
+
 
         $calurls = WPHelpers::getStaffOption('cal_urls');
         if (empty($calurls)) {

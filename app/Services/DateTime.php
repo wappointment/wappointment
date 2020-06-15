@@ -43,6 +43,33 @@ class DateTime
 
         return $ordered_tz;
     }
+
+    public static function isKnownTimezone($timezone)
+    {
+
+        try {
+            $zone = new \DateTimeZone($timezone);
+        } catch (\Exception $th) {
+            //try to get a match
+            $timezone = self::getMatch($timezone);
+            $trye = new \DateTimeZone($timezone);
+        }
+
+        return $timezone;
+    }
+
+    public static function getMatch($unknownTZ)
+    {
+        $unkownTimezones = [
+            'Central Standard Time' => 'America/Chicago',
+            'Pacific Standard Time' => 'America/Los_Angeles'
+        ];
+
+        if (!isset($unkownTimezones[$unknownTZ])) {
+            throw new \WappointmentException("Cannot recorgnize timezone '" . $unknownTZ . "'", 1);
+        }
+        return $unkownTimezones[$unknownTZ];
+    }
     public static function timeZToUtc($time)
     {
         $time = \str_replace('Z', '', $time);

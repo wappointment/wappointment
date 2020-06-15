@@ -43,6 +43,8 @@ class CalendarParser
         }
 
         $this->setTimezone($vcalendar);
+
+
         $uids = \WappointmentLv::collect([]);
         foreach ($vcalendar->VEVENT as $vevent) {
             if ($start > ($start + 60)) {
@@ -135,15 +137,23 @@ class CalendarParser
         return $this->getFormatedDate($this->vcalDateToCarbon($vcalDateTimeString), $format);
     }
 
-    private function vcalDateToCarbon($vcalDateTimeString, $vevent = false)
+    protected function findTimezone($timezone_string)
+    {
+        return empty($timezone_string) ? '' : DateTime::isKnownTimezone($timezone_string);
+    }
+    private function vcalDateToCarbon($vcalDateTimeString, $vevent = null)
     {
         $timezone = '';
         if (empty($this->timezone)) {
             if ($vevent !== false) {
-                $this->timezone = $timezone = $vevent->DTSTART['TZID']->getValue();
+                $this->timezone = $timezone = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
             }
         } else {
             $timezone = $this->timezone;
+        }
+
+        if (!empty($vevent->DTSTART)) {
+            $timezone = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
         }
 
         return Carbon::parse($vcalDateTimeString, $timezone);
@@ -156,7 +166,10 @@ class CalendarParser
 
     private function setTimezone($vcalObject)
     {
-        $this->timezone = (string) $vcalObject->{'X-WR-TIMEZONE'};
+
+        $timezonekey = 'X-WR-TIMEZONE';
+        //dd($vcalObject->$timezonekey, $vcalObject->{'X-WR-TIMEZONE'});
+        $this->timezone = $this->findTimezone((string) $vcalObject->$timezonekey);
     }
 
     private function getFrequency($frequency)

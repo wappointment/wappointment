@@ -70,6 +70,7 @@ class Calendar
 
         if ($this->hasChanged($body_string)) {
             $parser = new CalendarParser($this->url, $original_content, $this->staff_id);
+
             $this->log('last-parser', $parser->handle());
             $this->log('last-hash', md5($body_string), false);
             $this->log('last-parsed', time(), false);
