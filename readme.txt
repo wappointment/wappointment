@@ -152,6 +152,7 @@ It requires work on your end but keeps your site safe and optimized.
 * Fixed edge case when permalinks are not turned on or server badly configured
 * Fixed issue with recurring event on calendar sync
 * Fixed issue dealing with failed jobs
+* Fixed non standard timezone recognition when syncing calendar 
 
 = 1.5.1 - 2020-06-05 =
 * Fixed update notifications
