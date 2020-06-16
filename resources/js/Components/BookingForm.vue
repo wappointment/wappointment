@@ -446,6 +446,7 @@ export default {
     box-shadow: inset 0px 0px 10px rgba(0,0,0,.14);
     border-radius: .2em;
     overflow: hidden;
+    margin-top: .3em;
 }
 .wap-front [data-tt] {
   position: relative;
@@ -536,9 +537,11 @@ export default {
     width:100%;
 }
 
-.wap-front .btn-confirm button {
+.wap-front .wbtn-confirm span.wbtn {
     font-size: 1em;
+    margin:0;
 }
+
 
 .slide-fade-enter-active, 
 .slide-fade-leave-active, 

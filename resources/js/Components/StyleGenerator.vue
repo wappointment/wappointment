@@ -1,42 +1,42 @@
 <template>
     <v-style>
-        .wap-front .btn.btn-primary.btn-booking,
-        .wap-front .btn-primary.btn-booking:not(:disabled):not(.disabled):active, 
-        .wap-front .btn-primary.btn-booking:not(:disabled):not(.disabled).active {
+        .wap-front .wbtn.wbtn-primary.wbtn-booking,
+        .wap-front .wbtn-primary.wbtn-booking:not(:disabled):not(.disabled):active, 
+        .wap-front .wbtn-primary.wbtn-booking:not(:disabled):not(.disabled).active {
         font-size: {{ opts.button.slide_size+'em' }} !important;
         {{ buttonIsBold }}
         {{ buttonIsFull }}
         }
-        .wap-front .btn.btn-primary,
-        .wap-front .btn-primary:not(:disabled):not(.disabled):active, 
-        .wap-front .btn-primary:not(:disabled):not(.disabled).active {
+        .wap-front .wbtn.wbtn-primary,
+        .wap-front .wbtn-primary:not(:disabled):not(.disabled):active, 
+        .wap-front .wbtn-primary:not(:disabled):not(.disabled).active {
             background: {{ hx_rgb(opts.colors.primary.bg) }};
             background-color: {{ hx_rgb(opts.colors.primary.bg) }};
             border-color: {{ hx_rgb(opts.colors.primary.bg, .8) }};
             color: {{ hx_rgb(opts.colors.primary.text) }};
             box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .6) }};
         }
-        .wap-front .btn.btn-primary:hover {
+        .wap-front .wbtn.wbtn-primary:hover {
         background-color: {{ hx_rgb(opts.colors.primary.bg,.9) }};
         box-shadow: 0 0 0 .2em {{ hx_rgb(opts.colors.primary.bg,.5) }};
         }
 
-                .wap-front .btn:focus, 
-        .wap-front .btn.focus {
+                .wap-front .wbtn:focus, 
+        .wap-front .wbtn.focus {
         box-shadow: 0 0 0 .2em {{ hx_rgb(opts.colors.primary.bg, .25) }};
         }
         
-        .wap-front .btn-primary.disabled, 
-        .wap-front .btn-primary:disabled, 
-        .wap-front .btn-primary.disabled:hover, 
-        .wap-front .btn-primary:disabled:hover {
+        .wap-front .wbtn-primary.disabled, 
+        .wap-front .wbtn-primary:disabled, 
+        .wap-front .wbtn-primary.disabled:hover, 
+        .wap-front .wbtn-primary:disabled:hover {
             background-color: {{ hx_rgb(opts.colors.primary.bg) }} !important;
             border-color: {{ hx_rgb(opts.colors.primary.bg, .8) }} !important;
             color: {{ hx_rgb(opts.colors.primary.text) }} !important;
             box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .6) }};
         }
 
-        .wap-front .btn-primary:disabled:hover {
+        .wap-front .wbtn-primary:disabled:hover {
             background-color: {{ hx_rgb(opts.colors.primary.bg) }} !important;
             border-color: {{ hx_rgb(opts.colors.primary.bg, .8) }} !important;
             color: {{ hx_rgb(opts.colors.primary.text) }} !important;
@@ -52,22 +52,22 @@
         .wap-front .address-service a{
             color: {{ hx_rgb(opts.colors.address.text) }};
         }
-        .wap-front .btn.btn-secondary,
-        .wap-front .btn-secondary:not(:disabled):not(.disabled):active, 
-        .wap-front .btn-secondary:not(:disabled):not(.disabled).active {
+        .wap-front .wbtn.wbtn-secondary,
+        .wap-front .wbtn-secondary:not(:disabled):not(.disabled):active, 
+        .wap-front .wbtn-secondary:not(:disabled):not(.disabled).active {
             background: {{ hx_rgb(opts.colors.secondary.bg) }};
         background-color: {{ hx_rgb(opts.colors.secondary.bg) }};
         border-color: {{ hx_rgb(opts.colors.secondary.bg, .8) }};
         color: {{ hx_rgb(opts.colors.secondary.text) }};
         box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.secondary.bg, .6) }};
-        margin:0;
+        margin: .4em 0;
         }
-        .wap-front .btn.btn-secondary:hover {
+        .wap-front .wbtn.wbtn-secondary:hover {
         background-color: {{ hx_rgb(opts.colors.secondary.bg,.9) }};
         box-shadow: 0 0 0 .2em {{ hx_rgb(opts.colors.secondary.bg,.5) }};
         }
 
-        .wap-front .btn.btn-secondary.selected{
+        .wap-front .wbtn.wbtn-secondary.selected{
         background-color: {{ hx_rgb(opts.colors.secondary.bg_selected) }};
         border-color: {{ hx_rgb(opts.colors.secondary.bg_selected, .8) }};
         color: {{ hx_rgb(opts.colors.secondary.text_selected) }};
@@ -88,6 +88,7 @@
             overflow: auto;
             max-height: none;
         }
+
         .wap-front .wrap-calendar {
             border-top: none;
             text-align: center;
@@ -97,7 +98,7 @@
             background-color: {{ hx_rgb(opts.colors.body.bg) }};
         }
 
-        .wap-front .wrap-calendar .no-avail, .wap-front .wrap-calendar .btn-link.disabled{
+        .wap-front .wrap-calendar .no-avail, .wap-front .wrap-calendar .wbtn-link.disabled{
             color: {{ hx_rgb(opts.colors.body.disabled_links) }};
         }
 
@@ -110,7 +111,7 @@
             border-radius: {{ calendarRound }}em {{ calendarRound }}em 0 0;
         }
         
-        .wap-front .btn.btn-secondary.dayselected{
+        .wap-front .wbtn.wbtn-secondary.dayselected{
             background-color: {{ hx_rgb(opts.colors.selected_day.bg) }};
         }
         .wap-front .wrap-calendar .dayselected span.avail{
@@ -126,7 +127,7 @@
             border-radius: {{ calendarRound }}em;
         }
 
-        .wap-front .btn-cell{
+        .wap-front .wbtn-cell{
             text-align: center;
             padding: .4em;
             border-radius: {{ calendarRound }}em;

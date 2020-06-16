@@ -26,19 +26,19 @@
                         </div>
                         <div v-else>
                             <p class="h4">{{getText('confirmation')}}</p>
-                            <button class="btn btn-primary" @click="cancelAppointmentConfirmed">{{getText('confirm')}}</button>
+                            <button class="wbtn wbtn-primary" @click="cancelAppointmentConfirmed">{{getText('confirm')}}</button>
                         </div>
                     </div>
                     
                 </div>
                 <div v-if="!buttonClicked">
                     <div v-if="isReschedulePage">
-                        <button v-if="canStillReschedule" class="btn btn-primary" @click="rescheduleEvent">{{getText('button')}}</button>
+                        <button v-if="canStillReschedule" class="wbtn wbtn-primary" @click="rescheduleEvent">{{getText('button')}}</button>
                         <p class="h4" v-else>{{getText('toolate')}}</p>
                     </div>
                     
                     <div v-if="isCancelPage">
-                        <button v-if="canStillCancel" class="btn btn-primary" @click="cancelAppointment">{{getText('button')}}</button>
+                        <button v-if="canStillCancel" class="wbtn wbtn-primary" @click="cancelAppointment">{{getText('button')}}</button>
                         <p class="h4" v-else>{{getText('toolate')}}</p>
                     </div>
                     

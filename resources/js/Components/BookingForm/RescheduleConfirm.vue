@@ -4,9 +4,9 @@
             <h4>{{options.form.header}}</h4>
             <h5>{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</h5>
         </div>
-        <div class="d-flex btn-confirm my-2">
-            <span class="btn-secondary btn mr-2" role="button" @click="back" >{{options.form.back}}</span>
-            <span class="btn-primary btn w100 m-0" role="button" @click="confirm" >{{options.form.confirm}}</span>
+        <div class="d-flex wbtn-confirm my-2">
+            <span class="wbtn-secondary wbtn mr-2" role="button" @click="back" >{{options.form.back}}</span>
+            <span class="wbtn-primary wbtn w100 m-0" role="button" @click="confirm" >{{options.form.confirm}}</span>
         </div>
     </div>
 </template>

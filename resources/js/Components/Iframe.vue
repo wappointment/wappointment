@@ -1,5 +1,5 @@
 <template>
-    <div class="if-load">
+    <div class="if-load my-2">
         <iframe width="100%" :height="height" :src="src" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
     </div>
 </template>

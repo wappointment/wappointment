@@ -9,7 +9,7 @@
         <div class="wap-wid" v-if="isWidget">
             <span v-if="bookForm && isBottomRight" @click="backToButton" class="close-wid"></span>
             <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :passedDataSent="dataSent"></BookingForm>
-            <BookingButton v-else @click="toggleBookForm" class="btn btn-booking btn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
+            <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
         </div>
         <div class="wap-bg" v-if="bookForm"></div>
     </div>
@@ -119,7 +119,7 @@ export default {
     min-width: 200px;
 }
 
-.br-fixed .wap-wid .btn-booking{
+.br-fixed .wap-wid .wbtn-booking{
   float:right;
 }
 .wap-wid .loader {
@@ -129,11 +129,12 @@ export default {
     font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
 }
 
-.wap-front .btn.btn-secondary.btn-cell{
+.wap-front .wbtn.wbtn-secondary.wbtn-cell{
   border-radius: .5em;
+  margin: .4em 0;
 }
 
-.wap-front .btn {
+.wap-front .wbtn {
   display: inline-block;
   font-weight: 400;
   text-align: center;
@@ -157,32 +158,32 @@ export default {
 }
 
 
-  .wap-front .btn:hover, 
-  .wap-front .btn:focus {
+  .wap-front .wbtn:hover, 
+  .wap-front .wbtn:focus {
     text-decoration: none;
   }
 
-  .wap-front .btn:focus, 
-  .wap-front .btn.focus {
+  .wap-front .wbtn:focus, 
+  .wap-front .wbtn.focus {
     outline: 0;
   }
 
-  .wap-front .btn.btn-disabled, 
-  .wap-front .btn:disabled {
+  .wap-front .wbtn.wbtn-disabled, 
+  .wap-front .wbtn:disabled {
     opacity: 0.65;
   }
 
-  .wap-front .btn:not(:disabled):not(.btn-disabled) {
+  .wap-front .wbtn:not(:disabled):not(.wbtn-disabled) {
     cursor: pointer;
   }
 
-  .wap-front .btn:not(:disabled):not(.btn-disabled):active, 
-  .wap-front .btn:not(:disabled):not(.btn-disabled).active {
+  .wap-front .wbtn:not(:disabled):not(.wbtn-disabled):active, 
+  .wap-front .wbtn:not(:disabled):not(.wbtn-disabled).active {
     background-image: none;
   }
 
-  .wap-front a.btn.btn-disabled,
-  .wap-front fieldset:disabled a.btn {
+  .wap-front a.wbtn.wbtn-disabled,
+  .wap-front fieldset:disabled a.wbtn {
     pointer-events: none;
   }
 
@@ -288,7 +289,7 @@ right: 0;
     width: 100%;
     margin: 0;
   }
-  .wap-front.br-fixed .btn.btn-booking.btn-primary{
+  .wap-front.br-fixed .wbtn.wbtn-booking.wbtn-primary{
     margin: 0;
     width:100%;
     border-radius: .2rem .2rem 0 0;

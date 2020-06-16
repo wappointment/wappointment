@@ -25,7 +25,7 @@ class Widget extends WidgetAbstract
                 $htmlAttributes .= ' data-' . str_replace('_', '-', strtolower($attr)) . '="' . esc_attr($val) . '"';
             }
         }
-        return '<div class="wappointment_widget" ' . $htmlAttributes . '></div>';
+        return '<button class="wappointment_widget" ' . $htmlAttributes . '>' . esc_html($instance['button_title']) . '</button>';
     }
 
 
@@ -42,8 +42,24 @@ class Widget extends WidgetAbstract
                 'label' => 'Floats in the bottom right corner', 'default' => false
             ],
         ];
-        return apply_filters('wappointment_booking_widget_form_fields', $definition);
+
+        return apply_filters('wappointment_booking_widget_form_fields', static::contextualize($definition));
     }
+
+
+    protected static function contextualize($definition)
+    {
+        if (!empty($_REQUEST['action']) && $_REQUEST['action'] == 'elementor_ajax') {
+            $definition['notice_elementor'] = [
+                'label' => 'The style of the button can be changed from <a href="admin.php?page=wappointment_settings#/general" target="_blank">Wappointment > General >
+                Booking Widget setup</a> ',
+                'class' => 'elementor-control-field-description'
+            ];
+        }
+        //dd($definition);
+        return $definition;
+    }
+
     public function widget($args, $instance)
     {
         if (!self::canShow()) {

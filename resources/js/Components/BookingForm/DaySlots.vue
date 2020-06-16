@@ -5,7 +5,7 @@
                 <small class="day-part">{{getLabel(part)}}</small>
                 <BookingButton @click="$emit('selected', slot)" 
                 v-for="(slot, slid) in slots" 
-                className="btn btn-primary btn-slot" :key="slot" :options="options" >
+                className="wbtn wbtn-primary wbtn-slot" :key="slot" :options="options" >
                     {{ getMoment(slot, currentTz).format(time_format) }}
                 </BookingButton>
             </div>
@@ -117,17 +117,17 @@ export default {
 .ds-3{
     width: 31%;
 }
-.btn.btn-slot {
+.wbtn.wbtn-slot {
     width: 100%;
     overflow: hidden;
 }
-.btn.btn-slot,
-.btn.btn-slot:not(:disabled):not(.disabled):active, 
-.btn.btn-slot:not(:disabled):not(.disabled).active{
+.wbtn.wbtn-slot,
+.wbtn.wbtn-slot:not(:disabled):not(.disabled):active, 
+.wbtn.wbtn-slot:not(:disabled):not(.disabled).active{
     margin: 0.2em;
 }
 
-.ds-1 .btn.btn-slot {
+.ds-1 .wbtn.wbtn-slot {
     width: 31%;
 }
 
@@ -137,7 +137,6 @@ export default {
 
 .timezone{
     width: 100%;
-    padding-bottom: .3em;
 }
 
 </style>

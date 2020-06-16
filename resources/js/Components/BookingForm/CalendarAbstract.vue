@@ -470,7 +470,7 @@ export default {
 
 <style >
 
-.wap-front .btn-round,
+.wap-front .wbtn-round,
 .wap-front .calendarMonth .ddays div {
     min-width: 1.5em;
     min-height: 1.5em;
@@ -479,21 +479,21 @@ export default {
     font-size: .75em;
     padding: .5em;
     transition: all .3s ease-in-out;
-    margin: 0;
+    margin: 0 !important;
 }
 
-.wap-front .btn-top.btn-round {
+.wap-front .wbtn-top.wbtn-round {
     min-width: 1em;
     min-height: 1em;
 }
-.wap-front .btn-top.btn-round span {
+.wap-front .wbtn-top.wbtn-round span {
     width: 1em;
     height: 1em;
     line-height: 1em;
 }
 
-.wap-front .btn.btn-secondary.btn-round.btn-disabled, 
-.wap-front .btn-round.btn-disabled:hover {
+.wap-front .wbtn.wbtn-secondary.wbtn-round.wbtn-disabled, 
+.wap-front .wbtn-round.wbtn-disabled:hover {
     background-color: transparent;
     border: none;
     box-shadow: none;

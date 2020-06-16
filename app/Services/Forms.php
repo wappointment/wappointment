@@ -43,10 +43,11 @@ class Forms
                     break;
 
                 default:
-                    # code...
+                    $formHtml .= '<div class="' . (empty($field['class']) ? '' : $field['class']) . '">' . $field['label'] . '</div>';
                     break;
             }
         }
+        //dd($formHtml);
         return $formHtml;
     }
 

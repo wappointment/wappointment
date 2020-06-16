@@ -6,7 +6,7 @@ import VideoIframe from './Ne/VideoIframe'
 window.wappointmentExtends.store('commons', {InputPh, ClickCopy, VideoIframe})
 
 import VueRouter from 'vue-router'
-import App from './App'
+import Backend from './Backend'
 import VueWapModal from './Plugins/vue-wap-modal'
 import FormGenerator from './Form/FormGenerator'
 import StickyBar from './Components/StickyBar'
@@ -230,8 +230,8 @@ const app = new Vue({
     }
     
   },
-  components: { App },
-  render: h => h(App)
+  components: { Backend },
+  render: h => h(Backend)
 })
 
 

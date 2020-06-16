@@ -9,7 +9,7 @@
         <div class="wap-wid" v-if="isWidget">
             <span v-if="bookForm && isBottomRight" @click="backToButton" class="close-wid"></span>
             <BookingFormDemo v-if="bookForm" :step="currentStep" :options="opts" :passedDataSent="dataSent"></BookingFormDemo>
-            <BookingButton v-else @click="toggleBookForm" class="btn btn-booking btn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
+            <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
         </div>
     </div>
 </template>

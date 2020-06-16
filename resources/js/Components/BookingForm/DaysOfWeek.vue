@@ -30,8 +30,8 @@ export default {
                 'first-day': idday === 0,
                 'last-day': idday === this.week.length -1,
                 'dayselected': this.isSelected(day),
-                'no-avail btn btn-disabled': this.noAvailability(day),
-                'btn-secondary btn btn-round avail': this.hasAvailability(day),
+                'no-avail wbtn wbtn-disabled': this.noAvailability(day),
+                'wbtn-secondary wbtn wbtn-round avail': this.hasAvailability(day),
                 'last-avail': this.lastAvailability(day),
                 'few-avail': this.fewAvailability(day),
                 'enough-avail': this.enoughAvailability(day),
@@ -80,9 +80,9 @@ export default {
 }
 </script>
 <style>
-.btn.no-avail span, 
-.btn.avail span, 
-.btn-secondary.btn-round span {
+.wbtn.no-avail span, 
+.wbtn.avail span, 
+.wbtn-secondary.wbtn-round span {
     display: block;
     line-height: 1.5em;
     height: 1.5em;

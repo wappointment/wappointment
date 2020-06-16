@@ -29,7 +29,7 @@
             <transition name="slide-fade">
                 <SaveButtons v-if="showSaveButtons" :service="service" :showResult="showResult" :appointment="appointment"
                 :staff="staff" :currentTz="timeprops.currentTz" :physicalSelected="physicalSelected"></SaveButtons>
-                <span v-else class="btn-secondary btn" @click="showSaveButtons=true">
+                <span v-else class="wbtn-secondary wbtn" @click="showSaveButtons=true">
                     <FontAwesomeIcon icon="calendar-alt" size="lg"/> {{options.confirmation.savetocal}}
                 </span>
             </transition>

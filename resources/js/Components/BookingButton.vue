@@ -17,7 +17,7 @@ export default {
         },
         className: {
             type: String,
-            default: 'btn btn-primary'
+            default: 'wbtn wbtn-primary'
         },
     },
 }   

@@ -13,15 +13,15 @@
                 </div>
                 
                 <div v-if="serviceHasTypes">
-                    <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="btn btn-secondary btn-cell" :class="{selected: physicalSelected}">
+                    <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: physicalSelected}">
                         <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
                         <div>{{options.form.inperson}}</div>
                     </div>
-                    <div v-if="allowedType('phone')" @click="selectType('phone')" role="button" class="btn btn-secondary btn-cell" :class="{selected: phoneSelected}">
+                    <div v-if="allowedType('phone')" @click="selectType('phone')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: phoneSelected}">
                         <FontAwesomeIcon icon="phone" size="lg"/>
                         <div>{{options.form.byphone}}</div>
                     </div>
-                    <div v-if="allowedType('skype')" @click="selectType('skype')" role="button" class="btn btn-secondary btn-cell" :class="{selected: skypeSelected}">
+                    <div v-if="allowedType('skype')" @click="selectType('skype')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: skypeSelected}">
                         <FontAwesomeIcon :icon="['fab', 'skype']" size="lg"/>
                         <div>{{options.form.byskype}}</div>
                     </div>
@@ -67,10 +67,10 @@
                     </div>
                 </div>
             </transition>
-            <div class="d-flex btn-confirm my-2">
-                <span class="btn-secondary btn mr-2" role="button" @click="back">{{options.form.back}}</span>
-                <span v-if="canSubmit" class="btn-primary btn flex-fill m-0" role="button" @click="confirm">{{options.form.confirm}}</span>
-                <span v-else class="btn-primary btn btn-disabled flex-fill m-0" role="button" disabled>{{options.form.confirm}}</span>
+            <div class="d-flex wbtn-confirm my-2">
+                <span class="wbtn-secondary wbtn mr-2" role="button" @click="back">{{options.form.back}}</span>
+                <span v-if="canSubmit" class="wbtn-primary wbtn flex-fill m-0" role="button" @click="confirm">{{options.form.confirm}}</span>
+                <span v-else class="wbtn-primary wbtn wbtn-disabled flex-fill m-0" role="button" disabled>{{options.form.confirm}}</span>
             </div>
             <CountryStyle/>
         </div>
