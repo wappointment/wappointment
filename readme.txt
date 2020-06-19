@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.4
 Requires PHP: 7.0
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -146,7 +146,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 1.5.2 - 2020-06-?? =
+= 1.5.2 - 2020-06-19 =
 * Added option to turn the cancellation rescheduling page into a proper WordPress page so you can control the style
 * Added client's phone number to Admin notifications when present
 * Fixed edge case when permalinks are not turned on or server badly configured

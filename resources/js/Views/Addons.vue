@@ -108,13 +108,14 @@ export default {
     },
     methods: {
       changedWappointmentAllowed(){
-      
         this.changed(this.viewData.wappointment_allowed, 'wappointment_allowed')
         window.apiWappointment.allowed = this.viewData.wappointment_allowed
       },
+
       changed(value, key) {
         this.settingSave(key, value)
       },
+
       runInstallation(addon){
         let solution_key = addon.solutions[0].namekey.replace('-','_')
         if(this.services_install[solution_key] !== undefined){
@@ -122,16 +123,20 @@ export default {
           this.request(this.installAddon, false, undefined,false, this.initialSetupSuccess)
         }
       },
+
       initialSetupSuccess(e){
         this.successActivate(e)
       },
+
       async installAddon(){
           return await this.currentServiceAddon.call('install')
         },
+
       openWizardModal(addon){
         this.addonWizard = addon
         this.openModal()
       },
+
       openModal(){
         this.showModal = true
       },
@@ -164,6 +169,7 @@ export default {
           this.$WapModal().request(this.checkLicenceRequest()).then(this.successInstalled).catch(this.failedCheckRequest)
             //this.request(this.checkLicenceRequest, false, this.loadedAddons)
         },
+
         failedCheckRequest(error){
           this.failedRequest(error)
           this.request(this.loadAddons, false,undefined,false,  this.loadedAddons)
@@ -186,26 +192,31 @@ export default {
         loadedAddons(response){
           this.viewData = response.data
         },
+
         install(addon){
           this.$WapModal().request(this.installAddonRequest(addon)).then(this.successInstalled).catch(this.failedRequest)
         },
+
         async installAddonRequest(addon) {
             return await this.serviceAddons.call('install', { addon: addon })
         }, 
-        successInstalled(response){
 
+        successInstalled(response){
           this.$WapModal().notifySuccess(response.data.message)
           this.request(this.loadAddons, false,undefined,false,  this.loadedAddons)
         },
+
         successActivate(response){
           this.$WapModal().notifySuccess(response.data.message)
           this.$WapModal()
             .request(this.sleep(4000))
           window.location = window.apiWappointment.base_admin + '?page=wappointment_addons'
         },
+
         activate(addon){
           this.$WapModal().request(this.activateAddonRequest(addon)).then(this.successActivate).catch(this.failedRequest)
         },
+
         async activateAddonRequest(addon) {
             return await this.serviceAddons.call('activate', { addon: addon })
         }, 
@@ -213,6 +224,7 @@ export default {
         deactivate(addon){
           this.$WapModal().request(this.deactivateAddonRequest(addon)).then(this.successInstalled).catch(this.failedRequest)
         },
+        
         async deactivateAddonRequest(addon) {
             return await this.serviceAddons.call('deactivate', { addon: addon })
         }, 
