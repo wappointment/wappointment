@@ -51,6 +51,7 @@ import BookingFormHeader from './BookingForm/Header'
 import DurationCell from './BookingForm/DurationCell'
 BookingFormHeader.components = {DurationCell}
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
+import convertDateFormatPHPtoJS from '../Standalone/convertDateFormatPHPtoJS'
 import browserLang from '../Standalone/browserLang'
 
 let compDeclared = {
@@ -107,24 +108,20 @@ export default {
 
     computed: {
         appointmentStartsAt(){
-            if(browserLang().substr(0,2)!=='en' && this.viewData.site_lang !== 'en'){ // if the browser is not english we fetch for a localized date
+            if(browserLang().substr(0,2)!=='en'){ // if the browser is not english we fetch for a localized date
                 let date_loaded = new Date(this.selectedSlot*1000)
 
-                return date_loaded.toLocaleString(browserLang(), {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: '2-digit',
-                    hour: '2-digit',
-                    minute: '2-digit'
-                })
+                return convertDateFormatPHPtoJS(
+                    this.viewData.date_format+ this.viewData.date_time_union+ this.viewData.time_format, 
+                    new Date(this.selectedSlot*1000)
+                    )
 
                 /* this.convertDateRequest({
                     timezone: this.timeprops.currentTz,
                     timestamp: this.selectedSlot
                 }).then(this.convertedDate)  */
             }
-            return getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
+            return this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
         },
         getStaffs(){
             return this.viewData.staffs !== undefined ? this.viewData.staffs:[]

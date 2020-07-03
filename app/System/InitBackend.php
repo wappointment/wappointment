@@ -36,9 +36,10 @@ class InitBackend
 
         return $post_states;
     }
+
     public function registerMenuRoot()
     {
-        $this->menus = new Menus();
+        $this->menus = new Menus;
     }
 
     public function registerMenuSubs()
