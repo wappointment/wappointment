@@ -116,7 +116,7 @@
 
 <script>
 import abstractView from './Abstract'
-import Helpers from '../Standalone/helpers'
+import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 import momenttz from '../appMoment'
 import Regav from './Subpages/Regav'
 import Service from './Subpages/Service'
@@ -183,7 +183,7 @@ export default {
     },
     date_example(){
       return momenttz().tz(this.viewData.timezone).format(
-        (new Helpers()).convertPHPToMomentFormat(this.viewData.date_format + '['+this.viewData.date_time_union+']' + this.viewData.time_format))
+        convertDateFormatPHPtoMoment(this.viewData.date_format + '['+this.viewData.date_time_union+']' + this.viewData.time_format))
     },
   },
   methods: {
@@ -213,10 +213,10 @@ export default {
     },
     
     day_example(dformat){
-      return momenttz().tz(this.viewData.timezone).format( (new Helpers()).convertPHPToMomentFormat(dformat) )
+      return momenttz().tz(this.viewData.timezone).format( convertDateFormatPHPtoMoment(dformat) )
     },
     time_example(tformat){
-      return momenttz().tz(this.viewData.timezone).format( (new Helpers()).convertPHPToMomentFormat(tformat) )
+      return momenttz().tz(this.viewData.timezone).format( convertDateFormatPHPtoMoment(tformat) )
     },
     changeDDP(date, key = 'date_format'){
       this.viewData[key] = date

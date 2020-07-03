@@ -25,7 +25,11 @@ class Main extends AbstractRoutes
                     'controller' => 'BookingController',
                     'method' => 'save',
                     'hint' => 'Booking'
-                ]
+                ],
+                /*                 '/convertdate' => [
+                    'controller' => 'BookingController',
+                    'method' => 'convertDate',
+                ] */
             ],
             'PATCH' => [
                 '/booking' => [

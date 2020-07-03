@@ -22,7 +22,7 @@ import {  faApple, faWindows, faYahoo, faGoogle } from '@fortawesome/free-brands
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faApple, faWindows, faYahoo, faGoogle)
 import momenttz from '../../appMoment'
-import Helpers from '../../Standalone/helpers'
+import convertDateFormatPHPtoMoment from '../../Standalone/convertDateFormatPHPtoMoment'
 
 export default {
     props: ['service', 'staff', 'currentTz', 'physicalSelected','appointment', 'showResult'],
@@ -37,7 +37,7 @@ export default {
     },
     computed: {
         isoFormat(){
-            return (new Helpers()).convertPHPToMomentFormat('Ymd') + '[T]' + (new Helpers()).convertPHPToMomentFormat('His')
+            return convertDateFormatPHPtoMoment('Ymd') + '[T]' + convertDateFormatPHPtoMoment('His')
         },
         startDate(){
             return momenttz.unix(this.appointment.start_at)

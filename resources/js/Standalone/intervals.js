@@ -1,5 +1,3 @@
-import { format } from "path";
-
 export default class Intervals {
 
     constructor(intervals, intervalsPassed = false) {

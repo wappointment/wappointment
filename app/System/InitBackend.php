@@ -4,6 +4,7 @@ namespace Wappointment\System;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Settings;
+use Wappointment\Services\Addons;
 
 class InitBackend
 {
@@ -12,10 +13,6 @@ class InitBackend
     public function __construct($isInstalledAndUpdated)
     {
 
-        $addons_activated = true; //TODO get the list of activated addons if there are
-        if ($addons_activated) {
-            new \Wappointment\Services\Wappointment\VersionCheck;
-        }
         add_action('admin_init', [$this, 'enqueueMin']);
         add_action('admin_menu', [$this, 'registerMenuRoot']);
         if ($isInstalledAndUpdated) {
@@ -98,6 +95,10 @@ class InitBackend
 
     public function enqueueBackendAlways()
     {
+
+        if (!empty(Addons::getActive())) {
+            new \Wappointment\Services\Wappointment\VersionCheck;
+        }
 
         if (!\WappointmentLv::function_exists('register_block_type')) {
             // Gutenberg is not active.

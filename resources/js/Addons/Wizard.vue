@@ -2,7 +2,8 @@
     <div >
         <ul class="my-4 nav nav-tabs" v-if="addon.instructions.length > 1">
             <li class="nav-item"  v-for="(instruction,idx) in addon.instructions">
-                <a class="nav-link" :class="{active:currentStep == instruction.step}" href="javascript:;" @click="showStep(instruction.step)">
+                <a class="nav-link" :class="{active:currentStep == instruction.step}" href="javascript:;" 
+                @click="showStep(instruction.step)">
                     {{ idx + 1 }} - {{ instruction.button }}
                 </a>
             </li>
@@ -10,11 +11,12 @@
 
         <div>
             <div v-if="currentInstruction.description !== undefined">{{ currentInstruction.description }}</div>
-            <Service :crumb="false" v-if="stepService" />
-            <Widget v-if="stepWidgetEditor" />
-            <Regav v-if="stepRegav" :minimal="true"/>
+
             <div v-if="stepAddonsSettings">
-                <component :is="addon.settingKey"></component>
+                <component :is="addon.settingKey" :crumb="false"></component>
+            </div>
+            <div v-else>
+                <component :is="currentStep" :crumb="false"></component>
             </div>
         </div>
     </div>
@@ -34,7 +36,10 @@ import AbstractListing from '../Views/AbstractListing'
 
 library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck)
 export default {
-  components: window.wappointmentExtends.filter('AddonsSettingsComponents', { Service, Widget, Regav, FontAwesomeIcon, AbstractListing }, {extends: abstractView, mixins: [RequestMaker]} ),
+  components: window.wappointmentExtends.filter('AddonsSettingsComponents', 
+  { Service, Widget, Regav, 
+  FontAwesomeIcon, AbstractListing }, 
+  {extends: abstractView, mixins: [RequestMaker]} ),
     props: ['addon'],
     data() {
         return {

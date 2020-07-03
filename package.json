@@ -28,6 +28,7 @@
     "moment": "2.24.*",
     "moment-timezone": "0.5.*",
     "nouislider": "^11.1.0",
+    "replace-once": "^1.0.0",
     "systemjs": "^3.1.6",
     "tiptap": "^0.20.1",
     "tiptap-extensions": "^0.23.0",

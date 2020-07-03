@@ -5,8 +5,10 @@
 </template>
 
 <script>
-import Helpers from '../Standalone/helpers'
+
+import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 import momenttz from '../appMoment'
+
 export default {
   props: ['id','selected', 'classN', 'timeFormat'],
   data() {
@@ -19,7 +21,7 @@ export default {
   },
   methods: {
       formatTime(h){
-          let formattedFormat = (new Helpers()).convertPHPToMomentFormat(this.timeFormat)
+          let formattedFormat = convertDateFormatPHPtoMoment(this.timeFormat)
           return momenttz().hours(h).minutes(0).format(formattedFormat)
       },
       changed(){

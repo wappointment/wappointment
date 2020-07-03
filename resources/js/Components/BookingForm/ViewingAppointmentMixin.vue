@@ -1,9 +1,9 @@
 <script>
-import Helpers from '../../Standalone/helpers'
+import convertDateFormatPHPtoMoment from '../../Standalone/convertDateFormatPHPtoMoment'
 export default {
     methods:{
         convertDateFormat(date){
-            return (new Helpers()).convertPHPToMomentFormat(date)
+            return convertDateFormatPHPtoMoment(date)
         },
         loadAppointment(){
             this.loading = true

@@ -88,6 +88,11 @@ And for any question or doubt, you can reach us:
 
 == Frequently Asked Questions ==
 
+**I get "ERROR loading..." when clicking the booking button**
+
+This is in 99.9% of the case because of the caching plugin or caching system you are using on your site. 
+But it's also really simple to fix. Each time you update our plugin, or any plugin for what it matters, you must clear the cache of your caching plugin or caching system. That's it Solved!
+
 **Can I customize the look and feel of the booking form?**
 
 We provide a very simple editor in which you can change the texts, colors and few other parameters of each step of the booking process. We plan on adding several templates in the future, meanwhile simply use css to make it exactly the way you want.

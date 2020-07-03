@@ -5,6 +5,11 @@ import momenttz from '../../appMoment'
 import DaySlots from './DaySlots'
 import DaysOfWeek from './DaysOfWeek'
 import WeekHeader from './WeekHeader'
+import weekdaysLocale from '../../Standalone/weekdaysLocale'
+import monthLocale from '../../Standalone/monthLocale'
+/**
+ * TODO Review moment usage
+ */
 export default {
     props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration', 'viewData'],
     mixins: [Dates],
@@ -51,7 +56,7 @@ export default {
         this.mounted = true
         
         this.autoRunOnMount()
-        this.getLocalWeekDays()
+        this.object_days = weekdaysLocale()
         this.setWeekHeader()
     },
     updated: function () {
@@ -71,7 +76,6 @@ export default {
         now() {
             return momenttz().tz(this.currentTz)
         },
-        
         
         realMonthNumber() { //month number go from 0 to 11 in momentjs
             return this.monthNumber + 1
@@ -194,17 +198,9 @@ export default {
             
             this.weekHeader = localeweekdays
         },
-        getMonthYear() {
-            let objDate = new Date()
-            objDate.setDate(1)
-            objDate.setMonth(this.monthNumber)
-            let month = objDate.toLocaleString(this.getBrowserLang(), { month: "long" })
-            month = month[0].toUpperCase() + month.substring(1)
-            return month +' '+ this.yearNumber
-        },
 
-        getBrowserLang(){
-            return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.userLanguage || navigator.language || navigator.browserLanguage || 'en-US'
+        getMonthYear() {
+            return monthLocale(this.monthNumber) +' '+ this.yearNumber
         },
 
         getLocaleDay(dayname){
@@ -218,18 +214,7 @@ export default {
             }
         },
 
-        getLocalWeekDays(){
-
-            let tomorrow = new Date()
-            for (let i = 0; i < 7; i++) {
-                this.object_days[i] = {
-                    en:tomorrow.toLocaleDateString('en-US', { weekday: 'long'}), 
-                    locale:new Intl.DateTimeFormat(this.getBrowserLang(), { weekday: 'long'}).format(tomorrow)
-                }
-                tomorrow.setDate(tomorrow.getDate() + 1)
-            }
-
-        },
+        
 
         selectFirstDayAvail(){
             for (let i = 0; i < this.reorganiseDays.length; i++) {

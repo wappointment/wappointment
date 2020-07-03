@@ -4,7 +4,7 @@
             <div class="text-center">
                 <div class=" my-2">
                     <div><strong>{{options.form.header}}</strong></div>
-                    <div><strong>{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></div>
+                    <div><strong>{{ appointment_starts_at }}</strong></div>
                 </div>
                 <div class="wappointment-errors" v-if="errors.length > 0">
                     <div v-for="error in errors">
@@ -68,7 +68,7 @@
                 </div>
             </transition>
             <div class="d-flex wbtn-confirm my-2">
-                <span class="wbtn-secondary wbtn mr-2" role="button" @click="back">{{options.form.back}}</span>
+                <span class="wbtn-secondary wbtn" role="button" @click="back">{{options.form.back}}</span>
                 <span v-if="canSubmit" class="wbtn-primary wbtn flex-fill m-0" role="button" @click="confirm">{{options.form.confirm}}</span>
                 <span v-else class="wbtn-primary wbtn wbtn-disabled flex-fill m-0" role="button" disabled>{{options.form.confirm}}</span>
             </div>
@@ -80,7 +80,6 @@
 <script>
 import abstractFront from '../../Views/abstractFront'
 import BookingAddress from './Address'
-import Dates from '../../Modules/Dates'
 import PhoneInput from './PhoneInput'
 import Strip from '../../Helpers/Strip'
 import {isEmail, isEmpty} from 'validator'
@@ -91,10 +90,11 @@ import { faSkype} from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faMapMarkedAlt, faPhone, faSkype)
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../CountryStyle')
+
 export default {
     extends: abstractFront,
-    mixins: [Dates, Strip],
-    props: ['service','selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations'],
+    mixins: [ Strip],
+    props: ['service','selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations', 'appointment_starts_at'],
     components: {
         BookingAddress,
         PhoneInput,
@@ -112,7 +112,7 @@ export default {
         errorsOnFields: {},
         selectedServiceType: false,
         mounted: false,
-        disabledButtons: false
+        disabledButtons: false,
     }),
     watch: {
         bookingForm: {
@@ -147,6 +147,7 @@ export default {
             this.bookingForm = Object.assign({},this.data)
             if(this.bookingForm.type!==undefined)this.selectedServiceType = this.bookingForm.type
         }
+
     },
     computed: {
         getTerms(){
@@ -201,7 +202,7 @@ export default {
             
             this.$emit('back', this.relations.prev,{selectedSlot:false})
         },
-
+        
         confirm(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'confirmation')
@@ -218,7 +219,7 @@ export default {
             .then(this.appointmentBooked)
             .catch(this.appointmentBookingError)
         },
-
+        
 
         async saveBookingRequest(data) {
             return await this.serviceBooking.call('save', data)

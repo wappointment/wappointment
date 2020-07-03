@@ -145,7 +145,7 @@ import StatusService from '../Services/V1/Status'
 import WappointmentService from '../Services/V1/Wappointment'
 
 import Intervals from '../Standalone/intervals'
-import Helpers from '../Standalone/helpers'
+import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 import TimeZones from '../Components/TimeZones'
 import ControlBar from '../Components/ControlBar'
 import FullCalendarWrapper from '../Components/FullCalendarWrapper'
@@ -178,6 +178,11 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
       AdminStatusFreeConfirm,
       AdminStatusBusyConfirm
   })
+
+  /**
+ * TODO Review moment usage
+ */
+
 export default {
   extends: abstractView,
   mixins: mixins_array,
@@ -589,8 +594,8 @@ export default {
             this.openedDays = this.viewData.regav
 
             this.intervalsCollection = new Intervals(this.viewData.availability)
-            this.viewData.time_format = (new Helpers()).convertPHPToMomentFormat(this.viewData.time_format)
-            this.viewData.date_format = (new Helpers()).convertPHPToMomentFormat(this.viewData.date_format)
+            this.viewData.time_format = convertDateFormatPHPtoMoment(this.viewData.time_format)
+            this.viewData.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
             this.setMinAndMax()
             this.setInterval(this.viewData.service.duration)
             

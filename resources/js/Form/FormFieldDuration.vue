@@ -1,5 +1,5 @@
 <template>
-    <div class="w-100">
+    <div class="w-100 slider-duration">
         <div class="pl-2"v-if="[undefined,''].indexOf(label) === -1">
             {{ label}}
         </div>
@@ -85,6 +85,9 @@ export default {
 <style>
 .slider {
     width: 78%;
+}
+.slider-duration{
+    min-width: 300px;
 }
 .field-wrap {
     display: block;

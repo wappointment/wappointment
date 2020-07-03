@@ -254,7 +254,8 @@ class ViewsData
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'now' => (new Carbon())->format('Y-m-d\TH:i:00'),
             'buffer_time' => Settings::get('buffer_time'),
-            'services' => Service::all()
+            'services' => Service::all(),
+            'site_lang' => substr(get_locale(), 0, 2)
         ]);
     }
 }

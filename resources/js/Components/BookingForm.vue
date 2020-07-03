@@ -41,9 +41,8 @@
 <script>
 import abstractFront from '../Views/abstractFront'
 import Intervals from '../Standalone/intervals'
-import Helpers from '../Standalone/helpers'
-import Colors from "../Modules/Colors";
-
+import Colors from "../Modules/Colors"
+import Dates from "../Modules/Dates"
 import BookingFormConfirmation from './BookingForm/Confirmation'
 import RescheduleConfirm from './BookingForm/RescheduleConfirm'
 import BookingCalendar from './BookingForm/Calendar'
@@ -51,8 +50,8 @@ import BookingFormInputs from './BookingForm/Form'
 import BookingFormHeader from './BookingForm/Header'
 import DurationCell from './BookingForm/DurationCell'
 BookingFormHeader.components = {DurationCell}
-
-import momenttz from '../appMoment'
+import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
+import browserLang from '../Standalone/browserLang'
 
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
@@ -67,7 +66,7 @@ compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared
 
 export default {
      extends: abstractFront,
-     mixins: [Colors],
+     mixins: [Colors, Dates],
      props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent'],
      components: compDeclared, 
     data: () => ({
@@ -97,8 +96,8 @@ export default {
     mounted () {
         
         this.refreshInitValue()
-        this.currentTz = momenttz.tz.guess()
-        this.createdAt = momenttz().unix()
+        this.currentTz = this.tzGuess()
+        this.createdAt = this.getUnixNow()
         
         if(this.step == 'button') {
             this.$emit('changedStep','selection')
@@ -107,6 +106,26 @@ export default {
     },
 
     computed: {
+        appointmentStartsAt(){
+            if(browserLang().substr(0,2)!=='en' && this.viewData.site_lang !== 'en'){ // if the browser is not english we fetch for a localized date
+                let date_loaded = new Date(this.selectedSlot*1000)
+
+                return date_loaded.toLocaleString(browserLang(), {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                })
+
+                /* this.convertDateRequest({
+                    timezone: this.timeprops.currentTz,
+                    timestamp: this.selectedSlot
+                }).then(this.convertedDate)  */
+            }
+            return getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
+        },
         getStaffs(){
             return this.viewData.staffs !== undefined ? this.viewData.staffs:[]
         },
@@ -149,7 +168,7 @@ export default {
                currentTz: this.currentTz,
                time_format: this.time_format,
                fullDateFormat: this.fullDateFormat,
-               ctz: momenttz.tz.guess()
+               ctz: this.currentTz
            }
            if(this.appointmentkey !== undefined){
                timeprops.appointmentkey = this.appointmentkey
@@ -161,6 +180,16 @@ export default {
        }
     },
     methods: {
+
+        /* async convertDateRequest(data) {
+            return await this.serviceBooking.call('convertDate', data)
+        }, 
+
+        convertedDate(result){
+            console.log('result.data.converted',result.data.converted)
+            //this.converted = result.data.converted
+        }, */
+
         loadStep(step){
             this.loadingStep = step
         },
@@ -225,9 +254,11 @@ export default {
             }
             return listeners
         },
+        
         getComp(component_name){
             return this.componentsList[component_name].name
         },
+
         isCompVisible(component_name){
             let conditions = this.componentsList[component_name].conditions !== undefined ? this.componentsList[component_name].conditions : false
             if(conditions !== false) {
@@ -256,18 +287,18 @@ export default {
                 return this.viewData.staffs[0]
             }
         },
+
         loadedAfter() {
-            this.time_format = (new Helpers()).convertPHPToMomentFormat(this.viewData.time_format)
-            this.date_format = (new Helpers()).convertPHPToMomentFormat(this.viewData.date_format)
+            this.time_format = convertDateFormatPHPtoMoment(this.viewData.time_format)
+            this.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
 
             this.startDay = this.viewData.week_starts_on
             let firstStaff = this.getDefaultStaff()
             this.intervalsCollection = new Intervals(this.viewData.availability[firstStaff.id])
 
-            momenttz.locale(this.getLocale())
+            this.setMomentLocale()
 
             this.dataloaded = true
-
             
             this.setServiceDurationLocation()
 
@@ -302,6 +333,7 @@ export default {
                 this.location = this.service.type !== undefined ? this.service.type : window.wappointmentExtends.filter('locationDefault', this.service)
             } 
         },
+
         setComponentLists(){
             let componentsList = {
                 BookingCalendar: {
@@ -370,7 +402,8 @@ export default {
                         errors:"errorMessages",
                         data:"dataSent",
                         options:"options",
-                        relatedComps: 'relatedComps'
+                        relatedComps: 'relatedComps', 
+                        appointment_starts_at: 'appointmentStartsAt',
                     },
                     listeners: {
                         back:'childChangedStep',
@@ -397,7 +430,8 @@ export default {
                         result:"dataSent",
                         options:"options",
                         isApprovalManual:"isApprovalManual",
-                        staff:"staff"
+                        staff:"staff", 
+                        appointment_starts_at: 'appointmentStartsAt',
                     },
                     listeners: {
                         loading: 'childChangedData',
@@ -409,9 +443,7 @@ export default {
             this.componentsList = window.wappointmentExtends.filter('componentsList', componentsList,
              {service: this.service, rescheduling:this.rescheduling} )
         },
-        getLocale(){
-            return (navigator.languages && navigator.languages.length) ? navigator.languages[0] : navigator.language;
-        },
+        
         
     }
 }
@@ -537,11 +569,15 @@ export default {
     width:100%;
 }
 
-.wap-front .wbtn-confirm span.wbtn {
+.wap-front .wbtn-confirm span.wbtn, 
+.wap-front .wbtn-confirm .wbtn.wbtn-secondary {
     font-size: 1em;
-    margin:0;
+    margin: 0 !important;
 }
 
+.wap-front .wbtn-confirm .wbtn-secondary.wbtn {
+    margin-right: .5em !important;
+}
 
 .slide-fade-enter-active, 
 .slide-fade-leave-active, 

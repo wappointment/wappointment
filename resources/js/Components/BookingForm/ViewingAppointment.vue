@@ -2,11 +2,9 @@
     <div>
         <div v-if="loadedAppointment">
             <h2 v-if="!isSaveEventPage">{{getText('title')}}</h2>
-            <ul>
-                <li>{{ client.name }} - {{ client.email }}</li>
-                <li><strong>{{ getMoment(selectedSlot, currentTz).format(fullDateFormat) }}</strong></li>
-                <li><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></li>
-            </ul>
+            <div>{{ client.name }} - {{ client.email }}</div>
+            <div><strong>{{ getMoment(selectedSlot, currentTz).format(fullDateFormat) }}</strong></div>
+            <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
             <div v-if="isSaveEventPage">
                 <div>
                     <p>{{options.confirmation.savetocal}}</p>
@@ -55,19 +53,19 @@
 </template>
 
 <script>
-import momenttz from '../../appMoment'
 
 import Dates from '../../Modules/Dates'
 import abstractFront from '../../Views/abstractFront'
 import SaveButtons from './SaveButtons'
 import Iframe from '../Iframe'
-
 import AppointmentService from '../../Services/V1/Appointment'
 import DurationCell from './DurationCell'
 import RescheduleForm from './RescheduleForm'
 import ViewingAppointmentMixin from './ViewingAppointmentMixin'
+
 let mixins = {ViewingAppointmentMixin:ViewingAppointmentMixin}
 mixins = window.wappointmentExtends.filter('ViewingAppointmentMixin', mixins)
+
 export default {
      
     mixins: [Dates, mixins.ViewingAppointmentMixin],
@@ -103,7 +101,7 @@ export default {
         
     }),
     created(){
-        this.currentTz = momenttz.tz.guess()
+        this.currentTz = this.tzGuess()
         this.serviceAppointment = this.$vueService(new AppointmentService)
         this.viewData = this.view
         if(this.options.demoData !== undefined){
@@ -162,12 +160,10 @@ export default {
     },
     computed: {
         canStillReschedule(){
-            let now = momenttz()
-            return now.unix() < this.appointment.canRescheduleUntil
+            return this.getUnixNow() < this.appointment.canRescheduleUntil
         },
         canStillCancel(){
-            let now = momenttz()
-            return now.unix() < this.appointment.canCancelUntil
+            return this.getUnixNow() < this.appointment.canCancelUntil
         },
         isReschedulePage(){
             return this.viewData == 'reschedule-event'

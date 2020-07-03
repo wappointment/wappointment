@@ -40,7 +40,11 @@ class Service
             return $validation->errors()->toArray();
         }
 
+        return static::saveService($serviceData);
+    }
 
+    public static function saveService($serviceData)
+    {
         $service = static::get('service'); // to test the existing service
 
         $serviceData['options'] = array_merge($service['options'], $serviceData['options']);

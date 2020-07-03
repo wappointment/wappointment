@@ -18,7 +18,11 @@ export default class BookingService extends ApiV1{
             delete: { 
                 method: 'delete', 
                 route: 'booking'
-            }
+            },
+            convertDate: { 
+                method: 'post', 
+                route: 'convertDate'
+            },
         };
     }
 

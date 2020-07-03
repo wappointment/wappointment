@@ -6,7 +6,7 @@
         </div>
         <div class="my-2">
             <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
-            <div><strong>{{ getMoment(appointment.start_at, timeprops.currentTz).format(timeprops.fullDateFormat) }}</strong></div>
+            <div><strong>{{ appointment_starts_at }}</strong></div>
         </div>
         <p v-if="isApprovalManual">{{options.confirmation.pending}}</p>
         <div v-if="physicalSelected">
@@ -41,14 +41,12 @@
 import BookingAddress from './Address'
 import DurationCell from './DurationCell'
 import SaveButtons from './SaveButtons'
-import Dates from '../../Modules/Dates'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMapMarkedAlt, faPhone, faCalendarCheck, faCalendarAlt } from '@fortawesome/free-solid-svg-icons'
 import { faSkype } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck,faCalendarAlt)
 export default {
-    mixins: [Dates],
     components: {
         FontAwesomeIcon,
         BookingAddress,
@@ -62,12 +60,13 @@ export default {
         'isApprovalManual', 
         'timeprops',
         'staff',
-        'options'
+        'options',
+        'appointment_starts_at',
     ],
     data: () => ({
         showSaveButtons: false,
         selectedServiceType: '',
-        showResult: null
+        showResult: null,
     }),
 
     created(){
