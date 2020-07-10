@@ -28,9 +28,11 @@
                         <div class="d-flex align-items-center mb-2">
                             <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit"  @click="toggleColor">
                                 <span v-if="colorEdit"><FontAwesomeIcon :icon="['fas', 'edit']" size="lg"/> Edit Steps</span>
-                                <span v-else><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Colors</span>
+                                <span v-else><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Global</span>
                             </button>
                             <div class="d-flex flex-wrap" v-if="!colorEdit"> 
+                                <button v-if="widgetFields.general !== undefined" class="btn btn-secondary btn-xs m-1 tt-below" 
+                                :class="{'selected': (step == 'general')}" @click="setStep('general', 'General')" data-tt="General"> General</button>
                                 <button v-for="(stepObj,idx) in editionsSteps" class="btn btn-secondary btn-xs m-1 tt-below" 
                                 :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key, getLabelForStep(stepObj.key))" :data-tt="stepObj.label"> Step {{ idx + 1 }}</button>
                             </div>
@@ -58,23 +60,41 @@
                             </div>
                         </transition>
                     </div>
-                    <div v-if="!colorEdit" v-for="(stepObj,idx) in reverseEditionsSteps" :key="stepObj.key">
+                    <div v-if="!colorEdit" >
+                        <div v-for="(stepObj,idx) in reverseEditionsSteps" :key="stepObj.key">
+                            <transition name="slide-fade-top"  >
+                                <div class="widget-fields" v-if="isCurrentStep(stepObj.key)" :data-step="'Step '+(4-idx)+': '+stepObj.label" 
+                                :class="{'active-fields': (step == stepObj.key)}">
+                                    <template v-for="(inputvalue, group_key) in options[stepObj.key]">
+                                        <component  v-if="isComponentTypeActive(inputvalue,stepObj.key,group_key, group_key)" :key="group_key"  
+                                        :is="getComponentType(inputvalue,group_key)" 
+                                        v-model="options[stepObj.key][group_key]" 
+                                        @change="changedInput"
+                                        eventChange="input"
+                                        :label="getLabel(stepObj.key, group_key)" 
+                                        :ph="defaultSettings[stepObj.key][group_key]"
+                                        :options="getOptions(stepObj.key, group_key)" 
+                                        allowReset></component>
+                                    </template>
+                                </div>
+                            </transition>
+                        </div>
                         <transition name="slide-fade-top"  >
-                            <div class="widget-fields" v-if="isCurrentStep(stepObj.key)" :data-step="'Step '+(4-idx)+': '+stepObj.label" 
-                            :class="{'active-fields': (step == stepObj.key)}">
-                                <template v-for="(inputvalue, group_key) in options[stepObj.key]">
-                                    <component  v-if="isComponentTypeActive(inputvalue,stepObj.key,group_key, group_key)" :key="group_key"  
-                                    :is="getComponentType(inputvalue,group_key)" 
-                                    v-model="options[stepObj.key][group_key]" 
-                                    @change="changedInput"
-                                    eventChange="input"
-                                    :label="getLabel(stepObj.key, group_key)" 
-                                    :ph="defaultSettings[stepObj.key][group_key]"
-                                    :options="getOptions(stepObj.key, group_key)" 
-                                    allowReset></component>
-                                </template>
-                            </div>
-                        </transition>
+                                <div class="widget-fields" v-if="isCurrentStep('general')" data-step="General" 
+                                :class="{'active-fields': (step == 'general')}">
+                                    <template v-for="(inputvalue, group_key) in options['general']">
+                                        <component  v-if="isComponentTypeActive(inputvalue,'general',group_key, group_key)" :key="group_key"  
+                                        :is="getComponentType(inputvalue,group_key)" 
+                                        v-model="options['general'][group_key]" 
+                                        @change="changedInput"
+                                        eventChange="input"
+                                        :label="getLabel('general', group_key)" 
+                                        :ph="defaultSettings['general'][group_key]"
+                                        :options="getOptions('general', group_key)" 
+                                        allowReset></component>
+                                    </template>
+                                </div>
+                            </transition>
 
                     </div>
                     
@@ -124,7 +144,6 @@ export default {
         colorEdit: false,
         textEdit: true,
         canSave: false,
-        showAllText: false,
         labelActiveStep: '',
         editionsSteps: [
             {
@@ -282,8 +301,6 @@ export default {
             let fieldInfos = this.getFieldAdminInfos(section, key)
             if(subkey!== false && this.hasFieldKey(fieldInfos, subkey)){
                 return fieldInfos.fields[subkey].hidden !== undefined  ? false:true
-            }else{
-                return  fieldInfos !== false && fieldInfos.hidden !== undefined ? false:true
             }
             return  fieldInfos !== false && fieldInfos.hidden !== undefined ? false:true
         },
@@ -312,15 +329,10 @@ export default {
         },
         isComponentTypeActive(value, section, group_key, key, onlycolors=false){
             if(value[0] == '#'){
-  
                 return onlycolors===true && this.colorEdit && this.getVisibility(section, group_key, key)
             }else{
                 if(onlycolors===true) return false
-                if(this.showAllText === true){
-                    return true
-                }else{
-                    return this.getVisibility(section, key)
-                }
+                return this.getVisibility(section, key)
             }
         },
 

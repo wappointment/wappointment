@@ -2,7 +2,8 @@
 <template>
     <div v-if="duration" role="button" :class="{'duration':show,'wbtn wbtn-cell wbtn-secondary':!show}" 
     @click="$emit('clicked',duration)">
-    {{ duration }}min <slot></slot>
+        <div class="duration-value">{{ duration }}min</div>
+        <slot></slot>
     </div>
 </template>
 

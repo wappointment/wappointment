@@ -13,6 +13,7 @@ class Widget extends WidgetAbstract
     {
         return empty($_REQUEST['wappo_module_off']) && empty($_REQUEST['appointmentkey']);
     }
+
     public static function baseHtml($instance = [])
     {
         if (!self::canShow()) {
@@ -25,7 +26,8 @@ class Widget extends WidgetAbstract
                 $htmlAttributes .= ' data-' . str_replace('_', '-', strtolower($attr)) . '="' . esc_attr($val) . '"';
             }
         }
-        return '<button class="wappointment_widget" ' . $htmlAttributes . '>' . esc_html($instance['button_title']) . '</button>';
+        $button_title = !empty($instance['button_title']) ? esc_html($instance['button_title']) : 'Book now!';
+        return '<button class="wappointment_widget" ' . $htmlAttributes . '>' . $button_title . '</button>';
     }
 
 

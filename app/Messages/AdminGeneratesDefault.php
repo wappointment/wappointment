@@ -15,7 +15,7 @@ trait AdminGeneratesDefault
             'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
             'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
                 . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
-            'Service: ' . sanitize_text_field(Service::get()['name']),
+            'Service: ' . $appointment->getServiceName(),
             'Location: ' . $appointment->getLocation(),
             "Client's name: " . sanitize_text_field($client->name),
             "Client's email: " . sanitize_text_field($client->email),

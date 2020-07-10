@@ -271,7 +271,7 @@ class WidgetSettings
             $fields = $this->hideButtonService($fields);
         }
         if (!$service->hasPhone()) {
-            $fields = $this->hidePhone($fields);
+            //$fields = $this->hidePhone($fields);
         }
         if (!$service->hasSkype()) {
             $fields = $this->hideSkype($fields);
