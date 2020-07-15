@@ -54,11 +54,12 @@ export default {
           this.request(this.wizardStep1Request,  undefined, undefined, false,  this.redirectWizardStep1, this.failedRequest)
       },
       failedRequest(e){
-        console.log('e',e.response)
+        
         if(e.response.status === 404){
           // pretty permalinks configure in WP but are not well configured on the server
           // suggest switching to ugly ones
           this.suggest_ugly_links = true
+          //console.log('e',e.response)
         }
         if(e.response !== undefined){
           for (const key in e.response.data.data.errors.validations) {

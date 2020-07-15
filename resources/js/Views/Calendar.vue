@@ -551,8 +551,7 @@ export default {
       return undefined
     },
     endTimeDisplayed() {
-      if(this.fcIsReady) {
-        if(this.getDate() !== undefined)
+      if(this.fcIsReady && this.getDate() !== undefined) {
         return this.getDate().tz(this.selectedTimezone).day(7).hours(this.maxHour)
       }
       return undefined
@@ -569,7 +568,9 @@ export default {
         this.writeHistory()
 
         //if(initSave === false)window.location.reload()
-        if(initSave === false)this.reload()
+        if(initSave === false) {
+          this.reload()
+        }
         
         //this.refreshEvents()
       },

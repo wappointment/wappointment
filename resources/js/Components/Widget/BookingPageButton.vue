@@ -1,10 +1,10 @@
 <template>
     <div class="card d-flex flex-row justify-content-between" >
         <div class="h5 my-1 d-flex align-items-center">
-            <span class="dashicons mr-1" :class="[viewData.booking_page_id !== 0 ? 'dashicons-text-page text-success': 'dashicons-dismiss text-danger']"></span>
+            <span class="dashicons mr-1" :class="[hasBookingPage ? 'dashicons-text-page text-success': 'dashicons-dismiss text-danger']"></span>
             <span>{{ title }}</span>
         </div>
-        <div v-if="viewData.booking_page_id === 0" >
+        <div v-if="hasBookingPage" >
             <span class="mr-2" :class="{'text-danger':viewData.booking_page_id === 0}">You don't have a booking page yet</span> 
             <button class="btn btn-secondary" @click="showCreateBookingPage = true">Create one</button>
         </div>
@@ -38,6 +38,11 @@ export default {
     },
     components: {
         CreateBookingPage
+    },
+    computed: {
+        hasBookingPage(){
+            return this.viewData.booking_page_id !== 0 && this.viewData.booking_page_url !== false
+        }
     },
     methods:{
         savedPage(page_id){
