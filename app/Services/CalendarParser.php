@@ -141,6 +141,7 @@ class CalendarParser
     {
         return empty($timezone_string) ? '' : DateTime::isKnownTimezone($timezone_string);
     }
+
     private function vcalDateToCarbon($vcalDateTimeString, $vevent = null)
     {
         $timezone = '';
@@ -152,7 +153,7 @@ class CalendarParser
             $timezone = $this->timezone;
         }
 
-        if (!empty($vevent->DTSTART)) {
+        if (empty($timezone) && !empty($vevent->DTSTART)) {
             $timezone = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
         }
 
