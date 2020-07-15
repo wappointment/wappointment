@@ -23,10 +23,10 @@ class Service
         } */
         $this->service = $serviceArray;
         $this->name = $serviceArray['name'];
-        $this->type = is_array($serviceArray['type']) ? $serviceArray['type'] : [];
+        $this->type = !empty($serviceArray['type']) && is_array($serviceArray['type']) ? $serviceArray['type'] : [];
         $this->address = $this->hasPhysical() && !empty($serviceArray['address']) ? $serviceArray['address'] : '';
-        $this->duration = $serviceArray['duration'];
-        $this->options = $serviceArray['options'];
+        $this->duration = empty($serviceArray['duration']) ? 0 : $serviceArray['duration'];
+        $this->options = empty($serviceArray['options']) ? [] : $serviceArray['options'];
     }
 
     public function hasManyTypes()
