@@ -5,7 +5,8 @@ namespace Wappointment\WP;
 class Database
 {
     public $host = '';
-    private $port = '';
+    private $port = '3306';
+    private $alt_port = '';
     private $prefix = '';
     private $mainprefix = '';
 
@@ -14,7 +15,6 @@ class Database
         global $wpdb;
 
         $this->host = DB_HOST;
-        $this->port = '3306';
         $this->prefix = $wpdb->prefix;
         if (is_multisite() && defined('BLOG_ID_CURRENT_SITE')) {
             $this->mainprefix = $wpdb->get_blog_prefix(BLOG_ID_CURRENT_SITE);
@@ -24,7 +24,12 @@ class Database
             $host_port = explode(':', $this->host);
             $this->host = $host_port[0];
             $this->port = $host_port[1];
+        } else {
+            if (!empty(ini_get('mysqli.default_port'))) {
+                $this->alt_port = ini_get('mysqli.default_port'); // make sure this cannot break working connection
+            }
         }
+        //dd(ini_get('mysqli.default_port'));
     }
 
     public function getDbName()

@@ -5,10 +5,8 @@ namespace Wappointment\Installation\Checks;
 class DatabasePrivileges extends \Wappointment\Installation\MethodsRunner
 {
 
-
     protected function canConnectToPdo2()
     {
-
         try {
             \Wappointment\Config\Database::capsule()->getConnection('default')->getPdo();
         } catch (\Throwable $th) {
@@ -53,6 +51,10 @@ class DatabasePrivileges extends \Wappointment\Installation\MethodsRunner
                         if (strpos($res, $privilege) === false) {
                             $cannot_do[] = $privilege;
                         }
+                    }
+
+                    if (empty($cannot_do)) {
+                        return true;
                     }
                 }
             }
