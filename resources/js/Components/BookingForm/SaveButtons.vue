@@ -46,7 +46,7 @@ export default {
             return this.service.duration
         },
         endDate(){
-            return momenttz.unix(this.appointment.start_at + ( this.getDuration * 60))
+            return momenttz.unix(this.appointment.end_at)
         },
         formattedStartDate(){
             return this.startDate.format(this.isoFormat)
