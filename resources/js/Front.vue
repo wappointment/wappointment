@@ -1,5 +1,5 @@
 <template>
-    <div class="wap-front" :class="{'br-fixed': isBottomRight, 'large-version': largeVersion}" :id="elementId">
+    <div class="wap-front" :class="getDynaClasses" :id="elementId">
         <StyleGenerator :options="opts" :wrapper="elementId" :largeVersion="largeVersion"></StyleGenerator>
         <div v-if="isPage">
             <BookingForm v-if="isBookingPage" :options="opts"></BookingForm>
@@ -71,6 +71,11 @@ export default {
         }
     },
     computed:{
+        getDynaClasses(){
+          let classes = {'br-fixed': this.isBottomRight, 'large-version': this.largeVersion}
+          classes[this.getParameterByName('view')] = true
+          return classes
+        },
 
         realButtonTitle(){
           return this.options!== undefined && this.options.button.title !== undefined ? this.options.button.title : this.buttonTitle
