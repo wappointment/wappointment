@@ -7,8 +7,8 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
                 <h1 class="h2 align-self-center"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
-                <span v-if="!viewingFreeSlot" @click="getFreeSlots" class="tt-below d-none d-md-block badge badge-secondary align-self-center ml-3 btn btn-link" data-tt="View free slots">Free slots {{ totalSlots }}</span>
-                <span v-else class="tt-below btn btn-link" @click="getEdition">Back to edition</span>
+                <SlotsCount :totalSlots="totalSlots" :viewingFreeSlot="viewingFreeSlot" :durations="getAllDurations" :duration="selectedDuration"
+                @resizeSlots="resizeSlots" @getFreeSlots="getFreeSlots" @getEdition="getEdition"/>
               </div>
               <div class="d-flex">
                 <TimeZones v-if="viewData!==null" :timezones="viewData.timezones_list" :staffTimezone="viewData.timezone" classW="align-self-center pr-2" 
@@ -100,7 +100,7 @@
                   <div class="card d-flex flex-row justify-content-between">
                     <div class="h5 my-1 d-flex align-items-center">
                       <span class="dashicons dashicons-yes-alt text-success mr-2"></span> 
-                      <span>You provide <strong>{{ viewData.service.name }}</strong> lasting {{ viewData.service.duration }}min</span>
+                      <span>You provide <strong>{{ viewData.service.name }}</strong> lasting {{ selectedDuration }}min</span>
                     </div> 
                   </div>
                   <BookingPageButton v-if="showWelcomePopup" :title="getTitleShowWelcome" :viewData="viewData" @saved="savedPage"/>
@@ -143,7 +143,6 @@ import Regav from './Subpages/Regav'
 import EventService from '../Services/V1/Event'
 import StatusService from '../Services/V1/Status'
 import WappointmentService from '../Services/V1/Wappointment'
-
 import Intervals from '../Standalone/intervals'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 import TimeZones from '../Components/TimeZones'
@@ -156,9 +155,13 @@ import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import abstractView from './Abstract'
 import momenttz from '../appMoment'
 import BookingPageButton from '../Components/Widget/BookingPageButton'
-
 import AppointmentRender from './Calendar/AppointmentRender'
-let mixins_object = window.wappointmentExtends.filter('BackendCalendarMixins', {AppointmentRender:AppointmentRender})
+import SlotsCount from '../CalendarAdmin/SlotsCount'
+import MixinRender from '../CalendarAdmin/MixinRender'
+import MixinBeautify from '../CalendarAdmin/MixinBeautify'
+import MixinSelection from '../CalendarAdmin/MixinSelection'
+
+let mixins_object = window.wappointmentExtends.filter('BackendCalendarMixins', {AppointmentRender, MixinRender, MixinBeautify, MixinSelection})
 let mixins_array = []
 for (const key in mixins_object) {
   if (mixins_object.hasOwnProperty(key)) {
@@ -176,7 +179,8 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
       FullCalendarWrapper,
       AdminAppointmentBooking,
       AdminStatusFreeConfirm,
-      AdminStatusBusyConfirm
+      AdminStatusBusyConfirm,
+      SlotsCount
   })
 
   /**
@@ -190,6 +194,8 @@ export default {
   components: calendar_components, 
 
   data: () => ({
+    momenttz: momenttz,
+    selectedDuration: false,
     fcIsReady: false,
     observer: undefined,
     canLoadEvents: true,
@@ -235,6 +241,7 @@ export default {
     openconfirm: false,
     hasBeenSetCalProps: false,
     welcomeComplete: false,
+    queryParameters: undefined
   }),
 
   created(){
@@ -242,10 +249,8 @@ export default {
     this.serviceStatus = this.$vueService(new StatusService)
     this.serviceWappointment = this.$vueService(new WappointmentService)
     
-    if(window.savedQueries!== undefined && [null,undefined].indexOf(window.savedQueries.open_confirm) === -1 && window.savedQueries.open_confirm > 0) {
-      this.openconfirm = window.savedQueries.open_confirm
-    }
-    
+    this.checkQueryParams()
+
   },
 
  watch: {
@@ -261,6 +266,9 @@ export default {
   },
  
  computed: {
+   getAllDurations(){
+     return this.viewData.durations
+   },
    getTitleShowWelcome(){
      return this.viewData.booking_page_id === 0? 'Booking page missing':'Your booking page has been created'
    },
@@ -293,8 +301,7 @@ export default {
 
     },
     totalSlots() {
-      if(this.getThisWeekIntervals === 0 ) return this.getThisWeekIntervals
-      return this.getThisWeekIntervals.splits(parseInt(this.viewData.service.duration)*60).totalSlots()
+      return this.getThisWeekIntervals === 0 ? 0:this.getThisWeekIntervals.splits(parseInt(this.selectedDuration)*60).totalSlots()
     },
     lastDay() {
       return momenttz.tz(this.firstDay,this.displayTimezone).day(7)
@@ -324,53 +331,27 @@ export default {
     endTimeDisplay(){
       return this.formatTime(this.endTime)
     },
-    shownAppointmentForm(){
-      return this.selectedChoice === 3
-    },
-    shownBusyConfirm(){
-      return this.selectedChoice === 2
-    },
-    shownFreeConfirm(){
-      return this.selectedChoice === 1
-    },
-    selectionSingleDay(){
-      return (this.startTime.day() === this.endTime.day() && 
-        this.startTime.month() === this.endTime.month() && 
-        this.startTime.year() === this.endTime.year())
-    },
-    isAvailable(){
-      if(this.getThisWeekIntervals!==0) {
-        for (let index = 0; index < this.getThisWeekIntervals.intervals.length; index++) {
-          const element = this.getThisWeekIntervals.intervals[index]
-          if(this.selectIsWithin(element)){
-            return true
-          }
-        }
-      }
-      return false
-    },
     
-
-    isBusy(){
-      if(this.getThisWeekIntervals!==0) {
-        for (let index = 0; index < this.getThisWeekIntervals.intervals.length; index++) {
-          const element = this.getThisWeekIntervals.intervals[index]
-          if(
-            this.selectWraps(element) ||
-            this.selectIntersectsLeft(element) ||
-            this.selectIntersectsRight(element) ||
-            this.selectIsWithin(element)
-          ){
-            return false
-          }
-
-        }
-      }
-      
-      return true
-    },
  },
   methods: {
+    checkQueryParams(){
+      if(window.savedQueries!== undefined ) {
+        this.queryParameters = window.savedQueries
+        if([null,undefined].indexOf(window.savedQueries.open_confirm) === -1 && window.savedQueries.open_confirm > 0){
+          this.openconfirm = window.savedQueries.open_confirm
+        }
+        
+      }
+    },
+    resizeSlots(duration){
+      
+      this.setInterval(duration)
+
+      this.fullCalOption = undefined
+      setTimeout(this.setFullCalOptions.bind(null, this.firstDay.format()), 100);
+
+    },
+
     sendTestBooking(){
       this.request(this.sendTestBookingRequest, false, undefined,false,  this.closeAndRefreshWelcome)
     },
@@ -404,41 +385,7 @@ export default {
       this.viewingFreeSlot = false
       this.refreshEvents()
     },
-    selectIsWithin(element){
-      let selStart = momenttz.tz(this.startTime.format(), this.timezone)
-      let selEnd = momenttz.tz(this.endTime.format(), this.timezone)
-      return selStart.unix() >= element.start 
-      && selEnd.unix() <= element.end
-    },
-    selectWraps(element){
-      return this.startTime.unix() <= element.start 
-      && this.endTime.unix() >= element.end
-    },
-    selectIntersectsLeft(element){
-      return this.startTime.unix() < element.start 
-      && this.endTime.unix() > element.start 
-      && this.endTime.unix() <= element.end
-    },
-    selectIntersectsRight(element){
-      return this.startTime.unix() >= element.start 
-      && this.startTime.unix() < element.end 
-      && this.endTime.unix() > element.end
-    },
-    confirmFree(){
-      if(!this.selectionSingleDay || this.isAvailable) return
-      if(this.selectionSingleDay){
-        this.selectedChoice = 1
-      }
-    },
-    confirmBusy(){
-      if(this.isBusy) return
-      this.selectedChoice = 2
-    },
-    confirmNewBooking(){
-      if(this.selectionSingleDay){
-        this.selectedChoice = 3
-      }
-    },
+    
     
     hideModal(){
         this.bookForAclient = false
@@ -458,85 +405,6 @@ export default {
       
     },
 
-
-    hoverIndicatorRegister(){
-      let selectedTz = this.selectedTimezone 
-      window.jQuery('.fc-content-today').on('mouseover','.fc-now-indicator-line', function(now, e) {
-          window.jQuery('.fc-now-indicator-line .nowtime').html(now.tz(selectedTz).format('dddd HH:mm'))
-          window.jQuery('.fc-now-indicator-line .nowtime').addClass('show')
-      }.bind(null,  momenttz.tz(this.viewData.now,this.viewData.timezone)))
-
-      window.jQuery('.fc-content-today').on('mouseout','.fc-now-indicator-line',() => window.jQuery('.nowtime').removeClass('show'))
-    }, 
-    hoverIndicatorUnregister(){
-
-      window.jQuery('.fc-content-today').unbind('mouseover')
-      window.jQuery('.fc-content-today').unbind('mouseout')
-    }, 
-    beforeDestroy(){
-        this.hoverIndicatorUnregister()
-        this.observer.disconnect()
-    },
-    observeNowIndicator(){
-        if(this.observer !== undefined){
-            this.hoverIndicatorUnregister()
-            this.observer.disconnect()
-        }
-        this.observer = undefined
-        const elements = document.querySelectorAll('.fc-content-skeleton td .fc-content-col')
-        let today = false
-        for (let i = 0; i < elements.length; i++) {
-              if(elements[i].childNodes.length > 0){
-                  for (let j = 0; j < elements[i].childNodes.length; j++) {
-                      if(Array.from(elements[i].childNodes[j].classList).indexOf('fc-now-indicator-line') !== -1) {
-                          today = elements[i]
-                          today.classList.toggle('fc-content-today')
-                      }
-                      if(today !== false) break
-                  }
-                  
-              }
-            if(today !== false) break
-        }
-        if(today !== false){
-            // config object
-            const config = {
-                attributes: false,
-                attributeOldValue: false,
-                characterData: false,
-                characterDataOldValue: false,
-                childList: true,
-                subtree: false
-            };
-            // instantiating observer
-            this.observer = new MutationObserver(this.observerSubscriber)
-
-            // observing target
-            this.observer.observe(today, config)
-            this.hoverIndicatorRegister()
-        }
-    },
-    observerSubscriber(mutations) {
-        for (let i = 0; i < mutations.length; i++) {
-          const mutation = mutations[i]
-          if (mutation.addedNodes.length > 0) {
-                for (let k = 0; k < mutation.addedNodes.length; k++) {
-                  if( Array.from(mutation.addedNodes[k].classList).indexOf('fc-now-indicator-line')!==-1){
-                    this.setTodayPastSection()
-                  }
-                }
-            }
-        }
-    },
-    setTodayPastSection(){
-      if([0, '0', '0px'].indexOf(window.jQuery('.fc-now-indicator-line').css('top')) === -1){
-        window.jQuery('.fc-now-indicator-line').css('height',window.jQuery('.fc-now-indicator-line').css('top'))
-        window.jQuery('.fc-now-indicator-line').css('top', 0)
-      }
-
-      window.jQuery('<div>', {class: 'nowtime', html:''}).appendTo( window.jQuery( '.fc-now-indicator-line' ) )
-        
-    },
     startTimeDisplayed() {
       if(this.fcIsReady) {
         if(this.getDate() !== undefined)
@@ -576,8 +444,9 @@ export default {
       },
 
       setInterval(duration){
-        this.intervals.hours = parseInt(duration/ 60)
-        this.intervals.minutes = duration % 60
+        this.selectedDuration = duration
+        this.intervals.hours = parseInt(this.selectedDuration/ 60)
+        this.intervals.minutes = this.selectedDuration % 60
       },
       convertInterval(){
         let hours = this.intervals.hours
@@ -598,31 +467,29 @@ export default {
             this.viewData.time_format = convertDateFormatPHPtoMoment(this.viewData.time_format)
             this.viewData.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
             this.setMinAndMax()
-            this.setInterval(this.viewData.service.duration)
             
-            let initTimezone = (window.savedQueries !== undefined)? window.savedQueries.timezone:this.viewData.timezone
+            
+            let initTimezone = (this.queryParameters !== undefined)? this.queryParameters.timezone:this.viewData.timezone
             this.timezone = initTimezone // staff timezone
             this.selectedTimezone = initTimezone // display timezone
             this.showWelcomePopup = this.viewData.showWelcome
+            this.setInterval(this.viewData.service.duration)
           }
+          
 
-          if(this.loadedAfter !== undefined) this.loadedAfter()
-          this.setFullCalOptions()
+          if(this.loadedAfter !== undefined) {
+            this.loadedAfter()
+          }
+          
+          let defaultDate = false
+          if(this.queryParameters !== undefined){
+            defaultDate = this.toMoment(this.queryParameters.start.replace(' ','+')).format()
+          }
+          this.setFullCalOptions(defaultDate)
           
       },
-      setTodayAsPast(){
-        if(momenttz.tz(this.viewData.now,this.viewData.timezone).hour() >= this.maxHour){
-
-              let all = document.querySelectorAll('.fc-today')
-              for (let i = 0; i < all.length; i++) {
-                all[i].classList.add('fc-past')
-              }
-
-          }
-        
-
-      },
-      setFullCalOptions(){
+      
+      setFullCalOptions(defaultDate = false){
           const intervalString = this.convertInterval()
           
           this.fullCalOption = {
@@ -644,7 +511,7 @@ export default {
                   right: ''
                 },
                 slotLabelInterval: intervalString,
-                slotDuration: intervalString + ':00',
+                slotDuration: intervalString,
                 showNonCurrentDates: true,
                 nowIndicator: true,
                 now: momenttz.tz(this.viewData.now,this.viewData.timezone).tz(this.timezone).format(),
@@ -665,7 +532,7 @@ export default {
                 minTime: this.minHour + ':00',
                 maxTime: this.maxHour + ':00',  
                 navLinks: false, 
-                editable: true,
+                editable:true,
                 eventLimit: true,
                 events: this.loadingEvents,
                 eventAllow: this.eventAllow,
@@ -673,8 +540,10 @@ export default {
               }
               
             }
-            if(window.savedQueries !== undefined){
-              this.fullCalOption.props.defaultDate = this.toMoment(window.savedQueries.start.replace(' ','+')).format()
+            
+            if(defaultDate !== false){
+              console.log('setdefault date',defaultDate)
+              this.fullCalOption.props.defaultDate = defaultDate
             }
       },
       loadAgain(){
@@ -685,478 +554,9 @@ export default {
         this.fcIsReady = false
         setTimeout(this.loadAgain, 100)
       },
-      setDaysProperties(){
 
-        if(this.daysProperties !== false) return
-        let daysProperties = []
-        window.jQuery('.fc-day.fc-widget-content').each(function( index ) {
-          if(window.jQuery(this).hasClass('fc-past') ) daysProperties.push('fc-past')
-          else{
-            daysProperties.push('')
-          } 
-        })
-        this.daysProperties = daysProperties
-      },
-      setSkeletonProperties(){
-
-        let daysProperties = this.daysProperties
-        //console.log('daysProperties',daysProperties)
-        window.jQuery('.fc-content-skeleton tr td').each(function( index ) {
-          if(window.jQuery(this).hasClass('fc-axis')){
-
-          }else{
-            //console.log((index+1)+' '+daysProperties[index+1])
-            if(daysProperties[index-1]=='fc-past') {
-              window.jQuery(this).addClass('skel-past')
-            }
-          }
-          
-        })
-      },
-      isParentInThePast(element){
-        if(this.hasBeenSetCalProps){
-          return
-        }
-        this.setDaysProperties()
-        this.setSkeletonProperties()
-        this.setTodayAsPast()
-        this.hasBeenSetCalProps = true
-      },
-
-      eventRender(renderInfo){
-        
-        let event = renderInfo.event
-        let eventExt = event.extendedProps
-
-        
-        let element = window.jQuery(renderInfo.el)
-        this.isParentInThePast(element)
-         //'.fc-content-skeleton tr td'
-
-        element.attr('data-id', eventExt.dbid)
-        element.attr('id', 'event-'+eventExt.type+event.id)
-        element.attr('data-rendering', event.rendering)
-
-        
-        if(eventExt.onlyDelete!==undefined){
-          element.attr('data-only-delete', 1)
-        }
-        if(eventExt.past !== undefined && eventExt.past === true) {
-          element.addClass('past-event')
-          
-          if(this.isAppointmentEvent(event.rendering)){
-              element.find('.fc-time').html(this.getAppointmentHtml(event,element))
-              element.append('<div class="fc-bg"></div>'+this.getBufferHtml(event))
-              element.click(this.cancelClick)
-              element.mouseenter(this.EOver)
-              element.mouseleave(this.EOut)
-            }
-        }else{
-
-          if(event.rendering =='background'){
-            element.mousedown(this.bgEOut)
-            if([undefined,null].indexOf(eventExt.options)  === -1  && eventExt.options.title !== undefined){
-              element.attr('data-calendar-title', eventExt.options.title)
-            }
-            
-            element.click(this.cancelClick)
-            element.mouseenter(this.bgEOverDelay)
-            element.mouseleave(this.bgEOut)
-          }else{
-            if(this.isAppointmentEvent(event.rendering)){
-              element.find('.fc-time').html(this.getAppointmentHtml(event,element))
-              element.append('<div class="fc-bg"></div>'+this.getBufferHtml(event))
-              element.click(this.cancelClick)
-              element.mouseenter(this.EOver)
-              element.mouseleave(this.EOut)
-            }
-          }
-        }
-
-      },
-
-      EOver(event){
-        if(this.disableBgEvent) {
-          return false
-        }
-
-        this.disableSelectClick = true
-        
-        this.attachEvent( window.jQuery(event.currentTarget))
-        
-      },
-
-      EOut(event){
-        
-        this.disableSelectClick = false
-
-        if(this.disableBgEvent) {
-          return false
-        }
-
-        /*window.jQuery(event.target).parent().css('z-index',2)*/
-        let el = window.jQuery(event.currentTarget)
-        el.removeClass('hover')
-        el.find('.fill-event').remove()
-
-      },
-
-      bgEDown(event){ 
-        this.hasBeenClicked = window.jQuery(event.currentTarget).attr('data-id')
-        event.stopPropagation()
-      },
-
-      modifyRegav(event){
-        //this.$router.push({ name: 'regav'})
-        this.showRegularAv = true
-        event.stopPropagation()
-      },
-
-      isAppointmentEvent(datarendering){
-        return ['appointment-confirmed', 'appointment-pending'].indexOf(datarendering) !== -1
-      },
-      isAppointmentPending(datarendering){
-        return 'appointment-pending' == datarendering
-      },
-      isAppointmentConfirmed(datarendering){
-        return 'appointment-confirmed' == datarendering
-      },
-      attachEvent(el) {
-        el.addClass('hover')
-
-        if(el.attr('data-only-delete')!==undefined){
-          let innerhtml ='<div class="fill-event">'
-
-          if(el.attr('data-rendering')!== undefined && el.attr('data-rendering')=='background'){
-            if(el.hasClass('extra')) {
-              innerhtml += '<div class="crib blue">Punctual Availability</div>'
-            }else{
-              if(el.hasClass('busy')){
-                innerhtml += '<div class="crib red">Busy</div>'
-              }else{
-                if(el.hasClass('recurrent')){
-                  innerhtml += '<div class="crib orange">Personal Calendar recurs <span class="dashicons dashicons-update"></span></div>'
-                }else{
-                  innerhtml += '<div class="crib orange">Personal Calendar</div>'
-                }
-                if(el.attr('data-calendar-title')!== undefined){
-                    if(el.children('.cal-title').length == 0){
-                      innerhtml += '<div class="cal-title">'+el.attr('data-calendar-title')+'</div>'
-                    }
-                }
-              }
-              
-            }
-          }else{
-            innerhtml += '<div class="crib yel">Appointment</div>'
-          }
-          
-          if(!el.hasClass('past-event') || (el.hasClass('past-event') && this.isAppointmentEvent(el.attr('data-rendering')))){
-            innerhtml += '<div class="d-flex justify-content-center align-items-center mx-4 ctrlbar">'
-            if(this.isAppointmentConfirmed(el.attr('data-rendering'))) innerhtml += '<button class="btn btn-xs btn-light viewElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-visibility"></span></button>'
-            if(this.isAppointmentPending(el.attr('data-rendering'))) innerhtml += '<button class="btn btn-xs btn-light confirmElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-yes"></span></button>'
-            
-            if(!el.hasClass('past-event')){
-              if(this.isAppointmentEvent(el.attr('data-rendering'))) {
-                innerhtml += '<button class="btn btn-xs btn-light cancelAppointment" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-dismiss"></span></button>'
-              }else{
-                let spanIcon = el.hasClass('calendar') ? '<span class="dashicons dashicons-controls-volumeoff"></span> ': '<span class="dashicons dashicons-trash"></span>'
-                innerhtml += '<button class="btn btn-xs btn-light deleteElement" data-id="'+el.attr('data-id')+'">'+spanIcon+'</button>'
-              }
-                
-            }
-            
-            innerhtml += '</div>'
-          }
-          innerhtml += '</div>'// endfill-event
-          
-
-          if(this.isAppointmentEvent(el.attr('data-rendering'))){
-            //el.find('.fc-content').append(innerhtml)
-            el.find('.fc-bg').append(innerhtml)
-            el.find('.cancelAppointment').on( "click", this.cancelAppointment)
-            el.find('.viewElement').on( "click", this.viewAppointment)
-            el.find('.confirmElement').on( "click", this.confirmAppointment)
-          } else{
-            el.append(innerhtml)
-            el.find('.deleteElement').on( "click", this.deleteElement)
-          }
-          
-        }else{
-          if(el.hasClass('opening')){
-            let innerhtml = '<div class="fill-event"><div class="crib grey">Weekly Availability</div>'
-            innerhtml += '<div class="d-flex justify-content-center align-items-center mx-4 ctrlbar"><button class="btn btn-xs btn-light modifyRegav" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-edit"></span></button></div>'
-            innerhtml += '</div>' // endfill-event
-            el.append(innerhtml)
-            el.find('.modifyRegav').on( "click", this.modifyRegav)
-          }
-          
-        }
-        let heightTarget = el.height()
-
-        if(el.find('.ctrlbar').length > 0) {
-          let marginTopControls = Math.floor((heightTarget - el.find('.ctrlbar')[0].offsetHeight)/2)
-
-          if(marginTopControls > 0 ){
-            el.find('.ctrlbar').css('margin-top', marginTopControls+'px')
-          }
-        }
-        
-      },
-      bgEOverDelay(event){
-        this.cancelbgOver = setTimeout(this.bgEOver.bind('',event),100)
-      },
-      
-      bgEOver(event,fsdfsd){
-        let el =  window.jQuery(event.target)
-        //return;
-        if(!el.hasClass('fc-bgevent')) {
-          return
-        }
-        this.parentAttach = el.parent()
-
-        if(this.disableBgEvent) {
-          return false
-        }
-
-        if(this.parentAttach.parent('.fc-content-col').find('.fc-highlight-container .fc-highlight').length>0) {
-          this.disableBgEvent = true
-          return false
-        }
-        this.activeBgOverId = el.attr('data-id')
-        window.jQuery('[data-id="' + this.activeBgOverId + '"]').addClass('hover')
-
-        this.disableSelectClick = true
-
-
-        this.attachEvent(el)
-        
-        el.css('z-index', 9)
-
-        el.attr('data-parent-class', this.parentAttach.attr('class') )
-        el.insertAfter(this.parentAttach.parent('.fc-content-col').find('.fc-highlight-container'))
-        
-
-      },
-
-      bgEOut(event){
-        window.jQuery('[data-id="' + this.activeBgOverId + '"]').removeClass('hover')
-        this.activeBgOverId = false
-        
-        if(this.cancelbgOver) {
-          clearTimeout(this.cancelbgOver)
-          this.cancelbgOver = false
-        }
-        if(event.type=='mousedown' && window.jQuery(event.target).hasClass('btn-secondary')) {
-          this.$refs.calendar.fireMethod('unselect')
-          return false
-        }
-        this.disableSelectClick = false
-
-        if(this.disableBgEvent) {
-          return false
-        }
-
-        let el = window.jQuery(event.target)
-        el.innterHtml = ''
-        if(el.attr('data-parent-class') !== undefined){
-          this.reAttach(el)
-        }else{
-          
-          let newEl = el.parent()
-          if(newEl.attr('class').search("fc-bgevent")!==-1){
-            this.reAttach(newEl)
-          }else{
-            this.reAttach(newEl.parent())
-          }
-        }
-        this.parentAttach = undefined
-
-      },
-
-      reAttach(el){
-          el.appendTo(el.parent().find('.'+el.attr('data-parent-class')))
-        
-          el.removeClass('hover')
-          el.find('.fill-event').remove()
-          el.css('z-index', '')
-          el.removeAttr('data-parent-class')
-      },
-      
-      cancelClick(event){
-          event.stopPropagation()
-          return false
-      },
-      bgEClick(event){
-        let eventId = window.jQuery(event.currentTarget).attr('data-id')
-
-      },
-      getEventById(eventId){
-        for (let index = 0; index < this.events.length; index++) {
-          const element = this.events[index]
-
-          if(element.id !== undefined && element.id == eventId) return element
-        }
-      },
-      mouseEnter(event){
-        //this.viewAppointment(event)
-        return false
-      },
-      mouseLeave(event){
-        //this.viewAppointment(event)
-        return false
-      },
-      clickEvent(event){
-        this.viewAppointment(event)
-        return false
-      },
-
-      deleteElement(event){
-        let eventId = window.jQuery(event.currentTarget).attr('data-id')
-        this.deleteStatus(eventId)
-      },
-      cancelAppointment(event){
-        let eventId = window.jQuery(event.currentTarget).attr('data-id')
-        this.cancelRequest(eventId)
-      },
-
-      findAppointmentById(eventId){
-        let tmp = this.findEventById(eventId, 'appointment')
-        return {
-          start: tmp.start,
-          end:tmp.end,
-          extendedProps:tmp,
-        }
-      },
-
-      findEventById(eventId, type = false){
-        for (let index = 0; index < this.events.length; index++) {
-          if(type === false && this.events[index]['type']=='appointment') {
-            continue //we ignore the appointment events
-          }
-          if(this.events[index]['dbid']!== undefined && eventId == this.events[index]['dbid']) {
-            return this.events[index]
-          }
-        }
-      },
-
-      viewAppointment(event){
-        let eventId = window.jQuery(event.currentTarget).attr('data-id')
-        let appointment = this.findAppointmentById(eventId)
-
-        this.$WapModalOn({
-            title:'Appointment details',
-            content: this.getAppointmentInfoHTML(appointment)
-        })
-      },
-
-      confirmAppointment(event){
-        let eventId = window.jQuery(event.currentTarget).attr('data-id')
-        this.confirmRequest(eventId)
-      },
-
-      confirmRequest(eventId){
-        let appointment = this.findAppointmentById(eventId)
-        this.$WapModal().confirm({
-          title: 'Do you really want to confirm this appointment?',
-          content: window.wappointmentExtends.filter('ConfirmPopup', this.getAppointmentInfoHTML(appointment), {appointment, viewData:this.viewData}) 
-        }).then((result) => {
-          if(result === true){
-              this.request(this.confirmEventRequest, eventId, undefined,false,  this.refreshEvents)
-          } 
-        })
-      },
-
-      cancelRequest(eventId){
-        this.$WapModal().confirm({
-          title: 'Do you really want to cancel this appointment?',
-        }).then((result) => {
-          if(result === true){
-            this.request(this.cancelEventRequest, eventId,undefined,false,  this.refreshEvents)
-          } 
-        })
-      },
-
-      deleteStatus(eventId){
-        let popupData = {
-          title: 'Do you really want to delete this calendar event?',
-        }
-        let event = this.findEventById(eventId)
-        if(event.source!=''){
-          popupData['title'] = 'Do you really want to mute this calendar event?'
-        }
-        if(event.options!==undefined && event.options.title!==undefined && event.options.title!=''){
-          popupData['content'] = `<h3>${event.options.title}</h3>`
-        }
-        this.$WapModal().confirm(popupData).then((result) => {
-          if(result === true){
-              this.request(this.deleteStatusRequest, eventId,undefined,false,  this.refreshEvents)
-          } 
-          
-        })
-
-      },
-
-
-      getEventById(eventId){
-        for (let index = 0; index < this.events.length; index++) {
-          const element = this.events[index];
-          if(element.id==eventId){
-              return element
-          }
-        }
-      }, 
-      
-
-      selectAllow(selectInfo){
-         if(this.isInThePast(selectInfo)) return false
-         return true
-      },
-
-      eventDragStart(event){
-        //console.log('event drag', event)
-        if(event.editable !== true) return false
-        this.disableBgEvent = true
-      },
-
-      eventDragStop(event ){
-        if(event.editable !== true) return false
-        this.disableBgEvent = false
-      },
-
-      eventPatch(info ){
-        let event = info.event
-        let delta =info.delta
-        let revertFunc = info.revert
-        
-
-        //console.log('patch to ', event, this.toMoment(event.start))
-
-        this.$WapModal().confirm({
-          title: 'Do you really want to modify this appointment?',
-          content: this.getAppointmentInfoHTML(event,delta)
-        }).then((result) => {
-          if(result === true){
-             this.request(this.editEventRequest, {eventId: event.extendedProps.dbid, start: this.toMoment(event.start).unix(), end: this.toMoment(event.end).unix()},undefined,false,  this.refreshEvents)
-          }else {
-            revertFunc()
-          }  
-        })
-
-      },
       toMoment(FullCaldateString, timezone = false, debug=false){
-
-/*          if(debug){
-            console.log('time is ', FullCaldateString)
-           console.log('default timezone before debug',this.timezone)
-          console.log('event is ', event)
-          //if(this.timezone)console.log(momenttz.tz(FullCaldateString,this.timezone))
-          //console.log(momenttz(FullCaldateString,this.timezone))
-          console.log(momenttz.tz(FullCaldateString,this.timezone))
-          console.log(momenttz.tz(FullCaldateString,this.timezone).format())
-        }  */
-
-        return momenttz.tz(FullCaldateString,this.timezone) //momenttz.tz(FullCaldateString, timezone === false ? 'UTC': timezone)
+        return momenttz.tz(FullCaldateString,this.timezone) 
       },
       isInThePast(event){
 
@@ -1170,9 +570,7 @@ export default {
       },
 
       eventAllow(dropLocation, draggedEvent){
-
-        if(this.isInThePast(dropLocation)) return false
-        return draggedEvent.extendedProps.allowedit
+        return this.isInThePast(dropLocation)? false:draggedEvent.extendedProps.allowedit
       },
 
       selectMethod(selectInfo) {
@@ -1263,11 +661,15 @@ export default {
         this.callback = successCallback
         let params = {}
 
-        if(window.savedQueries !== undefined){
-          this.timezone = window.savedQueries.timezone
-          params = {start: this.toMoment(window.savedQueries.start.replace(' ','+')), end: this.toMoment(window.savedQueries.end.replace(' ','+')), timezone: this.timezone}
+        if(this.queryParameters !== undefined){
+          this.timezone = this.queryParameters.timezone
+          params = {
+            start: this.toMoment(this.queryParameters.start.replace(' ','+')), 
+            end: this.toMoment(this.queryParameters.end.replace(' ','+')), 
+            timezone: this.timezone
+          }
           this.writeHistory()
-          window.savedQueries = undefined
+          
         } else{
           params = {start: this.toMoment(fetchInfo.start), end: this.toMoment(fetchInfo.end), timezone: this.timezone}
         }
@@ -1288,27 +690,10 @@ export default {
           return await this.serviceEvent.call('get', p)
       },
       
-      async cancelEventRequest(eventId) {
-          return await this.serviceEvent.call('delete', {id: eventId})
-      },
-      async confirmEventRequest(eventId) {
-          return await this.serviceEvent.call('confirm', {id: eventId})
-      },
-      async deleteStatusRequest(eventId) {
-          return await this.serviceStatus.call('delete', {id: eventId})
-      },
-      async editEventRequest(params) {
-          return await this.serviceEvent.call('patch', {id: params.eventId, start: params.start, end: params.end, timezone: this.displayTimezone})
-      },
-      
       isLoading(isLoading){
-        
-        if(this.fcIsReady) {
-          //this.resetFirstDay()
-        }
-
         this.observeNowIndicator()
       },
+
       getDate(){
         return this.toMoment(this.$refs.calendar.fireMethod('getDate'))
       },
@@ -1316,6 +701,7 @@ export default {
         this.firstDay = this.getDate().startOf('week')
       },
       nextWeek(){
+        this.queryParameters = undefined
         this.daysProperties = false
         this.firstDay = this.$refs.calendar.next(this.lastDay)
         this.hasBeenSetCalProps = false
@@ -1325,6 +711,7 @@ export default {
       },
       
       prevWeek(){
+        this.queryParameters = undefined
         this.daysProperties = false
         this.firstDay = this.$refs.calendar.prev(this.firstDay)
         this.hasBeenSetCalProps = false
@@ -1354,8 +741,9 @@ export default {
          this.$refs.calendar.fireMethod('changeView', 'timeGridWeek')
          this.$refs.calendar.fireMethod('today')
          this.currentView = 'timeGridWeek'
-         this.refreshEvents()
          //this.resetFirstDay()
+         this.refreshEvents()
+         
       },
       monthView(){
          this.$refs.calendar.fireMethod('changeView', 'month')
@@ -1369,24 +757,19 @@ export default {
       },
       refreshEvents(){
         this.hasBeenSetCalProps = false
-        this.$refs.calendar.fireMethod('refetchEvents');
+        this.$refs.calendar.fireMethod('refetchEvents')
       },
 
     }
 }
 </script>
 <style>
-/*@import '~fullcalendar/dist/fullcalendar.css';*/
 @import '~@fullcalendar/core/main.css';
 @import '~@fullcalendar/daygrid/main.css';
 @import '~@fullcalendar/timegrid/main.css';
-  .calendar-overflow {
-    overflow: auto;
-  }
-  #calendar {
-    min-width: 794px;
-  }
-  .ctrlbar{
+
+
+.ctrlbar{
     transition: all .3s ease-in-out;
     top: 30px;
     opacity: 0;
@@ -1424,25 +807,18 @@ export default {
     min-height: 84px;
     z-index: 3 !important;
   }
-  .btn-default {
-      background-color: #f3f3f3;
+.fc-header-toolbar{
+    display:none;
   }
-  .btn:hover {
-      text-decoration: none !important;
+  .fc-time-grid .fc-event {
+    padding: .5rem;
   }
-  .appointment-title:hover {
-    text-decoration: underline;
-    cursor: pointer;
+
+  .fc-axis.fc-time.fc-widget-content {
+      background-color: #fff;
+      opacity: 1;
   }
-  .alert.top-right {
-      z-index: 9002;
-  }
-  .calendar-wrap{
-    position: relative;
-    margin: 0 10px 0 0;
-    font-size: 15px;
-  }
-  .fc-time-grid-container, .fc-time-grid {
+ .fc-time-grid-container, .fc-time-grid {
     height: 100% !important;
   }
   
@@ -1455,25 +831,31 @@ export default {
   .fc-unthemed .fc-divider, .fc-unthemed .fc-popover .fc-header, .fc-unthemed .fc-list-heading td {
       background: none;
   }
-
-  h1.h5{
-    margin:0 .8rem;
-  }
-  h1.h2{
-    padding:0 .5rem;
-  }
   
-  .fc-header-toolbar{
-    display:none;
-  }
-  .fc-time-grid .fc-event {
-    padding: .5rem;
-  }
+#calendar .fc-event .btn-xs.btn-light {
+  font-size: 1rem;
+  color: #fff ;
+  background-color: transparent;
+  border: none !important;
+}
 
-  .fc-axis.fc-time.fc-widget-content {
-      background-color: #fff;
-      opacity: 1;
-  }
+#calendar .fc-event .btn-xs.btn-light:hover {
+  font-size: 1rem;
+  color: rgb(233, 233, 233) ;
+  background-color: rgba(255,255,255,.4);
+}
+#calendar .fc-time-grid .fc-event{
+  padding: .3rem;
+}
+.preview-pop .swal2-content #swal2-content{
+  width: 70%;
+  text-align: left;
+  margin:0 auto;
+}
+.fc-month-view .fc-day-grid-container.fc-scroller {
+    height: auto!important;
+    overflow-y: auto;
+}
 
   .fc-bgevent, .fc-event{
     box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,0);
@@ -1734,10 +1116,6 @@ export default {
   background-size: auto auto;
 }
 
-.btn-link {
-    color: #4481c3;
-}
-
 .crib{
   position: absolute;
   display: inline-block;
@@ -1809,6 +1187,48 @@ export default {
     opacity: 1;
 }
 
+  .calendar-overflow {
+    overflow: auto;
+  }
+  #calendar {
+    min-width: 794px;
+  }
+  
+  .btn-default {
+      background-color: #f3f3f3;
+  }
+  .btn:hover {
+      text-decoration: none !important;
+  }
+  .appointment-title:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .alert.top-right {
+      z-index: 9002;
+  }
+  .calendar-wrap{
+    position: relative;
+    margin: 0 10px 0 0;
+    font-size: 15px;
+  }
+
+
+  h1.h5{
+    margin:0 .8rem;
+  }
+  h1.h2{
+    padding:0 .5rem;
+  }
+  
+  
+
+.btn-link {
+    color: #4481c3;
+}
+
+
+
 .flex-md-row .dashicons{
   font-size: 2rem;
   height: 2rem;
@@ -1850,33 +1270,6 @@ export default {
   border-radius: 8rem !important;
   padding-top: 0.1rem !important;
 }
-
-#calendar .fc-event .btn-xs.btn-light {
-  font-size: 1rem;
-  color: #fff ;
-  background-color: transparent;
-  border: none !important;
-}
-
-#calendar .fc-event .btn-xs.btn-light:hover {
-  font-size: 1rem;
-  color: rgb(233, 233, 233) ;
-  background-color: rgba(255,255,255,.4);
-}
-#calendar .fc-time-grid .fc-event{
-  padding: .3rem;
-}
-.preview-pop .swal2-content #swal2-content{
-  width: 70%;
-  text-align: left;
-  margin:0 auto;
-}
-.fc-month-view .fc-day-grid-container.fc-scroller {
-    height: auto!important;
-    overflow-y: auto;
-}
-
-
 
 
 .fdisabled{
