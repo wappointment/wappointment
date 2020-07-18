@@ -1,11 +1,13 @@
 <template>
     <div>
         <div v-if="loadedAppointment">
-            <h2 v-if="!isSaveEventPage">{{getText('title')}}</h2>
-            <div>{{ client.name }} - {{ client.email }}</div>
-            <div><strong>{{ getMoment(selectedSlot, currentTz).format(fullDateFormat) }}</strong></div>
-            <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
-            <div v-if="isSaveEventPage">
+            <div class="summary-event" :class="view">
+                <h2 v-if="!isSaveEventPage">{{getText('title')}}</h2>
+                <div>{{ client.name }} - {{ client.email }}</div>
+                <div><strong class="date-start">{{ startDatei18n }}</strong></div>
+                <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
+            </div>
+             <div v-if="isSaveEventPage">
                 <div>
                     <p>{{options.confirmation.savetocal}}</p>
                     <SaveButtons :selectedSlot="selectedSlot" :service="service" :appointment="appointment"
@@ -30,15 +32,15 @@
                     
                 </div>
                 <div v-if="!buttonClicked">
-                    <div v-if="isReschedulePage">
-                        <button v-if="canStillReschedule" class="wbtn wbtn-primary" @click="rescheduleEvent">{{getText('button')}}</button>
+                    <template v-if="isReschedulePage">
+                        <button v-if="canStillReschedule" class="wbtn wbtn-primary" :class="'wbtn-'+view" @click="rescheduleEvent">{{getText('button')}}</button>
                         <p class="h4" v-else>{{getText('toolate')}}</p>
-                    </div>
+                    </template>
                     
-                    <div v-if="isCancelPage">
-                        <button v-if="canStillCancel" class="wbtn wbtn-primary" @click="cancelAppointment">{{getText('button')}}</button>
+                    <template v-if="isCancelPage">
+                        <button v-if="canStillCancel" class="wbtn wbtn-primary" :class="'wbtn-'+view" @click="cancelAppointment">{{getText('button')}}</button>
                         <p class="h4" v-else>{{getText('toolate')}}</p>
-                    </div>
+                    </template>
                     
                 </div>
             </div>
@@ -159,6 +161,9 @@ export default {
         
     },
     computed: {
+        startDatei18n(){
+            return this.appointment.converted !== undefined ? this.appointment.converted :this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
+        },
         canStillReschedule(){
             return this.getUnixNow() < this.appointment.canRescheduleUntil
         },
@@ -207,3 +212,8 @@ export default {
     }
 }
 </script>
+<style >
+.summary-event{
+    margin: 1rem 0;
+}
+</style>
