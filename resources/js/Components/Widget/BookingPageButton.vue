@@ -4,7 +4,7 @@
             <span class="dashicons mr-1" :class="[hasBookingPage ? 'dashicons-text-page text-success': 'dashicons-dismiss text-danger']"></span>
             <span>{{ title }}</span>
         </div>
-        <div v-if="hasBookingPage" >
+        <div v-if="!hasBookingPage" >
             <span class="mr-2" :class="{'text-danger':viewData.booking_page_id === 0}">You don't have a booking page yet</span> 
             <button class="btn btn-secondary" @click="showCreateBookingPage = true">Create one</button>
         </div>
