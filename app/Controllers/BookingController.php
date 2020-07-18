@@ -7,9 +7,7 @@ use Wappointment\Services\Appointment;
 use Wappointment\Validators\HttpRequest\Booking;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Request;
-
 use Wappointment\Services\DateTime;
-use Wappointment\Services\Settings;
 
 class BookingController extends RestController
 {
@@ -24,7 +22,7 @@ class BookingController extends RestController
             return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['errors']);
         }
         $appointment = $result->toArraySpecial();
-        $appointment['converted'] = $this->convert((int) $booking->get('time'), $booking->get('ctz'));
+
         return ['result' => true, 'appointment' => (new \Wappointment\ClassConnect\Collection($appointment))->except(['id', 'client_id'])];
     }
 
@@ -33,7 +31,7 @@ class BookingController extends RestController
         return Appointment::reschedule($request->input('appointmentkey'), $request->input('time'));
     }
 
-    /*     public function convertDate(Request $request)
+    public function convertDate(Request $request)
     {
         return [
             'converted' => $this->convert((int) $request->input('timestamp'), $request->input('timezone'))
@@ -42,10 +40,9 @@ class BookingController extends RestController
 
     protected function convert($ts, $tz)
     {
-        return DateTime::convertUnixTS(
+        return DateTime::i18nDateTime(
             $ts,
-            Settings::get('date_format') . Settings::get('date_time_union') . Settings::get('time_format'),
             $tz
         );
-    } */
+    }
 }

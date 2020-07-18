@@ -9,6 +9,12 @@ class Helpers
     public static $option_prefix = WAPPOINTMENT_SLUG;
     private static $request;
 
+    public static function dateTime($format, $timestamp, $timezone)
+    {
+        // wp_date only since wp 5.3
+        return function_exists('\wp_date') ? \wp_date($format, $timestamp, new \DateTimeZone($timezone)) : false;
+    }
+
     public static function getThemeBgColor()
     {
         $color = get_background_color();

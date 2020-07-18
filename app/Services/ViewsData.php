@@ -97,8 +97,6 @@ class ViewsData
     private function calendar()
     {
         $staff_timezone = Settings::getStaff('timezone');
-
-
         return  apply_filters('wappointment_back_calendar', [
             'regav' => Settings::getStaff('regav'),
             'availability' => WPHelpers::getStaffOption('availability'),
@@ -108,6 +106,7 @@ class ViewsData
             'timezones_list' => DateTime::tz(),
             'now' => (new Carbon())->setTimezone($staff_timezone)->format('Y-m-d\TH:i:00'),
             'service' => Service::get(),
+            'durations' => [Service::get()['duration']],
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
@@ -129,6 +128,7 @@ class ViewsData
         return [
             // general
             'approval_mode' => Settings::get('approval_mode'),
+            'today_formatted' => DateTime::i18nDateTime(time(), Settings::getStaff('timezone')),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),

@@ -4,6 +4,7 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\Services\Settings;
+use Wappointment\Services\DateTime;
 use Wappointment\ClassConnect\Carbon;
 
 class Appointment extends Model
@@ -116,12 +117,14 @@ class Appointment extends Model
 
     public function toArraySpecial()
     {
-        $array = parent::toArray();
+        $appointment = parent::toArray();
 
-        $array['start_at'] = $this->start_at->timestamp;
-        $array['end_at'] = $this->end_at->timestamp;
-        $array['type'] = $this->getLocationSlug();
-        return $array;
+        $appointment['start_at'] = $this->start_at->timestamp;
+        $appointment['end_at'] = $this->end_at->timestamp;
+        $appointment['type'] = $this->getLocationSlug();
+        $appointment['converted'] = DateTime::i18nDateTime((int) $appointment['start_at'], $this->client->getTimezone());
+
+        return $appointment;
     }
 
     public function getFullDurationInSec()
@@ -142,9 +145,10 @@ class Appointment extends Model
 
     public function getStartsDayAndTime($timezone)
     {
-        return $this->start_at
+        return DateTime::i18nDateTime($this->start_at->timestamp, $timezone);
+        /*         return $this->start_at
             ->timezone($timezone)
-            ->format(Settings::get('date_format') . Settings::get('date_time_union') . Settings::get('time_format'));
+            ->format(Settings::get('date_format') . Settings::get('date_time_union') . Settings::get('time_format')); */
     }
 
 

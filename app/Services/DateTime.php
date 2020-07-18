@@ -3,6 +3,7 @@
 namespace Wappointment\Services;
 
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\WP\Helpers;
 
 class DateTime
 {
@@ -85,5 +86,15 @@ class DateTime
     public static function convertUnixTS($timestamp, $format = WAPPOINTMENT_DB_FORMAT . ':00', $timezone = 'UTC')
     {
         return Carbon::createFromTimestamp($timestamp)->setTimezone($timezone)->format($format);
+    }
+
+    public static function i18nDateTime($timestamp, $timezone, $format = '')
+    {
+        $format = empty($format) ? Settings::get('date_format') . Settings::get('date_time_union') . Settings::get('time_format') : $format;
+        $time = Helpers::dateTime($format, $timestamp, $timezone);
+        if ($time === false) {
+            $time = static::convertUnixTS($timestamp, $format, $timezone); // translated only if server loads locale
+        }
+        return $time;
     }
 }
