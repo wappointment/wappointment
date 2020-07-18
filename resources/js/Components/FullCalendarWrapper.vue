@@ -51,8 +51,6 @@
             this.isReady = true
             this.$emit('isReady')
         },
-        
-
 
         methods: {
             
@@ -78,11 +76,8 @@
                 if(!this.apiReady()) {
                     //console.log('API not ready for call fireMethod', ...options)
                 }
-
-                if(options.indexOf('next') !== -1) {
-                    //console.log('get date',this.getApi.getDate())
-                    return this.getApi.gotodate()
-                }
+                if(options.indexOf('today') !== -1) return this.getApi.today()
+                if(options.indexOf('next') !== -1) return this.getApi.gotodate()
                 if(options.indexOf('prev') !== -1) return this.getApi.prev()
                 if(options.indexOf('getDate') !== -1) return this.getApi.getDate()
                 if(options.indexOf('refetchEvents') !== -1) return this.getApi.refetchEvents()
