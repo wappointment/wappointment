@@ -92,6 +92,7 @@ export default {
         duration: false,
         currentStep: 'BookingCalendar',
         loadingStep: '',
+        converted:false
     }),
 
     mounted () {
@@ -108,20 +109,7 @@ export default {
 
     computed: {
         appointmentStartsAt(){
-            if(browserLang().substr(0,2)!=='en'){ // if the browser is not english we fetch for a localized date
-                let date_loaded = new Date(this.selectedSlot*1000)
-
-                return convertDateFormatPHPtoJS(
-                    this.viewData.date_format+ this.viewData.date_time_union+ this.viewData.time_format, 
-                    new Date(this.selectedSlot*1000)
-                    )
-
-                /* this.convertDateRequest({
-                    timezone: this.timeprops.currentTz,
-                    timestamp: this.selectedSlot
-                }).then(this.convertedDate)  */
-            }
-            return this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
+            return this.converted 
         },
         getStaffs(){
             return this.viewData.staffs !== undefined ? this.viewData.staffs:[]
@@ -178,17 +166,17 @@ export default {
     },
     methods: {
 
-        /* async convertDateRequest(data) {
+        async convertDateRequest(data) {
             return await this.serviceBooking.call('convertDate', data)
         }, 
 
         convertedDate(result){
-            console.log('result.data.converted',result.data.converted)
-            //this.converted = result.data.converted
-        }, */
+            this.converted = result.data.converted
+        },
 
         loadStep(step){
             this.loadingStep = step
+            this.fetchFormattedDate()
         },
         childChangedStep(newStep, dataChanged){
             if(typeof dataChanged == 'object' && Object.keys(dataChanged).length > 0) {
@@ -318,6 +306,24 @@ export default {
             if(this.loadedInit !== undefined){
                 this.loadedInit(this.step)
             }
+            
+        },
+
+        fetchFormattedDate(){
+            if(this.selectedSlot === false) {
+                this.converted = false
+            }
+            if(this.selectedSlot !== false && this.converted === false){
+                if(this.viewData.site_lang!== 'en' && browserLang().substr(0,2)!=='en'){ // if the browser is not english we fetch for a localized date
+                    this.convertDateRequest({
+                        timezone: this.timeprops.currentTz,
+                        timestamp: this.selectedSlot
+                    }).then(this.convertedDate) 
+                }else{
+                    this.converted = this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
+                }
+            }
+            
         },
 
         setServiceDurationLocation(){

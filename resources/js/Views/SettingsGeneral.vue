@@ -41,11 +41,11 @@
                             <span v-for="date in date_formats" class="dropdown-item" @click="changeDDP(date)">{{ date }} ({{ day_example(date) }})</span>
                           </div>
                         </div>
-                        <input id="date-format" class="form-control" v-model="viewData.date_format" @change="changed('date_format')" size="5" type="text">
+                        <input id="date-format" class="form-control" v-model="viewData.date_format" @change="changedReload('date_format')" size="5" type="text">
                       </div>
 
                       <div class="input-group  input-group-sm">
-                        <input id="date-time-union" class="form-control" v-model="viewData.date_time_union" @change="changed('date_time_union')" size="3" type="text">
+                        <input id="date-time-union" class="form-control" v-model="viewData.date_time_union" @change="changedReload('date_time_union')" size="3" type="text">
                       </div>
 
                       <div class="input-group  input-group-sm">
@@ -58,7 +58,7 @@
                         <input id="time-format" class="form-control" v-model="viewData.time_format" @change="changed('time_format')" size="5" type="text">
                       </div>
                     </div>
-                    <div class="date-preview"> <span class="font-weight-bold small">{{ date_example }}</span> </div>
+                    <div class="date-preview"> <span class="font-weight-bold small">{{ viewData.today_formatted }}</span> </div>
                   </div>
             </div>
             <div class="d-flex mb-2">
@@ -181,10 +181,6 @@ export default {
     getExtraClass(){
       return this.showWidget ? 'biggerPop':''
     },
-    date_example(){
-      return momenttz().tz(this.viewData.timezone).format(
-        convertDateFormatPHPtoMoment(this.viewData.date_format + '['+this.viewData.date_time_union+']' + this.viewData.time_format))
-    },
   },
   methods: {
     savedPage(page_id){
@@ -221,7 +217,11 @@ export default {
     changeDDP(date, key = 'date_format'){
       this.viewData[key] = date
       this.toggle(key)
+      this.changedReload(key)
+    },
+    changedReload(key){
       this.changed(key)
+      this.refreshInitValue()
     },
     changedDay(value){
       this.viewData['week_starts_on'] = value

@@ -4,7 +4,7 @@
             <div class="text-center">
                 <div class=" my-2">
                     <div><strong>{{options.form.header}}</strong></div>
-                    <div><strong>{{ appointment_starts_at }}</strong></div>
+                    <div v-if="appointment_starts_at"><strong>{{ appointment_starts_at }}</strong></div>
                 </div>
                 <div class="wappointment-errors" v-if="errors.length > 0">
                     <div v-for="error in errors">
