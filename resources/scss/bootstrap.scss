@@ -48,21 +48,53 @@
     max-width: 100%;
     height: auto;
 }
-.btn.btn-secondary {
+.btn.btn-secondary,
+.wbtn.wbtn-secondary {
     color: #626262;
 }
-.btn.btn-secondary.selected {
+.btn.btn-secondary.selected,
+.wbtn.wbtn-secondary.selected {
     background-color: #666;
     color: #fff;
 }
 
-.btn.btn-secondary.btn-cell{
+.btn.btn-secondary.btn-cell, 
+.wbtn.wbtn-secondary.wbtn-cell{
     text-align: center;
     padding: .4rem;
     border-radius: .8rem;
     cursor:pointer;
     margin: 0 .5rem;
 }
+
+
+
+.wbtn {
+
+    display: inline-block;
+    font-weight: 400;
+    color: #212529;
+    text-align: center;
+    vertical-align: middle;
+    user-select: none;
+    background-color: transparent;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+
+}
+.wbtn-secondary {
+    background-color: #e9ecef;
+    border-color: #e9ecef;
+}
+
+.wbtn-secondary:hover {
+    background-color: #d3d9df;
+    border-color: #cbd3da;
+}
+
 
 .check-locations .btn.btn-secondary.btn-cell {
     width: 130px;
