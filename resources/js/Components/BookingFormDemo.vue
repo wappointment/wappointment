@@ -1,5 +1,5 @@
 <script>
-import BookingForm from './BookingForm'
+import BookingForm from '../BookingForm/Main'
 
 export default {
     extends: BookingForm,

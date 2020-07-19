@@ -43,12 +43,12 @@ import abstractFront from '../Views/abstractFront'
 import Intervals from '../Standalone/intervals'
 import Colors from "../Modules/Colors"
 import Dates from "../Modules/Dates"
-import BookingFormConfirmation from './BookingForm/Confirmation'
-import RescheduleConfirm from './BookingForm/RescheduleConfirm'
-import BookingCalendar from './BookingForm/Calendar'
-import BookingFormInputs from './BookingForm/Form'
-import BookingFormHeader from './BookingForm/Header'
-import DurationCell from './BookingForm/DurationCell'
+import BookingFormConfirmation from './Confirmation'
+import RescheduleConfirm from './RescheduleConfirm'
+import BookingCalendar from './Calendar'
+import BookingFormInputs from './Form'
+import BookingFormHeader from './Header'
+import DurationCell from './DurationCell'
 BookingFormHeader.components = {DurationCell}
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 import convertDateFormatPHPtoJS from '../Standalone/convertDateFormatPHPtoJS'

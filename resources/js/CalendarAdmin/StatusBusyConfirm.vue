@@ -6,9 +6,9 @@
     </div>
 </template>
 <script>
-import AdminStatusFreeConfirm from './AdminStatusFreeConfirm'
+import StatusFreeConfirm from './StatusFreeConfirm'
 export default {
-    extends: AdminStatusFreeConfirm,
+    extends: StatusFreeConfirm,
 
     methods:{
         async setRequest(params) {

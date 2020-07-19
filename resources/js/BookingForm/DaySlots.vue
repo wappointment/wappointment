@@ -14,8 +14,8 @@
 </template>
 
 <script>
-import BookingButton from '../BookingButton'
-import Dates from '../../Modules/Dates'
+import BookingButton from './BookingButton'
+import Dates from '../Modules/Dates'
 export default {
     mixins: [Dates],
     props: {

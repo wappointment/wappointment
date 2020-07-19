@@ -3,15 +3,15 @@
 </template>
 
 <script>
-import LoadingComponent from '../Loaders/Bar'
-import ErrorComponent from '../Error'
-import abstractFront from '../../Views/abstractFront'
+import LoadingComponent from '../Components/Loaders/Bar'
+import ErrorComponent from '../Components/Error'
+import abstractFront from '../Views/abstractFront'
 export default {
      props: ['appointmentkey', 'options', 'rescheduleData'],
      components: {
         BookingForm: () => ({
             // The component to load (should be a Promise)
-            component: import(/* webpackChunkName: "group-bookingform" */ '../BookingForm'),
+            component: import(/* webpackChunkName: "group-bookingform" */ './Main'),
             // A component to use while the async component is loading
             loading: LoadingComponent,
             // A component to use if the load fails

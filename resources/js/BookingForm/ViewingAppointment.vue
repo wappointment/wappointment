@@ -56,11 +56,11 @@
 
 <script>
 
-import Dates from '../../Modules/Dates'
-import abstractFront from '../../Views/abstractFront'
+import Dates from '../Modules/Dates'
+import abstractFront from '../Views/abstractFront'
 import SaveButtons from './SaveButtons'
-import Iframe from '../Iframe'
-import AppointmentService from '../../Services/V1/Appointment'
+import Iframe from '../Components/Iframe'
+import AppointmentService from '../Services/V1/Appointment'
 import DurationCell from './DurationCell'
 import RescheduleForm from './RescheduleForm'
 import ViewingAppointmentMixin from './ViewingAppointmentMixin'

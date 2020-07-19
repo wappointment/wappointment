@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import WizardMenu from './WizardMenu'
-import BlockMenu from './BlockMenu'
+import WizardMenu from '../Components/WizardMenu'
+import BlockMenu from '../Components/BlockMenu'
 export default {
     components: {
         BlockMenu,

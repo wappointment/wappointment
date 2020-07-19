@@ -7,7 +7,7 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
                 <h1 class="h2 align-self-center"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
-                <SlotsCount :totalSlots="totalSlots" :viewingFreeSlot="viewingFreeSlot" :durations="getAllDurations" :duration="selectedDuration"
+                <FreeSlotsSelector :totalSlots="totalSlots" :viewingFreeSlot="viewingFreeSlot" :durations="getAllDurations" :duration="selectedDuration"
                 @resizeSlots="resizeSlots" @getFreeSlots="getFreeSlots" @getEdition="getEdition"/>
               </div>
               <div class="d-flex">
@@ -66,14 +66,14 @@
 
                   </div>
                   <div v-else>
-                    <AdminAppointmentBooking v-if="shownAppointmentForm" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"
+                    <BehalfBooking v-if="shownAppointmentForm" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"
                       :timezone="displayTimezone" @cancelled="hideModal" @confirmed="confirmedStatus" @updateEndTime="updateEndTime"/>
 
-                    <AdminStatusBusyConfirm v-if="shownBusyConfirm" 
+                    <StatusBusyConfirm v-if="shownBusyConfirm" 
                     :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :viewData="viewData"  
                     @confirmed="confirmedStatus" @cancelled="hideModal"/>
 
-                    <AdminStatusFreeConfirm v-if="shownFreeConfirm" 
+                    <StatusFreeConfirm v-if="shownFreeConfirm" 
                     :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :viewData="viewData"
                     @confirmed="confirmedStatus" @cancelled="hideModal"/>
                   </div>
@@ -139,27 +139,28 @@
   </div>
 </template>
 <script>
-import Regav from './Subpages/Regav'
+import Regav from '../Views/Subpages/Regav'
+import abstractView from '../Views/Abstract'
+import TimeZones from '../Components/TimeZones'
+import ControlBar from './ControlBar'
+import FullCalendarWrapper from './FullCalendarWrapper'
+import BehalfBooking from './BehalfBooking'
+import StatusBusyConfirm from './StatusBusyConfirm'
+import StatusFreeConfirm from './StatusFreeConfirm'
+import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
+import momenttz from '../appMoment'
+import BookingPageButton from '../Components/Widget/BookingPageButton'
+import AppointmentRender from './AppointmentRender'
+import FreeSlotsSelector from './FreeSlotsSelector'
+import MixinRender from './MixinRender'
+import MixinBeautify from './MixinBeautify'
+import MixinSelection from './MixinSelection'
+
 import EventService from '../Services/V1/Event'
 import StatusService from '../Services/V1/Status'
 import WappointmentService from '../Services/V1/Wappointment'
 import Intervals from '../Standalone/intervals'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
-import TimeZones from '../Components/TimeZones'
-import ControlBar from '../Components/ControlBar'
-import FullCalendarWrapper from '../Components/FullCalendarWrapper'
-import AdminAppointmentBooking from '../Components/AdminAppointmentBooking'
-import AdminStatusBusyConfirm from '../Components/AdminStatusBusyConfirm'
-import AdminStatusFreeConfirm from '../Components/AdminStatusFreeConfirm'
-import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
-import abstractView from './Abstract'
-import momenttz from '../appMoment'
-import BookingPageButton from '../Components/Widget/BookingPageButton'
-import AppointmentRender from './Calendar/AppointmentRender'
-import SlotsCount from '../CalendarAdmin/SlotsCount'
-import MixinRender from '../CalendarAdmin/MixinRender'
-import MixinBeautify from '../CalendarAdmin/MixinBeautify'
-import MixinSelection from '../CalendarAdmin/MixinSelection'
 
 let mixins_object = window.wappointmentExtends.filter('BackendCalendarMixins', {AppointmentRender, MixinRender, MixinBeautify, MixinSelection})
 let mixins_array = []
@@ -177,10 +178,10 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
       ControlBar,
       Regav,
       FullCalendarWrapper,
-      AdminAppointmentBooking,
-      AdminStatusFreeConfirm,
-      AdminStatusBusyConfirm,
-      SlotsCount
+      BehalfBooking,
+      StatusFreeConfirm,
+      StatusBusyConfirm,
+      FreeSlotsSelector
   })
 
   /**

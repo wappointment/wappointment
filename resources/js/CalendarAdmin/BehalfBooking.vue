@@ -86,10 +86,10 @@
 import AppointmentTypeSelection from './AppointmentTypeSelection'
 import ClientService from '../Services/V1/Client'
 import RequestMaker from '../Modules/RequestMaker'
-import PhoneInput from './BookingForm/PhoneInput'
 import {isEmail, isEmpty} from 'validator'
-import FormInputs from './BookingForm/Form'
-import StyleGenerator from './StyleGenerator'
+import PhoneInput from '../BookingForm/PhoneInput'
+import FormInputs from '../BookingForm/Form'
+import StyleGenerator from '../Components/StyleGenerator'
 export default {
     props: ['viewData','startTime', "endTime", "realEndTime"],
     mixins:[RequestMaker],

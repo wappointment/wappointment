@@ -17,7 +17,7 @@
 
 <script>
 
-import BookingButton from './Components/BookingButton'
+import BookingButton from './BookingForm/BookingButton'
 import StyleGenerator from './Components/StyleGenerator'
 import Colors from './Modules/Colors'
 import UrlParam from './Modules/UrlParam'
@@ -29,8 +29,8 @@ export default {
     components: { 
         BookingButton,
         StyleGenerator,
-        ViewingAppointment: () => (ckl(import(/* webpackChunkName: "group-viewingappointment" */ './Components/BookingForm/ViewingAppointment'))),
-        BookingForm: () => (ckl(import(/* webpackChunkName: "group-bookingform" */ './Components/BookingForm')))
+        ViewingAppointment: () => (ckl(import(/* webpackChunkName: "group-viewingappointment" */ './BookingForm/ViewingAppointment'))),
+        BookingForm: () => (ckl(import(/* webpackChunkName: "group-bookingform" */ './BookingForm/Main')))
     }, 
     data: () => ({
         bookForm: false,

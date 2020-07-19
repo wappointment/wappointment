@@ -12,7 +12,7 @@ import FormGenerator from './Form/FormGenerator'
 import StickyBar from './Components/StickyBar'
 import RingLoader from './Components/Loaders/Ring'
 import WLoader from './Components/Loaders/BigCalendar'
-import DurationCell from './Components/BookingForm/DurationCell'
+import DurationCell from './BookingForm/DurationCell'
 import VueService from './Plugins/vue-service'
 import changeWPmenu from './Standalone/changeWPmenu'
 import parseQuery from './Standalone/parseQuery'
@@ -37,7 +37,7 @@ Vue.component('DurationCell', DurationCell)
 Vue.use(VueRouter)
 
 
-const CalendarPage = () => import(/* webpackChunkName: "group-calendar" */ './Views/Calendar')
+const CalendarPage = () => import(/* webpackChunkName: "group-calendar" */ './CalendarAdmin/Main')
 const SettingsPage = () => import(/* webpackChunkName: "group-settings" */ './Views/Settings')
 const AddonsPage = () => import(/* webpackChunkName: "group-addons" */ './Views/Addons')
 const HelpPage = () => import(/* webpackChunkName: "group-help" */ './Ne/Help')

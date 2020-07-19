@@ -1,5 +1,5 @@
 <script>
-import convertDateFormatPHPtoMoment from '../../Standalone/convertDateFormatPHPtoMoment'
+import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 export default {
     methods:{
         convertDateFormat(date){

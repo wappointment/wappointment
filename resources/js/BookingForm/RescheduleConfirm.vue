@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import Dates from "../../Modules/Dates"
-import AbstractFront from "../../Views/abstractFront"
+import Dates from "../Modules/Dates"
+import AbstractFront from "../Views/abstractFront"
 export default {
     extends: AbstractFront,
     mixins: [Dates],

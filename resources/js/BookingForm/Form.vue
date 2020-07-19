@@ -78,18 +78,18 @@
 </template>
 
 <script>
-import abstractFront from '../../Views/abstractFront'
+import abstractFront from '../Views/abstractFront'
 import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
-import Strip from '../../Helpers/Strip'
-import {isEmail, isEmpty} from 'validator'
+import Strip from '../Helpers/Strip'
 
+import {isEmail, isEmpty} from 'validator'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMapMarkedAlt, faPhone} from '@fortawesome/free-solid-svg-icons'
 import { faSkype} from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faMapMarkedAlt, faPhone, faSkype)
-const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../CountryStyle')
+const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
 
 export default {
     extends: abstractFront,

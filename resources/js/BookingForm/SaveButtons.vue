@@ -21,8 +21,8 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 import {  faApple, faWindows, faYahoo, faGoogle } from '@fortawesome/free-brands-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faApple, faWindows, faYahoo, faGoogle)
-import momenttz from '../../appMoment'
-import convertDateFormatPHPtoMoment from '../../Standalone/convertDateFormatPHPtoMoment'
+import momenttz from '../appMoment'
+import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 
 export default {
     props: ['service', 'staff', 'currentTz', 'physicalSelected','appointment', 'showResult'],

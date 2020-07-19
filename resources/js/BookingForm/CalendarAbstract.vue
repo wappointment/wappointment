@@ -1,12 +1,12 @@
 <script>
-import calendar from '../../Plugins/calendar-js'
-import Dates from '../../Modules/Dates'
-import momenttz from '../../appMoment'
+import calendar from '../Plugins/calendar-js'
+import Dates from '../Modules/Dates'
+import momenttz from '../appMoment'
 import DaySlots from './DaySlots'
 import DaysOfWeek from './DaysOfWeek'
 import WeekHeader from './WeekHeader'
-import weekdaysLocale from '../../Standalone/weekdaysLocale'
-import monthLocale from '../../Standalone/monthLocale'
+import weekdaysLocale from '../Standalone/weekdaysLocale'
+import monthLocale from '../Standalone/monthLocale'
 /**
  * TODO Review moment usage
  */

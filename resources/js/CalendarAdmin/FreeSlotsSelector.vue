@@ -1,11 +1,11 @@
 
 <template>
-    <div class="d-flex items-align-center">
-        <span v-if="!viewingFreeSlot" @click="$emit('getFreeSlots')" 
-        class="tt-below d-none d-md-block badge badge-secondary align-self-center ml-3 btn btn-link" 
-        data-tt="View free slots">Free slots {{ totalSlots }}</span>
-        <span v-else class="tt-below btn btn-link" @click="$emit('getEdition')">Back to edition</span>
-        <div class="dropdown ml-2 d-flex align-items-center" :class="{'show': toggle}" v-if="durations.length > 0">
+    <div class="d-flex items-align-center sm-text">
+        <a v-if="!viewingFreeSlot" @click="$emit('getFreeSlots')" 
+        class="tt-below d-none d-md-block ml-2 align-self-center" 
+        data-tt="Show free times" href="javascript:;">{{ totalSlots }} Free slots</a>
+        <a v-else class="tt-below align-self-center" href="javascript:;" @click="$emit('getEdition')">Back to edition</a>
+        <div class="dropdown ml-2 d-flex align-self-center" :class="{'show': toggle}" v-if="durations.length > 1">
             <button class="btn btn-secondary dropdown-toggle btn-xs" type="button" @click="toggle=!toggle">
                 {{duration}}min
             </button>
@@ -13,6 +13,9 @@
                 <a class="dropdown-item" href="javascript:;" v-for="durationI in durations" @click="selectDuration(durationI)"> {{durationI}}min</a>
             </div>
             
+        </div>
+        <div v-else class="ml-2 align-self-center text-muted">
+            {{duration}}min
         </div>
     </div>
 </template>
@@ -32,3 +35,8 @@ export default {
     }
 }
 </script>
+<style>
+.sm-text{
+    font-size:.9em;
+}
+</style>

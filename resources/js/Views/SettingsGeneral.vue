@@ -127,7 +127,7 @@ import hasBreadcrumbs from '../Mixins/hasBreadcrumbs'
 import weekDays from "../Components/weekDays"
 import RequestMaker from '../Modules/RequestMaker'
 import AbstractListing from './AbstractListing'
-import DurationCell from '../Components/BookingForm/DurationCell'
+import DurationCell from '../BookingForm/DurationCell'
 import BookingPageButton from '../Components/Widget/BookingPageButton'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faMapMarkedAlt, faPhone, faCalendarCheck } from '@fortawesome/free-solid-svg-icons'

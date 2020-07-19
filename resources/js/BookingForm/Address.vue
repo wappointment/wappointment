@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import WIframe from "../Iframe"
+import WIframe from "../Components/Iframe"
 export default {
     components: {WIframe}, 
     props: {
