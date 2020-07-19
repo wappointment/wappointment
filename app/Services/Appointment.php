@@ -146,10 +146,9 @@ class Appointment
         if ($is_admin === true) {
             return true;
         }
-        //staff being booked
-        $activeStaff = Settings::get('activeStaffId');
+
         //test that were in the booking availability
-        if ((new Availability())->isAvailable($start_at, $end_at, $activeStaff)) {
+        if ((new AvailabilityGetter())->isAvailable($start_at, $end_at, Settings::get('activeStaffId'))) {
             return true;
         }
         throw new \WappointmentException('Slot not available', 1);
@@ -257,7 +256,7 @@ class Appointment
         $result = $appointment->destroy($appointment->id);
 
         if ($result) {
-            (new Availability())->regenerate($staff_id_regenerate);
+            (new Availability($staff_id_regenerate))->regenerate();
             Events::dispatch('AppointmentCanceledEvent', ['appointment' => $appointment, 'client' => $client]);
         }
         return $result;

@@ -14,19 +14,22 @@ class Service
 
     public function __construct($serviceArray)
     {
-        /* if (
-            empty($serviceArray['name'])
-            || (empty($serviceArray['type']) || (!is_array($serviceArray['type'])))
-            || empty($serviceArray['duration'])
-        ) {
-            throw new \WappointmentException("Error with the service instance");
-        } */
         $this->service = $serviceArray;
         $this->name = $serviceArray['name'];
         $this->type = !empty($serviceArray['type']) && is_array($serviceArray['type']) ? $serviceArray['type'] : [];
         $this->address = $this->hasPhysical() && !empty($serviceArray['address']) ? $serviceArray['address'] : '';
         $this->duration = empty($serviceArray['duration']) ? 0 : $serviceArray['duration'];
         $this->options = empty($serviceArray['options']) ? [] : $serviceArray['options'];
+    }
+
+    public function getDurations()
+    {
+        return [$this->duration];
+    }
+
+    public function getTypes()
+    {
+        return $this->type;
     }
 
     public function hasManyTypes()

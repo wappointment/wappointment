@@ -41,7 +41,7 @@ class Sections
 
     public function setAvailabilities()
     {
-        $this->availabilities = (new Availability(
+        $this->availabilities = (new AvailabilityGetter(
             $this->start_at,
             $this->end_at
         ))->getStaff(Settings::get('activeStaffId'));

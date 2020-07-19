@@ -26,6 +26,7 @@ class Contact extends API
 
     private function prepareData($data)
     {
+        $data['message'] = nl2br($data['message']);
         //$data['options.sitedetails'] = $this->getSiteDetails();
         return $data;
     }

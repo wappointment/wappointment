@@ -12,7 +12,7 @@ class Helpers
     public static function dateTime($format, $timestamp, $timezone)
     {
         // wp_date only since wp 5.3
-        return function_exists('\wp_date') ? \wp_date($format, $timestamp, new \DateTimeZone($timezone)) : false;
+        return \WappointmentLv::function_exists('wp_date') ? wp_date($format, $timestamp, new \DateTimeZone($timezone)) : false;
     }
 
     public static function getThemeBgColor()
