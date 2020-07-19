@@ -139,8 +139,8 @@ export default {
         }
     },
     mounted(){
-        if(this.service !== false) {
-            if(!this.serviceHasTypes) this.selectDefaultType()
+        if(this.service !== false && !this.serviceHasTypes) {
+            this.selectDefaultType()
         }
         this.mounted = true
         if(Object.keys(this.data).length > 1){

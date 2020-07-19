@@ -35,8 +35,3 @@ export default {
     }
 }
 </script>
-<style>
-.sm-text{
-    font-size:.9em;
-}
-</style>

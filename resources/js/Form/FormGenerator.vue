@@ -41,6 +41,7 @@ import AbstractField from './AbstractField'
 import RequestMaker from '../Modules/RequestMaker'
 import LabelMaterial from '../Fields/LabelMaterial'
 import FormFieldInput from './FormFieldInput'
+import FormFieldTextarea from './FormFieldTextarea'
 import FormFieldInputs from './FormFieldInputs'
 import FormFieldCheckbox from './FormFieldCheckbox'
 import FormFieldDuration from './FormFieldDuration'
@@ -56,7 +57,7 @@ import FormFieldCheckImages from './FormFieldCheckImages'
 import FormFieldImageSelect from './FormFieldImageSelect'
 import FormFieldLabel from './FormFieldLabel'
 import eventsBus from '../eventsBus'
-let allComponents = {FormFieldInput,FormFieldInputs, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
+let allComponents = {FormFieldInput,FormFieldTextarea, FormFieldInputs, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
         FormFieldStatus,FormFieldFile, FormFieldSelect,FormFieldCheckImages,
         FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect, FormFieldLabel, FormFieldTipTap}
 import DotKey from '../Modules/DotKey'
@@ -154,6 +155,7 @@ export default {
             let fieldsTypes = {
                 'label': 'FormFieldLabel',
                 'input' : 'FormFieldInput',
+                'textarea': 'FormFieldTextarea',
                 'inputs' : 'FormFieldInputs',
                 'checkbox' : 'FormFieldCheckbox',
                 'file' : 'FormFieldFile',

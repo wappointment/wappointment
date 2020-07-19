@@ -85,54 +85,9 @@
                 <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">Close</button>
               </WapModal>
 
-              <WapModal :show="showWelcomePopup" @hide="hideWelcome">
-                <h1 slot="title" class="modal-title">Yeahhhh! You're done!</h1>
-                <div v-if="!welcomeComplete">
-                  <h2 class="text-center">Congrats!</h2>
-                  <h5 class="text-center" v-if="viewData.booking_page_id">You are ready to get booked</h5>
-                  <h5 class="text-center" v-else>You are almost set, only you need to setup your booking widget</h5>
-                  <div class="card d-flex flex-row justify-content-between">
-                    <div class="h5 my-1 d-flex align-items-center">
-                      <span class="dashicons dashicons-yes-alt text-success mr-2"></span> 
-                      <span>Availability is set, you have <strong>{{ totalSlots }} slots available</strong> this week</span>
-                    </div> 
-                  </div>
-                  <div class="card d-flex flex-row justify-content-between">
-                    <div class="h5 my-1 d-flex align-items-center">
-                      <span class="dashicons dashicons-yes-alt text-success mr-2"></span> 
-                      <span>You provide <strong>{{ viewData.service.name }}</strong> lasting {{ selectedDuration }}min</span>
-                    </div> 
-                  </div>
-                  <BookingPageButton v-if="showWelcomePopup" :title="getTitleShowWelcome" :viewData="viewData" @saved="savedPage"/>
-                  <div class="card d-flex flex-row justify-content-between">
-                    <div class=" my-1 d-flex align-items-center">
-                      <span class="dashicons dashicons-testimonial text-muted d-none d-sm-block"></span> 
-                      <div>
-                        <h3>One last thing!</h3>
-                        <p>You need to test that emails are working, either you can try to book yourself on your own or we can test it for you.</p>
-                        <div>
-                            <InputPh v-model="viewData.subscribe_email" ph="Send result to email"/>
-                            <button type="button"  class="btn btn-primary align-self-start" @click.prevent.stop="sendTestBooking">Send test email to Wappointment</button>
-                            <div class="ml-2 small text-muted">
-                              We will generate a test booking and will reply to the confirmation email if we receive it.
-                            </div>
-                            <div class="ml-2 small text-muted">We will send you the result on this email : {{ viewData.subscribe_email }}</div>
-                        </div>
-                        <div class="my-2">
-                          <button type="button" class="btn btn-secondary btn-sm" @click.prevent.stop="sendIgnore">Ignore</button>
-                        </div>
-                      </div>
-                    </div> 
-                  </div>
-                </div>
-                <div v-else>
-                  <div class="text-center mt-4 bg-light rounded p-3 border-secondary">
-                    <div class="h6">The next page you will see, is central in Wappointment, that's where you will see your new appointments and manage your availability</div>
-                    <img src="https://ps.w.org/wappointment/assets/screenshot-2.gif?rev=2301252" class="text-center rounded">
-                  </div>
-                </div>
-                
-              </WapModal>
+              <WelcomeModal v-if="showWelcomePopup" 
+              @refreshEvents="refreshEvents" @refreshInitValue="refreshInitValue"
+              :passviewData="viewData" :selectedDuration="selectedDuration" :passshowWelcomePopup="showWelcomePopup" :totalSlots="totalSlots" />
             </div>
       </div>
     </div>
@@ -149,7 +104,8 @@ import StatusBusyConfirm from './StatusBusyConfirm'
 import StatusFreeConfirm from './StatusFreeConfirm'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import momenttz from '../appMoment'
-import BookingPageButton from '../Components/Widget/BookingPageButton'
+
+import WelcomeModal from './WelcomeModal'
 import AppointmentRender from './AppointmentRender'
 import FreeSlotsSelector from './FreeSlotsSelector'
 import MixinRender from './MixinRender'
@@ -158,7 +114,7 @@ import MixinSelection from './MixinSelection'
 
 import EventService from '../Services/V1/Event'
 import StatusService from '../Services/V1/Status'
-import WappointmentService from '../Services/V1/Wappointment'
+
 import Intervals from '../Standalone/intervals'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 
@@ -171,9 +127,7 @@ for (const key in mixins_object) {
 }
 
 let calendar_components = window.wappointmentExtends.filter('BackendCalendarComponents', {
-      InputPh: window.wappoGet('InputPh'),
       SubscribeNewsletter,
-      BookingPageButton,
       TimeZones,
       ControlBar,
       Regav,
@@ -181,7 +135,8 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
       BehalfBooking,
       StatusFreeConfirm,
       StatusBusyConfirm,
-      FreeSlotsSelector
+      FreeSlotsSelector,
+      WelcomeModal
   })
 
   /**
@@ -238,17 +193,14 @@ export default {
     daysProperties: false,
     serviceEvent: null,
     serviceStatus: null,
-    serviceWappointment: null,
     openconfirm: false,
     hasBeenSetCalProps: false,
-    welcomeComplete: false,
     queryParameters: undefined
   }),
 
   created(){
     this.serviceEvent = this.$vueService(new EventService)
     this.serviceStatus = this.$vueService(new StatusService)
-    this.serviceWappointment = this.$vueService(new WappointmentService)
     
     this.checkQueryParams()
 
@@ -269,9 +221,6 @@ export default {
  computed: {
    getAllDurations(){
      return this.viewData.durations
-   },
-   getTitleShowWelcome(){
-     return this.viewData.booking_page_id === 0? 'Booking page missing':'Your booking page has been created'
    },
     isToday(){
       return this.firstDay!== undefined && this.lastDay !== undefined && this.firstDay.unix() < momenttz().unix() && this.lastDay.unix() > momenttz().unix()
@@ -353,28 +302,7 @@ export default {
 
     },
 
-    sendTestBooking(){
-      this.request(this.sendTestBookingRequest, false, undefined,false,  this.closeAndRefreshWelcome)
-    },
-    async sendTestBookingRequest() {
-        return await this.serviceWappointment.call('sendtestbooking', {email: this.viewData.subscribe_email})
-    },
-    sendIgnore(){
-      this.request(this.sendIgnoreRequest, false, undefined,false,  this.closeAndRefreshWelcome)
-    },
-    async sendIgnoreRequest() {
-        return await this.serviceWappointment.call('sendignore')
-    },
-
-    closeAndRefreshWelcome(e){
-      this.welcomeComplete = true
-      this.refreshEvents()
-    },
     
-    savedPage(page_id){
-      this.settingSave('booking_page', page_id)
-      this.refreshInitValue()
-    },
     fcalReady(){
       this.fcIsReady=true
     },
@@ -395,15 +323,6 @@ export default {
     hideRegavModal(){
       this.showRegularAv = false
       this.refreshEvents()
-    },
-
-    hideWelcome(){
-      if(!this.welcomeComplete){
-        this.sendIgnore()
-      }else{
-        this.showWelcomePopup = false
-      }
-      
     },
 
     startTimeDisplayed() {

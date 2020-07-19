@@ -122,5 +122,9 @@ export default {
     display: none !important;
 }
 
+.sm-text{
+    font-size:.9em;
+}
+
 </style>
 

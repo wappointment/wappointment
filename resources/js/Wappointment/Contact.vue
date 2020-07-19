@@ -82,7 +82,7 @@ export default {
                 cast: String,
             },
             {
-                type: 'editor',
+                type: 'textarea',
                 label: 'Your message',
                 model: 'message',
                 cast: String,
