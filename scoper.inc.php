@@ -127,7 +127,7 @@ if (!function_exists("dds")) {
                     '\WappoVendor\WP_Ajax_Upgrader_Skin',
                     '\WappoVendor\Plugin_Upgrader',
                     '\WappoVendor\WP_Filesystem_Base',
-                    '\WappoVendor\WappoSwift_'
+                    '\WappoVendor\WappoSwift_',
                 ], [
                     '\WappointmentValidationException',
                     '\WappointmentException',
@@ -137,7 +137,7 @@ if (!function_exists("dds")) {
                     '\WP_Ajax_Upgrader_Skin',
                     '\Plugin_Upgrader',
                     '\WP_Filesystem_Base',
-                    '\WappoSwift_'
+                    '\WappoSwift_',
                 ], $contents);
             }
 
