@@ -33,6 +33,7 @@ class Reset
             WPHelpers::deleteStaffOption('cal_urls', $staff_id);
             WPHelpers::deleteStaffOption('viewed_updates', $staff_id);
             WPHelpers::deleteStaffOption('hello_page', $staff_id);
+            WPHelpers::deleteStaffOption('preferences', $staff_id);
         }
     }
 

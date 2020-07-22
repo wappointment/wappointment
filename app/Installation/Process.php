@@ -3,7 +3,8 @@
 namespace Wappointment\Installation;
 
 use Wappointment\WP\Helpers as WPHelpers;
-use \Wappointment\Services\Settings;
+use Wappointment\Services\Settings;
+use Wappointment\System\Status;
 
 class Process extends AbstractProcess
 {
@@ -38,7 +39,8 @@ class Process extends AbstractProcess
             'activeStaffId' => WPHelpers::userId(),
             'email_notifications' => WPHelpers::currentUserEmail(),
         ]);
-        \Wappointment\System\Status::dbVersionUpdateComplete();
+        Status::dbVersionUpdateComplete();
+        Status::setViewedUpdated();
         return WPHelpers::setOption('installation_completed', (int) current_time('timestamp'), true);
     }
 }

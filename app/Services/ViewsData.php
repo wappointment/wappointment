@@ -7,7 +7,6 @@ use Wappointment\ClassConnect\Carbon;
 use Wappointment\Services\Staff;
 use Wappointment\WP\WidgetAPI;
 
-
 class ViewsData
 {
     public function load($key)
@@ -117,7 +116,8 @@ class ViewsData
             'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
             'showWelcome' => Settings::get('show_welcome'),
             'subscribe_email' => Settings::get('email_notifications'),
-            'welcome_site' => get_site_url()
+            'welcome_site' => get_site_url(),
+            'cal_duration' => Service::get()['duration']
         ]);
     }
 

@@ -88,11 +88,6 @@ And for any question or doubt, you can reach us:
 
 == Frequently Asked Questions ==
 
-**I get "ERROR loading..." when clicking the booking button**
-
-This is in 99.9% of the case because of the caching plugin or caching system you are using on your site. 
-But it's also really simple to fix. Each time you update our plugin, or any plugin for what it matters, you must clear the cache of your caching plugin or caching system. That's it Solved!
-
 **Can I customize the look and feel of the booking form?**
 
 We provide a very simple editor in which you can change the texts, colors and few other parameters of each step of the booking process. We plan on adding several templates in the future, meanwhile simply use css to make it exactly the way you want.
@@ -150,6 +145,15 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 1.5.3 - 2020-07-20 =
+* added Dates Localized when supported in booking widget
+* fixed Calendar Synch issue
+* fixed issue when instaling on local by FlyWheel
+* added fix for cached websites, somehow could break frontend booking form
+* Corrected style issue
+* Fixed Save appointment to personal calendar button 
+* code refactor booking form and bug fixes
 
 = 1.5.2 - 2020-06-19 =
 * Added option to turn the cancellation rescheduling page into a proper WordPress page so you can control the style

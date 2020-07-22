@@ -11,6 +11,7 @@ use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Models\Status as Mstatus;
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Services\Appointment;
+use Wappointment\Services\Preferences;
 
 class EventsController extends RestController
 {
@@ -31,6 +32,8 @@ class EventsController extends RestController
         if ((bool) $request->input('viewingFreeSlot')) {
             return $this->debugAvailability();
         } else {
+            //we save the duration preference
+            (new Preferences)->save('cal_duration', $request->input('slotDuration'));
             return [
                 'events' => array_merge($this->events($request), $this->regavToBgEvent($request)),
                 'availability' => WPHelpers::getStaffOption('availability'), //$this->TESTprocessAvail(Settings::getStaff('availability')),

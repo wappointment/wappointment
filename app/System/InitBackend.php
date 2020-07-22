@@ -19,6 +19,7 @@ class InitBackend
             add_action('admin_menu', [$this, 'registerMenuSubs']);
             add_action('admin_init', [$this, 'enqueueBackendAlways']);
             add_filter('display_post_states', [$this, 'addDisplayPostStates'], 12, 2);
+            add_filter('plugin_action_links_' . plugin_basename(WAPPOINTMENT_FILE), [$this, 'customPluginLinks']);
         }
         if (WPHelpers::isPluginPage()) {
             add_action('admin_init', [$this, 'enqueueBackendPlugin']);
@@ -105,5 +106,31 @@ class InitBackend
             // Gutenberg is not active.
             return;
         }
+    }
+
+    public function customPluginLinks($links)
+    {
+        $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_settings')) . '" >Settings</a>';
+        if (Status::installedForXDays() > 30) {
+            $links[] = '<a href="https://wordpress.org/support/plugin/wappointment/reviews/#new-post" target="_blank" class="btn btn-outline-secondary text-dark ml-2">
+                Support us with stars
+                <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span>
+            </a> <style>.plugins .plugin-title .dashicons.dashicons-star-filled::before {
+                padding: 0px;
+                background-color: transparent;
+                box-shadow: none;
+                font-size: 17px;
+                color: #ffb900;
+            }
+            .plugins .plugin-title .dashicons, .plugins .plugin-title img {
+                float: none;
+                width: auto;
+                height: auto;
+                padding: 0;
+            }
+            </style>';
+        }
+
+        return $links;
     }
 }

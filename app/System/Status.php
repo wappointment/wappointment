@@ -3,6 +3,7 @@
 namespace Wappointment\System;
 
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Services\Settings;
 
 class Status
 {
@@ -46,7 +47,15 @@ class Status
         return false;
     }
 
-
+    public static function setViewedUpdated()
+    {
+        return WPHelpers::setStaffOption(
+            'viewed_updates',
+            WAPPOINTMENT_VERSION,
+            Settings::get('activeStaffId'),
+            true
+        );
+    }
 
     public static function viewedUpdates()
     {
@@ -56,6 +65,16 @@ class Status
     public static function helloPage()
     {
         return WPHelpers::getStaffOption('hello_page');
+    }
+
+    public static function setHelloPage($value)
+    {
+        return WPHelpers::setStaffOption(
+            'hello_page',
+            $value,
+            Settings::get('activeStaffId'),
+            true
+        );
     }
 
     public static function wizardStep()

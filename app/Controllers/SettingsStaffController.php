@@ -5,6 +5,7 @@ namespace Wappointment\Controllers;
 use Wappointment\Services\Settings;
 use Wappointment\ClassConnect\Request;
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\System\Status;
 
 class SettingsStaffController extends RestController
 {
@@ -16,20 +17,10 @@ class SettingsStaffController extends RestController
     public function save(Request $request)
     {
         if ($request->input('key') == 'viewed_updates') {
-            return WPHelpers::setStaffOption(
-                'viewed_updates',
-                WAPPOINTMENT_VERSION,
-                Settings::get('activeStaffId'),
-                true
-            );
+            return Status::setViewedUpdated();
         }
         if ($request->input('key') == 'hello_page') {
-            return WPHelpers::setStaffOption(
-                'hello_page',
-                $request->input('val'),
-                Settings::get('activeStaffId'),
-                true
-            );
+            return Status::setHelloPage($request->input('val'));
         }
 
 

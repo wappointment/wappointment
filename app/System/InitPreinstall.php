@@ -2,6 +2,8 @@
 
 namespace Wappointment\System;
 
+use Wappointment\WP\Helpers as WPHelpers;
+
 class InitPreinstall
 {
     private $plugin_file = '';
@@ -11,6 +13,9 @@ class InitPreinstall
         register_activation_hook($this->plugin_file, [$this, 'activated']);
         add_action('admin_init', [$this, 'checkJustActivated']);
         add_filter('plugin_row_meta', [$this, 'customPluginRowMeta'], 10, 2);
+
+        add_filter('plugin_action_links_' . plugin_basename(WAPPOINTMENT_FILE), [$this, 'customPluginLinks']);
+
         new \Wappointment\Routes\Init();
     }
 
@@ -45,7 +50,7 @@ class InitPreinstall
 
         if (strpos($file, $this->plugin_file) !== false) {
             $buttonInit = '<a href="' .
-                \Wappointment\WP\Helpers::adminUrl('wappointment_calendar') .
+                WPHelpers::adminUrl('wappointment_calendar') .
                 '" class="button button-primary button-large" >Setup</a>';
             $htmlWrap = '<div class="notice inline notice-info">
             <p>Thanks for activating me! Now set me up in only few seconds ' . $buttonInit . '
@@ -56,6 +61,12 @@ class InitPreinstall
         }
 
 
+        return $links;
+    }
+
+    public function customPluginLinks($links)
+    {
+        $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_calendar')) . '" >Start Setup</a>';
         return $links;
     }
 }
