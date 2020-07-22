@@ -1,5 +1,5 @@
 <template>
-    <div class="d-flex flex-wrap flex-sm-nowrap">
+    <div>
       <div class="mr-2">
           <LabelMaterial>
                 <textarea class="form-control" @focusout="$emit('activated')" :class="{'is-invalid':hasErrors}" v-model="updatedValue"

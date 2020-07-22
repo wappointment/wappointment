@@ -14,7 +14,7 @@
                         <p class="h6">It took us a full year of work to get that plugin in your hands.</p>
                         <h6>How is your experience with Wappointment so far?</h6>
                         <HowYouFeel @changed="feelingChanged"/>
-                        <div >
+                        <div>
                             <button class="btn btn-link btn-sm" @click="dontShowAgain">Don't show again</button>
                         </div>
                     </div>
@@ -29,10 +29,6 @@
                                     <div class="contact-wrapper" v-if="!messageSent">
                                         <div>
                                             <div class="h1 text-center" data-tt="We need you!"><strong>Help us grow!</strong></div>
-                                            <div class="text-center">   
-                                                <img :src="'https://ps.w.org/wappointment/assets/equipowappo.jpg?rev=2151020'" class="img-fluid rounded" height="200" alt="Our little team of 2">
-                                                <div>Elena and Ben Wireframing Wappointment</div>
-                                            </div>
                                             <div class="h1 bg-primary text-white text-center m-4">
                                                 "And spread the word!"
                                             </div>

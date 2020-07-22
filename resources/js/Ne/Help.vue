@@ -39,7 +39,6 @@ export default {
             return {
                 server: this.serverObj
             }
-            
         },
     },
     methods:{

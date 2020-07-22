@@ -3,7 +3,11 @@ import Vue from './appVue'
 import ClickCopy from './Fields/ClickCopy'
 import InputPh from './Fields/InputLabelMaterial'
 import VideoIframe from './Ne/VideoIframe'
-window.wappointmentExtends.store('commons', {InputPh, ClickCopy, VideoIframe})
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import DurationCell from './BookingForm/DurationCell'
+import PhoneInput from './BookingForm/PhoneInput'
+
+window.wappointmentExtends.store('commons', {PhoneInput, InputPh, ClickCopy, VideoIframe, FontAwesomeIcon, DurationCell})
 
 import VueRouter from 'vue-router'
 import Backend from './Backend'
@@ -12,14 +16,10 @@ import FormGenerator from './Form/FormGenerator'
 import StickyBar from './Components/StickyBar'
 import RingLoader from './Components/Loaders/Ring'
 import WLoader from './Components/Loaders/BigCalendar'
-import DurationCell from './BookingForm/DurationCell'
 import VueService from './Plugins/vue-service'
-import changeWPmenu from './Standalone/changeWPmenu'
-import parseQuery from './Standalone/parseQuery'
-
-
-
-window.wappoChangeWPmenu = changeWPmenu
+import rewriteWPMenu from './Standalone/rewriteWPMenu'
+import routerSetupRedirect from './Standalone/routerSetupRedirect'
+import routerQueryRedirect from './Standalone/routerQueryRedirect'
 
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
@@ -157,81 +157,57 @@ const router = window.wappointmentrouter = new VueRouter({
 
 
 router.beforeEach((to, from, next) => {
+
+  if([null, undefined].indexOf(to.name) ===-1 && to.name.indexOf('wizard') === -1 ){
+    let setupNeeded = routerSetupRedirect(router)
+    if(setupNeeded === true){
+      return
+    }
+  }
+  
   if(to.query.page!== undefined && to.query.page.indexOf('wappointment_')!==-1){
     if(['wappointment_calendar', 'wappointment_settings'].indexOf(to.query.page) !== -1 && to.hash.indexOf('#/') !== -1){
-          next({ name: to.hash.replace('#/','')})
-        }else{
-          if(to.path == window.apiWappointment.base_admin && to.query.page=='wappointment_calendar' && to.query.start !== undefined){
-            //we save the query parameters for later use start, end , timezone
-            window.savedQueries = to.query
-          }
-          next({ name: to.query.page})
-
+        next({ name: to.hash.replace('#/','')})
+      }else{
+        if(to.path == window.apiWappointment.base_admin && to.query.page=='wappointment_calendar' && to.query.start !== undefined){
+          //we save the query parameters for later use start, end , timezone
+          window.savedQueries = to.query
         }
-    } else{
-        window.wappoChangeWPmenu(to.name)
-        next()
-    }
+        next({ name: to.query.page})
 
-  })
+      }
+  } else{
+      rewriteWPMenu(to.name)
+      next()
+  }
 
-  window.jQuery(function($){
+})
+
+  window.jQuery(function($){ // scan certain link to apply a routing
     $('.wappointmentLink').click(function(e){
       let pagename =  e.currentTarget.getAttribute('data-pagename')
       router.push({ name: pagename })
-      window.wappoChangeWPmenu(pagename)
+      rewriteWPMenu(pagename)
       if (e.stopPropagation) e.stopPropagation()
       if (e.preventDefault) e.preventDefault()
       return false
     })
     
-  });
+  })
 
   
 const app = new Vue({
   router,
   el: '#wappointment_app',
   created: function () {
-
-    var wizardInt = parseInt(wappointmentAdmin.wizardStep);
-    if(wizardInt > -1){
-        switch (wizardInt) {
-            case 0:
-            case 1:
-            case 2:
-            case 3:
-                router.push({ name: 'wizard'+(wizardInt+1)})
-                break;
-            default:
-                break;
-        }
-        
-    }else {
-        if(parseInt(wappointmentAdmin.updatePage) === 1){
-            router.push({ name: 'wappointment_update'})
-        }else{
-            let result = parseQuery(window.location.search.replace('?',''))
-            if(result.page !== undefined && result.page.startsWith('wappointment_')) {
-                if(result.page == 'wappointment_settings') {
-                    if(result.page == 'wappointment_settings' && window.location.hash.indexOf('#/') !== -1){
-                        router.push({ name: window.location.hash.replace('#/','')})
-                    }else{
-                        router.push({ name: 'wappointment_settings'})
-                    }
-                }else{
-                    router.push({ name: result.page})
-                }
-                
-            }else{
-                router.push({ name: 'wappointment_calendar'})
-            }
-            
-        }
+    if(routerSetupRedirect(router) === false){
+      routerQueryRedirect(router)
     }
-    
   },
   components: { Backend },
   render: h => h(Backend)
 })
+
+
 
 

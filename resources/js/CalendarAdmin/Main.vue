@@ -7,7 +7,8 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
                 <h1 class="h2 align-self-center"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
-                <FreeSlotsSelector :totalSlots="totalSlots" :viewingFreeSlot="viewingFreeSlot" :durations="getAllDurations" :duration="selectedDuration"
+                <FreeSlotsSelector :totalSlots="totalSlots" :viewingFreeSlot="viewingFreeSlot" 
+                :durations="getAllDurations" :duration="selectedDuration" :buffer="this.viewData.buffer_time"
                 @resizeSlots="resizeSlots" @getFreeSlots="getFreeSlots" @getEdition="getEdition"/>
               </div>
               <div class="d-flex">
@@ -294,7 +295,6 @@ export default {
       }
     },
     resizeSlots(duration){
-      
       this.setInterval(duration)
 
       this.fullCalOption = undefined
@@ -393,12 +393,10 @@ export default {
             this.timezone = initTimezone // staff timezone
             this.selectedTimezone = initTimezone // display timezone
             this.showWelcomePopup = this.viewData.showWelcome
-            this.setInterval(this.viewData.service.duration)
-          }
-          
-
-          if(this.loadedAfter !== undefined) {
-            this.loadedAfter()
+            let duration_temp = [undefined,false].indexOf(this.viewData.cal_duration) === -1 ? this.viewData.cal_duration:this.viewData.durations[0]
+            console.log('duration_temp',duration_temp)
+            console.log('this.viewData.cal_duration',this.viewData.cal_duration)
+            this.setInterval(duration_temp)
           }
           
           let defaultDate = false
@@ -462,7 +460,6 @@ export default {
             }
             
             if(defaultDate !== false){
-              console.log('setdefault date',defaultDate)
               this.fullCalOption.props.defaultDate = defaultDate
             }
       },
@@ -603,7 +600,7 @@ export default {
       },
 
       async getEventsRequest(params) {
-        let p = {start: params.start.format(), end: params.end.format(), timezone:params.timezone, view: this.currentView}
+        let p = {start: params.start.format(), end: params.end.format(), timezone:params.timezone, view: this.currentView, slotDuration: this.selectedDuration}
         if(this.viewingFreeSlot){
           p.viewingFreeSlot = true
         }

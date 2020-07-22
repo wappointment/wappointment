@@ -10,11 +10,11 @@
             <div v-if="clientSelected">
                 <div class="d-flex align-items-center">
                     <div class="mr-2">
-                    <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name">
+                        <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name">
                     </div>
                     <div>
-                    <h6 class="m-0">{{ clientSelected.name }}</h6>
-                    <small>{{ clientSelected.email }}</small>
+                        <h6 class="m-0">{{ clientSelected.name }}</h6>
+                        <small>{{ clientSelected.email }}</small>
                     </div>
                 </div>
                 <small class="btn btn-link btn-sm" role="button" @click="clearClientSelection">Change client</small>
@@ -93,7 +93,7 @@ import StyleGenerator from '../Components/StyleGenerator'
 export default {
     props: ['viewData','startTime', "endTime", "realEndTime"],
     mixins:[RequestMaker],
-    components: {AppointmentTypeSelection,PhoneInput, FormInputs, StyleGenerator},
+    components: {AppointmentTypeSelection, PhoneInput, FormInputs, StyleGenerator},
     data: () => ({
         clientSearching:false,
         clientsResults: [],
@@ -113,7 +113,6 @@ export default {
         prevEmail: '',
     }),
     created(){
- 
         this.serviceClient = this.$vueService(new ClientService)
     },
     watch: {
@@ -126,9 +125,6 @@ export default {
 
     },
     computed: {
-        selectedDuration(){
-            return this.service.duration
-        },
         isToday(){
             return this.firstDay!== undefined && this.lastDay !== undefined && this.firstDay.unix() < momenttz().unix() && this.lastDay.unix() > momenttz().unix()
         },

@@ -43,7 +43,7 @@
             <div class="mt-4 p-3 text-center">
             <h2>Welcome to your Calendar page!</h2>
             <img src="https://ps.w.org/wappointment/assets/screenshot-2.gif?rev=2301252" class="mb-3 rounded img-fluid mr-2">
-            <div class="m-auto sm-box sm-text align-self-center text-muted rounded bg-light p-2 pl-5">
+            <div class="m-auto sm-box sm-text align-self-center text-left text-muted rounded bg-light p-2 pl-5">
                 <p class="h6">From this page you will be able to:</p>
                 <ol class="ml-0 my-3">
                     <li> Review your availability and appointments</li>

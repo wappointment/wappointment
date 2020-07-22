@@ -7,22 +7,22 @@
         <a v-else class="tt-below align-self-center" href="javascript:;" @click="$emit('getEdition')">Back to edition</a>
         <div class="dropdown ml-2 d-flex align-self-center" :class="{'show': toggle}" v-if="durations.length > 1">
             <button class="btn btn-secondary dropdown-toggle btn-xs" type="button" @click="toggle=!toggle">
-                {{duration}}min
+                {{duration}}min <span v-if="buffer > 0" class="tt-below" data-tt="Buffer time">(+{{buffer}}min)</span>
             </button>
             <div class="dropdown-menu" :class="{'show': toggle}">
-                <a class="dropdown-item" href="javascript:;" v-for="durationI in durations" @click="selectDuration(durationI)"> {{durationI}}min</a>
+                <a class="dropdown-item" href="javascript:;" v-for="durationI in durations" @click="selectDuration(durationI)"> {{durationI}}min </a>
             </div>
             
         </div>
         <div v-else class="ml-2 align-self-center text-muted">
-            {{duration}}min
+            {{duration}}min <span v-if="buffer > 0" class="tt-below" data-tt="Buffer time">(+{{buffer}}min)</span>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['totalSlots', 'viewingFreeSlot', 'durations', 'duration'],
+    props: ['totalSlots', 'viewingFreeSlot', 'durations', 'duration', 'buffer'],
     data: () => ({
         toggle: false
     }),

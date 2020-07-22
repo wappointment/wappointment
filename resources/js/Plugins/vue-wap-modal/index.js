@@ -1,9 +1,9 @@
-import './styles.css';
-import WapModal from './Components/WapModal';
-import WapNotify from './Components/WapNotify';
-import WapModalContainer from './Components/WapModalContainer';
+import './styles.css'
+import WapModal from './Components/WapModal'
+import WapNotify from './Components/WapNotify'
+import WapModalContainer from './Components/WapModalContainer'
 
-var VueWapModal = function () {};
+var VueWapModal = function () {}
 VueWapModal.install = function (Vue, options) {
   
   Vue.component('WapModal', WapModal)

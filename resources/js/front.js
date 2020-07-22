@@ -2,9 +2,9 @@ __webpack_public_path__ = apiWappointment.resourcesUrl;
 
 import Vue from './appVue'
 import Front from './Front'
-import VueWapModal from './Plugins/vue-wap-modal'
 import VueService from './Plugins/vue-service'
 import WLoader from './Components/Loaders/BigCalendar'
+import VueWapModal from './Plugins/vue-wap-modal'
 
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
@@ -34,5 +34,3 @@ for (let index = 0; index < vues.length; index++) {
     }) 
     
 }
-
-

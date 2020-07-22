@@ -1,5 +1,5 @@
-export default function changeWPmenu(pagename) {
-  
+export default function (pagename) {
+    //a quick cleaning to remove duplicate parent menu element
     window.jQuery(function($){
         $('#toplevel_page_wappointment_calendar li.current, #toplevel_page_wappointment_calendar li a.current').removeClass('current')
         let testpagename = pagename
