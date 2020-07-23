@@ -1,6 +1,6 @@
 <template>
     <WapModal :show="showWelcomePopup" @hide="hideWelcome">
-        <h1 slot="title" class="modal-title">Yeahhhh! You're done!</h1>
+        <h1 slot="title" class="modal-title">Yayyyy! You're done!</h1>
         <div v-if="!welcomeComplete">
             <h2 class="text-center">Congrats!</h2>
             <h5 class="text-center" v-if="passviewData.booking_page_id">You are ready to get booked</h5>
