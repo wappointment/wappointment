@@ -52,7 +52,7 @@ class WappointmentController extends RestController
         // quickly trigger the queue task
         WPHelpers::cronTrigger();
         if ($result) {
-            Settings::save('show_welcome', false);
+            // Settings::save('show_welcome', false);
             return [
                 'result' => true,
                 'message' => "Alright we just created a test appointment"
@@ -67,7 +67,7 @@ class WappointmentController extends RestController
     public function sendIgnoreBooking()
     {
 
-        Settings::save('show_welcome', false);
+        //Settings::save('show_welcome', false);
 
         return [
             'result' => true,

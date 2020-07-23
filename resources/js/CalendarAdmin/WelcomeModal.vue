@@ -47,7 +47,7 @@
                 <p class="h6">From this page you will be able to:</p>
                 <ol class="ml-0 my-3">
                     <li> Review your availability and appointments</li>
-                    <li> Block times where you're busy </li>
+                    <li> Block times when you're busy </li>
                     <li> Add extra Bookable time </li>
                     <li> Book appointments on behalf of your clients</li>
                 </ol>
