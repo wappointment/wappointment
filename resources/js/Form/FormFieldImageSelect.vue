@@ -18,7 +18,7 @@
             <WapModal :show="edit" @hide="close" large>
                 <h4 slot="title" class="modal-title">Select an Image</h4>
                 <div class="d-flex">
-                    <div v-if="hasImage" class="mr-4 preview">
+                    <div v-if="hasImage" class="mr-4 preview-side-image">
                         <div class="mb-4">
                             <img :src="wp_image.src" class="img-fluid rounded" >
                         </div>
@@ -167,7 +167,7 @@ export default {
 }
 </script>
 <style >
-.preview{
+.preview-side-image{
     width:400px;
 }
     .img-bg {
