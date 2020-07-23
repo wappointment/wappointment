@@ -182,7 +182,7 @@ class Appointment
                 );
             }
             //we immediately spawn a process to trigger availability regenerate in the back
-            spawn_cron();
+            WPHelpers::cronTrigger();
         }
 
 

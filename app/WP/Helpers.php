@@ -9,6 +9,24 @@ class Helpers
     public static $option_prefix = WAPPOINTMENT_SLUG;
     private static $request;
 
+    /**
+     * Function running manually cron pending wp crons
+     *
+     * @return void
+     */
+    public static function cronTrigger()
+    {
+        spawn_cron();
+    }
+
+    /**
+     * Wp Localized date
+     *
+     * @param [type] $format
+     * @param [type] $timestamp
+     * @param [type] $timezone
+     * @return void
+     */
     public static function dateTime($format, $timestamp, $timezone)
     {
         // wp_date only since wp 5.3

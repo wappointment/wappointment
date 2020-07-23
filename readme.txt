@@ -146,6 +146,9 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 1.5.4 - 2020-??-?? =
+* improving email test when sending test appointment (cron trigger)
+
 = 1.5.3 - 2020-07-22 =
 * added Dates Localized when supported in booking widget
 * fixed Calendar Synch issue
