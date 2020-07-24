@@ -49,7 +49,12 @@ class Database
 
     public function getDbCollate()
     {
-        return empty(DB_COLLATE) ? 'utf8_general_ci' : DB_COLLATE;
+        return !defined('DB_COLLATE') || empty(DB_COLLATE) ? 'utf8_general_ci' : DB_COLLATE;
+    }
+
+    public function getDbCharset()
+    {
+        return !defined('DB_CHARSET') || empty(DB_CHARSET) ? 'utf8' : DB_CHARSET;
     }
 
     public function getHost()

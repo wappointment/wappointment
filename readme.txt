@@ -150,6 +150,7 @@ It requires work on your end but keeps your site safe and optimized.
 * Improving email test when sending test appointment (cron trigger)
 * Fixed Booking Widget Editor
 * Fixed issue no available slots when little booking activity
+* Fixed installation issue DB_CHARSET missing
 
 = 1.5.3 - 2020-07-22 =
 * added Dates Localized when supported in booking widget

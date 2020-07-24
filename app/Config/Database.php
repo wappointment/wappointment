@@ -34,7 +34,7 @@ class Database
             'database' => $db->getDbName(),
             'username' => $db->getDbUser(),
             'password' => $db->getDbPass(),
-            'charset' => 'utf8',
+            'charset' => $db->getDbCharset(),
             'collation' => $db->getDbCollate(),
             'prefix' => $db->getPrefix(),
             'strict' => true,
