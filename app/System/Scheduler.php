@@ -5,11 +5,14 @@ namespace Wappointment\System;
 use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
 
+/**
+ * TODO Most of this class is static but it has a constructor, review
+ */
 class Scheduler
 {
     public function __construct()
     {
-        switch ((int) Settings::get('scheduler_mode')) {
+        switch ((int) Settings::get('scheduler_mode')) { // this is not used yet probably won't be needed ever
             case 1:
                 $this->setWappointmentScheduler();
                 break;
@@ -18,6 +21,11 @@ class Scheduler
         }
     }
 
+    /**
+     * runs every 5 min
+     *
+     * @return void
+     */
     public static function syncCalendar()
     {
         foreach (\Wappointment\Services\Staff::getIds() as $staff_id) {
@@ -30,9 +38,79 @@ class Scheduler
             }
             //regenerate availability only when we get new events
             if ($hasChanged) {
-                (new \Wappointment\Services\Availability())->regenerate();
+                self::regenerateAvailability();
             }
         }
+    }
+
+
+    /**
+     * Runs every minute
+     * refactor as it contains non prod code
+     *
+     * @return void
+     */
+    public static function processQueue()
+    {
+
+        if (\WappointmentLv::isTest()) {
+            \Wappointment\Services\Queue::process();
+        } else {
+            $lock = new \Wappointment\Services\Lock;
+            if (!$lock->alreadySet()) {
+                $lock->set();
+                \Wappointment\Services\Queue::process();
+                $lock->release();
+            }
+        }
+    }
+
+    /**
+     * Runs every hour for jobs that were processed but didn't complete
+     *
+     * @return void
+     */
+    public static function checkLostReservedJobs()
+    {
+        \Wappointment\Services\Queue::resetTimedoutJobs();
+    }
+    /**
+     * Runs every day
+     *
+     * @return void
+     */
+    public static function dailyProcess()
+    {
+        try {
+            self::regenerateAvailability(); // we at least regenerate once a day to avoid empty calendar after aa while without a booking
+            self::checkLicence();
+        } catch (\Exception $e) {
+            //silent execution
+        }
+    }
+    /**
+     * Not needed already process in processQueue
+     *
+     * @return void
+     */
+    public static function checkPendingReminder()
+    {
+    }
+
+
+
+    private static function regenerateAvailability()
+    {
+        (new \Wappointment\Services\Availability())->regenerate();
+    }
+
+    private static function checkLicence()
+    {
+        (new \Wappointment\Services\Wappointment\Licences)->check();
+    }
+
+    private function setWappointmentScheduler()
+    {
     }
 
     private static function getUrlsToScan($staff_id)
@@ -41,6 +119,13 @@ class Scheduler
         return self::upgradingUrls($calendar_urls, $staff_id);
     }
 
+    /**
+     * TODO This is a legacy, it was an upgrade process probably no longer needed. or can be split
+     *
+     * @param array $calendar_urls
+     * @param int $staff_id
+     * @return array
+     */
     private static function upgradingUrls($calendar_urls, $staff_id)
     {
         $require_save = false;
@@ -65,45 +150,5 @@ class Scheduler
         }
 
         return $calendar_urls;
-    }
-
-    public static function processQueue()
-    {
-
-        if (\WappointmentLv::isTest()) {
-            \Wappointment\Services\Queue::process();
-        } else {
-            $lock = new \Wappointment\Services\Lock;
-            if (!$lock->alreadySet()) {
-                $lock->set();
-                \Wappointment\Services\Queue::process();
-                $lock->release();
-            }
-        }
-    }
-
-    public static function checkPendingReminder()
-    {
-    }
-
-    public static function checkLostReservedJobs()
-    {
-        \Wappointment\Services\Queue::resetTimedoutJobs();
-    }
-
-    public static function dailyProcess()
-    {
-        try {
-            self::checkLicence();
-        } catch (\Exception $e) {
-            //silent execution
-        }
-    }
-    public static function checkLicence()
-    {
-        (new \Wappointment\Services\Wappointment\Licences)->check();
-    }
-    private function setWappointmentScheduler()
-    {
     }
 }
