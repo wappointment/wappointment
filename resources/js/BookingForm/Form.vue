@@ -226,7 +226,8 @@ export default {
         }, 
 
         appointmentBooked(result){
-            let relationnext = window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, {result:result, service: this.service} )
+            let relationnext = window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, 
+            {result:result, service: this.service} )
             
             this.$emit('confirmed', relationnext , {
                 appointmentSavedData:result.data.appointment, 

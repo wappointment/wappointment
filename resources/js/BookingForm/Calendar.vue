@@ -13,7 +13,7 @@ import CalendarMonth from './CalendarMonth'
 import CalendarWeek from './CalendarWeek'
 
 export default {
-    props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration', 'viewData','rescheduling'],
+    props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration', 'viewData','rescheduling', 'relations'],
     components: {
         CalendarMonth, CalendarWeek
     }, 
@@ -24,7 +24,8 @@ export default {
     },
     methods: {
         selectSlot(slot){
-            this.$emit('selectSlot', this.rescheduling?'RescheduleConfirm':'BookingFormInputs', {selectedSlot: slot})
+            let next = this.relations.next
+            this.$emit('selectSlot', this.rescheduling ? 'RescheduleConfirm':next, {selectedSlot: slot})
         },
     }
 
