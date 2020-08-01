@@ -5,7 +5,7 @@ class Extends {
 
     constructor() {
         this.callbacks = {}
-        this.baseUrl = window.apiWappointment.baseUrl
+        this.baseUrl = window.apiWappointment.baseUrl // TODO probably no need for that line
         this.storage = {}
     }
 

@@ -5,7 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\Validators\HasValues;
 use Wappointment\Validators\RequiredIfHas;
 
-class Service
+class Service implements ServiceInterface
 {
     public static function save($serviceData)
     {

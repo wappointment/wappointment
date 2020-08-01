@@ -8,7 +8,10 @@ namespace Wappointment\Managers;
 class Central
 {
     protected $services = [
-        'Service' => \Wappointment\Services\Service::class
+        'Service' => [
+            'class' => \Wappointment\Services\Service::class,
+            'implements' => \Wappointment\Services\ServiceInterface::class
+        ]
     ];
 
     public static function instance()
@@ -22,7 +25,7 @@ class Central
 
     public static function get($serviceName)
     {
-        return static::instance()->getService($serviceName);
+        return static::instance()->getService($serviceName)['class'];
     }
 
     public function has($serviceName)
@@ -50,6 +53,11 @@ class Central
 
     protected function set($serviceName, $class)
     {
-        $this->services[$serviceName] = $class;
+        $service = $this->getService($serviceName);
+
+        if (!in_array($service['implements'], class_implements($class))) {
+            throw new \WappointmentException("Central: " . $serviceName . ' class ' . $class . ' not implementing ' . $service['implements'], 1);
+        }
+        $this->services[$serviceName]['class'] = $class;
     }
 }

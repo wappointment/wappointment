@@ -49,7 +49,8 @@ class Database
 
     public function getDbCollate()
     {
-        return !defined('DB_COLLATE') || empty(DB_COLLATE) ? 'utf8_general_ci' : DB_COLLATE;
+        $defaultCollate = $this->getDbCharset() != 'utf8mb4' ? 'utf8_general_ci' : 'utf8mb4_unicode_ci';
+        return !defined('DB_COLLATE') || empty(DB_COLLATE) ? $defaultCollate : DB_COLLATE;
     }
 
     public function getDbCharset()

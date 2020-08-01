@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.4
 Requires PHP: 7.0
-Stable tag: 1.5.3
+Stable tag: 1.5.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -146,7 +146,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 1.5.4 - 2020-??-?? =
+= 1.5.4 - 2020-07-31 =
 * Improving email test when sending test appointment (cron trigger)
 * Fixed Booking Widget Editor
 * Fixed issue no available slots when little booking activity
