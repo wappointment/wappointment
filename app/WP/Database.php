@@ -5,6 +5,8 @@ namespace Wappointment\WP;
 class Database
 {
     public $host = '';
+    public $charset = '';
+    public $collate = '';
     private $port = '3306';
     private $alt_port = '';
     private $prefix = '';
@@ -29,6 +31,8 @@ class Database
                 $this->alt_port = ini_get('mysqli.default_port'); // make sure this cannot break working connection
             }
         }
+        $this->charset =  $wpdb->charset;
+        $this->collate =  $wpdb->collate;
         //dd(ini_get('mysqli.default_port'));
     }
 
@@ -49,13 +53,15 @@ class Database
 
     public function getDbCollate()
     {
-        $defaultCollate = $this->getDbCharset() != 'utf8mb4' ? 'utf8_general_ci' : 'utf8mb4_unicode_ci';
-        return !defined('DB_COLLATE') || empty(DB_COLLATE) ? $defaultCollate : DB_COLLATE;
+        return $this->collate;
+        /* $defaultCollate = $this->getDbCharset() != 'utf8mb4' ? 'utf8_general_ci' : 'utf8mb4_unicode_ci';
+        return !defined('DB_COLLATE') || empty(DB_COLLATE) ? 'utf8_general_ci' : DB_COLLATE; */
     }
 
     public function getDbCharset()
     {
-        return !defined('DB_CHARSET') || empty(DB_CHARSET) ? 'utf8' : DB_CHARSET;
+        return $this->charset;
+        /* return !defined('DB_CHARSET') || empty(DB_CHARSET) ? 'utf8' : DB_CHARSET; */
     }
 
     public function getHost()

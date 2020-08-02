@@ -146,6 +146,9 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 1.5.5 - 2020-08-02 =
+* fixed new bug DB_CHARSET and DB_COLLATE in v1.5.4
+
 = 1.5.4 - 2020-07-31 =
 * Improving email test when sending test appointment (cron trigger)
 * Fixed Booking Widget Editor
