@@ -19,6 +19,10 @@ export default {
       type:Boolean,
       default:false
     }, 
+    forceFloat:{
+      type:Boolean,
+      default:false
+    }, 
   },
   data () {
     return {
@@ -64,14 +68,15 @@ export default {
       return this.for
     },
     isActive() {
-        return this.value !== ''
+
+        return [undefined,''].indexOf(this.value) === -1
     },
     
     labelClass () {
       var obj = {
         'label-wrapper': true,
         'focused': this.isFocused,
-        'active': this.isActive,
+        'active': this.isActive || this.forceFloat,
       }
       if(this.extraClass != undefined) obj[this.extraClass] = true
       return obj
@@ -120,12 +125,14 @@ export default {
     font-size: 12px;
     right: 3px;
 }
-.label-wrapper.focused label, .label-wrapper.active label {
+.label-wrapper.focused label, 
+.label-wrapper.active label {
     top: 0px;
     font-size: 12px;
     left: 6px;
 }
-.label-wrapper.focused label, .label-wrapper.active.focused label {
+.label-wrapper.focused label, 
+.label-wrapper.active.focused label {
     color: #6664cb;
 }
 .label-wrapper.active label {

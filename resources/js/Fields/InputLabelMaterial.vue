@@ -10,14 +10,17 @@ export default {
     props: {
         value: {
             type:String
-        }
-        , 
+        }, 
         ph:{
             type:String
         }, 
         allowReset: {
             type:Boolean,
             default: false
+        },
+        phIsvalue: {
+            type:Boolean,
+            default: true
         }
     },
     components: {LabelMaterial},
@@ -30,7 +33,7 @@ export default {
         }
     },
     created(){
-       this.valueInit =  this.ph !== undefined ? this.ph:this.value
+       this.valueInit =  this.phIsvalue && this.ph !== undefined ? this.ph:this.value
     },
     methods: {
         reseted(element){

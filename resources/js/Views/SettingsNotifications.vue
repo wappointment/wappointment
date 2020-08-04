@@ -7,10 +7,7 @@
       <div class="reduced" v-else>
           <div class="my-3">
             <div class="d-flex align-items-center">
-                <LabelMaterial>
-                  <input class="form-control" id="email-notifications" v-model="viewData.email_notifications" 
-                  placeholder="Email notifications are sent to" type="email" @change="changed('email_notifications')">
-                </LabelMaterial>
+                <InputValueCards ph="Email notifications are sent to" v-model="viewData.email_notifications" @changed="changed('email_notifications')" /> 
             </div>
             <div class="d-flex align-items-center mt-2">
               <Checkbox :value="viewData.weekly_summary"  @changed="changedCheck('weekly_summary')"></Checkbox>
@@ -66,6 +63,7 @@ import Checkbox from '../Fields/Checkbox'
 import LabelMaterial from '../Fields/LabelMaterial'
 import MailConfig from '../Components/MailConfig'
 import NotificationEmail from '../Notification/Email'
+import InputValueCards from '../Fields/InputValueCards'
 export default {
   extends: abstractView,
   components: {
@@ -74,7 +72,8 @@ export default {
       Checkbox,
       LabelMaterial,
       MailConfig,
-      NotificationEmail
+      NotificationEmail,
+      InputValueCards
     },
   mixins: [ hasBreadcrumbs],
   data() {
@@ -112,10 +111,10 @@ export default {
     },
     changedCheck(key){
       this.viewData[key] = !this.viewData[key]
-       this.settingSave(key, this.viewData[key]);
+       this.settingSave(key, this.viewData[key])
     },
     changed(key) {
-      this.settingSave(key, this.viewData[key]);
+      this.settingSave(key, this.viewData[key])
     },
 
   }

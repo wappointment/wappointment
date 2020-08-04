@@ -394,8 +394,7 @@ export default {
             this.selectedTimezone = initTimezone // display timezone
             this.showWelcomePopup = this.viewData.showWelcome
             let duration_temp = [undefined,false].indexOf(this.viewData.cal_duration) === -1 ? this.viewData.cal_duration:this.viewData.durations[0]
-            console.log('duration_temp',duration_temp)
-            console.log('this.viewData.cal_duration',this.viewData.cal_duration)
+
             this.setInterval(duration_temp)
           }
           

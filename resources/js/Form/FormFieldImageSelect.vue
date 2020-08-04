@@ -127,7 +127,6 @@ export default {
             return image.width /5
         },
         refreshGallery(){
-            console.log('log gallery')
             this.galleryShow = false
             setTimeout(this.galleryOn, 100)
         },

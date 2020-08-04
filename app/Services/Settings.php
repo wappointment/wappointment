@@ -140,8 +140,7 @@ class Settings
         ];
     }
 
-    public static function
-    default($key)
+    public static function defaultGet($key)
     {
         $default_settings = static::allDefaults();
 
@@ -160,10 +159,11 @@ class Settings
         $values = static::getValues();
 
         if (isset($values[$setting_key])) {
-            return $values[$setting_key];
+            $method = $setting_key . 'GetTransform';
+            return method_exists(static::class, $method) ? static::$method($values[$setting_key]) : $values[$setting_key];
+        } else {
+            return ($default !== null) ? $default : static::defaultGet($setting_key);
         }
-        return ($default !== null) ? $default : static::
-            default($setting_key);
     }
 
     protected static function prepareSave($setting_key, $value)
@@ -369,11 +369,6 @@ class Settings
         return true;
     }
 
-    protected static function email_notificationsValid($value)
-    {
-        return self::emailField($value);
-    }
-
     protected static function hours_before_booking_allowedValid($value)
     {
         if ($value < 1) {
@@ -410,19 +405,7 @@ class Settings
         throw new \WappointmentException('Hour field is not valid');
     }
 
-    protected static function emailField($value)
-    {
-        $validator = new \Rakit\Validation\Validator;
 
-        $validation = $validator->validate(['email' => $value], [
-            'email' => 'required|email'
-        ]);
-
-        if ($validation->fails()) {
-            throw new \WappointmentException('The Email is not valid');
-        }
-        return true;
-    }
 
     // remove slots that are in the future but are not bookable
     protected static function availabilityPrepare($availabilities)
@@ -452,5 +435,38 @@ class Settings
         //transfer all staff id settings to the right full owner
         //dd('current ' . Settings::get('activeStaffId'), 'old ' . $newStaffId);
         WPHelpers::transferStaffOptions(Settings::get('activeStaffId'), $newStaffId);
+    }
+
+    protected static function email_notificationsValid($value)
+    {
+
+        $values = self::email_notificationsGetTransform($value);
+        //dd($values);
+        foreach ($values as $value) {
+            if (!self::emailField($value)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected static function email_notificationsGetTransform($value)
+    {
+        return is_array($value) ? $value : array_map('trim', explode(',', $value));
+    }
+
+    protected static function emailField($value)
+    {
+        $validator = new \Rakit\Validation\Validator;
+
+        $validation = $validator->validate(['email' => $value], [
+            'email' => 'required|email'
+        ]);
+
+        if ($validation->fails()) {
+            $error = sprintf('The Email %s is not valid', $value);
+            throw new \WappointmentException($error);
+        }
+        return true;
     }
 }
