@@ -16,7 +16,7 @@ class AddonsController extends RestController
             Settings::save('wappointment_allowed', true);
         }
         $data = (new Addons)->get();
-        $data->admin_email = Settings::get('email_notifications');
+        $data->admin_email = Settings::get('email_notifications')[0];
         $statuses = WPHelpers::getOption('subscribed_status');
         $data->statuses = $statuses === false ? [] : $statuses;
         $data->wappointment_allowed = Settings::get('wappointment_allowed');

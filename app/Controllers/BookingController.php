@@ -23,7 +23,7 @@ class BookingController extends RestController
         }
         $appointment = $result->toArraySpecial();
 
-        return ['result' => true, 'appointment' => (new \Wappointment\ClassConnect\Collection($appointment))->except(['id', 'client_id'])];
+        return ['result' => true, 'appointment' => (new \Wappointment\ClassConnect\Collection($appointment))->except(['rest_route', 'id', 'client_id'])];
     }
 
     public function reschedule(Request $request)
