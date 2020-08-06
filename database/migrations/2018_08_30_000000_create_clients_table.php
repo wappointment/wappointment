@@ -14,7 +14,7 @@ class CreateClientsTable extends Wappointment\Installation\Migrate
     {
         Capsule::schema()->create(Database::$prefix_self . '_clients', function ($table) {
             $table->increments('id');
-            $table->string('email')->unique();
+            $table->string('email', 191)->unique();
             $table->string('name');
             $table->mediumText('options')->nullable();
             $table->timestamps();
