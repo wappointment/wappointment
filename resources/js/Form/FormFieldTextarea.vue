@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="d-flex flex-wrap flex-sm-nowrap">
       <div class="mr-2">
           <LabelMaterial>
                 <textarea class="form-control" @focusout="$emit('activated')" :class="{'is-invalid':hasErrors}" v-model="updatedValue"
@@ -24,6 +24,7 @@
 import AbstractField from './AbstractField'
 import LabelMaterial from '../Fields/LabelMaterial'
 export default {
+    name: 'core-textarea',
     mixins: [AbstractField],
     components: {LabelMaterial},
 }

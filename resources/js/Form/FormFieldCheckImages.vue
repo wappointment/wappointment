@@ -33,6 +33,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck)
 
 export default {
+    name:'core-checkimages',
     mixins: [AbstractField],
     components: {FontAwesomeIcon},
     props:{

@@ -12,7 +12,7 @@ export default {
                 
             }
             if(oldVal !== undefined) {
-                return this.$emit(this.eventEmit, newVal, this.model)
+                return this.$emit(this.eventEmit, newVal, this.model, this.definition.type)
             }
         }
     },

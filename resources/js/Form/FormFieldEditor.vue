@@ -1,7 +1,7 @@
 <template>
     <div>
         <label for="exampleFormControlTextarea1">{{ label }}</label>
-        <tinymce-editor v-model="updatedValue" :init="config"></tinymce-editor>
+        <tinymce-editor v-model="updatedValue" :init="getConfig"></tinymce-editor>
     </div>
 </template>
 
@@ -10,6 +10,7 @@ import AbstractField from './AbstractField'
 import Editor from '@tinymce/tinymce-vue'
 
 export default {
+    name:'core-editor',
     mixins: [AbstractField],
     data(){
         return {
@@ -23,6 +24,16 @@ export default {
                 setup: this.setupEditor
             },
             waitForScript: true
+        }
+    },
+    computed:{
+        getConfig(){
+            if(this.definition.configmce !== undefined){
+                let configmce = this.definition.configmce
+                configmce.setup = this.setupEditor
+                return configmce
+            }
+            return this.config
         }
     },
     methods:{

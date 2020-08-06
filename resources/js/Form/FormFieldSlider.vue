@@ -8,6 +8,7 @@
 <script>
 import AbstractField from './AbstractField'
 export default {
+    name: 'core-slider',
     props: ['options'],
     mixins: [AbstractField],
     computed:{

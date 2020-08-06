@@ -20,8 +20,9 @@
 </template>
 
 <script>
-import AbstractField from './AbstractField'
+import AbstractField from '../Form/AbstractField'
 export default {
+    name:'opt-prices',
     mixins: [AbstractField],
     data() {
         return {

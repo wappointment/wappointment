@@ -5,6 +5,7 @@
 <script>
 import AbstractField from './AbstractField'
 export default {
+    name:'core-label',
     mixins: [AbstractField],
 }
 </script>

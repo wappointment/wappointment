@@ -8,10 +8,11 @@
 <script>
 import AbstractField from './AbstractField'
 export default {
+    name:'core-file',
     mixins: [AbstractField],
     methods: {
         onFileChange(e) {
-            var files = e.target.files || e.dataTransfer.files;
+            var files = e.target.files || e.dataTransfer.files
             if (files.length == 0) return
             
             this.updatedValue = this.convertFileArray(files)

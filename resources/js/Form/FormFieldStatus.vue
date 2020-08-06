@@ -11,6 +11,7 @@ import AbstractField from './AbstractField'
 import RequestMaker from '../Modules/RequestMaker'
 import SearchDropdown from '../Fields/SearchDropdown'
 export default {
+    name: 'core-status',
     mixins: [AbstractField, RequestMaker],
     components: {SearchDropdown},
     props: {

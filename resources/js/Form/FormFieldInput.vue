@@ -2,7 +2,7 @@
     <div :class="getClassWrapper">
         <LabelMaterial>
             <input @keydown.prevent.stop.enter="catchEnterEvent"  
-             :id="id"
+             :id="id" :readonly="isReadOnly"
              :type="getInputType" class="form-control" :class="{'is-invalid':hasErrors}"
             @focusout="$emit('activated')" :placeholder="label" :autocomplete="autocomplete"
             v-model="updatedValue">
@@ -23,6 +23,7 @@
 import AbstractField from './AbstractField'
 import LabelMaterial from '../Fields/LabelMaterial'
 export default {
+    name:'core-input',
     components: {LabelMaterial},
     mixins: [AbstractField],
     data(){
@@ -36,6 +37,9 @@ export default {
         },
     },
     computed: {
+        isReadOnly(){
+            return [undefined,false,null,''].indexOf(this.definition.readonly) === -1
+        },
         getInputType(){
             if(this.passwordShow === true) return 'text'
             return this.definition.type != 'input' ? this.definition.type : 'text'

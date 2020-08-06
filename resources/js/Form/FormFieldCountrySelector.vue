@@ -19,6 +19,7 @@
 import AbstractField from './AbstractField'
 import CountrySelector from '../Components/CountrySelector'
 export default {
+    name:'core-countryselector',
     mixins: [AbstractField],
     components: {CountrySelector},
     methods: {

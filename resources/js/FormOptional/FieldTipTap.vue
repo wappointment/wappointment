@@ -148,7 +148,7 @@
 </template>
 
 <script>
-import AbstractField from './AbstractField'
+import AbstractField from '../Form/AbstractField'
 import { Editor } from "tiptap"
 import {
   // Nodes
@@ -183,7 +183,7 @@ import ConditionalPhysicalBlockNode from "./text-editor/ConditionalPhysicalBlock
 import LinkEdit from "../Components/LinkEdit";
 
 export default {
-    name: 'opt-tiptap',
+  name:'opt-tiptap',
     mixins: [AbstractField],
     components: {
         Editor,

@@ -25,12 +25,12 @@
                 <h3>One last thing!</h3>
                 <p>You need to test that emails are working, either you can try to book yourself on your own or we can test it for you.</p>
                 <div>
-                    <InputPh v-model="passviewData.subscribe_email" ph="Send result to email"/>
+                    <InputPh v-model="getSubscribeEmail" ph="Send result to email"/>
                     <button type="button"  class="btn btn-primary align-self-start" @click.prevent.stop="sendTestBooking">Send test email to Wappointment</button>
                     <div class="ml-2 small text-muted">
                         We will generate a test booking and will reply to the confirmation email if we receive it.
                     </div>
-                    <div class="ml-2 small text-muted">We will send you the result on this email : {{ passviewData.subscribe_email }}</div>
+                    <div class="ml-2 small text-muted">We will send you the result on this email : {{ getSubscribeEmail }}</div>
                 </div>
                 <div class="my-2">
                     <button type="button" class="btn btn-secondary btn-sm" @click.prevent.stop="sendIgnore">Ignore</button>
@@ -80,6 +80,9 @@ export default {
     getTitleShowWelcome(){
         return this.passviewData.booking_page_id === 0? 'Booking page missing':'Your booking page has been created'
     },
+    getSubscribeEmail(){
+        return this.passviewData.subscribe_email[0]
+    }
   },
   methods: {
     hideWelcome(){
@@ -93,7 +96,7 @@ export default {
       this.request(this.sendTestBookingRequest, false, undefined,false,  this.closeAndRefreshWelcome)
     },
     async sendTestBookingRequest() {
-        return await this.serviceWappointment.call('sendtestbooking', {email: this.passviewData.subscribe_email})
+        return await this.serviceWappointment.call('sendtestbooking', {email: this.getSubscribeEmail})
     },
     sendIgnore(){
       this.request(this.sendIgnoreRequest, false, undefined,false,  this.closeAndRefreshWelcome)

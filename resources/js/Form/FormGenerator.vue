@@ -3,7 +3,7 @@
         <div v-if="!formIsReady" class="loading-overlay d-flex align-items-center">
             <WLoader></WLoader>
         </div>
-        <div class="fields-wrap" >
+        <div v-if="reload" class="fields-wrap" >
             <template v-for="(element, keydi) in schema">
                 <div v-if="element.type == 'row'"  :class="getRowClass(element)">
                     <div class="form-group"  v-for="(subelement, skeydi) in element.fields" 
@@ -39,28 +39,10 @@
 <script>
 import AbstractField from './AbstractField'
 import RequestMaker from '../Modules/RequestMaker'
-import LabelMaterial from '../Fields/LabelMaterial'
-import FormFieldInput from './FormFieldInput'
-import FormFieldTextarea from './FormFieldTextarea'
-import FormFieldInputs from './FormFieldInputs'
-import FormFieldCheckbox from './FormFieldCheckbox'
-import FormFieldDuration from './FormFieldDuration'
-import FormFieldAddress from './FormFieldAddress'
-import FormFieldFile from './FormFieldFile'
-import FormFieldEditor from './FormFieldEditor'
-import FormFieldTipTap from './FormFieldTipTap'
-import FormFieldPrices from './FormFieldPrices'
-import FormFieldStatus from './FormFieldStatus'
-import FormFieldCountrySelector from './FormFieldCountrySelector'
-import FormFieldSelect from './FormFieldSelect'
-import FormFieldCheckImages from './FormFieldCheckImages'
-import FormFieldImageSelect from './FormFieldImageSelect'
-import FormFieldLabel from './FormFieldLabel'
 import eventsBus from '../eventsBus'
-let allComponents = {FormFieldInput,FormFieldTextarea, FormFieldInputs, FormFieldCheckbox, FormFieldEditor,FormFieldPrices,
-        FormFieldStatus,FormFieldFile, FormFieldSelect,FormFieldCheckImages,
-        FormFieldAddress, FormFieldDuration,FormFieldCountrySelector,FormFieldImageSelect, FormFieldLabel, FormFieldTipTap}
+import CoreFieldss from './CoreFields'
 import DotKey from '../Modules/DotKey'
+let CoreFields = CoreFieldss
 export default {
     mixins: [DotKey],
     props: {
@@ -117,9 +99,9 @@ export default {
             default:true
         }
     },
-    components: allComponents,
+    components: CoreFields.components,
     data: () => ({
-        modelHolder: {},
+        modelHolder: null,
         isValid: false,
         fieldsStatus:{},
         formIsReady: false,
@@ -128,15 +110,12 @@ export default {
         errorsData: {},
         visibles: [],
         childrensHidden: [],
-        activated_fields: []
+        activated_fields: [],
+        reload: true,
+        replaceRefresh: false,
     }),
     created(){
-        if(this.submittedErrors){
-            this.errorsData = Object.assign({}, this.errors)
-            this.submitted = true
-        }
-        this.modelHolder = this.creating === false ? Object.assign({},this.data):{}
-        this.verifyModel()
+        this.refresh()
     },
 
     computed: {
@@ -151,29 +130,38 @@ export default {
         },
     },
     methods: {
-        getFormComponent(element){
-            let fieldsTypes = {
-                'label': 'FormFieldLabel',
-                'input' : 'FormFieldInput',
-                'textarea': 'FormFieldTextarea',
-                'inputs' : 'FormFieldInputs',
-                'checkbox' : 'FormFieldCheckbox',
-                'file' : 'FormFieldFile',
-                'editor' : 'FormFieldEditor',
-                'prices' : 'FormFieldPrices',
-                'status' : 'FormFieldStatus',
-                'select' : 'FormFieldSelect',
-                'checkimages' : 'FormFieldCheckImages',
-                'address' : 'FormFieldAddress',
-                'duration' : 'FormFieldDuration',
-                'countryselector' : 'FormFieldCountrySelector',
-                'imageselect' : 'FormFieldImageSelect',
-                'tiptap': 'FormFieldTipTap'
+        refresh(){
+            if(this.submittedErrors){
+                this.errorsData = Object.assign({}, this.errors)
+                this.submitted = true
             }
-
-            fieldsTypes = window.wappointmentExtends.filter( 'FormGeneratorFieldsTypes', fieldsTypes, {mixins: [AbstractField,RequestMaker], components:{LabelMaterial}, allComponents:allComponents } )
-
-            return fieldsTypes[element.type]!== undefined ? fieldsTypes[element.type]:'FormFieldInput'
+            
+            if(this.modelHolder === null || this.replaceRefresh === true){
+                this.modelHolder = this.creating === false ? Object.assign({},this.data):{}
+            }
+            this.verifyModel()
+        },
+        reRender(replaceRefresh = false){
+            this.formIsReady = false
+            this.reload = false
+            this.replaceRefresh = replaceRefresh
+            setTimeout(this.reRenderDelay, 100)
+        },
+        reRenderDelay(){
+            this.formIsReady = true
+            this.reload = true
+            this.refresh()
+        },
+        back(){
+            return this.$emit('back')
+        },
+        getFormComponent(element){
+            let fieldsType = CoreFields.inputTypes
+            let elementType = element.type.indexOf('-') === -1 ? 'core-'+element.type:element.type
+            
+            CoreFields = window.wappointmentExtends.filter('FormAddonsFields', CoreFields)
+            //console.log('try to get',elementType, fieldsType, fieldsType[elementType])
+            return fieldsType[elementType]!== undefined ? fieldsType[elementType]:'FormFieldInput'
         },
         inVisibles(element){
             return element.model !== undefined ? this.visibles.indexOf(element.model) === -1: true
@@ -283,32 +271,32 @@ export default {
                     failed = true
                 }
             }
-            if(['array','object'].indexOf(typeof modelValue) !== -1){
+            if(condition.isempty !== undefined){
+                failed = !this.isEmptyValue(modelValue)
+            }else{
                 if(condition.notempty !== undefined){
                     failed = this.isEmptyValue(modelValue)
                 }else{
-                    if(condition.notin !== undefined){
-                        
-                        failed = this.atLeastOne(modelValue, condition)
+                    if(['array','object'].indexOf(typeof modelValue) !== -1){
+                        if(condition.notin !== undefined){
+                            failed = this.atLeastOne(modelValue, condition)
+                        }else{
+                            failed = !this.atLeastOne(modelValue, condition)
+                        }
                     }else{
-                        failed = !this.atLeastOne(modelValue, condition)
+                        if(condition.notin !== undefined){
+                            if(condition.values.indexOf(modelValue) !== -1){
+                                failed = true
+                            }
+                        }else{
+                            if(condition.values.indexOf(modelValue) === -1){
+                                failed = true
+                            }
+                        }
                     }
                 }
-                
-                
-            }else{
-                
-                if(condition.notin !== undefined){
-                    if(condition.values.indexOf(modelValue) !== -1){
-                        failed = true
-                    }
-                }else{
-                    if(condition.values.indexOf(modelValue) === -1){
-                        failed = true
-                    }
-                }
-                
             }
+
             return !failed
         },
 
@@ -392,6 +380,8 @@ export default {
 
          isEmptyValue(value){
              switch (typeof value) {
+                 case 'undefined':
+                     return true
                  case 'array':
                      return value.length == 0
                  case 'string':
@@ -506,8 +496,8 @@ export default {
             if(element.model === undefined) return true
             if(this.activated_fields.indexOf(element.model) === -1) this.activated_fields.push(element.model)
         },
-        changedValue(newVal, model){
-            this.setModelValue(newVal, model)
+        changedValue(newVal, model, type){
+            this.setModelValue(newVal, model, type)
             if(this.pendingValidation === false){
                 this.pendingValidation = setTimeout(this.runningValidation, 200)
             }
@@ -539,14 +529,14 @@ export default {
             this.$emit('submit', Object.assign({}, this.modelHolder), this.creating)
         },
 
-        setModelValue(newVal, model){
+        setModelValue(newVal, model, type){
              if(model.indexOf('.')!== -1){
                 let myarr = model.split('.')
                 this.modelHolder[myarr[0]][myarr[1]] = newVal
             }else{
                 this.modelHolder[model] = newVal
             }
-            this.$emit('changedValue',this.modelHolder)
+            this.$emit('changedValue',this.modelHolder,  model, newVal, type)
         },
         getModelValue(element){
             if(element.model === undefined){

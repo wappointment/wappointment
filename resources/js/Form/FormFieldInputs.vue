@@ -31,6 +31,7 @@ import AbstractField from './AbstractField'
 import FormFieldInput from './FormFieldInput'
 import makeid from '../Standalone/makeid'
 export default {
+    name:'core-inputs',
     components: {FormFieldInput},
     mixins: [AbstractField],
     data: () => ({

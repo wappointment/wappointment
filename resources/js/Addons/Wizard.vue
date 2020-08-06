@@ -16,7 +16,7 @@
                 <component :is="addon.settingKey" :crumb="false"></component>
             </div>
             <div v-else>
-                <component :is="currentStep" :crumb="false"></component>
+                <component :is="currentStep" :crumb="false" @changeStep="showStep"></component>
             </div>
         </div>
     </div>
@@ -51,15 +51,6 @@ export default {
         this.currentStep = this.addon.instructions[0].step
     },
     computed: {
-        stepService(){
-           return this.currentStep == 'service'
-        },
-        stepWidgetEditor(){
-            return this.currentStep == 'widget'
-        },
-        stepRegav(){
-            return this.currentStep == 'regav'
-        },
         stepAddonsSettings(){
             return this.currentStep == 'addons_settings'
         },

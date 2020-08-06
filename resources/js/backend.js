@@ -12,6 +12,9 @@ window.wappointmentExtends.store('commons', {PhoneInput, InputPh, ClickCopy, Vid
 import VueRouter from 'vue-router'
 import Backend from './Backend'
 import VueWapModal from './Plugins/vue-wap-modal'
+import wappoExtend from './Standalone/extends.js'
+window.wappointmentExtends = wappoExtend
+import FieldsOptional from './FormOptional/Fields.js'
 import FormGenerator from './Form/FormGenerator'
 import StickyBar from './Components/StickyBar'
 import RingLoader from './Components/Loaders/Ring'
@@ -31,6 +34,7 @@ Vue.component('v-style', {
 });
 Vue.component('WAPFormGenerator', FormGenerator)
 Vue.component('StickyBar', StickyBar)
+Vue.component('InputPh', InputPh)
 Vue.component('RingLoader', RingLoader)
 Vue.component('WLoader', WLoader)
 Vue.component('DurationCell', DurationCell)
@@ -157,13 +161,14 @@ const router = window.wappointmentrouter = new VueRouter({
 
 
 router.beforeEach((to, from, next) => {
-
-  if([null, undefined].indexOf(to.name) ===-1 && to.name.indexOf('wizard') === -1 ){
+  
+  /* if([null, undefined].indexOf(to.name) ===-1 && to.name.indexOf('wizard') === -1 ){
+    console.log('routerSetupRedirect 1')
     let setupNeeded = routerSetupRedirect(router)
     if(setupNeeded === true){
       return
     }
-  }
+  } */
   
   if(to.query.page!== undefined && to.query.page.indexOf('wappointment_')!==-1){
     if(['wappointment_calendar', 'wappointment_settings'].indexOf(to.query.page) !== -1 && to.hash.indexOf('#/') !== -1){

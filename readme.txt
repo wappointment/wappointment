@@ -148,6 +148,11 @@ It requires work on your end but keeps your site safe and optimized.
 
 = 1.5.6 - 2020-08-?? =
 * added possibility to include more than one email for admin notifications
+* fixed redirect issue on plugin setup
+* fixed installation interrupted error with MySQL 5.6 due to unique keys length
+* Refactored form generator latest version extendable
+* Fixed issue with email notifications
+* fixed issue while updating reminder
 
 = 1.5.5 - 2020-08-02 =
 * fixed new bug DB_CHARSET and DB_COLLATE in v1.5.4

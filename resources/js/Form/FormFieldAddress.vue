@@ -28,6 +28,7 @@ import AbstractField from './AbstractField'
 import LabelMaterial from '../Fields/LabelMaterial'
 import wapIframe from '../Components/Iframe'
 export default {
+    name:'core-address',
     mixins: [AbstractField],
     components: {LabelMaterial, wapIframe},
     computed: {

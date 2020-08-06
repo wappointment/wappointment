@@ -1,5 +1,5 @@
 <template>
-    <div class="w-100 slider-duration">
+    <div class="w-100">
         <div class="pl-2"v-if="[undefined,''].indexOf(label) === -1">
             {{ label}}
         </div>
@@ -27,6 +27,7 @@ import AbstractField from './AbstractField'
 import RangeSlider from 'vue-range-slider'
 import 'vue-range-slider/dist/vue-range-slider.css'
 export default {
+    name:'core-duration',
     props:{
         definition:{
             type: Object,
@@ -85,9 +86,6 @@ export default {
 <style>
 .slider {
     width: 78%;
-}
-.slider-duration{
-    min-width: 300px;
 }
 .field-wrap {
     display: block;

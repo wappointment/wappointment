@@ -91,7 +91,7 @@ export default {
               },
               {
                   label: "Header image",
-                  type: 'imageselect',
+                  type: 'opt-imageselect',
                   model: "email_logo",
                   size: 'full',
                   preview:{
@@ -111,7 +111,7 @@ export default {
       this.schema[0].label = this.getReminderLabel(this.model)
       if(this.model.type == 1){
         this.schema.push({
-            type: "tiptap",
+            type: "opt-tiptap",
             model: "options.body",
             required: true,
             validation: ['required'],
@@ -130,7 +130,7 @@ export default {
           this.filterSchema()
         }
         this.schema.push({
-            type: "tiptap",
+            type: "opt-tiptap",
             model: "options.body",
             simple: true,
             required: true,
