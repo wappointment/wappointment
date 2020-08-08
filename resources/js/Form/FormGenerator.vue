@@ -156,11 +156,12 @@ export default {
             return this.$emit('back')
         },
         getFormComponent(element){
+            CoreFields = window.wappointmentExtends.filter('FormAddonsFields', CoreFields)
+
             let fieldsType = CoreFields.inputTypes
             let elementType = element.type.indexOf('-') === -1 ? 'core-'+element.type:element.type
+
             
-            CoreFields = window.wappointmentExtends.filter('FormAddonsFields', CoreFields)
-            //console.log('try to get',elementType, fieldsType, fieldsType[elementType])
             return fieldsType[elementType]!== undefined ? fieldsType[elementType]:'FormFieldInput'
         },
         inVisibles(element){

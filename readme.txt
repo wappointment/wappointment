@@ -8,14 +8,14 @@ Stable tag: 1.5.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Appointment booking system for personal coaches, teachers, therapists and service professionals of all kind
+Appointment bookings made easy for personal coaches, teachers, therapists and service professionals of all kind
 
 == Description ==
 
-A simple and reliable **appointment booking system**, for personal coaches, teachers, therapists and service professionals of all kind.
+Client focused **appointment booking system**, for personal coaches, teachers, therapists and service professionals of all kind.
 Get booked 24/7 with a really **intuitive booking form**.
 
-It is made for anyone willing to provide appointments to their clients.
+Built for anyone provide time based services to their clients.
 
 Wappointment is free and will remain **free forever**.
 
@@ -60,7 +60,7 @@ Quickly define when and how many of them do they receive (1 day before appointme
 * Set how far in advance an appointment can be booked 
 * Allow clients to cancel and reschedule appointments
 * Book an appointment on behalf of your customer
-* Connect your personal calendar to the booking system and automatically block time where you are busy
+* Connect your personal calendar to the booking system and automatically block times during which you are busy
 * Set the date and time format 
 
 = Make the Booking Form Blend =
@@ -94,7 +94,7 @@ We provide a very simple editor in which you can change the texts, colors and fe
 
 **Can I set the duration of my appointment?**
 
-Of course. You decide the duration of your appointments whether it's 5 minutes, 10 minutes, ..., 4 hours long. It's all up to you.
+Of course. You decide the duration of your appointments whether it's 5 minutes, 10 minutes, ..., 4 hours, 8hours long. It's all up to you.
 
 **Can I set time limits for cancelling and rescheduling appointments?**
 
@@ -118,7 +118,7 @@ It depends on your website's configuration. The most reliable solution is to set
 
 **Why clients can book me 2 months ahead only?**
 
-By default your schedule is opened for the next 60 days, but you can change that value in *Wappointment > Settings > General > Weekly Availability*. For performance reason we recommend keeping it as low as possible. Just figure which value is right for your activity.
+By default your schedule is opened for the next 60 days, but you can change that value in *Wappointment > Settings > General > Weekly Availability*. For performance reason we recommend keeping it as low as possible. Just figure which value is right for your activity, 90days, 120 days, etc ...
 
 **Why does nobody receive my confirmations or reminders emails?**
 
@@ -130,7 +130,7 @@ Your emails most likely go straight to SPAM or don't event reach your inbox. *Ch
 
 * WordPress 4.7(or greater)
 * PHP version 7.0(or greater)
-* MySQL version 5.5(or greater) or MariaDB 10.0(or greater)
+* MySQL version 5.6(or greater) or MariaDB 10.0(or greater)
 
 Always keep your softwares updated.
 It requires work on your end but keeps your site safe and optimized.
@@ -146,11 +146,11 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 1.5.6 - 2020-08-?? =
+= 1.6.0 - 2020-08-08 =
+* Refactored form generator latest version extendable
 * added possibility to include more than one email for admin notifications
 * fixed redirect issue on plugin setup
 * fixed installation interrupted error with MySQL 5.6 due to unique keys length
-* Refactored form generator latest version extendable
 * Fixed issue with email notifications
 * fixed issue while updating reminder
 
