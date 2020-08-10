@@ -2,7 +2,7 @@
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
 Requires at least: 4.7
-Tested up to: 5.4
+Tested up to: 5.5
 Requires PHP: 7.0
 Stable tag: 1.6.0
 License: GPLv2 or later
@@ -146,7 +146,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 1.6.0 - 2020-08-08 =
+= 1.6.0 - 2020-08-10 =
 * Refactored form generator latest version extendable
 * added possibility to include more than one email for admin notifications
 * fixed redirect issue on plugin setup

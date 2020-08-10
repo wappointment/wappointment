@@ -40,7 +40,6 @@ Vue.component('WLoader', WLoader)
 Vue.component('DurationCell', DurationCell)
 Vue.use(VueRouter)
 
-
 const CalendarPage = () => import(/* webpackChunkName: "group-calendar" */ './CalendarAdmin/Main')
 const SettingsPage = () => import(/* webpackChunkName: "group-settings" */ './Views/Settings')
 const AddonsPage = () => import(/* webpackChunkName: "group-addons" */ './Views/Addons')
