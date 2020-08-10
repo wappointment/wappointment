@@ -174,13 +174,15 @@
         .wap-booking-fields .isInvalid input[type="text"], 
         .wap-booking-fields .isInvalid input[type="email"], 
         .wap-booking-fields .isInvalid input[type="url"], 
-        .wap-booking-fields .isInvalid input[type="tel"]{
+        .wap-booking-fields .isInvalid input[type="tel"],
+        .wap-booking-fields .isInvalid textarea{
             border-right: 4px solid {{ hx_rgb(opts.colors.form.error) }} !important;
         }
         .wap-booking-fields .isValid input[type="text"], 
         .wap-booking-fields .isValid input[type="email"], 
         .wap-booking-fields .isValid input[type="url"], 
-        .wap-booking-fields .isValid input[type="tel"]{
+        .wap-booking-fields .isValid input[type="tel"],
+        .wap-booking-fields .isValid textarea{
             border-right: 4px solid {{ hx_rgb(opts.colors.form.success) }} !important;
         }
         .wap-booking-fields .field-required label::after {

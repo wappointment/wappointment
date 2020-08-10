@@ -115,7 +115,7 @@ export default {
         return `${this.getClientAvatarSize(appointment, 60)} ${appointment.extendedProps.client.name}`
       },
       getAllAppointmentOptions(appointment){
-        let clientoptions = '';
+        let clientoptions = ''
         for (const key in appointment.extendedProps.client.options) {
           if (appointment.extendedProps.client.options.hasOwnProperty(key)) {
             const element = appointment.extendedProps.client.options[key];
