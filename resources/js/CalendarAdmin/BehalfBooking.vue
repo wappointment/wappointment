@@ -21,41 +21,41 @@
             </div>
             <div v-else>
                 <div class="mb-3">
-                    <div class="input-group input-group-lg" >
-                    <div class="input-group-prepend">
-                        <span class="input-group-text" id="inputGroup-sizing-lg">Email</span>
-                    </div>
-                    <input type="text" class="form-control" id="bookingemail" :class="hasError('email')" v-model="bookingForm.email" @focus="canShowDropdown" @blur="clearDropdownDelay">
+                    <div class="input-group mb-3" >
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroup-sizing-default">Email</span>
+                        </div>
+                        <input type="text" class="form-control" id="bookingemail" :class="hasError('email')" v-model="bookingForm.email" @focus="canShowDropdown" @blur="clearDropdownDelay">
                     </div>
                     <div>
                         <div class="dd-search-results" v-if="showDropdown" >
-                        <div v-if="clientsResults.length>0">
-                            <div class="btn btn-light d-flex align-items-center" role="button" v-for="client in clientsResults" @click="selectClient(client)">
-                                <div class="mr-2">
-                                <img class="rounded-circle" :src="client.avatar" :title="client.name">
-                                </div>
-                                <div>
-                                <h6 class="m-0 text-left">{{ client.name }}</h6>
-                                <small>{{ client.email }}</small>
+                            <div v-if="clientsResults.length>0">
+                                <div class="btn btn-light d-flex align-items-center" role="button" v-for="client in clientsResults" @click="selectClient(client)">
+                                    <div class="mr-2">
+                                        <img class="rounded-circle" :src="client.avatar" :title="client.name">
+                                    </div>
+                                    <div>
+                                        <h6 class="m-0 text-left">{{ client.name }}</h6>
+                                        <small>{{ client.email }}</small>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div v-if="clientSearching">
-                            Loading ...
-                        </div>
+                            <div v-if="clientSearching">
+                                Loading ...
+                            </div>
                         </div>  
                     </div>
                 </div>
                 <div class="input-group mb-3" >
                     <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
+                        <span class="input-group-text" id="inputGroup-sizing-default">Name</span>
                     </div>
                     <input class="form-control" id="bookingname" type="text" :class="hasError('name')" v-model="bookingForm.name">
                 </div>
 
                 <div class="input-group mb-3" v-if="phoneSelected" >
                     <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroup-sizing-default">Phone</span>
+                        <span class="input-group-text" id="inputGroup-sizing-default">Phone</span>
                     </div>
                     <PhoneInput 
                     :phone="bookingForm.phone"
@@ -67,7 +67,7 @@
 
                 <div class="input-group mb-3" v-if="skypeSelected" >
                     <div class="input-group-prepend">
-                    <span class="input-group-text" id="inputGroup-sizing-default">Skype</span>
+                        <span class="input-group-text" id="inputGroup-sizing-default">Skype</span>
                     </div>
                     <input class="form-control" id="bookingskype" type="text" :class="hasError('skype')" v-model="bookingForm.skype">
                 </div>
