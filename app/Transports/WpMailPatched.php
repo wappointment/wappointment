@@ -8,6 +8,32 @@ namespace Wappointment\Transports;
 trait WpMailPatched
 {
 
+    public function getPhpMailer()
+    {
+        global $phpmailer, $wp_version;
+
+        if (version_compare('5.4.9', $wp_version) > 0) {
+            // (Re)create it, if it's gone missing
+            if (!($phpmailer instanceof \PHPMailer)) {
+                require_once ABSPATH . WPINC . '/class-phpmailer.php';
+                require_once ABSPATH . WPINC . '/class-smtp.php';
+                $phpmailer = new \PHPMailer(true);
+            }
+        } else {
+            if (!($phpmailer instanceof \PHPMailer\PHPMailer\PHPMailer)) {
+                require_once ABSPATH . WPINC . '/PHPMailer/PHPMailer.php';
+                require_once ABSPATH . WPINC . '/PHPMailer/SMTP.php';
+                require_once ABSPATH . WPINC . '/PHPMailer/Exception.php';
+                $phpmailer = new \PHPMailer\PHPMailer\PHPMailer(true);
+
+                $phpmailer::$validator = static function ($email) {
+                    return (bool) is_email($email);
+                };
+            }
+        }
+
+        return $phpmailer;
+    }
     public function wpMail($to, $subject, $message, $headers = '', $attachments = array())
     {
         // Compact the input, apply the filters, and extract them back out
@@ -39,14 +65,7 @@ trait WpMailPatched
         }
 
 
-        global $phpmailer;
-
-        // (Re)create it, if it's gone missing
-        if (!($phpmailer instanceof \PHPMailer)) {
-            require_once ABSPATH . WPINC . '/class-phpmailer.php';
-            require_once ABSPATH . WPINC . '/class-smtp.php';
-            $phpmailer = new \PHPMailer(true);
-        }
+        $phpmailer = $this->getPhpMailer();
 
         // Headers
         if (empty($headers)) {

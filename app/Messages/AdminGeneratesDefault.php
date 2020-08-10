@@ -26,6 +26,6 @@ trait AdminGeneratesDefault
         if (!empty($client->getSkype())) {
             $dataEmail[] = "Client's skype: " . sanitize_text_field($client->getSkype());
         }
-        return $dataEmail;
+        return apply_filters('wappointment_admin_email_fields', $dataEmail, $client, $appointment);
     }
 }
