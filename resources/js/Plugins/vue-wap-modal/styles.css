@@ -98,7 +98,7 @@
       padding: 1rem;
       overflow: auto;
       background-color: #fff;
-      overflow: scroll;
+      /* overflow: scroll; */
       height: 80%;
   }
 
