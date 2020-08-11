@@ -208,10 +208,16 @@ export default {
         },
 
         successActivate(response){
-          this.$WapModal().notifySuccess(response.data.message)
-          this.$WapModal()
-            .request(this.sleep(4000))
-          window.location = window.apiWappointment.base_admin + '?page=wappointment_addons'
+
+          if(response.data.message !== undefined){
+            this.$WapModal().notifySuccess(response.data.message)
+            this.$WapModal()
+              .request(this.sleep(4000))
+            window.location = window.apiWappointment.base_admin + '?page=wappointment_addons'
+          }else{
+            this.$WapModal().notifyError(response.data)
+          }
+          
         },
 
         activate(addon){
