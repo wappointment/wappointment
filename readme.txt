@@ -15,7 +15,7 @@ Appointment bookings made easy for personal coaches, teachers, therapists and se
 Client focused **appointment booking system**, for personal coaches, teachers, therapists and service professionals of all kind.
 Get booked 24/7 with a really **intuitive booking form**.
 
-Built for anyone provide time based services to their clients.
+Built for anyone providing time based services to clients.
 
 Wappointment is free and will remain **free forever**.
 

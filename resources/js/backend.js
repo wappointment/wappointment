@@ -6,8 +6,9 @@ import VideoIframe from './Ne/VideoIframe'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import DurationCell from './BookingForm/DurationCell'
 import PhoneInput from './BookingForm/PhoneInput'
+import AbstractListing from './Views/AbstractListing'
 
-window.wappointmentExtends.store('commons', {PhoneInput, InputPh, ClickCopy, VideoIframe, FontAwesomeIcon, DurationCell})
+window.wappointmentExtends.store('commons', {AbstractListing, PhoneInput, InputPh, ClickCopy, VideoIframe, FontAwesomeIcon, DurationCell})
 
 import VueRouter from 'vue-router'
 import Backend from './Backend'
