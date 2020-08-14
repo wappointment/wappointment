@@ -15,7 +15,7 @@ class WidgetSettings
             ],
 
             'header' => [
-                'bg' => '#e6e6e6',
+                'bg' => '#f0f0f0',
                 'text' => '#212529',
                 'durationbg' => '#eeeeee',
             ],
@@ -29,7 +29,7 @@ class WidgetSettings
                 'text' => '#ffffff', //back_color
             ],
             'secondary' => [
-                'bg' => '#e6e6e6', //back_bg
+                'bg' => '#f7f7f7', //back_bg
                 'bg_selected' => '#949494', //back_sel_bg
                 'text' => '#606060', //back_color
                 'text_selected' => '#ffffff', //back_sel_co
