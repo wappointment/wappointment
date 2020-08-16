@@ -146,6 +146,9 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 1.6.1 - 2020-08-?? =
+* Added prefilled booking form when user is logged in
+
 = 1.6.0 - 2020-08-10 =
 * Refactored form generator latest version extendable
 * added possibility to include more than one email for admin notifications

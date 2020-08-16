@@ -62,6 +62,15 @@ class Helpers
         return false;
     }
 
+    public static function wpUserData()
+    {
+        $wp_user = self::currentUser();
+        return [
+            'email' => $wp_user->user_email,
+            'name' => $wp_user->display_name
+        ];
+    }
+
     public static function getUserBy($field, $value)
     {
         if (\WappointmentLv::function_exists('get_user_by')) {

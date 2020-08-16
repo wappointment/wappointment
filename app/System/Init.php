@@ -124,6 +124,7 @@ class Init
         ];
         if (is_user_logged_in()) {
             $variables['nonce'] = wp_create_nonce('wp_rest');
+            $variables['wp_user'] = WPHelpers::wpUserData();
         }
         if (defined('WAPPOINTMENT_DEBUG')) {
             $variables['debug'] = true;
@@ -138,6 +139,7 @@ class Init
         $return .= 'var apiWappointment = ' . json_encode($variables) . ";\n";
         $return .= 'var widgetWappointment = '
             . json_encode((new \Wappointment\Services\WidgetSettings)->get()) . ";\n";
+
         $return .= apply_filters('wappointment_js_vars', '');
         $return .= '/* ]]> */ ' . "\n";
 

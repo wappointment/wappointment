@@ -131,7 +131,7 @@ export default {
         }
     },
     created(){
-
+        this.tryPrefill()
         if(this.options.demoData !== undefined){
             this.bookingForm = this.options.demoData.form 
             this.selectedServiceType = this.bookingForm.type
@@ -193,7 +193,12 @@ export default {
         }
     },
     methods: {
-
+        tryPrefill(){
+            if(window.apiWappointment.wp_user !== undefined){
+                this.bookingForm.email = window.apiWappointment.wp_user.email
+                this.bookingForm.name = window.apiWappointment.wp_user.name
+            }
+        },
         back(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'selection')
