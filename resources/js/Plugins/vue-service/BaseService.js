@@ -45,7 +45,12 @@ class BaseService {
     }
 
     success(result) {
-        result.data = typeof result.data != 'object' || result.data == null ? {} : result.data
+
+        if(result.data === null){
+            console.log('result',result)
+            throw 'Response is malformed'
+        }
+        result.data = typeof result.data != 'object' ? {} : result.data
         return result
     } 
 

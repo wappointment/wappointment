@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div v-if="label" class="mb-2">
+        <label v-if="label" class="mb-2">
             {{ label}}
-        </div>
+        </label>
         <div>
             <CountrySelector required :selected="value" @selected="selectedCountries" :hasErrors="hasErrors"
             @activated="$emit('activated')"></CountrySelector>

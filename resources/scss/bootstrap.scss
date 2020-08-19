@@ -104,6 +104,14 @@
 .range-slider-inner .range-slider-fill {
     background-color: $primary;
 }
+.text-primary {
+    color: #9695d0 !important;
+}
+
+.btn-success {
+    color: #fff;
+    font-weight: bold;
+}
 
 .wappointment-wrap{
     input[type="checkbox"]:focus, 
@@ -148,6 +156,18 @@
     margin: -3px 0 0 -4px;
 }
 
+.table{
+    color: #999;
+}
+.table thead th{
+    vertical-align: bottom;
+    border-bottom: 2px solid #dee2e6;
+    font-weight: normal;
+    font-style: italic;
+    font-size: .9rem;
+    color: #bbb;
+    border-top: none;
+}
 
 .wappointment-wrap {
     .btn.disabled {

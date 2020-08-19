@@ -2,7 +2,7 @@
     <div class="wap-color-picker" :class="{'wapcpsmall': small}">
         <div class="d-flex">
             <div class="picker" :style="generateStyle" @click.stop="showPicker"></div>
-            <div class="ml-1">{{ label }}</div>
+            <label class="ml-1">{{ label }}</label>
         </div>
         <Chrome v-if="picker" :value="value" @input="getNewValue" v-click-outside="clickedOutside" ></Chrome>
     </div>

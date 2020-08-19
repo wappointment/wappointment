@@ -5,7 +5,7 @@
 <script>
 import LoadingComponent from '../Components/Loaders/Bar'
 import ErrorComponent from '../Components/Error'
-import abstractFront from '../Views/abstractFront'
+import AbstractFront from './AbstractFront'
 export default {
      props: ['appointmentkey', 'options', 'rescheduleData'],
      components: {
@@ -23,7 +23,7 @@ export default {
             timeout: 6000
         })
     }, 
-    extends: abstractFront,
+    extends: AbstractFront,
     data: () => ({
        
     }),

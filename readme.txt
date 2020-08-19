@@ -98,7 +98,7 @@ Of course. You decide the duration of your appointments whether it's 5 minutes, 
 
 **Can I set time limits for cancelling and rescheduling appointments?**
 
-You decided when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
+You decide when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
 
 **Can I sync multiple calendars besides of my Google calendar?**
 

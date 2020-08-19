@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div v-if="label" class="mb-2">
+        <label v-if="label" class="mb-2">
             {{ label}}
-        </div>
+        </label>
         <div class="d-flex">
             <div v-for="(item, idx) in images" :key="idx" @click="onChanged(item)"  
             class="btn btn-secondary btn-cell" :class="getClassesImage(item)" :data-tt="item.sub">

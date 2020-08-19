@@ -5,6 +5,7 @@ namespace Wappointment\Messages;
 use Wappointment\Models\Client;
 use Wappointment\Models\Appointment;
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Services\Settings;
 
 class AdminPendingAppointmentEmail extends AbstractAdminEmail
 {
@@ -42,6 +43,7 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
         );
 
         if ($buttonConfirm === true) {
+            $tz = Settings::getStaff('timezone');
             $this->addButton(
                 'Confirm appointment',
                 WPHelpers::adminUrl('wappointment_calendar&start=' .

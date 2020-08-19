@@ -43,9 +43,12 @@ class WidgetSettings
                 'text' => '#606060',
             ],
             'confirmation' => [
-                'bg' => '#6f9b66', //header_bg
+                'bg' => '#82ca9c', //header_bg
                 'text' => '#ffffff', //header_co
             ]
+        ],
+        'general' => [
+            'check_header_compact_mode' => true,
         ],
         'button' => [
             'title' => 'Book now!',
@@ -79,6 +82,9 @@ class WidgetSettings
         ],
         'confirmation' => [
             'confirmation' => 'Appointment Booked',
+            'when' => 'When:',
+            'duration' => 'Duration:',
+            'service' => 'Service:',
             'pending' => 'The appointment is pending and should be quickly confirmed',
             'skype' => 'The appointment will take place on Skype, we will call you on this account:',
             'phone' => 'The appointment will take place over the phone, we will call you on this number:',
@@ -168,6 +174,10 @@ class WidgetSettings
                     'bg' => ['label' => 'Background'],
                 ]
             ]
+        ],
+        'general' => [
+            'check_header_compact_mode' => ['label' => 'Header Compact mode']
+
         ],
         'button' => [
             'backgroundColor' => ['label' => 'Primary Button Background'],

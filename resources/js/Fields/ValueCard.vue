@@ -1,5 +1,5 @@
 <template>
-    <span class="value-card" >
+    <span class="value-card d-flex align-items-center justify-content-between" >
         <span class="label"><slot></slot></span>
         <span class="close" @click.prevent.stop="discard"></span>
     </span>
@@ -18,18 +18,28 @@ export default {
 
 <style>
 .value-card {
-    background-color: #ececec;
-    padding: .1rem 1rem .1rem .2rem;
+    background-color: #ababab;
+    padding: .1rem .2rem .1rem .2rem;
     font-size: .8rem;
     border-radius: .2rem;
     position: relative;
     margin: 0 .6rem .3rem 0;
-    border: 1px solid #dfdfdf;
+    color:#fff;
+    border: 1px solid #9d9d9d;
+    font-weight: bold;
 }
 .value-card:hover {
-    background-color: #f4f4f4;
+    background-color: #7d7d7d;
 }
-
+.value-card .close{
+    background: #fff;
+    width: 15px;
+    display: inline-block;
+    height: 15px;
+    border-radius: 2rem;
+    position: relative;
+    margin-left: .4rem;
+}
 .value-card .close::after {
     transform: translateX(15px) rotate(-45deg);
 }
@@ -51,7 +61,7 @@ export default {
     height: 10px;
     width: 1px;
     top: 3px;
-    right: 24px;
+    right: 22px;
 }
 </style>
 

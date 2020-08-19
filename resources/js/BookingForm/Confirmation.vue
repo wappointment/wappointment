@@ -4,9 +4,19 @@
             <div class="bigicon"><FontAwesomeIcon icon="calendar-check" /> </div>
             <div class="text-conf">{{options.confirmation.confirmation}}</div>
         </div>
-        <div class="my-2">
-            <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
-            <div><strong>{{ appointment_starts_at }}</strong></div>
+        <div class="confirmation-summary">
+            <div>
+                <span class="wlabel">{{options.confirmation.when}}</span>
+                <span>{{ appointment_starts_at }}</span>
+            </div>
+            <div>
+                <span class="wlabel">{{options.confirmation.duration}}</span>
+                <span>{{service.duration}}min</span>
+            </div>
+            <div>
+                <span class="wlabel">{{options.confirmation.service}}</span>
+                <span>{{ service.name }}</span>
+            </div>
         </div>
         <p v-if="isApprovalManual">{{options.confirmation.pending}}</p>
         <div v-if="physicalSelected">
@@ -19,17 +29,17 @@
                 <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
             </BookingAddress>
         </div>
-        <div v-if="phoneSelected">
+        <div class="wdescription" v-if="phoneSelected">
             <p>{{options.confirmation.phone}} <strong>{{ getClientPhone}}</strong></p>
         </div>
-        <div v-if="skypeSelected">
+        <div class="wdescription" v-if="skypeSelected">
             <p>{{options.confirmation.skype}} <strong>{{ getClientSkype }}</strong> </p>
         </div>
-        <div class="my-2">
+        <div class="wdescription my-2 text-center">
             <transition name="slide-fade">
                 <SaveButtons v-if="showSaveButtons" :service="service" :showResult="showResult" :appointment="appointment"
                 :staff="staff" :currentTz="timeprops.currentTz" :physicalSelected="physicalSelected"></SaveButtons>
-                <span v-else class="wbtn-secondary wbtn" @click="showSaveButtons=true">
+                <span v-else class="wbtn-primary-light wbtn" @click="showSaveButtons=true">
                     <FontAwesomeIcon icon="calendar-alt" size="lg"/> {{options.confirmation.savetocal}}
                 </span>
             </transition>
@@ -115,7 +125,7 @@ export default {
 }
 .success .text-conf{
     text-align: left;
-    font-size: 1.65em;
+    font-size: 1.6em;
     line-height: 1.2em;
 }
 .align-items-center {
@@ -128,5 +138,24 @@ export default {
 }
 .mt-2, .my-2 {
     margin-top: .5em !important;
+}
+
+.confirmation-summary{
+    padding:2em;
+    font-size: .8em;
+}
+.confirmation-summary .wlabel{
+    font-weight: bold;
+    color:#888686;
+}
+.confirmation-summary span{
+    color:#9f9898;
+}
+.text-center{
+    text-align: center;
+}
+.wdescription{
+    color:#888686;
+    font-size: .9em;
 }
 </style>

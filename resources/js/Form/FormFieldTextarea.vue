@@ -2,14 +2,14 @@
     <div class="d-flex flex-wrap flex-sm-nowrap">
       <div class="mr-2">
           <LabelMaterial>
-                <textarea class="form-control" @focusout="$emit('activated')" :class="{'is-invalid':hasErrors}" v-model="updatedValue"
+                <textarea class="form-control" @focusout="$emit('activated')" :class="{'is-invalid':hasErrors, 'm-0':true}" v-model="updatedValue"
             :id="id"
             :maxlength="definition.max"
             :minlength="definition.min"
             :rows="definition.rows || 2"
             :placeholder="definition.label"></textarea>
         </LabelMaterial>
-        <small id="emailHelp" v-if="tip" class="form-text text-muted">{{ tip }}</small>
+        <small v-if="tip" class="wtip form-text text-muted text-right m-0 tip">{{ tip }}</small>
         <div class="small text-danger" v-if="hasErrors">
             <div v-for="error in errors">
                 {{ error }}
@@ -29,3 +29,8 @@ export default {
     components: {LabelMaterial},
 }
 </script>
+<style>
+.wtip{
+    color: #ced4da !important;
+}
+</style>

@@ -1,7 +1,8 @@
 <template>
     <div>
+        <label v-if="label">{{ label }}</label>
         <SearchDropdown v-model="updatedValue" :ph="label" :elements="elements" :extraClass="getExtraClass"
-             :idKey="idKey" :labelSearchKey="labelSearchKey" :flexWrap="flexWrap" :hasMulti="multi"></SearchDropdown>
+             :idKey="idKey" :labelSearchKey="labelSearchKey" :flexWrap="flexWrap" :hasMulti="multi" :horizontal="horizontal"></SearchDropdown>
         <div class="small text-danger" v-if="hasErrors">
             <div v-for="error in errors">
                 {{ error }}
@@ -33,6 +34,10 @@ export default {
             default:false
         },
         multi: {
+            type: Boolean,
+            default: false
+        },
+        horizontal: {
             type: Boolean,
             default: false
         }

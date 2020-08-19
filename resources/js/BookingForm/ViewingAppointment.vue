@@ -57,7 +57,7 @@
 <script>
 
 import Dates from '../Modules/Dates'
-import abstractFront from '../Views/abstractFront'
+import AbstractFront from './AbstractFront'
 import SaveButtons from './SaveButtons'
 import Iframe from '../Components/Iframe'
 import AppointmentService from '../Services/V1/Appointment'
@@ -71,7 +71,7 @@ mixins = window.wappointmentExtends.filter('ViewingAppointmentMixin', mixins)
 export default {
      
     mixins: [Dates, mixins.ViewingAppointmentMixin],
-    extends: abstractFront,
+    extends: AbstractFront,
     components: {
         SaveButtons,
         Iframe,
@@ -81,7 +81,6 @@ export default {
     props: ['appointmentkey', 'view', 'options'],
     data: () => ({
         viewName: 'appointment',
-        viewData: null,
         appointment: null,
         client: null,
         service: null,

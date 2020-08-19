@@ -53,3 +53,17 @@ export default {
     }
 }
 </script>
+<style >
+.table-responsive.table-hover {
+    color: #626060;
+}
+.table-responsive .actions {
+    visibility: hidden;
+}
+.table-responsive .actions .dashicons-move{
+    cursor: pointer;
+}
+.table-responsive tr:hover .actions{
+    visibility: visible;
+}
+</style>

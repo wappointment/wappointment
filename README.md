@@ -4,9 +4,9 @@
 **Contributors:** wappointment, benheu  
 **Tags:** appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar  
 **Requires at least:** 4.7  
-**Tested up to:** 5.3  
+**Tested up to:** 5.5 
 **Requires PHP:** 7.0  
-**Stable tag:** 1.2.0  
+**Stable tag:** 1.6.0 
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -105,7 +105,7 @@ Of course. You decide the duration of your appointments whether it's 5 minutes, 
 
 **Can I set time limits for cancelling and rescheduling appointments?**
 
-You decided when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
+You decide when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
 
 **Can I sync multiple calendars besides of my Google calendar?**
 
@@ -139,7 +139,7 @@ Your emails most likely go straight to SPAM or don't event reach your inbox. *Ch
 
 * WordPress 4.7(or greater)
 * PHP version 7.0(or greater)
-* MySQL version 5.5(or greater) or MariaDB 10.0(or greater)
+* MySQL version 5.6(or greater) or MariaDB 10.0(or greater)
 
 Always keep your softwares updated.
 It requires work on your end but keeps your site safe and optimized.

@@ -1,18 +1,16 @@
 <template>
     <div>
-        <div @click="changePicture" style="cursor:pointer" v-if="[undefined,''].indexOf(label) === -1">
+        <label @click="changePicture" style="cursor:pointer" v-if="[undefined,''].indexOf(label) === -1">
             {{ label}}
-        </div>
+        </label>
         <div class="picture-edit">
-            <div @click="changePicture" class="text-center preview-fimage">
+            <div @click="changePicture" class="text-center preview-fimage" :class="{'preview-selected':hasImage}">
                 <div class="fimage-edit">
-                    <div v-if="hasImage" @mouseover="changeButtonOn = true" @mouseout="changeButtonOn = false">
-                        <div :style="'background-image: url(' + wp_image.src + ');'" class="img-bg d-flex justify-content-center align-items-center">
-                            <div v-if="changeButtonOn" class="btn btn-secondary btn-lg">Change Picture</div>
-                        </div>
+                    <div v-if="hasImage" >
+                        <div :style="getImageStyle" class="img-bg d-flex justify-content-center align-items-center"></div>
                     </div>
                     <i v-else class="dashicons dashicons-format-image"></i>
-                    <span class="small text-primary" href="javascript:;">edit</span>
+                    <span class="small text-primary" href="javascript:;">{{ hasImage ? 'edit':'add'}}</span>
                 </div>
             </div>
             <WapModal :show="edit" @hide="close" large>
@@ -74,7 +72,6 @@ export default {
     },
     data() {
         return {
-            changeButtonOn: false,
             isHover:false,
             edit: false,
             size: 'thumbnail',
@@ -101,6 +98,14 @@ export default {
         },
         selectedImage(){
             return this.wp_image !== undefined && this.wp_image.wp_id !== undefined ? this.wp_image.wp_id:0
+        },
+        getImageStyle(){
+            let style = 'background-image: url(' + this.wp_image.src + ');'
+            if(this.definition.thumb_size !== undefined){
+                style += 'min-width:'+this.definition.thumb_size+';'
+                style += 'min-height:'+this.definition.thumb_size+';'
+            }
+            return style
         }
     },
     methods:{
@@ -170,11 +175,18 @@ export default {
         background-position: center top;
         min-width: 100px;
     }
-
+    .fieldthumb .img-bg{
+        min-height: 50px;
+        background-size: cover;
+        min-width: 50px;
+    }
+    .fimage-edit {
+        position: relative;
+    }
     .fimage-edit i.dashicons{
-        width: 40px;
-        height: 40px;
-        font-size: 40px;
+        width: 50px;
+        height: 50px;
+        font-size: 50px;
         color: #b9b6b6;
     }
 
@@ -210,19 +222,16 @@ export default {
     .preview-fimage{
         border: 1px solid #eee;
         cursor: pointer;
-        border-radius: 0.3rem;
+        border-radius: .2rem;
+        overflow: hidden;
+    }
+    .preview-fimage.preview-selected{
+        border-radius: 2rem;
     }
     .preview-fimage:hover{
         border: 1px solid #6664cb;
     }
-    .fimage-edit{
-        position:relative;
-        max-height: 100px;
-        overflow: hidden;
-    }
-    .fimage-edit:hover {
-        max-height: 100%;
-    }
+
     .fimage-edit span.text-primary{
         position: absolute;
         display: none;
@@ -231,5 +240,13 @@ export default {
     }
     .fimage-edit:hover span{
         display: block;
+        width: 100%;
+        height: 18px;
+        position: absolute;
+        left: 0;
+        background: rgba(97, 134, 204, 0.6);
+        bottom: 0;
+        color: #fff !important;
+        font-weight: bold;
     }
 </style>

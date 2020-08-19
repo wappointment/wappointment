@@ -3,17 +3,26 @@
         <div v-if="canBeBooked">
             <BookingFormHeader :staffs="getStaffs" 
             :isStepSlotSelection="isStepSlotSelection"
-            :appointmentSaved="appointmentSaved"
             :options="options"
-            :service="service" :duration="duration" @refreshed="refreshClick"
+            :service="service" 
+            :duration="duration" 
+            @changeStaff="childChangedStep"
+            />
+            <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
+            :isStepSlotSelection="isStepSlotSelection"
+            :options="options"
+            :service="service" 
+            :duration="duration" 
             :services="services"
             :rescheduling="rescheduling"
-            @changeStaff="childChangedStep"
+            :startsAt="appointmentStartsAt"
+            :location="location"
+            @refreshed="refreshClick"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
             />
 
-            <div class="wrap-calendar p-2">
+            <div class="wrap-calendar p-2" :class="'step-'+currentStep">
                 <div v-if="loading">
                     <Loader></Loader>
                 </div>
@@ -33,13 +42,18 @@
                 <div v-if="service">No appointments available</div>
                 <div v-else>Service not ready</div>
             </div>
-            <div v-else><Loader></Loader></div>
+            <template>
+                <div class="wappointment-errors" v-if="errorMessages.length > 0">
+                    <div v-for="errorM in errorMessages">{{errorM}}</div>
+                </div>
+                <div v-else><Loader></Loader></div>
+            </template>
         </div>
     </div>
 </template>
 
 <script>
-import abstractFront from '../Views/abstractFront'
+import AbstractFront from './AbstractFront'
 import Intervals from '../Standalone/intervals'
 import Colors from "../Modules/Colors"
 import Dates from "../Modules/Dates"
@@ -48,6 +62,7 @@ import RescheduleConfirm from './RescheduleConfirm'
 import BookingCalendar from './Calendar'
 import BookingFormInputs from './Form'
 import BookingFormHeader from './Header'
+import BookingFormSummary from './AppointmentSummary'
 import DurationCell from './DurationCell'
 BookingFormHeader.components = {DurationCell}
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
@@ -61,12 +76,13 @@ let compDeclared = {
     'BookingFormInputs':BookingFormInputs,
     'BookingFormHeader': BookingFormHeader,
     'DurationCell': DurationCell,
-    'abstractFront':abstractFront
+    'abstractFront':AbstractFront,
+    'BookingFormSummary': BookingFormSummary
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
 
 export default {
-     extends: abstractFront,
+     extends: AbstractFront,
      mixins: [Colors, Dates],
      props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent'],
      components: compDeclared, 
@@ -108,6 +124,9 @@ export default {
     },
 
     computed: {
+        isCompactHeader(){
+            return this.options.general !== undefined && [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
+        },
         appointmentStartsAt(){
             return this.converted 
         },
@@ -184,6 +203,9 @@ export default {
             }
             this.currentStep = newStep
             setTimeout(this.loadStep.bind(null,newStep), 100)
+        },
+        selectedLocation(location){
+            this.location = location
         },
         childChangedData(dataChanged){
             for (const key in dataChanged) {
@@ -333,7 +355,7 @@ export default {
             
             if(this.service !== false){
                 this.duration = this.service.duration !== undefined ? this.service.duration : window.wappointmentExtends.filter('durationDefault', this.service)
-                this.location = this.service.type !== undefined ? this.service.type : window.wappointmentExtends.filter('locationDefault', this.service)
+                this.location = this.service.type !== undefined ? '' : window.wappointmentExtends.filter('locationDefault', this.service)
             } 
         },
 
@@ -406,10 +428,10 @@ export default {
                         data:"dataSent",
                         options:"options",
                         relatedComps: 'relatedComps', 
-                        appointment_starts_at: 'appointmentStartsAt',
                     },
                     listeners: {
                         back:'childChangedStep',
+                        selectedLocation: 'selectedLocation',
                         loading: 'childChangedData',
                         confirmed: 'childChangedStep',
                         serviceError: 'serviceError'

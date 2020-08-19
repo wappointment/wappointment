@@ -1,8 +1,8 @@
 <template>
     <div class="w-100">
-        <div class="pl-2"v-if="[undefined,''].indexOf(label) === -1">
+        <label class="pl-2"v-if="[undefined,''].indexOf(label) === -1">
             {{ label}}
-        </div>
+        </label>
         <div class="d-flex" :class="getClassWrapper">
             <range-slider
                 class="slider"

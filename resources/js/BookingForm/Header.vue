@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="wap-head">
         <div v-for="staff in staffs"> 
-            <div class="d-flex wap-head align-items-center">
+            <div class="d-flex align-items-center">
                 <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="refreshClicked">
                     <img :src="staff.a" :alt="staff.n">
                     <div class="after" v-if="isStepSlotSelection">
@@ -11,11 +11,14 @@
                     </div>
                 </div>
                 <div class="staff-desc">
-                    <div><strong>{{ staff.n }}</strong></div>
-                    <div v-if="service!== false">{{ service.name }} <DurationCell :show="true" :duration="duration"/></div>
+                    <strong>{{ staff.n }}</strong>
+                    <div class="header-service" v-if="service!== false && isCompactHeader">
+                        {{ service.name }}
+                        <DurationCell :show="true" :duration="duration"/>
+                    </div>
                 </div>
             </div>
-        </div> 
+        </div>
     </div>
 </template>
 
@@ -25,26 +28,21 @@ export default {
         staffs: {
             type: Array, default: []
         },
-        service: {
-            type: [Object, Boolean]
-        },
+
         isStepSlotSelection:{
             type: Boolean,
             default: false
         },
+
+        options: {
+            type:[Object]
+        },
+        service: {
+            type:[Object, Boolean]
+        },
         duration:{
             type: [Boolean,Number]
         },
-        appointmentSaved:{
-            type: Boolean,
-            default: false
-        },
-        rescheduling:{
-            type: Boolean,
-        },
-        options: {
-            type:[Object]
-        }
     },
     data: () => ({
         disabledButtons: false,
@@ -62,6 +60,11 @@ export default {
             } 
             this.$emit('refreshed')
         }
+    },
+    computed:{
+        isCompactHeader(){
+            return this.options.general !== undefined && [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
+        },
     }
 
 }

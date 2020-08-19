@@ -1,16 +1,7 @@
 <template>
     <transition name="slide-fade">
         <div v-if="mounted" class="max400">
-            <div class="text-center">
-                <div class=" my-2">
-                    <div><strong>{{options.form.header}}</strong></div>
-                    <div v-if="appointment_starts_at"><strong>{{ appointment_starts_at }}</strong></div>
-                </div>
-                <div class="wappointment-errors" v-if="errors.length > 0">
-                    <div v-for="error in errors">
-                        {{ error }}
-                    </div>
-                </div>
+            <div v-if="!selectedServiceType">
                 
                 <div v-if="serviceHasTypes">
                     <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: physicalSelected}">
@@ -30,6 +21,11 @@
             </div>
             <transition name="slide-fade">
                 <div v-if="selectedServiceType">
+                    <div class="wappointment-errors" v-if="errors.length > 0">
+                        <div v-for="error in errors">
+                            {{ error }}
+                        </div>
+                    </div>
                     <div class="wap-booking-fields">
                         <div v-if="physicalSelected" class="address-service">
                             <BookingAddress :service="service">
@@ -78,7 +74,7 @@
 </template>
 
 <script>
-import abstractFront from '../Views/abstractFront'
+import AbstractFront from './AbstractFront'
 import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
 import Strip from '../Helpers/Strip'
@@ -92,9 +88,9 @@ library.add(faMapMarkedAlt, faPhone, faSkype)
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
 
 export default {
-    extends: abstractFront,
+    extends: AbstractFront,
     mixins: [ Strip],
-    props: ['service','selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations', 'appointment_starts_at'],
+    props: ['service', 'selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations', 'appointment_starts_at'],
     components: {
         BookingAddress,
         PhoneInput,
@@ -205,7 +201,7 @@ export default {
               return
             } 
             
-            this.$emit('back', this.relations.prev,{selectedSlot:false})
+            this.$emit('back', this.relations.prev,{selectedSlot:false, location:''})
         },
         
         confirm(){
@@ -261,6 +257,7 @@ export default {
             this.bookingForm = {}
             this.bookingForm = bookingForm
             this.bookingForm.type = type
+            this.$emit('selectedLocation', type)
         },
 
         hasError(field){
@@ -325,6 +322,13 @@ export default {
     font-size: .7em;
     text-align: left;
     line-height: 1.4;
+}
+
+.wap-front .wrounded{
+  border-radius : 3rem;
+}
+.wap-front .wshadow{
+  box-shadow: inset 0px 8px 10px 0 rgba(0,0,0,.08);
 }
 
 </style>

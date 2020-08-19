@@ -126,5 +126,14 @@ export default {
     font-size:.9em;
 }
 
+.wrounded{
+  border-radius: 3rem;
+}
+.wshadow{
+  box-shadow: inset 0px 8px 10px 0 rgba(0,0,0,.08);
+}
+.wimage{
+  max-width: 30px;
+}
 </style>
 

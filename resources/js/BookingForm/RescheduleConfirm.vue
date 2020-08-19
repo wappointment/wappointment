@@ -13,7 +13,7 @@
 
 <script>
 import Dates from "../Modules/Dates"
-import AbstractFront from "../Views/abstractFront"
+import AbstractFront from "./AbstractFront"
 export default {
     extends: AbstractFront,
     mixins: [Dates],

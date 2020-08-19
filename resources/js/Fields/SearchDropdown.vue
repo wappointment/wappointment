@@ -24,9 +24,9 @@
                 </LabelMaterial>
                 <span :class="arrowUpClass" @click="makeInactive"></span>
             </div>
-            <div class="dropElements "  :class="[ flexWrap ? 'd-flex flex-wrap':'']">
+            <div class="dropElements "  :class="[ horizontal ? 'd-flex flex-wrap':'']">
                 <div v-if="filteredElements.length > 0" v-for="elementLoop in filteredElements" @click="selectElement(elementLoop)" 
-                class="btn btn-sm m-0 clickable" :class="[ isSelected(elementLoop)? 'btn-outline-primary':'btn-light', flexWrap ? '':'btn-block']">
+                class="btn btn-sm clickable" :class="[ isSelected(elementLoop)? 'btn-outline-primary':'btn-light', horizontal ? 'm-2':'m-0 btn-block']">
                     <small>{{ displayElementFunc(elementLoop) }}</small>
                 </div>
                 <div v-else>
@@ -83,6 +83,10 @@ export default {
             type: Boolean,
             default: false
         },
+        horizontal: {
+            type: Boolean,
+            default: false
+        },
         arrowDownClass: {
             type: String,
             default: 'arrow-down'
@@ -91,10 +95,6 @@ export default {
             type: String,
             default: 'arrow-up mx-2 clickable'
         },
-        flexWrap: {
-            type:Boolean,
-            default:false
-        }
     },
     data () {
         return {
@@ -215,42 +215,6 @@ export default {
     z-index: 5;
 }
 
-.value-card {
-    background-color: #ececec;
-    padding: .1rem 1rem .1rem .2rem;
-    font-size: .8rem;
-    border-radius: .2rem;
-    position: relative;
-    margin: 0 .6rem .3rem 0;
-    border: 1px solid #dfdfdf;
-}
-.value-card:hover {
-    background-color: #f4f4f4;
-}
-
-.close::after {
-    transform: translateX(15px) rotate(-45deg);
-}
-.close::before, .close::after {
-    content: ' ';
-    position: absolute;
-    background-color: #b5b1b1;
-}
-.close::before {
-    transform: translateX(15px) rotate(45deg);
-}
-.value-card .close:hover::before, .value-card .close:hover::after {
-    background-color: #575656;
-    width: 2px;
-}
-
-
-.value-card .close::before, .value-card .close::after  {
-    height: 10px;
-    width: 1px;
-    top: 3px;
-    right: 24px;
-}
 .container-values.form-control{
     height: auto;
 }

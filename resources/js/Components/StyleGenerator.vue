@@ -1,5 +1,14 @@
 <template>
     <v-style>
+        .wap-front .wbtn.wbtn-primary-light,
+        .wap-front .wbtn.wbtn-primary-light:not(:disabled):not(.disabled):active, 
+        .wap-front .wbtn.wbtn-primary-light:not(:disabled):not(.disabled).active {
+            background: {{ hx_rgb(opts.colors.primary.bg, .8) }};
+            background-color: {{ hx_rgb(opts.colors.primary.bg, .8) }};
+            border-color: {{ hx_rgb(opts.colors.primary.bg, .6) }};
+            color: {{ hx_rgb(opts.colors.primary.text) }};
+            box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .4) }};
+        }
         .wap-front .wbtn.wbtn-primary.wbtn-booking,
         .wap-front .wbtn-primary.wbtn-booking:not(:disabled):not(.disabled):active, 
         .wap-front .wbtn-primary.wbtn-booking:not(:disabled):not(.disabled).active {
@@ -91,11 +100,13 @@
 
         .wap-front .wrap-calendar {
             border-top: none;
-            text-align: center;
             overflow-y: scroll;
             overflow-x: hidden;
             max-height: 500px;
             background-color: {{ hx_rgb(opts.colors.body.bg) }};
+        }
+        .wap-front .wrap-calendar.step-BookingFormConfirmation{
+            overflow-y: hidden;
         }
 
         .wap-front .wrap-calendar .no-avail, .wap-front .wrap-calendar .wbtn-link.disabled{
@@ -163,7 +174,7 @@
         .wap-front .confirmation-cell .success {
             background-color: {{ hx_rgb(opts.colors.confirmation.bg) }};
             color: {{ hx_rgb(opts.colors.confirmation.text) }};
-            padding: .5em .8em;
+            padding: .2em .8em;
             border-radius: 5px;
             overflow: hidden;
             font-size: .8em;
