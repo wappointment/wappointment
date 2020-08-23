@@ -7,7 +7,7 @@
             </div>
         </div>
         <div class="wsummary-section wsec-starts" v-if="startsAt">
-            <div class="wlabel">{{options.form.header}}</div>
+            <div class="wlabel"  v-if="hasText(['general','when'])">{{options.general.when}}</div>
             <div class="wselected wmy-4">
                 {{ startsAt }}
             </div>

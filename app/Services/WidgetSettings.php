@@ -49,6 +49,8 @@ class WidgetSettings
         ],
         'general' => [
             'check_header_compact_mode' => true,
+            'when' => 'When',
+            'service' => 'Service'
         ],
         'button' => [
             'title' => 'Book now!',
