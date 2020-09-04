@@ -5,7 +5,7 @@
         <div v-if="icon" class="dashicons" :class="icon"></div> 
         <div v-if="emptyValue">{{ placeHolderLabel }}</div>
         <div v-else>
-            <span  v-if="hasMulti" class="d-flex flex-wrap">
+            <span v-if="hasMulti" class="d-flex flex-wrap">
                 <ValueCard v-if="value.length > 0" v-for="val in value" :key="val"
                         :value="val" @discard="discardElement">{{ displayElementFunc(getElement(val)) }}</ValueCard>
             </span>
@@ -179,7 +179,7 @@ export default {
             this.$emit('input', newValues)
             //this.makeInactive()
         }else{
-            this.selectedElement = this.isSelected(element) ? '':element[this.idKey]
+            this.selectedElement = element[this.idKey]
             this.$emit('input', this.selectedElement, element)
             this.makeInactive()
         }
