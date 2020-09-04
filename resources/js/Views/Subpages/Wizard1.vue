@@ -30,7 +30,8 @@
 
 import AppService from '../../Services/V1/App' // your service
 import abstractview from '../Abstract'
-import Notifications from '../../WP/Notifications'
+const Notifications = () => import(/* webpackChunkName: "wappo-notif" */ '../../WP/Notifications')
+//import Notifications from '../../WP/Notifications'
 
 export default {
   extends: abstractview,

@@ -8,8 +8,8 @@
                   <li v-for="message in messages">{{ message }}</li>
                 </ul>
                 <div v-if="isError">
-                  <div class="border-top h5 pt-2 mt-2">Need help with that?</div>
-                  <ContactButton :subject="title" :autofill="autofill" :messages="messages" />
+                  <div class="border-top h5 pt-2 mt-2">Contact us, we'll help you!</div>
+                  <ContactButton :subject="title" buttonLabel="Open a ticket" :autofill="autofill" :messages="messages" />
                 </div>
             </div>
         </div>

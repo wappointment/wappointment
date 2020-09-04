@@ -46,14 +46,16 @@ const SettingsPage = () => import(/* webpackChunkName: "group-settings" */ './Vi
 const AddonsPage = () => import(/* webpackChunkName: "group-addons" */ './Views/Addons')
 const HelpPage = () => import(/* webpackChunkName: "group-help" */ './Ne/Help')
 
-const WizardPage = () => import(/* webpackChunkName: "group-wizard" */ './Views/Subpages/Wizard')
+const WizardPage = () => import(/* webpackChunkName: "group-wizardinit" */ './Views/Subpages/Wizard')
 const Wizard1Page = () => import(/* webpackChunkName: "group-wizard" */ './Views/Subpages/Wizard1')
 const Wizard2Page = () => import(/* webpackChunkName: "group-wizard" */ './Views/Subpages/Wizard2')
 const Wizard3Page = () => import(/* webpackChunkName: "group-wizard2" */ './Views/Subpages/Wizard3')
 const Wizard4Page = () => import(/* webpackChunkName: "group-wizard2" */ './Views/Subpages/Wizard4')
 
-const RegavPage = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/Regav')
-const ServicePage = () => import(/* webpackChunkName: "group-settingspages" */ './Views/Subpages/Service')
+const RegavPage = () => import(/* webpackChunkName: "group-regav" */ './Views/Subpages/Regav')
+const ServicePage = () => import(/* webpackChunkName: "group-service" */ './Views/Subpages/Service')
+
+const WappointmentErrorFileNotLoading = () => import(/* webpackChunkName: "wappo-error" */ './Views/WappointmentErrorFileNotLoading')
 
 const router = window.wappointmentrouter = new VueRouter({
   mode: 'history',
@@ -84,6 +86,11 @@ const router = window.wappointmentrouter = new VueRouter({
           path: 'calendar#',
           component: WizardPage,
           children: [
+            {
+              path: 'error',
+              name: 'wappointment_error',
+              component: WappointmentErrorFileNotLoading
+            },
             {
               path: 'wizard1',
               name: 'wizard1',
@@ -162,13 +169,7 @@ const router = window.wappointmentrouter = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   
-  /* if([null, undefined].indexOf(to.name) ===-1 && to.name.indexOf('wizard') === -1 ){
-    console.log('routerSetupRedirect 1')
-    let setupNeeded = routerSetupRedirect(router)
-    if(setupNeeded === true){
-      return
-    }
-  } */
+  console.log('routerSetupRedirect 1', to)
   
   if(to.query.page!== undefined && to.query.page.indexOf('wappointment_')!==-1){
     if(['wappointment_calendar', 'wappointment_settings'].indexOf(to.query.page) !== -1 && to.hash.indexOf('#/') !== -1){
@@ -185,6 +186,11 @@ router.beforeEach((to, from, next) => {
       rewriteWPMenu(to.name)
       next()
   }
+
+})
+router.onError((error) => {
+  window.backWappoError = error
+  router.push({ name: 'wappointment_error'})
 
 })
 
