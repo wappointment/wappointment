@@ -47,11 +47,58 @@ class Appointment
 
     public static function patch($id, $data)
     {
-        $result = AppointmentModel::where('id', $id)->update($data);
+        $appointment = AppointmentModel::where('id', $id)->first();
+        $oldAppointment = $appointment->replicate();
+
+        $result = $appointment->update($data);
+
         if ($result) {
-            (new Availability())->regenerate();
+            static::appointmentModified($appointment, $oldAppointment);
         }
         return $result;
+    }
+
+    public static function reschedule($edit_key, $start_at)
+    {
+        if (!(bool) Settings::get('allow_rescheduling')) {
+            throw new \WappointmentException('Appointment rescheduling is not allowed', 1);
+        }
+
+        $appointment = AppointmentModel::where('edit_key', $edit_key)->first();
+        $oldAppointment = $appointment->replicate();
+        if (empty($appointment)) {
+            throw new \WappointmentException("Can't find appointment", 1);
+        }
+        if (!$appointment->canStillReschedule()) {
+            throw new \WappointmentException("Can't reschedule appointment anymore", 1);
+        }
+
+        $result = $appointment->update(
+            [
+                'start_at' => static::unixToDb($start_at),
+                'end_at' => static::unixToDb($start_at + $appointment->getFullDurationInSec()),
+                'options' => $appointment->getIncrementedSequenceOptions()
+            ]
+        );
+        if ($result) {
+            static::appointmentModified($appointment, $oldAppointment);
+            return $appointment->toArraySpecial();
+        }
+        return false;
+    }
+
+    protected static function appointmentModified($appointment, $oldAppointment)
+    {
+        (new Availability())->regenerate();
+
+        Events::dispatch(
+            'AppointmentRescheduledEvent',
+            [
+                'appointment' => $appointment,
+                'client' => $appointment->client()->first(),
+                'oldAppointment' => $oldAppointment
+            ]
+        );
     }
 
     public static function unixToDb($unixTS)
@@ -187,44 +234,6 @@ class Appointment
 
 
         return $appointment;
-    }
-
-    public static function reschedule($edit_key, $start_at)
-    {
-        if (!(bool) Settings::get('allow_rescheduling')) {
-            throw new \WappointmentException('Appointment rescheduling is not allowed', 1);
-        }
-
-        $appointment = AppointmentModel::where('edit_key', $edit_key)->first();
-        $oldAppointment = $appointment->replicate();
-        if (empty($appointment)) {
-            throw new \WappointmentException("Can't find appointment", 1);
-        }
-        if (!$appointment->canStillReschedule()) {
-            throw new \WappointmentException("Can't reschedule appointment anymore", 1);
-        }
-
-        $result = $appointment->update(
-            [
-                'start_at' => static::unixToDb($start_at),
-                'end_at' => static::unixToDb($start_at + $appointment->getFullDurationInSec()),
-                'options' => $appointment->getIncrementedSequenceOptions()
-            ]
-        );
-        if ($result) {
-            (new Availability())->regenerate();
-
-            Events::dispatch(
-                'AppointmentRescheduledEvent',
-                [
-                    'appointment' => $appointment,
-                    'client' => $appointment->client()->first(),
-                    'oldAppointment' => $oldAppointment
-                ]
-            );
-            return $appointment->toArraySpecial();
-        }
-        return false;
     }
 
     public static function tryCancel($edit_key)

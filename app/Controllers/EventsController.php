@@ -116,6 +116,7 @@ class EventsController extends RestController
             ->where('end_at', '<=', $end_at_string)
             ->get();
     }
+
     private function events(Request $request)
     {
         $ends_at_carbon = DateTime::timeZToUtc($request->input('end'));
