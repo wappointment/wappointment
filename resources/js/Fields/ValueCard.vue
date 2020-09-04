@@ -1,13 +1,19 @@
 <template>
     <span class="value-card d-flex align-items-center justify-content-between" >
         <span class="label"><slot></slot></span>
-        <span class="close" @click.prevent.stop="discard"></span>
+        <span v-if="canDiscard" class="close" @click.prevent.stop="discard"></span>
     </span>
 </template>
 <script>
-import copy from 'copy-to-clipboard'
 export default {
-    props:['value'],
+    props:{
+        value:{
+        },
+        canDiscard:{
+            type: Boolean,
+            default:true
+        }
+    },
     methods: {
       discard(){
           this.$emit('discard', this.value)

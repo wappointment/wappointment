@@ -9,9 +9,9 @@
                 <ValueCard v-if="value.length > 0" v-for="val in value" :key="val"
                         :value="val" @discard="discardElement">{{ displayElementFunc(getElement(val)) }}</ValueCard>
             </span>
-            <span class="mr-2" v-else>
-                <ValueCard :key="value"
-                        :value="value" @discard="discardElement">{{ displayElementFunc(getElement(value)) }}</ValueCard>
+            <span v-else>
+                <ValueCard :key="value" :canDiscard="false"
+                        :value="value">{{ displayElementFunc(getElement(value)) }}</ValueCard>
             </span>
         </div>
         <div :class="arrowDownClass" ></div>
