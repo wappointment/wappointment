@@ -81,10 +81,12 @@ export default {
       },
       
 
-      getHourStart(y){
+      getHourStart (y){
+          console.log('getHourStart y', y ,(y / this.heightUnit) + this.minHour )
           return (y / this.heightUnit) + this.minHour 
       },
       getHourEnd(y,h){
+          console.log('getHourEnd y h', y, h ,((h) / this.heightUnit) + this.getHourStart(y)  )
           return ((h) / this.heightUnit) + this.getHourStart(y) 
       },
       getHeightColumn(){

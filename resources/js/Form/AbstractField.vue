@@ -12,7 +12,8 @@ export default {
                 
             }
             if(oldVal !== undefined) {
-                return this.$emit(this.eventEmit, newVal, this.model, this.definition.type)
+                let typeDefi = this.definition === undefined ? '':this.definition.type 
+                return this.$emit(this.eventEmit, newVal, this.model, typeDefi)
             }
         }
     },
