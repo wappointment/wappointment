@@ -1,8 +1,8 @@
 
 <template>
     <div class="d-flex align-items-center">
-        <span>{{ service.name }} -</span> 
-        <span class="wduration">{{ getDuration }}</span> 
+        <span>{{ service.name }}</span> 
+        <span v-if="duration" class="wduration"> - {{ getDuration }}</span> 
         <span v-if="cancellable" class="wclose" role="button" @click="$emit('discardElement', service)"></span>
     </div>
 </template>
@@ -14,16 +14,19 @@ export default {
             type: Object, 
         },
         duration:{
-            type: Number,
+            type: [Number,Boolean],
         },
         cancellable:{
             type: Boolean,
             default: true
+        },
+        options:{
+            type:Object
         }
     },
     computed:{
         getDuration(){
-            return this.duration + 'min'
+            return this.duration + this.options.general.min
         }
     }
 }
@@ -33,6 +36,10 @@ export default {
 .wap-front .wduration{
     font-weight: bold;
     margin: 0 .2em;
+}
+.wap-front .header-service .wduration{
+    font-weight: normal;
+    font-size:.9em;
 }
 
 .wclose::after {

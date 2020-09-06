@@ -14,7 +14,7 @@
                     <strong>{{ staff.n }}</strong>
                     <div class="header-service" v-if="service!== false && isCompactHeader">
                         {{ service.name }}
-                        <DurationCell :show="true" :duration="duration"/>
+                        <span class="wduration">{{duration}}{{getMinText}}</span>
                     </div>
                 </div>
             </div>
@@ -23,7 +23,9 @@
 </template>
 
 <script>
+import minText from './minText'
 export default {
+    mixins: [minText],
     props: {
         staffs: {
             type: Array, default: []
@@ -63,7 +65,7 @@ export default {
     },
     computed:{
         isCompactHeader(){
-            return this.options.general !== undefined && [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
+            return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
         },
     }
 

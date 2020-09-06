@@ -132,7 +132,8 @@ export default {
 }
 
 .day-part{
-    display:block;
+    display: block;
+    text-align: center;
 }
 
 .timezone{

@@ -1,5 +1,5 @@
 <template>
-    <span class="value-card d-flex align-items-center justify-content-between" >
+    <span class="value-card closable d-flex align-items-center justify-content-between" >
         <span class="label"><slot></slot></span>
         <span v-if="canDiscard" class="close" @click.prevent.stop="discard"></span>
     </span>
@@ -23,6 +23,7 @@ export default {
 </script>
 
 <style>
+@import '../../css/closable.css';
 .value-card {
     background-color: #ababab;
     padding: .1rem .2rem .1rem .2rem;
@@ -37,38 +38,14 @@ export default {
 .value-card:hover {
     background-color: #7d7d7d;
 }
-.value-card .close{
+.value-card.closable .close{
     background: #fff;
-    width: 15px;
-    display: inline-block;
-    height: 15px;
-    border-radius: 2rem;
-    position: relative;
-    margin-left: .4rem;
+    border-radius: 2em;
 }
-.value-card .close::after {
-    transform: translateX(15px) rotate(-45deg);
-}
-.value-card .close::before, .value-card .close::after {
-    content: ' ';
-    position: absolute;
+.value-card.closable .close::before, .value-card.closable .close::after {
     background-color: #b5b1b1;
 }
-.value-card .close::before {
-    transform: translateX(15px) rotate(45deg);
-}
-.value-card .close:hover::before, .value-card .close:hover::after {
-    background-color: #575656;
-    width: 2px;
-}
 
-
-.value-card .close::before, .value-card .close::after  {
-    height: 10px;
-    width: 1px;
-    top: 3px;
-    right: 22px;
-}
 </style>
 
 

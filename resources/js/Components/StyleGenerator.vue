@@ -97,16 +97,17 @@
             overflow: auto;
             max-height: none;
         }
-
         .wap-front .wrap-calendar {
             border-top: none;
-            overflow-y: scroll;
-            overflow-x: hidden;
-            max-height: 500px;
+        }
+        .wap-front .wrap-calendar,
+        .wap-front .appointment-summary{
             background-color: {{ hx_rgb(opts.colors.body.bg) }};
         }
-        .wap-front .wrap-calendar.step-BookingFormConfirmation{
-            overflow-y: hidden;
+        .wap-front .wrap-calendar.step-BookingCalendar .slotsPane {
+            overflow-y: scroll;
+            overflow-x: hidden;
+            max-height: 200px;
         }
 
         .wap-front .wrap-calendar .no-avail, .wap-front .wrap-calendar .wbtn-link.disabled{
@@ -127,6 +128,13 @@
         }
         .wap-front .wrap-calendar .dayselected span.avail{
             color: {{ hx_rgb(opts.colors.selected_day.text) }};
+        }
+
+        .wap-front .wsummary-section {
+            border-bottom: 1px solid {{ hx_rgb(opts.colors.body.text, .1) }};
+        }
+        .wap-front .wlabel{
+            color: {{ hx_rgb(opts.colors.body.text) }};
         }
 
         .wap-front .wap-head .duration {
@@ -150,6 +158,10 @@
             border-color: #80bdff;
             outline: 0;
             box-shadow: 0 0 0 1px {{ hx_rgb(opts.colors.primary.bg, .25) }};
+        }
+        .wap-front .wselected{
+            background-color: {{ hx_rgb(opts.colors.primary.bg, .5) }};
+            color: {{ hx_rgb(opts.colors.primary.text) }};
         }
 
         .wap-front [data-tt]:before {

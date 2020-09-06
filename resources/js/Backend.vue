@@ -37,7 +37,6 @@ export default {
   padding-left: 0;
 }
 
-
 .modal {
     z-index: 50 !important;
 }

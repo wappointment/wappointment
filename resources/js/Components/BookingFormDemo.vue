@@ -49,17 +49,22 @@ export default {
                 data.appointmentSaved = false
                 data.dataSent = {}
             }
-            if(cursor_at >= calendar_at) {
-                let laskey = this.intervalsCollection.intervals.length -1
-                data.selectedSlot = this.intervalsCollection.intervals[laskey].start
+            if(cursor_at > calendar_at) {
+                data.selectedSlot = this.getSlotAvailableForDemo()
+                data.location =  this.service.type !== undefined ? this.service.type[0]:''
             }
             
             if(cursor_at > form_at) {
                 data.appointmentSaved = true
                 
                 if(this.passedDataSent !== null)data.dataSent = this.passedDataSent
-                else data.dataSent = this.options.demoData.form
+                else{
+                    data.dataSent = this.options.demoData.form
+                    /* data.dataSent.type = this.service.type[0]
+                    data.dataSent.time = this.getSlotAvailableForDemo() */
+                } 
             }
+
             return data
         },
 
@@ -72,6 +77,10 @@ export default {
                 case 'confirmation':
                     return 'BookingFormConfirmation'
             }
+        },
+
+        getSlotAvailableForDemo(){
+            return this.intervalsCollection.intervals[0].start
         }
 
     }

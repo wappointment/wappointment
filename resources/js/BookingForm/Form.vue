@@ -1,23 +1,19 @@
 <template>
     <transition name="slide-fade">
         <div v-if="mounted" class="max400">
-            <div v-if="!selectedServiceType">
-                
-                <div v-if="serviceHasTypes">
-                    <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: physicalSelected}">
-                        <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
-                        <div>{{options.form.inperson}}</div>
-                    </div>
-                    <div v-if="allowedType('phone')" @click="selectType('phone')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: phoneSelected}">
-                        <FontAwesomeIcon icon="phone" size="lg"/>
-                        <div>{{options.form.byphone}}</div>
-                    </div>
-                    <div v-if="allowedType('skype')" @click="selectType('skype')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: skypeSelected}">
-                        <FontAwesomeIcon :icon="['fab', 'skype']" size="lg"/>
-                        <div>{{options.form.byskype}}</div>
-                    </div>
+            <div v-if="serviceHasTypes">
+                <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: physicalSelected}">
+                    <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
+                    <div>{{options.form.inperson}}</div>
                 </div>
-
+                <div v-if="allowedType('phone')" @click="selectType('phone')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: phoneSelected}">
+                    <FontAwesomeIcon icon="phone" size="lg"/>
+                    <div>{{options.form.byphone}}</div>
+                </div>
+                <div v-if="allowedType('skype')" @click="selectType('skype')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: skypeSelected}">
+                    <FontAwesomeIcon :icon="['fab', 'skype']" size="lg"/>
+                    <div>{{options.form.byskype}}</div>
+                </div>
             </div>
             <transition name="slide-fade">
                 <div v-if="selectedServiceType">
@@ -80,11 +76,8 @@ import PhoneInput from './PhoneInput'
 import Strip from '../Helpers/Strip'
 
 import {isEmail, isEmpty} from 'validator'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faMapMarkedAlt, faPhone} from '@fortawesome/free-solid-svg-icons'
-import { faSkype} from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faMapMarkedAlt, faPhone, faSkype)
+
+const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
 
 export default {
@@ -202,6 +195,7 @@ export default {
             } 
             
             this.$emit('back', this.relations.prev,{selectedSlot:false, location:''})
+            
         },
         
         confirm(){
@@ -274,7 +268,6 @@ export default {
 }
 </script>
 <style>
-
 .wap-front .phone-field .dropdown ul {
     position: initial;
     max-width: 266px;

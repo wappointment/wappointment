@@ -10,17 +10,18 @@
                 <span>{{ appointment_starts_at }}</span>
             </div>
             <div>
-                <span class="wlabel">{{options.confirmation.duration}}</span>
-                <span>{{service.duration}}min</span>
-            </div>
-            <div>
                 <span class="wlabel">{{options.confirmation.service}}</span>
                 <span>{{ service.name }}</span>
             </div>
+            <div>
+                <span class="wlabel">{{options.confirmation.duration}}</span>
+                <span>{{service.duration}}{{getMinText}}</span>
+            </div>
+            
         </div>
-        <p v-if="isApprovalManual">{{options.confirmation.pending}}</p>
+        <div class="wdescription" v-if="isApprovalManual">{{options.confirmation.pending}}</div>
         <div v-if="physicalSelected">
-            <p>{{options.confirmation.physical}} </p>
+            <div class="wdescription">{{options.confirmation.physical}} </div>
             <div class="address-service">
                 <BookingAddress :service="service"><FontAwesomeIcon icon="map-marked-alt" size="lg"/></BookingAddress>
             </div>
@@ -30,10 +31,10 @@
             </BookingAddress>
         </div>
         <div class="wdescription" v-if="phoneSelected">
-            <p>{{options.confirmation.phone}} <strong>{{ getClientPhone}}</strong></p>
+            {{options.confirmation.phone}} <strong>{{ getClientPhone}}</strong>
         </div>
         <div class="wdescription" v-if="skypeSelected">
-            <p>{{options.confirmation.skype}} <strong>{{ getClientSkype }}</strong> </p>
+            {{options.confirmation.skype}} <strong>{{ getClientSkype }}</strong> 
         </div>
         <div class="wdescription my-2 text-center">
             <transition name="slide-fade">
@@ -49,20 +50,16 @@
 
 <script>
 import BookingAddress from './Address'
-import DurationCell from './DurationCell'
 import SaveButtons from './SaveButtons'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faMapMarkedAlt, faPhone, faCalendarCheck, faCalendarAlt } from '@fortawesome/free-solid-svg-icons'
-import { faSkype } from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck,faCalendarAlt)
+import minText from './minText'
+const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 export default {
     components: {
         FontAwesomeIcon,
         BookingAddress,
         SaveButtons,
-        DurationCell
     }, 
+    mixins: [minText],
     props: [
         'appointment',
         'service', 
@@ -155,7 +152,7 @@ export default {
     text-align: center;
 }
 .wdescription{
-    color:#888686;
-    font-size: .9em;
+    color:#9f9898;
+    font-size: .8em;
 }
 </style>

@@ -25,12 +25,7 @@
 <script>
 import AbstractField from './AbstractField'
 import {isObject, isNil, clone} from "lodash"
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faMapMarkedAlt, faPhone, faCalendarCheck } from '@fortawesome/free-solid-svg-icons'
-import { faSkype} from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck)
+const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 
 export default {
     name:'core-checkimages',

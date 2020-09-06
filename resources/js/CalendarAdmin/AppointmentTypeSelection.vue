@@ -17,12 +17,8 @@
 
 <script>
 
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faMapMarkedAlt, faPhone } from '@fortawesome/free-solid-svg-icons'
-import { faSkype } from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-library.add(faMapMarkedAlt, faPhone, faSkype)
+//import appFawesome from '../appFawesome'
+const appFawesome = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 
 export default {
     props: ['service', 'preselect'],
@@ -30,7 +26,7 @@ export default {
         selection: false,
     }),
     components: {
-        'font-awesome-icon': FontAwesomeIcon,
+        'font-awesome-icon': appFawesome,
     }, 
     mounted(){
         if(this.service.type.length == 1){

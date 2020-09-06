@@ -129,12 +129,8 @@ import RequestMaker from '../Modules/RequestMaker'
 import AbstractListing from './AbstractListing'
 import DurationCell from '../BookingForm/DurationCell'
 import BookingPageButton from '../Components/Widget/BookingPageButton'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faMapMarkedAlt, faPhone, faCalendarCheck } from '@fortawesome/free-solid-svg-icons'
-import { faSkype} from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 
-library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck)
 export default {
   extends: abstractView,
   

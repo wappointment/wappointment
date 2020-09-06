@@ -1,0 +1,30 @@
+.closable .close{
+    width: 15px;
+    display: inline-block;
+    height: 15px;
+    position: relative;
+    margin-left: .4em;
+}
+.closable .close::after {
+    transform: translateX(15px) rotate(-45deg);
+}
+.closable .close::before, .closable .close::after {
+    content: ' ';
+    position: absolute;
+    background-color: #fff;
+}
+.closable .close::before {
+    transform: translateX(15px) rotate(45deg);
+}
+.closable .close:hover::before, .closable .close:hover::after {
+    background-color: #575656;
+    width: 2px;
+}
+
+
+.closable .close::before, .closable .close::after  {
+    height: 10px;
+    width: 1px;
+    top: 3px;
+    right: 22px;
+}

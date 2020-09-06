@@ -116,7 +116,6 @@ import FrontDemo from '../FrontDemo'
 import ColorPicker from './ColorPicker'
 import FormFieldCheckbox from '../Form/FormFieldCheckbox'
 import FormFieldSlider from '../Form/FormFieldSlider'
-import BookingFormDemo from './BookingFormDemo'
 import Colors from '../Modules/Colors'
 import SettingsSave from '../Modules/SettingsSave'
 import CountrySelector from './CountrySelector'
@@ -181,8 +180,8 @@ export default {
                 email: 'j.mcgregor@gmail',
                 phone: '6552',
                 skype: 'jmcg',
-                type: this.config.service.type[0],
-                time: this.preselection(),
+                type: this.config.service.type !== undefined ? this.config.service.type[0]:'',
+                time: false,
             }
         }
         this.tbgcolor = this.bgcolor
@@ -370,9 +369,6 @@ export default {
             this.labelActiveStep = labelActiveStep
         },
 
-        preselection(){
-            return (new Date()).getTime() / 1000
-        },
         toggleColor(){
             this.colorEdit=!this.colorEdit
         },

@@ -15,7 +15,7 @@
 
                 <transition :name="slotsAnimation">
                     <div v-if="dayWeekSelected(selectedWeek) && selectedDay">
-                        <small class="timezone">{{ timezoneDisplay(currentTz) }}</small>
+                        <div class="timezone">{{ timezoneDisplay(currentTz) }}</div>
                         <div class="slotsPane p-2" >
                             <DaySlots 
                             :intervals="availableIntervals.intervals" 

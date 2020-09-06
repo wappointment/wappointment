@@ -5,7 +5,14 @@
             :isStepSlotSelection="isStepSlotSelection"
             :options="options"
             :service="service" 
+            :services="services"
             :duration="duration" 
+            :location="location"
+            :rescheduling="rescheduling"
+            :appointmentSaved="appointmentSaved"
+            @changeService="childChangedStep"
+            @changeDuration="childChangedStep"
+            @changeLocation="childChangedStep"
             @changeStaff="childChangedStep"
             />
             <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
@@ -20,6 +27,8 @@
             @refreshed="refreshClick"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
+            @changeLocation="childChangedStep"
+            @changeStaff="childChangedStep"
             />
 
             <div class="wrap-calendar p-2" :class="'step-'+currentStep">
@@ -120,12 +129,13 @@ export default {
         if(this.step == 'button') {
             this.$emit('changedStep','selection')
         }
+        
 
     },
 
     computed: {
         isCompactHeader(){
-            return this.options.general !== undefined && [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
+            return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
         },
         appointmentStartsAt(){
             return this.converted 
@@ -204,6 +214,10 @@ export default {
             this.currentStep = newStep
             setTimeout(this.loadStep.bind(null,newStep), 100)
         },
+        reloadStep(data){
+            
+            setTimeout(this.loadStep.bind(null,'BookingFormInputs'), 100)
+        },
         selectedLocation(location){
             this.location = location
         },
@@ -213,6 +227,7 @@ export default {
                     this[key] = dataChanged[key]
                 }
             }
+            this.autoSelectLocation()
         },
 
         getDefaultService(){
@@ -321,14 +336,21 @@ export default {
 
             }else{
                 this.currentStep = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', {service:this.service, duration:this.duration, location: this.location})
+                this.autoSelectLocation()
             }
-            
+
             this.loadStep(this.currentStep)
 
             if(this.loadedInit !== undefined){
                 this.loadedInit(this.step)
             }
             
+        },
+
+        autoSelectLocation(){
+            if(Array.isArray(this.service.type) && this.service.type.length == 1){
+                this.location = this.service.type[0]
+            }
         },
 
         fetchFormattedDate(){

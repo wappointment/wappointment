@@ -15,13 +15,13 @@ class WidgetSettings
             ],
 
             'header' => [
-                'bg' => '#f0f0f0',
-                'text' => '#212529',
+                'bg' => '#F5F4F4',
+                'text' => '#676767',
                 'durationbg' => '#eeeeee',
             ],
             'body' => [
                 'bg' => '#ffffff', //calendar_bg
-                'text' => '#212529', //calendar_cotext
+                'text' => '#505050', //calendar_cotext
                 'disabled_links' => '#cccccc' //calendar_codisabled
             ],
             'selected_day' => [
@@ -48,9 +48,11 @@ class WidgetSettings
             ]
         ],
         'general' => [
-            'check_header_compact_mode' => true,
+            'check_header_compact_mode' => false,
             'when' => 'When',
-            'service' => 'Service'
+            'service' => 'Service',
+            'location' => 'Where',
+            'min' => 'min'
         ],
         'button' => [
             'title' => 'Book now!',
@@ -178,8 +180,7 @@ class WidgetSettings
             ]
         ],
         'general' => [
-            'check_header_compact_mode' => ['label' => 'Header Compact mode']
-
+            'check_header_compact_mode_gen' => ['label' => 'Header Compact mode']
         ],
         'button' => [
             'backgroundColor' => ['label' => 'Primary Button Background'],

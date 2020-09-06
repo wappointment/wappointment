@@ -3,7 +3,7 @@ import Vue from './appVue'
 import ClickCopy from './Fields/ClickCopy'
 import InputPh from './Fields/InputLabelMaterial'
 import VideoIframe from './Ne/VideoIframe'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ './appFawesome')
 import DurationCell from './BookingForm/DurationCell'
 import PhoneInput from './BookingForm/PhoneInput'
 import AbstractListing from './Views/AbstractListing'
@@ -169,7 +169,6 @@ const router = window.wappointmentrouter = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   
-  console.log('routerSetupRedirect 1', to)
   
   if(to.query.page!== undefined && to.query.page.indexOf('wappointment_')!==-1){
     if(['wappointment_calendar', 'wappointment_settings'].indexOf(to.query.page) !== -1 && to.hash.indexOf('#/') !== -1){

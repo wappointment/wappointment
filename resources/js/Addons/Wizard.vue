@@ -28,13 +28,9 @@ import Widget from '../Views/Subpages/Widget'
 import Regav from '../Views/Subpages/Regav'
 import abstractView from '../Views/Abstract'
 import RequestMaker from '../Modules/RequestMaker'
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { faMapMarkedAlt, faPhone, faCalendarCheck } from '@fortawesome/free-solid-svg-icons'
-import { faSkype} from '@fortawesome/free-brands-svg-icons'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 import AbstractListing from '../Views/AbstractListing'
 
-library.add(faMapMarkedAlt, faPhone, faSkype, faCalendarCheck)
 export default {
   components: window.wappointmentExtends.filter('AddonsSettingsComponents', 
   { Service, Widget, Regav, 

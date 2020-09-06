@@ -19,7 +19,7 @@ import BookingFormDemo from './Components/BookingFormDemo'
 export default {
     extends: Front,
     components:{
-      BookingFormDemo: BookingFormDemo
+      BookingFormDemo: window.wappointmentExtends.filter('BookingDemoComponent', BookingFormDemo)
     },
     methods: {
 
