@@ -137,6 +137,18 @@
             color: {{ hx_rgb(opts.colors.body.text) }};
         }
 
+        .confirmation-summary span{
+            color: {{ hx_rgb(opts.colors.body.text,.8) }};
+        }
+        .wtitle{
+            color: {{ hx_rgb(opts.colors.body.text,.8) }};
+            font-size: 1em;
+            text-align:center;
+        }
+        .wdescription{
+            color: {{ hx_rgb(opts.colors.body.text,.8) }};
+        }
+
         .wap-front .wap-head .duration {
             background-color: {{ hx_rgb(opts.colors.header.durationbg) }};
             border-color: {{ hx_rgb(opts.colors.header.durationbg) }};

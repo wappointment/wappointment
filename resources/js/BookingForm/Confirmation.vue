@@ -1,5 +1,5 @@
 <template>
-    <div class="confirmation-cell max400">
+    <div class="confirmation-cell">
         <div class="success d-flex align-items-center">
             <div class="bigicon"><FontAwesomeIcon icon="calendar-check" /> </div>
             <div class="text-conf">{{options.confirmation.confirmation}}</div>
@@ -143,16 +143,12 @@ export default {
 }
 .confirmation-summary .wlabel{
     font-weight: bold;
-    color:#888686;
 }
-.confirmation-summary span{
-    color:#9f9898;
+.wdescription{
+    font-size: .8em;
 }
 .text-center{
     text-align: center;
 }
-.wdescription{
-    color:#9f9898;
-    font-size: .8em;
-}
+
 </style>

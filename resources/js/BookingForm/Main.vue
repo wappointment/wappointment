@@ -213,11 +213,9 @@ export default {
             }
             this.currentStep = newStep
             setTimeout(this.loadStep.bind(null,newStep), 100)
+            this.$emit('changedStep',newStep)
         },
-        reloadStep(data){
-            
-            setTimeout(this.loadStep.bind(null,'BookingFormInputs'), 100)
-        },
+
         selectedLocation(location){
             this.location = location
         },
@@ -450,6 +448,7 @@ export default {
                         data:"dataSent",
                         options:"options",
                         relatedComps: 'relatedComps', 
+                        appointment_starts_at: 'appointmentStartsAt',
                     },
                     listeners: {
                         back:'childChangedStep',

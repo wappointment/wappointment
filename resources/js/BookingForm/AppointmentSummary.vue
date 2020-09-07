@@ -8,17 +8,10 @@
         </div>
         <div class="wsummary-section wsec-starts" v-if="startsAt">
             <div class="wlabel"  v-if="hasText(['general','when'])">{{options.general.when}}</div>
-            <div class="wselected wmy-4">
-                <FontAwesomeIcon :icon="['far','clock']" /> {{ startsAt }}
-            </div>
-        </div>
-        <div class="wsummary-section wsec-location" v-if="location && false">
-            <div class="wlabel" v-if="hasText(['general','location'])">{{options.general.location}}</div>
-            <div class="closable wselected wmy-4">
-                <FontAwesomeIcon :icon="getLocationIcon" /> 
-                <span v-if="!isPhysical">{{ getLocationLabel }}</span>
-                <a v-else :href="getMapAdress" target="_blank" >{{ getLocationLabel }}</a>
-                <span class="close" @click="changeLocation"></span>
+            <div class="wselected closable wmy-4 d-flex align-items-center d-flex-inline">
+                <FontAwesomeIcon :icon="['far','clock']" />
+                <span class="wml-2">{{ startsAt }}</span>
+                <span class="close" @click="changeTime" ></span>
             </div>
         </div>
     </div>
@@ -78,9 +71,7 @@ export default {
         },
     },
     methods:{
-        changeLocation(){
-            this.$emit('changeLocation', {loading:false, location:''})
-        },
+
         hasText(searchOptions){
             let element = this.options
             for (let i = 0; i < searchOptions.length; i++) {
@@ -91,6 +82,9 @@ export default {
                 }
             }
             return true
+        },
+        changeTime(){
+            this.$emit('changeService', 'BookingCalendar', {selectedSlot:false})
         }
     }
     

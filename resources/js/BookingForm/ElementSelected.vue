@@ -2,7 +2,8 @@
 <template>
     <div class="d-flex align-items-center">
         <span>{{ service.name }}</span> 
-        <span v-if="duration" class="wduration"> - {{ getDuration }}</span> 
+        <span v-if="duration" class="wduration"> - {{ getDuration }}</span>
+        <span v-if="getPrice" class="wprice"> - {{ getPrice }}</span> 
         <span v-if="cancellable" class="wclose" role="button" @click="$emit('discardElement', service)"></span>
     </div>
 </template>
@@ -27,8 +28,25 @@ export default {
     computed:{
         getDuration(){
             return this.duration + this.options.general.min
+        },
+
+        getPrice(){
+            if(this.service.options.durations !== undefined){
+                for (let i = 0; i < this.service.options.durations.length; i++) {
+                    const dur = this.service.options.durations[i];
+                    if(dur.duration == this.duration && ['',undefined].indexOf(dur.woo_price) === -1 ){
+                        return dur.woo_price + wappointment_woocommerce.currency_symbol
+                    }
+                }
+            }else{
+                if(this.service.options.woo_price !== undefined){
+                    return this.service.options.woo_price + wappointment_woocommerce.currency_symbol
+                }
+            }
+            
+            return false
         }
-    }
+    },
 }
 </script>
 <style>

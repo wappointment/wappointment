@@ -1,14 +1,14 @@
 <template>
     <div class="wap-front" :class="getDynaClasses" :id="elementId">
         <StyleGenerator :options="opts" :wrapper="elementId" :largeVersion="largeVersion"></StyleGenerator>
-        <div v-if="isPage">
-            <BookingForm v-if="isBookingPage" :options="opts"></BookingForm>
+        <div v-if="isPage" :class="'step-'+stepName">
+            <BookingForm v-if="isBookingPage" :options="opts" @changedStep="stepChanged"></BookingForm>
             <ViewingAppointment v-else  :options="opts" :view="getParameterByName('view')" :appointmentkey="getParameterByName('appointmentkey')"></ViewingAppointment>
         </div>
         
-        <div class="wap-wid" v-if="isWidget">
+        <div class="wap-wid" :class="'step-'+stepName" v-if="isWidget">
             <span v-if="bookForm && isBottomRight" @click="backToButton" class="close-wid"></span>
-            <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :passedDataSent="dataSent"></BookingForm>
+            <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
             <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
         </div>
         <div class="wap-bg" v-if="bookForm"></div>
@@ -38,6 +38,7 @@ export default {
         dataSent: null,
         opts: null,
         elementId: '',
+        stepName: '',
         disabledButtons: false,
         buttonTitle: '',
         brFixed: undefined,
@@ -95,6 +96,9 @@ export default {
 
     },
     methods: {
+        stepChanged(stepName){
+          this.stepName = stepName
+        },
         processShortcode(){
           if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){
             if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
@@ -117,6 +121,9 @@ export default {
 </script>
 <style>
 .large-version .wap-wid{
+    max-width: 420px;
+}
+.large-version .wap-wid.step-BookingCalendar{
     max-width: 100%;
 }
 .wap-wid{
@@ -192,9 +199,12 @@ export default {
     pointer-events: none;
   }
 
-  .wap-front .d-flex {
+.wap-front .d-flex {
   display: -ms-flexbox !important;
   display: flex !important;
+}
+.wap-front .d-flex.d-flex-inline{
+    display: inline-flex !important;
 }
 .wap-front .flex-wrap {
     -ms-flex-wrap: wrap !important;
@@ -275,6 +285,10 @@ right: 0;
     width: 1px;
     top: 6px;
     right: 28px;
+}
+
+.wap-front .wml-2{
+    margin-left:.4em;
 }
 
 @media only screen and (max-width: 500px) {

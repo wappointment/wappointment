@@ -1,7 +1,24 @@
 <template>
     <transition name="slide-fade">
-        <div v-if="mounted" class="max400">
-            <div v-if="serviceHasTypes">
+        <div v-if="mounted" >
+            <div class="form-summary text-center" v-if="isCompactHeader">
+                <div class="my-2">
+                    <div><strong>{{options.form.header}}</strong></div>
+                    <div v-if="appointment_starts_at">
+                        <div class="wselected closable wmy-4 d-flex align-items-center d-flex-inline">
+                            <FontAwesomeIcon :icon="['far','clock']" />
+                            <span class="wml-2">{{ appointment_starts_at }}</span>
+                            <span class="close" @click="back" ></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="wappointment-errors" v-if="errors.length > 0">
+                    <div v-for="error in errors">
+                        {{ error }}
+                    </div>
+                </div>
+            </div>
+            <div v-if="serviceHasTypes" class="text-center">
                 <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: physicalSelected}">
                     <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
                     <div>{{options.form.inperson}}</div>
@@ -17,11 +34,7 @@
             </div>
             <transition name="slide-fade">
                 <div v-if="selectedServiceType">
-                    <div class="wappointment-errors" v-if="errors.length > 0">
-                        <div v-for="error in errors">
-                            {{ error }}
-                        </div>
-                    </div>
+                    
                     <div class="wap-booking-fields">
                         <div v-if="physicalSelected" class="address-service">
                             <BookingAddress :service="service">
@@ -139,6 +152,9 @@ export default {
 
     },
     computed: {
+        isCompactHeader(){
+            return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
+        },
         getTerms(){
             return this.strip(this.options.form.terms).replace('[link]', '<a href="'+this.options.form.terms_link+'" target="_blank">').replace('[/link]', '</a>')
         },
@@ -322,6 +338,10 @@ export default {
 }
 .wap-front .wshadow{
   box-shadow: inset 0px 8px 10px 0 rgba(0,0,0,.08);
+}
+.wap-front .form-summary .wselected {
+    display: inline-block !important;
+    font-size: .8em;
 }
 
 </style>
