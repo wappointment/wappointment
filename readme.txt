@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.5
 Requires PHP: 7.0
-Stable tag: 1.6.0
+Stable tag: 1.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -146,8 +146,11 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 1.6.1 - 2020-08-?? =
+= 1.7.0 - 2020-09-07 =
 * Added prefilled booking form when user is logged in
+* Improved design of booking form
+* Added rescheduled emails when rescheduling from the backend
+* Added security plugin conflict detection
 
 = 1.6.0 - 2020-08-10 =
 * Refactored form generator latest version extendable
