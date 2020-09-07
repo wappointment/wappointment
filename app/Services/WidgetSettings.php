@@ -180,7 +180,7 @@ class WidgetSettings
             ]
         ],
         'general' => [
-            'check_header_compact_mode_gen' => ['label' => 'Header Compact mode']
+            'check_header_compact_mode' => ['label' => 'Header Compact mode']
         ],
         'button' => [
             'backgroundColor' => ['label' => 'Primary Button Background'],

@@ -27,7 +27,7 @@ class ViewsData
             'regav' => Settings::getStaff('regav'),
             'availaible_booking_days' => Settings::getStaff('availaible_booking_days'),
             'staffs' => Staff::getWP(),
-            'activeStaffId' => Settings::get('activeStaffId'),
+            'activeStaffId' => (string)Settings::get('activeStaffId'),
             'activeStaffAvatar' => Settings::getStaff('avatarId') ?
                 wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
             'activeStaffGravatar' => $gravatar_img,

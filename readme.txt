@@ -151,6 +151,7 @@ It requires work on your end but keeps your site safe and optimized.
 * Improved design of booking form
 * Added rescheduled emails when rescheduling from the backend
 * Added security plugin conflict detection
+* Corrected bug when discarding active staff
 
 = 1.6.0 - 2020-08-10 =
 * Refactored form generator latest version extendable
