@@ -2,7 +2,7 @@
     <transition name="fade" mode="out-in">
       <div class="wappointment-wrap">
           <div v-if="!db_update">
-              <HelloPage />
+              <UpdateInformation />
               <VersionsInfos />
           </div>
           <div v-else>
@@ -15,10 +15,10 @@
 
 <script>
 import VersionsInfos from './Ne/VersionsInfos'
-import HelloPage from './Ne/HelloPage'
 import PendingDBUpdate from './Ne/PendingDBUpdate'
+import UpdateInformation from './Ne/UpdateInformation'
 export default {
-    components: {VersionsInfos, HelloPage, PendingDBUpdate},
+    components: {VersionsInfos, PendingDBUpdate, UpdateInformation},
     data: () => ({
         db_update: false,
     }),

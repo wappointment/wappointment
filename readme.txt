@@ -146,6 +146,10 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 1.7.1 - 2020-09-08 =
+* Corrected bug on active staff switch
+* Added update page information
+
 = 1.7.0 - 2020-09-07 =
 * Added prefilled booking form when user is logged in
 * Improved design of booking form

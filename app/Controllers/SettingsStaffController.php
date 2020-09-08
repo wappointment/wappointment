@@ -23,7 +23,6 @@ class SettingsStaffController extends RestController
             return Status::setHelloPage($request->input('val'));
         }
 
-
         $result = Settings::saveStaff($request->input('key'), $request->input('val'));
 
         if (in_array($request->input('key'), ['regav', 'availaible_booking_days'])) {
