@@ -36,7 +36,7 @@ class Process extends AbstractProcess
         Settings::saveMultiple([
             'mail_config' => $mail_config,
             'show_welcome' => true,
-            'activeStaffId' => (string)WPHelpers::userId(),
+            'activeStaffId' => (int)WPHelpers::userId(),
             'email_notifications' => WPHelpers::currentUserEmail(),
         ]);
         Status::dbVersionUpdateComplete();

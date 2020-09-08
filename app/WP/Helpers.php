@@ -124,9 +124,14 @@ class Helpers
     public static function transferStaffOptions($old_staff_id, $new_staff_id)
     {
         //dd($old_staff_id, $new_staff_id);
+        if ((int)$old_staff_id === (int)$new_staff_id) {
+            return;
+        }
         $options_to_transfer = ['settings', 'since_last_refresh', 'availability'];
+
         foreach ($options_to_transfer as $option_name) {
             $originalUserSetting = self::getStaffOption($option_name, $old_staff_id);
+
             self::setStaffOption($option_name, $originalUserSetting, $new_staff_id);
             self::deleteStaffOption($option_name, $old_staff_id);
         }
