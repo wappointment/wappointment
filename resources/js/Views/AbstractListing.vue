@@ -41,7 +41,7 @@ export default {
         loadedElements(response){
             this.elements = response.data
         },
-        failedLoadingElements(){
+        failedLoadingElements(fail){
             this.$WapModal().notifyError('Error Loading elements')
         },
         loadElements() {

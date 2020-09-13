@@ -128,7 +128,6 @@ class WidgetSettings
                 'fields' => [
                     'text' => ['label' => 'Text'],
                     'bg' => ['label' => 'Background'],
-                    'durationbg' => ['label' => 'Duration'],
                 ],
                 'main' => true
             ],

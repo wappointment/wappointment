@@ -116,6 +116,9 @@ export default {
     }),
     created(){
         this.refresh()
+        if(this.modelHolder.id !== undefined){
+            this.isValid = true
+        }
     },
 
     computed: {

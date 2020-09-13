@@ -39,7 +39,7 @@ export default {
                     }
                 }
             }else{
-                if(this.service.options.woo_price !== undefined){
+                if(['',undefined].indexOf(this.service.options.woo_price) === -1 ){
                     return this.service.options.woo_price + wappointment_woocommerce.currency_symbol
                 }
             }

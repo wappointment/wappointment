@@ -1,5 +1,13 @@
 <template>
     <v-style>
+        :root {
+            --wappo-pri-bg: {{ hx_rgb(opts.colors.primary.bg) }};
+            --wappo-pri-tx: {{ hx_rgb(opts.colors.primary.text) }};
+            --wappo-sec-bg: {{ hx_rgb(opts.colors.secondary.bg) }};
+            --wappo-sec-tx: {{ hx_rgb(opts.colors.secondary.text) }};
+            --wappo-sec-sel-bg: {{ hx_rgb(opts.colors.secondary.bg_selected) }};
+            --wappo-sec-sel-tx: {{ hx_rgb(opts.colors.secondary.text_selected) }};
+        }
         .wap-front .wbtn.wbtn-primary-light,
         .wap-front .wbtn.wbtn-primary-light:not(:disabled):not(.disabled):active, 
         .wap-front .wbtn.wbtn-primary-light:not(:disabled):not(.disabled).active {
@@ -148,12 +156,7 @@
         .wdescription{
             color: {{ hx_rgb(opts.colors.body.text,.8) }};
         }
-
-        .wap-front .wap-head .duration {
-            background-color: {{ hx_rgb(opts.colors.header.durationbg) }};
-            border-color: {{ hx_rgb(opts.colors.header.durationbg) }};
-        }
-
+        
         .wap-front .wap-head img{
             border-radius: {{ calendarRound }}em;
         }
@@ -232,6 +235,10 @@
             padding: .3em;
             margin: .5em 0;
         }
+        .wap-front .text-sm{
+            color: {{ hx_rgb(opts.colors.body.tx_small) }};
+        }
+
         /** wrapper tag **/
         {{ '#'+wrapper }}.wap-front {
             font-size: {{ baseFontSize }};

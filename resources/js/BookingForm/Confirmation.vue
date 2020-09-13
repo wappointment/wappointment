@@ -147,8 +147,5 @@ export default {
 .wdescription{
     font-size: .8em;
 }
-.text-center{
-    text-align: center;
-}
 
 </style>

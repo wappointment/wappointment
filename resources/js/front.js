@@ -6,8 +6,12 @@ import VueService from './Plugins/vue-service'
 import WLoader from './Components/Loaders/BigCalendar'
 import VueWapModal from './Plugins/vue-wap-modal'
 
+const WapImage = () => import(/* webpackChunkName: "WapImage" */ './Components/WapImage')
+
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
+
+Vue.component('WapImage', WapImage)
 Vue.component('WLoader', WLoader)
 Vue.component('v-style', {
     render: function (createElement) {

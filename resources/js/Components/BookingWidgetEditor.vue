@@ -28,7 +28,7 @@
                         <div class="d-flex align-items-center mb-2">
                             <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit"  @click="toggleColor">
                                 <span v-if="colorEdit"><FontAwesomeIcon :icon="['fas', 'edit']" size="lg"/> Edit Steps</span>
-                                <span v-else><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Global</span>
+                                <span v-else><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Color</span>
                             </button>
                             <div class="d-flex flex-wrap" v-if="!colorEdit"> 
                                 <button v-if="widgetFields.general !== undefined" class="btn btn-secondary btn-xs m-1 tt-below" 

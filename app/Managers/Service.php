@@ -13,4 +13,9 @@ class Service
     {
         return Central::get('Service')::saveService($data);
     }
+
+    public static function patch($service_id, $data)
+    {
+        return Central::get('Service')::patch($service_id, $data);
+    }
 }

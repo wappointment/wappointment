@@ -13,4 +13,5 @@ interface ServiceInterface
     public static function getObject($service_id = false);
 
     public static function all();
+    public static function patch($service_id, $data);
 }

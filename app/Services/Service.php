@@ -61,6 +61,15 @@ class Service implements ServiceInterface
         return $resultSave;
     }
 
+    public static function patch($service_id, $data)
+    {
+        //dd('$service_id, $data', $service_id, $data);
+        $serviceDB = static::get('service');
+        $data['options'] = array_merge($serviceDB['options'], $data['options']);
+        $serviceDB = array_merge($serviceDB, $data);
+        Settings::save('service', $serviceDB);
+    }
+
     public static function get($service_id = false)
     {
         return Settings::get('service');

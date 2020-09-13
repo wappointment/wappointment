@@ -290,6 +290,17 @@ right: 0;
 .wap-front .wml-2{
     margin-left:.4em;
 }
+.wprice{
+  font-weight: bold;
+}
+
+.wap-front .text-center{
+    text-align: center;
+}
+
+.wap-front .text-sm{
+  font-size: .7em;
+}
 
 @media only screen and (max-width: 500px) {
   .wap-front.br-fixed .wap-bg{

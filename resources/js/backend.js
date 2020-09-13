@@ -4,6 +4,7 @@ import ClickCopy from './Fields/ClickCopy'
 import InputPh from './Fields/InputLabelMaterial'
 import VideoIframe from './Ne/VideoIframe'
 const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ './appFawesome')
+const WapImage = () => import(/* webpackChunkName: "WapImage" */ './Components/WapImage')
 import DurationCell from './BookingForm/DurationCell'
 import PhoneInput from './BookingForm/PhoneInput'
 import AbstractListing from './Views/AbstractListing'
@@ -28,6 +29,7 @@ import routerQueryRedirect from './Standalone/routerQueryRedirect'
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
 
+Vue.component('WapImage', WapImage)
 Vue.component('v-style', {
   render: function (createElement) {
       return createElement('style', this.$slots.default)

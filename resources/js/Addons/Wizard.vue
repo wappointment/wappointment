@@ -4,7 +4,7 @@
             <li class="nav-item"  v-for="(instruction,idx) in addon.instructions">
                 <a class="nav-link" :class="{active:currentStep == instruction.step}" href="javascript:;" 
                 @click="showStep(instruction.step)">
-                    {{ idx + 1 }} - {{ instruction.button }}
+                    {{ instruction.button }}
                 </a>
             </li>
         </ul>

@@ -15,7 +15,6 @@ class Addons
         if ($addons === false) {
             $addons = static::getActive();
         }
-
         return !empty($addons[$addon_name]);
     }
 }
