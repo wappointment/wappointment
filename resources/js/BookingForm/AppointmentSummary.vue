@@ -9,7 +9,7 @@
         <div class="wsummary-section wsec-starts" v-if="startsAt">
             <div class="wlabel"  v-if="hasText(['general','when'])">{{options.general.when}}</div>
             <div class="wselected closable wmy-4 d-flex align-items-center d-flex-inline">
-                <FontAwesomeIcon :icon="['far','clock']" />
+                <WapImage :faIcon="['far','clock']" size="sm" />
                 <span class="wml-2">{{ startsAt }}</span>
                 <span class="close" @click="changeTime" ></span>
             </div>
@@ -18,7 +18,6 @@
 </template>
 
 <script>
-const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 import ElementSelected from './ElementSelected'
 export default {
     props: {
@@ -41,9 +40,7 @@ export default {
         },
         rescheduling:{}
     },
-    components: {
-        ElementSelected, FontAwesomeIcon
-    },
+    components: { ElementSelected },
     computed:{
         getLocationLabel(){
             if(this.location == 'physical') return this.getAddress

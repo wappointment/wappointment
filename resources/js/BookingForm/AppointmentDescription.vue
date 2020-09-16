@@ -3,18 +3,19 @@
         <div v-if="physicalSelected">
             <p>{{options.confirmation.physical}} </p>
             <div class="address-service">
-                <BookingAddress :service="service"><FontAwesomeIcon icon="map-marked-alt" size="lg"/></BookingAddress>
+                <BookingAddress :service="service">
+                    <WapImage :faIcon="'map-marked-alt'" size="lg" /></BookingAddress>
             </div>
             
             <BookingAddress :iframe="true" :service="service">
-                <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
+                <WapImage :faIcon="'map-marked-alt'" size="lg" />
             </BookingAddress>
         </div>
         <div v-if="phoneSelected">
-            <p>{{options.confirmation.phone}} <strong>{{ showResult.phone}}</strong></p>
+            <div class="wdescription">{{options.confirmation.phone}} <strong>{{ showResult.phone}}</strong></div>
         </div>
         <div v-if="skypeSelected">
-            <p>{{options.confirmation.skype}} <strong>{{ showResult.skype}}</strong> </p>
+            <div class="wdescription">{{options.confirmation.skype}} <strong>{{ showResult.skype}}</strong> </div>
         </div>
     </div>
 </template>

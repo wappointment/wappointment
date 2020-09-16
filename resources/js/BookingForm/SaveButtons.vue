@@ -1,30 +1,28 @@
 
 <template>
     <div class="saveButtons">
-        <span class="wbtn-secondary wbtn googlecal" role="button" @click="goToUrl(saveToGoogle)">
-            <FontAwesomeIcon :icon="['fab', 'google']" size="lg"/> Google
+        <span class="wbtn-secondary wbtn googlecal d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToGoogle)">
+            <WapImage :faIcon="['fab', 'google']" size="md" /> <span class="ml-2">Google</span>
         </span>
-        <span class="wbtn-secondary wbtn outlook" role="button" @click="goToUrl(saveToIcal)">
-            <FontAwesomeIcon :icon="['fab', 'windows']" size="lg"/> Outlook
+        <span class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToIcal)">
+            <WapImage :faIcon="['fab', 'windows']" size="md" /> <span class="ml-2">Outlook</span>
         </span>
-        <span class="wbtn-secondary wbtn" role="button" @click="goToUrl(saveToIcal)">
-            <FontAwesomeIcon :icon="['fab', 'apple']" size="lg"/> iCal
+        <span class="wbtn-secondary wbtn d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToIcal)">
+            <WapImage :faIcon="['fab', 'apple']" size="md" /> <span class="ml-2">iCal</span>
         </span>
-        <span class="wbtn-secondary wbtn" role="button" @click="goToUrl(saveToYahoo)">
-            <FontAwesomeIcon :icon="['fab', 'yahoo']" size="lg"/> Yahoo
+        <span class="wbtn-secondary wbtn d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToYahoo)">
+            <WapImage :faIcon="['fab', 'yahoo']" size="md" /> <span class="ml-2">Yahoo</span>
         </span>
     </div>
 </template>
 
 <script>
 
-const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 import momenttz from '../appMoment'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 
 export default {
     props: ['service', 'staff', 'currentTz', 'physicalSelected','appointment', 'showResult'],
-    components:{FontAwesomeIcon},
     methods: {
         goToUrl(url){
             window.open(url)

@@ -6,7 +6,7 @@
                     <div><strong>{{options.form.header}}</strong></div>
                     <div v-if="appointment_starts_at">
                         <div class="wselected closable wmy-4 d-flex align-items-center d-flex-inline">
-                            <FontAwesomeIcon :icon="['far','clock']" />
+                            <WapImage :faIcon="['far','clock']" size="md" />
                             <span class="wml-2">{{ appointment_starts_at }}</span>
                             <span class="close" @click="back" ></span>
                         </div>
@@ -20,15 +20,15 @@
             </div>
             <div v-if="serviceHasTypes" class="text-center">
                 <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: physicalSelected}">
-                    <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
+                    <WapImage faIcon="map-marked-alt" size="lg" />
                     <div>{{options.form.inperson}}</div>
                 </div>
                 <div v-if="allowedType('phone')" @click="selectType('phone')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: phoneSelected}">
-                    <FontAwesomeIcon icon="phone" size="lg"/>
+                    <WapImage faIcon="phone" size="lg" />
                     <div>{{options.form.byphone}}</div>
                 </div>
                 <div v-if="allowedType('skype')" @click="selectType('skype')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: skypeSelected}">
-                    <FontAwesomeIcon :icon="['fab', 'skype']" size="lg"/>
+                    <WapImage :faIcon="['fab', 'skype']" size="lg" />
                     <div>{{options.form.byskype}}</div>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                     <div class="wap-booking-fields">
                         <div v-if="physicalSelected" class="address-service">
                             <BookingAddress :service="service">
-                                <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
+                                <WapImage faIcon="map-marked-alt" size="lg" />
                             </BookingAddress>
                         </div>
                         <div class="wap-field field-required" :class="hasError('name')">
@@ -90,7 +90,6 @@ import Strip from '../Helpers/Strip'
 
 import {isEmail, isEmpty} from 'validator'
 
-const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
 
 export default {
@@ -100,7 +99,6 @@ export default {
     components: {
         BookingAddress,
         PhoneInput,
-        FontAwesomeIcon,
         CountryStyle
     }, 
     data: () => ({

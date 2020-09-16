@@ -17,6 +17,7 @@ class DatabasePrivileges extends \Wappointment\Installation\MethodsRunner
     }
 
 
+
     protected function testResults($results)
     {
         $newresults = [];
@@ -32,7 +33,7 @@ class DatabasePrivileges extends \Wappointment\Installation\MethodsRunner
         return $newresults;
     }
 
-    protected function canInstallAndRun()
+    protected function xxxcanInstallAndRun()
     {
 
         $testPrivileges = ['CREATE', 'DELETE', 'INSERT', 'UPDATE'];

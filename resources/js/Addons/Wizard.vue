@@ -28,13 +28,11 @@ import Widget from '../Views/Subpages/Widget'
 import Regav from '../Views/Subpages/Regav'
 import abstractView from '../Views/Abstract'
 import RequestMaker from '../Modules/RequestMaker'
-const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 import AbstractListing from '../Views/AbstractListing'
 
 export default {
   components: window.wappointmentExtends.filter('AddonsSettingsComponents', 
-  { Service, Widget, Regav, 
-  FontAwesomeIcon, AbstractListing }, 
+  { Service, Widget, Regav, AbstractListing }, 
   {extends: abstractView, mixins: [RequestMaker]} ),
     props: ['addon'],
     data() {

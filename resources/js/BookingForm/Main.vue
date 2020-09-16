@@ -511,6 +511,9 @@ export default {
 .wap-front .mr-2{
     margin-right: .3em !important;
 }
+.wap-front .ml-2{
+    margin-left: .3em !important;
+}
 .wap-front .mb-2{
     margin-bottom: .3em !important;
 }

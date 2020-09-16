@@ -134,6 +134,7 @@ export default {
 .day-part{
     display: block;
     text-align: center;
+    font-size: .75em;
 }
 
 .timezone{

@@ -1,7 +1,7 @@
 <template>
     <div class="confirmation-cell">
         <div class="success d-flex align-items-center">
-            <div class="bigicon"><FontAwesomeIcon icon="calendar-check" /> </div>
+            <div class="bigicon"><WapImage :faIcon="'calendar-check'" size="md" /> </div>
             <div class="text-conf">{{options.confirmation.confirmation}}</div>
         </div>
         <div class="confirmation-summary">
@@ -23,11 +23,12 @@
         <div v-if="physicalSelected">
             <div class="wdescription">{{options.confirmation.physical}} </div>
             <div class="address-service">
-                <BookingAddress :service="service"><FontAwesomeIcon icon="map-marked-alt" size="lg"/></BookingAddress>
+                <BookingAddress :service="service">
+                    <WapImage :faIcon="'map-marked-alt'" size="lg" /> </BookingAddress>
             </div>
             
             <BookingAddress :iframe="true" :service="service">
-                <FontAwesomeIcon icon="map-marked-alt" size="lg"/>
+                <WapImage :faIcon="'map-marked-alt'" size="lg" /> 
             </BookingAddress>
         </div>
         <div class="wdescription" v-if="phoneSelected">
@@ -40,8 +41,8 @@
             <transition name="slide-fade">
                 <SaveButtons v-if="showSaveButtons" :service="service" :showResult="showResult" :appointment="appointment"
                 :staff="staff" :currentTz="timeprops.currentTz" :physicalSelected="physicalSelected"></SaveButtons>
-                <span v-else class="wbtn-primary-light wbtn" @click="showSaveButtons=true">
-                    <FontAwesomeIcon icon="calendar-alt" size="lg"/> {{options.confirmation.savetocal}}
+                <span v-else class="wbtn-primary-light wbtn d-flex align-items-center d-flex-inline" @click="showSaveButtons=true">
+                    <WapImage :faIcon="'calendar-alt'" size="md" /> <span class="ml-2">{{options.confirmation.savetocal}}</span>
                 </span>
             </transition>
         </div>
@@ -52,10 +53,8 @@
 import BookingAddress from './Address'
 import SaveButtons from './SaveButtons'
 import minText from './minText'
-const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 export default {
     components: {
-        FontAwesomeIcon,
         BookingAddress,
         SaveButtons,
     }, 
@@ -138,8 +137,11 @@ export default {
 }
 
 .confirmation-summary{
-    padding:2em;
+    padding: 2em 2em 1.5em 2em;
     font-size: .8em;
+}
+.confirmation-summary > div{
+    margin-bottom:.5em;
 }
 .confirmation-summary .wlabel{
     font-weight: bold;

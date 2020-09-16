@@ -129,14 +129,12 @@ import RequestMaker from '../Modules/RequestMaker'
 import AbstractListing from './AbstractListing'
 import DurationCell from '../BookingForm/DurationCell'
 import BookingPageButton from '../Components/Widget/BookingPageButton'
-const FontAwesomeIcon = () => import(/* webpackChunkName: "appFawesome" */ '../appFawesome')
 
 export default {
   extends: abstractView,
-  
   mixins: [ hasBreadcrumbs],
   components: window.wappointmentExtends.filter('SettingsGeneralComponents', { 
-     BookingPageButton, Service, Regav, Widget , EditCancelPage, LargeButton, AbstractListing, FontAwesomeIcon, DurationCell, weekDays
+     BookingPageButton, Service, Regav, Widget , EditCancelPage, LargeButton, AbstractListing, DurationCell, weekDays
     }, 
     {
       extends: abstractView, 

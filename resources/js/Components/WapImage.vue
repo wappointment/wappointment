@@ -1,5 +1,5 @@
 <template >
-    <div v-if="getIcon!==undefined" role="img" :aria-label="desc">
+    <div v-if="getIcon!==undefined" class="wap-img" role="img" :aria-label="desc">
         <FontAwesomeIcon v-if="getIcon.wp_id === undefined" :icon="getIcon" :size="size"/>
         <div v-else class="wap-icon-image" :class="getClassIcon" :style="getStyle"></div>
     </div>
@@ -13,13 +13,17 @@ export default {
     components: { FontAwesomeIcon },
     props:{
         element:{
-            type:Object
+            type: Object
         },
         config:{
-            type:Object,
+            type: Object,
             default: ()=>{
                 return {mauto:true}
             }
+        },
+        faIcon:{
+            type: [String, Array],
+            default: ''
         },
         size:{
             type: String,
@@ -33,7 +37,7 @@ export default {
     computed:{
         getIcon(){
 
-            if([undefined, ''].indexOf(this.element.options.icon) !== -1){
+            if(this.element !== undefined && [undefined, ''].indexOf(this.element.options.icon) !== -1){
                 switch(this.element.type) {
                     case 3:
                     case '3':
@@ -51,7 +55,9 @@ export default {
                         return undefined
                 }
             }
-
+            if(this.faIcon != ''){
+                return this.faIcon
+            }
             return this.element.options.icon
         },
         getClassIcon(){
@@ -75,7 +81,6 @@ export default {
 </script>
 <style>
 .wap-icon-image{
-    width: 25px;
     text-align: center;
 }
 .wap-icon-image.mauto{
@@ -91,9 +96,27 @@ export default {
     background-size: cover;
 }
 
-.wap-icon-image.lg {
+.wap-icon-image.xl {
     height: 80px;
     width: 80px;
+}
+
+.wap-icon-image.lg {
+    height: 50px;
+    width: 50px;
+}
+
+.wap-icon-image.md {
+    height: 35px;
+    width: 35px;
+}
+
+.wap-icon-image.sm {
+    height: 25px;
+    width: 25px;
+}
+.wap-img .fa-lg{
+    font-size: 50px;
 }
 
 </style>

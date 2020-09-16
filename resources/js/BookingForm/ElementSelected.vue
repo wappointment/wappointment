@@ -2,8 +2,8 @@
 <template>
     <div class="d-flex align-items-center">
         <span>{{ service.name }}</span> 
-        <span v-if="duration" class="wduration"> - {{ getDuration }}</span>
-        <span v-if="getPrice" class="wprice"> - {{ getPrice }}</span> 
+        <span v-if="duration" class="wduration wsep">{{ getDuration }}</span>
+        <span v-if="getPrice" class="wprice wsep">{{ getPrice }}</span> 
         <span v-if="cancellable" class="wclose" role="button" @click="$emit('discardElement', service)"></span>
     </div>
 </template>
@@ -58,6 +58,13 @@ export default {
 .wap-front .header-service .wduration{
     font-weight: normal;
     font-size:.9em;
+}
+.wap-front .wsep{
+    display:inline-flex;
+}
+.wap-front .wsep::before{
+    content: ' - ';
+    margin-right: .4em;
 }
 
 .wclose::after {
