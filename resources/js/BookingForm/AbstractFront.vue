@@ -36,7 +36,6 @@ export default {
       },
 
       loaded(viewData) {
-        console.log('viewData',viewData)
           this.viewData = viewData.data
           this.loading = false
           if(this.loadedAfter !== undefined) {

@@ -106,17 +106,20 @@ export default {
     width: 50px;
 }
 
-.wap-icon-image.md {
-    height: 35px;
-    width: 35px;
-}
-
-.wap-icon-image.sm {
+.wap-icon-image.md, .wap-icon-image.auto {
     height: 25px;
     width: 25px;
 }
+
+.wap-icon-image.sm {
+    height: 15px;
+    width: 15px;
+}
 .wap-img .fa-lg{
     font-size: 50px;
+}
+.wap-img .fa-md{
+    font-size: 25px;
 }
 
 </style>

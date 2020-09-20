@@ -16,14 +16,15 @@ class AppointmentRescheduledEmail extends AbstractEmail
 
     const EVENT = Reminder::APPOINTMENT_RESCHEDULED;
 
-    public function loadContent(Client $client, Appointment $appointment, Appointment $oldAppointment)
+    public function loadContent()
     {
-        if (!$this->prepareClientEmail($client, $appointment, static::EVENT)) {
+
+        if (!$this->prepareClientEmail($this->params['client'], $this->params['appointment'], static::EVENT)) {
             return false;
         }
 
         if ($this->icsRequired) {
-            $this->attachIcs([$appointment], 'appointment');
+            $this->attachIcs([$this->params['appointment']], 'appointment');
         }
     }
 }

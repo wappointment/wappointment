@@ -1,56 +1,62 @@
 <template>
     <div>
-        <div v-if="loadedAppointment">
-            <div class="summary-event" :class="view">
-                <h2 v-if="!isSaveEventPage">{{getText('title')}}</h2>
-                <div>{{ client.name }} - {{ client.email }}</div>
-                <div><strong class="date-start">{{ startDatei18n }}</strong></div>
-                <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
-            </div>
-             <div v-if="isSaveEventPage">
-                <div>
-                    <p>{{options.confirmation.savetocal}}</p>
-                    <SaveButtons :selectedSlot="selectedSlot" :service="service" :appointment="appointment"
-                    :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected"></SaveButtons>
+        <template v-if="view.indexOf('addonView') === 0">
+          <component :is="view" :options="options"></component>
+        </template>
+        <template v-else>
+            <div v-if="loadedAppointment">
+                <div class="summary-event" :class="view">
+                    <h2 v-if="!isSaveEventPage">{{getText('title')}}</h2>
+                    <div>{{ client.name }} - {{ client.email }}</div>
+                    <div><strong class="date-start">{{ startDatei18n }}</strong></div>
+                    <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
+                </div>
+                <div v-if="isSaveEventPage">
+                    <div>
+                        <p>{{options.confirmation.savetocal}}</p>
+                        <SaveButtons :selectedSlot="selectedSlot" :service="service" :appointment="appointment"
+                        :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected"></SaveButtons>
+                    </div>
+                </div>
+                <div v-else>
+                    <RescheduleForm v-if="showReschedule" :appointmentkey="appointmentkey" :rescheduleData="rescheduleData" :options="options" ></RescheduleForm>
+                    <div v-if="showCancelConfirmation">
+                        <div v-if="appointmentCanceled">
+                            <p class="h4">{{getText('confirmed')}}</p>
+                        </div>
+                        <div v-else>
+                            <div v-if="loading">
+                                <WLoader></WLoader>
+                            </div>
+                            <div v-else>
+                                <p class="h4">{{getText('confirmation')}}</p>
+                                <button class="wbtn wbtn-primary" @click="cancelAppointmentConfirmed">{{getText('confirm')}}</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div v-if="!buttonClicked">
+                        <template v-if="isReschedulePage">
+                            <button v-if="canStillReschedule" class="wbtn wbtn-primary" :class="'wbtn-'+view" @click="rescheduleEvent">{{getText('button')}}</button>
+                            <p class="h4" v-else>{{getText('toolate')}}</p>
+                        </template>
+                        
+                        <template v-if="isCancelPage">
+                            <button v-if="canStillCancel" class="wbtn wbtn-primary" :class="'wbtn-'+view" @click="cancelAppointment">{{getText('button')}}</button>
+                            <p class="h4" v-else>{{getText('toolate')}}</p>
+                        </template>
+                        
+                    </div>
                 </div>
             </div>
             <div v-else>
-                <RescheduleForm v-if="showReschedule" :appointmentkey="appointmentkey" :rescheduleData="rescheduleData" :options="options" ></RescheduleForm>
-                <div v-if="showCancelConfirmation">
-                    <div v-if="appointmentCanceled">
-                        <p class="h4">{{getText('confirmed')}}</p>
-                    </div>
-                    <div v-else>
-                        <div v-if="loading">
-                            <WLoader></WLoader>
-                        </div>
-                        <div v-else>
-                            <p class="h4">{{getText('confirmation')}}</p>
-                            <button class="wbtn wbtn-primary" @click="cancelAppointmentConfirmed">{{getText('confirm')}}</button>
-                        </div>
-                    </div>
-                    
+                <div v-if="loading">
+                    <WLoader></WLoader>
                 </div>
-                <div v-if="!buttonClicked">
-                    <template v-if="isReschedulePage">
-                        <button v-if="canStillReschedule" class="wbtn wbtn-primary" :class="'wbtn-'+view" @click="rescheduleEvent">{{getText('button')}}</button>
-                        <p class="h4" v-else>{{getText('toolate')}}</p>
-                    </template>
-                    
-                    <template v-if="isCancelPage">
-                        <button v-if="canStillCancel" class="wbtn wbtn-primary" :class="'wbtn-'+view" @click="cancelAppointment">{{getText('button')}}</button>
-                        <p class="h4" v-else>{{getText('toolate')}}</p>
-                    </template>
-                    
-                </div>
+                <div v-else>{{errorLoading}}</div>
             </div>
-        </div>
-        <div v-else>
-            <div v-if="loading">
-                <WLoader></WLoader>
-            </div>
-            <div v-else>{{errorLoading}}</div>
-        </div>
+        </template>
+        
     </div>
 </template>
 
@@ -68,16 +74,21 @@ import ViewingAppointmentMixin from './ViewingAppointmentMixin'
 let mixins = {ViewingAppointmentMixin:ViewingAppointmentMixin}
 mixins = window.wappointmentExtends.filter('ViewingAppointmentMixin', mixins)
 
+
+let compos = { 
+    SaveButtons,
+    Iframe,
+    RescheduleForm,
+    DurationCell,
+  }
+  compos = window.wappointmentExtends.filter('FrontMainViews', compos )
+  console.log('compos',compos)
+
 export default {
      
     mixins: [Dates, mixins.ViewingAppointmentMixin],
     extends: AbstractFront,
-    components: {
-        SaveButtons,
-        Iframe,
-        RescheduleForm,
-        DurationCell,
-    }, 
+    components: compos, 
     props: ['appointmentkey', 'view', 'options'],
     data: () => ({
         viewName: 'appointment',

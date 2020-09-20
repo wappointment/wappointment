@@ -195,13 +195,14 @@ class TipTap
                     foreach ($matches[2] as $key => $attributeName) {
                         $attributeValues[$attributeName] = $matches[3][$key];
                     }
+                    $model_String = !empty($attributeValues['model']) ? $attributeValues['model'] : 'appointment';
                     $newArrayString[] = [
                         'type' => 'text',
                         'marks' => [
                             [
                                 'type' => 'link',
                                 'attrs' => [
-                                    'href' => '[appointment:' . $attributeValues['link'] . ']',
+                                    'href' => '[' . $model_String . ':' . $attributeValues['link'] . ']',
                                 ],
                             ]
                         ],

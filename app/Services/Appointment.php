@@ -252,7 +252,9 @@ class Appointment
             throw new \WappointmentException("Can't cancel appointment anymore", 1);
         }
 
-        static::cancel($appointment);
+        apply_filters('wappointment_cancelled_appointment', $appointment);
+
+        return static::cancel($appointment);
     }
 
     public static function cancel(AppointmentModel $appointment)

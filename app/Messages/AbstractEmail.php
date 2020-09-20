@@ -18,9 +18,9 @@ abstract class AbstractEmail extends AbstractMessage
     public $replacing = ['subject', 'body'];
     public $attachments = [];
 
-    public function __construct(...$params)
+    public function __construct($params)
     {
-        parent::__construct(...$params);
+        parent::__construct($params);
 
         $this->renderer = new FoundationEmail();
 

@@ -24,9 +24,14 @@ abstract class AbstractAppointmentEmailJob extends AbstractEmailJob
     protected function generateContent()
     {
         $emailClass = static::CONTENT;
+        $data = [
+            'client' => $this->client,
+            'appointment' => $this->appointment,
+        ];
         if ($this->reminder_id) {
-            return new $emailClass($this->client, $this->appointment, $this->reminder_id);
+            $data['reminder_id'] = $this->reminder_id;
+            return new $emailClass($data);
         }
-        return new $emailClass($this->client, $this->appointment);
+        return new $emailClass($data);
     }
 }

@@ -14,7 +14,8 @@ export default {
         },
        hexToRgbA(hex){
         if (typeof hex !== 'string' || nonHexChars.test(hex) || !validHexSize.test(hex)) {
-          throw new TypeError('Expected a valid hex string');
+          console.log('Expected a valid hex string')
+          return '#ccc';
         }
         
         hex = hex.replace(/^#/, '');

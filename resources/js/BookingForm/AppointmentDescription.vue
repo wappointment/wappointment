@@ -4,11 +4,11 @@
             <p>{{options.confirmation.physical}} </p>
             <div class="address-service">
                 <BookingAddress :service="service">
-                    <WapImage :faIcon="'map-marked-alt'" size="lg" /></BookingAddress>
+                    <WapImage :faIcon="'map-marked-alt'" size="md" /></BookingAddress>
             </div>
             
             <BookingAddress :iframe="true" :service="service">
-                <WapImage :faIcon="'map-marked-alt'" size="lg" />
+                <WapImage :faIcon="'map-marked-alt'" size="md" />
             </BookingAddress>
         </div>
         <div v-if="phoneSelected">

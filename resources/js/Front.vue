@@ -2,16 +2,16 @@
     <div class="wap-front" :class="getDynaClasses" :id="elementId">
         <StyleGenerator :options="opts" :wrapper="elementId" :largeVersion="largeVersion"></StyleGenerator>
         <div v-if="isPage" :class="'step-'+stepName">
-            <BookingForm v-if="isBookingPage" :options="opts" @changedStep="stepChanged"></BookingForm>
+            <BookingForm v-if="isBookingPage" :options="opts" :wrapperid="elementId" @changedStep="stepChanged"></BookingForm>
             <ViewingAppointment v-else  :options="opts" :view="getParameterByName('view')" :appointmentkey="getParameterByName('appointmentkey')"></ViewingAppointment>
         </div>
         
-        <div class="wap-wid" :class="'step-'+stepName" v-if="isWidget">
-            <span v-if="bookForm && isBottomRight" @click="backToButton" class="close-wid"></span>
-            <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
+        <div class="wap-wid wclosable" :class="'step-'+stepName" v-if="isWidget">
+            <span v-if="bookForm && isBottomRight" @click="backToButton" class="wclose"></span>
+            <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
             <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
         </div>
-        <div class="wap-bg" v-if="bookForm"></div>
+        <div class="wap-bg" v-if="bgEnabled" @click="backToButton"></div>
     </div>
 </template>
 
@@ -72,10 +72,22 @@ export default {
         }
     },
     computed:{
+        bgEnabled(){
+          return this.bookForm && this.isBottomRight
+        },
         getDynaClasses(){
-          let classes = {'br-fixed': this.isBottomRight, 'large-version': this.largeVersion}
+          let classes = {
+            'br-fixed': this.isBottomRight, 
+            'large-version': this.largeVersion,
+            'wmobile': this.isMobilePhone,
+          }
+          
           classes[this.getParameterByName('view')] = true
           return classes
+        },
+
+        isMobilePhone(){
+          return window.innerWidth < 500 && window.innerHeight > window.innerWidth
         },
 
         realButtonTitle(){
@@ -111,10 +123,16 @@ export default {
           }
         },
         backToButton(){
+          if(this.bgEnabled && this.isMobilePhone){
+                document.body.classList.remove("wappo-popped")
+          }
           this.bookForm = false
         },
         toggleBookForm() {
             this.bookForm = !this.bookForm
+            if(this.bgEnabled && this.isMobilePhone){
+                document.body.classList.add("wappo-popped")
+            }
         },
     }
 }
@@ -127,8 +145,7 @@ export default {
     max-width: 100%;
 }
 .wap-wid{
-    max-width: 320px;
-    min-width: 200px;
+    max-width: 360px;
 }
 
 .br-fixed .wap-wid .wbtn-booking{
@@ -253,38 +270,22 @@ export default {
     bottom: 0;
     margin: 1rem;
     z-index: 9999999;
-    min-width: 320px;
+    max-height: 95%;
 }
 
-.close-wid::after {
-    transform: translateX(15px) rotate(-45deg);
-}
-.close-wid::before, .close-wid::after {
-    content: ' ';
+.wap-wid.wclosable > .wclose {
     position: absolute;
+    z-index: 1;
+    right: 2px;
+    top: 2px;
+}
+.wap-wid.wclosable > .wclose::before, 
+.wap-wid.wclosable > .wclose::after {
     background-color: #b5b1b1;
 }
-.close-wid::before {
-    transform: translateX(15px) rotate(45deg);
-}
-.close-wid:hover::before, .close-wid:hover::after {
+.wap-wid.wclosable > .wclose:hover::before, 
+.wap-wid.wclosable > .wclose:hover::after {
     background-color: #575656;
-    width: 2px;
-}
-.close-wid{
-  cursor: pointer;
-height: 25px;
-width: 25px;
-display: block;
-position: absolute;
-right: 0;
-}
-
-.close-wid::before, .close-wid::after  {
-    height: 10px;
-    width: 1px;
-    top: 6px;
-    right: 28px;
 }
 
 .wap-front .wml-2{
@@ -302,6 +303,11 @@ right: 0;
   font-size: .7em;
 }
 
+
+.wappo-popped{
+  overflow: hidden;
+}
+
 @media only screen and (max-width: 500px) {
   .wap-front.br-fixed .wap-bg{
     position: fixed;
@@ -315,17 +321,15 @@ right: 0;
     width: 100%;
     margin: 0;
   }
-  .wap-front.br-fixed{
-    width: 100%;
-    margin: 0;
-  }
+
   .wap-front.br-fixed .wbtn.wbtn-booking.wbtn-primary{
     margin: 0;
     width:100%;
     border-radius: .2rem .2rem 0 0;
   }
 
-  .wap-front.br-fixed .wap-bf, .wap-front.br-fixed .wap-wid{
+  .wap-front.br-fixed .wap-bf,
+  .wap-front.br-fixed .wap-wid{
     max-width: 100%;
   }
 }

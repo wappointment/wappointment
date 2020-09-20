@@ -46,6 +46,6 @@ class AppointmentController extends RestController
         if ($result) {
             return ['message' => 'Appointment has been canceled'];
         }
-        return $result;
+        throw new \WappointmentException("Error Cancelling appointment", 1);
     }
 }

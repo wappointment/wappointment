@@ -5,9 +5,11 @@ namespace Wappointment\Messages;
 abstract class AbstractMessage implements InterfaceMessage
 {
     public $body = '';
-    public function __construct(...$params)
+    public $params = [];
+    public function __construct($params)
     {
-        $this->loadContent(...$params);
+        $this->params = $params;
+        $this->loadContent();
     }
 
     protected function parseBody()

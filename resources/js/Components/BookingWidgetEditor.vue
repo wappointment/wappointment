@@ -407,13 +407,12 @@ export default {
 
 .widget-wraper{
     box-shadow: inset 0 0 5px #959090;
-    width: 360px;
-    
+    width: 400px;
 }
 
 @media (min-width: 1410px) { 
     .widget-wraper{
-        width: 770px !important;
+        width: 800px !important;
     }
 }
 

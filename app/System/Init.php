@@ -140,10 +140,18 @@ class Init
         $return .= 'var widgetWappointment = '
             . json_encode((new \Wappointment\Services\WidgetSettings)->get()) . ";\n";
 
+        if (is_admin()) {
+            $return .= 'var wappoEmailTags =' .  $this->getWappoEmailTags() . ";\n";
+        }
         $return .= apply_filters('wappointment_js_vars', '');
         $return .= '/* ]]> */ ' . "\n";
 
         $return .= '</script>' . "\n";
         echo $return;
+    }
+
+    public function getWappoEmailTags()
+    {
+        return json_encode(\Wappointment\Messages\TagsReplacement::emailsTags());
     }
 }

@@ -9,7 +9,7 @@ trait HasTagsToReplace
     {
         foreach ($this->replacing as $property) {
             if (!empty($this->$property)) {
-                $this->$property = (new TagsReplacement($this->client, $this->appointment))->replace($this->$property);
+                $this->$property = (new TagsReplacement($this->params))->replace($this->$property);
             }
         }
     }

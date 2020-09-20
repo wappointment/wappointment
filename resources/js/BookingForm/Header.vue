@@ -87,7 +87,7 @@ export default {
   content: "\f463";
   transition: .3s ease;
   background-color: transparent;
-  border-radius: 3px;
+  border-radius: 50%;
   opacity:0;
 }
 .wap-front .staff-av:hover .after{
@@ -97,6 +97,17 @@ export default {
 .wap-front .staff-av .ic-refresh {
   fill: #fff;
 }
+.wap-front .wap-head {
+    padding: .4em;
+    position: absolute;
+    width: 100%;
+    height: 56px;
+}
+
+.wap-front .wap-bf.show.has-scroll .wap-head {
+    box-shadow: 0px 4px 10px -10px rgba(0,0,0,.9);
+}
+
 .wap-front .wap-head .staff-desc {
     padding-left: .4em;
     line-height: 1.2;

@@ -16,7 +16,7 @@ class ReminderController extends RestController
 
     public function save(Request $request)
     {
-        $requested = $request->except(['rest_route', 'locked', 'email_logo']);
+        $requested = $request->except(['rest_route', 'locked', 'email_logo', 'label']);
         $requested['published'] = true;
         $this->saveImage($request);
         if ($this->isTrueOrFail(Reminder::save($requested))) {
@@ -34,7 +34,7 @@ class ReminderController extends RestController
     public function patch(Request $request)
     {
         $this->saveImage($request);
-        if ($this->isTrueOrFail(Reminder::save($request->except(['rest_route', 'locked', 'email_logo'])))) {
+        if ($this->isTrueOrFail(Reminder::save($request->except(['rest_route', 'locked', 'email_logo', 'label'])))) {
             return ['message' => 'Reminder updated'];
         } else {
             throw new \WappointmentException('Couldn\'t update reminder', 1);

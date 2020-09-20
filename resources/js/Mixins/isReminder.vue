@@ -35,8 +35,10 @@ export default {
             this.mail_status = true
         },
         getReminderLabel(reminder){
+            return reminder.label
+            
             let labelString = '' 
-
+            
             if(this.isAppointmentStartEvent(reminder)){
             labelString += 'Sent before appointment takes place.(' + this.getDelay(reminder) + ')'
             }else if(this.isAppointmentBookedEvent(reminder)){

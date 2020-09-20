@@ -1,7 +1,7 @@
 <template>
-    <span class="value-card closable d-flex align-items-center justify-content-between" >
+    <span class="value-card wclosable d-flex align-items-center justify-content-between" >
         <span class="label"><slot></slot></span>
-        <span v-if="canDiscard" class="close" @click.prevent.stop="discard"></span>
+        <span v-if="canDiscard" class="wclose" @click.prevent.stop="discard"></span>
     </span>
 </template>
 <script>
@@ -38,11 +38,11 @@ export default {
 .value-card:hover {
     background-color: #7d7d7d;
 }
-.value-card.closable .close{
+.value-card.wclosable .close{
     background: #fff;
     border-radius: 2em;
 }
-.value-card.closable .close::before, .value-card.closable .close::after {
+.value-card.wclosable .wclose::before, .value-card.wclosable .wclose::after {
     background-color: #b5b1b1;
 }
 

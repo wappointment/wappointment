@@ -13,6 +13,11 @@ class AdminEmailRescheduledAppointment extends AbstractAppointmentEmailJob
     protected function generateContent()
     {
         $emailClass = static::CONTENT;
-        return new $emailClass($this->client, $this->appointment, new Appointment($this->params['oldAppointment']));
+        $data = [
+            'client' => $this->client,
+            'appointment' => $this->appointment,
+            'oldAppointment' => new Appointment($this->params['oldAppointment'])
+        ];
+        return new $emailClass($data);
     }
 }

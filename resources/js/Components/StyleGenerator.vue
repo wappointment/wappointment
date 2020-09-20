@@ -96,45 +96,33 @@
         .wap-front .wap-head .staff-desc {
             color: {{ hx_rgb(opts.colors.header.text) }};
         }
-        .wap-front .wrap-calendar .timezone {
-            text-align: center;
-            font-size: .75em;
+
+        .wap-front .wap-form-body .timezone {
             background-color: {{ hx_rgb(opts.colors.body.bg, .9) }};
         }
-        .wap-front.large-version .wrap-calendar {
-            overflow: auto;
-            max-height: none;
-        }
-        .wap-front .wrap-calendar {
-            border-top: none;
-        }
-        .wap-front .wrap-calendar,
-        .wap-front .appointment-summary{
+        
+        .wap-front .wap-form-body{
             background-color: {{ hx_rgb(opts.colors.body.bg) }};
-        }
-        .wap-front .wrap-calendar.step-BookingCalendar .slotsPane {
-            overflow-y: scroll;
-            overflow-x: hidden;
-            max-height: 200px;
+            color: {{ hx_rgb(opts.colors.body.text) }};
         }
 
-        .wap-front .wrap-calendar .no-avail, .wap-front .wrap-calendar .wbtn-link.disabled{
+        .wap-front .wap-form-body .no-avail, 
+        .wap-front .wap-form-body .wbtn-link.disabled{
             color: {{ hx_rgb(opts.colors.body.disabled_links) }};
         }
 
-        .wap-front .wrap-calendar  {
-            color: {{ hx_rgb(opts.colors.body.text) }};
-        }
         .wap-front .wap-head {
             background-color: {{ hx_rgb(opts.colors.header.bg) }};
-            padding: .4em;
-            border-radius: {{ calendarRound }}em {{ calendarRound }}em 0 0;
+        }
+
+        .wap-bf.show{
+            border-radius: {{ calendarRound }}em;
         }
         
         .wap-front .wbtn.wbtn-secondary.dayselected{
             background-color: {{ hx_rgb(opts.colors.selected_day.bg) }};
         }
-        .wap-front .wrap-calendar .dayselected span.avail{
+        .wap-front .wap-form-body .dayselected span.avail{
             color: {{ hx_rgb(opts.colors.selected_day.text) }};
         }
 
@@ -158,7 +146,7 @@
         }
         
         .wap-front .wap-head img{
-            border-radius: {{ calendarRound }}em;
+            border-radius: 50%;
         }
 
         .wap-front .wbtn-cell{
@@ -290,7 +278,7 @@ export default {
         if(this.widthWrapper < '320'){
             this.baseFontSize = '18px'
         }
-        if(this.widthWrapper < '230'){
+/*         if(this.widthWrapper < '230'){
             this.baseFontSize = '17px'
         }
         if(this.widthWrapper < '210'){
@@ -301,7 +289,7 @@ export default {
         }
         if(this.widthWrapper < '170'){
             this.baseFontSize = '14px'
-        }
+        } */
     }
 }
 </script>

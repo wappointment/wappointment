@@ -5,10 +5,10 @@
                 <div class="my-2">
                     <div><strong>{{options.form.header}}</strong></div>
                     <div v-if="appointment_starts_at">
-                        <div class="wselected closable wmy-4 d-flex align-items-center d-flex-inline">
-                            <WapImage :faIcon="['far','clock']" size="md" />
+                        <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline">
+                            <WapImage :faIcon="['far','clock']" size="auto" />
                             <span class="wml-2">{{ appointment_starts_at }}</span>
-                            <span class="close" @click="back" ></span>
+                            <span class="wclose" @click="back" ></span>
                         </div>
                     </div>
                 </div>
@@ -20,15 +20,15 @@
             </div>
             <div v-if="serviceHasTypes" class="text-center">
                 <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: physicalSelected}">
-                    <WapImage faIcon="map-marked-alt" size="lg" />
+                    <WapImage faIcon="map-marked-alt" size="md" />
                     <div>{{options.form.inperson}}</div>
                 </div>
                 <div v-if="allowedType('phone')" @click="selectType('phone')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: phoneSelected}">
-                    <WapImage faIcon="phone" size="lg" />
+                    <WapImage faIcon="phone" size="md" />
                     <div>{{options.form.byphone}}</div>
                 </div>
                 <div v-if="allowedType('skype')" @click="selectType('skype')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: skypeSelected}">
-                    <WapImage :faIcon="['fab', 'skype']" size="lg" />
+                    <WapImage :faIcon="['fab', 'skype']" size="md" />
                     <div>{{options.form.byskype}}</div>
                 </div>
             </div>
@@ -38,7 +38,7 @@
                     <div class="wap-booking-fields">
                         <div v-if="physicalSelected" class="address-service">
                             <BookingAddress :service="service">
-                                <WapImage faIcon="map-marked-alt" size="lg" />
+                                <WapImage faIcon="map-marked-alt" size="md" />
                             </BookingAddress>
                         </div>
                         <div class="wap-field field-required" :class="hasError('name')">
@@ -72,7 +72,7 @@
                     </div>
                 </div>
             </transition>
-            <div class="d-flex wbtn-confirm my-2">
+            <div v-if="selectedServiceType" class="d-flex wbtn-confirm my-2">
                 <span class="wbtn-secondary wbtn" role="button" @click="back">{{options.form.back}}</span>
                 <span v-if="canSubmit" class="wbtn-primary wbtn flex-fill m-0" role="button" @click="confirm">{{options.form.confirm}}</span>
                 <span v-else class="wbtn-primary wbtn wbtn-disabled flex-fill m-0" role="button" disabled>{{options.form.confirm}}</span>

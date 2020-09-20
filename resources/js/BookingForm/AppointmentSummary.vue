@@ -8,10 +8,10 @@
         </div>
         <div class="wsummary-section wsec-starts" v-if="startsAt">
             <div class="wlabel"  v-if="hasText(['general','when'])">{{options.general.when}}</div>
-            <div class="wselected closable wmy-4 d-flex align-items-center d-flex-inline">
-                <WapImage :faIcon="['far','clock']" size="sm" />
+            <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline">
+                <WapImage :faIcon="['far','clock']" size="auto" />
                 <span class="wml-2">{{ startsAt }}</span>
-                <span class="close" @click="changeTime" ></span>
+                <span class="wclose" @click="changeTime" ></span>
             </div>
         </div>
     </div>
@@ -38,7 +38,8 @@ export default {
         services:{
             type: Array
         },
-        rescheduling:{}
+        rescheduling:{},
+        appointmentSaved: {}
     },
     components: { ElementSelected },
     computed:{

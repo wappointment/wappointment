@@ -1,6 +1,6 @@
 <template>
-    <div class="wap-bf" :class="{show: canBeBooked}">
-        <div v-if="canBeBooked">
+    <div class="wap-bf" :class="{show: canBeBooked, 'has-scroll':requiresScroll}">
+        <template v-if="canBeBooked">
             <BookingFormHeader :staffs="getStaffs" 
             :isStepSlotSelection="isStepSlotSelection"
             :options="options"
@@ -15,37 +15,42 @@
             @changeLocation="childChangedStep"
             @changeStaff="childChangedStep"
             />
-            <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
-            :isStepSlotSelection="isStepSlotSelection"
-            :options="options"
-            :service="service" 
-            :duration="duration" 
-            :services="services"
-            :rescheduling="rescheduling"
-            :startsAt="appointmentStartsAt"
-            :location="location"
-            @refreshed="refreshClick"
-            @changeService="childChangedStep"
-            @changeDuration="childChangedStep"
-            @changeLocation="childChangedStep"
-            @changeStaff="childChangedStep"
-            />
+            <div class="wap-form-body" :id="getWapBodyId" >
+                <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
+                :isStepSlotSelection="isStepSlotSelection"
+                :options="options"
+                :service="service" 
+                :duration="duration" 
+                :services="services"
+                :rescheduling="rescheduling"
+                :startsAt="appointmentStartsAt"
+                :location="location"
+                :appointmentSaved="appointmentSaved"
+                @refreshed="refreshClick"
+                @changeService="childChangedStep"
+                @changeDuration="childChangedStep"
+                @changeLocation="childChangedStep"
+                @changeStaff="childChangedStep"
+                />
 
-            <div class="wrap-calendar p-2" :class="'step-'+currentStep">
-                <div v-if="loading">
-                    <Loader></Loader>
-                </div>
-                <div :class="{'hide-loading':loading}">
-                    <div v-if="currentStep == loadingStep && isCompVisible(currentStep)">
-                        <component :is="getComp(currentStep)"
-                        v-bind="getCompProp(currentStep)"
-                        v-on="getCompListeners(currentStep)"
-                        :relations="getCompRelations(currentStep)"
-                        ></component>
+                <div class="wrap-calendar p-2" :class="'step-'+currentStep">
+                    <div v-if="loading">
+                        <Loader></Loader>
+                    </div>
+                    <div :class="{'hide-loading':loading}">
+                        <div v-if="currentStep == loadingStep && isCompVisible(currentStep)">
+                            <component :is="getComp(currentStep)"
+                            @hook:mounted="checkIfRequiresScrollDelay"
+                            @hook:updated="checkIfRequiresScrollDelay"
+                            v-bind="getCompProp(currentStep)"
+                            v-on="getCompListeners(currentStep)"
+                            :relations="getCompRelations(currentStep)"
+                            ></component>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
         <div v-else>
             <div v-if="dataloaded">
                 <div v-if="service">No appointments available</div>
@@ -86,14 +91,14 @@ let compDeclared = {
     'BookingFormHeader': BookingFormHeader,
     'DurationCell': DurationCell,
     'abstractFront':AbstractFront,
-    'BookingFormSummary': BookingFormSummary
+    'BookingFormSummary': BookingFormSummary,
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
 
 export default {
      extends: AbstractFront,
      mixins: [Colors, Dates],
-     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent'],
+     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid'],
      components: compDeclared, 
     data: () => ({
         viewName: 'availability',
@@ -117,7 +122,8 @@ export default {
         duration: false,
         currentStep: 'BookingCalendar',
         loadingStep: '',
-        converted:false
+        converted:false,
+        requiresScroll: false
     }),
 
     mounted () {
@@ -191,6 +197,9 @@ export default {
        },
        getStaffs(){
            return this.viewData !== undefined && this.viewData.staffs !== undefined ? this.viewData.staffs: []
+       },
+       getWapBodyId(){
+           return 'wapbody'+this.wrapperid
        }
     },
     methods: {
@@ -206,6 +215,30 @@ export default {
         loadStep(step){
             this.loadingStep = step
             this.fetchFormattedDate()
+            
+        },
+        checkIfRequiresScrollDelay(){
+            //console.log('first')
+            setTimeout(this.checkIfRequiresScroll, 200);
+        },
+        checkIfRequiresScroll(){
+            //console.log('second')
+            let heightDiv = document.getElementById(this.getWapBodyId).scrollHeight
+/*             console.log('wap-body scrollHeight inner class', heightDiv)
+            console.log('wap-body scrollHeight id', document.getElementById(this.getWapBodyId).scrollHeight)
+
+ */
+            let heightWindow = window.innerHeight / 100 * 85
+            //console.log('85vh', heightWindow, window.innerHeight)
+            if(heightDiv > heightWindow){
+                //add scrollbar
+                //console.log(' TRUE 85vh', heightDiv ,heightWindow)
+                this.requiresScroll = true
+            }else{
+                //remove scrollbar
+                //console.log(' FALSE 85vh',  heightDiv ,heightWindow)
+                this.requiresScroll = false
+            }
         },
         childChangedStep(newStep, dataChanged){
             if(typeof dataChanged == 'object' && Object.keys(dataChanged).length > 0) {
@@ -500,6 +533,9 @@ export default {
 }
 .wap-bf.show{
     box-shadow: 0px 8px 10px 0 rgba(0,0,0,.08);
+    overflow: hidden;
+    position: relative;
+    min-width: 280px;
 }
 
 
@@ -597,8 +633,25 @@ export default {
     text-align: left;
 }
 
+.wap-front .wap-form-body .timezone {
+    text-align: center;
+    font-size: .75em;
+}
+.wap-front.large-version .wrap-calendar {
+    overflow: auto;
+    max-height: none;
+}
+.wap-front .wrap-calendar {
+    border-top: none;
+}
+.wap-front .wrap-calendar.step-BookingCalendar .slotsPane {
+    overflow-y: scroll;
+    overflow-x: hidden;
+    max-height: 200px;
+}
 
-.wrap-calendar p, .wrap-calendar hr{
+
+.wap-form-body p, .wap-form-body hr{
     margin: 0 0 .4em;
     font-size: .9em;
 }
@@ -755,5 +808,12 @@ export default {
 .wap-front .max400{
     max-width:400px;
     margin:0 auto;
+}
+.wap-front .wap-form-body{
+    max-height: calc(85vh);
+    margin-top:56px;
+}
+.wap-front .has-scroll .wap-form-body{
+    overflow-y: scroll;
 }
 </style>

@@ -18,7 +18,7 @@ class Reminder extends Model
         'locked' => 'boolean',
         'published' => 'boolean'
     ];
-
+    protected $appends = ['label'];
 
     const APPOINTMENT_STARTS = 1;
     const APPOINTMENT_CONFIRMED = 2;
@@ -72,6 +72,20 @@ class Reminder extends Model
         }
     }
 
+    public function getLabelAttribute()
+    {
+        $labels = [
+            self::APPOINTMENT_STARTS => 'Sent before appointment takes place.(sent 1 day(s) before)',
+            self::APPOINTMENT_CONFIRMED => 'Sent after appointment has been confirmed.',
+            self::APPOINTMENT_RESCHEDULED => 'Sent after appointment has been rescheduled.',
+            self::APPOINTMENT_CANCELLED => 'Sent after appointment has been cancelled.  ',
+            self::APPOINTMENT_PENDING => 'Sent after appointment has been booked when admin approval is required.',
+        ];
+        $labels = apply_filters('wappointment_reminders_labels', $labels);
+        return $labels[$this->event];
+    }
+
+
     public static function getEvents()
     {
         return [
@@ -104,25 +118,25 @@ class Reminder extends Model
         }
     }
 
-    public function toMailable(Appointment $appointment)
+    public function toMailable($appointment = null)
     {
         return new AppointmentEmailFiller($this->subject, $this->getHtmlBody($appointment));
     }
 
-    public function getHtmlBody(Appointment $appointment)
+    public function getHtmlBody($appointment = null)
     {
         if ($this->isTipTap()) {
             return \Wappointment\Helpers\TipTap::toHTML($this->filterBody($appointment));
         }
     }
 
-    private function filterBody(Appointment $appointment)
+    private function filterBody($appointment = null)
     {
         $bodyEmail = $this->options['body'];
         $newBodyEmailContent = [];
 
         foreach ($bodyEmail['content'] as $key => $rowContent) {
-            if (\WappointmentLv::starts_with($rowContent['type'], 'cblock')) {
+            if ($appointment !== null && \WappointmentLv::starts_with($rowContent['type'], 'cblock')) {
                 if ($appointment->isPhysical() && $rowContent['type'] == 'cblockphysical') {
                     $newBodyEmailContent[] = $rowContent;
                 } else {

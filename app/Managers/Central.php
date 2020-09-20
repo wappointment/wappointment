@@ -11,6 +11,9 @@ class Central
         'Service' => [
             'class' => \Wappointment\Services\Service::class,
             'implements' => \Wappointment\Services\ServiceInterface::class
+        ],
+        'Client' => [
+            'class' => \Wappointment\Models\Client::class,
         ]
     ];
 
@@ -55,7 +58,7 @@ class Central
     {
         $service = $this->getService($serviceName);
 
-        if (!in_array($service['implements'], class_implements($class))) {
+        if (isset($service['implements']) && !in_array($service['implements'], class_implements($class))) {
             throw new \WappointmentException("Central: " . $serviceName . ' class ' . $class . ' not implementing ' . $service['implements'], 1);
         }
         $this->services[$serviceName]['class'] = $class;

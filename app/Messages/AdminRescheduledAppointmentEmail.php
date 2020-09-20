@@ -10,10 +10,7 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
 {
     use AttachesIcs, AdminGeneratesDefault;
 
-    protected $client = null;
-    protected $appointment = null;
-
-    public function loadContent(Client $client, Appointment $appointment, Appointment $oldAppointment)
+    public function loadContent()
     {
         $this->subject = 'Rescheduled appointment';
         $this->addLogo();
@@ -21,18 +18,18 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
         $tz = Settings::getStaff('timezone');
 
         $this->addLines([
-            'Hi ' . $appointment->getStaff()->getFirstName() . ', ',
+            'Hi ' . $this->params['appointment']->getStaff()->getFirstName() . ', ',
             'A client rescheduled his appointment, find the details below.',
         ]);
 
-        $this->addRoundedSquare($this->getEmailContent($client, $appointment));
+        $this->addRoundedSquare($this->getEmailContent($this->params['client'], $this->params['appointment']));
 
         $this->addRoundedSquare(
             [
                 '<u>Former appointment</u>',
-                'Date: ' . $oldAppointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
-                'Time: ' . $oldAppointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
-                    . ' - ' . $oldAppointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
+                'Date: ' . $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('date_format')),
+                'Time: ' . $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('time_format'))
+                    . ' - ' . $this->params['oldAppointment']->end_at->setTimezone($tz)->format(Settings::get('time_format')),
             ]
         );
         $this->addLines([
@@ -40,7 +37,6 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
             '',
             'Ps: An .ics file with the appointment\'s details is attached'
         ]);
-        $this->attachIcs([$appointment], 'appointment', true);
-        //$this->attachCancelled([$oldAppointment], 'cancelled_appointment', true);
+        $this->attachIcs([$this->params['appointment']], 'appointment', true);
     }
 }

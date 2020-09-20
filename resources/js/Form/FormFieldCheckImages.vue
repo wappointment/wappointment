@@ -7,7 +7,7 @@
             <div v-for="(item, idx) in images" :key="idx" @click="onChanged(item)"  
             class="btn btn-secondary btn-cell" :class="getClassesImage(item)" :data-tt="item.sub">
                 <div v-if="item.icon !== undefined">
-                    <WapImage v-if="item.icontype===undefined" :faIcon="item.icon" size="lg" />
+                    <WapImage v-if="item.icontype===undefined" :faIcon="item.icon" size="md" />
                     <span v-if="item.icontype=='wp'" :class="'dashicons ' + getWPicon(item)"></span>
                 </div>
                 

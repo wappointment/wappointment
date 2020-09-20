@@ -13,7 +13,7 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
     protected $client = null;
     protected $appointment = null;
 
-    public function loadContent(Client $client, Appointment $appointment, $reminder_id = false)
+    public function loadContent()
     {
         $this->subject = 'Pending appointment';
         $this->addLogo();
@@ -21,25 +21,25 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
 
 
         $this->addLines([
-            'Hi ' . $appointment->getStaff()->getFirstName() . ', ',
+            'Hi ' . $this->params['appointment']->getStaff()->getFirstName() . ', ',
             'Great news! You just got booked! ',
             'Please confirm the appointment.'
         ]);
 
-        $this->addRoundedSquare($this->getEmailContent($client, $appointment));
+        $this->addRoundedSquare($this->getEmailContent($this->params['client'], $this->params['appointment']));
 
         $this->addBr();
         $formatString = 'Y-m-d\T00:00:00';
 
-        $st = $appointment->start_at->startOfWeek()->format($formatString);
-        $end = $appointment->start_at->addDays(7)->format($formatString);
+        $st = $this->params['appointment']->start_at->startOfWeek()->format($formatString);
+        $end = $this->params['appointment']->start_at->addDays(7)->format($formatString);
 
         $buttonConfirm = true;
 
         $buttonConfirm = apply_filters(
             'wappointment_appointment_pending_email_button',
             $buttonConfirm,
-            $appointment->options
+            $this->params['appointment']->options
         );
 
         if ($buttonConfirm === true) {
@@ -47,7 +47,7 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
             $this->addButton(
                 'Confirm appointment',
                 WPHelpers::adminUrl('wappointment_calendar&start=' .
-                    $st . '&end=' . $end . '&timezone=' . $tz . '&open_confirm=' . (int) $appointment->id)
+                    $st . '&end=' . $end . '&timezone=' . $tz . '&open_confirm=' . (int) $this->params['appointment']->id)
             );
         } else {
             $this->addLines(sanitize_text_field($buttonConfirm));

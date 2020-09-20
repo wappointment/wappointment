@@ -1,7 +1,7 @@
 
 <template>
     <div class="d-flex align-items-center">
-        <span>{{ service.name }}</span> 
+        <span class="welementname" :class="{wenmax:(duration || getPrice)}">{{ service.name }}</span> 
         <span v-if="duration" class="wduration wsep">{{ getDuration }}</span>
         <span v-if="getPrice" class="wprice wsep">{{ getPrice }}</span> 
         <span v-if="cancellable" class="wclose" role="button" @click="$emit('discardElement', service)"></span>
@@ -55,6 +55,13 @@ export default {
     font-weight: bold;
     margin: 0 .2em;
 }
+.wap-front .welementname{
+    line-height: 1.2em;
+}
+
+.wap-front .wenmax{
+    max-width:60%;
+}
 .wap-front .header-service .wduration{
     font-weight: normal;
     font-size:.9em;
@@ -87,7 +94,6 @@ export default {
     height: 1em;
     width: 1em;
     display: inline-block;
-    background: #fff;
     border-radius: 2em;
     position:relative;
 }

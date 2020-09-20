@@ -230,53 +230,7 @@ export default {
         ddph: false,
         ddpf: false,
         ddpc: false,
-        customfield: [
-            {
-            model: "client",
-            key: "name",
-            label: "Client's name"
-            },
-            {
-            model: "client",
-            key: "email",
-            label: "Client's email"
-            },
-            {
-            model: "client",
-            key: "phone",
-            label: "Client's phone"
-            },
-            {
-            model: "client",
-            key: "skype",
-            label: "Client's Skype"
-            },
-            {
-            model: "appointment",
-            key: "duration",
-            label: "Appointment duration"
-            },
-            {
-            model: "appointment",
-            key: "location",
-            label: "Appointment location"
-            },
-            {
-            model: "appointment",
-            key: "starts",
-            label: "Appointment date and time"
-            },
-            {
-            model: "service",
-            key: "name",
-            label: "Service name"
-            },
-            {
-            model: "service",
-            key: "address",
-            label: "Service address"
-            }
-        ],
+        customfield: window.wappoEmailTags,
         extensions: [
             new BlockquoteNode(),
             new BulletListNode(),

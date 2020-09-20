@@ -110,6 +110,7 @@ class Queue
     {
         //process it
         $jobClassName = $job->payload['job'];
+
         if (!class_exists($jobClassName)) {
             throw new \WappointmentException('Error Job ' . $jobClassName . ' cannot be found ', 1);
         }

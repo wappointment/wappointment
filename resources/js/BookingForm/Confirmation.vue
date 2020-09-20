@@ -1,7 +1,7 @@
 <template>
     <div class="confirmation-cell">
         <div class="success d-flex align-items-center">
-            <div class="bigicon"><WapImage :faIcon="'calendar-check'" size="md" /> </div>
+            <div class="bigicon"><WapImage :faIcon="'calendar-check'" size="lg" /> </div>
             <div class="text-conf">{{options.confirmation.confirmation}}</div>
         </div>
         <div class="confirmation-summary">
@@ -24,11 +24,11 @@
             <div class="wdescription">{{options.confirmation.physical}} </div>
             <div class="address-service">
                 <BookingAddress :service="service">
-                    <WapImage :faIcon="'map-marked-alt'" size="lg" /> </BookingAddress>
+                    <WapImage :faIcon="'map-marked-alt'" size="md" /> </BookingAddress>
             </div>
             
             <BookingAddress :iframe="true" :service="service">
-                <WapImage :faIcon="'map-marked-alt'" size="lg" /> 
+                <WapImage :faIcon="'map-marked-alt'" size="md" /> 
             </BookingAddress>
         </div>
         <div class="wdescription" v-if="phoneSelected">
@@ -137,17 +137,19 @@ export default {
 }
 
 .confirmation-summary{
-    padding: 2em 2em 1.5em 2em;
+    padding: 2em 1em 1.5em 1em;
     font-size: .8em;
 }
 .confirmation-summary > div{
     margin-bottom:.5em;
+    line-height: 1em;
 }
 .confirmation-summary .wlabel{
     font-weight: bold;
 }
 .wdescription{
     font-size: .8em;
+    line-height: 1.4em;
 }
 
 </style>

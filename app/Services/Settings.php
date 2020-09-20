@@ -171,6 +171,9 @@ class Settings
         if (!static::$valid || static::valid($setting_key, $value)) {
             $updatedValues = static::getValues();
 
+            if ($setting_key == 'service') {
+                unset($value['id']);
+            }
             $updatedValues[$setting_key] = $value;
 
             //before save

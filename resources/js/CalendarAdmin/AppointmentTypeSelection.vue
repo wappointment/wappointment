@@ -1,15 +1,15 @@
 <template>
     <div class="d-flex mb-4" v-if="serviceHasTypes">
         <div v-if="allowedType('physical')" @click="selectType('physical')" class="btn btn-secondary btn-cell" role="button" :class="{selected: physicalSelected}">
-            <font-awesome-icon icon="map-marked-alt" size="lg"/>
+            <font-awesome-icon icon="map-marked-alt" size="md"/>
             <div>At a location</div>
         </div>
         <div v-if="allowedType('phone')" @click="selectType('phone')" class="btn btn-secondary btn-cell" role="button" :class="{selected: phoneSelected}">
-            <font-awesome-icon icon="phone" size="lg"/>
+            <font-awesome-icon icon="phone" size="md"/>
             <div>By phone</div>
         </div>
         <div v-if="allowedType('skype')" @click="selectType('skype')" class="btn btn-secondary btn-cell" role="button" :class="{selected: skypeSelected}">
-            <font-awesome-icon :icon="['fab', 'skype']" size="lg"/>
+            <font-awesome-icon :icon="['fab', 'skype']" size="md"/>
             <div>By skype</div>
         </div>
     </div>

@@ -17,6 +17,7 @@ class Client extends Model
     protected $casts = [
         'options' => 'array',
     ];
+    protected $appends = ['avatar'];
 
     public function appointments()
     {
@@ -29,6 +30,10 @@ class Client extends Model
     public function getFirstName()
     {
         return (strpos($this->name, ' ')) !== false ? substr($this->name, 0, strpos($this->name, ' ')) : $this->name;
+    }
+    public function getAvatarAttribute()
+    {
+        return get_avatar_url($this['email'], ['size' => 40]);
     }
     public function getLastName()
     {
@@ -49,7 +54,7 @@ class Client extends Model
         return empty($this->options['tz']) ? Settings::getStaff('timezone') : $this->options['tz'];
     }
 
-    public function book($bookingRequest)
+    public function book($bookingRequest, $forceConfirmed = false)
     {
         $startTime = $bookingRequest->get('time');
         $type = $bookingRequest->get('type');
@@ -57,19 +62,30 @@ class Client extends Model
 
         //test type is allowed
         if (!in_array($type, $service['type'])) {
-            throw new \WappointmentException('Error booking type not allowed', 1);
+            throw new \WappointmentException('Error booking type not allowed2', 1);
         }
 
         $type = (int) call_user_func('Wappointment\Models\Appointment::getType' . ucfirst($type));
 
         //test that this is bookable
-        $hasBeenBooked = AppointmentService::tryBook(
-            $this,
-            $startTime,
-            $startTime + $this->getRealDuration($service),
-            $type,
-            $service
-        );
+        if ($forceConfirmed) {
+            $hasBeenBooked = AppointmentService::adminBook(
+                $this,
+                $startTime,
+                $startTime + $this->getRealDuration($service),
+                $type,
+                $service
+            );
+        } else {
+            $hasBeenBooked = AppointmentService::tryBook(
+                $this,
+                $startTime,
+                $startTime + $this->getRealDuration($service),
+                $type,
+                $service
+            );
+        }
+
         if (!$hasBeenBooked) {
             throw new \WappointmentException('Error cannot book at this time', 1);
         }
