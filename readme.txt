@@ -150,6 +150,8 @@ It requires work on your end but keeps your site safe and optimized.
 * Added client basic listing
 * Booking form widget design improvements
 * Booking form mobile improvements
+* Added staff name 1-click edit
+* Improved booking widget editor, made clearer
 * Improved icons, colors and styling management
 * refactored email generation and tag system
 * Global refactoring
