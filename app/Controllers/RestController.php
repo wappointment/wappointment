@@ -43,7 +43,7 @@ abstract class RestController
 
     protected function registerPagination($request)
     {
-        \Illuminate\Pagination\Paginator::currentPageResolver(function ($pageName = 'page') use ($request) {
+        \Wappointment\ClassConnect\Paginator::currentPageResolver(function ($pageName = 'page') use ($request) {
             return (int)$request->input($pageName);
         });
     }

@@ -9,7 +9,7 @@
           <div class="flg" :class="activeCountry.iso2.toLowerCase()"></div>
         </span>
       </div>
-      <LabelMaterial :labelAbove="!fieldMaterial" :forceFloat="phone!=''">
+      <LabelMaterial v-if="fieldMaterial" :labelAbove="!fieldMaterial" :forceFloat="phone!=''">
             <input
         :id="id"
         ref="input"
@@ -25,15 +25,30 @@
         @input="onInput"
       >
       </LabelMaterial>
+      <input v-else
+        :id="id"
+        ref="input"
+        v-model="phone"
+        type="tel"
+        class="tel"
+        :class="classField"
+        :disabled="disabled"
+        :required="required"
+        :placeholder="hasLabel"
+        :autocomplete="autocomplete"
+        @blur="onBlur"
+        @input="onInput"
+      >
 
       
     </div>
     <div v-if="open" class="dropdown open">
         <div class="selection d-flex">
 
-          <LabelMaterial :forceFloat="phone!=''">
+          <LabelMaterial v-if="fieldMaterial" :forceFloat="phone!=''">
             <input ref="search" @click.stop class="search flex-fill" :class="{'show':open}" :placeholder="hasLabel" type="text" v-model="search" >
           </LabelMaterial>
+          <input v-else ref="search" @click.stop class="search flex-fill" :class="{'show':open}" :placeholder="hasLabel" type="text" v-model="search" >
      </div>
         <ul v-show="open" ref="list">
           <li
@@ -459,7 +474,6 @@ export default {
   width: auto;
 }
 .phone-field-wrap .dropdown.open{
-    position: absolute;
     background: #fff;
     padding: .3em;
     z-index: 99;
