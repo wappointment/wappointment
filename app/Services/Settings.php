@@ -136,7 +136,9 @@ class Settings
             'timezone' => $timezone,
             'avatarId' => false,
             'viewed_updates' => false,
-            'email_logo' => false
+            'email_logo' => false,
+            'per_page' => 10,
+            'display_name' => ''
         ];
     }
 

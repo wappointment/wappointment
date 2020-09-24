@@ -60,6 +60,7 @@
                     <PhoneInput 
                     :phone="bookingForm.phone"
                     @onInput="onInput"
+                    :fieldMaterial="true"
                     :className="hasError('phone')+ ' form-control'"
                     :countries="preferredCountries" 
                     ></PhoneInput>
@@ -129,10 +130,10 @@ export default {
             return this.firstDay!== undefined && this.lastDay !== undefined && this.firstDay.unix() < momenttz().unix() && this.lastDay.unix() > momenttz().unix()
         },
         preferredCountries(){
-        return this.viewData.preferredCountries
+            return this.viewData.preferredCountries
         },
         readyToBook(){
-        return this.bookingForm.clientid !== false || (Object.keys(this.errorsOnFields).length < 1 && isEmail(this.bookingForm.email))
+            return this.bookingForm.clientid !== false || (Object.keys(this.errorsOnFields).length < 1 && isEmail(this.bookingForm.email))
         },
         skypeValid(){
             return /^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/.test(this.bookingForm.skype)

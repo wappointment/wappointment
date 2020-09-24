@@ -15,7 +15,7 @@ export default {
         activeStaffId: false,
         labelDefault: {
             type: String,
-            default: 'Select or search staff'
+            default: 'Select WordPress account'
         },
     },
     data() {
@@ -30,7 +30,7 @@ export default {
     },
     methods:{
         displayElementFunc(element){
-            return element !== undefined ? element.display_name + ' - ' + element.user_email: 'Unknown'
+            return element !== undefined ? element.user_email: 'Unknown'
         },
     },
     computed: {

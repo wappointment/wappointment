@@ -2,6 +2,7 @@
     <div :class="classWrapper" v-if="tzLoaded">
         <div v-if="typeAdvanced">
             <SearchDropdownTimezone v-model="timezone" :ph="labelDefault" :elements="timezones" 
+            @activeOrNot="activeOrNot"
              idKey="name" hasGroup :typeClass="typeClass"></SearchDropdownTimezone>
              <button v-if="viewingInDifferentTz" class="btn btn-link btn-xs" @click="backToStaffTimezone"> < <small> Back to {{ staffTimezone }}</small></button>
         </div>
@@ -62,6 +63,9 @@ export default {
     methods:{
         backToStaffTimezone(){
             this.timezone = this.staffTimezone
+        },
+        activeOrNot(s){
+            this.$emit('activeOrNot', s, this.timezone)
         }
     },
     watch: {
@@ -71,6 +75,7 @@ export default {
                 this.initSave = false
             }else{
                 if(!this.firstTrigger) this.$emit('updateTimezone', newTz, this.firstTrigger)
+                else this.$emit('initTimezone', newTz, this.firstTrigger)
             }
             this.firstTrigger = false
 

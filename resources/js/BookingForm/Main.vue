@@ -82,6 +82,7 @@ BookingFormHeader.components = {DurationCell}
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 import convertDateFormatPHPtoJS from '../Standalone/convertDateFormatPHPtoJS'
 import browserLang from '../Standalone/browserLang'
+import AppointmentTypeSelection from './AppointmentTypeSelection'
 
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
@@ -92,6 +93,7 @@ let compDeclared = {
     'DurationCell': DurationCell,
     'abstractFront':AbstractFront,
     'BookingFormSummary': BookingFormSummary,
+    'AppointmentTypeSelection': AppointmentTypeSelection
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
 
@@ -134,6 +136,10 @@ export default {
         
         if(this.step == 'button') {
             this.$emit('changedStep','selection')
+        }
+
+        if(this.step !== null) {
+            this.requiresScroll = true //booking widget editor requires scroll always
         }
         
 
@@ -223,6 +229,9 @@ export default {
         },
         checkIfRequiresScroll(){
             //console.log('second')
+            if(this.step !== null) {
+                return true //booking widget editor requires scroll always
+            }
             let heightDiv = document.getElementById(this.getWapBodyId).scrollHeight
 /*             console.log('wap-body scrollHeight inner class', heightDiv)
             console.log('wap-body scrollHeight id', document.getElementById(this.getWapBodyId).scrollHeight)

@@ -1,8 +1,10 @@
 <template>
     <div>
-        <div class="mb-2">
-            <h4>{{options.form.header}}</h4>
-            <h5>{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</h5>
+        <div v-if="isCompactHeader" class="mb-2">
+            <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline">
+                <WapImage :faIcon="['far','clock']" size="auto" />
+                <span class="wml-2">{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</span>
+            </div>
         </div>
         <div class="d-flex wbtn-confirm my-2">
             <span class="wbtn-secondary wbtn" role="button" @click="back" >{{options.form.back}}</span>
@@ -18,6 +20,11 @@ export default {
     extends: AbstractFront,
     mixins: [Dates],
     props: ['options','selectedSlot','timeprops','relations','rescheduleData'],
+    computed: {
+        isCompactHeader(){
+            return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
+        },
+    },
     methods: {
         back(){
             this.$emit('back', this.relations.prev, {selectedSlot:false})

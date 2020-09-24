@@ -8,8 +8,9 @@ const WapImage = () => import(/* webpackChunkName: "WapImage" */ './Components/W
 import DurationCell from './BookingForm/DurationCell'
 import PhoneInput from './BookingForm/PhoneInput'
 import AbstractListing from './Views/AbstractListing'
+import momenttz from './appMoment'
 
-window.wappointmentExtends.store('commons', {AbstractListing, PhoneInput, InputPh, ClickCopy, VideoIframe, FontAwesomeIcon, DurationCell})
+window.wappointmentExtends.store('commons', {AbstractListing, PhoneInput, InputPh, ClickCopy, VideoIframe, FontAwesomeIcon, DurationCell, momenttz})
 
 import VueRouter from 'vue-router'
 import Backend from './Backend'
@@ -25,6 +26,7 @@ import VueService from './Plugins/vue-service'
 import rewriteWPMenu from './Standalone/rewriteWPMenu'
 import routerSetupRedirect from './Standalone/routerSetupRedirect'
 import routerQueryRedirect from './Standalone/routerQueryRedirect'
+
 
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
@@ -44,6 +46,7 @@ Vue.component('DurationCell', DurationCell)
 Vue.use(VueRouter)
 
 const CalendarPage = () => import(/* webpackChunkName: "group-calendar" */ './CalendarAdmin/Main')
+const ClientsPage = () => import(/* webpackChunkName: "group-clients" */ './Views/Clients')
 const SettingsPage = () => import(/* webpackChunkName: "group-settings" */ './Views/Settings')
 const AddonsPage = () => import(/* webpackChunkName: "group-addons" */ './Views/Addons')
 const HelpPage = () => import(/* webpackChunkName: "group-help" */ './Ne/Help')
@@ -72,6 +75,11 @@ const router = window.wappointmentrouter = new VueRouter({
           path: 'settings',
           name: 'wappointment_settings',
           redirect: { name: 'general'}
+      },
+      {
+        path: 'clients',
+        name: 'wappointment_clients',
+        component: ClientsPage
       },
       {
           path: 'help',

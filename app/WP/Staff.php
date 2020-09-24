@@ -29,7 +29,8 @@ class Staff
         $this->avatar = Settings::getStaff('avatarId') ?
             wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] :
             get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
-        $this->name = $this->getUserDisplayName();
+        $staff_name = Settings::getStaff('display_name');
+        $this->name = empty($staff_name) ? $this->getUserDisplayName() : $staff_name;
         $this->timezone = Settings::getStaff('timezone', $staff_id);
     }
 

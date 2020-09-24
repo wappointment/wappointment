@@ -69,7 +69,6 @@ class WidgetSettings
             'check_viewweek' => false,
         ],
         'form' => [
-            'header' => 'Confirm Appointment',
             'byskype' => 'By Skype',
             'byphone' => 'By Phone',
             'inperson' => 'At a Location',

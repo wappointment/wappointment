@@ -28,6 +28,7 @@ class Appointment extends Model
     const STATUS_AWAITING_CONFIRMATION = 0;
     const STATUS_CONFIRMED = 1;
 
+    protected $appends = ['duration_sec', 'location_label'];
 
     public function getStaff()
     {
@@ -80,6 +81,11 @@ class Appointment extends Model
         return apply_filters('wappointment_service_location', $location, $this);
     }
 
+    public function getLocationLabelAttribute()
+    {
+        return $this->getLocation();
+    }
+
     public function getStaffId()
     {
         return Settings::get('activeStaffId');
@@ -129,7 +135,12 @@ class Appointment extends Model
 
     public function getFullDurationInSec()
     {
-        return $this->end_at->timestamp - $this->start_at->timestamp;
+        return !empty($this->end_at) ? $this->end_at->timestamp - $this->start_at->timestamp : 0;
+    }
+
+    public function getDurationSecAttribute()
+    {
+        return $this->getDurationInSec();
     }
 
     public function getDurationInSec()
@@ -145,7 +156,7 @@ class Appointment extends Model
 
     public function getStartsDayAndTime($timezone)
     {
-        return DateTime::i18nDateTime($this->start_at->timestamp, $timezone);
+        return !empty($this->start_at) ? DateTime::i18nDateTime($this->start_at->timestamp, $timezone) : '';
         /*         return $this->start_at
             ->timezone($timezone)
             ->format(Settings::get('date_format') . Settings::get('date_time_union') . Settings::get('time_format')); */

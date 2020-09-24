@@ -24,6 +24,7 @@ class InitBackend
         if (WPHelpers::isPluginPage()) {
             add_action('admin_init', [$this, 'enqueueBackendPlugin']);
             add_action('admin_notices', ['\Wappointment\WP\Alerts', 'display']);
+            add_action('wp_print_scripts', [$this, 'jsVariables']);
         }
     }
 
@@ -46,6 +47,23 @@ class InitBackend
     public function registerMenuSubs()
     {
         $this->menus->addSubmenus();
+    }
+
+    public function jsVariables()
+    {
+        $variables = [];
+        foreach ($this->menus->sub_menus as $key => $value) {
+            $variables[] = 'wappointment_' . $key;
+        }
+
+        $return = '<script type="text/javascript">' . "\n";
+        $return .= '/* Wappointment globals */ ' . "\n";
+        $return .= '/* <![CDATA[ */ ' . "\n";
+        $return .= 'var wappointmentBackMenus = ' . json_encode($variables) . ";\n";
+        $return .= '/* ]]> */ ' . "\n";
+
+        $return .= '</script>' . "\n";
+        echo $return;
     }
 
     public function enqueueMin()

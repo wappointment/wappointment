@@ -14,14 +14,17 @@ class BaseService {
     }
 
     call(endpoint, params = {}, headers = {} ) {
-        const endpointConfig = this.endpoints()[endpoint]
+        const endpoints = this.endpoints()
+        if(endpoints[endpoint] === undefined){
+            throw Error("Endpoint '"+endpoint+"' is undefined")
+        }
+        const endpointConfig = endpoints[endpoint]
         let append = ''
         if(params.append !== undefined){
             append = params.append
             delete params.append
             params = { ...params }
         }
-
         let endpointRoute = endpointConfig.route.toLowerCase() + append
         return this.request(endpointRoute, params, headers, endpointConfig.method,  endpointConfig.timeout)
     }
@@ -47,7 +50,6 @@ class BaseService {
     success(result) {
 
         if(result.data === null){
-            console.log('result',result)
             throw 'Response is malformed'
         }
         result.data = typeof result.data != 'object' ? {} : result.data

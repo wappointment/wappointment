@@ -7,6 +7,34 @@ use Wappointment\Validators\HttpRequest\Booking;
 
 class Client
 {
+
+    public static function save($data)
+    {
+        //create or load client account
+        $client = MClient::firstOrCreate(
+            ['email' =>  $data['email']],
+            [
+                'name' => $data['name'],
+                'options' => [
+                    'tz' => $data['options']['tz'],
+                    'skype' => $data['options']['skype'],
+                    'phone' => $data['options']['phone'],
+                ]
+            ]
+        );
+
+        $options = $client->options;
+        foreach ($data['options'] as $key => $value) {
+            $options[$key] = $value;
+        }
+        $client->options = $options;
+        $client->name = $data['name'];
+        $client->save();
+
+        //book with that client
+        return $client;
+    }
+
     public static function book(Booking $booking)
     {
         //create or load client account

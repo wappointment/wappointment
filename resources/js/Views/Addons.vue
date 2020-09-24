@@ -1,9 +1,7 @@
 <template>
   <div class="px-4 pb-2">
-    <transition name="slide-fade-top">
-      <div id="screen-meta" v-if="showSettings" class="metabox-prefs" >
-          <div id="screen-options-wrap" >
-            <div class="d-flex mb-2">
+    <WPScreenOptions>
+      <div class="d-flex mb-2">
                 <label class="form-check-label w-100" for="allow-wappointment">
                   <div class="d-flex align-items-center">
                     <input type="checkbox" v-model="viewData.wappointment_allowed" id="allow-wappointment" @change="changedWappointmentAllowed()">
@@ -11,14 +9,8 @@
                   </div>
                 </label>
             </div>
-          </div>
-      </div>
-    </transition>
-    <div id="screen-meta-links">
-        <div id="screen-options-link-wrap" class="hide-if-no-js screen-meta-toggle" style="">
-          <button @click="showSettings = !showSettings" type="button" id="show-settings-link" class="button show-settings" aria-controls="screen-options-wrap" aria-expanded="false">Screen Options</button>
-        </div>
-    </div>
+    </WPScreenOptions>
+
     <div class="d-flex align-items-center">
       <h1 class="m-2">Addons</h1>
       <div v-if="dataLoaded">
@@ -69,11 +61,12 @@
 
 <script>
 import AddonsService from '../Services/V1/Addons'
-
 import abstractView from './Abstract'
 import AddonsWizard from '../Addons/Wizard'
 import AddonPreview from '../Components/Addon'
 let services_install = window.wappointmentExtends.filter('AddonsServiceInstall', {})
+import WPScreenOptions from '../WP/ScreenOptions'
+
 export default {
     extends: abstractView,
     data: () => ({
@@ -87,7 +80,7 @@ export default {
         currentServiceAddon:null,
         showSettings: false
     }),
-    components: {AddonPreview, AddonsWizard},
+    components: {AddonPreview, AddonsWizard, WPScreenOptions},
     created(){
       this.serviceAddons = this.$vueService(new AddonsService)
       this.services_install = services_install
@@ -261,9 +254,7 @@ export default {
 .wappointment-wrap .addons p {
     margin-bottom: .2rem;
 }
-.wappointment-wrap #screen-meta{
-  display:block;
-}
+
 
 </style>
 

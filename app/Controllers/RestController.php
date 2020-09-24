@@ -41,6 +41,13 @@ abstract class RestController
         error_reporting(E_ALL);
     }
 
+    protected function registerPagination($request)
+    {
+        \Illuminate\Pagination\Paginator::currentPageResolver(function ($pageName = 'page') use ($request) {
+            return (int)$request->input($pageName);
+        });
+    }
+
     public function tryExecute($param)
     {
         if (defined('WP_DEBUG') && WP_DEBUG === true) {
@@ -53,6 +60,10 @@ abstract class RestController
                 throw new \WappointmentException('There is no method defined', 1);
             }
             $request = WPHelpers::requestGet($param->get_params());
+
+            if ($methodName == 'index') {
+                $this->registerPagination($request);
+            }
 
             // wrap request with validated data
 

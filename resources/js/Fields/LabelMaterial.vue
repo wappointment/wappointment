@@ -1,6 +1,6 @@
 <template>
   <div :class="labelClass">
-    <label :for="id">{{ floatLabel }}</label>
+    <label :for="id" v-if="floatLabel!=''" >{{ floatLabel }}</label>
     <slot></slot>
     <a v-if="allowBack" class="resetClass" @click="backToDefault" href="javascript:;">reset</a>
   </div>
@@ -20,6 +20,10 @@ export default {
       default:false
     }, 
     forceFloat:{
+      type:Boolean,
+      default:false
+    }, 
+    labelAbove:{
       type:Boolean,
       default:false
     }, 
@@ -73,6 +77,9 @@ export default {
     },
     
     labelClass () {
+      if(this.labelAbove){
+        return ''
+      }
       var obj = {
         'label-wrapper': true,
         'focused': this.isFocused,

@@ -11,6 +11,14 @@ export default class ClientService extends ApiV1{
                 method: 'post', 
                 route: 'client/book'
             },
+            index: { 
+                method: 'get', 
+                route: 'client'
+            },
+            save: { 
+                method: 'post', 
+                route: 'client'
+            },
             
         };
     }

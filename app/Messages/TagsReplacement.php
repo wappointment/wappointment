@@ -138,11 +138,12 @@ class TagsReplacement
         } else {
             $key = $tag['key'];
             if (is_object($this->params[$tag['model']])) {
-                return $this->params[$tag['model']]->$key;
+                //return $this->params[$tag['model']]->$key;
+                return !empty($this->params[$tag['model']]->$key) ? $this->params[$tag['model']]->$key : '';
             }
 
             if (is_array($this->params[$tag['model']])) {
-                return $this->params[$tag['model']][$key];
+                return !empty($this->params[$tag['model']][$key]) ? $this->params[$tag['model']][$key] : '';
             }
         }
     }

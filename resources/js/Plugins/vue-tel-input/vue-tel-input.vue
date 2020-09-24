@@ -9,7 +9,8 @@
           <div class="flg" :class="activeCountry.iso2.toLowerCase()"></div>
         </span>
       </div>
-      <input
+      <LabelMaterial :labelAbove="!fieldMaterial" :forceFloat="phone!=''">
+            <input
         :id="id"
         ref="input"
         v-model="phone"
@@ -18,17 +19,22 @@
         :class="classField"
         :disabled="disabled"
         :required="required"
+        :placeholder="hasLabel"
         :autocomplete="autocomplete"
         @blur="onBlur"
         @input="onInput"
       >
+      </LabelMaterial>
+
+      
     </div>
-    <div v-if="open"
-        class="dropdown open"
-      >
-        <span class="selection d-flex">
-          <input ref="search" @click.stop class="search flex-fill" :class="{'show':open}" type="text" v-model="search" >
-        </span>
+    <div v-if="open" class="dropdown open">
+        <div class="selection d-flex">
+
+          <LabelMaterial :forceFloat="phone!=''">
+            <input ref="search" @click.stop class="search flex-fill" :class="{'show':open}" :placeholder="hasLabel" type="text" v-model="search" >
+          </LabelMaterial>
+     </div>
         <ul v-show="open" ref="list">
           <li
             class="d-flex align-items-center"
@@ -50,7 +56,7 @@
 import ClickOutside from 'vue-click-outside'
 import { formatNumber, AsYouType, isValidNumber } from 'libphonenumber-js'
 import allCountries from '../../Standalone/all-countries'
-
+import LabelMaterial from '../../Fields/LabelMaterial'
 export default {
   props: {
     id: {
@@ -103,11 +109,17 @@ export default {
       type: String,
       default: 'tel',
     },
-/*     dropdownOptions: {
-      type: Object,
-      default: () => ({}),
-    }, */
+    hasLabel: {
+      type: String,
+      default: '',
+    },
+    fieldMaterial:{
+      type: Boolean,
+      default: false
+    }
+
   },
+  components:{LabelMaterial},
   mounted() {
     this.initializeCountry()
     this.$emit('onValidate', this.response)
@@ -142,6 +154,15 @@ export default {
     },
   },
   computed: {
+    labelClass () {
+      var obj = {
+        'label-wrapper': true,
+        'focused': this.isFocused,
+        'active': this.isActive || this.forceFloat,
+      }
+      if(this.extraClass != undefined) obj[this.extraClass] = true
+      return obj
+    },
     noDrop(){
       return this.oneCountryOnly || this.mode === 'code'
     },
@@ -359,6 +380,9 @@ export default {
   display: flex;
   border: 1px solid #bbb;
   text-align: left;
+}
+.phone-field-wrap .label-wrapper{
+  margin-bottom: 0 !important;
 }
 
 .wap-front .phone-field-wrap .phone-field input.tel {

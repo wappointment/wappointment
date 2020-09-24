@@ -95,7 +95,7 @@ class TipTap
 
     protected static function getMarksWrap($tiptapArray)
     {
-        $markedString = !empty($tiptapArray['text']) ? $tiptapArray['text'] : '';
+        $markedString = !empty($tiptapArray['text']) ? $tiptapArray['text'] : '<br/>';
         if (!empty($tiptapArray['marks'])) {
             foreach ($tiptapArray['marks'] as $key => $value) {
                 $type = self::getMarkTag($value['type']);
@@ -150,7 +150,7 @@ class TipTap
 
         //detect custom fields and links
         if (!empty($detected_tags)) {
-            $attributes['content'] = self::generateArrayContentTag($detected_tags, $value);
+            $attributes['content'] = self::generateArrayContentTag($detected_tags, $value, $attributes);
         } else {
             $attributes['content'] = [
                 [
@@ -162,7 +162,7 @@ class TipTap
         return $attributes;
     }
 
-    protected static function generateArrayContentTag($detected_tags, $value)
+    protected static function generateArrayContentTag($detected_tags, $value, $attributes)
     {
         $wrapped_tags = [];
         foreach ($detected_tags as $tag) {
@@ -210,7 +210,7 @@ class TipTap
                     ];
                 } else {
                     $modelValue = explode(':', $tag_to_use);
-                    $newArrayString[] = [
+                    $data = [
                         'type' => 'customfield',
                         'attrs' => [
                             'src' => $modelValue[0],
@@ -219,9 +219,14 @@ class TipTap
                             'title' => null,
                         ],
                     ];
+                    if (isset($attributes['marks'])) {
+                        $data['marks'] = $attributes['marks'];
+                    }
+                    $newArrayString[] = $data;
                 }
             }
         }
+
         return $newArrayString;
     }
 
@@ -240,6 +245,11 @@ class TipTap
     protected static function tiptapP($value)
     {
         return self::integrateContent(['type' => 'paragraph'], $value);
+    }
+
+    protected static function tiptapPb($value)
+    {
+        return self::integrateContent(['type' => 'paragraph', 'marks' => [["type" => "bold"]]], $value);
     }
 
     protected static function tiptapPhysical($value)

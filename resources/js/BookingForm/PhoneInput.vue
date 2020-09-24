@@ -1,10 +1,11 @@
 <template>
-    <div>
-        <label v-if="label" :for="generatedId">{{ label }}</label>
+    <div >
         <VueTelInput placeholder="" 
         v-model="phoneval"
         @onInput="onInput" 
+        :hasLabel="label"
         :classField="className"
+        :fieldMaterial="fieldMaterial"
         :id="generatedId"
         :onlyCountries="countries"></VueTelInput>
         <CountryStyle/>
@@ -40,11 +41,18 @@ export default {
             type: Array,
             default: () => [],
         },
+        fieldMaterial:{
+            type: Boolean,
+            default:false
+        }
     },
     data: () => ({
         phoneval: '',
         generatedId: "telinput-"+(new Date()).getTime()
     }),
+    created(){
+        this.$emit('getId', this.generatedId)
+    },
     methods: {
         onInput(data){
             this.$emit('onInput',data, this.keyInput)
@@ -52,3 +60,9 @@ export default {
     },
 }
 </script>
+<style>
+.wap-booking-fields .isInvalid .search.flex-fill.show {
+    border-right: none !important;
+    box-shadow: none;
+}
+</style>

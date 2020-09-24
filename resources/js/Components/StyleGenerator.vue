@@ -227,6 +227,15 @@
             color: {{ hx_rgb(opts.colors.body.tx_small) }};
         }
 
+        .wap-wid.wclosable > .wclose::before, 
+        .wap-wid.wclosable > .wclose::after {
+            background-color: {{ hx_rgb(opts.colors.header.text, .7) }};
+        }
+        .wap-wid.wclosable > .wclose:hover::before, 
+        .wap-wid.wclosable > .wclose:hover::after {
+            background-color: {{ hx_rgb(opts.colors.header.text) }};
+        }
+
         /** wrapper tag **/
         {{ '#'+wrapper }}.wap-front {
             font-size: {{ baseFontSize }};

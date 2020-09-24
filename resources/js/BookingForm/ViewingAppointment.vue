@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="view.indexOf('addonView') === 0">
-          <component :is="view" :options="options"></component>
+          <component :is="view" @loading="changeLoading" :options="options" :momenttz="momenttz" :convertDateFormat="convertDateFormat"></component>
         </template>
         <template v-else>
             <div v-if="loadedAppointment">
@@ -70,7 +70,7 @@ import AppointmentService from '../Services/V1/Appointment'
 import DurationCell from './DurationCell'
 import RescheduleForm from './RescheduleForm'
 import ViewingAppointmentMixin from './ViewingAppointmentMixin'
-
+import momenttz from '../appMoment'
 let mixins = {ViewingAppointmentMixin:ViewingAppointmentMixin}
 mixins = window.wappointmentExtends.filter('ViewingAppointmentMixin', mixins)
 
@@ -82,7 +82,6 @@ let compos = {
     DurationCell,
   }
   compos = window.wappointmentExtends.filter('FrontMainViews', compos )
-  console.log('compos',compos)
 
 export default {
      
@@ -109,7 +108,8 @@ export default {
         appointmentCanceled: false,
         errorLoading: '',
         disabledButtons: false,
-        rescheduleData: null
+        rescheduleData: null,
+        momenttz:momenttz
         
     }),
     created(){
@@ -132,6 +132,9 @@ export default {
         
     },
     methods: {
+        changeLoading(loading){
+            this.loading = loading
+        },
         getText(textKey){
             return this.isCancelPage? this.options.cancel[textKey]:this.options.reschedule[textKey]
         },

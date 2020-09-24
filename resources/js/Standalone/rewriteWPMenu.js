@@ -6,7 +6,7 @@ export default function (pagename) {
         if(['general','reminders', 'notifications', 'advanced', 'addonstab'].indexOf(testpagename) !== -1){
           testpagename = 'wappointment_settings'
         }
-        let menuIndex = ['wappointment_calendar','wappointment_settings', 'wappointment_addons', 'wappointment_help' ].indexOf(testpagename) + 2
+        let menuIndex = window.wappointmentBackMenus.indexOf(testpagename) + 2
           $('#toplevel_page_wappointment_calendar ul.wp-submenu li:nth-child('+menuIndex+') , #toplevel_page_wappointment_calendar ul.wp-submenu li:nth-child('+menuIndex+') a')
           .addClass('current')
     });

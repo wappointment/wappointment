@@ -158,11 +158,13 @@ export default {
     },
     makeActive(s=true){
         this.active = s
+        this.$emit('activeOrNot',s)
     },
     makeInactive(){
         this.makeActive(false)
         this.groupShow = undefined
         this.search = ''
+        
     },
     selectElement(element){
         if(this.hasMulti){

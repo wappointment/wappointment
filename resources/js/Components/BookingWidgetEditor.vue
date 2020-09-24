@@ -7,7 +7,7 @@
                     <div v-if="!editingMode">
                         <Front :options="preoptions"  classEl="wappointment_widget" :attributesEl="shortcodeParams" ></Front>
                     </div>
-                    <div v-if="editingMode && frontAvailability!==undefined" class="d-flex flex-wrap preview">
+                    <div v-if="editingMode && frontAvailability!==undefined" class="d-flex flex-wrap preview-book">
                         <div  v-for="(stepObj,idx) in editionsSteps" class="bordered" :class="orderedClass(stepObj,idx)" :data-tt="stepObj.key==step?labelActiveStep:false">
                             <div  class="overflowhidden" :class="'step-'+stepObj.key">
                                 <FrontDemo :options="options"  classEl="wappointment_widget" :step="stepObj.key" ></FrontDemo>
@@ -135,8 +135,7 @@ export default {
     mixins: [Colors, SettingsSave],
     props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability', 'editingMode', 'shortcodeParams'],
     data: () => ({
-        step: 'button',
-        stepPassed: 'button',
+        step: 'general',
         showAdvancedColors: false,
         options: null,
         tbgcolor: '#fff',
@@ -188,7 +187,7 @@ export default {
         eventsBus.listens('stepChanged', this.stepChanged)
         eventsBus.listens('dataDemoChanged', this.dataChanged)
 
-        this.stepChanged('button')
+        this.stepChanged('general')
 
     },
 
@@ -246,7 +245,7 @@ export default {
             return 'order-' + orderItem
         },
         orderedClass(stepObj, stepIdx){
-            let classes = {hover: stepObj.key==this.step}
+            let classes = {hover: stepObj.key==this.step, hidestep: ['general',stepObj.key].indexOf(this.step)===-1}
             if(this.colorEdit === false){
                 classes[this.getOrderClass(stepObj, stepIdx)] = true
             }
@@ -389,17 +388,20 @@ export default {
     position: absolute;
 }
 
-.preview > .bordered {
+.preview-book > .bordered {
     margin: .5rem;
     box-shadow: inset 0px 0px 10px 0 rgba(0,0,0,.2);
     border-radius: .2rem;
 }
 
-.preview > .hover{
+.preview-book > .hover{
     box-shadow: inset 0px 0px 10px 0 rgba(127, 126, 208, 0.6);
 }
+.preview-book > .hidestep{
+    display: none;
+}
 
-.preview > .hover[data-tt]::before, .preview > .hover[data-tt]::after{
+.preview-book > .hover[data-tt]::before, .preview-book > .hover[data-tt]::after{
     visibility: visible;
     opacity: 1;
     bottom:100%;
@@ -412,7 +414,7 @@ export default {
 
 @media (min-width: 1410px) { 
     .widget-wraper{
-        width: 800px !important;
+        width: 850px !important;
     }
 }
 
@@ -463,7 +465,7 @@ export default {
 }
 
 
-.preview .wap-front{
+.preview-book .wap-front{
     min-width: 300px;
     margin: 1rem;
 }

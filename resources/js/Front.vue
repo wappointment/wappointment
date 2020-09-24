@@ -279,14 +279,6 @@ export default {
     right: 2px;
     top: 2px;
 }
-.wap-wid.wclosable > .wclose::before, 
-.wap-wid.wclosable > .wclose::after {
-    background-color: #b5b1b1;
-}
-.wap-wid.wclosable > .wclose:hover::before, 
-.wap-wid.wclosable > .wclose:hover::after {
-    background-color: #575656;
-}
 
 .wap-front .wml-2{
     margin-left:.4em;

@@ -14,7 +14,7 @@ export default {
             initvalue: null,
             definition: {
                     min:1,
-                    max:60,
+                    max: 120,
                     step:1,
                     int:true,
                     unit: 'days',

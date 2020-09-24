@@ -3,7 +3,6 @@
         <div v-if="mounted" >
             <div class="form-summary text-center" v-if="isCompactHeader">
                 <div class="my-2">
-                    <div><strong>{{options.form.header}}</strong></div>
                     <div v-if="appointment_starts_at">
                         <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline">
                             <WapImage :faIcon="['far','clock']" size="auto" />
@@ -18,20 +17,11 @@
                     </div>
                 </div>
             </div>
-            <div v-if="serviceHasTypes" class="text-center">
-                <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: physicalSelected}">
-                    <WapImage faIcon="map-marked-alt" size="md" />
-                    <div>{{options.form.inperson}}</div>
-                </div>
-                <div v-if="allowedType('phone')" @click="selectType('phone')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: phoneSelected}">
-                    <WapImage faIcon="phone" size="md" />
-                    <div>{{options.form.byphone}}</div>
-                </div>
-                <div v-if="allowedType('skype')" @click="selectType('skype')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: skypeSelected}">
-                    <WapImage :faIcon="['fab', 'skype']" size="md" />
-                    <div>{{options.form.byskype}}</div>
-                </div>
-            </div>
+            <AppointmentTypeSelection v-if="serviceHasTypes" 
+            :options="options" 
+            :typeSelected="selectedServiceType" 
+            :typesAllowed="service.type"
+            @selectType="selectType" />
             <transition name="slide-fade">
                 <div v-if="selectedServiceType">
                     
@@ -54,11 +44,12 @@
                             </p>
                         </div>
                         <div v-if="requirePhoneInput" class="wap-field field-required" :class="hasError('phone')">
+                            <label :for="phoneId">{{options.form.phone}}</label>
                             <PhoneInput 
-                            :label="options.form.phone"
                             :phone="bookingForm.phone"
                             :countries="service.options.countries"
                             @onInput="onInput" 
+                            @getId="getId"
                             ></PhoneInput>
                         </div>
                         <div v-if="skypeSelected" class="wap-field field-required" :class="hasError('skype')">
@@ -87,9 +78,8 @@ import AbstractFront from './AbstractFront'
 import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
 import Strip from '../Helpers/Strip'
-
+import AppointmentTypeSelection from './AppointmentTypeSelection'
 import {isEmail, isEmpty} from 'validator'
-
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
 
 export default {
@@ -99,7 +89,8 @@ export default {
     components: {
         BookingAddress,
         PhoneInput,
-        CountryStyle
+        CountryStyle,
+        AppointmentTypeSelection
     }, 
     data: () => ({
         bookingForm: {
@@ -108,6 +99,7 @@ export default {
             skype: '',
             name: '',
         },
+        phoneId:'',
         phoneValid: false,
         errorsOnFields: {},
         selectedServiceType: false,
@@ -196,6 +188,9 @@ export default {
         }
     },
     methods: {
+        getId(id){
+            this.phoneId = id
+        },
         tryPrefill(){
             if(window.apiWappointment.wp_user !== undefined){
                 this.bookingForm.email = window.apiWappointment.wp_user.email
@@ -256,9 +251,6 @@ export default {
             this.selectedServiceType = this.service.type[0]
         },
         
-        allowedType(type){
-            return this.service.type.indexOf(type) !== -1
-        },
         selectType(type){
             this.selectedServiceType = type
             let bookingForm =  Object.assign ({}, this.bookingForm)
@@ -338,7 +330,7 @@ export default {
   box-shadow: inset 0px 8px 10px 0 rgba(0,0,0,.08);
 }
 .wap-front .form-summary .wselected {
-    display: inline-block !important;
+    display: inline-flex !important;
     font-size: .8em;
 }
 

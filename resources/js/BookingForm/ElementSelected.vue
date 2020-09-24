@@ -31,19 +31,9 @@ export default {
         },
 
         getPrice(){
-            if(this.service.options.durations !== undefined){
-                for (let i = 0; i < this.service.options.durations.length; i++) {
-                    const dur = this.service.options.durations[i];
-                    if(dur.duration == this.duration && ['',undefined].indexOf(dur.woo_price) === -1 ){
-                        return dur.woo_price + wappointment_woocommerce.currency_symbol
-                    }
-                }
-            }else{
-                if(['',undefined].indexOf(this.service.options.woo_price) === -1 ){
-                    return this.service.options.woo_price + wappointment_woocommerce.currency_symbol
-                }
+            if(this.getWooPrice !== undefined && typeof this.getWooPrice == 'function'){
+                return this.getWooPrice()
             }
-            
             return false
         }
     },
@@ -59,9 +49,6 @@ export default {
     line-height: 1.2em;
 }
 
-.wap-front .wenmax{
-    max-width:60%;
-}
 .wap-front .header-service .wduration{
     font-weight: normal;
     font-size:.9em;

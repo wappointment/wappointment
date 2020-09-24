@@ -14,6 +14,9 @@ class Central
         ],
         'Client' => [
             'class' => \Wappointment\Models\Client::class,
+        ],
+        'AppointmentModel' => [
+            'class' => \Wappointment\Models\Appointment::class,
         ]
     ];
 

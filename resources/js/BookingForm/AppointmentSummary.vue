@@ -19,6 +19,7 @@
 
 <script>
 import ElementSelected from './ElementSelected'
+
 export default {
     props: {
         service: {
@@ -41,7 +42,9 @@ export default {
         rescheduling:{},
         appointmentSaved: {}
     },
-    components: { ElementSelected },
+    components: { 
+        ElementSelected: window.wappointmentExtends.filter('ElementSelected', ElementSelected)
+     },
     computed:{
         getLocationLabel(){
             if(this.location == 'physical') return this.getAddress

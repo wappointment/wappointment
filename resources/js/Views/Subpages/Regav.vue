@@ -7,9 +7,13 @@
             </p>
             <div v-if="viewData" class="d-flex align-items-center mb-2">
                 <StaffPicture :src="viewData.activeStaffAvatar" :gravatar="viewData.activeStaffGravatar" @changed="changed"></StaffPicture>
+                <div class="mr-2 changename">
+                    <InputPh v-model="viewData.activeStaffName" ph="Change name" @updatedValue="updateStaffName" />
+                </div>
                 <StaffSelector :staffs="viewData.staffs" :activeStaffId="viewData.activeStaffId" @updateStaff="updateStaff"></StaffSelector>
             </div>
-            <small class="text-muted" v-if="viewData.staffs.length == 1"> In order to change the email and name, simply <a href="users.php" target="_blank">add a WordPress user</a> or edit the current one  </small>
+            
+            <small class="text-muted" > In order to change the user in charge <a href="users.php" target="_blank">add a WordPress user</a> or edit the current one </small>
             
             <p class="h6 text-muted"><span class="bullet-wap">2</span> <span class="bullet-title"> Set your timezone</span></p>
             <TimeZones v-if="viewData" classW="d-flex" :wizard="noback" :timezones="viewData.timezones_list" 
@@ -66,6 +70,11 @@ export default {
     updateTimezone(selectedTimezone){
         this.settingStaffSave('timezone', selectedTimezone)
     },
+    updateStaffName(value){
+        this.reload = true
+        this.viewData.activeStaffName = value
+        this.settingStaffSave('display_name', value)
+    },
     updateStaff(selectedStaff){
         this.reload = true
         this.settingSave('activeStaffId', selectedStaff)
@@ -100,5 +109,8 @@ export default {
     color: var(--primary);
     margin-right: .5rem;
     background-color: #fff;
+}
+.changename .label-wrapper{
+    margin-bottom: 0 !important;
 }
 </style>

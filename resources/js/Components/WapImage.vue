@@ -1,6 +1,6 @@
 <template >
     <div v-if="getIcon!==undefined" class="wap-img" role="img" :aria-label="desc">
-        <FontAwesomeIcon v-if="getIcon.wp_id === undefined" :icon="getIcon" :size="size"/>
+        <FontAwesomeIcon v-if="getIcon.wp_id === undefined" :icon="getIcon" :size="getFaSize"/>
         <div v-else class="wap-icon-image" :class="getClassIcon" :style="getStyle"></div>
     </div>
 </template>
@@ -59,6 +59,20 @@ export default {
                 return this.faIcon
             }
             return this.element.options.icon
+        },
+        getFaSize(){
+            //'xs', 'sm', '1x', '2x', '3x', '4x', '5x', '6x', '7x', '8x', '9x', '10x'
+            if(this.size == 'auto'){
+                return '1x'
+            }
+            if(this.size == 'md'){
+                return '2x'
+            }
+  /*           if(['auto', 'md'].indexOf(this.size) !== -1){
+                return ''
+            } */
+            //console.log('this.size', Date.now(), this.size)
+            return this.size
         },
         getClassIcon(){
             let classes = {}

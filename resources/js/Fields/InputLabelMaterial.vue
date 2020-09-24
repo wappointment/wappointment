@@ -1,6 +1,6 @@
 <template>
     <LabelMaterial :allowReset="canReset" @reseted="reseted">
-        <input class="form-control" type="text" :value="value" ref="input" :placeholder="valueInit" @input="changeInput" >
+        <input class="form-control" type="text" :value="value" @keyup.enter.prevent="updatedValue" @focusout="updatedValue" ref="input" :placeholder="valueInit" @input="changeInput" >
     </LabelMaterial>
 </template>
 
@@ -36,6 +36,9 @@ export default {
        this.valueInit =  this.phIsvalue && this.ph !== undefined ? this.ph:this.value
     },
     methods: {
+        updatedValue(){
+            this.$emit('updatedValue', this.value)
+        },
         reseted(element){
             this.$emit('input', this.ph)
 

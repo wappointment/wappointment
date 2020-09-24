@@ -83,6 +83,10 @@ class Main extends AbstractRoutes
                     'controller' => 'SettingsStaffController',
                     'method' => 'get',
                 ],
+                '/client' => [
+                    'controller' => 'ClientController',
+                    'method' => 'index',
+                ],
             ],
             'POST' => [
                 '/app/migrate' => [
@@ -114,15 +118,7 @@ class Main extends AbstractRoutes
                     'method' => 'deactivate',
                     'controller' => 'AddonsController'
                 ],
-                '/client/search' => [
-                    'method' => 'search',
-                    'controller' => 'ClientController'
-                ],
-                '/client/book' => [
-                    'method' => 'book',
-                    'controller' => 'ClientController',
-                    'hint' => 'BookingAdmin'
-                ],
+
                 '/events' => [
                     'method' => 'save',
                     'controller' => 'EventsController',
@@ -164,7 +160,20 @@ class Main extends AbstractRoutes
                 '/settings/sendtestemail' => [
                     'controller' => 'SettingsController',
                     'method' => 'sendPreviewEmail'
-                ]
+                ],
+                '/client/search' => [
+                    'method' => 'search',
+                    'controller' => 'ClientController'
+                ],
+                '/client/book' => [
+                    'method' => 'book',
+                    'controller' => 'ClientController',
+                    'hint' => 'BookingAdmin'
+                ],
+                '/client' => [
+                    'method' => 'save',
+                    'controller' => 'ClientController'
+                ],
             ],
         ]
     ];

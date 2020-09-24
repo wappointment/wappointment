@@ -5,7 +5,7 @@ namespace Wappointment\System;
 class Menus
 {
     private $parent_slug = '';
-    private $sub_menus = [];
+    public $sub_menus = [];
     private $menu_capability = '';
     private $load_view = ['Wappointment\Controllers\AdminDefaultController', 'defaultContent'];
 
@@ -16,6 +16,7 @@ class Menus
             'calendar' => ['label' => 'Calendar'],
         ];
         if (Status::wizardComplete()) {
+            $this->sub_menus['clients'] = ['label' => 'Clients'];
             $this->sub_menus['settings'] = ['label' => 'Settings'];
             $this->sub_menus['addons'] = ['label' => 'Addons'];
             $this->sub_menus['help'] = ['label' => 'Help'];

@@ -62,11 +62,11 @@ export default {
         }, 
         create: {
             type: String,
-            default: 'Create'
+            default: 'Save'
         }, 
         modify: {
             type: String,
-            default: 'Update'
+            default: 'Save'
         },
         creating: {
             type: Boolean,
@@ -605,4 +605,5 @@ export default {
 .basic-form-wrapper {
     max-width: 700px;
 }
+
 </style>
