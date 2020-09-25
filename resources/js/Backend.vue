@@ -3,7 +3,6 @@
       <div class="wappointment-wrap">
           <div v-if="!db_update">
               <UpdateInformation />
-              <VersionsInfos />
           </div>
           <div v-else>
               <PendingDBUpdate />

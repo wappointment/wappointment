@@ -23,11 +23,11 @@ export default {
       settingSave(setting, value){
         this.requestRunner({key: setting, val: value})
       }, 
-      settingStaffSave(setting, value){
-        this.requestRunner({key: setting, val: value}, true)
+      settingStaffSave(setting, value, success = false){
+        this.requestRunner({key: setting, val: value}, true, success)
       }, 
-      requestRunner(params, staff = false){
-        this.request(this.settingSaveRequest, params, undefined, staff)
+      requestRunner(params, staff = false, success){
+        this.request(this.settingSaveRequest, params, undefined, staff, success)
       },
       async settingSaveRequest(params, staff = false) {
           if(staff) return await this.serviceSettingStaff.call('save', params) 
