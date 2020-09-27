@@ -97,7 +97,8 @@ class Settings
             'new_booking_link' => 'Book a new appointment',
             'booking_page' => 0,
             'show_welcome' => false,
-            'force_ugly_permalinks' => false
+            'force_ugly_permalinks' => false,
+            'disabled_modern_api_verbs' => false
         ];
     }
 

@@ -16,7 +16,7 @@ class InitPreinstall
 
         add_filter('plugin_action_links_' . plugin_basename(WAPPOINTMENT_FILE), [$this, 'customPluginLinks']);
 
-        new \Wappointment\Routes\Init();
+        //new \Wappointment\Routes\Init();
     }
 
     public function activated()
