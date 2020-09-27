@@ -82,7 +82,7 @@ class Reminder extends Model
             self::APPOINTMENT_PENDING => 'Sent after appointment has been booked when admin approval is required.',
         ];
         $labels = apply_filters('wappointment_reminders_labels', $labels);
-        return $labels[$this->event];
+        return empty($labels[$this->event]) ? 'undefined' : $labels[$this->event];
     }
 
 
