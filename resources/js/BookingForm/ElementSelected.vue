@@ -49,10 +49,6 @@ export default {
     line-height: 1.2em;
 }
 
-.wap-front .header-service .wduration{
-    font-weight: normal;
-    font-size:.9em;
-}
 .wap-front .wsep{
     display:inline-flex;
 }

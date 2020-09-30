@@ -818,10 +818,7 @@ export default {
     max-width:400px;
     margin:0 auto;
 }
-.wap-front .wap-form-body{
-    max-height: calc(85vh);
-    margin-top:56px;
-}
+
 .wap-front .has-scroll .wap-form-body{
     overflow-y: scroll;
 }

@@ -252,7 +252,7 @@ export default {
     data:() => ({
         opts: null,
         widthWrapper: false,
-        baseFontSize: '18px',
+        baseFontSize: '20px',
         calendarRound: .6,
     }),
     created(){
@@ -276,16 +276,16 @@ export default {
             if(this.widthWrapper < '620'){
                 this.baseFontSize = '21px'
             }
-            if(this.widthWrapper < '520'){
+/*             if(this.widthWrapper < '520'){
                 this.baseFontSize = '20px'
             }
             if(this.widthWrapper < '420'){
                 this.baseFontSize = '19px'
-            }
+            } */
         }
         
         if(this.widthWrapper < '320'){
-            this.baseFontSize = '18px'
+            this.baseFontSize = '20px'
         }
 /*         if(this.widthWrapper < '230'){
             this.baseFontSize = '17px'
