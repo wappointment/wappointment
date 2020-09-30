@@ -120,7 +120,10 @@ class Reminder extends Model
 
     public function toMailable($appointment = null)
     {
-        return new AppointmentEmailFiller($this->subject, $this->getHtmlBody($appointment));
+        return new AppointmentEmailFiller([
+            'subject' => $this->subject,
+            'body' => $this->getHtmlBody($appointment)
+        ]);
     }
 
     public function getHtmlBody($appointment = null)
