@@ -25,6 +25,11 @@ module.exports = {
     enforceExtension: false,
     mainFiles: ['index']
   },
+  optimization: {
+    splitChunks: {
+      automaticNameDelimiter: '-',
+    }
+  },
   module: {
     rules: [
       {
