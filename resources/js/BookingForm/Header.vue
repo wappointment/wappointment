@@ -1,7 +1,7 @@
 <template>
     <div class="wap-head">
         <div v-for="staff in staffs"> 
-            <div class="d-flex align-items-start">
+            <div class="d-flex" :class="[isCompactHeader ? 'align-items-start':'align-items-center']">
                 <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="refreshClicked">
                     <img :src="staff.a" :alt="staff.n">
                     <div class="after" v-if="isStepSlotSelection">

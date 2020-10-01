@@ -10,6 +10,7 @@
             :location="location"
             :rescheduling="rescheduling"
             :appointmentSaved="appointmentSaved"
+            @refreshed="refreshClick"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
             @changeLocation="childChangedStep"
@@ -336,7 +337,9 @@ export default {
 
 
         refreshClick() {
-            if(!this.isStepSlotSelection) return false
+            if(!this.isStepSlotSelection) {
+                return false
+            }
             this.currentStep = ''
             this.loading = true
             this.refreshInitValue()
