@@ -3,7 +3,7 @@
       :class="{registered: isRegistered, 'installed-addon': 
       isInstalled, activated: isActivated, 'coming-soon': !isPublished, 'odd':!odd}">
             <div class="d-flex addon-header align-items-center">
-                <img :src="'//cdn.wappointment.com/images/addon-'+addon.key+'.svg'" class="img-fluid m-auto"/>
+                <img :src="cdnUrl+'/images/addon-'+addon.key+'.svg'" class="img-fluid m-auto"/>
             </div>
             <div class="content-addon">
                 <h2 class="pb-4 m-auto">{{ addon.options.name }}</h2>
@@ -15,7 +15,7 @@
                 </div>
                 <div v-if="!isRegistered" class="d-flex justify-content-between align-items-center">
                     <div>
-                        <a class="btn btn-outline-primary" :href="learnAddonUrl">Learn more</a>
+                        <a class="btn btn-outline-primary" target="_blank" :href="learnAddonUrl">Learn more</a>
                     </div>
                 </div>
 
@@ -72,8 +72,8 @@ export default {
     mixins: [HelpersPackages],
     props: ['addon', 'viewData', 'apiSite', 'idx'],
     computed: {
-        siteUrl(){
-            return window.apiWappointment.resourcesUrl  
+        cdnUrl(){
+            return this.apiSite.replace('https://','https://cdn.')  
         },
         odd(){
             return this.idx%2 == 0
@@ -91,7 +91,9 @@ export default {
             return this.addon.initial_wizard || this.addon.settingKey === undefined //doesnt have settings
         },
         learnAddonUrl(){
-         return this.addon.options.product_page !== undefined ? this.addon.options.product_page : this.buyAddonUrl
+            let url = this.addon.options.product_page !== undefined ? this.addon.options.product_page : this.buyAddonUrl
+            url += '?utm_source=plugin&utm_medium=link&utm_campaign=addons_'+this.addon.key
+         return url
        },
         
         buyAddonUrl(){

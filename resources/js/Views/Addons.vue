@@ -3,7 +3,7 @@
     <WPScreenOptions>
       <div class="d-flex mb-2">
                 <label class="form-check-label w-100" for="allow-wappointment">
-                  <div class="d-flex align-items-center">
+                  <div class="d-flex align-items-center" v-if="dataLoaded">
                     <input type="checkbox" v-model="viewData.wappointment_allowed" id="allow-wappointment" @change="changedWappointmentAllowed()">
                     <div>Allow connection to wappointment.com</div>
                   </div>
@@ -24,17 +24,26 @@
       </div>
     </div>
       
-    <div class="addons d-flex flex-wrap pb-4" v-if="dataLoaded">
-      <template v-for="(addon,id) in viewData.addons"> 
-        <AddonPreview 
-        :apiSite="apiSite" :viewData="viewData" :idx="id" :addon="addon"
-        @openWizardModal="openWizardModal" 
-        @runInstallation="runInstallation" 
-        @install="install"
-        @activate="activate" 
-        @deactivate="deactivate" />
-      </template>
+    <div  v-if="dataLoaded">
       
+      <div class="addons d-flex flex-wrap">
+          <template v-for="(bundle,id) in getBundles"> 
+            <BundlePreview 
+            :apiSite="apiSite" :viewData="viewData" :idx="id" :addon="bundle" />
+          </template>
+      </div>
+      <div class="addons d-flex flex-wrap pb-4">
+        <template v-for="(addon,id) in getAddons"> 
+          <AddonPreview 
+          :apiSite="apiSite" :viewData="viewData" :idx="id" :addon="addon"
+          @openWizardModal="openWizardModal" 
+          @runInstallation="runInstallation" 
+          @install="install"
+          @activate="activate" 
+          @deactivate="deactivate" />
+        </template>
+      </div>
+
     </div>
     <div v-else>
       <div v-if="cantShowAddons" class="text-muted text-center bg-light p-4">
@@ -44,8 +53,6 @@
     </div>
     
     <WapModal v-if="showModal" :show="showModal" @hide="hideModal" large noscroll>
-
-        
         <h4 slot="title" class="modal-title">{{ addonWizardOn ? 'Wizard Setup: ' + addonWizard.options.name:'Enter licence key'}}</h4>
         <AddonsWizard :addon="addonWizard" @closeWizard="hideModal" v-if="addonWizardOn"/>
         <div v-else>
@@ -64,6 +71,7 @@ import AddonsService from '../Services/V1/Addons'
 import abstractView from './Abstract'
 import AddonsWizard from '../Addons/Wizard'
 import AddonPreview from '../Components/Addon'
+import BundlePreview from '../Components/Bundle'
 let services_install = window.wappointmentExtends.filter('AddonsServiceInstall', {})
 import WPScreenOptions from '../WP/ScreenOptions'
 
@@ -80,7 +88,7 @@ export default {
         currentServiceAddon:null,
         showSettings: false
     }),
-    components: {AddonPreview, AddonsWizard, WPScreenOptions},
+    components: {AddonPreview, BundlePreview, AddonsWizard, WPScreenOptions},
     created(){
       this.serviceAddons = this.$vueService(new AddonsService)
       this.services_install = services_install
@@ -97,6 +105,12 @@ export default {
       },
       addonWizardOn(){
         return this.addonWizard !== null
+      },
+      getAddons(){
+        return this.viewData.addons.filter((el) => el.solutions.length == 1)
+      },
+      getBundles(){
+        return this.viewData.addons.filter((el) => el.solutions.length > 1)
       }
     },
     methods: {
@@ -250,12 +264,9 @@ export default {
 }
 </script>
 <style>
-
 .wappointment-wrap .addons p {
     margin-bottom: .2rem;
 }
-
-
 </style>
 
 
