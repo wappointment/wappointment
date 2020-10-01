@@ -134,15 +134,13 @@ export default {
         this.currentTz = this.tzGuess()
         this.createdAt = this.getUnixNow()
         
-        if(this.step == 'button') {
-            this.$emit('changedStep','selection')
-        }
 
+        this.$emit('changedStep',this.currentStep)
+    
         if(this.step !== null) {
             this.requiresScroll = true //booking widget editor requires scroll always
         }
         
-
     },
 
     computed: {
