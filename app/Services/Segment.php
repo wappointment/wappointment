@@ -31,7 +31,6 @@ class Segment
                     false
                 );
             } catch (\Throwable $th) {
-
                 /* \Wappointment\Models\Log::data([
                     'info' => "Error with the segment ",
                     'start' => $this->debugDate($segment[0]),
