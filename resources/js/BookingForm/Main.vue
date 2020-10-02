@@ -648,7 +648,6 @@ export default {
     font-size: .75em;
 }
 .wap-front.large-version .wrap-calendar {
-    overflow: auto;
     max-height: none;
 }
 .wap-front .wrap-calendar {
@@ -822,5 +821,52 @@ export default {
 
 .wap-front .has-scroll .wap-form-body{
     overflow-y: scroll;
+}
+
+.wap-front .wap-form-body,
+.wap-front .wlabel,
+.wap-front .wrap-calendar div
+{
+    color: var(--wappo-body-tx);
+}
+
+.wap-front .wap-head .staff-desc, 
+.wap-front .wap-head strong {
+    color: var(--wappo-header-tx);
+}
+
+.wap-front .wap-head img{
+    border-radius: 50%;
+}
+.wap-front .wbtn-cell{
+    text-align: center;
+    padding: .4em;
+}
+
+.wap-front .form-control:focus {
+    outline: 0;
+}
+
+.wap-front .confirmation-cell .success {
+    padding: .2em .8em;
+    border-radius: 5px;
+    overflow: hidden;
+    font-size: .8em;
+}
+
+.wap-booking-fields .wap-field{
+    margin-bottom:.4em
+}
+
+.wap-wid.wclosable > .wclose:hover::before, 
+.wap-wid.wclosable > .wclose:hover::after {
+    background-color: var(--wappo-header-tx);
+}
+
+.wap-front .wappointment-errors{
+    color:#fff;
+    border-radius:.25em;
+    padding: .3em;
+    margin: .5em 0;
 }
 </style>

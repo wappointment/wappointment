@@ -49,6 +49,12 @@ export default {
     line-height: 1.2em;
 }
 
+.wap-front .welementname,
+.wap-front .wduration,
+.wap-img svg{
+    color: var(--wappo-pri-tx);
+}
+
 .wap-front .wsep{
     display:inline-flex;
 }
@@ -57,18 +63,19 @@ export default {
     margin-right: .4em;
 }
 
-.wclose::after {
-    transform: translateX(15px) rotate(-45deg);
-}
-.wclose::before, .wclose::after {
+.wclose::before, .wclose::after{
     content: ' ';
     position: absolute;
     background-color: #b5b1b1;
 }
-.wclose::before {
+.wclose::before{
     transform: translateX(15px) rotate(45deg);
 }
-.wclose:hover::before, .wclose:hover::after {
+.wclose::after{
+    transform: translateX(15px) rotate(-45deg);
+}
+.wclose:hover::before, 
+.wclose:hover::after{
     background-color: #7a7575;
     width: 1px;
 }
@@ -81,7 +88,8 @@ export default {
     position:relative;
 }
 
-.wclose::before, .wclose::after  {
+.wclose::before, 
+.wclose::after{
     height: .8em;
     width: 1px;
     top: .1em;
