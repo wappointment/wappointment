@@ -93,6 +93,7 @@ class InitBackend
             true
         );
 
+
         $varJs = ['wizardStep' => Status::wizardStep()];
         if (Status::wizardComplete()) {
             $varJs = array_merge($varJs, [
@@ -123,9 +124,26 @@ class InitBackend
             new \Wappointment\Services\Wappointment\VersionCheck;
         }
 
+        add_action('current_screen', [$this, 'enqueuePlugins']);
+
+
         if (!\WappointmentLv::function_exists('register_block_type')) {
             // Gutenberg is not active.
             return;
+        }
+    }
+
+    public function enqueuePlugins()
+    {
+        if (WPHelpers::isBackendPage('plugins')) {
+            wp_register_script(
+                WAPPOINTMENT_SLUG . '_feedbacks',
+                Helpers::assetUrl('js/feedbacks.js'),
+                ['jquery'],
+                null,
+                true
+            );
+            wp_enqueue_script(WAPPOINTMENT_SLUG . '_feedbacks');
         }
     }
 

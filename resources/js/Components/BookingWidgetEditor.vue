@@ -466,7 +466,7 @@ export default {
 
 
 .preview-book .wap-front{
-    min-width: 300px;
+    min-width: 360px;
     margin: 1rem;
 }
 

@@ -33,6 +33,15 @@ class Helpers
         return \WappointmentLv::function_exists('wp_date') ? wp_date($format, $timestamp, new \DateTimeZone($timezone)) : false;
     }
 
+    public static function isBackendPage($page)
+    {
+        if (!is_admin()) {
+            return false;
+        }
+        $screen = get_current_screen();
+        return $screen->base == $page;
+    }
+
     public static function getThemeBgColor()
     {
         $color = get_background_color();

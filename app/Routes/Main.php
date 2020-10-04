@@ -89,6 +89,10 @@ class Main extends AbstractRoutes
                 ],
             ],
             'POST' => [
+                '/send_feedback' => [
+                    'method' => 'sendFeedback',
+                    'controller' => 'AppController',
+                ],
                 '/app/migrate' => [
                     'method' => 'migrate',
                     'controller' => 'AppController',
