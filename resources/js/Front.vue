@@ -250,6 +250,11 @@ export default {
   -ms-flex-align: center !important;
   align-items: center !important;
 }
+.wap-front .align-items-start {
+    -webkit-box-align: start !important;
+    -ms-flex-align: start !important;
+    align-items: flex-start !important;
+}
 .wap-front .align-content-around {
   -ms-flex-line-pack: distribute !important;
   align-content: space-around !important;
@@ -271,6 +276,7 @@ export default {
     margin: 1rem;
     z-index: 9999999;
     max-height: 95%;
+    min-width: 320px;
 }
 
 .wap-wid.wclosable > .wclose {

@@ -1,7 +1,7 @@
 <template>
     <div class="wap-head">
         <div v-for="staff in staffs"> 
-            <div class="d-flex align-items-center">
+            <div class="d-flex" :class="[isCompactHeader ? 'align-items-start':'align-items-center']">
                 <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="refreshClicked">
                     <img :src="staff.a" :alt="staff.n">
                     <div class="after" v-if="isStepSlotSelection">
@@ -11,10 +11,10 @@
                     </div>
                 </div>
                 <div class="staff-desc">
-                    <strong>{{ staff.n }}</strong>
+                    <div><strong>{{ staff.n }}</strong></div>
                     <div class="header-service" v-if="service!== false && isCompactHeader">
-                        {{ service.name }}
                         <span class="wduration">{{duration}}{{getMinText}}</span>
+                        <span>{{ service.name }}</span>
                     </div>
                 </div>
             </div>
@@ -101,7 +101,12 @@ export default {
     padding: .4em;
     position: absolute;
     width: 100%;
-    height: 56px;
+    height: 60px;
+    overflow: hidden;
+}
+.wap-front .wap-form-body{
+    max-height: calc(85vh);
+    margin-top:60px;
 }
 
 .wap-front .wap-bf.show.has-scroll .wap-head {
@@ -112,9 +117,10 @@ export default {
     padding-left: .4em;
     line-height: 1.2;
     font-size: 1em;
+    width: 100%;
 }
 .wap-front .staff-av img{
-    max-width: 40px;
+    max-width: 46px;
     display: block;
     overflow: hidden;
     font-size: 12px;
@@ -122,5 +128,15 @@ export default {
 .wap-front .staff-av.norefresh {
     cursor: default;
 }
+.wap-front .header-service {
+    font-weight: normal;
+    font-size:.9em;
+}
+.wap-front .header-service .wduration{
+    font-weight: bold;
+    float: right;
+}
+
+
 </style>
 

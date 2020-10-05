@@ -10,6 +10,7 @@
             :location="location"
             :rescheduling="rescheduling"
             :appointmentSaved="appointmentSaved"
+            @refreshed="refreshClick"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
             @changeLocation="childChangedStep"
@@ -134,15 +135,13 @@ export default {
         this.currentTz = this.tzGuess()
         this.createdAt = this.getUnixNow()
         
-        if(this.step == 'button') {
-            this.$emit('changedStep','selection')
-        }
 
+        this.$emit('changedStep',this.currentStep)
+    
         if(this.step !== null) {
             this.requiresScroll = true //booking widget editor requires scroll always
         }
         
-
     },
 
     computed: {
@@ -338,7 +337,9 @@ export default {
 
 
         refreshClick() {
-            if(!this.isStepSlotSelection) return false
+            if(!this.isStepSlotSelection) {
+                return false
+            }
             this.currentStep = ''
             this.loading = true
             this.refreshInitValue()
@@ -633,6 +634,20 @@ export default {
   opacity: 1;
 }
 
+.wap-front .confirmation-cell .success,
+.wap-front .wap-form-body .success .text-conf {
+    color: var(--wappo-success-tx);
+}
+
+.wclosable .wclose::before, 
+.wclosable .wclose::after {
+    background-color: var(--wappo-pri-tx);
+}
+
+.wclosable .wclose:hover::before, 
+.wclosable .wclose:hover::after {
+    background-color: var(--wappo-pri-tx-lt);
+}
 
 .wap-bf button {
     font-size: .7em;
@@ -647,7 +662,6 @@ export default {
     font-size: .75em;
 }
 .wap-front.large-version .wrap-calendar {
-    overflow: auto;
     max-height: none;
 }
 .wap-front .wrap-calendar {
@@ -818,11 +832,54 @@ export default {
     max-width:400px;
     margin:0 auto;
 }
-.wap-front .wap-form-body{
-    max-height: calc(85vh);
-    margin-top:56px;
-}
+
 .wap-front .has-scroll .wap-form-body{
     overflow-y: scroll;
+}
+
+.wap-front .wap-form-body,
+.wap-front .wlabel,
+.wap-front .wrap-calendar div
+{
+    color: var(--wappo-body-tx);
+}
+
+.wap-front .wap-head .staff-desc, 
+.wap-front .wap-head strong {
+    color: var(--wappo-header-tx);
+}
+
+.wap-front .wap-head img{
+    border-radius: 50%;
+}
+.wap-front .wbtn-cell{
+    text-align: center;
+    padding: .4em;
+}
+
+.wap-front .form-control:focus {
+    outline: 0;
+}
+
+.wap-front .confirmation-cell .success {
+    padding: .2em .8em;
+    border-radius: 5px;
+    overflow: hidden;
+    font-size: .8em;
+}
+
+.wap-booking-fields .wap-field{
+    margin-bottom:.4em
+}
+
+.wap-wid.wclosable > .wclose:hover::before, 
+.wap-wid.wclosable > .wclose:hover::after {
+    background-color: var(--wappo-header-tx);
+}
+
+.wap-front .wappointment-errors{
+    border-radius:.25em;
+    padding: .3em;
+    margin: .5em 0;
 }
 </style>

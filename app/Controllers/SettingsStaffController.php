@@ -19,9 +19,6 @@ class SettingsStaffController extends RestController
         if ($request->input('key') == 'viewed_updates') {
             return Status::setViewedUpdated();
         }
-        if ($request->input('key') == 'hello_page') {
-            return Status::setHelloPage($request->input('val'));
-        }
 
         $result = Settings::saveStaff($request->input('key'), $request->input('val'));
 

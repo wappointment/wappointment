@@ -11,10 +11,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="wappointment-errors" v-if="errors.length > 0">
-                    <div v-for="error in errors">
-                        {{ error }}
-                    </div>
+            </div>
+            <div class="wappointment-errors" v-if="errors.length > 0">
+                <div v-for="error in errors">
+                    {{ error }}
                 </div>
             </div>
             <AppointmentTypeSelection v-if="serviceHasTypes" 

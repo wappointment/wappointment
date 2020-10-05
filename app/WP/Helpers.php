@@ -33,6 +33,15 @@ class Helpers
         return \WappointmentLv::function_exists('wp_date') ? wp_date($format, $timestamp, new \DateTimeZone($timezone)) : false;
     }
 
+    public static function isBackendPage($page)
+    {
+        if (!is_admin()) {
+            return false;
+        }
+        $screen = get_current_screen();
+        return $screen->base == $page;
+    }
+
     public static function getThemeBgColor()
     {
         $color = get_background_color();
@@ -109,7 +118,7 @@ class Helpers
         }
 
         $setting = get_user_option(self::$option_prefix . '_' . strtolower($option_name), $staff_id);
-
+        //dd($setting, self::$option_prefix . '_' . strtolower($option_name), $staff_id);
         return (empty($setting)) ? $default : $setting;
     }
 
@@ -127,7 +136,7 @@ class Helpers
         if ((int)$old_staff_id === (int)$new_staff_id) {
             return;
         }
-        $options_to_transfer = ['settings', 'since_last_refresh', 'availability'];
+        $options_to_transfer = ['settings', 'since_last_refresh', 'availability', 'cal_urls', 'calendar_logs', 'viewed_updates'];
 
         foreach ($options_to_transfer as $option_name) {
             $originalUserSetting = self::getStaffOption($option_name, $old_staff_id);

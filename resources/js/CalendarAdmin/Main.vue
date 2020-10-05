@@ -9,7 +9,7 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
                 <FreeSlotsSelector :totalSlots="totalSlots" :viewingFreeSlot="viewingFreeSlot" 
                 :durations="getAllDurations" :duration="selectedDuration" :buffer="this.viewData.buffer_time"
-                @resizeSlots="resizeSlots" @getFreeSlots="getFreeSlots" @getEdition="getEdition"/>
+                @resizeSlots="resizeSlots" @getFreeSlots="getFreeSlots" @getEdition="getEdition" />
               </div>
               <div class="d-flex">
                 <TimeZones v-if="viewData!==null" :timezones="viewData.timezones_list" :staffTimezone="viewData.timezone" classW="align-self-center pr-2" 
