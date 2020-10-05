@@ -34,16 +34,19 @@ class Status
 
     public static function canSeeUpdatePage()
     {
-
         return !static::seenUpdatePage();
     }
 
     public static function seenUpdatePage()
     {
         $update_seen = static::viewedUpdates();
-        return $update_seen && version_compare($update_seen, WAPPOINTMENT_VERSION) >= 0;
+        return $update_seen && version_compare($update_seen, static::getBaseVersion()) >= 0;
     }
 
+    public static function getBaseVersion()
+    {
+        return substr(WAPPOINTMENT_VERSION, 0, 3 - strlen(WAPPOINTMENT_VERSION));
+    }
 
 
     public static function hasPendingUpdates()
