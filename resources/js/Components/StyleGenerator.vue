@@ -3,12 +3,14 @@
         :root {
             --wappo-pri-bg: {{ hx_rgb(opts.colors.primary.bg) }};
             --wappo-pri-tx: {{ hx_rgb(opts.colors.primary.text) }};
+            --wappo-pri-tx-lt: {{ hx_rgb(opts.colors.primary.text,.8) }};
             --wappo-sec-bg: {{ hx_rgb(opts.colors.secondary.bg) }};
             --wappo-sec-tx: {{ hx_rgb(opts.colors.secondary.text) }};
             --wappo-sec-sel-bg: {{ hx_rgb(opts.colors.secondary.bg_selected) }};
             --wappo-sec-sel-tx: {{ hx_rgb(opts.colors.secondary.text_selected) }};
             --wappo-header-tx: {{ hx_rgb(opts.colors.header.text) }};
             --wappo-body-tx: {{ hx_rgb(opts.colors.body.text) }};
+            --wappo-success-tx: {{ hx_rgb(opts.colors.confirmation.text) }};
         }
         .wap-front .wbtn.wbtn-primary-light,
         .wap-front .wbtn.wbtn-primary-light:not(:disabled):not(.disabled):active, 
@@ -16,7 +18,7 @@
             background: {{ hx_rgb(opts.colors.primary.bg, .8) }};
             background-color: {{ hx_rgb(opts.colors.primary.bg, .8) }};
             border-color: {{ hx_rgb(opts.colors.primary.bg, .6) }};
-            color: {{ hx_rgb(opts.colors.primary.text) }};
+            color: var(--wappo-pri-tx);
             box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .4) }};
         }
         .wap-front .wbtn.wbtn-primary.wbtn-booking,
@@ -29,10 +31,10 @@
         .wap-front .wbtn.wbtn-primary,
         .wap-front .wbtn-primary:not(:disabled):not(.disabled):active, 
         .wap-front .wbtn-primary:not(:disabled):not(.disabled).active {
-            background: {{ hx_rgb(opts.colors.primary.bg) }};
-            background-color: {{ hx_rgb(opts.colors.primary.bg) }};
+            background: var(--wappo-pri-bg);
+            background-color: var(--wappo-pri-bg);
             border-color: {{ hx_rgb(opts.colors.primary.bg, .8) }};
-            color: {{ hx_rgb(opts.colors.primary.text) }};
+            color: var(--wappo-pri-tx);
             box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .6) }};
         }
         .wap-front .wbtn.wbtn-primary:hover {
@@ -49,16 +51,16 @@
         .wap-front .wbtn-primary:disabled, 
         .wap-front .wbtn-primary.disabled:hover, 
         .wap-front .wbtn-primary:disabled:hover {
-            background-color: {{ hx_rgb(opts.colors.primary.bg) }} !important;
+            background-color: var(--wappo-pri-bg) !important;
             border-color: {{ hx_rgb(opts.colors.primary.bg, .8) }} !important;
-            color: {{ hx_rgb(opts.colors.primary.text) }} !important;
+            color: var(--wappo-pri-tx) !important;
             box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .6) }};
         }
 
         .wap-front .wbtn-primary:disabled:hover {
-            background-color: {{ hx_rgb(opts.colors.primary.bg) }} !important;
+            background-color: var(--wappo-pri-bg) !important;
             border-color: {{ hx_rgb(opts.colors.primary.bg, .8) }} !important;
-            color: {{ hx_rgb(opts.colors.primary.text) }} !important;
+            color: var(--wappo-pri-tx) !important;
             box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .6) }};
         }
 
@@ -148,12 +150,12 @@
         }
         .wap-front .wselected{
             background-color: {{ hx_rgb(opts.colors.primary.bg, .5) }};
-            color: {{ hx_rgb(opts.colors.primary.text) }};
+            color: var(--wappo-pri-tx);
         }
 
         .wap-front [data-tt]:before {
             background-color: {{ hx_rgb(opts.colors.primary.bg, .8) }};
-            color: {{ hx_rgb(opts.colors.primary.text) }};
+            color: var(--wappo-pri-tx);
         }
 
         .wap-front [data-tt]:after {
@@ -162,22 +164,19 @@
 
         .wap-front .phone-field:focus-within {
             box-shadow: 0 0 2px  {{ hx_rgb(opts.colors.primary.bg, .25) }};
-            border-color: {{ hx_rgb(opts.colors.primary.bg) }};
+            border-color: var(--wappo-pri-bg);
         }
         .wap-front .field-required input:focus, 
         .wap-front .field-required select:focus {
-            border-color: {{ hx_rgb(opts.colors.primary.bg) }};
+            border-color: var(--wappo-pri-bg);
             box-shadow: 0 0 2px {{ hx_rgb(opts.colors.primary.bg, .6) }};
             outline: 2px solid transparent;
         }
         .wap-front .confirmation-cell .success {
             background-color: {{ hx_rgb(opts.colors.confirmation.bg) }};
         }
-        .wap-front .confirmation-cell .success,
-        .wap-front .wap-form-body .success .text-conf {
-            color: {{ hx_rgb(opts.colors.confirmation.text) }};
-        }
         
+
         .wap-booking-fields .isInvalid input[type="text"], 
         .wap-booking-fields .isInvalid input[type="email"], 
         .wap-booking-fields .isInvalid input[type="url"], 

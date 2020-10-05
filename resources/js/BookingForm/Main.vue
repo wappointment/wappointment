@@ -634,6 +634,20 @@ export default {
   opacity: 1;
 }
 
+.wap-front .confirmation-cell .success,
+.wap-front .wap-form-body .success .text-conf {
+    color: var(--wappo-success-tx);
+}
+
+.wclosable .wclose::before, 
+.wclosable .wclose::after {
+    background-color: var(--wappo-pri-tx);
+}
+
+.wclosable .wclose:hover::before, 
+.wclosable .wclose:hover::after {
+    background-color: var(--wappo-pri-tx-lt);
+}
 
 .wap-bf button {
     font-size: .7em;

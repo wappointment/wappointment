@@ -51,9 +51,15 @@ export default {
 
 .wap-front .welementname,
 .wap-front .wduration,
-.wap-img svg{
+.wselected .wap-img svg,
+.wbtn-primary-light .wap-img svg{
     color: var(--wappo-pri-tx);
 }
+
+.success .wap-img svg{
+    color: var(--wappo-success-tx);
+}
+
 
 .wap-front .wsep{
     display:inline-flex;

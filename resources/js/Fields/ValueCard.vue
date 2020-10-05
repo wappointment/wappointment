@@ -42,10 +42,10 @@ export default {
     background: #fff;
     border-radius: 2em;
 }
-.value-card.wclosable .wclose::before, .value-card.wclosable .wclose::after {
+.value-card.wclosable .wclose::before, 
+.value-card.wclosable .wclose::after {
     background-color: #b5b1b1;
 }
-
 </style>
 
 
