@@ -2,6 +2,8 @@
 
 namespace Wappointment\Validators;
 
+use Wappointment\ClassConnect\PhoneNumberUtil;
+
 class Phone extends \Rakit\Validation\Rule
 {
     protected $message = ':attribute is not a valid Phone number';
@@ -11,21 +13,20 @@ class Phone extends \Rakit\Validation\Rule
     {
         $this->countries = $countriesAllowed;
     }
+
     public function check($value)
     {
         if (empty($value)) {
             return false;
         }
-        $phoneUtil = \libphonenumber\PhoneNumberUtil::getInstance();
+        $phoneUtil = PhoneNumberUtil::getInstance();
         $number = $phoneUtil->parse($value);
 
         if ($phoneUtil->isValidNumber($number) === false) {
             return false;
         }
 
-        if (!empty($this->countries) &&
-            !in_array($phoneUtil->getRegionCodeForNumber($number), $this->countries)
-        ) {
+        if (!empty($this->countries) && !in_array($phoneUtil->getRegionCodeForNumber($number), $this->countries)) {
             return false;
         }
 
