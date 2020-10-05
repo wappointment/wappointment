@@ -149,7 +149,7 @@ class InitBackend
     public function customPluginLinks($links)
     {
         $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_settings')) . '" >Settings</a>';
-        if (Status::installedForXDays() > 30) {
+        /* if (Status::installedForXDays() > 30) {
             $links[] = '<a href="https://wordpress.org/support/plugin/wappointment/reviews/#new-post" target="_blank" class="btn btn-outline-secondary text-dark ml-2">
                 Support us with stars
                 <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span>
@@ -167,7 +167,7 @@ class InitBackend
                 padding: 0;
             }
             </style>';
-        }
+        } */
 
         return $links;
     }
