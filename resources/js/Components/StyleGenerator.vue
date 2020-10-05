@@ -199,6 +199,10 @@
         .wap-front .wappointment-errors{
             background-color:{{ hx_rgb(opts.colors.form.error) }};
         }
+        .wap-front .wappointment-errors div{
+            color: #fff;
+            font-size: .9em;
+        }
         
 
         .wap-front .text-sm{

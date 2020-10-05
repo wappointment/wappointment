@@ -878,7 +878,6 @@ export default {
 }
 
 .wap-front .wappointment-errors{
-    color:#fff;
     border-radius:.25em;
     padding: .3em;
     margin: .5em 0;
