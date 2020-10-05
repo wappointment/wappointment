@@ -147,7 +147,16 @@ It requires work on your end but keeps your site safe and optimized.
 == Changelog ==
 
 = 1.8.2 - 2020-10-05 =
-* resolved!
+* fixed various styling issue in the booking form
+* fixed broken email preview for appointment reminders
+* fixed large calendar version not expanding fully
+* reduced size of calendar buttons days
+* corrected calendar refresh in booking form
+* fixed account switch bug re showing update page
+* corrected error when booking appointment really close to starting time "left greater than right"
+* set min width of floating booking form to 320px
+* fixed missing error message in booking form
+* added feedback script on deactivation 
 
 = 1.8.1 - 2020-09-25 =
 * Backward issue resolved
