@@ -69,7 +69,9 @@ class Status
     {
         return WPHelpers::setStaffOption(
             'viewed_updates',
-            WAPPOINTMENT_VERSION
+            WAPPOINTMENT_VERSION,
+            false,
+            true
         );
     }
 
