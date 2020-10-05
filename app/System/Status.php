@@ -66,9 +66,7 @@ class Status
     {
         return WPHelpers::setStaffOption(
             'viewed_updates',
-            WAPPOINTMENT_VERSION,
-            Settings::get('activeStaffId'),
-            true
+            WAPPOINTMENT_VERSION
         );
     }
 
@@ -77,20 +75,6 @@ class Status
         return WPHelpers::getStaffOption('viewed_updates');
     }
 
-    public static function helloPage()
-    {
-        return WPHelpers::getStaffOption('hello_page');
-    }
-
-    public static function setHelloPage($value)
-    {
-        return WPHelpers::setStaffOption(
-            'hello_page',
-            $value,
-            Settings::get('activeStaffId'),
-            true
-        );
-    }
 
     public static function wizardStep()
     {

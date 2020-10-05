@@ -34,6 +34,7 @@ class Reset
             WPHelpers::deleteStaffOption('viewed_updates', $staff_id);
             WPHelpers::deleteStaffOption('hello_page', $staff_id);
             WPHelpers::deleteStaffOption('preferences', $staff_id);
+            WPHelpers::deleteStaffOption('since_last_refresh', $staff_id);
         }
     }
 

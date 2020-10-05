@@ -118,7 +118,7 @@ class Helpers
         }
 
         $setting = get_user_option(self::$option_prefix . '_' . strtolower($option_name), $staff_id);
-
+        //dd($setting, self::$option_prefix . '_' . strtolower($option_name), $staff_id);
         return (empty($setting)) ? $default : $setting;
     }
 
