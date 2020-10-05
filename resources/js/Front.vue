@@ -276,6 +276,7 @@ export default {
     margin: 1rem;
     z-index: 9999999;
     max-height: 95%;
+    min-width: 320px;
 }
 
 .wap-wid.wclosable > .wclose {
