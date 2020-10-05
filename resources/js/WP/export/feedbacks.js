@@ -1,7 +1,8 @@
 jQuery(function($){
     
   function wappo_feedback(){
-      var deactivate_link = document.getElementById('deactivate-wappointment')
+    
+      var deactivate_link = $('tr[data-slug="wappointment"] span.deactivate a')
       var newDiv = document.createElement("div");
       newDiv.setAttribute("id", "wappo-feedback");
       newDiv.innerHTML = '<div id="wappo-feedback-content" >'+
@@ -26,7 +27,7 @@ jQuery(function($){
                               '<div class="wappo-loader wap-hidden"></div>'
                           '</div>';
       document.body.appendChild(newDiv);
-      deactivate_link.addEventListener('click', wappo_open_feedback);
+      deactivate_link.click(wappo_open_feedback);
       document.getElementById('wappo-feedback-confirm').addEventListener('click', wappo_confirm_feedback);
       document.getElementById('wappo-feedback-cancel').addEventListener('click', wappo_close_feedback);
       document.getElementById('wappo-feedback-skip').addEventListener('click', wappo_skip_feedback);
@@ -100,7 +101,7 @@ jQuery(function($){
       wappo_deactivate();
   }
   function wappo_deactivate(){
-      window.location = document.getElementById('deactivate-wappointment').getAttribute('href');
+      window.location = $('tr[data-slug="wappointment"] span.deactivate a').attr('href');
   }
   wappo_feedback();
 });
