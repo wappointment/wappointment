@@ -136,13 +136,19 @@ class Helpers
         if ((int)$old_staff_id === (int)$new_staff_id) {
             return;
         }
-        $options_to_transfer = ['settings', 'since_last_refresh', 'availability', 'cal_urls', 'calendar_logs', 'viewed_updates'];
 
-        foreach ($options_to_transfer as $option_name) {
+        foreach (['settings', 'since_last_refresh', 'availability', 'cal_urls', 'calendar_logs'] as $option_name) {
             $originalUserSetting = self::getStaffOption($option_name, $old_staff_id);
 
             self::setStaffOption($option_name, $originalUserSetting, $new_staff_id);
             self::deleteStaffOption($option_name, $old_staff_id);
+        }
+
+        foreach (['viewed_updates'] as $option_name) {
+            $originalUserSetting = self::getStaffOption($option_name, $old_staff_id);
+
+            self::setStaffOption($option_name, $originalUserSetting, $new_staff_id, true);
+            self::deleteStaffOption($option_name, $old_staff_id, true);
         }
     }
 
