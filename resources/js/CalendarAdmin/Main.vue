@@ -95,7 +95,7 @@
   </div>
 </template>
 <script>
-import Regav from '../Views/Subpages/Regav'
+import Regav from '../RegularAvailability/View'
 import abstractView from '../Views/Abstract'
 import TimeZones from '../Components/TimeZones'
 import ControlBar from './ControlBar'

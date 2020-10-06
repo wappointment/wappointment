@@ -1,6 +1,7 @@
 <template>
     <div>
         <div class="d-flex w100">
+            
             <div class="columnTitle" data-tt="Number of days in the future where you're made available">Available Booking Days</div> 
                 <ClickRevealSlider :alwaysShow="true" 
                 :value="viewData.availaible_booking_days" @change="changedCRS" />
@@ -14,13 +15,16 @@
                 <div v-if="!scrolledAtTheEnd" class="btn btn-link btn-xs" role="button" @click="scrollToEnd">End >></div>
             </div>
             
-            <hourColumn  :heightUnit="heightUnit" :openingTimes="openingTimes" 
-            @addMin="addMin" @addMax="addMax" 
-            @removeMin="removeMin" @removeMax="removeMax"></hourColumn>
+            <hourColumn v-if="precision" 
+            :heightUnit="precision" :openingTimes="openingTimes" :precision="precision"
+            @addMin="addMin" @addMax="addMax" @changedPrecision="changedPrecision"
+            @removeMin="removeMin" @removeMax="removeMax"
+            ></hourColumn>
             <div id="regav-wrapper" ref="regavwrap" @scroll="scrolledTrigger" class="regular-availability d-flex" >
                 <template v-for="(openedTimes, daykey) in openedDays">     
-                    <dayColumn  :key="daykey" :class="classColumn" :heightUnit="heightUnit" :daykey="daykey" 
-                    :openedTimes="openedTimes" :minHour="minHour" :maxHour="maxHour" @updatedSlots="updatedSlots" @editBlock="editBlock"></dayColumn>
+                    <dayColumn  :key="daykey" :class="classColumn" :heightUnit="precision" :daykey="daykey" 
+                    :openedTimes="openedTimes" :minHour="minHour" :maxHour="maxHour" :precision="precision"
+                    @updatedSlots="updatedSlots" @editBlock="editBlock"></dayColumn>
                 </template>
             </div>
         </div>
@@ -28,19 +32,20 @@
 </template>
 
 <script>
-import dayColumn from '../Components/DayColumn'
-import hourColumn from '../Components/HourColumn'
+import dayColumn from './DayColumn'
+import hourColumn from './HourColumn'
 import ClickRevealSlider from '../Fields/ClickRevealSlider'
 import orderBy from 'lodash/orderBy'
+
 export default {
     props: ['initValue','viewData'],
     data() {
         return {
             classColumn: 'day-column',
             notchSize: 1,
+            precision: 60,
             minHour: 7,
             maxHour: 21,
-            heightUnit: 50,
             openedDays: {},
             openedDaysConditional: {},
             timezone: {},
@@ -78,13 +83,25 @@ export default {
         openingTimes(){
             let opening_times = []
             for (let index = this.minHour; index < this.maxHour; index++) {
+                
                 opening_times.push(index+'h') 
+                /* for (let j = 0; j < this.hourSplits; j++) {
+                    //const element = this.hourSplits[j];
+                    opening_times.push(index+'h'+(j*this.precision)+'min') 
+                } */
+                
             }
             return opening_times
         },
+        hourSplits(){
+            return 60/this.precision
+        }
     },
     
     methods: {
+        changedPrecision(precision){
+            this.precision = precision
+        },
         changedCRS(value){
             this.$emit('changedABD', value)  
         },
@@ -162,13 +179,13 @@ export default {
 
             for (let index = 0; index < timeBlocks.length; index++) {
                 let timeblock = timeBlocks[index]
-                if(timeblock[0]<this.minHour){
+                if(timeblock[0]<this.minHour *60 ){
                     hasChanged=true
-                    timeblock[0]=this.minHour
+                    timeblock[0]=this.minHour *60 
                 } 
-                if(timeblock[1]>this.maxHour){
+                if(timeblock[1]>this.maxHour *60 ){
                     hasChanged=true
-                    timeblock[1]=this.maxHour
+                    timeblock[1]=this.maxHour *60 
                 } 
                 if(timeblock[0] == timeblock[1]) this.openedDays[property1].splice(index,1)
                 else this.openedDays[property1][index] = timeblock
@@ -193,10 +210,12 @@ export default {
 
 
       refreshTimeBlocks(daykey){
+          
         let orderedres = this.getSeriePerDay(daykey)
         let openedDays = this.openedDays
         this.openedDays = []
         let original = openedDays[daykey]
+
         openedDays[daykey] = this.makeTimeBlocks(orderedres)
         for (let i = 0; i < original.length; i++) {
             if(original[i].length > 2){ // check for extra params on that regav
@@ -216,13 +235,16 @@ export default {
         this.openedDays = openedDays
         this.updatedRegav()
       },
+
       updatedRegav(){
           this.$emit('updatedDays',this.openedDays)
       },
 
       getSerie(timeBlock){
           var result = []
-          for (var i = timeBlock[0]; i != timeBlock[1]; ++i) result.push(i)
+          for (var i = timeBlock[0]; i != timeBlock[1]; i = i + this.precision ) result.push(i)
+          console.log('result',result)
+          alert('exit')
           return result
       },
 
@@ -327,12 +349,7 @@ export default {
     .regular-availability  .col-sm-1{
         text-align: center;
     }
-    .day-column{
-        min-width: 100px;
-        margin: 0 1rem;
-        text-align: center;
-        width: 100%;
-    }
+   
     .regular-availability{
         overflow-x: scroll;
     }

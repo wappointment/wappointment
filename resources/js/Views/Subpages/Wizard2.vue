@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import Regav from './Regav'
+import Regav from '../../RegularAvailability/View'
 import wizardLayout from '../abstractWizardLayout'
 
 export default {

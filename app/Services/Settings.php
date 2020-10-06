@@ -123,13 +123,14 @@ class Settings
         //if (empty($timezone)) $timezone = 'UTC';
         return [
             'regav' => [
-                'monday' => [[8, 12], [14, 19]],
-                'tuesday' => [[8, 12], [14, 19]],
-                'wednesday' => [[8, 12], [14, 19]],
-                'thursday' => [[8, 12], [14, 19]],
-                'friday' => [[8, 12], [14, 19]],
+                'monday' => [[480, 720], [840, 1140]],
+                'tuesday' => [[480, 720], [840, 1140]],
+                'wednesday' => [[480, 720], [840, 1140]],
+                'thursday' => [[480, 720], [840, 1140]],
+                'friday' => [[480, 720], [840, 1140]],
                 'saturday' => [],
-                'sunday' => []
+                'sunday' => [],
+                'precise' => true
             ],
             'availaible_booking_days' => 60,
             'calurl' => '',

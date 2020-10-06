@@ -26,7 +26,8 @@
                 <span class="bullet-wap">3</span> 
                 <span class="bullet-title"> Set your standard weekly schedule</span>
             </p>
-            <RegularAvailability :initValue="viewData.regav" :viewData="viewData" 
+ 
+            <RegularAvailability :initValue="getRegav" :viewData="viewData" 
             @updatedDays="updatedRA"
             @changedABD="changedABD"></RegularAvailability>
         </div>
@@ -34,12 +35,12 @@
 </template>
 
 <script>
-import RegularAvailability from '../../Components/RegularAvailability'
-import StaffSelector from '../../Components/StaffSelector'
-import TimeZones from '../../Components/TimeZones'
-import abstractView from '../Abstract'
-import StaffPicture from '../../Components/StaffPicture'
-import RequestMaker from '../../Modules/RequestMaker'
+import RegularAvailability from './RegularAvailability'
+import StaffSelector from '../Components/StaffSelector'
+import TimeZones from '../Components/TimeZones'
+import abstractView from '../Views/Abstract'
+import StaffPicture from '../Components/StaffPicture'
+import RequestMaker from '../Modules/RequestMaker'
 
 export default {
   extends: abstractView,
@@ -55,12 +56,32 @@ export default {
       hasRegav(){
           return (this.viewData !== null && this.viewData.regav !== undefined) ? true:false
       },
+      getRegav(){
+          let regav = Object.assign({},this.viewData.regav)
+          if(this.viewData.regav.precise === undefined){
+              regav = this.convertRegavToPrecise(regav)
+          }
+          return regav
+      }
   },
   methods: {
+    convertRegavToPrecise(regav){
+        for (const key in this.viewData.regav) {
+            if (this.viewData.regav.hasOwnProperty(key)) {
+                for (let i = 0; i < this.viewData.regav[key].length; i++) {
+                    const el = this.viewData.regav[key][i]
+                    regav[key][i] = [el[0]*60, el[1]*60] //converting hours to minutes
+                }
+                 
+            }
+        }
+        return regav
+    },
     changed(){
         this.refreshInitValue()
     },
     updatedRA(openeDays){
+        openeDays.precise = true
         this.settingStaffSave('regav', openeDays) 
     },
     changedABD(value){

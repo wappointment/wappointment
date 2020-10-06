@@ -1,9 +1,8 @@
 <template>
     <div :class="classColumn">
         <strong class="columnTitle">{{ daykey }}</strong>
-        <div :id="daykey" :class=" active ? 'box-shadow active' : 'box-shadow'" :style="'height:'+getHeightColumn()+'px'"
+        <div :id="daykey" :class=" active ? 'box-shadow active' : 'box-shadow'" :style="'height:'+getHeightColumn+'px'"
             draggable="true" 
-
             @mousedown.prevent.stop="dragging"
             @touchstart.prevent.stop="dragging"
             @mousemove="draggingMove"
@@ -14,14 +13,17 @@
             <div class="drag-helper" :style="getWrapperGhostStyle"></div>
             <div class="ghost-wrapper" :style="getWrapperGhostStyle">
                 <div v-if="isAtLeastOneSlot" :style="getGhostStyle" class="ghost">
-                    <strong class="timeText">{{ ghost[0] }}h - {{ ghost[1] }}h</strong>
+                    <strong class="timeText">{{ convertMinutesToTime(ghost[0]) }} - {{ convertMinutesToTime(ghost[1]) }}</strong>
                 </div>
             </div>
             <div class="events" v-if="!hiddenTimes">
                 
                 <timeBlock v-for="(timeBlock, tblockid) in openedTimes" :key="minHour+maxHour+daykey+tblockid+timeBlock[0]+timeBlock[1]" 
                 :tblockid="tblockid" :timeBlock="timeBlock" 
-                :daykey="daykey" :y="getY(timeBlock[0])" :h="getHeight(timeBlock)"
+                :daykey="daykey" :y="getY(timeBlock[0])" 
+                :h="getHeight(timeBlock)"
+                :minHour="minHour"
+                :heightUnit="heightUnit"
                 @deletedBlock="deletedBlock" 
                 @updatedBlock="updatedBlock"
                 @active="activeDay"
@@ -35,11 +37,11 @@
 </template>
 
 <script>
-import timeBlock from '../Components/TimeBlock'
+import timeBlock from './TimeBlock'
 
 let timeBlockComps = window.wappointmentExtends.filter('RegavTimeBlockComponent', {'timeBlock': timeBlock} )
 export default {
-    props: ['daykey', 'openedTimes', 'minHour', 'maxHour', 'classColumn', 'heightUnit'],
+    props: ['daykey', 'openedTimes', 'minHour', 'maxHour', 'classColumn', 'heightUnit', 'precision'],
     data() {
         return {
             notchSize:1,
@@ -59,19 +61,36 @@ export default {
             return this.isDragging && (this.ghost[1]-this.ghost[0]) != 0
         },
         getGhostStyle(){
-          if(this.ghost.length > 0) return 'height:'+this.getHeight(this.ghost)+'px;top:'+this.getY(this.ghost[0])+'px;'
+          if(this.ghost.length > 0) {
+              return 'height:'+this.getHeight(this.ghost)+'px;top:'+this.getY(this.ghost[0])+'px;'
+          }
           return ''
         },
         getWrapperGhostStyle(){
-          if(this.ghost.length > 0) return 'position:absolute;height: 100%;width: 100%;'
+          if(this.ghost.length > 0) {
+              return 'position:absolute;height: 100%;width: 100%;'
+          }
           return ''
-        }
+        },
+        getHeightColumn(){
+          return (this.totalIntervals) * this.heightUnit 
+        },
+
+        totalIntervals(){
+            return (this.maxHour - this.minHour) * this.intervalsPerHour
+        },
+
+        intervalsPerHour(){
+            return (60/this.precision)
+        },
     },
     mounted(){
         this.deactiveDay()
     },
     methods: {
-
+    convertMinutesToTime(min){
+        return ( Math.floor(min/60))+'h'+(min%60)
+    },
       activeDay(){
           this.active = true
       },
@@ -103,37 +122,33 @@ export default {
       draggingMove(e){
           
          //if(this.isDragging)console.log(e)
-         if(!this.isDragging || !(e.target.className=='events' || e.target.className=='drag-helper' || e.target.className=='ghost')) return;
-          if(e.target.className=='events' || e.target.className=='drag-helper' ) this.lastLayerY = e.layerY
+         if(!this.isDragging || !(e.target.className=='events' || e.target.className=='drag-helper' || e.target.className=='ghost')) {
+             return;
+         }
+          if(e.target.className=='events' || e.target.className=='drag-helper' ) {
+              this.lastLayerY = e.layerY
+          }
 
           this.currentDrag = e.layerY
 
-
-          if(e.target.className=='ghost') this.currentDrag += this.lastLayerY
-          //if(e.target.className.substr(0, 3)=='vdr') this.currentDrag = this.lastLayerY - (e.target.clientHeight - e.layerY)
-          if(this.startDragAt > this.currentDrag){
-              
-              this.ghost = [this.convertYToHour(this.currentDrag), this.convertYToHour(this.startDragAt)]
-          }else{
-              
-              this.ghost = [this.convertYToHour(this.startDragAt), this.convertYToHour(this.currentDrag)]
+          if(e.target.className=='ghost') {
+              this.currentDrag += this.lastLayerY
           }
+          
+          this.ghost = this.startDragAt > this.currentDrag ? [this.convertYToHour(this.currentDrag), this.convertYToHour(this.startDragAt)] :[this.convertYToHour(this.startDragAt), this.convertYToHour(this.currentDrag)]
 
       },
       
       getHeight(timeBlock){
-          //console.log('get height block',timeBlock[1],timeBlock[0],this.heightUnit)
-          //console.log('extra',(timeBlock[1]-timeBlock[0]) * this.heightUnit ,this.y,this.getY(timeBlock[0]))
-          return (timeBlock[1]-timeBlock[0]) * this.heightUnit 
+          //console.log('this.heightUnit',this.heightUnit)
+          return (timeBlock[1]-timeBlock[0]) 
       },
 
       getY(hour){
-          return (hour - this.minHour) * this.heightUnit 
+          return hour - (this.minHour * 60)
       },
 
-      getHeightColumn(){
-          return (this.maxHour - this.minHour) * this.heightUnit 
-      },
+      
 
       openingTimes(){
         let opening_times = []
@@ -156,7 +171,9 @@ export default {
             this.isDragging = false
 
             let openedTimes = this.openedTimes
-            if(this.ghost.length == 0) this.ghost=[this.convertYToHour(event.layerY), this.convertYToHour(event.layerY+this.heightUnit)]
+            if(this.ghost.length == 0) {
+                this.ghost = [this.convertYToHour(event.layerY), this.convertYToHour(event.layerY+this.heightUnit)]
+            }
 
             openedTimes.push(this.ghost)
             this.$emit('updatedSlots', this.daykey, openedTimes)
@@ -181,7 +198,11 @@ export default {
       },
 
       convertYToHour(val){
-          return this.minHour + Math.floor(val/this.heightUnit)
+          let baseInMinutes = (this.minHour*60)
+          let slot = Math.floor(val/this.heightUnit)
+          let hourInMinutes = baseInMinutes + (slot * this.heightUnit)
+
+          return hourInMinutes
       },
 
   } 
@@ -217,6 +238,12 @@ export default {
         text-transform: capitalize;
         font-weight: normal;
         color:#acacac;
+    }
+     .day-column{
+        min-width: 100px;
+        margin: 0 1rem;
+        text-align: center;
+        width: 100%;
     }
     .day-column .columnTitle{
         font-weight: bold;
