@@ -190,10 +190,7 @@ export default {
         color: #b9b6b6;
     }
 
-    .picture-edit .staff-av img {
-        border-radius: .6rem;
-        margin-right: 1rem;
-    }
+
     .fimage-selection{
         background-color: #fff;
         z-index: 9;
