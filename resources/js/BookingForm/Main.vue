@@ -843,6 +843,13 @@ export default {
 {
     color: var(--wappo-body-tx);
 }
+.wbtn.wbtn-secondary .wduration,
+.wbtn.wbtn-secondary .wap-img svg,
+.wbtn.wbtn-secondary .service-label .service-name,
+.wbtn.wbtn-secondary .service-label .service-price,
+.wbtn.wbtn-secondary .service-label .service-price .price-currency{
+    color: var(--wappo-sec-tx); 
+}
 
 .wap-front .wap-head .staff-desc, 
 .wap-front .wap-head strong {
