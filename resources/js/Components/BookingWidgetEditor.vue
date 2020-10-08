@@ -370,6 +370,7 @@ export default {
 
         toggleColor(){
             this.colorEdit=!this.colorEdit
+            this.step = 'general'
         },
         toggleText(){
             this.textEdit=!this.textEdit
