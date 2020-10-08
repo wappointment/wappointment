@@ -869,7 +869,7 @@ export default {
 }
 
 .wap-booking-fields .wap-field{
-    margin-bottom:.4em
+    margin-bottom: .4em !important;
 }
 
 .wap-wid.wclosable > .wclose:hover::before, 
