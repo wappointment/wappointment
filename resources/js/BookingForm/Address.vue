@@ -49,7 +49,6 @@ address {
     line-height: 18px;
     font-size: 16px;
     margin:0;
-    overflow: hidden;
 }
 address a {
     white-space: pre-wrap;
@@ -57,7 +56,6 @@ address a {
     white-space: -pre-wrap;
     white-space: -o-pre-wrap;
     word-wrap: break-word;
-    
 }
 </style>
 
