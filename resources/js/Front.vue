@@ -124,14 +124,16 @@ export default {
         },
         backToButton(){
           if(this.bgEnabled && this.isMobilePhone){
-                document.body.classList.remove("wappo-popped")
+            document.documentElement.classList.remove("wappo-popped")
+            document.body.classList.remove("wappo-popped")
           }
           this.bookForm = false
         },
         toggleBookForm() {
             this.bookForm = !this.bookForm
             if(this.bgEnabled && this.isMobilePhone){
-                document.body.classList.add("wappo-popped")
+              document.body.classList.add("wappo-popped")
+              document.documentElement.classList.add("wappo-popped")
             }
         },
     }
@@ -277,6 +279,7 @@ export default {
     z-index: 9999999;
     max-height: 95%;
     min-width: 320px;
+    overflow-y: scroll;
 }
 
 .wap-wid.wclosable > .wclose {
