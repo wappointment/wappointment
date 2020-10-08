@@ -52,7 +52,8 @@ export default {
 .wap-front .welementname,
 .wap-front .wduration,
 .wselected .wap-img svg,
-.wbtn-primary-light .wap-img svg{
+.wbtn-primary-light .wap-img svg,
+.wap-front .wselected .wprice{
     color: var(--wappo-pri-tx);
 }
 

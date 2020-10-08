@@ -440,7 +440,7 @@ export default {
                 until = start.clone().add(1, 'day')
             }
             if(min_start.unix() >= until.unix()) {
-                start = false // we automatically skip
+                return this.currentIntervals.get(false) // we skip returnin an empty interval
             } else{
                 if(min_start.unix() > start.unix()) {
                     start = min_start.clone()
@@ -452,6 +452,7 @@ export default {
             return this.prepareDayInterval(dayIntervals, start,until)
         },
 
+        /** used to filter more when overidding from an addon */
         prepareDayInterval(dayIntervals, start,until){
             return dayIntervals
         },
