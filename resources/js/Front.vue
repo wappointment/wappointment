@@ -80,6 +80,7 @@ export default {
             'br-fixed': this.isBottomRight, 
             'large-version': this.largeVersion,
             'wmobile': this.isMobilePhone,
+            'wdesk': !this.isMobilePhone,
           }
           
           classes[this.getParameterByName('view')] = true
@@ -87,6 +88,7 @@ export default {
         },
 
         isMobilePhone(){
+          console.log(' window.innerWidth', window.innerWidth,window.innerHeight)
           return window.innerWidth < 500 && window.innerHeight > window.innerWidth
         },
 
@@ -279,14 +281,13 @@ export default {
     z-index: 9999999;
     max-height: 95%;
     min-width: 320px;
-    overflow-y: scroll;
 }
 
 .wap-wid.wclosable > .wclose {
     position: absolute;
     z-index: 1;
-    right: 2px;
-    top: 2px;
+    right: .3em;
+    top: .3em;
 }
 
 .wap-front .wml-2{
@@ -309,6 +310,10 @@ export default {
   overflow: hidden;
 }
 
+.wap-front.wdesk.br-fixed {
+  min-width: 360px;
+}
+
 @media only screen and (max-width: 500px) {
   .wap-front.br-fixed .wap-bg{
     position: fixed;
@@ -317,6 +322,7 @@ export default {
     background-color: rgba(0, 0, 0, .7);
     top: 0;
     z-index: -1;
+    overflow-y: scroll;
   }
   .wap-front.br-fixed{
     width: 100%;

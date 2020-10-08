@@ -98,12 +98,16 @@ export default {
   fill: #fff;
 }
 .wap-front .wap-head {
-    padding: .4em;
     position: absolute;
     width: 100%;
     height: 60px;
     overflow: hidden;
 }
+.wap-front .wap-head > div {
+    padding: .4em;
+}
+
+
 .wap-front .wap-form-body{
     max-height: calc(85vh);
     margin-top:60px;
