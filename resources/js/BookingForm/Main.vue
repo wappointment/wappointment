@@ -53,11 +53,11 @@
             </div>
         </template>
         <div v-else>
-            <div v-if="dataloaded">
+            <div v-if="dataloaded" class="wappointment-errors">
                 <div v-if="service">No appointments available</div>
                 <div v-else>Service not ready</div>
             </div>
-            <template>
+            <template v-else>
                 <div class="wappointment-errors" v-if="errorMessages.length > 0">
                     <div v-for="errorM in errorMessages">{{errorM}}</div>
                 </div>
