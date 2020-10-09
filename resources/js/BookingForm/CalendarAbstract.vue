@@ -466,9 +466,9 @@ export default {
 
 .wap-front .wbtn-round,
 .wap-front .calendarMonth .ddays div {
-    min-width: 2em;
-    min-height: 2em;
-    border-radius: 2em;
+    min-width: 1.5em;
+    min-height: 1.5em;
+    border-radius: 50%;
     text-align: center;
     font-size: .75em;
     padding: .5em;
