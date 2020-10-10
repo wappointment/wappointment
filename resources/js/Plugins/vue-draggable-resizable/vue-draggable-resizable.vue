@@ -9,18 +9,26 @@
     @mouseover="showControls" 
     @mouseout="hideControls"
   >
+    <div class="handle handle-actions" :class="{
+        'handle-show': enabled
+        }">
+        <div class="d-block dashicons dashicons-trash" @click="$emit('delete')"></div>
+        <div v-if="editable" class="d-block dashicons dashicons-edit" @click="$emit('edit')"></div>
+    </div>
     <div
       v-for="handle in handles"
       v-if="resizable"
-      class="handle"
+      class="handle handle-arrows"
       :key="handle"
-      :class="'handle-' + handle"
-      
-      :style="{ display: enabled ? 'block' : 'none'}"
+      :class="getHandleClass(handle)"
+
       @mousedown.stop.prevent="handleDown(handle, $event)"
       @touchstart.stop.prevent="handleDown(handle, $event)"
     >
-    <div :class="{ 'dashicons dashicons-arrow-up-alt': handle=='tm', 'dashicons dashicons-arrow-down-alt': handle=='bm' }"></div>
+      <div :class="{ 
+        'dashicons dashicons-arrow-up-alt': handle=='tm', 
+        'dashicons dashicons-arrow-down-alt': handle=='bm' 
+        }"></div>
     </div>
     <slot></slot>
   </div> 
@@ -34,6 +42,9 @@ export default {
   name: 'VueDraggableResizable',
   props: {
     active: {
+      type: Boolean, default: false
+    },
+    editable: {
       type: Boolean, default: false
     },
     draggable: {
@@ -51,7 +62,7 @@ export default {
     },
     h: {
       type: Number,
-      default: 50,
+      default: 10,
       validator: function (val) {
         return val > 0
       }
@@ -62,7 +73,7 @@ export default {
     },
     minh: {
       type: Number,
-      default: 50,
+      default: 10,
       validator: function (val) {
         return val > 0
       }
@@ -193,6 +204,9 @@ export default {
   },
 
   methods: {
+    getHandleClass(handle){
+      return ['handle-' + handle, this.enabled ?'handle-show':'']
+    },
     getClasses(){
       let classes = {
         draggable: this.draggable,
@@ -503,27 +517,57 @@ export default {
       width: 100%;
   }
   .handle {
-    box-sizing: border-box;
-    display: none;
+    transition: all .3s ease-in-out;
+    opacity: 0;
     position: absolute;
+    font-size: 1px;
+    z-index:-1;
+  }
+
+
+
+
+  .handle-actions .dashicons{
+    cursor: pointer;
+    margin: .2em;
+  }
+
+  .handle-arrows {
+    box-sizing: border-box;
     width: 10px;
     height: 10px;
-    font-size: 1px;
     background: #EEE;
     border: 1px solid #333;
   }
+  .handle-arrows:hover, 
+  .handle-actions:hover {
+    opacity:1;
+  }
+  
   .handle-tm {
-    top: -10px;
+    top: 0;
     left: 50%;
     margin-left: -5px;
     cursor: n-resize;
   }
 
   .handle-bm {
-    bottom: -10px;
+    bottom: 0;
     left: 50%;
     margin-left: -5px;
     cursor: s-resize;
+  }
+  .handle-tm.handle-show {
+    top: -10px;
+  }
+  
+
+  .handle-bm.handle-show {
+    bottom: -10px;
+  }
+
+  .handle-show{
+    opacity:.4;
   }
 
   @media only screen and (max-width: 768px) {

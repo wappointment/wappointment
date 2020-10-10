@@ -22,7 +22,7 @@
             ></hourColumn>
             <div id="regav-wrapper" ref="regavwrap" @scroll="scrolledTrigger" class="regular-availability d-flex" >
                 <template v-for="(openedTimes, daykey) in openedDays">     
-                    <dayColumn  :key="daykey" :class="classColumn" :heightUnit="precision" :daykey="daykey" 
+                    <dayColumn v-if="daykey!=='precise'"  :key="daykey" :class="classColumn" :heightUnit="precision" :daykey="daykey" 
                     :openedTimes="openedTimes" :minHour="minHour" :maxHour="maxHour" :precision="precision"
                     @updatedSlots="updatedSlots" @editBlock="editBlock"></dayColumn>
                 </template>
@@ -83,13 +83,7 @@ export default {
         openingTimes(){
             let opening_times = []
             for (let index = this.minHour; index < this.maxHour; index++) {
-                
                 opening_times.push(index+'h') 
-                /* for (let j = 0; j < this.hourSplits; j++) {
-                    //const element = this.hourSplits[j];
-                    opening_times.push(index+'h'+(j*this.precision)+'min') 
-                } */
-                
             }
             return opening_times
         },
@@ -105,7 +99,7 @@ export default {
         changedCRS(value){
             this.$emit('changedABD', value)  
         },
-        editBlock(){
+        editBlock(){ // addons function
 
         },
         scrolledTrigger(){
@@ -173,34 +167,40 @@ export default {
           this.parseOpenedDays()
       },
       parseOpenedDays(){
-        let hasChanged=false
+        let hasChanged = false
         for (var property1 in this.openedDays) {
             let timeBlocks = this.openedDays[property1]
 
-            for (let index = 0; index < timeBlocks.length; index++) {
-                let timeblock = timeBlocks[index]
-                if(timeblock[0]<this.minHour *60 ){
-                    hasChanged=true
-                    timeblock[0]=this.minHour *60 
+            for (let i = 0; i < timeBlocks.length; i++) {
+                let timeblock = timeBlocks[i]
+                if(timeblock[0] < this.minHour *60 ){
+                    hasChanged = true
+                    timeblock[0] = this.minHour *60 
                 } 
-                if(timeblock[1]>this.maxHour *60 ){
-                    hasChanged=true
-                    timeblock[1]=this.maxHour *60 
+                if(timeblock[1] > this.maxHour *60 ){
+                    hasChanged = true
+                    timeblock[1] = this.maxHour *60 
                 } 
-                if(timeblock[0] == timeblock[1]) this.openedDays[property1].splice(index,1)
-                else this.openedDays[property1][index] = timeblock
+                if(timeblock[0] == timeblock[1]) {
+                    this.openedDays[property1].splice(i,1)
+                }else {
+                    this.openedDays[property1][i] = timeblock
+                }
             }
         }
 
-        if(hasChanged) this.updatedRegav()
+        if(hasChanged) {
+            this.updatedRegav()
+        }
 
      },
       
       
-      updatedSlots(daykey, tblockid){
+      updatedSlots(daykey, blocks_values_for_day){
 
           let openedDays = this.openedDays
-          openedDays[daykey] = tblockid
+          
+          openedDays[daykey] = blocks_values_for_day
 
           this.openedDays = []
           this.openedDays = openedDays
@@ -211,26 +211,10 @@ export default {
 
       refreshTimeBlocks(daykey){
           
-        let orderedres = this.getSeriePerDay(daykey)
         let openedDays = this.openedDays
         this.openedDays = []
-        let original = openedDays[daykey]
 
-        openedDays[daykey] = this.makeTimeBlocks(orderedres)
-        for (let i = 0; i < original.length; i++) {
-            if(original[i].length > 2){ // check for extra params on that regav
-                for (let j = 0; j < openedDays[daykey].length; j++) {
-                    if(openedDays[daykey][j][0] == original[i][0] && openedDays[daykey][j][1] == original[i][1]){
-                        if(openedDays[daykey][j][2] === undefined) {
-                            openedDays[daykey][j].push(original[i][2])
-                        }else{
-                            openedDays[daykey][j][2] == original[i][2]
-                        }
-                        
-                    }
-                }
-            }
-        }
+        openedDays[daykey] = orderBy(this.cleanSlots(openedDays[daykey]))
 
         this.openedDays = openedDays
         this.updatedRegav()
@@ -240,50 +224,52 @@ export default {
           this.$emit('updatedDays',this.openedDays)
       },
 
-      getSerie(timeBlock){
-          var result = []
-          for (var i = timeBlock[0]; i != timeBlock[1]; i = i + this.precision ) result.push(i)
-          console.log('result',result)
-          alert('exit')
-          return result
-      },
-
-      getSeriePerDay(daykey){
-          var result = []
-
-          for (let index = 0; index < this.openedDays[daykey].length; index++) {
-              result =[...new Set([...result, ...this.getSerie(this.openedDays[daykey][index])])]
-          }
-          return orderBy(result)
-
-      },
-      
-      /**
-       * convert a serie to an aray of start-end e.g.:[9,10,11,15,16,17] => [[9,11],[15,17]]
-       */
-      makeTimeBlocks(serie){
-          let serieIndex = 0
-          let newSeries = []
-          let elementNext = -1
-          for (let index = 0; index < serie.length; index++) {
-              let element = serie[index]
-              if(elementNext !== -1 && (elementNext + this.notchSize) != element) {
-                  serieIndex++
+      cleanSlots(day_slots){
+          let newDaySlots = []
+          let merge = false
+          for (let i = 0; i < day_slots.length; i++) {
+              if(merge === false){ // we compare while there is no merge planed
+                  for (let j = 0; j < day_slots.length; j++) {
+                    if(j !== i){
+                        //we compare the two timeblocks
+                        if(!this.blocksDoNotTouch(day_slots[i], day_slots[j])){
+                            //requires a merge and a cleanSlots restart
+                            merge = [i,j]
+                        }
+                    }
+                    
+                }
               }
-              if(newSeries[serieIndex] === undefined) newSeries[serieIndex] = []
-              newSeries[serieIndex].push(element)
-              elementNext = element
+
+              if(merge === false || (merge !== false && merge.indexOf(i) === -1)){ // we insert only the slots that are not planned for merge
+                newDaySlots.push(day_slots[i])
+              }
+
           }
-          
-          let timeBlocks = [];
-          for (let index = 0; index < newSeries.length; index++) {
-              let newBlock = []
-              newBlock.push(newSeries[index][0])
-              newBlock.push(newSeries[index].pop() + this.notchSize);
-              timeBlocks.push(newBlock)
+          if(merge !== false){ // we are mergine and pushing new item
+              newDaySlots.push(this.mergeBlocks(day_slots[merge[0]], day_slots[merge[1]])) 
+              return this.cleanSlots(newDaySlots)
           }
-         return timeBlocks
+          return newDaySlots
       },
+
+    mergeBlocks(block1, block2){
+        let start = block1[0] <= block2[0] ? block1[0]:block2[0]
+        let end = block1[1] >= block2[1] ? block1[1]:block2[1]
+        return start < end ? [start, end]:[end, start]
+    },
+
+      blocksDoNotTouch(block1, block2){
+          /*
+          *           [--b1--]
+          *[--b2--] 
+          * or
+          * *         [--b2--]
+          *[--b1--]
+          */
+          return block1[1] < block2[0] || block2[1] < block1[0] 
+      },
+
 
   } 
 }
@@ -320,18 +306,34 @@ export default {
         text-align: center;
         margin: 0 auto;
     }
-
+    .box-shadow .draggable .handle.handle-actions{
+        left: 0;
+        top: 40%;
+        background: rgb(157, 166, 168);
+        padding: .2em;
+        color: #fff;
+        border-radius: 6px 0 0 6px;
+        min-height : 30px;
+    }
+    .box-shadow .draggable .handle-actions.handle-show {
+        left: -26px;
+    }
     .box-shadow .draggable .handle:hover{
         background-color: rgb(134, 174, 185, .8);
     }
 
     .box-shadow .draggable .handle-tm {
-        top: -20px;
         border-radius: 6px 6px 0 0;
     }
     .box-shadow .draggable .handle-bm {
-        bottom: -20px;
         border-radius: 0 0  6px 6px;
+    }
+
+    .box-shadow .draggable .handle-tm.handle-show {
+        top: -20px;
+    }
+    .box-shadow .draggable .handle-bm.handle-show {
+        bottom: -20px;
     }
 
     .box-shadow {
@@ -352,6 +354,7 @@ export default {
    
     .regular-availability{
         overflow-x: scroll;
+        overflow-y: hidden;
     }
     .scroll-top{
         display:none;

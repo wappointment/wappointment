@@ -143,15 +143,11 @@ export default {
   props:['tablabel'],
   created(){
     this.mainCrumbLabel = this.tablabel
+    this.autoSelectSection()
   },
   data() {
     return {
       viewName: 'settingsgeneral',
-      showModal: false,
-      showRegav: false,
-      showService: false,
-      showWidget: false,
-      showEditPage: false,
       serviceBtnLabel: window.wappointmentExtends.filter('serviceBtnLabel', 'Service setup' ),
       isToggled: {
         date_format : false,
@@ -171,22 +167,19 @@ export default {
       ],
     };
   },
-  computed:{
-    getExtraClass(){
-      return this.showWidget ? 'biggerPop':''
-    },
-  },
+
   methods: {
+    autoSelectSection(){
+      switch (this.$route.name) {
+        case 'general_regav':
+          return this.goToRegav()
+        default:
+          break;
+      }
+    },
     savedPage(page_id){
       this.settingSave('booking_page', page_id)
       this.refreshInitValue()
-    },
-    hideModal(){
-      this.showModal = false
-      this.showRegav = false
-      this.showService = false
-      this.showWidget = false
-      this.showEditPage = false
     },
 
     goToRegav() {

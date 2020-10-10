@@ -7,7 +7,7 @@
             <span class="nav-link" :class="{'active' : isActive(key)}" @click="changeTab(key)">{{ tab.label }}</span>
         </li>
     </ul>
-    <div class="tab-content" id="myTabContent" :data-active-page="activePage">
+    <div class="tab-content" id="myTabContent" :data-active-page="activeTab">
         <div class="tab-pane fade" :class="{'show active' : isActive('general')}" v-if="isActive('general')">
             <settingsGeneral :tablabel="tabs.general.label"></settingsGeneral>
         </div>
@@ -74,18 +74,12 @@ export default {
       settingsAddons
     },
 
-    computed: {
-        activePage(){
-            this.recordActiveTab()
-            return this.$route.name
-        },
-       
-    },
+
     created() {
          if(window.wappointmentAdmin.addons !== undefined && this.addonsWithSettings().length > 0) {
             this.tabs['addonstab'] = { label: 'Addons'}
         }
-        this.recordActiveTab()
+        this.activeTab = this.$route.name
     },
 
     methods: {
@@ -102,12 +96,10 @@ export default {
             }
             return Object.keys(addonsWithSettings)
         },
-        recordActiveTab(){
-            let atab = this.$route.name
-            this.activeTab = atab
-        },
+
         isActive(key){
-            return (key==this.activeTab)
+            console.log('this.activeTab.indexOf(key)',this.activeTab.indexOf(key),key)
+            return key == this.activeTab || this.activeTab.indexOf(key) === 0
         },
         changeTab(selectedTab){
             this.$router.push({name: selectedTab})
@@ -115,10 +107,3 @@ export default {
     }  
 }
 </script>
-<style>
-
-.updated.error ol{
-  margin-top: 1rem;
-}
-</style>
-

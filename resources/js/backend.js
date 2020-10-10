@@ -128,11 +128,6 @@ const router = window.wappointmentrouter = new VueRouter({
           component: WizardPage,
           children: [
             {
-              path: 'regav',
-              name: 'regav',
-              component: RegavPage
-            },
-            {
                 path: 'service',
                 name: 'servicepage',
                 component: ServicePage
@@ -140,6 +135,11 @@ const router = window.wappointmentrouter = new VueRouter({
             {
                 path: 'general',
                 name: 'general',
+                component: SettingsPage
+            },
+            {
+                path: 'general_regav',
+                name: 'general_regav',
                 component: SettingsPage
             },
             {

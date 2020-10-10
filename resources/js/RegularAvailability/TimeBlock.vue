@@ -7,6 +7,7 @@
     @resizing="keepActive" 
     @resizestop="onResizeStop" 
     @dragstop="onDragstop"
+    @delete="deleteBlock"
     :grid="getGrid"
     :y="y" 
     :h="h"
@@ -15,10 +16,6 @@
             <div class="timeText"  >
                 <strong class="timeText" :key="start+end">{{ convertMinutesToTime(start) }} - {{ convertMinutesToTime(end) }} </strong>
             </div>
-            <strong class="timeText">
-                <span class="dashicons dashicons-trash"  @click.prevent.stop="deleteBlock"></span>
-            </strong>
-            
         </div>
         
     </vue-draggable-resizable>
