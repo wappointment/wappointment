@@ -220,10 +220,13 @@ class EventsController extends RestController
             $dayName = $daysOfTheWeek[$startDate->dayOfWeek];
 
             foreach ($this->regav[$dayName] as $dayTimeblock) {
-                $start = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))
-                    ->hour($dayTimeblock[0]);
-                $end = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))
-                    ->hour($dayTimeblock[1]);
+                $start = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone));
+                $end = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone));
+
+
+                $unit_added = !empty($this->regav['precise']) ? 'addMinutes' : 'addHours'; //detect precision mode
+                $start->$unit_added($dayTimeblock[0]);
+                $end->$unit_added($dayTimeblock[1]);
 
                 $bg_events[] = $this->setBgEvent($start, $end);
             }

@@ -120,10 +120,13 @@ class Availability
             $dailyAvailability = $this->regav[$dayName];
 
             foreach ($dailyAvailability as $dayTimeblock) {
-                $start = (new Carbon($now->format(WAPPOINTMENT_DB_FORMAT . ':00'), $this->timezone))
-                    ->hour($dayTimeblock[0]);
-                $end = (new Carbon($now->format(WAPPOINTMENT_DB_FORMAT . ':00'), $this->timezone))
-                    ->hour($dayTimeblock[1]);
+                $start = (new Carbon($now->format(WAPPOINTMENT_DB_FORMAT . ':00'), $this->timezone));
+                $end = (new Carbon($now->format(WAPPOINTMENT_DB_FORMAT . ':00'), $this->timezone));
+
+                $unit_added = !empty($this->regav['precise']) ? 'addMinutes' : 'addHours'; //detect precision mode
+                $start->$unit_added($dayTimeblock[0]);
+                $end->$unit_added($dayTimeblock[1]);
+
                 if ($min_time->gte($end)) {
                     continue;
                 }
