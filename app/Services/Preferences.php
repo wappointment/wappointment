@@ -13,6 +13,16 @@ class Preferences
         $this->preferences = WPHelpers::getStaffOption('preferences', WPHelpers::userId());
     }
 
+    public function saveMany($prefs_array)
+    {
+        foreach ($prefs_array as $name => $value) {
+            if (empty($this->preferences[$name]) || $this->preferences[$name] !== $value) {
+                $this->preferences[$name] = $value;
+            }
+        }
+        $this->updateRecord();
+    }
+
     public function save($name, $value)
     {
         if (empty($this->preferences[$name]) || $this->preferences[$name] !== $value) {

@@ -8,6 +8,8 @@
     @resizestop="onResizeStop" 
     @dragstop="onDragstop"
     @delete="deleteBlock"
+    @editBlock="editBlock"
+    :editable="editableBlock"
     :grid="getGrid"
     :y="y" 
     :h="h"
@@ -29,7 +31,8 @@ export default {
         return {
             maxHour:0,
             start:0,
-            end:0
+            end:0,
+            editableBlock: false
         }
     },
     components: {

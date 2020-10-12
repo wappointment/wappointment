@@ -172,7 +172,7 @@ export default {
     autoSelectSection(){
       switch (this.$route.name) {
         case 'general_regav':
-          return this.goToRegav()
+          return this.goToRegav(false)
         default:
           break;
       }
@@ -182,9 +182,13 @@ export default {
       this.refreshInitValue()
     },
 
-    goToRegav() {
+    goToRegav(click = true) {
       this.setCrumb('Regav', 'Weekly Availaibility', 'goToRegav')
+      if(click){
+        this.$router.push({name: 'general_regav'})
+      }
     },
+
     goToService() {
       this.setCrumb('Service', this.serviceBtnLabel, 'goToService')
     },

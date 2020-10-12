@@ -98,10 +98,11 @@ export default {
         },
 
         isActive(key){
-            console.log('this.activeTab.indexOf(key)',this.activeTab.indexOf(key),key)
             return key == this.activeTab || this.activeTab.indexOf(key) === 0
         },
+        
         changeTab(selectedTab){
+            this.activeTab = selectedTab
             this.$router.push({name: selectedTab})
         },       
     }  

@@ -33,7 +33,11 @@ class EventsController extends RestController
             return $this->debugAvailability();
         } else {
             //we save the duration preference
-            (new Preferences)->save('cal_duration', $request->input('slotDuration'));
+            (new Preferences)->saveMany([
+                'cal_duration' => $request->input('slotDuration'),
+                'cal_minH' => $request->input('minH'),
+                'cal_maxH' => $request->input('maxH'),
+            ]);
             return [
                 'events' => array_merge($this->events($request), $this->regavToBgEvent($request)),
                 'availability' => WPHelpers::getStaffOption('availability'), //$this->TESTprocessAvail(Settings::getStaff('availability')),

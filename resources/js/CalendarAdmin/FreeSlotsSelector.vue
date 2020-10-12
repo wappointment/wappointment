@@ -6,8 +6,8 @@
         data-tt="Show free times" href="javascript:;">{{ totalSlots }} Free slots</a>
         <a v-else class="tt-below align-self-center" href="javascript:;" @click="$emit('getEdition')">Back to edition</a>
         <div class="dropdown ml-2 d-flex align-self-center" :class="{'show': toggle}" v-if="durations.length > 1">
-            <button class="btn btn-secondary dropdown-toggle btn-xs" type="button" @click="toggle=!toggle">
-                {{duration}}min <span v-if="buffer > 0" class="tt-below" data-tt="Buffer time">(+{{buffer}}min)</span>
+            <button class="btn btn-secondary btn-light dropdown-toggle btn-xs" type="button" @click="toggle=!toggle">
+                {{selectedDuration}}min <span v-if="buffer > 0" class="tt-below" data-tt="Buffer time">(+{{buffer}}min)</span>
             </button>
             <div class="dropdown-menu" :class="{'show': toggle}">
                 <a class="dropdown-item" href="javascript:;" v-for="durationI in durations" @click="selectDuration(durationI)"> {{durationI}}min </a>
@@ -15,23 +15,32 @@
             
         </div>
         <div v-else class="ml-2 align-self-center text-muted">
-            {{duration}}min <span v-if="buffer > 0" class="tt-below" data-tt="Buffer time">(+{{buffer}}min)</span>
+            {{selectedDuration}}min <span v-if="buffer > 0" class="tt-below" data-tt="Buffer time">(+{{buffer}}min)</span>
         </div>
     </div>
 </template>
 
 <script>
 export default {
-    props: ['totalSlots', 'viewingFreeSlot', 'durations', 'duration', 'buffer'],
+    props: ['intervals', 'viewingFreeSlot', 'durations', 'duration', 'buffer'],
     data: () => ({
-        toggle: false
+        toggle: false,
+        selectedDuration: 0,
     }),
+    created(){
+        this.selectedDuration = this.duration
+    },
     methods:{
         selectDuration(duration){
             
-            this.$emit('resizeSlots', duration)
+            this.selectedDuration = duration
             this.toggle = false
         }
+    },
+    computed: {
+        totalSlots() {
+            return this.intervals === 0 ? 0:this.intervals.splits(parseInt(this.selectedDuration)*60).totalSlots()
+        },
     }
 }
 </script>

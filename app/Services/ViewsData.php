@@ -118,7 +118,8 @@ class ViewsData
             'showWelcome' => Settings::get('show_welcome'),
             'subscribe_email' => Settings::get('email_notifications'),
             'welcome_site' => get_site_url(),
-            'cal_duration' => Service::get()['duration']
+            'cal_duration' => Service::get()['duration'],
+            'preferences' => (new Preferences)->preferences
         ]);
     }
 

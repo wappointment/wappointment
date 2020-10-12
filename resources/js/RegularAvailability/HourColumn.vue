@@ -2,13 +2,14 @@
     <div class="hours-col"  @mouseover="editTimes" @mouseout="cancelEditTimes">
         <strong class="columnTitle">Hours <span class="dashicons dashicons-edit" ></span></strong>
         
-        <div v-if="edittime" class="d-flex justify-content-center">
+        <div v-if="edittime" class="d-flex justify-content-center commands-hours commands-top">
             <button data-tt="Show less hours" class="btn btn-secondary btn-xs" @click="removeMin">-</button>
             <div  data-tt="Change precision each 10min, 20min etc...">
                 <HoursDropdown :elements="durations" :current="precision" :funcDisplay="funcDisplay" @selected="changePrecision"/>
             </div>
             <button data-tt="Show more hours" @click="addMin" class="btn btn-secondary btn-xs">+</button>
         </div>
+
         <div :class="edittime ? 'box-shadow box-times active' : 'box-shadow box-times'">
             
             <div v-for="(time, timeidx) in openingTimes" class="hour-cell" >
@@ -25,7 +26,8 @@
             </div>
             
         </div>
-        <div  v-if="edittime" class="d-flex justify-content-center">
+
+        <div  v-if="edittime" class="d-flex justify-content-center commands-hours commands-bottom">
             <button data-tt="Show less hours" class="btn btn-secondary  btn-xs" @click="removeMax">-</button>
             <div  data-tt="Change precision each 10min, 20min etc...">
                 <HoursDropdown :elements="durations" :current="precision" :funcDisplay="funcDisplay" @selected="changePrecision"/>
@@ -105,5 +107,18 @@ export default {
     .box-times .hour-cell{
         border-bottom: 1px solid #f3f3f3;
     }
-
+    .commands-hours{
+        position: absolute;
+        border-radius: 6px;
+        padding: .4em;
+        background-color: #fff;
+        left: -5px;
+        box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,.08);
+    }
+    .commands-top{
+        top: 30px;
+    }
+    .commands-bottom{
+        bottom: -30px;
+    }
 </style>

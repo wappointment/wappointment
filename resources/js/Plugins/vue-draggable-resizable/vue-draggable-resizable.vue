@@ -13,7 +13,7 @@
         'handle-show': enabled
         }">
         <div class="d-block dashicons dashicons-trash" @click="$emit('delete')"></div>
-        <div v-if="editable" class="d-block dashicons dashicons-edit" @click="$emit('edit')"></div>
+        <div v-if="editable" class="d-block dashicons dashicons-edit" @click="$emit('editBlock')"></div>
     </div>
     <div
       v-for="handle in handles"

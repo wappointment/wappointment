@@ -27,6 +27,12 @@
                     @updatedSlots="updatedSlots" @editBlock="editBlock"></dayColumn>
                 </template>
             </div>
+            <WapModal v-if="showCustomRegav" :show="showCustomRegav" @hide="hideCustomRegav" large>
+                <h4 slot="title" class="modal-title" >Set conditions for that time ({{dayEdit}}  [{{ timeEdit[0] + 'h - ' +timeEdit[1] }}h])</h4>
+                <WAPFormGenerator v-if="schemaRegavCondition" ref="fg-regavCondition" :schema="schemaRegavCondition" :data="modelHolder" 
+                @submit="saveRegavCond" @back="hideCustomRegav" :errors="errorsPassed" :key="'regavCondForm'" 
+                labelButton="Save" :backbutton="true" backbuttonLabel="Cancel" />
+            </WapModal>
         </div>
     </div>
 </template>
@@ -54,8 +60,8 @@ export default {
             scrollStep: 133,
             widthWeekWrapper: 0,
             isMounted: false,
-            isSmallScreen: window.document.documentElement.clientWidth < 1100
-            
+            isSmallScreen: window.document.documentElement.clientWidth < 1100,
+            showCustomRegav: false
         }
     },
     components: { dayColumn, hourColumn, ClickRevealSlider }, 
@@ -308,12 +314,13 @@ export default {
     }
     .box-shadow .draggable .handle.handle-actions{
         left: 0;
-        top: 40%;
+        top: 7px;
         background: rgb(157, 166, 168);
         padding: .2em;
         color: #fff;
-        border-radius: 6px 0 0 6px;
+        border-radius: 6px;
         min-height : 30px;
+        height:auto;
     }
     .box-shadow .draggable .handle-actions.handle-show {
         left: -26px;

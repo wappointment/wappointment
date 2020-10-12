@@ -7,9 +7,9 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
                 <h1 class="h2 align-self-center"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
-                <FreeSlotsSelector :totalSlots="totalSlots" :viewingFreeSlot="viewingFreeSlot" 
-                :durations="getAllDurations" :duration="selectedDuration" :buffer="this.viewData.buffer_time"
-                @resizeSlots="resizeSlots" @getFreeSlots="getFreeSlots" @getEdition="getEdition" />
+                <FreeSlotsSelector :intervals="getThisWeekIntervals" :viewingFreeSlot="viewingFreeSlot" 
+                :durations="getAllDurations" :duration="selectedDuration" :buffer="viewData.buffer_time"
+                 @getFreeSlots="getFreeSlots" @getEdition="getEdition" />
               </div>
               <div class="d-flex">
                 <TimeZones v-if="viewData!==null" :timezones="viewData.timezones_list" :staffTimezone="viewData.timezone" classW="align-self-center pr-2" 
@@ -23,8 +23,12 @@
       <div class="full-width center-content calendar-wrap full-width-layout">
         <div class="wrap">
             
-            <div class="calendar-overflow" v-if="fullCalOption!==undefined">
-              <div id="calendar">
+            <div  v-if="fullCalOption!==undefined">
+              <div id="calendar" @mouseover="showCalSettings=true" @mouseout="showCalSettings = lockCalSettings === false ? false:true" >
+                <div v-if="showCalSettings">
+                    <CalendarSettings :durations="getAllDurations" :duration="selectedDuration" :pminH="minHour" :pmaxH="maxHour"
+                    @expanded="lockCalSettings=true" @reduced="lockCalSettings=false" @save="savePreferences" />
+                </div>
                 <FullCalendarWrapper ref="calendar" @isReady="fcalReady" :config="fullCalOption" />
               </div>
             </div>
@@ -109,6 +113,7 @@ import momenttz from '../appMoment'
 import WelcomeModal from './WelcomeModal'
 import AppointmentRender from './AppointmentRender'
 import FreeSlotsSelector from './FreeSlotsSelector'
+import CalendarSettings from './CalendarSettings'
 import MixinRender from './MixinRender'
 import MixinBeautify from './MixinBeautify'
 import MixinSelection from './MixinSelection'
@@ -137,7 +142,8 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
       StatusFreeConfirm,
       StatusBusyConfirm,
       FreeSlotsSelector,
-      WelcomeModal
+      WelcomeModal,
+      CalendarSettings
   })
 
   /**
@@ -182,8 +188,8 @@ export default {
     intervalsCollection: null,
     fullCalOption: undefined,
     openedDays: [],
-    minHour: 7,
-    maxHour: 19,
+    minHour: null,
+    maxHour: null,
     events: [],
     intervals: {
       hours: 0,
@@ -196,7 +202,9 @@ export default {
     serviceStatus: null,
     openconfirm: false,
     hasBeenSetCalProps: false,
-    queryParameters: undefined
+    queryParameters: undefined,
+    showCalSettings: false,
+    lockCalSettings: false
   }),
 
   created(){
@@ -265,7 +273,6 @@ export default {
 
     displayTimezone() {
       return (this.selectedTimezone !== undefined) ? this.selectedTimezone : this.timezone
-
     },
     shortStDayDisplay(){
       return this.startTime.format(this.shortDayFormat+' '+this.viewData.time_format)
@@ -283,8 +290,12 @@ export default {
       return this.formatTime(this.endTime)
     },
     
+    
  },
   methods: {
+    getPref(pref = 'cal_duration', defaultVal= ''){
+      return [undefined,false, null,''].indexOf(this.viewData.preferences[pref]) === -1 ? this.viewData.preferences[pref]: defaultVal
+    },
     checkQueryParams(){
       if(window.savedQueries!== undefined ) {
         this.queryParameters = window.savedQueries
@@ -297,11 +308,18 @@ export default {
     resizeSlots(duration){
       this.setInterval(duration)
 
+      this.reloadAfterChange()
+    },
+    reloadAfterChange(){
       this.fullCalOption = undefined
       setTimeout(this.setFullCalOptions.bind(null, this.firstDay.format()), 100);
-
     },
-
+    savePreferences(preferences){
+      console.log('preferences',preferences)
+      this.minHour = preferences.minH
+      this.maxHour = preferences.maxH
+      this.resizeSlots(preferences.interval)
+    },
     
     fcalReady(){
       this.fcIsReady=true
@@ -393,9 +411,11 @@ export default {
             this.timezone = initTimezone // staff timezone
             this.selectedTimezone = initTimezone // display timezone
             this.showWelcomePopup = this.viewData.showWelcome
-            let duration_temp = [undefined,false].indexOf(this.viewData.cal_duration) === -1 ? this.viewData.cal_duration:this.viewData.durations[0]
-
-            this.setInterval(duration_temp)
+            
+            console.log('test')
+            this.setInterval(this.getPref('cal_duration', this.viewData.durations[0]))
+            this.minHour = this.getPref('cal_minH', 7)
+            this.maxHour = this.getPref('cal_maxH', 19)
           }
           
           let defaultDate = false
@@ -599,7 +619,15 @@ export default {
       },
 
       async getEventsRequest(params) {
-        let p = {start: params.start.format(), end: params.end.format(), timezone:params.timezone, view: this.currentView, slotDuration: this.selectedDuration}
+        let p = {
+          start: params.start.format(), 
+          end: params.end.format(), 
+          timezone:params.timezone, 
+          view: this.currentView, 
+          slotDuration: this.selectedDuration,
+          minH: this.minHour,
+          maxH: this.maxHour,
+        }
         if(this.viewingFreeSlot){
           p.viewingFreeSlot = true
         }
@@ -1108,8 +1136,9 @@ export default {
   }
   #calendar {
     min-width: 794px;
+    position: relative;
   }
-  
+
   .btn-default {
       background-color: #f3f3f3;
   }
