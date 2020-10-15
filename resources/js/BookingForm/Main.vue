@@ -236,8 +236,8 @@ export default {
             console.log('wap-body scrollHeight id', document.getElementById(this.getWapBodyId).scrollHeight)
 
  */
-            let heightWindow = window.innerHeight / 100 * 85
-            //console.log('85vh', heightWindow, window.innerHeight)
+            let heightWindow = window.innerHeight / 100 * 95
+            console.log(heightDiv, heightWindow, window.innerHeight)
             if(heightDiv > heightWindow){
                 //add scrollbar
                 //console.log(' TRUE 85vh', heightDiv ,heightWindow)
@@ -889,4 +889,12 @@ export default {
     padding: .3em;
     margin: .5em 0;
 }
+
+
+/* @media only screen and (max-width: 500px) {
+    .wap-front .has-scroll .wap-form-body{
+        max-height:75vh;
+    }
+} */
+
 </style>
