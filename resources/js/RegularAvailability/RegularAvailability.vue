@@ -28,7 +28,7 @@
                 </template>
             </div>
             <WapModal v-if="showCustomRegav" :show="showCustomRegav" @hide="hideCustomRegav" large>
-                <h4 slot="title" class="modal-title" >Set conditions for that time ({{dayEdit}}  [{{ timeEdit[0] + 'h - ' +timeEdit[1] }}h])</h4>
+                <h4 slot="title" class="modal-title" >Set conditions for that time ({{dayEdit}}  [{{ convertPrToh(timeEdit[0]) + 'h - ' +convertPrToh(timeEdit[1]) }}h])</h4>
                 <WAPFormGenerator v-if="schemaRegavCondition" ref="fg-regavCondition" :schema="schemaRegavCondition" :data="modelHolder" 
                 @submit="saveRegavCond" @back="hideCustomRegav" :errors="errorsPassed" :key="'regavCondForm'" 
                 labelButton="Save" :backbutton="true" backbuttonLabel="Cancel" />
@@ -135,23 +135,26 @@ export default {
         },
         setMinAndMax(){
             
-            for (var property1 in this.openedDays) {
-                let timeBlocks = this.openedDays[property1]
-
-                for (let index = 0; index < timeBlocks.length; index++) {
-                    let timeblock = timeBlocks[index]
-                    if(timeblock[0] < this.minHour){
-                        if(timeblock[0]>0) this.minHour = timeblock[0] - 1
-                        else this.minHour = 0
-                    } 
-                    if(timeblock[1] > this.maxHour){
-                        if(timeblock[1]<24) this.maxHour = timeblock[1] + 1
-                        else this.maxHour = 24
+            for (var day in this.openedDays) {
+                let timeBlocks = this.openedDays[day]
+                if(Array.isArray(timeBlocks)){
+                    for (let i = 0; i < timeBlocks.length; i++) {
+                        const start_in_hour = this.convertPrToh(timeBlocks[i][0])
+                        const end_in_hour = this.convertPrToh(timeBlocks[i][1])
+                        if(start_in_hour < this.minHour){
+                            this.minHour = start_in_hour > 0 ? start_in_hour - 1 :0
+                        } 
+                        if(end_in_hour > this.maxHour){
+                            this.maxHour = end_in_hour < 24 ? end_in_hour + 1 :24
+                        }
                     }
- 
                 }
             }
         },
+      
+      convertPrToh(minOrHour){
+          return this.openedDays.precise === undefined ? minOrHour:Math.floor(minOrHour/60)
+      },
       addMin(){
           if(this.minHour>0) {
               this.minHour--
@@ -289,7 +292,7 @@ export default {
     .box-shadow .draggable{
         background-color: rgb(162, 195, 204);
         transition: transform .3s ease-in-out;
-        padding: 0;
+        padding: .5em;
     }
     .box-shadow .draggable:hover {
         cursor: grab;

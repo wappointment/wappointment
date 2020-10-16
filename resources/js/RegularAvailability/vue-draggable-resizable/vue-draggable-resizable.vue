@@ -13,7 +13,9 @@
         'handle-show': enabled
         }">
         <div class="d-block dashicons dashicons-trash" @click="$emit('delete')"></div>
-        <div v-if="editable" class="d-block dashicons dashicons-edit" @click="$emit('editBlock')"></div>
+        <div v-if="editable" data-tt="Set conditions" class="tt-left">
+          <div class="d-block dashicons dashicons-shortcode" @click="$emit('editBlock')"></div>
+        </div>
     </div>
     <div
       v-for="handle in handles"
@@ -424,14 +426,22 @@ export default {
           this.elmW += diffX
         }
 
-        let heightPrev = this.height
         this.left = (Math.round(this.elmX / this.grid[0]) * this.grid[0])
-        this.top = (Math.round(this.elmY / this.grid[1]) * this.grid[1])
-
         this.width = (Math.round(this.elmW / this.grid[0]) * this.grid[0])
-        this.height = (Math.round(this.elmH / this.grid[1]) * this.grid[1])
 
-        if(this.height!=heightPrev){
+        let topPrev = this.top
+        let topNew = (Math.floor(this.elmY / this.grid[1]) * this.grid[1])
+        
+        let heightPrev = this.height
+        let heightNew = (Math.floor(this.elmH / this.grid[1]) * this.grid[1])
+
+        if(this.handle == 'tm' && heightNew != heightPrev){ // correcting snapping bug changing end value when moving start value
+          //top must change with the height
+          this.top = topPrev - (heightNew - heightPrev)
+        }
+        this.height = heightNew
+
+        if(heightNew!=heightPrev){
           this.$emit('resizesnapped', this.top, this.height)
         }
 
@@ -468,7 +478,8 @@ export default {
       this.handle = null
       if (this.resizing) {
         this.resizing = false
-        this.$emit('resizestop', this.left, this.top, this.width, this.height)
+        //console.log('resize stop values',this.top, this.height)
+        this.$emit('resizestop', this.top, this.height )
       }
       if (this.dragging) {
         this.dragging = false
@@ -482,10 +493,11 @@ export default {
 
   computed: {
     style: function () {
+      //console.log('style', this.top, this.height)
       return {
         top: this.top + 'px',
-        left: this.left + 'px',
-        width: this.width,
+/*         left: this.left + 'px', */
+        /* width: this.width, */
         height: this.height + 'px',
         zIndex: this.zIndex
       }

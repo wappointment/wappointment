@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import VueDraggableResizable from '../Plugins/vue-draggable-resizable/vue-draggable-resizable'
+import VueDraggableResizable from './vue-draggable-resizable/vue-draggable-resizable'
 export default {
     props: ['y', 'h', 'daykey', 'tblockid', 'timeBlock', 'minHour', 'heightUnit'],
     data() {
@@ -61,7 +61,7 @@ export default {
         keepActive(){
             this.$emit('active')
         },
-        onResizeStop(x,y,w,h) {
+        onResizeStop(y, h) {
             if(this.y != y || this.h != h){
                 this.$emit('updatedBlock', this.tblockid, this.getHourStart(y), this.getHourEnd(y,h), this.timeBlock)
             }
@@ -82,7 +82,7 @@ export default {
 
         },
         onResizeSnapped(y,h){
-
+            //console.log('onResizeSnapped','y',y,'h',h)
             this.start = this.getHourStart(y)
             this.end = this.getHourEnd(y,h)
         },

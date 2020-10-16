@@ -89,7 +89,7 @@ export default {
     },
     methods: {
     convertMinutesToTime(min){
-        return ( Math.floor(min/60))+'h'+(min%60)
+        return ( Math.floor(min/60))+'h'+(min%60== 0 ? '':min%60)
     },
       activeDay(){
           this.active = true
