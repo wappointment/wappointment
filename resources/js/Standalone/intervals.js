@@ -15,7 +15,10 @@ export default class Intervals {
 
     get(from, until) {
         let newCollection = []
-        
+        if(from === false){
+            return new Intervals(newCollection, true) //skipping
+        }
+
         for (let index = 0; index < this.intervals.length; index++) {
              const element = this.intervals[index]
 

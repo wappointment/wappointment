@@ -49,10 +49,11 @@ export default {
     line-height: 1.2em;
 }
 
-.wap-front .welementname,
-.wap-front .wduration,
+.wselected .welementname,
+.wselected .wduration,
 .wselected .wap-img svg,
-.wbtn-primary-light .wap-img svg{
+.wbtn-primary-light .wap-img svg,
+.wap-front .wselected .wprice{
     color: var(--wappo-pri-tx);
 }
 

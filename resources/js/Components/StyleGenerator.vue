@@ -74,6 +74,7 @@
             color: {{ hx_rgb(opts.colors.address.text) }};
         }
         .wap-front .wbtn.wbtn-secondary,
+        .wap-front .wbtn.wbtn-secondary .wduration,
         .wap-front .wbtn-secondary:not(:disabled):not(.disabled):active, 
         .wap-front .wbtn-secondary:not(:disabled):not(.disabled).active {
             background: {{ hx_rgb(opts.colors.secondary.bg) }};

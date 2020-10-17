@@ -391,7 +391,6 @@ export default {
 
             this.cachedSlots[daynumber] = dayIntervals.splits(this.realSlotDuration()).totalSlots()
             if(this.isDemo && this.demoSelected.day == false && this.cachedSlots[daynumber] > 0){
-                
                 this.demoSelected.day = daynumber
                 this.disabledButtons = true
             }
@@ -416,6 +415,7 @@ export default {
             let start = null
             let today = false
             let until = null
+            let min_start = this.getTodayStart()
             if(this.isCurrentMonth && daynumber === this.todayDay) {
                 today = true
                 
@@ -439,11 +439,20 @@ export default {
                 start = momenttz.tz(this.yearNumber + '-' + prefixMonth + this.realMonthNumber + '-' + prefixDay+daynumber, this.currentTz).startOf('day')
                 until = start.clone().add(1, 'day')
             }
+            if(min_start.unix() >= until.unix()) {
+                return this.currentIntervals.get(false) // we skip returnin an empty interval
+            } else{
+                if(min_start.unix() > start.unix()) {
+                    start = min_start.clone()
+                }
+            }
+            
             
             let dayIntervals = this.currentIntervals.get(start, until)
             return this.prepareDayInterval(dayIntervals, start,until)
         },
 
+        /** used to filter more when overidding from an addon */
         prepareDayInterval(dayIntervals, start,until){
             return dayIntervals
         },
@@ -457,9 +466,9 @@ export default {
 
 .wap-front .wbtn-round,
 .wap-front .calendarMonth .ddays div {
-    min-width: 2em;
-    min-height: 2em;
-    border-radius: 2em;
+    min-width: 1.5em;
+    min-height: 1.5em;
+    border-radius: 50%;
     text-align: center;
     font-size: .75em;
     padding: .5em;

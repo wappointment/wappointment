@@ -6,10 +6,12 @@
             <ViewingAppointment v-else  :options="opts" :view="getParameterByName('view')" :appointmentkey="getParameterByName('appointmentkey')"></ViewingAppointment>
         </div>
         
-        <div class="wap-wid wclosable" :class="'step-'+stepName" v-if="isWidget">
-            <span v-if="bookForm && isBottomRight" @click="backToButton" class="wclose"></span>
-            <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
-            <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
+        <div :class="{'wap-abs':hasCloseCross}">
+            <div class="wap-wid wclosable" :class="'step-'+stepName" v-if="isWidget">
+              <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
+              <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
+              <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
+          </div>
         </div>
         <div class="wap-bg" v-if="bgEnabled" @click="backToButton"></div>
     </div>
@@ -73,13 +75,21 @@ export default {
     },
     computed:{
         bgEnabled(){
-          return this.bookForm && this.isBottomRight
+          return this.bookForm && (this.isBottomRight || this.isMobilePhone)
+        },
+        isExpanded(){
+          return this.bookForm && this.bgEnabled && this.isMobilePhone
+        },
+        hasCloseCross(){
+          return this.bgEnabled && (this.isBottomRight || this.isExpanded)
         },
         getDynaClasses(){
           let classes = {
             'br-fixed': this.isBottomRight, 
             'large-version': this.largeVersion,
             'wmobile': this.isMobilePhone,
+            'wdesk': !this.isMobilePhone,
+            'wexpanded': this.isExpanded
           }
           
           classes[this.getParameterByName('view')] = true
@@ -124,20 +134,28 @@ export default {
         },
         backToButton(){
           if(this.bgEnabled && this.isMobilePhone){
-                document.body.classList.remove("wappo-popped")
+            document.documentElement.classList.remove("wappo-popped")
+            document.body.classList.remove("wappo-popped")
           }
           this.bookForm = false
         },
         toggleBookForm() {
             this.bookForm = !this.bookForm
             if(this.bgEnabled && this.isMobilePhone){
-                document.body.classList.add("wappo-popped")
+              document.body.classList.add("wappo-popped")
+              document.documentElement.classList.add("wappo-popped")
             }
         },
     }
 }
 </script>
 <style>
+.wap-abs{
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  max-height: 95%;
+}
 .large-version .wap-wid{
     max-width: 420px;
 }
@@ -269,21 +287,12 @@ export default {
   align-self: stretch !important;
 }
 
-.wap-front.br-fixed{
-    position: fixed;
-    right: 0;
-    bottom: 0;
-    margin: 1rem;
-    z-index: 9999999;
-    max-height: 95%;
-    min-width: 320px;
-}
 
 .wap-wid.wclosable > .wclose {
     position: absolute;
-    z-index: 1;
-    right: 2px;
-    top: 2px;
+    z-index: 2;
+    right: .3em;
+    top: .3em;
 }
 
 .wap-front .wml-2{
@@ -306,18 +315,45 @@ export default {
   overflow: hidden;
 }
 
+.wap-front.wdesk.br-fixed {
+  min-width: 360px;
+}
+
+
+.wap-front.br-fixed{
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    margin: 1rem;
+    z-index: 999999998;
+    max-height: 95%;
+    min-width: 320px;
+}
+
 @media only screen and (max-width: 500px) {
-  .wap-front.br-fixed .wap-bg{
+  .wap-front.br-fixed .wap-bg,
+  .wap-front.wexpanded .wap-bg{
     position: fixed;
     height: 100%;
     width: 100%;
     background-color: rgba(0, 0, 0, .7);
     top: 0;
-    z-index: -1;
+    z-index: 0;
+    overflow-y: scroll;
   }
-  .wap-front.br-fixed{
+  .wap-front.br-fixed,
+  .wap-front.wexpanded{
     width: 100%;
     margin: 0;
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    overflow-y: scroll;
+  }
+
+  .wap-front.wexpanded{
+    z-index: 999999999;
+    height: 100%;
   }
 
   .wap-front.br-fixed .wbtn.wbtn-booking.wbtn-primary{
@@ -327,8 +363,12 @@ export default {
   }
 
   .wap-front.br-fixed .wap-bf,
-  .wap-front.br-fixed .wap-wid{
+  .wap-front.br-fixed .wap-wid,
+  .wap-front.wmobile .wap-bf,
+  .wap-front.wmobile .wap-wid{
     max-width: 100%;
+    position:relative;
+    z-index: 1;
   }
 }
 </style>

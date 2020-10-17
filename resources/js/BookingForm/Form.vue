@@ -6,7 +6,7 @@
                     <div v-if="appointment_starts_at">
                         <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline">
                             <WapImage :faIcon="['far','clock']" size="auto" />
-                            <span class="wml-2">{{ appointment_starts_at }}</span>
+                            <span class="welementname wml-2">{{ appointment_starts_at }}</span>
                             <span class="wclose" @click="back" ></span>
                         </div>
                     </div>

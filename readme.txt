@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.5
 Requires PHP: 7.0
-Stable tag: 1.8.2
+Stable tag: 1.8.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -145,6 +145,11 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 1.8.3 - 2020-10-09 =
+* fixed styling issues in booking form
+* fixed unavailable booking slots close to current time appearing when they shouldn't
+* fixed usability issues in Booking widget editor
 
 = 1.8.2 - 2020-10-05 =
 * fixed various styling issue in the booking form

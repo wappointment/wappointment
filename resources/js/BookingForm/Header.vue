@@ -101,15 +101,19 @@ export default {
   fill: #fff;
 }
 .wap-front .wap-head {
-    padding: .4em;
     position: absolute;
     width: 100%;
-    height: 60px;
+    height: 62px;
     overflow: hidden;
 }
+.wap-front .wap-head > div {
+    padding: 8px;
+}
+
+
 .wap-front .wap-form-body{
     max-height: calc(85vh);
-    margin-top:60px;
+    margin-top:62px;
 }
 
 .wap-front .wap-bf.show.has-scroll .wap-head {
