@@ -141,7 +141,11 @@ export default {
         if(this.step !== null) {
             this.requiresScroll = true //booking widget editor requires scroll always
         }
+        window.addEventListener('resize', this.windowResized);
         
+    },
+    beforeDestroy(){
+        window.removeEventListener('resize', this.windowResized);
     },
 
     computed: {
@@ -208,7 +212,9 @@ export default {
        }
     },
     methods: {
-
+        windowResized(){
+            this.checkIfRequiresScroll()
+        },
         async convertDateRequest(data) {
             return await this.serviceBooking.call('convertDate', data)
         }, 
@@ -231,14 +237,19 @@ export default {
             if(this.step !== null) {
                 return true //booking widget editor requires scroll always
             }
-            let heightDiv = document.getElementById(this.getWapBodyId).scrollHeight
-/*             console.log('wap-body scrollHeight inner class', heightDiv)
-            console.log('wap-body scrollHeight id', document.getElementById(this.getWapBodyId).scrollHeight)
+            let wrapperDiv = document.getElementById(this.wrapperid)
+            let wrapperDivHead = wrapperDiv.getElementsByClassName("wap-head")
 
- */
-            let heightWindow = window.innerHeight / 100 * 95
-            console.log(heightDiv, heightWindow, window.innerHeight)
-            if(heightDiv > heightWindow){
+            let headHeight = 60
+            if(wrapperDivHead!== undefined && Array.isArray(wrapperDivHead) && wrapperDivHead[0] !== undefined) {
+                headHeight = wrapperDivHead[0].scrollHeight
+            }
+
+            let parentWindowHeight = wrapperDiv.scrollHeight - headHeight
+            let heightDiv = document.getElementById(this.getWapBodyId).scrollHeight
+/*             let heightWindow = window.innerHeight / 100 * 95
+            console.log(heightDiv, heightWindow, parentWindowHeight) */
+            if(heightDiv > parentWindowHeight){
                 //add scrollbar
                 //console.log(' TRUE 85vh', heightDiv ,heightWindow)
                 this.requiresScroll = true

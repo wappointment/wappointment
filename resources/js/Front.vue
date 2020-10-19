@@ -6,7 +6,7 @@
             <ViewingAppointment v-else  :options="opts" :view="getParameterByName('view')" :appointmentkey="getParameterByName('appointmentkey')"></ViewingAppointment>
         </div>
         
-        <div :class="{'wap-abs':hasCloseCross}">
+        <div :class="{'wap-abs':hasCloseCross && isMobilePhone}">
             <div class="wap-wid wclosable" :class="'step-'+stepName" v-if="isWidget">
               <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
               <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
@@ -150,12 +150,7 @@ export default {
 }
 </script>
 <style>
-.wap-abs{
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  max-height: 95%;
-}
+
 .large-version .wap-wid{
     max-width: 420px;
 }
@@ -331,6 +326,12 @@ export default {
 }
 
 @media only screen and (max-width: 500px) {
+  .wap-abs{
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    max-height: 95%;
+  }
   .wap-front.br-fixed .wap-bg,
   .wap-front.wexpanded .wap-bg{
     position: fixed;
