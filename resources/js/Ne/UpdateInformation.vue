@@ -5,10 +5,10 @@
               <h3>Precision on weekly availability and a few usability improvements</h3>
               <ol>
                   <li class="my-2">You can now set your weekly availability with more precision each 10min, 15min, 20min, 30min instead of only each 60min
-                      <img class="mt-2 img-fluid" :src="getImage(2)" alt="Weekly availaibility precision" >
+                      <div><img class="mt-2 img-fluid" :src="getImage(2)" alt="Weekly availaibility precision" ></div>
                   </li>
                   <li class="my-2">Your admin calendar view is improved, you can now decide the start and end time to be shown (e.g.: from 8am til 11pm)
-                      <img class="mt-2 img-fluid" :src="getImage(1)" alt="Calendar admin prefernces" >
+                      <div><img class="mt-2 img-fluid" :src="getImage(1)" alt="Calendar admin prefernces" ></div>
                   </li>
                   <li class="my-2">Finally the booking form is now full screen always on your phone, just try it on your phone. It is so much better!</li>
               </ol> 
