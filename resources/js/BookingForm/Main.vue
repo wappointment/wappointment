@@ -230,7 +230,7 @@ export default {
         },
         checkIfRequiresScrollDelay(){
             //console.log('first')
-            setTimeout(this.checkIfRequiresScroll, 200);
+            setTimeout(this.checkIfRequiresScroll, 200)
         },
         checkIfRequiresScroll(){
             //console.log('second')
