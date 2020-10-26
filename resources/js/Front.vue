@@ -305,15 +305,14 @@ export default {
   font-size: .7em;
 }
 
-
 .wappo-popped{
   overflow: hidden;
+  position: relative;
 }
 
 .wap-front.wdesk.br-fixed {
   min-width: 360px;
 }
-
 
 .wap-front.br-fixed{
     position: fixed;
@@ -331,6 +330,7 @@ export default {
     bottom: 0;
     width: 100%;
     max-height: 95%;
+    overflow-y: scroll;
   }
   .wap-front.br-fixed .wap-bg,
   .wap-front.wexpanded .wap-bg{

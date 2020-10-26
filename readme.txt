@@ -1,6 +1,6 @@
 === Appointment Scheduling & Booking Calendar - Wappointment ===
 Contributors: wappointment, benheu
-Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
+Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, booking form
 Requires at least: 4.7
 Tested up to: 5.5
 Requires PHP: 7.0
@@ -12,7 +12,7 @@ Appointment bookings made easy for personal coaches, teachers, therapists and se
 
 == Description ==
 
-Client focused **appointment booking system**, for personal coaches, teachers, therapists and service professionals of all kind.
+Client focused **appointment booking form**, for personal coaches, teachers, therapists and service professionals of all kind.
 Get booked 24/7 with a really **intuitive booking form**.
 
 Built for anyone providing time based services to clients.
