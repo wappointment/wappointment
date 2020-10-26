@@ -126,7 +126,7 @@ export default {
             if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
             if(this.attributesEl.brcFloats !== undefined) this.brFixed = true
             if([undefined,false].indexOf(this.attributesEl.largeVersion) === -1) this.largeVersion = true
-            if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) this.bookForm = true
+            if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) this.toggleBookForm()
             if([undefined,false].indexOf(this.attributesEl.week) === -1) this.opts.selection.check_viewweek = true
             
             this.opts.attributesEl = this.attributesEl
