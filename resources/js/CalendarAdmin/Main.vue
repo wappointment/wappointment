@@ -315,7 +315,6 @@ export default {
       setTimeout(this.setFullCalOptions.bind(null, this.firstDay.format()), 100);
     },
     savePreferences(preferences){
-      console.log('preferences',preferences)
       this.minHour = preferences.minH
       this.maxHour = preferences.maxH
       this.resizeSlots(preferences.interval)
@@ -412,7 +411,6 @@ export default {
             this.selectedTimezone = initTimezone // display timezone
             this.showWelcomePopup = this.viewData.showWelcome
             
-            console.log('test')
             this.setInterval(this.getPref('cal_duration', this.viewData.durations[0]))
             this.minHour = this.getPref('cal_minH', 7)
             this.maxHour = this.getPref('cal_maxH', 19)

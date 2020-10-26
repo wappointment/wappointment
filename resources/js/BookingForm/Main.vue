@@ -135,8 +135,6 @@ export default {
         this.currentTz = this.tzGuess()
         this.createdAt = this.getUnixNow()
         
-
-        this.$emit('changedStep',this.currentStep)
     
         if(this.step !== null) {
             this.requiresScroll = true //booking widget editor requires scroll always
@@ -390,7 +388,7 @@ export default {
                 this.currentStep = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', {service:this.service, duration:this.duration, location: this.location})
                 this.autoSelectLocation()
             }
-
+            this.$emit('changedStep',this.currentStep)
             this.loadStep(this.currentStep)
 
             if(this.loadedInit !== undefined){
