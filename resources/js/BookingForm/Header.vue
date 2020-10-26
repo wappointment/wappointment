@@ -13,8 +13,8 @@
                 <div class="staff-desc">
                     <div><strong>{{ staff.n }}</strong></div>
                     <div class="header-service" v-if="service!== false && isCompactHeader">
+                        <span class="compact-servicename">{{ service.name }}</span>
                         <span class="wduration">{{duration}}{{getMinText}}</span>
-                        <span>{{ service.name }}</span>
                     </div>
                 </div>
             </div>
@@ -106,6 +106,10 @@ export default {
     height: 62px;
     overflow: hidden;
 }
+.wap-front .wap-head:hover{
+    height: auto;
+    min-height:62px;
+}
 .wap-front .wap-head > div {
     padding: 8px;
 }
@@ -149,6 +153,10 @@ export default {
     height: 46px;
     border-radius: 50%;
     background-size: cover;
+}
+.compact-servicename{
+    max-width: 75%;
+    display: inline-block;
 }
 
 
