@@ -1,10 +1,10 @@
-=== Appointments Bookings - Wappointment ===
+=== Appointment Scheduling & Booking Calendar - Wappointment ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
 Requires at least: 4.7
 Tested up to: 5.5
 Requires PHP: 7.0
-Stable tag: 1.8.3
+Stable tag: 1.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -145,6 +145,16 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 1.9.0 - 2020-10-26 =
+* Added precision mode on Weekly Availability, you can now set your weekly schedule each 10min, 15min, 20min, 30min
+* Added display preferences in Admin Calendar View
+* Pref1: You can now set the starting time and end time showing on screen (e.g.: from 8am til 11pm)
+* Pref2: You can now set the size of the interval for selection
+* mobile booking form is now full screen always for better usability
+* Improved Iphone scheduling form
+* fixed styling issues in booking form distorter button or header compact mode with long service name
+* fixed unkown eastern standard time on calendar sync
 
 = 1.8.3 - 2020-10-09 =
 * fixed styling issues in booking form
