@@ -274,6 +274,10 @@ export default {
 }
 </script>
 <style>
+
+.wap-front .wap-booking-fields label{
+    color: var(--wappo-body-tx);
+}
 .wap-front .phone-field .dropdown ul {
     position: initial;
     max-width: 266px;

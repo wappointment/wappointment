@@ -45,6 +45,12 @@ export default {
         duration:{
             type: [Boolean,Number]
         },
+        appointmentSaved: {
+            type:Boolean
+        },
+        rescheduling: {
+            type: Boolean
+        },
     },
     data: () => ({
         disabledButtons: false,

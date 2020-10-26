@@ -1,15 +1,20 @@
 <template>
-    <WapModal :screenshot="true" :right="true" :show="show" @hide="hideModal">
+    <WapModal  :show="show" @hide="hideModal">
           <h4 slot="title" class="modal-title">You've just updated to version 1.9</h4>
           <div>
               <h3>Precision on weekly availability and a few usability improvements</h3>
               <ol>
-                  <li>You can now set your weekly availability with more precision each 10min, 15min, 20min, 30min instead of only each 60min</li>
-                  <li>Your admin calendar view becomes friendlier, you can now decide the start and end time to be displayed (e.g.: from 8am til 11pm)</li>
-                  <li>The booking form is now full screen always on your phone. It is so much better!</li>
+                  <li class="my-2">You can now set your weekly availability with more precision each 10min, 15min, 20min, 30min instead of only each 60min
+                      <img class="mt-2 img-fluid" :src="getImage(2)" alt="Weekly availaibility precision" >
+                  </li>
+                  <li class="my-2">Your admin calendar view is improved, you can now decide the start and end time to be shown (e.g.: from 8am til 11pm)
+                      <img class="mt-2 img-fluid" :src="getImage(1)" alt="Calendar admin prefernces" >
+                  </li>
+                  <li class="my-2">Finally the booking form is now full screen always on your phone, just try it on your phone. It is so much better!</li>
               </ol> 
-             
-              <div class="wrapping-update text-center">
+              
+
+              <div class="wrapping-update text-center" v-if="slideshow">
                   <div class="d-inline-flex m-2">
                       <div v-for="n in images">
                           <div class="btn btn-xs" :class="[n==image_number ? 'btn-primary':'btn-secondary']" @click="goTo(n)">{{n}}</div>
@@ -34,7 +39,8 @@ export default {
         show: true,
         images : [1,2],
         image_number: 1,
-        interval:false
+        interval:false,
+        slideshow: false
     }),
 
 
@@ -45,6 +51,9 @@ export default {
     },
 
     methods:{
+        getImage(number){
+            return apiWappointment.apiSite + '/versions_update/v19/' + number + '.png'
+        },
         hideModal(experience){
             this.show = false
         },
