@@ -16,7 +16,7 @@
                 :readonly="definition.readonly">
             </range-slider> 
             <small v-if="!editableInput" data-tt="Click to edit" @click="editableInput=true">{{ formatedValue }}</small>
-            <input v-else @keyup.enter.prevent="updateValueInput" @focusout.prevent="updateValueInput" v-model="tempVal" type="number" size="2"/>
+            <input v-else @keyup.enter.prevent.stop="updateValueInput" @focusout.prevent="updateValueInput" v-model="tempVal" type="number" size="2"/>
             <small id="emailHelp" v-if="tip" class="form-text text-muted">{{ tip }}</small>
         </div>
     </div>
