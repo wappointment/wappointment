@@ -84,9 +84,9 @@ export default {
 .wbtn.avail span, 
 .wbtn-secondary.wbtn-round span {
     display: block;
-    line-height: 1.3em;
-    height: 1.3em;
-    width: 1.3em;
+    line-height: 1.5em;
+    height: 1.5em;
+    width: 1.5em;
     padding:0;
     margin:0;
 }
