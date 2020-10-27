@@ -43,7 +43,7 @@ export default {
             type:[Object, Boolean]
         },
         duration:{
-            type: [Boolean,Number]
+            type: [Boolean,Number, String]
         },
         appointmentSaved: {
             type:Boolean

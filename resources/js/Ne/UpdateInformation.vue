@@ -1,5 +1,5 @@
 <template>
-    <WapModal  :show="show" @hide="hideModal">
+    <WapModal  :show="show" @hide="hideModal" v-if="show">
           <h4 slot="title" class="modal-title">You've just updated to version 1.9</h4>
           <div>
               <h3>Precision on weekly availability and a few usability improvements</h3>
