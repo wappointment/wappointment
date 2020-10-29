@@ -65,6 +65,7 @@ class DateTime
             'Central Standard Time' => 'America/Chicago',
             'Pacific Standard Time' => 'America/Los_Angeles',
             'Eastern Standard Time' => 'America/New_York',
+            'AUS Eastern Standard Time' => 'Australia/Brisbane',
         ];
 
         if (!isset($unkownTimezones[$unknownTZ])) {
