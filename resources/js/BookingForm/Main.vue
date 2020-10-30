@@ -844,6 +844,7 @@ export default {
 
 .wap-front .has-scroll .wap-form-body{
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 .wap-front .wap-form-body,
