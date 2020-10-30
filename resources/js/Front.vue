@@ -6,7 +6,7 @@
             <ViewingAppointment v-else  :options="opts" :view="getParameterByName('view')" :appointmentkey="getParameterByName('appointmentkey')"></ViewingAppointment>
         </div>
         
-        <div :class="{'wap-abs':hasCloseCross && isMobilePhone}">
+        <div :class="{'wap-abs':hasCloseCross && isMobilePhone && autoPop}">
             <div class="wap-wid wclosable" :class="'step-'+stepName" v-if="isWidget">
               <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
               <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
@@ -44,7 +44,8 @@ export default {
         disabledButtons: false,
         buttonTitle: '',
         brFixed: undefined,
-        largeVersion: false
+        largeVersion: false,
+        autoPop: true
     }),
     created(){
       this.elementId = 'wapfrontwrapper-' + Date.now()
@@ -77,8 +78,11 @@ export default {
         bgEnabled(){
           return this.bookForm && (this.isBottomRight || this.isMobilePhone)
         },
+        canPop(){
+          return this.bgEnabled && this.isMobilePhone && this.autoPop
+        },
         isExpanded(){
-          return this.bookForm && this.bgEnabled && this.isMobilePhone
+          return this.bookForm && this.canPop
         },
         hasCloseCross(){
           return this.bgEnabled && (this.isBottomRight || this.isExpanded)
@@ -128,12 +132,13 @@ export default {
             if([undefined,false].indexOf(this.attributesEl.largeVersion) === -1) this.largeVersion = true
             if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) this.toggleBookForm()
             if([undefined,false].indexOf(this.attributesEl.week) === -1) this.opts.selection.check_viewweek = true
+            if([undefined,false].indexOf(this.attributesEl.popOff) === -1) this.autoPop = false
             
             this.opts.attributesEl = this.attributesEl
           }
         },
         backToButton(){
-          if(this.bgEnabled && this.isMobilePhone){
+          if(this.canPop){
             document.documentElement.classList.remove("wappo-popped")
             document.body.classList.remove("wappo-popped")
           }
@@ -141,7 +146,7 @@ export default {
         },
         toggleBookForm() {
             this.bookForm = !this.bookForm
-            if(this.bgEnabled && this.isMobilePhone){
+            if(this.canPop){
               document.body.classList.add("wappo-popped")
               document.documentElement.classList.add("wappo-popped")
             }
