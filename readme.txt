@@ -148,6 +148,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 = 1.9.2 - 2020-10-31 =
 * corrected default behaviour on mobile, full screen mobile is OFF if auto-open is ON
+* added shortcode "pop_off" parameters to turn off pop behaviour and to force it too "pop"
 * added exception on timezone detection for "AUS Eastern Standard Time"
 
 = 1.9.1 - 2020-10-27 =
