@@ -49,14 +49,16 @@ class TagsReplacement
                 'key' => 'name',
                 'label' => 'Service name',
                 'getMethod' => 'getServiceName',
-                'sanitize' => true
+                'sanitize' => true,
+                'modelCall' => 'appointment'
             ],
             [
                 'model' => 'service',
                 'key' => 'address',
                 'label' => 'Service address',
                 'getMethod' => 'getServiceAddress',
-                'sanitize' => true
+                'sanitize' => true,
+                'modelCall' => 'appointment'
             ],
             [
                 'model' => 'appointment',
@@ -119,31 +121,31 @@ class TagsReplacement
 
     private function getValue($tag)
     {
-
-        if (empty($this->params[$tag['model']])) {
+        $model_key = empty($tag['modelCall']) ? $tag['model'] : $tag['modelCall'];
+        if (empty($this->params[$model_key])) {
             return '';
         }
 
         if (isset($tag['getMethod'])) {
-            if (method_exists($this->params[$tag['model']], $tag['getMethod'])) {
+            if (method_exists($this->params[$model_key], $tag['getMethod'])) {
                 if ($tag['getMethod'] == 'getStartsDayAndTime') {
                     return $this->params['appointment']->getStartsDayAndTime($this->params['client']->getTimezone());
                 } else {
                     return call_user_func([
-                        $this->params[$tag['model']],
+                        $this->params[$model_key],
                         $tag['getMethod']
                     ]);
                 }
             }
         } else {
             $key = $tag['key'];
-            if (is_object($this->params[$tag['model']])) {
-                //return $this->params[$tag['model']]->$key;
-                return !empty($this->params[$tag['model']]->$key) ? $this->params[$tag['model']]->$key : '';
+            if (is_object($this->params[$model_key])) {
+                //return $this->params[$model_key]->$key;
+                return !empty($this->params[$model_key]->$key) ? $this->params[$model_key]->$key : '';
             }
 
-            if (is_array($this->params[$tag['model']])) {
-                return !empty($this->params[$tag['model']][$key]) ? $this->params[$tag['model']][$key] : '';
+            if (is_array($this->params[$model_key])) {
+                return !empty($this->params[$model_key][$key]) ? $this->params[$model_key][$key] : '';
             }
         }
     }
