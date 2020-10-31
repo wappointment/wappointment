@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, appointment booking calendar,
 Requires at least: 4.7
 Tested up to: 5.5
 Requires PHP: 7.0
-Stable tag: 1.9.1
+Stable tag: 1.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -145,6 +145,10 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 1.9.2 - 2020-10-31 =
+* corrected default behaviour on mobile, full screen mobile is OFF if auto-open is ON
+* added exception on timezone detection for "AUS Eastern Standard Time"
 
 = 1.9.1 - 2020-10-27 =
 * corrected issue with update information

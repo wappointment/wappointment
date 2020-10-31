@@ -133,7 +133,10 @@ export default {
             if([undefined,false].indexOf(this.attributesEl.week) === -1) this.opts.selection.check_viewweek = true
             if([undefined,false].indexOf(this.attributesEl.popOff) === -1) this.autoPop = false
 
-            if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) this.toggleBookForm() // this one goes last
+            if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) {
+              this.autoPop =  false //no auto pop on 
+              this.toggleBookForm() // this one goes last
+            }
             this.opts.attributesEl = this.attributesEl
           }
         },
