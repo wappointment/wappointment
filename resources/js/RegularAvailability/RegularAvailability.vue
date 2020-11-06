@@ -1,11 +1,12 @@
 <template>
     <div>
-        <div class="d-flex w100">
+        <div v-if="minimal === false" class="d-flex w100">
             
             <div class="columnTitle" data-tt="Number of days in the future where you're made available">Available Booking Days</div> 
-                <ClickRevealSlider :alwaysShow="true" 
-                :value="viewData.availaible_booking_days" @change="changedCRS" />
-            </div>
+            <ClickRevealSlider :alwaysShow="true" 
+            :value="viewData.availaible_booking_days" @change="changedCRS" />
+        </div>
+
         <div class="commands-frame d-flex" @mouseover="showControls=true" @mouseout="showControls=false">
             
             <div class="scroll-top" v-if="isMounted && controlsShown">
@@ -44,7 +45,14 @@ import ClickRevealSlider from '../Fields/ClickRevealSlider'
 import orderBy from 'lodash/orderBy'
 
 export default {
-    props: ['initValue','viewData'],
+    props: {
+        initValue:{},
+        viewData:{}, 
+        minimal:{
+            type: Boolean,
+            default: false
+        }
+    },
     data() {
         return {
             classColumn: 'day-column',

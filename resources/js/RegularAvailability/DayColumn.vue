@@ -69,7 +69,8 @@ export default {
            return this.ghost.length > 0 ? 'position:absolute;height: 100%;width: 100%;':''
         },
         getHeightColumn(){
-          return (this.totalIntervals) * this.heightUnit 
+            console.log('getHeightColumn', this.totalIntervals, this.heightUnit)
+          return this.totalIntervals * this.heightUnit 
         },
 
         totalIntervals(){

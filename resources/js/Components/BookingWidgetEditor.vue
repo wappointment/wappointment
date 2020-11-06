@@ -27,8 +27,8 @@
                     <div class="d-flex">
                         <div class="d-flex align-items-center mb-2">
                             <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit"  @click="toggleColor">
-                                <span v-if="colorEdit"><FontAwesomeIcon :icon="['fas', 'edit']" size="lg"/> Edit Steps</span>
-                                <span v-else><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Color</span>
+                                <span><FontAwesomeIcon :icon="['fas', 'edit']" size="lg"/> Edit Text</span>
+                                <span><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Color</span>
                             </button>
                             <div class="d-flex flex-wrap" v-if="!colorEdit"> 
                                 <button v-if="widgetFields.general !== undefined" class="btn btn-secondary btn-xs m-1 tt-below" 
@@ -48,7 +48,7 @@
                                         <component  v-if="isComponentTypeActive(inputvalue,'colors',group_key, input_key, true)" :key="input_key"  
                                             :is="getComponentType(inputvalue,input_key)" 
                                             v-model="options.colors[group_key][input_key]" 
-                                            @change="changedInput"
+                                            
                                             eventChange="input"
                                             :label="getLabel('colors', group_key, input_key)" 
                                             :ph="defaultSettings.colors[group_key][input_key]"
@@ -66,35 +66,43 @@
                                 <div class="widget-fields" v-if="isCurrentStep(stepObj.key)" :data-step="'Step '+(4-idx)+': '+stepObj.label" 
                                 :class="{'active-fields': (step == stepObj.key)}">
                                     <template v-for="(inputvalue, group_key) in options[stepObj.key]">
-                                        <component  v-if="isComponentTypeActive(inputvalue,stepObj.key,group_key, group_key)" :key="group_key"  
+                                        {{ changedInput(stepObj.key, group_key, inputvalue) }}
+                                        <component  v-if="isComponentTypeActive(inputvalue,stepObj.key, group_key, group_key)" :key="group_key"  
                                         :is="getComponentType(inputvalue,group_key)" 
                                         v-model="options[stepObj.key][group_key]" 
-                                        @change="changedInput"
+                                        @input="(e) => changedInput(stepObj.key, group_key, e)"
                                         eventChange="input"
                                         :label="getLabel(stepObj.key, group_key)" 
                                         :ph="defaultSettings[stepObj.key][group_key]"
                                         :options="getOptions(stepObj.key, group_key)" 
                                         allowReset></component>
+                                        <div v-if="[undefined,false].indexOf(tagRemoved[stepObj.key + '_' + group_key]) === -1" class="small text-danger">
+                                          You should leave the tag(s) {{ getTags(defaultSettings[stepObj.key][group_key]).join(', ') }}
+                                        </div>
                                     </template>
                                 </div>
                             </transition>
                         </div>
                         <transition name="slide-fade-top"  >
-                                <div class="widget-fields" v-if="isCurrentStep('general')" data-step="General" 
-                                :class="{'active-fields': (step == 'general')}">
-                                    <template v-for="(inputvalue, group_key) in options['general']">
-                                        <component  v-if="isComponentTypeActive(inputvalue,'general',group_key, group_key)" :key="group_key"  
-                                        :is="getComponentType(inputvalue,group_key)" 
-                                        v-model="options['general'][group_key]" 
-                                        @change="changedInput"
-                                        eventChange="input"
-                                        :label="getLabel('general', group_key)" 
-                                        :ph="defaultSettings['general'][group_key]"
-                                        :options="getOptions('general', group_key)" 
-                                        allowReset></component>
-                                    </template>
-                                </div>
-                            </transition>
+                            <div class="widget-fields" v-if="isCurrentStep('general')" data-step="General" 
+                            :class="{'active-fields': (step == 'general')}">
+                                <template v-for="(inputvalue, group_key) in options['general']">
+                                    {{ changedInput('general', group_key, inputvalue) }}
+                                    <component  v-if="isComponentTypeActive(inputvalue,'general',group_key, group_key)" :key="group_key"  
+                                    :is="getComponentType(inputvalue,group_key)" 
+                                    v-model="options['general'][group_key]" 
+                                    @input="(e) => changedInput('general', group_key, e)"
+                                    eventChange="input"
+                                    :label="getLabel('general', group_key)" 
+                                    :ph="defaultSettings['general'][group_key]"
+                                    :options="getOptions('general', group_key)" 
+                                    allowReset></component>
+                                    <div v-if="[undefined,false].indexOf(tagRemoved['general_' + group_key]) === -1" class="small text-danger">
+                                        You should leave the tag(s) {{ getTags(defaultSettings['general'][group_key]).join(', ') }}
+                                    </div>
+                                </template>
+                            </div>
+                        </transition>
 
                     </div>
                     
@@ -143,6 +151,7 @@ export default {
         textEdit: true,
         canSave: false,
         labelActiveStep: '',
+        tagRemoved: {},
         editionsSteps: [
             {
                 key: 'button',
@@ -231,6 +240,24 @@ export default {
 
 
     methods: {
+        tagHasBeenRemoved(defaultVal, currentValue){
+            if(typeof defaultVal == "string"){
+                let tags = this.getTags(defaultVal)
+                if(tags === false) {
+                    return tags 
+                }
+                for (let i = 0; i < tags.length; i++) { //check whetehr the tags are presents in the string
+                    if(currentValue.indexOf(tags[i]) === -1 ){
+                        return true // tag has been removed
+                    }
+                }
+            }
+            return false
+        },
+        getTags(defaultVal){
+            const found = defaultVal.match(/\[[^\]]*]/g)
+            return Array.isArray(found) ? found:false
+        },
         dataChanged(newValue){
             this.options.demoData.form = newValue
         },
@@ -269,8 +296,9 @@ export default {
                 if(step == this.editionsSteps[i].key) return 'Step '+(i+1)+': '+this.editionsSteps[i].label
             }
         },
-        changedInput(a,b){
-            //console.log('changedInput',a,b)
+        changedInput(step, group, value){
+            let key = step+'_'+group
+            this.tagRemoved[key] = this.tagHasBeenRemoved(this.defaultSettings[step][group], this.options[step][group])
         },
         getFieldAdminInfos(section, key){
             return (this.widgetFields !== null && this.widgetFields[section]!== undefined && this.widgetFields[section][key] !== undefined) ? this.widgetFields[section][key]:false

@@ -1,6 +1,6 @@
 <template>
     <div v-if="dataLoaded">
-        <div v-if="minimal === undefined">
+        <div v-if="minimal === false">
             <p class="h6 text-muted"><span class="bullet-wap">1</span> 
                 <span class="bullet-title" v-if="viewData.staffs.length > 1"> Set who provides the appointments </span>
                 <span class="bullet-title" v-else> Modify your picture </span>
@@ -22,12 +22,12 @@
         </div>
         
         <div v-if="hasRegav">
-            <p v-if="minimal === undefined" class="h6 text-muted">
+            <p v-if="minimal === false" class="h6 text-muted">
                 <span class="bullet-wap">3</span> 
                 <span class="bullet-title"> Set your standard weekly schedule</span>
             </p>
  
-            <RegularAvailability :initValue="getRegav" :viewData="viewData" 
+            <RegularAvailability :initValue="getRegav" :viewData="viewData" :minimal="minimal"
             @updatedDays="updatedRA"
             @changedABD="changedABD"></RegularAvailability>
         </div>
@@ -45,7 +45,13 @@ import RequestMaker from '../Modules/RequestMaker'
 export default {
   extends: abstractView,
   components: window.wappointmentExtends.filter('RegavComponents', {RegularAvailability,TimeZones,StaffSelector, StaffPicture},{'RequestMaker':RequestMaker} ), 
-  props:['noback', 'minimal'],
+  props:{
+      noback:{},
+      minimal:{
+          type: Boolean,
+          default: false
+      }
+  },
   data() {
       return {
           viewName: 'regav',
