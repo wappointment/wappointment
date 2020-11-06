@@ -16,7 +16,7 @@
                 <component :is="addon.settingKey" :crumb="false"></component>
             </div>
             <div v-else>
-                <component :is="currentStep" :crumb="false" @changeStep="showStep"></component>
+                <component :is="currentStep" :crumb="false" minimal="true" @changeStep="showStep"></component>
             </div>
         </div>
     </div>

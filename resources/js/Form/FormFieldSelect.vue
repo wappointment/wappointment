@@ -1,6 +1,5 @@
 <template>
     <div>
-        <label v-if="label">{{ label }}</label>
         <SearchDropdown v-model="updatedValue" :ph="label" :elements="elements" :extraClass="getExtraClass"
              :idKey="idKey" :labelSearchKey="labelSearchKey" :flexWrap="flexWrap" :hasMulti="multi" :horizontal="horizontal"></SearchDropdown>
         <div class="small text-danger" v-if="hasErrors">
