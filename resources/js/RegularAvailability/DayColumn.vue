@@ -6,9 +6,11 @@
             @mousedown.prevent.stop="dragging"
             @touchstart.prevent.stop="dragging"
             @mousemove="draggingMove"
+            @touchmove="touchMove"
             @dragstart.prevent.self="startCreate"
             @mouseup.prevent.stop="stopCreate"
-            @touchend.prevent.self="stopCreate">
+            @touchend.prevent.stop="toucheComplete"
+            @touchcancel.prevent.stop="toucheComplete">
             
             <div class="drag-helper" :style="getWrapperGhostStyle"></div>
             <div class="ghost-wrapper" :style="getWrapperGhostStyle">
@@ -44,10 +46,10 @@ export default {
     props: ['daykey', 'openedTimes', 'minHour', 'maxHour', 'classColumn', 'heightUnit', 'precision'],
     data() {
         return {
-            notchSize:1,
-            startDragAt:0,
-            currentDrag:0,
-            isDragging:false,
+            notchSize: 1,
+            startDragAt: 0,
+            currentDrag: 0,
+            isDragging: false,
             ghost: [],
             lastLayerY: 0,
             active: false,
@@ -61,16 +63,10 @@ export default {
             return this.isDragging && (this.ghost[1]-this.ghost[0]) != 0
         },
         getGhostStyle(){
-          if(this.ghost.length > 0) {
-              return 'height:'+this.getHeight(this.ghost)+'px;top:'+this.getY(this.ghost[0])+'px;'
-          }
-          return ''
+          return this.ghost.length > 0 ? 'height:'+this.getHeight(this.ghost)+'px;top:'+this.getY(this.ghost[0])+'px;':''
         },
         getWrapperGhostStyle(){
-          if(this.ghost.length > 0) {
-              return 'position:absolute;height: 100%;width: 100%;'
-          }
-          return ''
+           return this.ghost.length > 0 ? 'position:absolute;height: 100%;width: 100%;':''
         },
         getHeightColumn(){
           return (this.totalIntervals) * this.heightUnit 
@@ -100,14 +96,26 @@ export default {
       startCreate(e){
           this.initGhost(e)
       },
-
+      
+      getYPositionInCol(e){
+          let parentDiv = document.getElementById(this.daykey).getBoundingClientRect()
+          if (e.type.indexOf('touch') !== -1) {
+             return e.changedTouches[0].clientY - parentDiv.top
+        } else {
+             return e.layerY
+        }
+      },
       initGhost(e){
-          this.startDragAt = e.layerY
+          this.startDragAt = this.getYPositionInCol(e)
           this.currentDrag = this.startDragAt + this.heightUnit
       },
-
+        toucheComplete(e){
+            this.stopCreate(e)
+        },
       stopCreate(e){
-          if(this.isDragging) this.createBlock(e)
+          if(this.isDragging) {
+              this.createBlock(e)
+          }
           
           this.ghost = []
           this.deactiveDay()
@@ -118,25 +126,29 @@ export default {
           this.isDragging = true
           this.activeDay()
       },
-
+        touchMove(e){
+            return this.draggingMove(e)
+        },
       draggingMove(e){
-          
+
          //if(this.isDragging)console.log(e)
          if(!this.isDragging || !(e.target.className=='events' || e.target.className=='drag-helper' || e.target.className=='ghost')) {
              return;
          }
+         
           if(e.target.className=='events' || e.target.className=='drag-helper' ) {
               this.lastLayerY = e.layerY
           }
 
-          this.currentDrag = e.layerY
+        this.currentDrag = this.getYPositionInCol(e)
 
+        
           if(e.target.className=='ghost') {
               this.currentDrag += this.lastLayerY
           }
-          
-          this.ghost = this.startDragAt > this.currentDrag ? [this.convertYToHour(this.currentDrag), this.convertYToHour(this.startDragAt)] :[this.convertYToHour(this.startDragAt), this.convertYToHour(this.currentDrag)]
 
+          this.ghost = this.startDragAt > this.currentDrag ? [this.convertYToHour(this.currentDrag), this.convertYToHour(this.startDragAt)] :[this.convertYToHour(this.startDragAt), this.convertYToHour(this.currentDrag)]
+    
       },
       
       getHeight(timeBlock){
@@ -244,6 +256,7 @@ export default {
         margin: 0 1rem;
         text-align: center;
         width: 100%;
+        padding-top: 38px;
     }
     .day-column .columnTitle{
         font-weight: bold;

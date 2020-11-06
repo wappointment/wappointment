@@ -1,8 +1,8 @@
 <template> 
-    <div class="hours-col"  @mouseover="editTimes" @mouseout="cancelEditTimes">
-        <strong class="columnTitle">Hours <span class="dashicons dashicons-edit" ></span></strong>
+    <div class="hours-col text-center"  @mouseover="editTimes" @mouseout="cancelEditTimes">
+        <strong class="columnTitle ">Hours</strong>
         
-        <div v-if="edittime" class="d-flex justify-content-center commands-hours commands-top">
+        <div class="d-flex justify-content-center commands-hours commands-top">
             <button data-tt="Show less hours" class="btn btn-secondary btn-xs" @click="removeMin">-</button>
             <div  data-tt="Change precision each 10min, 20min etc...">
                 <HoursDropdown :elements="durations" :current="precision" :funcDisplay="funcDisplay" @selected="changePrecision"/>
@@ -27,7 +27,7 @@
             
         </div>
 
-        <div  v-if="edittime" class="d-flex justify-content-center commands-hours commands-bottom">
+        <div  class="d-flex justify-content-center commands-hours commands-bottom">
             <button data-tt="Show less hours" class="btn btn-secondary  btn-xs" @click="removeMax">-</button>
             <div  data-tt="Change precision each 10min, 20min etc...">
                 <HoursDropdown :elements="durations" :current="precision" :funcDisplay="funcDisplay" @selected="changePrecision"/>
@@ -56,7 +56,6 @@ export default {
     },
     methods: {
         changePrecision(duration){
-            console.log('changing',duration)
             this.$emit('changedPrecision', duration)
         },
         funcDisplay(element){
@@ -108,17 +107,9 @@ export default {
         border-bottom: 1px solid #f3f3f3;
     }
     .commands-hours{
-        position: absolute;
         border-radius: 6px;
-        padding: .4em;
+        padding: .4em 0;
         background-color: #fff;
-        left: -5px;
-        box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,.08);
     }
-    .commands-top{
-        top: 30px;
-    }
-    .commands-bottom{
-        bottom: -30px;
-    }
+
 </style>

@@ -29,9 +29,9 @@ export default {
     props: ['y', 'h', 'daykey', 'tblockid', 'timeBlock', 'minHour', 'heightUnit'],
     data() {
         return {
-            maxHour:0,
-            start:0,
-            end:0,
+            maxHour: 0,
+            start: 0,
+            end: 0,
             editableBlock: false
         }
     },
@@ -71,14 +71,14 @@ export default {
         onDragstop(x,y) {
 
             if(this.y != y){
-                this.$emit('updatedBlock', this.tblockid, this.getHourStart(y), this.getHourEnd(y,this.h), this.timeBlock)
+                this.$emit('updatedBlock', this.tblockid, this.getHourStart(y), this.getHourEnd(y, this.h), this.timeBlock)
             }
             this.$emit('deactive')
         },
         onDragSnapped(top){
 
             this.start = this.getHourStart(top)
-            this.end = this.getHourEnd(top,this.h)
+            this.end = this.getHourEnd(top, this.h)
 
         },
         onResizeSnapped(y,h){

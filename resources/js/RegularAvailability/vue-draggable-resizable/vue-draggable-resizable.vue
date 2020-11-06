@@ -4,7 +4,9 @@
     :style="style"
     :class="getClasses()"
     @mousedown.stop="elmDown"
-    @touchstart.prevent.stop="elmDown"
+    @touchstart.prevent.stop="touchDragStart"
+    @touchend.stop.prevent="touchDragComplete"
+    @touchcancel.stop.prevent="touchDragComplete"
     @dblclick="fillParent"
     @mouseover="showControls" 
     @mouseout="hideControls"
@@ -12,9 +14,9 @@
     <div class="handle handle-actions" :class="{
         'handle-show': enabled
         }">
-        <div class="d-block dashicons dashicons-trash" @click="$emit('delete')"></div>
+        <div class="d-block dashicons dashicons-trash" @touchstart.prevent.self="$emit('delete')" @click="$emit('delete')"></div>
         <div v-if="editable" data-tt="Set conditions" class="tt-left">
-          <div class="d-block dashicons dashicons-shortcode" @click="$emit('editBlock')"></div>
+          <div class="d-block dashicons dashicons-shortcode" @touchstart.prevent.self="$emit('editBlock')" @click="$emit('editBlock')"></div>
         </div>
     </div>
     <div
@@ -25,7 +27,9 @@
       :class="getHandleClass(handle)"
 
       @mousedown.stop.prevent="handleDown(handle, $event)"
-      @touchstart.stop.prevent="handleDown(handle, $event)"
+      @touchstart.stop.prevent="touchHandleStart(handle, $event)"
+      @touchend.stop.prevent="touchHandleComplete(handle, $event)"
+      @touchcancel.stop.prevent="touchHandleComplete(handle, $event)"
     >
       <div :class="{ 
         'dashicons dashicons-arrow-up-alt': handle=='tm', 
@@ -163,7 +167,8 @@ export default {
     this.elmW = 0
     this.elmH = 0
   },
-  mounted: function () {
+  mounted () {
+    
     document.documentElement.addEventListener('mousemove', this.handleMove, true)
     document.documentElement.addEventListener('mousedown', this.deselect, true)
     document.documentElement.addEventListener('mouseup', this.handleUp, true)
@@ -171,8 +176,8 @@ export default {
     // touch events bindings
     document.documentElement.addEventListener('touchmove', this.handleMove, true)
     document.documentElement.addEventListener('touchend touchcancel', this.deselect, true)
-    document.documentElement.addEventListener('touchstart', this.handleUp, true)
-
+    document.documentElement.addEventListener('touchstart', this.toucheStart, true)
+    
     this.elmX = parseInt(this.$el.style.left)
     this.elmY = parseInt(this.$el.style.top)
     this.elmW = this.$el.offsetWidth || this.$el.clientWidth
@@ -180,15 +185,17 @@ export default {
 
     this.reviewDimensions()
   },
-  beforeDestroy: function () {
+  beforeDestroy () {
     document.documentElement.removeEventListener('mousemove', this.handleMove, true)
     document.documentElement.removeEventListener('mousedown', this.deselect, true)
     document.documentElement.removeEventListener('mouseup', this.handleUp, true)
 
     // touch events bindings removed
-    document.documentElement.addEventListener('touchmove', this.handleMove, true)
-    document.documentElement.addEventListener('touchend touchcancel', this.deselect, true)
-    document.documentElement.addEventListener('touchstart', this.handleUp, true)
+    document.documentElement.removeEventListener('touchmove', this.handleMove, true)
+    document.documentElement.removeEventListener('touchend touchcancel', this.deselect, true)
+    document.documentElement.removeEventListener('touchstart', this.toucheStart, true)
+
+    
   },
 
   data: function () {
@@ -219,9 +226,16 @@ export default {
       }
       for (let i = 0; i < this.extraClasses.length; i++) {
         classes[this.extraClasses[i]] = true
-        
       }
       return classes
+    },
+    enabledFunc(){
+      if (!this.enabled) {
+        this.enabled = true
+
+        this.$emit('activated')
+        this.$emit('update:active', true)
+      }
     },
     showControls(e){
           if(this.dragging || this.resizing) return;
@@ -235,7 +249,7 @@ export default {
           this.$emit('toggleControls',false)
           
       },
-    reviewDimensions: function () {
+    reviewDimensions() {
       if (this.minw > this.w) this.width = this.minw
 
       if (this.minh > this.h) this.height = this.minh
@@ -258,10 +272,10 @@ export default {
 
       this.elmW = this.width
       this.elmH = this.height
-
       this.$emit('resizing', this.left, this.top, this.width, this.height)
     },
-    elmDown: function (e) {
+    elmDown(e) {
+      
       const target = e.target || e.srcElement
       
       if (this.$el.contains(target)) {
@@ -280,15 +294,40 @@ export default {
         }
       }
     },
-    enabledFunc(){
-      if (!this.enabled) {
-        this.enabled = true
+    
+    touchDragStart(e){
+      
+      this.reviewDimensions()
 
-        this.$emit('activated')
-        this.$emit('update:active', true)
+
+      if (this.draggable) {
+        this.dragging = true
       }
     },
-    deselect: function (e) {
+    touchHandleStart(handle,e){
+      this.handleDown(handle,e)
+    },
+    touchDragComplete(e){
+      
+      if(this.enabled === false){
+        this.enabledFunc()
+      }else{
+        this.disableFunc()
+      }
+      return this.handleUp(e, true)
+
+    },
+    touchHandleComplete(handle,e){
+      this.handleUp(e)
+    },
+    toggleFunc(){
+      if(this.enabled){
+        this.enabled = false
+      }else{
+        this.enabledFunc()
+      }
+    },
+    deselect(e) {
       if (e.type.indexOf('touch') !== -1) {
         this.mouseX = e.changedTouches[0].clientX
         this.mouseY = e.changedTouches[0].clientY
@@ -315,7 +354,7 @@ export default {
           this.$emit('update:active', false)
         }
     },
-    handleDown: function (handle, e) {
+    handleDown (handle, e) {
       this.handle = handle
 
       if (e.stopPropagation) e.stopPropagation()
@@ -323,7 +362,7 @@ export default {
 
       this.resizing = true
     },
-    fillParent: function (e) {
+    fillParent (e) {
       if (!this.parent || !this.resizable || !this.maximize) return
 
       let done = false
@@ -379,7 +418,7 @@ export default {
 
       window.requestAnimationFrame(animate)
     },
-    handleMove: function (e) {
+    handleMove (e) {
       const isTouchMove = e.type.indexOf('touchmove') !== -1
       this.mouseX = isTouchMove
         ? e.touches[0].clientX
@@ -470,7 +509,10 @@ export default {
         //this.$emit('dragging', this.left, this.top)
       }
     },
-    handleUp: function (e) {
+    toucheStart(e){
+      return this.handleUp(e)
+    },
+    handleUp (e, dragStop = false) {
       if (e.type.indexOf('touch') !== -1) {
         this.lastMouseX = e.changedTouches[0].clientX
         this.lastMouseY = e.changedTouches[0].clientY
