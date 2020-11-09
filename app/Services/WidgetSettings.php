@@ -61,12 +61,12 @@ class WidgetSettings
             'slide_size' => 1.3
         ],
         'selection' => [
+            'check_viewweek' => false,
             'title' => '[total_slots] free slots',
             'timezone' => 'Timezone: [timezone]',
             'morning' => 'Morning',
             'afternoon' => 'Afternoon',
             'evening' => 'Evening',
-            'check_viewweek' => false,
         ],
         'form' => [
             'byskype' => 'By Skype',
@@ -86,8 +86,8 @@ class WidgetSettings
         'confirmation' => [
             'confirmation' => 'Appointment Booked',
             'when' => 'When:',
-            'duration' => 'Duration:',
             'service' => 'Service:',
+            'duration' => 'Duration:',
             'pending' => 'The appointment is pending and should be quickly confirmed',
             'skype' => 'The appointment will take place on Skype, we will call you on this account:',
             'phone' => 'The appointment will take place over the phone, we will call you on this number:',
@@ -178,40 +178,110 @@ class WidgetSettings
             ]
         ],
         'general' => [
-            'check_header_compact_mode' => ['label' => 'Header Compact mode']
+            'fields' => [
+                'check_header_compact_mode' => [
+                    'label' => 'Header Compact mode',
+                    'tip' => 'Appointment details is compacted in the header'
+                ],
+                'location' => [
+                    'conditions' => [
+                        ['key' => 'general.check_header_compact_mode', 'val' => false]
+                    ],
+                    'tip' => 'Appears in standard summary'
+                ],
+                'when' => [
+                    'conditions' => [
+                        ['key' => 'general.check_header_compact_mode', 'val' => false]
+                    ],
+                    'tip' => 'Appears in standard summary'
+                ],
+                'service' => [
+                    'conditions' => [
+                        ['key' => 'general.check_header_compact_mode', 'val' => false]
+                    ],
+                    'tip' => 'Appears in standard summary'
+                ],
+                'min' => [
+                    'tip' => 'minutes'
+                ],
+            ]
         ],
+
         'button' => [
-            'backgroundColor' => ['label' => 'Primary Button Background'],
-            'color' => ['label' => 'Primary Button Text'],
-            'check_full' => ['label' => 'Full Width'],
-            'check_bold' => ['label' => 'Bold'],
-            'slide_size' => [
-                'label' => 'Text Size',
-                'options' => ['min' => .6, 'max' => 2.6, 'step' => .1, 'unit' => 'em']
-            ],
+            'fields' => [
+                'check_full' => ['label' => 'Full Width'],
+                'check_bold' => ['label' => 'Bold'],
+                'slide_size' => [
+                    'label' => 'Text Size',
+                    'options' => ['min' => .6, 'max' => 2.6, 'step' => .1, 'unit' => 'em'],
+                ],
+            ]
+            // 'backgroundColor' => ['label' => 'Primary Button Background'],
+            // 'color' => ['label' => 'Primary Button Text'],
+
         ],
         'selection' => [
-            'header_co' => ['label' => 'Header text'],
-            'header_bg' => ['label' => 'Header background'],
-            'calendar_bg' => ['label' => 'Body background'],
-            'calendar_cotext' => ['label' => 'Body text'],
-            'calendar_codisabled' => ['label' => 'Disabled day'],
-            'check_viewweek' => ['label' => 'Week View'],
+            // 'header_co' => ['label' => 'Header text'],
+            // 'header_bg' => ['label' => 'Header background'],
+            // 'calendar_bg' => ['label' => 'Body background'],
+            // 'calendar_cotext' => ['label' => 'Body text'],
+            // 'calendar_codisabled' => ['label' => 'Disabled day'],
+            'fields' => [
+                'check_viewweek' => ['label' => 'Week View'],
+            ]
+
         ],
         'form' => [
-            'back_bg' => ['label' => 'Secondary Button background'],
-            'back_color' => ['label' => 'Secondary Button text'],
-            'back_sel_bg' => ['label' => 'Secondary Button background(selected)'],
-            'back_sel_co' => ['label' => 'Secondary Button text(selected)'],
-            'success_co' => ['label' => 'Success color'],
-            'error_co' => ['label' => 'Error color'],
-            'check_terms' => ['label' => 'Add data proccessing notice'],
+            // 'back_bg' => ['label' => 'Secondary Button background'],
+            // 'back_color' => ['label' => 'Secondary Button text'],
+            // 'back_sel_bg' => ['label' => 'Secondary Button background(selected)'],
+            // 'back_sel_co' => ['label' => 'Secondary Button text(selected)'],
+            // 'success_co' => ['label' => 'Success color'],
+            // 'error_co' => ['label' => 'Error color'],
+
+            'fields' => [
+                'check_terms' => [
+                    'label' => 'Add data proccessing notice',
+
+                ],
+                'terms' => [
+                    'conditions' => [
+                        ['key' => 'form.check_terms', 'val' => true]
+                    ],
+                ],
+                'terms_link' => [
+                    'conditions' => [
+                        ['key' => 'form.check_terms', 'val' => true]
+                    ],
+                ],
+            ]
         ],
         'confirmation' => [
-            'header_co' => ['label' => 'Header Confirmatiom Text'],
-            'header_bg' => ['label' => 'Header Confirmatiom background'],
+            'categories' => [
+                [
+                    'label' => 'Appointment Confirmed',
+                    'fields' => [
+                        'confirmation' => false,
+                        'when' => false,
+                        'service' => false,
+                        'duration' => false,
+                        'savetocal' => false
+                    ]
+                ],
+                [
+                    'label' => 'Conditional confirmation',
+                    'fields' => [
+                        'pending' => ['tip' => 'When admin confirmation is required'],
+                        'skype' => ['tip' => 'Skype appointments only'],
+                        'phone' => ['tip' => 'Phone appointments only'],
+                        'physical' => ['tip' => 'On site appointments only'],
+                    ]
+                ],
+            ]
+
         ]
     ];
+
     private $db_settings = [];
     private $merged_settings = [];
     private $key_option = 'widget_settings';

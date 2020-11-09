@@ -1,9 +1,8 @@
 <template>
     <div id="buttons-block">
         <div class="d-flex my-4" >
-            <button class="btn btn-secondary" :class="{selected: showWidget}" @click="showArea('widget')"><span class="dashicons dashicons-welcome-widgets-menus"></span> In my widget area</button>
-            <button class="btn btn-secondary" :class="{selected: showPost}" @click="showArea('post')"><span class="dashicons dashicons-admin-post"></span> Within my Post or Pages</button>
-            <button class="btn btn-secondary" :class="{selected: showTheme}" @click="showArea('theme')"><span class="dashicons dashicons-editor-code"></span> Using PHP snippet in my theme</button>
+            <button class="btn btn-secondary" :class="{selected: showPost}" @click="showArea('post')"><span class="dashicons dashicons-shortcode"></span> Using a Shortcode</button>
+            <button class="btn btn-secondary" :class="{selected: showWidget}" @click="showArea('widget')"><span class="dashicons dashicons-welcome-widgets-menus"></span> Using our Widget</button>
         </div>
         <div v-if="showWidget">
             <div class="mt-4">
@@ -11,21 +10,25 @@
             </div>
         </div>
         <div v-if="showPost">
-            <div  class="form-max">
-                <p class="m-0">Copy the shortcode below: </p>
-                <ClickCopy :value="shortcode"></ClickCopy>
-                <ShortcodeGenerator @change="updateShortCode" :title="title"/>
+            <h3>Use the shortcode in your page(s) or post(s) </h3>
+            <div  class="d-flex align-items-center">
+                
+                <div class="shortcode-gen">
+                    <ShortcodeGenerator @change="updateShortCode" :title="title"/>
+                </div>
+                
+                <div class="h3 m-4 text-muted"> > </div>
+                <div class="ml-4">
+                    <p class="m-0">Your shortcode: </p>
+                    <ClickCopy :value="shortcode"></ClickCopy>
+                </div>
             </div>
             <div class="mt-4">
+                <h4>How can I use this shortcode?</h4>
                 <VideoIframe src="https://www.youtube.com/embed/VMi2Ry-JrGA" />
             </div>
         </div>
-        <div v-if="showTheme">
-            <div class="form-max">
-                <p class="m-0">PHP snippet to use in your theme: <span class="text-danger">(for experts only)</span></p>
-                <ClickCopy value="<?php wappointment_booking_widget() ?>"></ClickCopy>
-            </div>
-        </div>
+
     </div>
 </template>
 
@@ -40,7 +43,7 @@ export default {
     components: {ClickCopy, VideoIframe, ShortcodeGenerator}, 
     data: () => ({
         area: '',
-        shortcode: '',
+        shortcode: 'post',
     }),
     computed: {
         
@@ -49,9 +52,6 @@ export default {
         },
         showPost(){
             return this.area == 'post'
-        },
-        showTheme(){
-            return this.area == 'theme'
         },
         
     },
@@ -75,5 +75,10 @@ export default {
 }
 .form-max{
     max-width: 350px;
+}
+.shortcode-gen{
+    background-color: #f5f5f5;
+    padding: .5em;
+    border-radius: .4em;
 }
 </style>
