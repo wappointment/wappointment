@@ -35,15 +35,21 @@ class SettingsStaffController extends RestController
     protected function regavClean($regav)
     {
         foreach ($regav as $day => $blocks) {
-            $newblocks = [];
+            if ($day === 'precise') {
+                $newblocks = $blocks;
+            } else {
+                $newblocks = [];
 
-            if (is_array($blocks) && !empty($blocks)) {
-                foreach ($blocks as $key => $block) {
-                    if ($block[1] - $block[0] > 0) {
-                        $newblocks[] = $block;
+                if (is_array($blocks) && !empty($blocks)) {
+                    foreach ($blocks as $key => $block) {
+                        if ($block[1] - $block[0] > 0) {
+                            $newblocks[] = $block;
+                        }
                     }
                 }
             }
+
+
 
             $regav[$day] = $newblocks;
         }

@@ -36,6 +36,11 @@
                     </div>
                 </div>
             </div>
+            <div class="d-flex align-items-center mb-2">
+                <div>Colors</div>
+                <div><ColorPicker  v-model="availableColor" label="Appointment"></ColorPicker></div>
+                <div><ColorPicker  v-model="appointmentColor" label="Available"></ColorPicker></div>
+            </div>
             <button @click="hidePref" class="btn btn-secondary btn-sm">Close</button> 
             <button @click="savePreferences" class="btn btn-outline-primary btn-sm">Save</button>
         </div>
@@ -44,6 +49,7 @@
 </template>
 
 <script>
+import ColorPicker from '../Components/ColorPicker'
 export default {
     props: [ 'durations', 'duration', 'pminH','pmaxH'],
     data: () => ({
@@ -56,8 +62,11 @@ export default {
         minHour: 6,
         maxHour: 19,
         selectedDuration: 0,
-        showText: false
+        showText: false,
+        availableColor: '#fff',
+        appointmentColor: '#4b6c97'
     }),
+    components: {ColorPicker},
     created(){
         for (let i = 0; i < this.durations.length; i++) {
             if(this.baseDurations.indexOf(this.durations[i]) === -1){

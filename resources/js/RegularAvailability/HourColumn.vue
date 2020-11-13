@@ -15,11 +15,11 @@
             <div v-for="(time, timeidx) in openingTimes" class="hour-cell" >
                 <div class="d-flex align-items-center justify-content-between">
                     <div>
-                        <div v-for="interval in intervals" :class="{'hr-interval':interval !== intervals}" :style="'height: '+heightUnit+'px;'"></div>
+                        <div v-for="interval in intervals" :class="{'hr-interval':interval !== intervals}" :style="'height: '+heightUnitMinusBorder+'px;'"></div>
                     </div>
                     <div>{{ time }}</div>
                     <div>
-                        <div v-for="interval in intervals" :class="{'hr-interval':interval !== intervals}" :style="'height: '+heightUnit+'px;'"></div>
+                        <div v-for="interval in intervals" :class="{'hr-interval':interval !== intervals}" :style="'height: '+heightUnitMinusBorder+'px;'"></div>
                     </div>
                 </div>
                 
@@ -52,6 +52,9 @@ export default {
     computed: {
         intervals(){
             return 60/this.precision
+        },
+        heightUnitMinusBorder(){
+            return this.heightUnit - (1/this.intervals)
         }
     },
     methods: {
