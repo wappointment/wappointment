@@ -32,7 +32,6 @@ class EventsController extends RestController
         if ((bool) $request->input('viewingFreeSlot')) {
             return $this->debugAvailability();
         } else {
-
             $pref_save = [
                 'cal_duration' => $request->input('slotDuration'),
                 'cal_minH' => $request->input('minH'),
@@ -40,6 +39,7 @@ class EventsController extends RestController
                 'cal_avail_col' => '#f2f2f2',
                 'cal_appoint_col' => '#4b6c97',
             ];
+
             if (!empty($request->input('preferences'))) {
                 $preferences = json_decode($request->input('preferences'));
                 if (!empty($preferences->cal_avail_col)) {
