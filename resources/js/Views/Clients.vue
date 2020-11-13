@@ -12,7 +12,7 @@
               <span v-for="(listingComp,key) in clientListing" :class="{'btn btn-link':view!=key}" @click="view=key">{{ listingComp.name }}</span>
             </div>
             
-            <component ref="listing" :is="view" @editClient="editClient" @loaded="loadedResult"/>
+            <component ref="listing" :is="view" @editClient="editClient" @deleteClient="deleteClient" @loaded="loadedResult"/>
 
         </template>
         <template v-else>
@@ -93,12 +93,15 @@ export default {
         perPage(per_page){
           this.$refs.listing.perPage(per_page)
         },
+
         reloadListing(){
           this.$refs.listing.loadElements()
         },
+
         back(){
           this.clientDataToSave = null
         },
+
         loadedResult(response){
           this.per_page = parseInt(response.data.viewData.per_page)
           this.schema[2].timezones_list = response.data.viewData.timezones_list
@@ -108,6 +111,7 @@ export default {
         saveClient(clientData){
           this.request(this.saveClientRequest, clientData, null, null, this.savedClient)
         },
+
         savedClient(response){
           this.serviceSuccess(response)
           this.back()
@@ -117,6 +121,7 @@ export default {
         async saveClientRequest(params) {
           return await this.mainService.call('save', params) 
         },
+
         getPhone(client){
           return client.options.phone !== undefined ? client.options.phone:'---'
         },
@@ -130,13 +135,30 @@ export default {
             },
           }
         },
+
         editClient(client){
           this.clientDataToSave = null
           setTimeout(this.clientEdited.bind(null,client), 100)
         },
+
         clientEdited(client){
           this.clientDataToSave = client
         },
+
+        deleteClient(clientId){
+          this.request(this.deleteClientRequest, {id: clientId}, null, null, this.deletedClient)
+        },
+
+        deletedClient(response){
+          this.serviceSuccess(response)
+          this.$refs.listing.elements = this.$refs.listing.elements.filter(e => e.id != response.data.elementDeleted)
+        },
+
+        async deleteClientRequest(params) {
+          return await this.mainService.call('delete', params) 
+        },
+
+        
 
     }
 }   

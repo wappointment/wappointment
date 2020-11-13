@@ -24,9 +24,9 @@
         .wap-front .wbtn.wbtn-primary.wbtn-booking,
         .wap-front .wbtn-primary.wbtn-booking:not(:disabled):not(.disabled):active, 
         .wap-front .wbtn-primary.wbtn-booking:not(:disabled):not(.disabled).active {
-        font-size: {{ opts.button.slide_size+'em' }} !important;
-        {{ buttonIsBold }}
-        {{ buttonIsFull }}
+            font-size: {{ opts.button.slide_size+'em' }} !important;
+            {{ buttonIsBold }}
+            {{ buttonIsFull }}
         }
         .wap-front .wbtn.wbtn-primary,
         .wap-front .wbtn-primary:not(:disabled):not(.disabled):active, 
@@ -38,13 +38,13 @@
             box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .6) }};
         }
         .wap-front .wbtn.wbtn-primary:hover {
-        background-color: {{ hx_rgb(opts.colors.primary.bg,.9) }};
-        box-shadow: 0 0 0 .2em {{ hx_rgb(opts.colors.primary.bg,.5) }};
+            background-color: {{ hx_rgb(opts.colors.primary.bg,.9) }};
+            box-shadow: 0 0 0 .2em {{ hx_rgb(opts.colors.primary.bg,.5) }};
         }
 
-                .wap-front .wbtn:focus, 
+        .wap-front .wbtn:focus, 
         .wap-front .wbtn.focus {
-        box-shadow: 0 0 0 .2em {{ hx_rgb(opts.colors.primary.bg, .25) }};
+            box-shadow: 0 0 0 .2em {{ hx_rgb(opts.colors.primary.bg, .25) }};
         }
         
         .wap-front .wbtn-primary.disabled, 
@@ -73,27 +73,37 @@
         .wap-front .address-service a{
             color: {{ hx_rgb(opts.colors.address.text) }};
         }
+
         .wap-front .wbtn.wbtn-secondary,
         .wap-front .wbtn.wbtn-secondary .wduration,
         .wap-front .wbtn-secondary:not(:disabled):not(.disabled):active, 
         .wap-front .wbtn-secondary:not(:disabled):not(.disabled).active {
             background: {{ hx_rgb(opts.colors.secondary.bg) }};
-        background-color: {{ hx_rgb(opts.colors.secondary.bg) }};
-        border-color: {{ hx_rgb(opts.colors.secondary.bg, .8) }};
-        color: {{ hx_rgb(opts.colors.secondary.text) }};
-        box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.secondary.bg, .6) }};
-        margin: .4em 0;
+            background-color: {{ hx_rgb(opts.colors.secondary.bg) }};
+            border-color: {{ hx_rgb(opts.colors.secondary.bg, .8) }};
+            color: {{ hx_rgb(opts.colors.secondary.text) }};
+            box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.secondary.bg, .6) }};
+            margin: .4em 0;
         }
+
+        .wap-front .wrap-calendar .wbtn.wbtn-secondary div{
+            color: {{ hx_rgb(opts.colors.secondary.text) }};
+        }
+
+        .wap-front .wrap-calendar .wbtn.wbtn-secondary.selected div{
+            color: {{ hx_rgb(opts.colors.secondary.text_selected) }};
+        }
+
         .wap-front .wbtn.wbtn-secondary:hover {
-        background-color: {{ hx_rgb(opts.colors.secondary.bg,.9) }};
-        box-shadow: 0 0 0 .2em {{ hx_rgb(opts.colors.secondary.bg,.5) }};
+            background-color: {{ hx_rgb(opts.colors.secondary.bg,.9) }};
+            box-shadow: 0 0 0 .2em {{ hx_rgb(opts.colors.secondary.bg,.5) }};
         }
 
         .wap-front .wbtn.wbtn-secondary.selected{
-        background-color: {{ hx_rgb(opts.colors.secondary.bg_selected) }};
-        border-color: {{ hx_rgb(opts.colors.secondary.bg_selected, .8) }};
-        color: {{ hx_rgb(opts.colors.secondary.text_selected) }};
-        box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.secondary.bg_selected, .6) }};
+            background-color: {{ hx_rgb(opts.colors.secondary.bg_selected) }};
+            border-color: {{ hx_rgb(opts.colors.secondary.bg_selected, .8) }};
+            color: {{ hx_rgb(opts.colors.secondary.text_selected) }};
+            box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.secondary.bg_selected, .6) }};
         }
 
         .wap-front .wap-form-body .timezone {
@@ -203,11 +213,6 @@
         .wap-front .wappointment-errors div{
             color: #fff;
             font-size: .9em;
-        }
-        
-
-        .wap-front .text-sm{
-            color: {{ hx_rgb(opts.colors.body.tx_small) }};
         }
 
         .wap-wid.wclosable > .wclose::before, 

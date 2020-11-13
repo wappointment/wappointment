@@ -51,8 +51,19 @@ class ClientController extends RestController
     public function save(Request $request)
     {
         Client::save($request->all());
+
         return [
             'message' => 'Client save',
+        ];
+    }
+
+    public function delete(Request $request)
+    {
+        Client::delete($request->input('id'));
+
+        return [
+            'elementDeleted' => $request->input('id'),
+            'message' => 'Client deleted',
         ];
     }
 }

@@ -19,6 +19,10 @@ export default class ClientService extends ApiV1{
                 method: 'post', 
                 route: 'client'
             },
+            delete: { 
+                method: 'post', 
+                route: 'client/delete'
+            },
             
         };
     }

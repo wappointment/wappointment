@@ -6,9 +6,12 @@ use Wappointment\ClassConnect\Model;
 use Wappointment\Services\Settings;
 use Wappointment\Services\Appointment as AppointmentService;
 use Wappointment\Services\Service;
+use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
 
 class Client extends Model
 {
+    use SoftDeletes;
+
     protected $table = 'wappo_clients';
 
     protected $fillable = [
@@ -17,28 +20,34 @@ class Client extends Model
     protected $casts = [
         'options' => 'array',
     ];
+
     protected $appends = ['avatar'];
 
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
     }
+
     public function getEmailAttribute($value)
     {
         return sanitize_email($value);
     }
+
     public function getFirstName()
     {
         return (strpos($this->name, ' ')) !== false ? substr($this->name, 0, strpos($this->name, ' ')) : $this->name;
     }
+
     public function getAvatarAttribute()
     {
         return get_avatar_url($this['email'], ['size' => 40]);
     }
+
     public function getLastName()
     {
         return (strpos($this->name, ' ')) !== false ? substr($this->name, strpos($this->name, ' ')) : '';
     }
+
     public function getPhone()
     {
         return empty($this->options['phone']) ? '' : $this->options['phone'];

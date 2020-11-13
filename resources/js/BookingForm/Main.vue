@@ -97,10 +97,10 @@ let compDeclared = {
     'AppointmentTypeSelection': AppointmentTypeSelection
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
-
+let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Colors, Dates] )
 export default {
      extends: AbstractFront,
-     mixins: [Colors, Dates],
+     mixins: mixinsDeclared,
      props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid'],
      components: compDeclared, 
     data: () => ({

@@ -4,6 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\Models\Client as MClient;
 use Wappointment\Validators\HttpRequest\Booking;
+use Wappointment\System\Status;
 
 class Client
 {
@@ -81,5 +82,15 @@ class Client
         }
 
         return $clients;
+    }
+
+    public static function delete($clientId)
+    {
+        if (version_compare(Status::dbVersion(), '1.9.3') >= 0) {
+            $clients = MClient::find($clientId)->delete();
+
+            return $clients;
+        }
+        throw new \WappointmentException("Run the pending database update first", 1);
     }
 }

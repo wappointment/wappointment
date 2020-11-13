@@ -178,6 +178,10 @@ class Main extends AbstractRoutes
                     'method' => 'save',
                     'controller' => 'ClientController'
                 ],
+                '/client/delete' => [
+                    'method' => 'delete',
+                    'controller' => 'ClientController'
+                ],
             ],
         ]
     ];
