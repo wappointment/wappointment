@@ -36,22 +36,50 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex align-items-center mb-2">
+            <div>
                 <div>Colors</div>
-                <div><ColorPicker  v-model="availableColor" label="Appointment"></ColorPicker></div>
-                <div><ColorPicker  v-model="appointmentColor" label="Available"></ColorPicker></div>
+                <div class="d-flex align-items-center mb-2">
+                    <div class="mr-2"><ColorPicker v-model="cal_avail_col" label="Available"></ColorPicker></div>
+                    <div class="mr-2"><ColorPicker v-model="cal_appoint_col" label="Appointment"></ColorPicker></div>
+                </div>
             </div>
-            <button @click="hidePref" class="btn btn-secondary btn-sm">Close</button> 
-            <button @click="savePreferences" class="btn btn-outline-primary btn-sm">Save</button>
+            
+            <button type="button" @click.prevent.stop="hidePref" class="btn btn-secondary btn-sm">Close</button> 
+            <button type="button" @click.prevent.stop="savePreferences" class="btn btn-outline-primary btn-sm">Save</button>
         </div>
-        <div v-else class="btn btn-link btn-xs" @click="showPref"><span class="dashicons dashicons-admin-settings"></span> <span v-if="showText">Edit preferences</span></div>
+        <div v-else class="btn btn-link btn-xs" role="button" @click="showPref"><span class="dashicons dashicons-admin-settings"></span> <span v-if="showText">Edit preferences</span></div>
+            <v-style >
+            .fc-event-container .fc-event, 
+            .fc-container .fc-event {
+                border-color: {{ hx_rgb(cal_appoint_col, 1) }} !important;
+                background-color: {{ hx_rgb(cal_appoint_col, 1) }}!important;
+            }
+            .fc-event-container .fc-event.appointment-pending, 
+            .fc-container .fc-event.appointment-pending {
+                background-color: {{ hx_rgb(cal_appoint_col, .7) }}!important;
+
+            }
+
+            .fc-bgevent.opening{
+                border: 2px dashed {{ hx_rgb(cal_avail_col, 1) }}!important;
+                background-color:{{ hx_rgb(cal_avail_col, 1) }}!important;
+            }
+                .fc-bgevent.opening.extra {
+                background-color: {{ hx_rgb(cal_avail_col, .8) }}!important;
+                border: 2px dashed {{ hx_rgb(cal_avail_col, .8) }}!important;
+
+            }
+        
+        </v-style>
     </div>
 </template>
 
 <script>
+import Colors from '../Modules/Colors'
 import ColorPicker from '../Components/ColorPicker'
 export default {
-    props: [ 'durations', 'duration', 'pminH','pmaxH'],
+    mixins:[Colors],
+    props: [ 'durations', 'duration', 'pminH','pmaxH', 'preferences'],
     data: () => ({
         showPreferences: false,
         toggle: false,
@@ -63,8 +91,8 @@ export default {
         maxHour: 19,
         selectedDuration: 0,
         showText: false,
-        availableColor: '#fff',
-        appointmentColor: '#4b6c97'
+        cal_avail_col: '',
+        cal_appoint_col: ''
     }),
     components: {ColorPicker},
     created(){
@@ -76,6 +104,14 @@ export default {
         this.selectedDuration = this.duration
         this.minHour = this.pminH
         this.maxHour = this.pmaxH
+        if([undefined, null].indexOf(this.preferences.cal_avail_col ) === -1){
+            this.cal_avail_col = this.preferences.cal_avail_col
+        }
+        if([undefined, null].indexOf(this.preferences.cal_avail_col) === -1){
+            this.cal_appoint_col = this.preferences.cal_appoint_col
+        }
+        
+        
     },
     methods:{
         showPref(){
@@ -87,11 +123,15 @@ export default {
             this.$emit('reduced')
         },
         savePreferences(){
+           
             this.$emit('save', {
                 interval: this.selectedDuration,
                 minH: this.minHour,
                 maxH: this.maxHour,
+                cal_avail_col: this.cal_avail_col,
+                cal_appoint_col: this.cal_appoint_col
             })
+
         },
         selectDuration(duration){
             this.selectedDuration = duration

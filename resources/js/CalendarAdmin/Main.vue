@@ -26,7 +26,7 @@
             <div  v-if="fullCalOption!==undefined">
               <div id="calendar" @mouseover="showCalSettings=true" @mouseout="showCalSettings = lockCalSettings === false ? false:true" >
                 <div v-if="showCalSettings">
-                    <CalendarSettings :durations="getAllDurations" :duration="selectedDuration" :pminH="minHour" :pmaxH="maxHour"
+                    <CalendarSettings :durations="getAllDurations" :duration="selectedDuration" :preferences="viewData.preferences" :pminH="minHour" :pmaxH="maxHour"
                     @expanded="lockCalSettings=true" @reduced="lockCalSettings=false" @save="savePreferences" />
                 </div>
                 <FullCalendarWrapper ref="calendar" @isReady="fcalReady" :config="fullCalOption" />
@@ -96,6 +96,33 @@
             </div>
       </div>
     </div>
+    <v-style v-if="viewData!== null">
+            .fc-event-container .fc-event, 
+            .fc-container .fc-event {
+                border-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, 1) }};
+                background-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, 1) }};
+            }
+            .fc-event-container .fc-event.appointment-pending, 
+            .fc-container .fc-event.appointment-pending {
+                background-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, .7) }};
+                background-image: linear-gradient(45deg, transparent 25%, #92aaca 25%, #92aaca 50%, transparent 50%, transparent 75%, #92aaca 75%, #92aaca 100%);
+                background-size: 30px 30px;
+            }
+
+            .fc-bgevent.opening{
+                opacity: 1;
+                border: 2px dashed {{ hx_rgb(viewData.preferences.cal_avail_col, 1) }};
+                background-color:{{ hx_rgb(viewData.preferences.cal_avail_col, 1) }};
+                z-index: 1;
+            }
+                .fc-bgevent.opening.extra {
+                background-color: {{ hx_rgb(viewData.preferences.cal_avail_col, .8) }};
+                border: 2px dashed {{ hx_rgb(viewData.preferences.cal_avail_col, .8) }};
+                opacity: 1;
+                z-index: 2;
+            }
+        
+        </v-style>
   </div>
 </template>
 <script>
@@ -123,9 +150,9 @@ import StatusService from '../Services/V1/Status'
 
 import Intervals from '../Standalone/intervals'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
-
+import Colors from '../Modules/Colors'
 let mixins_object = window.wappointmentExtends.filter('BackendCalendarMixins', {AppointmentRender, MixinRender, MixinBeautify, MixinSelection})
-let mixins_array = []
+let mixins_array = [Colors]
 for (const key in mixins_object) {
   if (mixins_object.hasOwnProperty(key)) {
     mixins_array.push(mixins_object[key])
@@ -317,6 +344,7 @@ export default {
     savePreferences(preferences){
       this.minHour = preferences.minH
       this.maxHour = preferences.maxH
+      this.viewData.preferences = preferences
       this.resizeSlots(preferences.interval)
     },
     
@@ -625,6 +653,7 @@ export default {
           slotDuration: this.selectedDuration,
           minH: this.minHour,
           maxH: this.maxHour,
+          preferences: this.viewData.preferences,
         }
         if(this.viewingFreeSlot){
           p.viewingFreeSlot = true
@@ -819,12 +848,7 @@ export default {
     opacity: .8 !important;
   }
 
-  .fc-bgevent.opening{
-    opacity: 1;
-    border: 2px dashed #f2f2f2;
-    background-color:rgb(242, 242, 242);
-    z-index: 1;
-  }
+  
 
   .fc-bgevent.debugging{
     opacity: 1;
@@ -834,12 +858,7 @@ export default {
   }
 
 
-  .fc-bgevent.opening.extra {
-      background-color: rgb(242, 242, 242);
-      border: 2px dashed #dadada;
-      opacity: 1;
-      z-index: 2;
-  }
+
 
   .fc-bgevent.busy, .fc-bgevent.calendar {
       z-index: 4;
@@ -960,12 +979,6 @@ export default {
     border-color: transparent;
   }
 
-  .fc-event-container .fc-event, 
-  .fc-container .fc-event {
-    background-color: #4b6c97;
-    border-color: #4b6c97;
-  }
-
 .fc-event-container.fc-mirror-container .fc-event{
     background-color: rgba(172, 137, 196, 0.3);
     border-color: rgba(214, 179, 238, 0.3);
@@ -976,12 +989,7 @@ export default {
     color:#776e6e;
 }
 
-  .fc-event-container .fc-event.appointment-pending, 
-  .fc-container .fc-event.appointment-pending {
-    background-color: #4b6c97;
-    background-image: linear-gradient(45deg, transparent 25%, #92aaca 25%, #92aaca 50%, transparent 50%, transparent 75%, #92aaca 75%, #92aaca 100%);
-    background-size: 30px 30px;
-  }
+
 
   .fc-event.past-event {
     background-color: #4b6c97 !important;
