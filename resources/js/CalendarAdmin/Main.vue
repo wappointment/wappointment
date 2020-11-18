@@ -980,16 +980,22 @@ export default {
   }
 
 .fc-event-container.fc-mirror-container .fc-event{
+    background-color: rgba(172, 137, 196, 0.3) !important;
+    border-color: rgba(214, 179, 238, 0.3) !important;
+    font-size: 1.4rem;
+    text-align: center;
+}
+
+.fc-event-container.fc-mirror-container .fc-event{
     background-color: rgba(172, 137, 196, 0.3);
     border-color: rgba(214, 179, 238, 0.3);
     font-size: 1.4rem;
     text-align: center;
 }
+
 .fc-event-container.fc-mirror-container .fc-event .fc-time{
     color:#776e6e;
 }
-
-
 
   .fc-event.past-event {
     background-color: #4b6c97 !important;
