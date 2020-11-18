@@ -21,7 +21,8 @@ class CreateAppointmentsTable extends Wappointment\Installation\Migrate
             $table->string('edit_key', 32)->nullable();
             $table->timestamps();
             $table->mediumText('options')->nullable();
-            $table->integer('client_id')->foreign()->references('id')->on(Database::$prefix_self . '_clients');
+            $table->integer('client_id')->nullable()->default(null);
+            //$table->unsignedInteger('client_id')->foreign()->references('id')->on(Database::$prefix_self . '_clients');
             $table->unsignedTinyInteger('staff_id')->default(0);
             $table->unsignedTinyInteger('service_id')->default(0);
             $table->unique(['staff_id', 'status', 'start_at', 'end_at'], 'unique_staff_id_status_start_end');
