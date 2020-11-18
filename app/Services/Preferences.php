@@ -6,11 +6,20 @@ use Wappointment\WP\Helpers as WPHelpers;
 
 class Preferences
 {
-    public $preferences = [];
+    public $preferences = [
+        'cal_duration' => '60',
+        'cal_minH' => '7',
+        'cal_maxH' => '19',
+        'cal_avail_col' => '#f2f2f2',
+        'cal_appoint_col' => '#4b6c97',
+    ];
 
     public function __construct()
     {
-        $this->preferences = WPHelpers::getStaffOption('preferences', WPHelpers::userId());
+        $pref = WPHelpers::getStaffOption('preferences', WPHelpers::userId());
+        if (!empty($pref)) {
+            $this->preferences = $pref;
+        }
     }
 
     public function saveMany($prefs_array)
