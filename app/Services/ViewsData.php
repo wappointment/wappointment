@@ -139,6 +139,7 @@ class ViewsData
             'week_starts_on' => Settings::get('week_starts_on'),
             'hours_before_booking_allowed' => Settings::get('hours_before_booking_allowed'),
             'is_availability_set' => empty(WPHelpers::getStaffOption('availability')) ? false : true,
+            'is_dotcom_connected' => false,
             'is_service_set' => empty($service['type']) && empty($service['name']) ? false : true,
             'is_widget_set' => empty($widget['form']) ? false : true,
             'hours_before_cancellation_allowed' => Settings::get('hours_before_cancellation_allowed'),

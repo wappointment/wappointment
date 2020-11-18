@@ -8,6 +8,21 @@
     <div class="reduced" v-else>
         <LargeButton @click="goToRegav" label="Weekly availability" :is_set="viewData.is_availability_set" ></LargeButton>
 
+        <LargeButton @click="dotcomOpen = true" label="3rd party services (Google Calendar, Zoom, etc ...)" :is_set="viewData.is_dotcom_connected" ></LargeButton>
+        <WapModal v-if="dotcomOpen" :show="dotcomOpen" @hide="dotcomOpen = false">
+          <h4 slot="title" class="modal-title"> 
+            Connect to 3rd party services with wappointment.com
+          </h4>
+          <div>
+            <h3>Mike Fowler</h3>
+            
+            <div>
+              <input type="text" placeholder="Enter code"> <button>Save</button>
+            </div>
+            <div>Connected <a href="#disconnect">disconnect</a></div>
+          </div>
+        </WapModal>
+
         <LargeButton @click="goToService" :label="serviceBtnLabel" :is_set="viewData.is_service_set" ></LargeButton>
 
         <LargeButton @click="goToWidgetSetup" label="Booking Widget Editor" :is_set="viewData.is_widget_set" ></LargeButton>
@@ -165,6 +180,7 @@ export default {
         'H:i',
         'H\\hi',
       ],
+      dotcomOpen: false,
     };
   },
 
