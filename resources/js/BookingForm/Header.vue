@@ -154,11 +154,12 @@ export default {
     float: right;
 }
 
-.wstaff-img{
+.staff-av .wstaff-img{
     width: 46px;
     height: 46px;
     border-radius: 50%;
     background-size: cover;
+    margin-right: 0;
 }
 .compact-servicename{
     max-width: 75%;
