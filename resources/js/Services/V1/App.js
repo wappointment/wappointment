@@ -23,6 +23,15 @@ export default class AppService extends ApiV1{
                 method: 'post',
                 route: 'app/migrate',
             },
+            connectdotcom: {
+                method: 'post',
+                route: 'wappointment/connect',
+            },
+
+            disconnectdotcom: {
+                method: 'post',
+                route: 'wappointment/disconnect',
+            },
         };
     }
 

@@ -97,6 +97,14 @@ class Main extends AbstractRoutes
                     'method' => 'migrate',
                     'controller' => 'AppController',
                 ],
+                '/wappointment/connect' => [
+                    'method' => 'connect',
+                    'controller' => 'WappointmentController',
+                ],
+                '/wappointment/disconnect' => [
+                    'method' => 'disconnect',
+                    'controller' => 'WappointmentController',
+                ],
                 '/wappointment/subscribe' => [
                     'method' => 'subscribe',
                     'controller' => 'WappointmentController',

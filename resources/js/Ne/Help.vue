@@ -3,7 +3,8 @@
     <div class="m-4">
       <div v-if="!messageSent">
         <div class="d-flex align-items-baseline">
-          <h1>What's your question?</h1> <button v-if="serverObj" class="btn btn-link btn-sm" @click="show_changes=true">See all changes</button>
+          <h1>What's your question?</h1> 
+          <!-- <button v-if="serverObj" class="btn btn-link btn-sm" @click="show_changes=true">See all changes</button> -->
         </div>
         <p><strong>Ask anything</strong>, whether you've <strong>encountered a bug</strong> or you're <strong>missing a feature</strong>, or you just want to <strong>say Hi</strong>.</p>
         <p>We'll try to answer as quickly as possible.</p>

@@ -3,6 +3,8 @@
 namespace Wappointment\Events;
 
 use Wappointment\Models\Reminder;
+use Wappointment\Services\Wappointment\DotCom;
+use Wappointment\Services\Settings;
 
 class AppointmentBookedEvent extends AbstractEvent
 {
@@ -21,10 +23,28 @@ class AppointmentBookedEvent extends AbstractEvent
             $this->oldAppointment = $args['oldAppointment'];
         }
 
+        $this->triggerAPI();
         $this->reminders = Reminder::select('id', 'event', 'type', 'options')
             ->where('published', 1)
             ->whereIn('type', Reminder::getTypes('code'))
             ->get();
+    }
+
+    public function triggerAPI()
+    {
+        $acs_id = Settings::get('activeStaffId');
+        $staff_id = empty($this->appointment->staff_id) ? $acs_id : (int)$this->appointment->staff_id;
+        $dotcomapi = new DotCom;
+        $dotcomapi->setStaff($staff_id);
+
+        if ($dotcomapi->isConnected()) {
+            if (!empty($this->oldAppointment)) {
+                $dotcomapi->update($this->appointment, $this->client);
+            } else {
+                $result = $dotcomapi->create($this->appointment, $this->client);
+                dd('create', $result);
+            }
+        }
     }
 
     public function getClient()

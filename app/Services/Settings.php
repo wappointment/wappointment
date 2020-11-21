@@ -139,7 +139,8 @@ class Settings
             'viewed_updates' => false,
             'email_logo' => false,
             'per_page' => 10,
-            'display_name' => ''
+            'display_name' => '',
+            'dotcom' => false
         ];
     }
 

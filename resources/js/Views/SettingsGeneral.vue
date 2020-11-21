@@ -8,18 +8,32 @@
     <div class="reduced" v-else>
         <LargeButton @click="goToRegav" label="Weekly availability" :is_set="viewData.is_availability_set" ></LargeButton>
 
-        <LargeButton @click="dotcomOpen = true" label="3rd party services (Google Calendar, Zoom, etc ...)" :is_set="viewData.is_dotcom_connected" ></LargeButton>
+        <LargeButton @click="dotcomOpen = true" label="3rd party services (Google Calendar, Zoom, etc ...)" :is_set="is_dotcom_connected !== false" ></LargeButton>
         <WapModal v-if="dotcomOpen" :show="dotcomOpen" @hide="dotcomOpen = false">
           <h4 slot="title" class="modal-title"> 
             Connect to 3rd party services with wappointment.com
           </h4>
           <div>
-            <h3>Mike Fowler</h3>
+            <h3 class="d-flex align-items-center">
+              <span role="img" class="wstaff-img" :style="styleGravatar"></span>
+              <span>{{ viewData.activeStaffName }}</span>
+            </h3>
             
-            <div>
-              <input type="text" placeholder="Enter code"> <button>Save</button>
+            <div class="d-flex">
+              <div v-if="is_dotcom_connected">
+                <span class="dashicons dashicons-yes-alt text-success"></span> 
+                <span>Connected <a class="small" href="javascript:;" @click="disconnectWappo">disconnect</a></span>
+                <div class="text-muted small">
+                  Connected services: <span class="slot" v-for="servicename in is_dotcom_connected.services"> {{ servicename }}</span>
+                </div>
+              </div>
+              <div v-else>
+                <InputPh v-model="account_key" ph="Enter your wappointment.com account code" /> 
+                <button class="btn btn-primary" @click="connectToWappo">Connect Account</button>
+                <div class="text-muted small">Don't have an account yet? <a href="">Create your free account</a></div>
+              </div>
             </div>
-            <div>Connected <a href="#disconnect">disconnect</a></div>
+            
           </div>
         </WapModal>
 
@@ -181,10 +195,20 @@ export default {
         'H\\hi',
       ],
       dotcomOpen: false,
+      account_key: '',
+      is_dotcom_connected: false
     };
   },
-
+  computed: {
+    styleGravatar(){
+        return 'background-image: url("'+this.viewData.gravatar+'");'
+    },
+  },
   methods: {
+    loaded(viewData){
+          this.viewData = viewData.data
+          this.is_dotcom_connected = viewData.data.is_dotcom_connected
+      },
     autoSelectSection(){
       switch (this.$route.name) {
         case 'general_regav':
@@ -218,18 +242,22 @@ export default {
     day_example(dformat){
       return momenttz().tz(this.viewData.timezone).format( convertDateFormatPHPtoMoment(dformat) )
     },
+
     time_example(tformat){
       return momenttz().tz(this.viewData.timezone).format( convertDateFormatPHPtoMoment(tformat) )
     },
+
     changeDDP(date, key = 'date_format'){
       this.viewData[key] = date
       this.toggle(key)
       this.changedReload(key)
     },
+
     changedReload(key){
       this.changed(key)
       this.refreshInitValue()
     },
+
     changedDay(value){
       this.viewData['week_starts_on'] = value
       this.changed('week_starts_on')
@@ -238,11 +266,37 @@ export default {
     toggled(element){
       return this.isToggled[element]
     },
+
     toggle(element){
       this.isToggled[element] = !this.isToggled[element]
     },
+
     changed(key) {
       this.settingSave(key, this.viewData[key])
+    },
+
+    connectToWappo() {
+        this.request(this.connectToWappoRequest,{account_key: this.account_key},null, false,this.successConnected)
+    },
+
+    async connectToWappoRequest(params) {
+        return await this.service.call('connectdotcom', params)
+    },
+    
+    successConnected(response){
+        this.is_dotcom_connected = response.data.data
+    },
+
+    disconnectWappo(){
+        this.request(this.disconnectToWappoRequest,{},null,false, this.successDisconnected)
+    },
+
+    async disconnectToWappoRequest(params) {
+        return await this.service.call('disconnectdotcom', params)
+    },
+    
+    successDisconnected(response){
+        this.is_dotcom_connected = false
     },
    
   }
@@ -272,5 +326,12 @@ export default {
 .wapmodal-body.biggerPop {
     min-height: 800px;
     position: relative;
+}
+.slot {
+    background-color: #e1e1e1;
+    padding: .4em;
+    border-radius: .3rem;
+    text-transform: capitalize;
+    margin: .2em;
 }
 </style>

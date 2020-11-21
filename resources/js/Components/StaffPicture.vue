@@ -10,16 +10,12 @@
         <div v-if="edit" class="avatar-selection">
             <span class="close close-gallery" @click="close"></span>
             <div class="d-flex justify-content-around">
-                <button class="staff-av btn btn-secondary" @click="revertToGravatar" :class="[isGravatar?'selected':'']">
-                    <span role="img"  class="wstaff-img"
-                        :style="'background-image: url("'+gravatar+'");'"
-                    ></span>
-                    Default Gravatar
+                <button class="staff-av btn btn-secondary d-flex align-items-center" @click="revertToGravatar" :class="[isGravatar?'selected':'']">
+                    <span role="img"  class="wstaff-img" :style="styleGravatar" ></span>
+                    Gravatar
                 </button>
-                <button class="staff-av btn btn-secondary" @click="openGallery" :class="[!isGravatar?'selected':'']">
-                    <span v-if="!isGravatar" role="img"  class="wstaff-img"
-                        :style="'background-image: url("'+src+'");'"
-                    ></span>
+                <button class="staff-av btn btn-secondary d-flex align-items-center" @click="openGallery" :class="[!isGravatar?'selected':'']">
+                    <span v-if="!isGravatar" role="img"  class="dashicons dashicons-format-image mr-2" ></span>
                      Browse Media gallery
                 </button>
             </div>
@@ -87,6 +83,9 @@ export default {
         }
     },
     computed:{
+        styleGravatar(){
+            return 'background-image: url("'+this.gravatar+'");'
+        },
         isGravatar(){
             return this.src == this.gravatar //this.src.indexOf('gravatar.com/avatar/') !== -1
         }
