@@ -16,7 +16,7 @@
         }">
         <div class="d-block dashicons dashicons-trash" @touchstart.prevent.self="$emit('delete')" @click="$emit('delete')"></div>
         <div v-if="editable" data-tt="Set conditions" class="tt-left">
-          <div class="d-block dashicons dashicons-shortcode" @touchstart.prevent.self="$emit('editBlock')" @click="$emit('editBlock')"></div>
+          <div class="d-block dashicons dashicons-filter" @touchstart.prevent.self="$emit('editBlock')" @click="$emit('editBlock')"></div>
         </div>
     </div>
     <div
