@@ -51,6 +51,11 @@ class Appointment extends Model
         return empty($this->options['sequence']) ? 0 : $this->options['sequence'];
     }
 
+    public function getTitle()
+    {
+        return $this->getServiceName() . ' ' . $this->getDuration() . ' - ' . $this->client->name;
+    }
+
     public function incrementSequence()
     {
         $this->options = $this->getIncrementedSequenceOptions();

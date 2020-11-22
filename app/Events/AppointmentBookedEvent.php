@@ -42,7 +42,6 @@ class AppointmentBookedEvent extends AbstractEvent
                 $dotcomapi->update($this->appointment, $this->client);
             } else {
                 $result = $dotcomapi->create($this->appointment, $this->client);
-                dd('create', $result);
             }
         }
     }

@@ -70,8 +70,14 @@ class DotCom extends API
         $response = $this->client->request('POST', $this->call('/api/appointment/create'), [
             'form_params' => $this->getParams([
                 'appointment' => [
-                    'title' => 'appointment title',
-                    'id' => 'id153'
+                    'title' => $appointment->getTitle(),
+                    'starts_at' => $appointment->start_at->timestamp,
+                    'appointment_id' => $appointment->id,
+                    'duration' => $appointment->getDurationInSec(),
+                    'timezone' => Settings::getStaff('timezone', $appointment->staff_id),
+                    'emails' => [
+                        $appointment->client->email
+                    ]
                 ],
                 'account_key' => $this->account_key
             ])
