@@ -38,7 +38,6 @@ class Availability
     public function regenerate()
     {
 
-
         // get regular avail and apply for x time from now
         $this->availabilities = $this->generateAvailabilityWithRA();
 

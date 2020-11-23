@@ -14,10 +14,6 @@ class Scheduler
             'method' => 'checkLostReservedJobs'
         ],
 
-        /* 'wappointment_process_every_thirty_min' => [
-            'frequency' => 'wappointment_thirty_min',
-            'method' => 'checkPendingReminder'
-        ], */
         'wappointment_process_every_5min' => [
             'frequency' => 'wappointment_five_min',
             'method' => 'syncCalendar'

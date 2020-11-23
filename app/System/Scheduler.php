@@ -12,13 +12,7 @@ class Scheduler
 {
     public function __construct()
     {
-        switch ((int) Settings::get('scheduler_mode')) { // this is not used yet probably won't be needed ever
-            case 1:
-                $this->setWappointmentScheduler();
-                break;
-            default:
-                \Wappointment\WP\Scheduler::init();
-        }
+        \Wappointment\WP\Scheduler::init();
     }
 
     /**
@@ -63,6 +57,17 @@ class Scheduler
                 $lock->release();
             }
         }
+        static::checkDotCom();
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public static function checkDotCom()
+    {
+        (new \Wappointment\Services\Wappointment\DotCom)->checkForUpdates();
     }
 
     /**
@@ -88,15 +93,6 @@ class Scheduler
             //silent execution
         }
     }
-    /**
-     * Not needed already process in processQueue
-     *
-     * @return void
-     */
-    public static function checkPendingReminder()
-    {
-    }
-
 
 
     private static function regenerateAvailability()
@@ -109,9 +105,6 @@ class Scheduler
         (new \Wappointment\Services\Wappointment\Licences)->check();
     }
 
-    private function setWappointmentScheduler()
-    {
-    }
 
     private static function getUrlsToScan($staff_id)
     {

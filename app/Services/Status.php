@@ -74,10 +74,13 @@ class Status
             $newEvents[] = $next;
             $from = $next->end_at->timestamp;
             $i++;
-            if ($i > 300) {
+            if ($i > 50) {
                 throw new \WappointmentException('Error Infinite loop', 1);
             }
             $next = self::getNext($next, $from, $until);
+            if ($next->start_at->timestamp <= $from) {
+                break; //if increment doesn't occur we just give up
+            }
         }
 
         return $newEvents;

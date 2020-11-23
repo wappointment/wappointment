@@ -18,6 +18,35 @@ class DotCom extends API
         }
     }
 
+    public function checkForUpdates()
+    {
+        // 0 - only check if site connected
+        if (!empty($this->site_key)) {
+            // 1 - retrieve appointments data
+            $appointments = $this->getAppointments();
+            $appointments_update = WPHelpers::getOption('appointments_update');
+            // 2 - check if there are changes since last check
+            if ($this->hasPendingChanges($appointments, $appointments_update)) {
+                // 3 - loop through each appointment and prepare for update if needs be
+                foreach ($appointments as $appointment_id => $appointment) {
+                    return $appointments;
+                }
+                WPHelpers::getOption('appointments_update', $appointments);
+            }
+        }
+    }
+
+    public function hasPendingChanges($appointments, $appointments_update)
+    {
+        return md5(json_encode($appointments)) !== md5(json_encode($appointments_update));
+    }
+
+    public function getAppointments()
+    {
+        $response = $this->client->request('GET', $this->call('/api/appointment/list/' . $this->site_key));
+        return $this->processResponse($response);
+    }
+
     public function isConnected()
     {
         return !empty($this->account_key);

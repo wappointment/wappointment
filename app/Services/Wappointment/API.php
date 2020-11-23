@@ -7,11 +7,13 @@ use Wappointment\WP\Helpers as WPHelpers;
 abstract class API
 {
     protected $client = null;
+    protected $site_key = '';
     private $domain = WAPPOINTMENT_SITE;
 
     public function __construct()
     {
         $this->client = new \GuzzleHttp\Client();
+        $this->site_key = WPHelpers::getOption('site_key');
     }
 
     public function call($endpoint = '/api/licence')
@@ -51,6 +53,6 @@ abstract class API
 
     protected function getSiteKey()
     {
-        return WPHelpers::getOption('site_key');
+        return $this->site_key;
     }
 }
