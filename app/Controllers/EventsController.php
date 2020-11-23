@@ -32,23 +32,20 @@ class EventsController extends RestController
         if ((bool) $request->input('viewingFreeSlot')) {
             return $this->debugAvailability();
         } else {
-            $pref_save = [
-                'cal_duration' => $request->input('slotDuration'),
-                'cal_minH' => $request->input('minH'),
-                'cal_maxH' => $request->input('maxH'),
-                'cal_avail_col' => '#f2f2f2',
-                'cal_appoint_col' => '#4b6c97',
-            ];
-
-            if (!empty($request->input('preferences'))) {
-                $preferences = json_decode($request->input('preferences'));
-                if (!empty($preferences->cal_avail_col)) {
-                    $pref_save['cal_avail_col'] = $preferences->cal_avail_col;
-                    $pref_save['cal_appoint_col'] = $preferences->cal_appoint_col;
+            $pref_save = [];
+            $prob_pref = ['cal-duration', 'cal-minH', 'cal-maxH', 'cal-avail-col', 'cal-appoint-col'];
+            foreach ($prob_pref as $pref_key) {
+                if (!empty($request->header($pref_key)) && $request->header($pref_key) !== 'null') {
+                    $pref_save[str_replace('-', '_', $pref_key)] = $request->header($pref_key);
                 }
             }
-            //we save the duration preference
-            (new Preferences)->saveMany($pref_save);
+
+            if (!empty($pref_save)) {
+                //we save the duration preference
+                (new Preferences)->saveMany($pref_save);
+            }
+            //dd($pref_save);
+
             return [
                 'events' => array_merge($this->events($request), $this->regavToBgEvent($request)),
                 'availability' => WPHelpers::getStaffOption('availability'), //$this->TESTprocessAvail(Settings::getStaff('availability')),

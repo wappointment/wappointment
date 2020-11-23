@@ -18,7 +18,13 @@ class Preferences
     {
         $pref = WPHelpers::getStaffOption('preferences', WPHelpers::userId());
         if (!empty($pref)) {
-            $this->preferences = $pref;
+            if (!empty($pref['cal_avail_col']) && substr($pref['cal_avail_col'], 0, 1) !== '#') {
+                unset($pref['cal_avail_col']);
+            }
+            if (!empty($pref['cal_avail_col']) && substr($pref['cal_appoint_col'], 0, 1) !== '#') {
+                unset($pref['cal_appoint_col']);
+            }
+            $this->preferences = array_merge($this->preferences, $pref);
         }
     }
 
