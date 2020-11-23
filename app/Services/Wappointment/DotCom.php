@@ -4,6 +4,7 @@ namespace Wappointment\Services\Wappointment;
 
 use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Models\Appointment;
 
 class DotCom extends API
 {
@@ -20,18 +21,38 @@ class DotCom extends API
 
     public function checkForUpdates()
     {
+
         // 0 - only check if site connected
         if (!empty($this->site_key)) {
             // 1 - retrieve appointments data
             $appointments = $this->getAppointments();
             $appointments_update = WPHelpers::getOption('appointments_update');
             // 2 - check if there are changes since last check
+
             if ($this->hasPendingChanges($appointments, $appointments_update)) {
                 // 3 - loop through each appointment and prepare for update if needs be
-                foreach ($appointments as $appointment_id => $appointment) {
-                    return $appointments;
+                $appointment_collect = \WappointmentLv::collect($appointments_update);
+                $requires_update = [];
+
+                foreach ($appointments as $newAppointment) {
+                    $found_appointment = $appointment_collect->firstWhere('appointment_id', $newAppointment->appointment_id);
+
+                    if (empty($found_appointment) || (int)$found_appointment->updated_at > (int) $newAppointment->updated_at) {
+                        $requires_update[$newAppointment->appointment_id] = ['providers' => $newAppointment->options->providers];
+                    }
                 }
-                WPHelpers::getOption('appointments_update', $appointments);
+
+                if (!empty($requires_update)) {
+                    $retrieved_appointments = Appointment::select('id', 'options')->whereIn('id', array_keys($requires_update))->get();
+
+                    foreach ($retrieved_appointments as $updatingAppointment) {
+                        $options = $updatingAppointment->options;
+                        $updatingAppointment->options = array_merge($options, $requires_update[$newAppointment->appointment_id]);
+                        $updatingAppointment->save();
+                    }
+                }
+
+                WPHelpers::setOption('appointments_update', $appointments);
             }
         }
     }

@@ -57,6 +57,7 @@ class Scheduler
                 $lock->release();
             }
         }
+
         static::checkDotCom();
     }
 
