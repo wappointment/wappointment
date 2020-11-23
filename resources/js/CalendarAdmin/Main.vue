@@ -347,6 +347,25 @@ export default {
       this.viewData.preferences = preferences
       this.resizeSlots(preferences.interval)
     },
+
+    async getEventsRequest(params) {
+        let p = {
+          start: params.start.format(), 
+          end: params.end.format(), 
+          timezone:params.timezone, 
+          view: this.currentView, 
+        }
+        if(this.viewingFreeSlot){
+          p.viewingFreeSlot = true
+        }
+          return await this.serviceEvent.call('get', p, {
+            'cal-maxH': this.maxHour,
+            'cal-minH': this.minHour,
+            'cal-duration': this.selectedDuration,
+            'cal-appoint-col': this.viewData.preferences.cal_appoint_col,
+            'cal-avail-col': this.viewData.preferences.cal_avail_col,
+          })
+      },
     
     fcalReady(){
       this.fcIsReady=true
@@ -644,23 +663,6 @@ export default {
         }
       },
 
-      async getEventsRequest(params) {
-        let p = {
-          start: params.start.format(), 
-          end: params.end.format(), 
-          timezone:params.timezone, 
-          view: this.currentView, 
-          slotDuration: this.selectedDuration,
-          minH: this.minHour,
-          maxH: this.maxHour,
-          preferences: this.viewData.preferences,
-        }
-        if(this.viewingFreeSlot){
-          p.viewingFreeSlot = true
-        }
-          return await this.serviceEvent.call('get', p)
-      },
-      
       isLoading(isLoading){
         this.observeNowIndicator()
       },
