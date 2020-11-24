@@ -12,17 +12,23 @@ class Client
     public static function save($data)
     {
         //create or load client account
-        $client = MClient::firstOrCreate(
-            ['email' =>  $data['email']],
-            [
-                'name' => $data['name'],
-                'options' => [
-                    'tz' => $data['options']['tz'],
-                    'skype' => $data['options']['skype'],
-                    'phone' => $data['options']['phone'],
+        $client = MClient::withTrashed()->where('email', $data['email'])->first();
+
+        if (!empty($client) && !empty($client->deleted_at)) {
+            $client->restore();
+        } else {
+            $client = MClient::create(
+                [
+                    'email' =>  $data['email'],
+                    'name' => $data['name'],
+                    'options' => [
+                        'tz' => $data['options']['tz'],
+                        'skype' => $data['options']['skype'],
+                        'phone' => $data['options']['phone'],
+                    ]
                 ]
-            ]
-        );
+            );
+        }
 
         $options = $client->options;
         foreach ($data['options'] as $key => $value) {
@@ -39,7 +45,10 @@ class Client
     public static function book(Booking $booking)
     {
         //create or load client account
-        $client = MClient::where('email', $booking->get('email'))->first();
+        $client = MClient::withTrashed()->where('email', $booking->get('email'))->first();
+        if (!empty($client) && !empty($client->deleted_at)) {
+            $client->restore();
+        }
         $dataClient = [
             'name' => $booking->get('name'),
             'options' => [
