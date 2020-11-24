@@ -47,7 +47,8 @@ class DotCom extends API
 
                     foreach ($retrieved_appointments as $updatingAppointment) {
                         $options = $updatingAppointment->options;
-                        $updatingAppointment->options = array_merge($options, $requires_update[$newAppointment->appointment_id]);
+                        $merging_options = isset($requires_update[$newAppointment->appointment_id]) ? $requires_update[$newAppointment->appointment_id] : [];
+                        $updatingAppointment->options = array_merge($options, $merging_options);
                         $updatingAppointment->save();
                     }
                 }
@@ -147,7 +148,16 @@ class DotCom extends API
 
         $response = $this->client->request('POST', $this->call('/api/appointment/update'), [
             'form_params' => $this->getParams([
-                'appointment' => $appointment,
+                'appointment' => [
+                    'title' => $appointment->getTitle(),
+                    'starts_at' => $appointment->start_at->timestamp,
+                    'appointment_id' => $appointment->id,
+                    'duration' => $appointment->getDurationInSec(),
+                    'timezone' => Settings::getStaff('timezone', $appointment->staff_id),
+                    'emails' => [
+                        $appointment->client->email
+                    ]
+                ],
                 'account_key' => $this->account_key
             ])
         ]);
@@ -163,10 +173,9 @@ class DotCom extends API
 
     public function delete($appointment)
     {
-
         $response = $this->client->request('POST', $this->call('/api/appointment/delete'), [
             'form_params' => $this->getParams([
-                'appointment' => $appointment,
+                'appointment_id' => $appointment->id,
                 'account_key' => $this->account_key
             ])
         ]);

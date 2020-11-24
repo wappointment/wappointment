@@ -38,10 +38,14 @@ class AppointmentBookedEvent extends AbstractEvent
         $dotcomapi->setStaff($staff_id);
 
         if ($dotcomapi->isConnected()) {
-            if (!empty($this->oldAppointment)) {
-                $dotcomapi->update($this->appointment, $this->client);
+            if (static::NAME == 'appointment.canceled') {
+                $dotcomapi->delete($this->appointment);
             } else {
-                $result = $dotcomapi->create($this->appointment, $this->client);
+                if (!empty($this->oldAppointment)) {
+                    $dotcomapi->update($this->appointment);
+                } else {
+                    $dotcomapi->create($this->appointment);
+                }
             }
         }
     }
