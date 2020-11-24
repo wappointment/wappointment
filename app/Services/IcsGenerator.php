@@ -52,7 +52,7 @@ class IcsGenerator
     public function summary($appointments, $cancelled = false)
     {
         foreach ($appointments as $appointment) {
-            if ($appointment instanceof Appointment) {
+            if ($appointment instanceof Appointment && $appointment->client instanceof Client) { //ignore mssing data
                 if ($cancelled) {
                     $this->cancelled($appointment, $appointment->client);
                 } else {
