@@ -44,6 +44,10 @@ class Service
     {
         return $this->hasType('skype');
     }
+    public function hasZoom()
+    {
+        return $this->hasType('zoom');
+    }
     public function hasPhysical()
     {
         return $this->hasType('physical');

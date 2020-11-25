@@ -25,6 +25,7 @@ class Appointment extends Model
     const TYPE_PHYSICAL = 0;
     const TYPE_PHONE = 1;
     const TYPE_SKYPE = 2;
+    const TYPE_ZOOM = 5;
     const STATUS_AWAITING_CONFIRMATION = 0;
     const STATUS_CONFIRMED = 1;
 
@@ -43,6 +44,8 @@ class Appointment extends Model
                 return 'phone';
             case self::TYPE_SKYPE:
                 return 'skype';
+            case self::TYPE_ZOOM:
+                return 'zoom';
         }
     }
 
@@ -82,6 +85,9 @@ class Appointment extends Model
             case self::TYPE_SKYPE:
                 $location = 'By Skype';
                 break;
+            case self::TYPE_ZOOM:
+                $location = 'Zoom meeting';
+                break;
         }
         return apply_filters('wappointment_service_location', $location, $this);
     }
@@ -111,6 +117,11 @@ class Appointment extends Model
         return self::TYPE_SKYPE == $this->type;
     }
 
+    public function isZoom()
+    {
+        return self::TYPE_ZOOM == $this->type;
+    }
+
     public static function getTypePhysical()
     {
         return self::TYPE_PHYSICAL;
@@ -124,6 +135,11 @@ class Appointment extends Model
     public static function getTypeSkype()
     {
         return self::TYPE_SKYPE;
+    }
+
+    public static function getTypeZoom()
+    {
+        return self::TYPE_ZOOM;
     }
 
     public function toArraySpecial()
@@ -223,6 +239,11 @@ class Appointment extends Model
     public function getLinkNewEvent()
     {
         return $this->getPageLink('new-event');
+    }
+
+    public function getLinkViewEvent()
+    {
+        return $this->getPageLink('view-event');
     }
 
     public function client()

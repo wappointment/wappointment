@@ -47,6 +47,7 @@ class TipTap
             case 'cblockphysical':
             case 'cblockphone':
             case 'cblockskype':
+            case 'cblockzoom':
             case 'customfield':
             case 'text':
             case 'doc':
@@ -276,6 +277,16 @@ class TipTap
     {
         return [
             'type' => 'cblockskype',
+            'content' => [
+                self::integrateContent(['type' => 'paragraph'], $value)
+            ]
+        ];
+    }
+
+    protected static function tiptapZoom($value)
+    {
+        return [
+            'type' => 'cblockzoom',
             'content' => [
                 self::integrateContent(['type' => 'paragraph'], $value)
             ]

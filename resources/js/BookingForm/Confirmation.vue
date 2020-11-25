@@ -53,12 +53,13 @@
 import BookingAddress from './Address'
 import SaveButtons from './SaveButtons'
 import minText from './minText'
+import MixinTypeSelected from './MixinTypeSelected'
 export default {
     components: {
         BookingAddress,
         SaveButtons,
     }, 
-    mixins: [minText],
+    mixins: [minText, MixinTypeSelected],
     props: [
         'appointment',
         'service', 
@@ -71,13 +72,12 @@ export default {
     ],
     data: () => ({
         showSaveButtons: false,
-        selectedServiceType: '',
         showResult: null,
     }),
 
     created(){
         this.showResult = this.result
-        this.selectedServiceType = this.showResult.type
+        this.selection = this.showResult.type
 
         if(this.options.demoData !== undefined){
             this.options.eventsBus.listens('dataDemoChanged', this.dataChanged)
@@ -85,31 +85,17 @@ export default {
     },
     computed: {
         getClientPhone(){
-            if(this.showResult.client !== undefined){
-                return this.showResult.client.options.phone
-            }
-            return this.showResult.phone
+            return this.showResult.client !== undefined ? this.showResult.client.options.phone : this.showResult.phone
         },
         getClientSkype(){
-            if(this.showResult.client !== undefined){
-                return this.showResult.client.options.skype
-            }
-            return this.showResult.skype
+            return this.showResult.client !== undefined ? this.showResult.client.options.skype : this.showResult.skype
         },
-        phoneSelected(){
-            return this.selectedServiceType == 'phone'
-        },
-        physicalSelected(){
-            return this.selectedServiceType == 'physical'
-        },
-        skypeSelected(){
-            return this.selectedServiceType == 'skype'
-        },
+
     },
     methods: {
         dataChanged(dataNew){
             this.showResult = dataNew
-            this.selectedServiceType = this.showResult.type
+            this.selection = this.showResult.type
         }
     }
 }

@@ -21,7 +21,7 @@ class Service implements ServiceInterface
         $validationRules = [
             'name' => 'required',
             'duration' => 'required|numeric',
-            'type' => 'required|array|hasvalues:physical,phone,skype',
+            'type' => 'required|array|hasvalues:physical,phone,skype,zoom',
             'address' => 'required_if_has:type,physical',
             'options' => '',
             'options.countries' => 'required_if_has:type,phone|array',

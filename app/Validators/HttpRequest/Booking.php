@@ -21,7 +21,7 @@ class Booking extends AbstractProcessor
         return [
             'name' => 'required|max:100',
             'email' => 'required|email',
-            'type' => 'required|in:physical,phone,skype',
+            'type' => 'required|in:physical,phone,skype,zoom',
             'phone' => 'required_if:type,phone|is_phone',
             'skype' => 'required_if:type,skype|regex:/^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/',
             'time' => 'required|min:' . $this->getTimeMin(),

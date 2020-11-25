@@ -50,6 +50,7 @@ export default {
             if(this.location == 'physical') return this.getAddress
             if(this.location == 'phone') return this.options.form.byphone
             if(this.location == 'skype') return this.options.form.byskype
+            if(this.location == 'zoom') return this.options.form.byzoom
         },
         isPhysical(){
             return this.location == 'physical'
@@ -58,6 +59,7 @@ export default {
             if(this.isPhysical) return 'map-marked-alt'
             if(this.location == 'phone') return 'phone'
             if(this.location == 'skype') return ['fab','skype']
+            if(this.location == 'zoom') return ['fas','video']
         },
         getAddress(){
             if(this.service.options.address !== undefined) return this.service.options.address

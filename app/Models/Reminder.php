@@ -147,6 +147,8 @@ class Reminder extends Model
                         $newBodyEmailContent[] = $rowContent;
                     } elseif ($appointment->isSkype() && $rowContent['type'] == 'cblockskype') {
                         $newBodyEmailContent[] = $rowContent;
+                    } elseif ($appointment->isZoom() && $rowContent['type'] == 'cblockzoom') {
+                        $newBodyEmailContent[] = $rowContent;
                     }
                 }
             } else {

@@ -3,7 +3,6 @@
 namespace Wappointment\Messages;
 
 use Wappointment\Services\Settings;
-use Wappointment\Services\Service;
 
 trait AdminGeneratesDefault
 {

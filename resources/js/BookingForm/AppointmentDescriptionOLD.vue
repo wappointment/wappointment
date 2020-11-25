@@ -17,41 +17,35 @@
         <div v-if="skypeSelected">
             <div class="wdescription">{{options.confirmation.skype}} <strong>{{ showResult.skype}}</strong> </div>
         </div>
+        <div v-if="zoomSelected">
+            <div class="wdescription">{{options.confirmation.zoom}} <strong>{{ showResult.zoom}}</strong> </div>
+        </div>
     </div>
 </template>
 <script>
 import BookingAddress from './Address'
+import MixinTypeSelected from './MixinTypeSelected'
 export default {
     props: ['options', 'service', 'selectedServiceType', 'showResult', 'appointment'],
     components: {
         BookingAddress,
     },
+    mixins:[MixinTypeSelected],
     data: () => ({
-        selectedServiceTypeDD: '',
+        selection: '',
         presentResult: null
     }),
     created(){
         if(this.appointment!== undefined){
-            this.selectedServiceTypeDD == this.appointment.type
+            this.selection == this.appointment.type
             this.presentResult = this.appointment
         }else{
             if(this.selectedServiceType!== undefined) {
-                this.selectedServiceTypeDD == this.selectedServiceType
+                this.selection == this.selectedServiceType
                 this.presentResult = showResult
             }
             
         }
-    },
-    computed: {
-        phoneSelected(){
-            return this.selectedServiceTypeDD == 'phone'
-        },
-        physicalSelected(){
-            return this.selectedServiceTypeDD == 'physical'
-        },
-        skypeSelected(){
-            return this.selectedServiceTypeDD == 'skype'
-        },
     },
 }
 </script>

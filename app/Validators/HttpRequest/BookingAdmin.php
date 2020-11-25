@@ -20,7 +20,7 @@ class BookingAdmin extends AbstractProcessor
         if (!empty($this->input('clientid'))) {
             return [
                 'name' => 'required_if:type,phone|present|max:100',
-                'type' => 'present|in:physical,phone,skype',
+                'type' => 'present|in:physical,phone,skype,zoom',
                 'start' => 'required|min:' . time(),
                 'end' => 'required|min:' . time(),
                 'timezone' => '',
@@ -30,7 +30,7 @@ class BookingAdmin extends AbstractProcessor
             return [
                 'name' => 'required_if:type,phone|present|max:100',
                 'email' => 'present|email',
-                'type' => 'present|in:physical,phone,skype',
+                'type' => 'present|in:physical,phone,skype,zoom',
                 'phone' => 'required_if:type,phone|is_phone',
                 'skype' => 'required_if:type,skype|regex:/^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/',
                 'start' => 'required|min:' . time(),

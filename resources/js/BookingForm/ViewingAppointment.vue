@@ -10,6 +10,13 @@
                     <div>{{ client.name }} - {{ client.email }}</div>
                     <div><strong class="date-start">{{ startDatei18n }}</strong></div>
                     <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
+                    <div v-if="zoomSelected">
+                        <a v-if="zoomMeetingRoom" :href="zoomMeetingRoom" class="wbtn wbtn-primary wbtn-lg">Join Meeting</a>
+                        <div v-else>
+                            <button class="wbtn wbtn-primary wbtn-lg disabled" disabled>Join Meeting</button>
+                            <div class="small">We don't have the meeting room link yet <a href="javascript:;" @click="refreshAppointment">refresh</a></div>
+                        </div>
+                    </div>
                 </div>
                 <div v-if="isSaveEventPage">
                     <div>
@@ -33,7 +40,6 @@
                                 <button class="wbtn wbtn-primary" @click="cancelAppointmentConfirmed">{{getText('confirm')}}</button>
                             </div>
                         </div>
-                        
                     </div>
                     <div v-if="!buttonClicked">
                         <template v-if="isReschedulePage">
@@ -45,7 +51,6 @@
                             <button v-if="canStillCancel" class="wbtn wbtn-primary" :class="'wbtn-'+view" @click="cancelAppointment">{{getText('button')}}</button>
                             <p class="h4" v-else>{{getText('toolate')}}</p>
                         </template>
-                        
                     </div>
                 </div>
             </div>
@@ -56,7 +61,6 @@
                 <div v-else>{{errorLoading}}</div>
             </div>
         </template>
-        
     </div>
 </template>
 
@@ -70,10 +74,10 @@ import AppointmentService from '../Services/V1/Appointment'
 import DurationCell from './DurationCell'
 import RescheduleForm from './RescheduleForm'
 import ViewingAppointmentMixin from './ViewingAppointmentMixin'
+import MixinTypeSelected from './MixinTypeSelected'
 import momenttz from '../appMoment'
 let mixins = {ViewingAppointmentMixin:ViewingAppointmentMixin}
 mixins = window.wappointmentExtends.filter('ViewingAppointmentMixin', mixins)
-
 
 let compos = { 
     SaveButtons,
@@ -81,11 +85,11 @@ let compos = {
     RescheduleForm,
     DurationCell,
   }
-  compos = window.wappointmentExtends.filter('FrontMainViews', compos )
+compos = window.wappointmentExtends.filter('FrontMainViews', compos )
 
 export default {
      
-    mixins: [Dates, mixins.ViewingAppointmentMixin],
+    mixins: [Dates, mixins.ViewingAppointmentMixin, MixinTypeSelected],
     extends: AbstractFront,
     components: compos, 
     props: ['appointmentkey', 'view', 'options'],
@@ -110,35 +114,37 @@ export default {
         disabledButtons: false,
         rescheduleData: null,
         momenttz:momenttz
-        
     }),
     created(){
         this.currentTz = this.tzGuess()
         this.serviceAppointment = this.$vueService(new AppointmentService)
         this.viewData = this.view
         if(this.options.demoData !== undefined){
-            let data = {
+            this.appointmentLoaded({
                 data: this.options.demoData.appointmentData
-            }
-            this.appointmentLoaded(data)
+            })
             this.viewData = this.options.demoData.view
             this.disabledButtons = true
         }
     },
     mounted () {
-        if(this.isReschedulePage || this.isCancelPage || this.isSaveEventPage) {
-            if(this.options.demoData === undefined)this.loadAppointment()
+        if(this.isReschedulePage || this.isCancelPage || this.isSaveEventPage || this.isViewEventPage) {
+            if(this.options.demoData === undefined) {
+                this.refreshAppointment()
+            }
         }
-        
     },
     methods: {
+        refreshAppointment(){
+            this.loadedAppointment = false
+            this.loadAppointment()
+        },
         changeLoading(loading){
             this.loading = loading
         },
         getText(textKey){
             return this.isCancelPage? this.options.cancel[textKey]:this.options.reschedule[textKey]
         },
-        
 
         cancelAppointmentConfirmed(){
             if(this.disabledButtons) return false
@@ -170,10 +176,12 @@ export default {
             this.buttonClicked = true
             this.showCancelConfirmation = true
         },
-
         
     },
     computed: {
+        zoomMeetingRoom(){
+            return this.appointment.options['providers'] !== undefined && this.appointment.options['providers']['zoom'] !== undefined && this.appointment.options['providers']['zoom']['join_url'] !== undefined ? this.appointment.options['providers']['zoom']['join_url']: false
+        },
         startDatei18n(){
             return this.appointment.converted !== undefined ? this.appointment.converted :this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
         },
@@ -192,6 +200,9 @@ export default {
         isSaveEventPage(){
             return this.viewData == 'add-event-to-calendar'
         },
+        isViewEventPage(){
+            return this.viewData == 'view-event'
+        },
         fullDateFormat(){
            return this.date_format + '[' + this.date_time_union + ']' + this.time_format
         },
@@ -207,15 +218,7 @@ export default {
         getMapAdress(){
             return 'https://www.google.com/maps/search/?api=1&query=' + this.getEncodedAdress
         },
-        phoneSelected(){
-            return this.appointment !== null && this.appointment.type == 'phone'
-        },
-        physicalSelected(){
-            return this.appointment !== null && this.appointment.type == 'physical'
-        },
-        skypeSelected(){
-            return this.appointment !== null && this.appointment.type == 'skype'
-        },
+
         clientPhone(){
             return this.client.options.phone
         },
@@ -228,5 +231,9 @@ export default {
 <style >
 .summary-event{
     margin: 1rem 0;
+}
+.wbtn.wbtn-lg{
+    font-size: 1.4em;
+    margin: .4em 0;
 }
 </style>

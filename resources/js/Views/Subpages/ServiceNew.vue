@@ -67,6 +67,7 @@ export default {
                 cast: Array,
                 images: [
                   { value:'physical', name:'At a location', icon: 'map-marked-alt'},
+                  { value:'zoom', name:'Zoom meeting', icon: ['fas', 'video']},
                   { value:'phone', name:'By Phone', icon: 'phone'},
                   { value:'skype', name:'By Skype', icon: ['fab', 'skype']}
                 ],

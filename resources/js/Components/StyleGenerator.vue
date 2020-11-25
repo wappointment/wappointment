@@ -105,6 +105,9 @@
             color: {{ hx_rgb(opts.colors.secondary.text_selected) }};
             box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.secondary.bg_selected, .6) }};
         }
+        .wap-front .wbtn.wbtn-secondary.selected svg{
+            color: {{ hx_rgb(opts.colors.secondary.text_selected) }};
+        }
 
         .wap-front .wap-form-body .timezone {
             background-color: {{ hx_rgb(opts.colors.body.bg, .9) }};
@@ -260,29 +263,12 @@ export default {
             if(this.widthWrapper < '620'){
                 this.baseFontSize = '21px'
             }
-/*             if(this.widthWrapper < '520'){
-                this.baseFontSize = '20px'
-            }
-            if(this.widthWrapper < '420'){
-                this.baseFontSize = '19px'
-            } */
         }
         
         if(this.widthWrapper < '320'){
             this.baseFontSize = '20px'
         }
-/*         if(this.widthWrapper < '230'){
-            this.baseFontSize = '17px'
-        }
-        if(this.widthWrapper < '210'){
-            this.baseFontSize = '16px'
-        }
-        if(this.widthWrapper < '190'){
-            this.baseFontSize = '15px'
-        }
-        if(this.widthWrapper < '170'){
-            this.baseFontSize = '14px'
-        } */
+
     }
 }
 </script>

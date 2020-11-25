@@ -19,11 +19,11 @@
             </div>
             <AppointmentTypeSelection v-if="serviceHasTypes" 
             :options="options" 
-            :typeSelected="selectedServiceType" 
+            :typeSelected="selection" 
             :typesAllowed="service.type"
             @selectType="selectType" />
             <transition name="slide-fade">
-                <div v-if="selectedServiceType">
+                <div v-if="selection">
                     
                     <div class="wap-booking-fields">
                         <div v-if="physicalSelected" class="address-service">
@@ -63,7 +63,7 @@
                     </div>
                 </div>
             </transition>
-            <div v-if="selectedServiceType" class="d-flex wbtn-confirm my-2">
+            <div v-if="selection" class="d-flex wbtn-confirm my-2">
                 <span class="wbtn-secondary wbtn" role="button" @click="back">{{options.form.back}}</span>
                 <span v-if="canSubmit" class="wbtn-primary wbtn flex-fill m-0" role="button" @click="confirm">{{options.form.confirm}}</span>
                 <span v-else class="wbtn-primary wbtn wbtn-disabled flex-fill m-0" role="button" disabled>{{options.form.confirm}}</span>
@@ -81,10 +81,10 @@ import Strip from '../Helpers/Strip'
 import AppointmentTypeSelection from './AppointmentTypeSelection'
 import {isEmail, isEmpty} from 'validator'
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
-
+import MixinTypeSelected from './MixinTypeSelected'
 export default {
     extends: AbstractFront,
-    mixins: [ Strip],
+    mixins: [ Strip, MixinTypeSelected],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations', 'appointment_starts_at'],
     components: {
         BookingAddress,
@@ -102,7 +102,6 @@ export default {
         phoneId:'',
         phoneValid: false,
         errorsOnFields: {},
-        selectedServiceType: false,
         mounted: false,
         disabledButtons: false,
     }),
@@ -126,7 +125,7 @@ export default {
         this.tryPrefill()
         if(this.options.demoData !== undefined){
             this.bookingForm = this.options.demoData.form 
-            this.selectedServiceType = this.bookingForm.type
+            this.selection = this.bookingForm.type
             this.disabledButtons = true
         }
     },
@@ -137,7 +136,9 @@ export default {
         this.mounted = true
         if(Object.keys(this.data).length > 1){
             this.bookingForm = Object.assign({},this.data)
-            if(this.bookingForm.type!==undefined)this.selectedServiceType = this.bookingForm.type
+            if(this.bookingForm.type!==undefined){
+                this.selection = this.bookingForm.type
+            }
         }
 
     },
@@ -152,20 +153,12 @@ export default {
             return this.options.form.check_terms === true
         },
         canSubmit(){
-            return this.selectedServiceType && Object.keys(this.errorsOnFields).length < 1 && !this.dataEmpty
+            return this.selection && Object.keys(this.errorsOnFields).length < 1 && !this.dataEmpty
         },
         requirePhoneInput(){
             return this.phoneSelected || [undefined,false,''].indexOf(this.service.options.phone_required) === -1 
         },
-        phoneSelected(){
-            return this.selectedServiceType == 'phone'
-        },
-        physicalSelected(){
-            return this.selectedServiceType == 'physical'
-        },
-        skypeSelected(){
-            return this.selectedServiceType == 'skype'
-        },
+
         skypeValid(){
             return /^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/.test(this.bookingForm.skype)
         },
@@ -214,7 +207,7 @@ export default {
             } 
             let data = this.bookingForm
             data.time = this.selectedSlot
-            data.type = this.selectedServiceType
+            data.type = this.selection
             data.ctz = this.timeprops.ctz
             //turns loading mode on in parent
             this.$emit('loading', {loading:true, dataSent: data})
@@ -248,11 +241,11 @@ export default {
 
         
         selectDefaultType(){
-            this.selectedServiceType = this.service.type[0]
+            this.selection = this.service.type[0]
         },
         
         selectType(type){
-            this.selectedServiceType = type
+            this.selection = type
             let bookingForm =  Object.assign ({}, this.bookingForm)
             this.bookingForm = {}
             this.bookingForm = bookingForm
@@ -325,6 +318,7 @@ export default {
     font-size: .7em;
     text-align: left;
     line-height: 1.4;
+    margin-bottom: .3em;
 }
 
 .wap-front .wrounded{

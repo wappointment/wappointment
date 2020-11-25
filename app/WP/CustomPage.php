@@ -77,27 +77,32 @@ class CustomPage
         if (!empty(WPHelpers::requestGet()->input('appointmentkey'))) {
             return true;
         }
-        return empty(WPHelpers::requestGet()->input($this->slug)) ? false : true;
+        return !empty(WPHelpers::requestGet()->input($this->slug));
     }
 
     public function isAddEventToCalendarPage()
     {
-        return WPHelpers::requestGet()->input('view') == 'add-event-to-calendar' ? true : false;
+        return WPHelpers::requestGet()->input('view') == 'add-event-to-calendar';
     }
 
     public function isReschedulePage()
     {
-        return WPHelpers::requestGet()->input('view') == 'reschedule-event' ? true : false;
+        return WPHelpers::requestGet()->input('view') == 'reschedule-event';
     }
 
     public function isCancelPage()
     {
-        return WPHelpers::requestGet()->input('view') == 'cancel-event' ? true : false;
+        return WPHelpers::requestGet()->input('view') == 'cancel-event';
     }
 
     public function isNewAppointmentPage()
     {
-        return WPHelpers::requestGet()->input('view') == 'new-event' ? true : false;
+        return WPHelpers::requestGet()->input('view') == 'new-event';
+    }
+
+    public function isViewAppointmentPage()
+    {
+        return WPHelpers::requestGet()->input('view') == 'view-event';
     }
 
     public function getPageTitle()

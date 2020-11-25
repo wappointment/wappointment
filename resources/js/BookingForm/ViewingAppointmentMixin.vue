@@ -22,6 +22,7 @@ export default {
         appointmentLoaded(d){
             this.rescheduleData = d.data
             this.appointment = d.data.appointment
+            this.selection = this.appointment.type
             this.client = d.data.client
             this.service = d.data.service
             this.staff = d.data.staff

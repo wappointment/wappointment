@@ -39,6 +39,10 @@ export default {
 
             if(this.element !== undefined && [undefined, ''].indexOf(this.element.options.icon) !== -1){
                 switch(this.element.type) {
+                    case 5:
+                    case '5':
+                    case 'zoom':
+                        return ['fas', 'video']
                     case 3:
                     case '3':
                     case 'skype':

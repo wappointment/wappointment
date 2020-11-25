@@ -62,7 +62,7 @@
                   >H{{ n }}</a>
                 </div>
               </div>
-              <div class="dropdown">
+              <div class="dropdown" data-tt="Insert custom data dynamycally replaced when email is sent">
                 <button
                   class="btn btn-secondary dropdown-toggle"
                   type="button"
@@ -78,15 +78,36 @@
                 >
                   <a
                     class="dropdown-item btn btn-secondary"
-                    v-for="cfield in customfield"
-                    @click.prevent="insertCfield(nodes, cfield.model, cfield.key)"
-                  >{{ cfield.label }}</a>
+                    v-for="etag in emailtags"
+                    @click.prevent="insertCfield(nodes, etag.model, etag.key)"
+                  >{{ etag.label }}</a>
                 </div>
               </div>
-              <div class="dropdown" v-if="definition.multiple_service_type">
+              <div class="dropdown" data-tt="Link selection to a Wappointment page">
                 <button
                   class="btn btn-secondary dropdown-toggle"
-                  :class="{ 'active': (nodes.cblockphysical.active()|| nodes.cblockskype.active() || nodes.cblockphone.active()) }"
+                  type="button"
+                  @click="toggleDDP('ddpl')"
+                  data-toggle="dropdown"
+                  aria-haspopup="true"
+                  aria-expanded="false"
+                >Links</button>
+                <div
+                  class="dropdown-menu"
+                  :class="{'show':ddpl}"
+                  aria-labelledby="dropdownMenuButton"
+                >
+                  <a
+                    class="dropdown-item btn btn-secondary"
+                    v-for="elink in emaillinks"
+                    @click.prevent="linkToSomething(marks, elink.model, elink.key)"
+                  >{{ elink.label }}</a>
+                </div>
+              </div>
+              <div class="dropdown" v-if="definition.multiple_service_type" data-tt="Show selection only when condition is met">
+                <button
+                  class="btn btn-secondary dropdown-toggle"
+                  :class="{ 'active': (nodes.cblockphysical.active()|| nodes.cblockskype.active() || nodes.cblockphone.active() || nodes.cblockzoom.active()) }"
                   type="button"
                   @click="toggleDDP('ddpc')"
                   data-toggle="dropdown"
@@ -108,6 +129,11 @@
                     :class="{ 'active': nodes.cblockskype.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockskype')"
                   >For Skype appointments</a>
+                  <a
+                    class="dropdown-item btn btn-secondary"
+                    :class="{ 'active': nodes.cblockzoom.active() }"
+                    @click.prevent="conditionalBlock(nodes, 'cblockzoom')"
+                  >For Zoom appointments</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockphysical.active() }"
@@ -176,11 +202,12 @@ import {
   HistoryExtension,
   PlaceholderExtension
 } from "tiptap-extensions"
-import CustomFieldNode from "./text-editor/CustomField.js";
-import ConditionalPhoneBlockNode from "./text-editor/ConditionalPhoneBlock.js";
-import ConditionalSkypeBlockNode from "./text-editor/ConditionalSkypeBlock.js";
-import ConditionalPhysicalBlockNode from "./text-editor/ConditionalPhysicalBlock.js";
-import LinkEdit from "../Components/LinkEdit";
+import CustomFieldNode from "./text-editor/CustomField.js"
+import ConditionalPhoneBlockNode from "./text-editor/ConditionalPhoneBlock.js"
+import ConditionalSkypeBlockNode from "./text-editor/ConditionalSkypeBlock.js"
+import ConditionalZoomBlockNode from "./text-editor/ConditionalZoomBlock.js"
+import ConditionalPhysicalBlockNode from "./text-editor/ConditionalPhysicalBlock.js"
+import LinkEdit from "../Components/LinkEdit"
 
 export default {
   name:'opt-tiptap',
@@ -229,8 +256,10 @@ export default {
         ],
         ddph: false,
         ddpf: false,
+        ddpl: false,
         ddpc: false,
-        customfield: window.wappoEmailTags,
+        emaillinks: window.wappoEmailLinks,
+        emailtags: window.wappoEmailTags,
         extensions: [
             new BlockquoteNode(),
             new BulletListNode(),
@@ -253,6 +282,7 @@ export default {
             new CustomFieldNode(),
             new ConditionalPhoneBlockNode(),
             new ConditionalSkypeBlockNode(),
+            new ConditionalZoomBlockNode(),
             new ConditionalPhysicalBlockNode()
         ]
         };
@@ -296,6 +326,7 @@ export default {
       this.extensions=[new CustomFieldNode(),
             new ConditionalPhoneBlockNode(),
             new ConditionalSkypeBlockNode(),
+            new ConditionalZoomBlockNode(),
             new ConditionalPhysicalBlockNode()
         ]
     }
@@ -429,14 +460,22 @@ export default {
       },
 
       hideDropDowns() {
-        this.ddph = false;
-        this.ddpf = false;
-        this.ddpc = false;
+        this.ddph = false
+        this.ddpf = false
+        this.ddpc = false
+        this.ddpl = false
       },
 
       insertCfield(nodes, model, key) {
         this.hideDropDowns();
-        return nodes.customfield.command({ src: model, alt: key });
+        return nodes.customfield.command({ src: model, alt: key })
+      },
+
+      linkToSomething(marks,  model, key) {
+        this.hideDropDowns()
+        marks["link"].command({ href: "["+model+':'+key+"]" })
+        this.resetLink();
+        this.writingUrl = false;
       },
 
       wrapHeaders(nodes, n = false) {
@@ -446,7 +485,7 @@ export default {
       },
 
       conditionalBlock(nodes, activateCondition) {
-        let cblocks = ["cblockphone", "cblockskype", "cblockphysical"];
+        let cblocks = ["cblockphone", "cblockskype", "cblockphysical", "cblockzoom"];
         let rerun = true;
         for (let index = 0; index < cblocks.length; index++) {
           const condition = cblocks[index];
@@ -466,6 +505,9 @@ export default {
 }
 </script>
 <style>
+.dropdown[data-tt]{
+  z-index: 99999999999;
+}
 .is-active {
   background-color: #ccc !important;
 }
@@ -503,7 +545,8 @@ export default {
 .conditional.conditional-physical::before {
   content: "\f231";
 }
-.conditional.conditional-skype::before {
+.conditional.conditional-skype::before,
+.conditional.conditional-zoom::before {
   content: "\f235";
 }
 
@@ -521,7 +564,8 @@ export default {
 .conditional.conditional-physical:hover::before {
   content: "\f231 " attr(data-tt);
 }
-.conditional.conditional-skype:hover::before {
+.conditional.conditional-skype:hover::before,
+.conditional.conditional-zoom:hover::before {
   content: "\f235 " attr(data-tt);
 }
 

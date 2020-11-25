@@ -142,12 +142,18 @@ class Init
 
         if (is_admin()) {
             $return .= 'var wappoEmailTags =' .  $this->getWappoEmailTags() . ";\n";
+            $return .= 'var wappoEmailLinks =' .  $this->getWappoEmailLinks() . ";\n";
         }
         $return .= apply_filters('wappointment_js_vars', '');
         $return .= '/* ]]> */ ' . "\n";
 
         $return .= '</script>' . "\n";
         echo $return;
+    }
+
+    public function getWappoEmailLinks()
+    {
+        return json_encode(\Wappointment\Messages\TagsReplacement::emailsLinks());
     }
 
     public function getWappoEmailTags()

@@ -112,6 +112,7 @@ export default {
         isBookingPage(){
             return this.isPage && this.getParameterByName('view') === 'new-event'
         },
+
         isWidget(){
             return this.classEl === 'wappointment_widget'
         },

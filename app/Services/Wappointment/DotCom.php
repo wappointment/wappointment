@@ -37,22 +37,22 @@ class DotCom extends API
                 foreach ($appointments as $newAppointment) {
                     $found_appointment = $appointment_collect->firstWhere('appointment_id', $newAppointment->appointment_id);
 
-                    if (empty($found_appointment) || (int)$found_appointment->updated_at > (int) $newAppointment->updated_at) {
+                    if (empty($found_appointment) ||  (int) $newAppointment->updated_at > (int)$found_appointment->updated_at) {
                         $requires_update[$newAppointment->appointment_id] = ['providers' => $newAppointment->options->providers];
                     }
                 }
+
 
                 if (!empty($requires_update)) {
                     $retrieved_appointments = Appointment::select('id', 'options')->whereIn('id', array_keys($requires_update))->get();
 
                     foreach ($retrieved_appointments as $updatingAppointment) {
                         $options = $updatingAppointment->options;
-                        $merging_options = isset($requires_update[$newAppointment->appointment_id]) ? $requires_update[$newAppointment->appointment_id] : [];
+                        $merging_options = isset($requires_update[$updatingAppointment->id]) ? $requires_update[$updatingAppointment->id] : [];
                         $updatingAppointment->options = array_merge($options, $merging_options);
                         $updatingAppointment->save();
                     }
                 }
-
                 WPHelpers::setOption('appointments_update', $appointments);
             }
         }
@@ -119,56 +119,30 @@ class DotCom extends API
     {
 
         $response = $this->client->request('POST', $this->call('/api/appointment/create'), [
-            'form_params' => $this->getParams([
-                'appointment' => [
-                    'title' => $appointment->getTitle(),
-                    'starts_at' => $appointment->start_at->timestamp,
-                    'appointment_id' => $appointment->id,
-                    'duration' => $appointment->getDurationInSec(),
-                    'timezone' => Settings::getStaff('timezone', $appointment->staff_id),
-                    'emails' => [
-                        $appointment->client->email
-                    ]
-                ],
-                'account_key' => $this->account_key
-            ])
+            'form_params' => $this->getParams($this->getAppointmentDetails($appointment))
         ]);
 
         $result = $this->processResponse($response);
         if ($result) {
+            return ['message' => 'Appointment created!'];
         } else {
             throw new \WappointmentException("Failed creating", 1);
         }
-
-        return ['message' => 'Appointment created!'];
     }
 
     public function update($appointment)
     {
 
         $response = $this->client->request('POST', $this->call('/api/appointment/update'), [
-            'form_params' => $this->getParams([
-                'appointment' => [
-                    'title' => $appointment->getTitle(),
-                    'starts_at' => $appointment->start_at->timestamp,
-                    'appointment_id' => $appointment->id,
-                    'duration' => $appointment->getDurationInSec(),
-                    'timezone' => Settings::getStaff('timezone', $appointment->staff_id),
-                    'emails' => [
-                        $appointment->client->email
-                    ]
-                ],
-                'account_key' => $this->account_key
-            ])
+            'form_params' => $this->getParams($this->getAppointmentDetails($appointment))
         ]);
 
         $result = $this->processResponse($response);
         if ($result) {
+            return ['message' => 'Appointment updated!'];
         } else {
             throw new \WappointmentException("Failed updating", 1);
         }
-
-        return ['message' => 'Appointment updated!'];
     }
 
     public function delete($appointment)
@@ -182,11 +156,28 @@ class DotCom extends API
 
         $result = $this->processResponse($response);
         if ($result) {
+            return ['message' => 'Appointment deleted!'];
         } else {
             throw new \WappointmentException("Failed deleting", 1);
         }
+    }
 
-        return ['message' => 'Appointment deleted!'];
+    protected function getAppointmentDetails($appointment)
+    {
+        return [
+            'appointment' => [
+                'title' => $appointment->getTitle(),
+                'type' => $appointment->type,
+                'starts_at' => $appointment->start_at->timestamp,
+                'appointment_id' => $appointment->id,
+                'duration' => $appointment->getDurationInSec(),
+                'timezone' => Settings::getStaff('timezone', $appointment->staff_id),
+                'emails' => [
+                    $appointment->client->email
+                ]
+            ],
+            'account_key' => $this->account_key
+        ];
     }
 
     private function getDotcom()

@@ -78,10 +78,53 @@ class TagsReplacement
                 'label' => 'Appointment\'s date and time',
                 'getMethod' => 'getStartsDayAndTime'
             ],
+
+
         ];
 
         return apply_filters('wappointment_emails_tags', $email_tags_core);
     }
+
+    public static function emailsLinks()
+    {
+        $email_links_core = [
+            [
+                'model' => 'appointment',
+                'key' => 'linkAddEventToCalendar',
+                'label' => 'Link to save appointment to calendar',
+                'getMethod' => 'getLinkAddEventToCalendar'
+            ],
+            [
+                'model' => 'appointment',
+                'key' => 'linkRescheduleEvent',
+                'label' => 'Link to reschedule appointment',
+                'getMethod' => 'getLinkRescheduleEvent'
+            ],
+            [
+                'model' => 'appointment',
+                'key' => 'linkCancelEvent',
+                'label' => 'Link to cancel appointment',
+                'getMethod' => 'getLinkCancelEvent'
+            ],
+            [
+                'model' => 'appointment',
+                'key' => 'linkNew',
+                'label' => 'Link to book a new appointment',
+                'getMethod' => 'getLinkNewEvent'
+            ],
+            [
+                'model' => 'appointment',
+                'key' => 'linkView',
+                'label' => 'Link to view the appointment details (Zoom room etc ...)',
+                'getMethod' => 'getLinkViewEvent'
+            ],
+
+
+        ];
+
+        return apply_filters('wappointment_emails_links', $email_links_core);
+    }
+
 
     public function replace($subject)
     {
@@ -90,7 +133,7 @@ class TagsReplacement
 
     private function prepareTags()
     {
-        foreach (static::emailsTags() as $key => $tag) {
+        foreach (array_merge(static::emailsTags(), static::emailsLinks()) as $key => $tag) {
             $tag_find = '[' . $tag['model'] . ':' . $tag['key'] . ']';
             $replace = $this->getValue($tag);
             if (!empty($tag['sanitize'])) {
@@ -99,24 +142,12 @@ class TagsReplacement
             $this->addFindReplace($tag_find, $replace);
         }
 
-        foreach ($this->hiddenEmailTags() as $tag => $replace) {
-            if (!empty($tag['sanitize'])) {
-                $replace = sanitize_text_field($replace);
-            }
-            $this->addFindReplace($tag, $replace);
-        }
-    }
-
-    private function hiddenEmailTags()
-    {
-        $email_hidden_tags_core = [
-            '[appointment:linkAddEventToCalendar]' => $this->getValue(['model' => 'appointment', 'getMethod' => 'getLinkAddEventToCalendar']),
-            '[appointment:linkRescheduleEvent]' => $this->getValue(['model' => 'appointment', 'getMethod' => 'getLinkRescheduleEvent']),
-            '[appointment:linkCancelEvent]' => $this->getValue(['model' => 'appointment', 'getMethod' => 'getLinkCancelEvent']),
-            '[appointment:linkNew]' => $this->getValue(['model' => 'appointment', 'getMethod' => 'getLinkNewEvent']),
-        ];
-
-        return apply_filters('wappointment_emails_hidden_tags', $email_hidden_tags_core);
+        // foreach ($this->hiddenEmailTags() as $tag => $replace) {
+        //     if (!empty($tag['sanitize'])) {
+        //         $replace = sanitize_text_field($replace);
+        //     }
+        //     $this->addFindReplace($tag, $replace);
+        // }
     }
 
     private function getValue($tag)
@@ -126,26 +157,30 @@ class TagsReplacement
             return '';
         }
 
-        if (isset($tag['getMethod'])) {
-            if (method_exists($this->params[$model_key], $tag['getMethod'])) {
-                if ($tag['getMethod'] == 'getStartsDayAndTime') {
-                    return $this->params['appointment']->getStartsDayAndTime($this->params['client']->getTimezone());
-                } else {
-                    return call_user_func([
-                        $this->params[$model_key],
-                        $tag['getMethod']
-                    ]);
-                }
-            }
+        if (isset($tag['getResult'])) {
+            return $tag['getResult'];
         } else {
-            $key = $tag['key'];
-            if (is_object($this->params[$model_key])) {
-                //return $this->params[$model_key]->$key;
-                return !empty($this->params[$model_key]->$key) ? $this->params[$model_key]->$key : '';
-            }
+            if (isset($tag['getMethod'])) {
+                if (method_exists($this->params[$model_key], $tag['getMethod'])) {
+                    if ($tag['getMethod'] == 'getStartsDayAndTime') {
+                        return $this->params['appointment']->getStartsDayAndTime($this->params['client']->getTimezone());
+                    } else {
+                        return call_user_func([
+                            $this->params[$model_key],
+                            $tag['getMethod']
+                        ]);
+                    }
+                }
+            } else {
+                $key = $tag['key'];
+                if (is_object($this->params[$model_key])) {
+                    //return $this->params[$model_key]->$key;
+                    return !empty($this->params[$model_key]->$key) ? $this->params[$model_key]->$key : '';
+                }
 
-            if (is_array($this->params[$model_key])) {
-                return !empty($this->params[$model_key][$key]) ? $this->params[$model_key][$key] : '';
+                if (is_array($this->params[$model_key])) {
+                    return !empty($this->params[$model_key][$key]) ? $this->params[$model_key][$key] : '';
+                }
             }
         }
     }

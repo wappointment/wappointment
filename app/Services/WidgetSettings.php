@@ -71,6 +71,7 @@ class WidgetSettings
         'form' => [
             'byskype' => 'By Skype',
             'byphone' => 'By Phone',
+            'byzoom' => 'Zoom meeting',
             'inperson' => 'At a Location',
             'fullname' => 'Full Name:',
             'email' => 'E-mail:',
@@ -90,6 +91,7 @@ class WidgetSettings
             'duration' => 'Duration:',
             'pending' => 'The appointment is pending and should be quickly confirmed',
             'skype' => 'The appointment will take place on Skype, we will call you on this account:',
+            'zoom' => 'The appointment will take place on Zoom, you will get the link to the meeting room by email',
             'phone' => 'The appointment will take place over the phone, we will call you on this number:',
             'physical' => 'The appointment will take place at this address:',
             'savetocal' => 'Save it to your calendar'
