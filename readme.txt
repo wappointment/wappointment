@@ -1,4 +1,4 @@
-=== Wappointment - Booking Calendar & Appointment Scheduling  ===
+=== Wappointment - Appointment Bookings  ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, booking form
 Requires at least: 4.7
@@ -10,21 +10,21 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Appointment scheduling for personal coaches, teachers, therapists and service professionals of all kind
 
-== Description ==
+== Appointment scheduling made easy ==
 
-**Appointment booking calendar**, for personal coaches, teachers, therapists and service professionals of all kind.
+**Appointment booking calendar** for personal coaches, teachers, therapists and service professionals of all kind.
 Get booked 24/7 with the most **intuitive booking form**.
 
-Convert visitors into potential clients with a simple call to action.
+Convert visitors into customers with a simple call to action.
 
-The perfect Calendly alternative made for WordPress, except that the data is yours.
+The perfect Calendly alternative designed for WordPress.
 
 https://www.youtube.com/watch?v=jUkiyejbuzg
 
-== The Benefits ==
+== Get booked simply ==
 
 = Save Time Automate your Bookings =
-Convert visitors into customers with a simple call to action. **Get booked 24/7**, Wappointment is basically a **booking assistant which never sleeps**.
+**Get booked 24/7**, Wappointment is basically a **booking assistant which never sleeps**.
 
 = Avoid Double Bookings =
 Keep your availability updated using our powerful centralized system. 
@@ -42,36 +42,39 @@ Our **user friendly booking form** gives your clients a quick overview of your a
 Your clients receive **appointment confirmations and reminders**. 
 Quickly define when and how many of them do they receive (1 day before appointment, 1 hour before appointment).
 
-== The features ==
+== Make it simple for your customers ==
+* Clients book you within seconds, from their mobile phone, tablet or desktop computer
+* The available booking slots are displayed in your client's timezone, no more confusion for your international clients
+* Client receive a confirmation and as many reminders as you've setup
+* Clients can easily save your appointment to their personal calendar
+
+== Manage your schedule simply ==
 * Unlimited bookings
 * User-friendly and intuitive interfaces with no coding involved
 
-= Availability Setup as an Admin =
+= Availability Setup =
 * Set your recurrent availability within seconds
 * Set your punctual availability and block your non-bookable time (non working days and hours, busy times, holidays, etc) in just few clicks
 * Select the timezone from which you operate
 
-= Appointments Settings as an Admin =
-* Manage your appointments through a comprehensive Admin panel
-* Define how you provide the appointments: by Phone, by Skype or in Person
-* Hand-pick the countries you will allow for a phone appointment
-* Change the duration of your appointment
+= Define how you provide your services = 
+* Zoom video conference
+* By Phone (pick all or certain country allowed for the call)
+* By Skype
+* In Person at an address you specify
+
+= Appointments Settings =
+* Set the duration of your appointment 5 min, 10 min, 15 min , 60 min etc ...
 * Set the appointments' approval mode: automatic or manual 
 * Set how far in advance an appointment can be booked 
 * Allow clients to cancel and reschedule appointments
 * Book an appointment on behalf of your customer
 * Connect your personal calendar to the booking system and automatically block times during which you are busy
-* Set the date and time format 
+* Change the date and time format 
 
-= Make the Booking Form Blend =
+= Customizing the appearance =
 * Quickly customize colors and texts for your booking form 
-* 4-steps booking process, each step is editable
-
-= Booking an Appointment as a Customer =
-* Clients book you within seconds, from their mobile phone, tablet or desktop computer
-* The available booking slots are displayed in your client's timezone, no more confusion for your international clients
-* Client receive a confirmation and as many reminders as you've setup
-* Clients can easily save your appointment to their personal calendar
+* 4-steps booking process, each step is fully editable
 
 = Appointments' Confirmations Reminders and Notifications =
 * Receive email notifications when clients book, reschedule or cancel an appointment

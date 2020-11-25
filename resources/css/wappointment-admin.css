@@ -3,7 +3,7 @@
 #wpbody-content > .notice-success,
 #wpbody-content > .updated, 
 #wpbody-content > .notice {
-    display:none;
+    display:none !important;
 }
 .wappointment-wrap .form-control::placeholder {
     color: #dadada;
