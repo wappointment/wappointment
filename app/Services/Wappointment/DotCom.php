@@ -24,7 +24,6 @@ class DotCom extends API
 
         // 0 - only check if site connected
         if (!empty($this->site_key)) {
-
             // 1 - retrieve appointments data
             $appointments = $this->getAppointments();
             $appointments_update = WPHelpers::getOption('appointments_update');
