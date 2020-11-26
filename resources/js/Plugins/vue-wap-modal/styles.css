@@ -38,6 +38,9 @@
     height: 90%;
     border-radius: 2rem;
   }
+  .wapmodal-content.marge {
+    margin-right:0;
+  }
 
 /*   .wapmodal-content.standard.noscroll {
     overflow: unset !important;

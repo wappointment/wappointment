@@ -9,22 +9,22 @@
     </ul>
     <div class="tab-content" id="myTabContent" :data-active-page="activeTab">
         <div class="tab-pane fade" :class="{'show active' : isActive('general')}" v-if="isActive('general')">
-            <settingsGeneral :tablabel="tabs.general.label"></settingsGeneral>
+            <settingsGeneral @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.general.label"></settingsGeneral>
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('notifications')}" v-if="isActive('notifications')">
-            <settingsNotifications :tablabel="tabs.notifications.label"></settingsNotifications>
+            <settingsNotifications @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.notifications.label"></settingsNotifications>
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('reminders')}" v-if="isActive('reminders')">
-            <settingsReminders :tablabel="tabs.reminders.label"></settingsReminders>
+            <settingsReminders @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.reminders.label"></settingsReminders>
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('sync')}" v-if="isActive('sync')">
-            <settingsSync :tablabel="tabs.advanced.label"></settingsSync>
+            <settingsSync @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.advanced.label"></settingsSync>
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('advanced')}" v-if="isActive('advanced')">
-            <settingsAdvanced :tablabel="tabs.advanced.label"></settingsAdvanced>
+            <settingsAdvanced @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.advanced.label"></settingsAdvanced>
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('addonstab')}" v-if="isActive('addonstab')">
-            <settingsAddons ></settingsAddons>
+            <settingsAddons @fullyLoaded="$emit('fullyLoaded')" ></settingsAddons>
         </div>
     </div>
     
@@ -79,6 +79,7 @@ export default {
          if(window.wappointmentAdmin.addons !== undefined && this.addonsWithSettings().length > 0) {
             this.tabs['addonstab'] = { label: 'Addons'}
         }
+        
     },
     computed: {
         activeTab(){

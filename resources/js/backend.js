@@ -51,7 +51,7 @@ const SettingsPage = () => import(/* webpackChunkName: "group-settings" */ './Vi
 const AddonsPage = () => import(/* webpackChunkName: "group-addons" */ './Views/Addons')
 const HelpPage = () => import(/* webpackChunkName: "group-help" */ './Ne/Help')
 
-const WizardPage = () => import(/* webpackChunkName: "group-wizardinit" */ './Views/Subpages/Wizard')
+const WrapperPage = () => import(/* webpackChunkName: "group-wizardinit" */ './Views/Subpages/Wrapper')
 const Wizard1Page = () => import(/* webpackChunkName: "group-wizard" */ './Views/Subpages/Wizard1')
 const Wizard2Page = () => import(/* webpackChunkName: "group-wizard" */ './Views/Subpages/Wizard2')
 const Wizard3Page = () => import(/* webpackChunkName: "group-wizard2" */ './Views/Subpages/Wizard3')
@@ -94,7 +94,7 @@ const router = window.wappointmentrouter = new VueRouter({
       
       {
           path: 'calendar#',
-          component: WizardPage,
+          component: WrapperPage,
           children: [
             {
               path: 'error',
@@ -125,7 +125,7 @@ const router = window.wappointmentrouter = new VueRouter({
       },
       {
           path: 'settings#',
-          component: WizardPage,
+          component: WrapperPage,
           children: [
             {
                 path: 'service',

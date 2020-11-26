@@ -124,6 +124,7 @@ export default {
     loaded(viewData){
         this.viewData = viewData.data
         this.calendarCount = Object.keys(this.viewData.calendar_url).length
+        this.$emit('fullyLoaded')
     },
     
   }

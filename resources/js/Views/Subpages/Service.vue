@@ -40,6 +40,7 @@ export default {
             countries: []
           }
         }
+        this.$emit('fullyLoaded')
     },
     
   }  

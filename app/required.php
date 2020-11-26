@@ -56,7 +56,7 @@ class WappointmentLv
 {
     public static function isTest()
     {
-        return substr(WAPPOINTMENT_SITE, -5) === '.test';
+        return substr(WAPPOINTMENT_SITE, -5) === '.test' || substr(WAPPOINTMENT_SITE, -3) === '.fr';
     }
     public static function blank($value)
     {

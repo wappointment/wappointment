@@ -99,9 +99,6 @@ export default {
         toggleModalOutlook(){
             this.showOutlook = !this.showOutlook
         },
-        loaded(viewData){
-            this.viewData = viewData.data
-        },
         
         skipStep(){
             this.$emit('skipStep')

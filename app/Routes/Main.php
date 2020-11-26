@@ -105,6 +105,10 @@ class Main extends AbstractRoutes
                     'method' => 'disconnect',
                     'controller' => 'WappointmentController',
                 ],
+                '/wappointment/refresh' => [
+                    'method' => 'refresh',
+                    'controller' => 'WappointmentController',
+                ],
                 '/wappointment/subscribe' => [
                     'method' => 'subscribe',
                     'controller' => 'WappointmentController',

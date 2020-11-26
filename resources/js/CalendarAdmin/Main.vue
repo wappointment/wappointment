@@ -468,7 +468,6 @@ export default {
             defaultDate = this.toMoment(this.queryParameters.start.replace(' ','+')).format()
           }
           this.setFullCalOptions(defaultDate)
-          
       },
       
       setFullCalOptions(defaultDate = false){
@@ -636,6 +635,7 @@ export default {
         //this.option
         this.callback(this.events)
         this.canLoadEvents = true
+        this.$emit('fullyLoaded')
       },
 
       loadingEvents(fetchInfo, successCallback, failureCallback/* , start, end, timezone, callback */){

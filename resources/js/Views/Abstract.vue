@@ -46,6 +46,7 @@ export default {
 
       loaded(viewData){
           this.viewData = viewData.data
+          this.$emit('fullyLoaded')
       },
 
       async initValueRequest() {

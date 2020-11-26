@@ -32,6 +32,10 @@ export default class AppService extends ApiV1{
                 method: 'post',
                 route: 'wappointment/disconnect',
             },
+            refreshdotcom: {
+                method: 'post',
+                route: 'wappointment/refresh',
+            },
         };
     }
 

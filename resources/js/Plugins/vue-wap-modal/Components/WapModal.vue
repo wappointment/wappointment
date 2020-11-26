@@ -3,7 +3,7 @@
         <div class="loader-wrap d-flex align-items-center" v-if="loader">
             <WLoader></WLoader>
         </div>
-        <div v-else class="wapmodal-content" :class="[right ? 'right ':'',screenshot ? 'screenshot':'standard', noscroll ? ' noscroll':'', large ? ' large':'']">
+        <div v-else class="wapmodal-content" :class="[marge ? 'marge ':'',right ? 'right ':'',screenshot ? 'screenshot':'standard', noscroll ? ' noscroll':'', large ? ' large':'']">
             <div class="wapmodal-header d-flex justify-content-between align-items-center">
                 <slot name="title"></slot>
                 <span @click.prevent="hideModal" class="close"></span>
@@ -60,6 +60,10 @@ export default {
         default: false
     },
     large: {
+        type: Boolean,
+        default: false
+    },
+    marge: {
         type: Boolean,
         default: false
     },

@@ -1,6 +1,6 @@
 <template>
     <transition name="fade" mode="out-in">
-      <div class="wappointment-wrap">
+      <div class="wappointment-wrap" :data-tt="changing">
           <div v-if="!db_update">
               <UpdateInformation />
           </div>
@@ -8,16 +8,18 @@
               <PendingDBUpdate />
           </div>
           <template v-if="has_messages">
-              <WPNotice>
-                    <p v-for="messageObj in has_messages">
-                        {{ messageObj.message }}
-                        <a v-if=" messageObj.link !== undefined" href="javascript:;" @click="goToLink(messageObj.link)">
-                            {{ messageObj.link.label }}
-                        </a>
-                    </p>
-              </WPNotice>
+              <transition name="fade" mode="out-in">
+                <WPNotice v-if="fully_loaded">
+                        <p v-for="messageObj in has_messages">
+                            {{ messageObj.message }}
+                            <a v-if=" messageObj.link !== undefined" href="javascript:;" @click="goToLink(messageObj.link)">
+                                {{ messageObj.link.label }}
+                            </a>
+                        </p>
+                </WPNotice>
+              </transition >
           </template>
-          <router-view />
+          <router-view @fullyLoaded="fullyLoaded" />
       </div>
     </transition>
 </template>
@@ -31,7 +33,8 @@ export default {
     components: {VersionsInfos, PendingDBUpdate, UpdateInformation, WPNotice},
     data: () => ({
         db_update: false,
-        has_messages: false
+        has_messages: false,
+        fully_loaded: false
     }),
     created(){
         if(window.wappointmentAdmin.hasPendingUpdates!== undefined ){
@@ -41,8 +44,16 @@ export default {
             this.has_messages = window.wappointmentAdmin.hasMessages
         }
     },
-
+    computed:{
+        changing(){ //hack to reset the fullyloaded param every time we change of view
+            this.fully_loaded = false
+            return this.$route.name
+        }
+    },
     methods: {
+        fullyLoaded(){
+            this.fully_loaded = true
+        },
         goToLink(linkObj){
             if(linkObj.address.indexOf('[goto_') === 0){
                 this.$router.push({ name: linkObj.address.replace('[goto_','').replace(']','')})

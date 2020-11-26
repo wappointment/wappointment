@@ -199,6 +199,7 @@ export default {
 
         loadedAddons(response){
           this.viewData = response.data
+          this.$emit('fullyLoaded')
         },
 
         install(addon){

@@ -45,6 +45,22 @@ class WappointmentController extends RestController
         throw new \WappointmentException("Couldn't disconnect account.", 1);
     }
 
+    public function refresh()
+    {
+        $staff_id = Settings::get('activeStaffId');
+        $dotcom = new DotCom;
+        $dotcom->setStaff($staff_id);
+        $result = $dotcom->refresh();
+
+        if ($result) {
+            return [
+                'data' => $result,
+                'message' => 'Account has been refreshed'
+            ];
+        }
+        throw new \WappointmentException("Couldn't refresh account.", 1);
+    }
+
     public function subscribe(SubscribeAdmin $request)
     {
 

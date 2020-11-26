@@ -106,6 +106,7 @@ export default {
           this.per_page = parseInt(response.data.viewData.per_page)
           this.schema[2].timezones_list = response.data.viewData.timezones_list
           this.schema[1].readonly = this.clientDataToSave !== null && this.clientDataToSave.id !==undefined
+          this.$emit('fullyLoaded')
         },
 
         saveClient(clientData){

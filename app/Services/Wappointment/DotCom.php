@@ -115,6 +115,17 @@ class DotCom extends API
         return ['dotcom' => $this->getDotcom(), 'message' => 'Account connected!'];
     }
 
+    public function refresh()
+    {
+        if (empty($this->account_key)) {
+            throw new \WappointmentException("Can't retrieve account key", 1);
+        }
+
+        $result = $this->connect($this->account_key);
+        $result['message'] = 'Account refreshed';
+        return $result;
+    }
+
     public function create($appointment)
     {
 

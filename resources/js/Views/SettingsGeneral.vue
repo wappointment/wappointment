@@ -9,16 +9,16 @@
         <LargeButton @click="goToRegav" label="Weekly availability" :is_set="viewData.is_availability_set" ></LargeButton>
 
         <LargeButton @click="goToDotCom" :is_set="is_dotcom_connected !== false" >
-          Connect to <strong class="zoom-color"><i class="dashicons dashicons-video-alt2"></i> Zoom</strong>, <strong class="google-color"><i class="dashicons dashicons-calendar-alt"></i> Google Calendar</strong> 
+          Connect to <strong class="zoom-color"><i class="dashicons dashicons-video-alt2"></i> Zoom</strong> , <strong class="google-color"><i class="dashicons dashicons-calendar-alt"></i> Google Calendar</strong> 
         </LargeButton>
-        <WapModal v-if="dotcomOpen" :show="dotcomOpen" @hide="dotcomOpen = false">
+        <WapModal v-if="dotcomOpen" :show="dotcomOpen" marge @hide="dotcomOpen = false">
           <h4 slot="title" class="modal-title"> 
             Connect to Zoom, Google Calendar etc...
           </h4>
-          <div>
-            <div class="d-flex justify-content-between">
+          <div class="wrapper-dotcom p-4">
+            <div class="d-flex justify-content-center align-items-center flex-wrap flex-xl-nowrap">
               <div >
-                <h3 class="d-flex align-items-center">
+                <h3 class="d-flex align-items-center mb-4">
                   <span role="img" class="wstaff-img" :style="styleGravatar"></span>
                   <span>{{ viewData.activeStaffName }}</span>
                 </h3>
@@ -26,17 +26,29 @@
                   <span class="dashicons dashicons-yes-alt text-success"></span> 
                   <span>Connected <a class="small" href="javascript:;" @click="disconnectWappo">disconnect</a></span>
                   <div class="text-muted small">
-                    Connected services: <span class="slot" v-for="servicename in is_dotcom_connected.services"> {{ servicename }}</span>
+                    Connected services: 
+                    <span v-if="is_dotcom_connected.services.length > 0">
+                      <span class="slot"  v-for="servicename in is_dotcom_connected.services" :class="servicename+'-color'">
+                       <i class="dashicons" :class="[ servicename == 'zoom' ? 'dashicons-video-alt2':'dashicons dashicons-calendar-alt' ]"></i> 
+                       {{ servicename }}
+                      </span>
+                    </span>
+                    <span v-else class="text-danger">No service connected</span>
+                    <a class="small" href="javascript:;" @click="refresh">refresh</a>
                   </div>
+                  <div><a :href="addMoreService" target="_blank">Manage connected services</a></div>
                 </div>
                 <div v-else>
-                  <InputPh v-model="account_key" ph="Enter your wappointment.com account code" /> 
-                  <button class="btn btn-primary" @click="connectToWappo">Connect Account</button>
-                  <div class="text-muted small">Don't have an account yet? <a :href="createAccount" target="_blank">Create your free account</a></div>
+                  <div class="mb-3">
+                    <InputPh v-model="account_key" ph="Enter account code" /> 
+                  </div>
+                  
+                  <button class="btn btn-primary btn-block btn-lg mb-2" @click="connectToWappo">Connect Account</button>
+                  <div class="text-muted">Don't have an account yet? <a :href="createAccount" target="_blank">Create your free account</a></div>
                 </div>
               </div>
 
-              <div v-if="!is_dotcom_connected" class="create-account">
+              <div v-if="!is_dotcom_connected" class="create-account ml-xl-4">
                 <h2>Automate your appointments' process</h2>
                 <ul>
                   <li>Connect your favourite tools in seconds and automatically:</li>
@@ -191,7 +203,6 @@ export default {
   props:['tablabel'],
   created(){
     this.mainCrumbLabel = this.tablabel
-    this.autoSelectSection()
   },
   data() {
     return {
@@ -224,19 +235,24 @@ export default {
     },
     createAccount(){
       return window.apiWappointment.apiSite + '/register'
+    },
+    addMoreService(){
+      return window.apiWappointment.apiSite + '/client/account'
     }
   },
   methods: {
     loaded(viewData){
           this.viewData = viewData.data
           this.is_dotcom_connected = viewData.data.is_dotcom_connected
+          this.autoSelectSection()
+          this.$emit('fullyLoaded')
       },
     autoSelectSection(){
       switch (this.$route.name) {
         case 'general_regav':
           return this.goToRegav(false)
         case 'general_zoom_account':
-          return this.goToDotCom()
+          return this.is_dotcom_connected === false ? this.goToDotCom():false
         default:
           break;
       }
@@ -303,6 +319,20 @@ export default {
       this.settingSave(key, this.viewData[key])
     },
 
+    refresh() {
+        this.request(this.refreshWappoRequest,{},null, false,this.successRefreshed)
+    },
+
+    async refreshWappoRequest() {
+        return await this.service.call('refreshdotcom')
+    },
+    successRefreshed(response){
+        this.is_dotcom_connected = response.data.data.dotcom
+    },
+    successConnected(response){
+        this.is_dotcom_connected = response.data.data.dotcom
+    },
+
     connectToWappo() {
         this.request(this.connectToWappoRequest,{account_key: this.account_key},null, false,this.successConnected)
     },
@@ -313,6 +343,8 @@ export default {
     
     successConnected(response){
         this.is_dotcom_connected = response.data.data
+        this.$WapModal().notifySuccess(response.data.message,1)
+        window.location.reload()
     },
 
     disconnectWappo(){
@@ -325,6 +357,8 @@ export default {
     
     successDisconnected(response){
         this.is_dotcom_connected = false
+        this.$WapModal().notifySuccess(response.data.message,1)
+        window.location.reload()
     },
    
   }
@@ -362,16 +396,31 @@ export default {
     text-transform: capitalize;
     margin: .2em;
 }
+.btn-lg.btn-block{
+  font-weight: bold;
+}
+.wrapper-dotcom{
+  background: #f7f7f7;
+  border-radius: .4rem;
+  max-width: 850px;
+  margin: 0 auto;
+}
 .create-account {
 	background: #d6d5ff;
 	padding: .8em;
 	border-radius: .4em;
-	max-width: 50%;
+	min-width: 380px;
+  max-width: 480px;
 }
 .zoom-color{
   color: #2d8cff;
 }
 .google-color {
   color: #3d76bb;
+}
+.reduced .wapmodal-content.marge {
+    margin-right: auto;
+    max-width: 960px;
+    width: 60%;
 }
 </style>

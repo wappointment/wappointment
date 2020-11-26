@@ -140,6 +140,7 @@ export default {
         this.loading = false
         this.emptyModel = d.data.defaultReminders
         this.emptyModel.email.email_logo = this.viewData.email_logo
+        this.$emit('fullyLoaded')
     },
     refreshInitValue() {
       this.remindersLoaded = false
