@@ -31,6 +31,8 @@ export default {
             this.date_time_union = d.data.date_time_union
             this.loadedAppointment = true
             this.loading = false
+            console.log('initCountDown')
+            this.initCountDown()
         },
     }
 }

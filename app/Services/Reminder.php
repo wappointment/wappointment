@@ -165,8 +165,8 @@ class Reminder
         $messageService = [
             'physical' => 'It will take place at this address : [service:address]',
             'phone' => 'It will take place over the phone, we will call you on this number : [client:phone]',
-            'skype' => 'It will take place on skype, we will call you on this account : [client:skype]',
-            'zoom' => 'It will take place on skype, we will call you on this account : [appointment:linkAppointment]'
+            'skype' => 'It will take place on Skype, we will call you on this account : [client:skype]',
+            'zoom' => 'It will take place on Zoom, the meeting room link will be accessible [ label="here" link="linkView"] '
         ];
         if (count($types) > 1) {
             foreach ($types as $type) {

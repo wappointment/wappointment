@@ -4,28 +4,52 @@
           <div v-if="!db_update">
               <UpdateInformation />
           </div>
-          <div v-else>
+          <div v-if="db_update">
               <PendingDBUpdate />
           </div>
+          <template v-if="has_messages">
+              <WPNotice>
+                    <p v-for="messageObj in has_messages">
+                        {{ messageObj.message }}
+                        <a v-if=" messageObj.link !== undefined" href="javascript:;" @click="goToLink(messageObj.link)">
+                            {{ messageObj.link.label }}
+                        </a>
+                    </p>
+              </WPNotice>
+          </template>
           <router-view />
       </div>
     </transition>
 </template>
 
 <script>
+import WPNotice from './WP/Notice'
 import VersionsInfos from './Ne/VersionsInfos'
 import PendingDBUpdate from './Ne/PendingDBUpdate'
 import UpdateInformation from './Ne/UpdateInformation'
 export default {
-    components: {VersionsInfos, PendingDBUpdate, UpdateInformation},
+    components: {VersionsInfos, PendingDBUpdate, UpdateInformation, WPNotice},
     data: () => ({
         db_update: false,
+        has_messages: false
     }),
     created(){
         if(window.wappointmentAdmin.hasPendingUpdates!== undefined ){
             this.db_update = true
         }
+        if(window.wappointmentAdmin.hasMessages!== undefined ){
+            this.has_messages = window.wappointmentAdmin.hasMessages
+        }
     },
+
+    methods: {
+        goToLink(linkObj){
+            if(linkObj.address.indexOf('[goto_') === 0){
+                this.$router.push({ name: linkObj.address.replace('[goto_','').replace(']','')})
+            }
+            return linkObj.address
+        }
+    }
 }
 </script>
 <style scoped>

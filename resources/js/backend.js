@@ -138,6 +138,11 @@ const router = window.wappointmentrouter = new VueRouter({
                 component: SettingsPage
             },
             {
+                path: 'general_zoom_account',
+                name: 'general_zoom_account',
+                component: SettingsPage
+            },
+            {
                 path: 'general_regav',
                 name: 'general_regav',
                 component: SettingsPage

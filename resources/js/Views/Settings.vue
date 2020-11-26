@@ -45,7 +45,7 @@ export default {
   extends: abstractView,
     data: () => ({
         service: null,
-        activeTab: 'general',
+        //activeTab: 'general',
         tabs:{
             general:{
                 label: 'General'
@@ -79,9 +79,12 @@ export default {
          if(window.wappointmentAdmin.addons !== undefined && this.addonsWithSettings().length > 0) {
             this.tabs['addonstab'] = { label: 'Addons'}
         }
-        this.activeTab = this.$route.name
     },
-
+    computed: {
+        activeTab(){
+            return this.$route.name.indexOf('_') === -1 ? this.$route.name : this.$route.name.split('_')[0]
+        }
+    },
     methods: {
          addonsWithSettings(){
             let addonsWithSettings = {}
@@ -102,7 +105,7 @@ export default {
         },
         
         changeTab(selectedTab){
-            this.activeTab = selectedTab
+            //this.activeTab = selectedTab
             this.$router.push({name: selectedTab})
         },       
     }  

@@ -91,10 +91,17 @@ class WidgetSettings
             'duration' => 'Duration:',
             'pending' => 'The appointment is pending and should be quickly confirmed',
             'skype' => 'The appointment will take place on Skype, we will call you on this account:',
-            'zoom' => 'The appointment will take place on Zoom, you will get the link to the meeting room by email',
+            'zoom' => 'The appointment will take place on Zoom, [meeting_link]get the meeting room[/meeting_link].',
             'phone' => 'The appointment will take place over the phone, we will call you on this number:',
             'physical' => 'The appointment will take place at this address:',
             'savetocal' => 'Save it to your calendar'
+        ],
+        'view' => [
+            'join' => 'Join Meeting',
+            'missing_url' => 'We don\'t have the meeting room link yet.',
+            'refresh' => 'refresh',
+            'timeleft' => '([days_left]d [hours_left]h [minutes_left]m [seconds_left]s)',
+            'started' => 'already started',
         ],
         'cancel' => [
             'page_title' => 'Cancel Appointment',

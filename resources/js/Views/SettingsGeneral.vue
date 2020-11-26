@@ -8,29 +8,48 @@
     <div class="reduced" v-else>
         <LargeButton @click="goToRegav" label="Weekly availability" :is_set="viewData.is_availability_set" ></LargeButton>
 
-        <LargeButton @click="dotcomOpen = true" label="3rd party services (Google Calendar, Zoom, etc ...)" :is_set="is_dotcom_connected !== false" ></LargeButton>
+        <LargeButton @click="goToDotCom" :is_set="is_dotcom_connected !== false" >
+          Connect to <strong class="zoom-color"><i class="dashicons dashicons-video-alt2"></i> Zoom</strong>, <strong class="google-color"><i class="dashicons dashicons-calendar-alt"></i> Google Calendar</strong> 
+        </LargeButton>
         <WapModal v-if="dotcomOpen" :show="dotcomOpen" @hide="dotcomOpen = false">
           <h4 slot="title" class="modal-title"> 
-            Connect to 3rd party services with wappointment.com
+            Connect to Zoom, Google Calendar etc...
           </h4>
           <div>
-            <h3 class="d-flex align-items-center">
-              <span role="img" class="wstaff-img" :style="styleGravatar"></span>
-              <span>{{ viewData.activeStaffName }}</span>
-            </h3>
-            
-            <div class="d-flex">
-              <div v-if="is_dotcom_connected">
-                <span class="dashicons dashicons-yes-alt text-success"></span> 
-                <span>Connected <a class="small" href="javascript:;" @click="disconnectWappo">disconnect</a></span>
-                <div class="text-muted small">
-                  Connected services: <span class="slot" v-for="servicename in is_dotcom_connected.services"> {{ servicename }}</span>
+            <div class="d-flex justify-content-between">
+              <div >
+                <h3 class="d-flex align-items-center">
+                  <span role="img" class="wstaff-img" :style="styleGravatar"></span>
+                  <span>{{ viewData.activeStaffName }}</span>
+                </h3>
+                <div v-if="is_dotcom_connected">
+                  <span class="dashicons dashicons-yes-alt text-success"></span> 
+                  <span>Connected <a class="small" href="javascript:;" @click="disconnectWappo">disconnect</a></span>
+                  <div class="text-muted small">
+                    Connected services: <span class="slot" v-for="servicename in is_dotcom_connected.services"> {{ servicename }}</span>
+                  </div>
+                </div>
+                <div v-else>
+                  <InputPh v-model="account_key" ph="Enter your wappointment.com account code" /> 
+                  <button class="btn btn-primary" @click="connectToWappo">Connect Account</button>
+                  <div class="text-muted small">Don't have an account yet? <a :href="createAccount" target="_blank">Create your free account</a></div>
                 </div>
               </div>
-              <div v-else>
-                <InputPh v-model="account_key" ph="Enter your wappointment.com account code" /> 
-                <button class="btn btn-primary" @click="connectToWappo">Connect Account</button>
-                <div class="text-muted small">Don't have an account yet? <a href="">Create your free account</a></div>
+
+              <div v-if="!is_dotcom_connected" class="create-account">
+                <h2>Automate your appointments' process</h2>
+                <ul>
+                  <li>Connect your favourite tools in seconds and automatically:</li>
+                  <li>
+                    <ol>
+                      <li>Create <strong class="zoom-color"><i class="dashicons dashicons-video-alt2"></i> Zoom</strong> meetings</li>
+                      <li>Save appointments in <strong class="google-color"><i class="dashicons dashicons-calendar-alt"></i> Google Calendar</strong></li>
+                      <li>and soon more to come ...</li>
+                    </ol>
+                  </li>
+                  
+                  <li>Simply <a :href="createAccount" target="_blank">create an account</a>, <strong>it's free</strong>! </li>
+                </ul>
               </div>
             </div>
             
@@ -203,6 +222,9 @@ export default {
     styleGravatar(){
         return 'background-image: url("'+this.viewData.gravatar+'");'
     },
+    createAccount(){
+      return window.apiWappointment.apiSite + '/register'
+    }
   },
   methods: {
     loaded(viewData){
@@ -213,6 +235,8 @@ export default {
       switch (this.$route.name) {
         case 'general_regav':
           return this.goToRegav(false)
+        case 'general_zoom_account':
+          return this.goToDotCom()
         default:
           break;
       }
@@ -220,6 +244,10 @@ export default {
     savedPage(page_id){
       this.settingSave('booking_page', page_id)
       this.refreshInitValue()
+    },
+
+    goToDotCom(){
+      this.dotcomOpen = true
     },
 
     goToRegav(click = true) {
@@ -333,5 +361,17 @@ export default {
     border-radius: .3rem;
     text-transform: capitalize;
     margin: .2em;
+}
+.create-account {
+	background: #d6d5ff;
+	padding: .8em;
+	border-radius: .4em;
+	max-width: 50%;
+}
+.zoom-color{
+  color: #2d8cff;
+}
+.google-color {
+  color: #3d76bb;
 }
 </style>

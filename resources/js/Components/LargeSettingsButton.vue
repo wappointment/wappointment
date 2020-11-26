@@ -3,7 +3,8 @@
         <span class="h5 my-1">
             <span v-if="is_set" class="dashicons dashicons-yes-alt text-success" ></span> 
             <span v-else class="dashicons dashicons-dismiss text-danger" ></span> 
-            {{ label }}
+            <span v-if="label">{{ label }}</span>
+            <span v-else><slot></slot></span>
         </span>
         <button  class="btn btn-xs btn-secondary hidden">{{ isSetupLabel(is_set) }}</button>
     </div>

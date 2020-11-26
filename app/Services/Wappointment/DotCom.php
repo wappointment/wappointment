@@ -24,6 +24,7 @@ class DotCom extends API
 
         // 0 - only check if site connected
         if (!empty($this->site_key)) {
+
             // 1 - retrieve appointments data
             $appointments = $this->getAppointments();
             $appointments_update = WPHelpers::getOption('appointments_update');
@@ -47,7 +48,7 @@ class DotCom extends API
                     $retrieved_appointments = Appointment::select('id', 'options')->whereIn('id', array_keys($requires_update))->get();
 
                     foreach ($retrieved_appointments as $updatingAppointment) {
-                        $options = $updatingAppointment->options;
+                        $options = empty($updatingAppointment->options) ? [] : $updatingAppointment->options;
                         $merging_options = isset($requires_update[$updatingAppointment->id]) ? $requires_update[$updatingAppointment->id] : [];
                         $updatingAppointment->options = array_merge($options, $merging_options);
                         $updatingAppointment->save();

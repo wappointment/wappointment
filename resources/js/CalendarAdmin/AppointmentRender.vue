@@ -1,12 +1,12 @@
 <script>
 export default {
     methods:{
-        getClientAppointment(appointment){
+        getClientAppointment(appointment, extraclass= ''){
           let testAppointment = ''
           if(appointment.extendedProps.client.options !== undefined && appointment.extendedProps.client.options.test_appointment !== undefined){
             testAppointment = 'This is a test appointment, you can delete it safely'
           }
-            return`<div>
+            return`<div class="client-appointment ${extraclass}">
                     <div>${this.getClientAvatarName(appointment)} </div>
                     <div>Email: ${appointment.extendedProps.client.email} </div>
                     ${this.getAllAppointmentOptions(appointment)}`+
@@ -25,7 +25,8 @@ export default {
                 
                 <div class="bg-light border border-primary rounded p-2 text-center">
                     <div> Scheduled Time </div>
-                    ${this.getIconClass(appointment.extendedProps.location)} ${this.getAppointmentTimeAndDate(this.toMoment(appointment.start), this.toMoment(appointment.end))}
+                    ${this.getIconClass(appointment.extendedProps.location)} 
+                    ${this.getAppointmentTimeAndDate(this.toMoment(appointment.start), this.toMoment(appointment.end))}
                 </div>
                 </div>
             `
@@ -40,8 +41,8 @@ export default {
             let oldStart = this.toMoment(appointment.start).clone().add(dms, 'ms').add(daysdelta, 'd')
             let oldEnd = this.toMoment(appointment.end).clone().add(dms, 'ms').add(daysdelta, 'd')
             return `
-                <div class="text-center">${this.getClientAppointment(appointment)}<hr></div>
-                <div class="d-sm-flex justify-content-around align-items-center my-2 text-center">
+                <div>${this.getClientAppointment(appointment, 'm-auto')}<hr></div>
+                <div class="d-sm-flex justify-content-around align-items-center my-2">
                     <div class="bg-light rounded p-2">
                     <div> Old schedule </div>
                     ${this.getAppointmentTimeAndDate(oldStart, oldEnd, 'text-danger')}
@@ -134,3 +135,11 @@ export default {
 }   
 </script>
 
+<style >
+.client-appointment{
+	max-width: 270px;
+	background: #f9f9f9;
+	padding: .6em;
+	border-radius: .3em;
+}
+</style>

@@ -55,6 +55,29 @@ class Status
         return version_compare($current_version, self::$db_version_required) < 0;
     }
 
+    public static function hasMessages()
+    {
+        //test if zoom is used and no account is connected
+        $messages = [];
+        if (empty(Settings::getStaff('dotcom'))) {
+            $services = \Wappointment\Managers\Service::all();
+            $services[] = $services[0];
+            foreach ($services as $service) {
+                if (in_array('zoom', $service['type'])) {
+                    $messages[] = [
+                        'message' => 'Hey! You are using Zoom, great for you! Just don\'t forget to connect your account to generate meetings automatically.',
+                        'link' => [
+                            'label' => 'Connect Zoom Account',
+                            'address' => '[goto_general_zoom_account]'
+                        ]
+                    ];
+                    break;
+                }
+            }
+        }
+        return $messages;
+    }
+
     public static function dbVersionUpdateComplete()
     {
         return WPHelpers::setOption('db_version', self::$db_version_required);

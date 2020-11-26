@@ -107,6 +107,10 @@ class InitBackend
                 $varJs['hasPendingUpdates'] = true;
             }
 
+            if (Status::hasMessages()) {
+                $varJs['hasMessages'] = Status::hasMessages();
+            }
+
             $varJs['canSeeUpdate'] = Status::canSeeUpdatePage();
             //dd($varJs);
         }

@@ -8,13 +8,13 @@
                 <div class="summary-event" :class="view">
                     <h2 v-if="!isSaveEventPage">{{getText('title')}}</h2>
                     <div>{{ client.name }} - {{ client.email }}</div>
-                    <div><strong class="date-start">{{ startDatei18n }}</strong></div>
                     <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
+                    <div><strong class="date-start">{{ startDatei18n }}</strong> {{timeLeft}}</div>
                     <div v-if="zoomSelected">
-                        <a v-if="zoomMeetingRoom" :href="zoomMeetingRoom" class="wbtn wbtn-primary wbtn-lg">Join Meeting</a>
+                        <a v-if="zoomMeetingRoom" :href="zoomMeetingRoom" class="wbtn wbtn-primary wbtn-lg">{{ options.view.join }}</a>
                         <div v-else>
-                            <button class="wbtn wbtn-primary wbtn-lg disabled" disabled>Join Meeting</button>
-                            <div class="small">We don't have the meeting room link yet <a href="javascript:;" @click="refreshAppointment">refresh</a></div>
+                            <button class="wbtn wbtn-primary wbtn-lg disabled" disabled>{{ options.view.join }}</button>
+                            <div class="small">{{ options.view.missing_url }} <a href="javascript:;" @click="refreshAppointment">{{ options.view.refresh }}</a></div>
                         </div>
                     </div>
                 </div>
@@ -113,7 +113,9 @@ export default {
         errorLoading: '',
         disabledButtons: false,
         rescheduleData: null,
-        momenttz:momenttz
+        momenttz: momenttz,
+        timeLeft: '',
+        timeLeftId: false
     }),
     created(){
         this.currentTz = this.tzGuess()
@@ -135,6 +137,53 @@ export default {
         }
     },
     methods: {
+        initCountDown(){
+            this.initDate = new Date()
+            this.initDate.setTime(this.selectedSlot*1000)
+            // Update the count down every 1 second
+            if(this.initDate.getTime()){
+                this.timeLeftId = setInterval(this.countDownInterval , 1000)
+            }
+            
+        },
+        countDownInterval(){
+
+            // mseconds left
+            let milisecondsleft = this.initDate.getTime() - new Date().getTime()
+
+            // return results
+            if (milisecondsleft < 0) {
+                this.timeLeft = this.options.view.started 
+                clearInterval(this.timeLeftId)
+            }else{
+                // unites left
+                let days = Math.floor(milisecondsleft / this.oneDayInMs())
+                let hours = Math.floor((milisecondsleft % this.oneDayInMs()) / this.oneHourInMs())
+                let minutes = Math.floor((milisecondsleft % this.oneHourInMs()) / this.oneMinInMs())
+                let seconds = Math.floor((milisecondsleft % this.oneMinInMs()) / this.oneSecInMs())
+
+                this.timeLeft = this.options.view.timeleft
+                .replace('[days_left]', days)
+                .replace('[hours_left]', hours)
+                .replace('[minutes_left]', minutes)
+                .replace('[seconds_left]', seconds)
+
+                //this.timeLeft = days + "d " + hours + "h " + minutes + "m " + seconds + "s"
+            }
+        },
+        oneDayInMs(){
+            return this.oneHourInMs() * 24
+        },
+        oneHourInMs(){
+            return this.oneMinInMs()  * 60
+        },
+        oneMinInMs(){
+            return this.oneSecInMs() * 60
+        },
+        oneSecInMs(){
+            return 1000
+        },
+
         refreshAppointment(){
             this.loadedAppointment = false
             this.loadAppointment()
