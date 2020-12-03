@@ -122,7 +122,9 @@ class EventsController extends RestController
 
     private function getAppointments($start_at_string, $end_at_string)
     {
-        return AppointmentModel::with('client')
+        return AppointmentModel::with(['client' => function ($q) {
+            $q->withTrashed();
+        }])
             ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
             ->where('start_at', '>=', $start_at_string)
             ->where('end_at', '<=', $end_at_string)
