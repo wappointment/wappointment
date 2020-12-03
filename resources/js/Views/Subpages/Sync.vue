@@ -30,7 +30,8 @@
                 </div>
             </div>
 
-            <WapModal :screenshot="true"  :show="showPopup" @hide="hideModal">
+            <div v-if="showPopup" >
+                <a @click="showPopup=false" href="javascript:;">Hide</a>
                 <h4 slot="title" class="modal-title">
                     <span v-if="showGoogle">Get your Google Calendar URL</span>
                     <span v-if="showIcal">Get your Apple iCal calendar URL</span>
@@ -39,7 +40,7 @@
                 <div class="">
                     <VideoIframe :src="getYouTubeUrl" />
                 </div>
-            </WapModal>
+            </div>
 
         </div>
     
@@ -64,16 +65,16 @@ export default {
           showOutlook: false,
       } 
   },
+
   watch: {
     // whenever question changes, this function will run
     calurl(newval,val){
-            if(newval !== undefined) {
-                if(newval.substr(0,9) == 'webcal://') this.calurl = newval.replace('webcal://','http://')
-                if(newval.indexOf('outlook')!=-1) this.calendar = 'outlook'
-                if(newval.indexOf('calendar.google')!=-1) this.calendar = 'google'
-                if(newval.indexOf('icloud.com')!=-1) this.calendar = 'ical'
-            }
-            
+        if(newval !== undefined) {
+            if(newval.substr(0,9) == 'webcal://') this.calurl = newval.replace('webcal://','http://')
+            if(newval.indexOf('outlook')!=-1) this.calendar = 'outlook'
+            if(newval.indexOf('calendar.google')!=-1) this.calendar = 'google'
+            if(newval.indexOf('icloud.com')!=-1) this.calendar = 'ical'
+        }
       }
   },
   computed: {
@@ -87,35 +88,35 @@ export default {
     }
   },
   methods: {
-        hideModal(){
-            this.showGoogle = this.showIcal = this.showOutlook = false
-        },
-        toggleModalGoogle(){
-            this.showGoogle = !this.showGoogle
-        },
-        toggleModalIcal(){
-            this.showIcal = !this.showIcal
-        },
-        toggleModalOutlook(){
-            this.showOutlook = !this.showOutlook
-        },
-        
-        skipStep(){
-            this.$emit('skipStep')
-        },
+    hideModal(){
+        this.showGoogle = this.showIcal = this.showOutlook = false
+    },
+    toggleModalGoogle(){
+        this.showGoogle = !this.showGoogle
+    },
+    toggleModalIcal(){
+        this.showIcal = !this.showIcal
+    },
+    toggleModalOutlook(){
+        this.showOutlook = !this.showOutlook
+    },
+    
+    skipStep(){
+        this.$emit('skipStep')
+    },
 
-        saveCal(){
-            this.request(this.saveCalRequest, {calurl: this.calurl}, null ,false,this.saveCalSuccess,this.saveCalError)
-        },
-        saveCalError(error){
-            this.$emit('errorSaving',error)
-        },
-        saveCalSuccess(response){
-            this.$emit('savedSync', response)
-        },
-        async saveCalRequest(params) {
-            return await this.serviceSettingStaff.call('saveCal', params) 
-        },
+    saveCal(){
+        this.request(this.saveCalRequest, {calurl: this.calurl}, null ,false,this.saveCalSuccess,this.saveCalError)
+    },
+    saveCalError(error){
+        this.$emit('errorSaving',error)
+    },
+    saveCalSuccess(response){
+        this.$emit('savedSync', response)
+    },
+    async saveCalRequest(params) {
+        return await this.serviceSettingStaff.call('saveCal', params) 
+    },
 
   }  
 }

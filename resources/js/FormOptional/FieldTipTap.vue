@@ -37,7 +37,6 @@
               <div class="dropdown" v-if="!simpleVersion">
                 <button
                   class="btn btn-secondary dropdown-toggle"
-                  :class="{ 'active': (nodes.paragraph.active()|| nodes.heading.active({level: 1}) || nodes.heading.active({level: 2})|| nodes.heading.active({level: 3})) }"
                   type="button"
                   @click="toggleDDP('ddph')"
                   data-toggle="dropdown"
@@ -83,11 +82,13 @@
                   >{{ etag.label }}</a>
                 </div>
               </div>
-              <div class="dropdown" data-tt="Link selection to a Wappointment page">
+              <div class="dropdown" :data-tt="selectionIsOn ? 'Link selection to a Wappointment page':'Select text to enable'">
                 <button
                   class="btn btn-secondary dropdown-toggle"
+                  :class="{'disabled':!selectionIsOn}"
+                  :disabled="!selectionIsOn"
                   type="button"
-                  @click="toggleDDP('ddpl')"
+                  @click="selectionIsOn ? toggleDDP('ddpl'):false"
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
@@ -284,10 +285,16 @@ export default {
             new ConditionalSkypeBlockNode(),
             new ConditionalZoomBlockNode(),
             new ConditionalPhysicalBlockNode()
-        ]
+        ],
         };
     },
     computed: {
+      selectionIsOn(){
+        if(this.$refs.editor !== undefined){
+          return this.$refs.editor.state.selection.ranges[0].$to.pos - this.$refs.editor.state.selection.ranges[0].$from.pos > 0
+        }
+        return false
+      },
       styleLinkContainer() {
         if (this.position) {
           let topPos = Math.round(this.position.top - this.position.height);
@@ -332,6 +339,7 @@ export default {
     }
   },
     methods:{
+
       updateModel({ getJSON, getHTML }) {
           this.updatedValue = getJSON()
           this.hasShortcodes = this.getShortcodes(this.$refs.editor.state.doc.content)
@@ -453,10 +461,11 @@ export default {
       },
 
       toggleDDP(ddpName) {
-        let newVal = true;
-        if (this[ddpName] == true) newVal = false;
-        this.hideDropDowns();
-        this[ddpName] = newVal;
+
+        let newVal = true
+        if (this[ddpName] == true) newVal = false
+        this.hideDropDowns()
+        this[ddpName] = newVal
       },
 
       hideDropDowns() {

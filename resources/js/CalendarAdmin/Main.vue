@@ -5,7 +5,7 @@
             <div class="d-flex flex-wrap flex-md-nowrap justify-content-between">
               <div class="d-flex">
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
-                <h1 class="h2 align-self-center"> {{ weekTitle }} </h1>
+                <h1 class="h2 align-self-center" @click="refreshEvents"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
                 <FreeSlotsSelector :intervals="getThisWeekIntervals" :viewingFreeSlot="viewingFreeSlot" 
                 :durations="getAllDurations" :duration="selectedDuration" :buffer="viewData.buffer_time"

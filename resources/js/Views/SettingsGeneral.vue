@@ -9,7 +9,7 @@
         <LargeButton @click="goToRegav" label="Weekly availability" :is_set="viewData.is_availability_set" ></LargeButton>
 
         <LargeButton @click="goToDotCom" :is_set="is_dotcom_connected !== false" >
-          Connect to <strong class="zoom-color"><i class="dashicons dashicons-video-alt2"></i> Zoom</strong> , <strong class="google-color"><i class="dashicons dashicons-calendar-alt"></i> Google Calendar</strong> 
+          Connect to <strong class="zoom-color"> <img :src="zoomImage" /> Zoom</strong> , <strong class="google-color"><img :src="googleImage" /> Google Calendar</strong> 
         </LargeButton>
         <WapModal v-if="dotcomOpen" :show="dotcomOpen" marge @hide="dotcomOpen = false">
           <h4 slot="title" class="modal-title"> 
@@ -28,9 +28,9 @@
                   <div class="text-muted small">
                     Connected services: 
                     <span v-if="is_dotcom_connected.services.length > 0">
-                      <span class="slot"  v-for="servicename in is_dotcom_connected.services" :class="servicename+'-color'">
-                       <i class="dashicons" :class="[ servicename == 'zoom' ? 'dashicons-video-alt2':'dashicons dashicons-calendar-alt' ]"></i> 
-                       {{ servicename }}
+                      <span class="slot"  v-for="servicekey in is_dotcom_connected.services" :class="servicekey+'-color'">
+                        <img :src="servicekey == 'zoom' ? zoomImage:googleImage" />
+                       {{ serviceLabel(servicekey) }}
                       </span>
                     </span>
                     <span v-else class="text-danger">No service connected</span>
@@ -54,8 +54,8 @@
                   <li>Connect your favourite tools in seconds and automatically:</li>
                   <li>
                     <ol>
-                      <li>Create <strong class="zoom-color"><i class="dashicons dashicons-video-alt2"></i> Zoom</strong> meetings</li>
-                      <li>Save appointments in <strong class="google-color"><i class="dashicons dashicons-calendar-alt"></i> Google Calendar</strong></li>
+                      <li>Create <strong class="zoom-color"><img :src="zoomImage" /> Zoom</strong> meetings</li>
+                      <li>Save appointments in <strong class="google-color"><img :src="googleImage" /> Google Calendar</strong></li>
                       <li>and soon more to come ...</li>
                     </ol>
                   </li>
@@ -226,10 +226,19 @@ export default {
       ],
       dotcomOpen: false,
       account_key: '',
-      is_dotcom_connected: false
+      is_dotcom_connected: false,
     };
   },
   computed: {
+    resourcesUrl(){
+      return window.apiWappointment.resourcesUrl+'images/'
+    },
+    zoomImage(){
+      return this.resourcesUrl + 'zoom.png'
+    },
+    googleImage(){
+      return this.resourcesUrl + 'google-calendar.png'
+    },
     styleGravatar(){
         return 'background-image: url("'+this.viewData.gravatar+'");'
     },
@@ -241,6 +250,9 @@ export default {
     }
   },
   methods: {
+    serviceLabel(serviceKey){
+      return serviceKey == 'google' ? 'Google Calendar':serviceKey
+    },
     loaded(viewData){
           this.viewData = viewData.data
           this.is_dotcom_connected = viewData.data.is_dotcom_connected
@@ -390,11 +402,12 @@ export default {
     position: relative;
 }
 .slot {
-    background-color: #e1e1e1;
-    padding: .4em;
+    background-color: #fff;
+    padding: .6em;
     border-radius: .3rem;
     text-transform: capitalize;
     margin: .2em;
+    border:1px solid #ccc;
 }
 .btn-lg.btn-block{
   font-weight: bold;

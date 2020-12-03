@@ -79,6 +79,17 @@ export default {
   data: () => ({
     remember: true,
   }),
+  created(){
+      if(this.show === true){
+          document.body.classList.add("wappo-popup")
+      }
+  },
+  destroyed(){
+      if(document.getElementsByClassName('wapmodal').length === 0){
+          document.body.classList.remove("wappo-popup")
+      }
+      
+  },
   computed:{
       labelCancel(){
           return this.options.cancel !== undefined ? this.options.cancel:'Back'

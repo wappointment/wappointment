@@ -181,6 +181,9 @@ export default {
   right: 0;
   z-index: 99999 !important;
 }
+.wappo-popup #adminmenuwrap{
+  z-index: 1;
+}
 @media (max-width: 470px) { 
     .notify-wrapper {
         width: 100%;

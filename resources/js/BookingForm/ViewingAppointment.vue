@@ -10,7 +10,7 @@
                     <div>{{ client.name }} - {{ client.email }}</div>
                     <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
                     <div><strong class="date-start">{{ startDatei18n }}</strong> {{timeLeft}}</div>
-                    <div v-if="zoomSelected">
+                    <div v-if="zoomSelected && isViewEventPage">
                         <a v-if="zoomMeetingRoom" :href="zoomMeetingRoom" class="wbtn wbtn-primary wbtn-lg">{{ options.view.join }}</a>
                         <div v-else>
                             <button class="wbtn wbtn-primary wbtn-lg disabled" disabled>{{ options.view.join }}</button>

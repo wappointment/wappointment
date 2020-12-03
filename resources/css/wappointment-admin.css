@@ -2,7 +2,8 @@
 #wpbody-content > .notice-warning, 
 #wpbody-content > .notice-success,
 #wpbody-content > .updated, 
-#wpbody-content > .notice {
+#wpbody-content > .notice
+#wpbody-content > .announcements-notices {
     display:none !important;
 }
 .wappointment-wrap .form-control::placeholder {
