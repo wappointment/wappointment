@@ -96,9 +96,15 @@ class Client
     public static function delete($clientId)
     {
         if (version_compare(Status::dbVersion(), '1.9.3') >= 0) {
-            $clients = MClient::find($clientId)->delete();
+            $client = MClient::find($clientId);
+            $client->update([
+                'email' => md5($client->email . time()),
+                'name' => 'Client erased',
+                'options' => [],
+            ]);
+            $client->delete();
 
-            return $clients;
+            return $client;
         }
         throw new \WappointmentException("Run the pending database update first", 1);
     }
