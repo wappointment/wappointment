@@ -18,4 +18,9 @@ class Service
     {
         return Central::get('Service')::patch($service_id, $data);
     }
+
+    public static function hasZoom($service)
+    {
+        return Central::get('Service')::hasZoom($service);
+    }
 }

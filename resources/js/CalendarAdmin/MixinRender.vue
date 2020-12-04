@@ -95,12 +95,39 @@ export default {
       isAppointmentEvent(datarendering){
         return ['appointment-confirmed', 'appointment-pending'].indexOf(datarendering) !== -1
       },
+
       isAppointmentPending(datarendering){
         return 'appointment-pending' == datarendering
       },
+
       isAppointmentConfirmed(datarendering){
         return 'appointment-confirmed' == datarendering
       },
+
+      hasDotcomButnoProvider(eventId){
+        let appointment = this.findAppointmentById(eventId)
+        return appointment.extendedProps.options.providers === undefined && this.hasDotcom()
+      },
+
+      hasDotcom(){
+        return [undefined,false].indexOf(this.viewData.is_dotcom_connected) === -1
+      },
+      
+      appointmentIsZoom(eventId){
+        let appointment = this.findAppointmentById(eventId)
+        return appointment.extendedProps.location == 'zoom'
+      },
+
+      appointmentHasZoomUrl(eventId){
+        let appointment = this.findAppointmentById(eventId)
+        return appointment.extendedProps.options.providers !== undefined && appointment.extendedProps.options.providers.zoom !== undefined
+      },
+
+      getZoomMeetingUrl(eventId){
+        let appointment = this.findAppointmentById(eventId)
+        return appointment.extendedProps.options.providers.zoom.join_url
+      },
+
       attachEvent(el) {
         el.addClass('hover')
 
@@ -133,15 +160,18 @@ export default {
           
           if(!el.hasClass('past-event') || (el.hasClass('past-event') && this.isAppointmentEvent(el.attr('data-rendering')))){
             innerhtml += '<div class="d-flex justify-content-center align-items-center mx-4 ctrlbar">'
-            if(this.isAppointmentConfirmed(el.attr('data-rendering'))) innerhtml += '<button class="btn btn-xs btn-light viewElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-visibility"></span></button>'
-            if(this.isAppointmentPending(el.attr('data-rendering'))) innerhtml += '<button class="btn btn-xs btn-light confirmElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-yes"></span></button>'
+            let services = [undefined, false].indexOf(this.viewData.is_dotcom_connected) !== -1 ? []:this.viewData.is_dotcom_connected.services
+            if(!el.hasClass('past-event') && this.hasDotcomButnoProvider(el.attr('data-id'))) innerhtml += '<button class="btn btn-xs btn-light recordDotcom" data-tt="Send details for '+services.join(', ')+'" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-cloud-upload"></span></button>'
+            if(!el.hasClass('past-event') && this.hasDotcom()  && this.appointmentIsZoom(el.attr('data-id')) && this.appointmentHasZoomUrl(el.attr('data-id'))) innerhtml += '<div  data-href="'+this.getZoomMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Zoom meeting" ><img src="'+window.apiWappointment.resourcesUrl+'images/zoom.png'+'" /></div>'
+            if(this.isAppointmentConfirmed(el.attr('data-rendering'))) innerhtml += '<button data-tt="View appointment details" class="btn btn-xs btn-light viewElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-visibility"></span></button>'
+            if(this.isAppointmentPending(el.attr('data-rendering'))) innerhtml += '<button data-tt="Confirm appointment" class="btn btn-xs btn-light confirmElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-yes"></span></button>'
             
             if(!el.hasClass('past-event')){
               if(this.isAppointmentEvent(el.attr('data-rendering'))) {
-                innerhtml += '<button class="btn btn-xs btn-light cancelAppointment" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-dismiss"></span></button>'
+                innerhtml += '<button class="btn btn-xs btn-light cancelAppointment" data-tt="Cancel appointment" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-dismiss"></span></button>'
               }else{
                 let spanIcon = el.hasClass('calendar') ? '<span class="dashicons dashicons-controls-volumeoff"></span> ': '<span class="dashicons dashicons-trash"></span>'
-                innerhtml += '<button class="btn btn-xs btn-light deleteElement" data-id="'+el.attr('data-id')+'">'+spanIcon+'</button>'
+                innerhtml += '<button data-tt="Mute Event" class="btn btn-xs btn-light deleteElement" data-id="'+el.attr('data-id')+'">'+spanIcon+'</button>'
               }
                 
             }
@@ -155,7 +185,10 @@ export default {
             //el.find('.fc-content').append(innerhtml)
             el.find('.fc-bg').append(innerhtml)
             el.find('.cancelAppointment').on( "click", this.cancelAppointment)
+            el.find('.recordDotcom').on( "click", this.recordDotcom)
             el.find('.viewElement').on( "click", this.viewAppointment)
+            el.find('.gotozoom').on( "click", this.goToZoom)
+            
             el.find('.confirmElement').on( "click", this.confirmAppointment)
           } else{
             el.append(innerhtml)
@@ -183,11 +216,12 @@ export default {
         }
         
       },
+
       bgEOverDelay(event){
         this.cancelbgOver = setTimeout(this.bgEOver.bind('',event),100)
       },
       
-      bgEOver(event,fsdfsd){
+      bgEOver(event){
         let el =  window.jQuery(event.target)
         //return;
         if(!el.hasClass('fc-bgevent')) {
@@ -267,6 +301,7 @@ export default {
           event.stopPropagation()
           return false
       },
+
       bgEClick(event){
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
 
@@ -274,3 +309,11 @@ export default {
     }
 }
 </script>
+<style >
+.gotozoom{
+  filter: grayscale(1);
+}
+.gotozoom:hover{
+  filter: none;
+}
+</style>

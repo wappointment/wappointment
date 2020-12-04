@@ -55,15 +55,18 @@ class Status
         return version_compare($current_version, self::$db_version_required) < 0;
     }
 
+
     public static function hasMessages()
     {
         //test if zoom is used and no account is connected
         $messages = [];
         if (empty(Settings::getStaff('dotcom'))) {
             $services = \Wappointment\Managers\Service::all();
+
             $services[] = $services[0];
+
             foreach ($services as $service) {
-                if (in_array('zoom', $service['type'])) {
+                if (\Wappointment\Managers\Service::hasZoom($service)) {
                     $messages[] = [
                         'message' => 'Hey! You are using Zoom, great for you! Just don\'t forget to connect your account to generate meetings automatically.',
                         'link' => [

@@ -12,6 +12,7 @@ use Wappointment\Models\Status as Mstatus;
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Services\Appointment;
 use Wappointment\Services\Preferences;
+use Wappointment\Services\Wappointment\DotCom;
 
 class EventsController extends RestController
 {
@@ -73,13 +74,31 @@ class EventsController extends RestController
 
     public function delete(Request $request)
     {
-        $appointment = AppointmentModel::where('id', $request->input('id'))->first();
+        $appointment = AppointmentModel::find($request->input('id'));
         if (Appointment::cancel($appointment)) {
             return ['message' => 'Appointment cancelled'];
         }
         throw new \WappointmentException('Error deleting appointment', 1);
     }
 
+    public function recordDotcom(Request $request)
+    {
+        $appointment = AppointmentModel::with('client')->where('id', $request->input('id'))->first();
+        $acs_id = Settings::get('activeStaffId');
+        $staff_id = empty($appointment->staff_id) ? $acs_id : (int)$appointment->staff_id;
+        $dotcomapi = new DotCom;
+        $dotcomapi->setStaff($staff_id);
+        if (!empty($appointment->client) && empty($appointment->options['providers']) && $dotcomapi->isConnected()) {
+            $dotcomapi->create($appointment);
+
+            $options = $appointment->options;
+            $options['providers'] = [];
+            $appointment->options = $options;
+            $appointment->save();
+            return ['message' => 'Appointment has been sent'];
+        }
+        throw new \WappointmentException('Appointment cannot be sent', 1);
+    }
 
     public function put(Request $request)
     {

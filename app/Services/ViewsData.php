@@ -119,7 +119,8 @@ class ViewsData
             'subscribe_email' => Settings::get('email_notifications'),
             'welcome_site' => get_site_url(),
             'cal_duration' => Service::get()['duration'],
-            'preferences' => (new Preferences)->preferences
+            'preferences' => (new Preferences)->preferences,
+            'is_dotcom_connected' => Settings::getStaff('dotcom'),
         ]);
     }
 

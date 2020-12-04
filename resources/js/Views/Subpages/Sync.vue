@@ -31,7 +31,7 @@
             </div>
 
             <div v-if="showPopup" >
-                <a @click="showPopup=false" href="javascript:;">Hide</a>
+                <a @click="hideModal" href="javascript:;">Hide</a>
                 <h4 slot="title" class="modal-title">
                     <span v-if="showGoogle">Get your Google Calendar URL</span>
                     <span v-if="showIcal">Get your Apple iCal calendar URL</span>
@@ -92,12 +92,15 @@ export default {
         this.showGoogle = this.showIcal = this.showOutlook = false
     },
     toggleModalGoogle(){
+        this.hideModal()
         this.showGoogle = !this.showGoogle
     },
     toggleModalIcal(){
+        this.hideModal()
         this.showIcal = !this.showIcal
     },
     toggleModalOutlook(){
+        this.hideModal()
         this.showOutlook = !this.showOutlook
     },
     

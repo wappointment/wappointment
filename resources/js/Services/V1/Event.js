@@ -22,7 +22,11 @@ export default class ServiceEvent extends ApiV1{
             confirm: { 
                 method: 'put', 
                 route: 'events'
-            }
+            },
+            recordDotcom: { 
+                method: 'post', 
+                route: 'events/record'
+            },
         };
     }
 

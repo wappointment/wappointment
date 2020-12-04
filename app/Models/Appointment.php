@@ -56,7 +56,12 @@ class Appointment extends Model
 
     public function getTitle()
     {
-        return $this->getServiceName() . ' ' . $this->getDuration() . ' - ' . $this->client->name;
+        return $this->getStatusTag() . $this->getServiceName() . ' ' . $this->getDuration() . ' - ' . $this->client->name;
+    }
+
+    public function getStatusTag()
+    {
+        return $this->status == static::STATUS_AWAITING_CONFIRMATION ? '[Pending]' : '';
     }
 
     public function incrementSequence()
@@ -291,5 +296,13 @@ class Appointment extends Model
     protected function longFormat()
     {
         return Settings::get('date_format') . Settings::get('date_time_union') . Settings::get('time_format');
+    }
+
+    public function sentToDotCom()
+    {
+        $options = $this->options;
+        $options['providers'] = [];
+        $this->options = $options;
+        $this->save();
     }
 }

@@ -26,6 +26,10 @@ class DotCom extends API
         if (!empty($this->site_key)) {
             // 1 - retrieve appointments data
             $appointments = $this->getAppointments();
+            if (empty($appointments)) {
+                return false;
+            }
+
             $appointments_update = WPHelpers::getOption('appointments_update');
             // 2 - check if there are changes since last check
 
@@ -135,6 +139,7 @@ class DotCom extends API
 
         $result = $this->processResponse($response);
         if ($result) {
+            $appointment->sentToDotCom();
             return ['message' => 'Appointment created!'];
         } else {
             throw new \WappointmentException("Failed creating", 1);
@@ -182,6 +187,7 @@ class DotCom extends API
                 'starts_at' => $appointment->start_at->timestamp,
                 'appointment_id' => $appointment->id,
                 'duration' => $appointment->getDurationInSec(),
+                'location' => $appointment->type == 0 ? $appointment->getServiceAddress() : $appointment->getLocation(),
                 'timezone' => Settings::getStaff('timezone', $appointment->staff_id),
                 'emails' => [
                     $appointment->client->email

@@ -89,6 +89,10 @@ class Main extends AbstractRoutes
                 ],
             ],
             'POST' => [
+                '/events/record' => [
+                    'method' => 'recordDotcom',
+                    'controller' => 'EventsController'
+                ],
                 '/send_feedback' => [
                     'method' => 'sendFeedback',
                     'controller' => 'AppController',

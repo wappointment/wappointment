@@ -3,7 +3,7 @@
     <h1>Wappointment can't work properly</h1>
     <p>An issue occured while loading the page.</p>
 
-    <Notifications :messages="errorDetails" title="A conflict with a plugin occured"></Notifications>
+    <Notifications :messages="errorDetails" title="Error loading that screen"></Notifications>
   </div>
 </template>
 

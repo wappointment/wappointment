@@ -29,7 +29,7 @@ class Appointment
 
     public static function confirm($id)
     {
-        $appointment = AppointmentModel::where('id', $id)
+        $oldAppointment = $appointment = AppointmentModel::where('id', $id)
             ->where('status', AppointmentModel::STATUS_AWAITING_CONFIRMATION)->first();
         if (empty($appointment)) {
             throw new \WappointmentException("Can't find appointment", 1);
@@ -38,7 +38,7 @@ class Appointment
             if ($result) {
                 Events::dispatch(
                     'AppointmentConfirmedEvent',
-                    ['appointment' => $appointment, 'client' => Client::find($appointment->client_id)]
+                    ['appointment' => $appointment, 'client' => Client::find($appointment->client_id), 'oldAppointment' => $oldAppointment]
                 );
             }
             return $result;

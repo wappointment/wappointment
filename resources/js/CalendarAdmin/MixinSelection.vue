@@ -126,6 +126,11 @@ export default {
         }
       },
 
+      goToZoom(event){
+        let adres = window.jQuery(event.currentTarget).attr('data-href')
+        window.open( 
+              adres, "_blank"); 
+      },
       viewAppointment(event){
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
         let appointment = this.findAppointmentById(eventId)
@@ -134,6 +139,15 @@ export default {
             title:'Appointment details',
             content: this.getAppointmentInfoHTML(appointment)
         })
+      },
+
+      recordDotcom(event){
+        let eventId = window.jQuery(event.currentTarget).attr('data-id')
+        this.request(this.recordDotcomRequest, eventId, undefined,false,  this.refreshEvents)
+      },
+
+      async recordDotcomRequest(eventId) {
+          return await this.serviceEvent.call('recordDotcom', {id: eventId})
       },
 
       confirmAppointment(event){

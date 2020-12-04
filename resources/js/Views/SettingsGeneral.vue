@@ -402,12 +402,10 @@ export default {
     position: relative;
 }
 .slot {
-    background-color: #fff;
     padding: .6em;
     border-radius: .3rem;
     text-transform: capitalize;
     margin: .2em;
-    border:1px solid #ccc;
 }
 .btn-lg.btn-block{
   font-weight: bold;

@@ -84,6 +84,11 @@ class Service implements ServiceInterface
         return apply_filters('wappointment_get_services', [static::get()]);
     }
 
+    public static function hasZoom($service)
+    {
+        return in_array('zoom', $service['type']);
+    }
+
     private static function createdService($types)
     {
         foreach (Reminder::getSeeds($types) as $reminder) {

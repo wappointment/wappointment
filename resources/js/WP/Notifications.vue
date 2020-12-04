@@ -4,7 +4,8 @@
             <div class="countdown"></div>
             <div class="content">
                 <div class="h3" v-if="title">{{ title }}</div>
-                <ul class="list-message">
+                <a v-if="!showDetails" href="javascript:;" @click="showDetails=true">Show details</a>
+                <ul class="list-message" v-else>
                   <li v-for="message in messages">{{ message }}</li>
                 </ul>
                 <div v-if="isError">
@@ -39,7 +40,12 @@ export default {
       isError(){
         return this.type == 'error'
       }
-    }
+    },
+    data() {
+      return {
+          showDetails: false,
+      } 
+  },
 }
 </script>
 <style>
