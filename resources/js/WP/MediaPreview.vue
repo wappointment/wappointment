@@ -68,7 +68,7 @@ export default {
 </script>
 <style>
 .selected {
-    border: 1px solid #b8b8f5;
+    border: 2px solid var(--primary);
 }
 </style>
 

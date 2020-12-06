@@ -115,7 +115,7 @@ class TagsReplacement
             [
                 'model' => 'appointment',
                 'key' => 'linkView',
-                'label' => 'Link to view the appointment details (Zoom room etc ...)',
+                'label' => 'Link to view the appointment details (Meeting room url etc ...)',
                 'getMethod' => 'getLinkViewEvent'
             ],
 

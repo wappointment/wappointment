@@ -25,6 +25,7 @@ class Service implements ServiceInterface
             'address' => 'required_if_has:type,physical',
             'options' => '',
             'options.countries' => 'required_if_has:type,phone|array',
+            'options.video' => 'required_if_has:type,zoom',
         ];
         $validationRules = apply_filters('wappointment_service_validation_rules', $validationRules);
         $validation = $validator->make($serviceData, $validationRules);

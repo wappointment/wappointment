@@ -91,10 +91,19 @@ class Appointment extends Model
                 $location = 'By Skype';
                 break;
             case self::TYPE_ZOOM:
-                $location = 'Zoom meeting';
+                $location = 'Video meeting';
                 break;
         }
         return apply_filters('wappointment_service_location', $location, $this);
+    }
+
+    public function getLocationVideo()
+    {
+        return $this->type == self::TYPE_ZOOM ? $this->getServiceVideo() : false;
+    }
+    public function getServiceVideo()
+    {
+        return $this->getService()->getVideo();
     }
 
     public function getLocationLabelAttribute()

@@ -134,12 +134,12 @@
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockzoom.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockzoom')"
-                  >For Zoom appointments</a>
+                  >For Video meetings appointments</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockphysical.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockphysical')"
-                  >For appointments at a Location</a>
+                  >For appointments at an address</a>
                 </div>
               </div>
             </div>

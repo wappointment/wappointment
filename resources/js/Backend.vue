@@ -67,6 +67,19 @@ export default {
 @import '../css/bootstrap.css';
 </style>
 <style>
+.btn.btn-secondary.btn-cell{
+    position :relative;
+    padding:1.4rem;
+}
+.btn.btn-secondary.btn-cell.selected{
+    border: 2px solid var(--primary);
+}
+
+.btn-secondary.btn-cell .dashicons{
+    position :absolute;
+    top:5px;
+    right:5px;
+}
 #wpcontent{
   padding-left: 0;
 }

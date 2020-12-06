@@ -123,9 +123,21 @@ export default {
         return appointment.extendedProps.options.providers !== undefined && appointment.extendedProps.options.providers.zoom !== undefined
       },
 
+      appointmentHasGoogleUrl(eventId){
+        let appointment = this.findAppointmentById(eventId)
+        return appointment.extendedProps.options.providers !== undefined 
+        && appointment.extendedProps.options.providers.google !== undefined 
+        && appointment.extendedProps.options.providers.google.google_meet_url !== undefined 
+      },
+
       getZoomMeetingUrl(eventId){
         let appointment = this.findAppointmentById(eventId)
         return appointment.extendedProps.options.providers.zoom.join_url
+      },
+
+      getGoogleMeetingUrl(eventId){
+        let appointment = this.findAppointmentById(eventId)
+        return appointment.extendedProps.options.providers.google.google_meet_url
       },
 
       attachEvent(el) {
@@ -162,7 +174,15 @@ export default {
             innerhtml += '<div class="d-flex justify-content-center align-items-center mx-4 ctrlbar">'
             let services = [undefined, false].indexOf(this.viewData.is_dotcom_connected) !== -1 ? []:this.viewData.is_dotcom_connected.services
             if(!el.hasClass('past-event') && this.hasDotcomButnoProvider(el.attr('data-id'))) innerhtml += '<button class="btn btn-xs btn-light recordDotcom" data-tt="Send details for '+services.join(', ')+'" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-cloud-upload"></span></button>'
-            if(!el.hasClass('past-event') && this.hasDotcom()  && this.appointmentIsZoom(el.attr('data-id')) && this.appointmentHasZoomUrl(el.attr('data-id'))) innerhtml += '<div  data-href="'+this.getZoomMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Zoom meeting" ><img src="'+window.apiWappointment.resourcesUrl+'images/zoom.png'+'" /></div>'
+            if(!el.hasClass('past-event') && this.hasDotcom()  && this.appointmentIsZoom(el.attr('data-id')) ){
+              if(this.appointmentHasZoomUrl(el.attr('data-id'))){
+                innerhtml += '<div  data-href="'+this.getZoomMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Zoom meeting" ><img src="'+window.apiWappointment.resourcesUrl+'images/zoom.png'+'" /></div>'
+              }
+              if(this.appointmentHasGoogleUrl(el.attr('data-id'))){
+                innerhtml += '<div  data-href="'+this.getGoogleMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Google meeting" ><img src="'+window.apiWappointment.resourcesUrl+'images/googlemeet.png'+'" /></div>'
+              }
+              
+            } 
             if(this.isAppointmentConfirmed(el.attr('data-rendering'))) innerhtml += '<button data-tt="View appointment details" class="btn btn-xs btn-light viewElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-visibility"></span></button>'
             if(this.isAppointmentPending(el.attr('data-rendering'))) innerhtml += '<button data-tt="Confirm appointment" class="btn btn-xs btn-light confirmElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-yes"></span></button>'
             

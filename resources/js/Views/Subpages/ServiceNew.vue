@@ -25,7 +25,8 @@ export default {
             address: '',
             options: {
               countries: [],
-              phone_required: false
+              phone_required: false,
+              video: ''
             }
           },
           errors:{},
@@ -66,10 +67,26 @@ export default {
                 model: 'type',
                 cast: Array,
                 images: [
-                  { value:'physical', name:'At a location', icon: 'map-marked-alt'},
-                  { value:'zoom', name:'Zoom meeting', icon: ['fas', 'video']},
+                  { value:'zoom', name:'Video meeting', subname:'(Zoom, Google meet, ...)', icon: ['fas', 'video']},
+                  { value:'physical', name:'At an address', icon: 'map-marked-alt'},
                   { value:'phone', name:'By Phone', icon: 'phone'},
                   { value:'skype', name:'By Skype', icon: ['fab', 'skype']}
+                ],
+                validation: ['required']
+            },
+
+            {
+                type: 'checkimages',
+                label: 'Service used for video meeting',
+                radioMode: true,
+                model: 'options.video',
+                cast: Array,
+                images: [
+                  { value:'zoom', name:'Zoom', icon: window.apiWappointment.resourcesUrl+'images/zoom.png', icontype: 'img'},
+                  { value:'googlemeet', name:'Google Meet', icon: window.apiWappointment.resourcesUrl+'images/googlemeet.png', icontype: 'img'},
+                ],
+                conditions: [
+                  { model:'type', values: ['zoom'] }
                 ],
                 validation: ['required']
             },
@@ -85,7 +102,7 @@ export default {
             },
              {
                 type: 'checkbox',
-                label: "Require client's phone",
+                label: "Clients must provide a phone number",
                 model: 'options.phone_required',
                 cast: Boolean,
             },

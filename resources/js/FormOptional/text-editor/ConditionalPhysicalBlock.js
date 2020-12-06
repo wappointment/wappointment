@@ -11,6 +11,6 @@ export default class ConditionalPhysicalBlockNode extends ConditionalBlockNode {
 	}
 
 	get tooltip() {
-		return 'Show only for appointment at a location'
+		return 'Show only for appointment at an address'
 	}
 }

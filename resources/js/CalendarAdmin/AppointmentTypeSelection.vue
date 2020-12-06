@@ -1,19 +1,24 @@
 <template>
     <div class="d-flex mb-4" v-if="serviceHasTypes">
-        <div v-if="allowedType('physical')" @click="selectType('physical')" class="btn btn-secondary btn-cell" role="button" :class="{selected: physicalSelected}">
-            <FaIcon icon="map-marked-alt" size="md"/>
-            <div>At a location</div>
-        </div>
         <div v-if="allowedType('zoom')" @click="selectType('zoom')" class="btn btn-secondary btn-cell" role="button" :class="{selected: zoomSelected}">
-            <FaIcon icon="video" size="md"/>
-            <div>Zoom meeting</div>
+            <span class="dashicons" :class="[zoomSelected ? 'dashicons-yes-alt text-primary':'dashicons-marker']"></span>
+            <FaIcon icon="video" size="lg"/>
+            <div>Video meeting</div>
+            <div class="small">(Zoom, Google meet, ...)</div>
+        </div>
+        <div v-if="allowedType('physical')" @click="selectType('physical')" class="btn btn-secondary btn-cell" role="button" :class="{selected: physicalSelected}">
+            <span class="dashicons" :class="[physicalSelected ? 'dashicons-yes-alt text-primary':'dashicons-marker']"></span>
+            <FaIcon icon="map-marked-alt" size="lg"/>
+            <div>At an address</div>
         </div>
         <div v-if="allowedType('phone')" @click="selectType('phone')" class="btn btn-secondary btn-cell" role="button" :class="{selected: phoneSelected}">
-            <FaIcon icon="phone" size="md"/>
+            <span class="dashicons" :class="[phoneSelected ? 'dashicons-yes-alt text-primary':'dashicons-marker']"></span>
+            <FaIcon icon="phone" size="lg"/>
             <div>By phone</div>
         </div>
         <div v-if="allowedType('skype')" @click="selectType('skype')" class="btn btn-secondary btn-cell" role="button" :class="{selected: skypeSelected}">
-            <FaIcon :icon="['fab', 'skype']" size="md"/>
+            <span class="dashicons" :class="[skypeSelected ? 'dashicons-yes-alt text-primary':'dashicons-marker']"></span>
+            <FaIcon :icon="['fab', 'skype']" size="lg"/>
             <div>By skype</div>
         </div>
     </div>

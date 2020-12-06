@@ -71,7 +71,7 @@ class WidgetSettings
         'form' => [
             'byskype' => 'By Skype',
             'byphone' => 'By Phone',
-            'byzoom' => 'Zoom meeting',
+            'byzoom' => 'Video meeting',
             'inperson' => 'At a Location',
             'fullname' => 'Full Name:',
             'email' => 'E-mail:',
@@ -91,7 +91,7 @@ class WidgetSettings
             'duration' => 'Duration:',
             'pending' => 'The appointment is pending and should be quickly confirmed',
             'skype' => 'The appointment will take place on Skype, we will call you on this account:',
-            'zoom' => 'The appointment will take place on Zoom, [meeting_link]get the meeting room[/meeting_link].',
+            'zoom' => 'The appointment will take place by Video meeting online, [meeting_link]get the meeting room[/meeting_link].',
             'phone' => 'The appointment will take place over the phone, we will call you on this number:',
             'physical' => 'The appointment will take place at this address:',
             'savetocal' => 'Save it to your calendar'

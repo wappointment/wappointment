@@ -69,7 +69,7 @@ class DotCom extends API
 
     public function getAppointments()
     {
-        $response = $this->client->request('GET', $this->call('/api/appointment/list/' . $this->site_key));
+        $response = $this->client->request('GET', $this->call('/api/appointment/list/' . $this->site_key), ['connect_timeout' => 5]);
         return $this->processResponse($response);
     }
 
@@ -184,6 +184,7 @@ class DotCom extends API
             'appointment' => [
                 'title' => $appointment->getTitle(),
                 'type' => $appointment->type,
+                'video' => $appointment->getLocationVideo(),
                 'starts_at' => $appointment->start_at->timestamp,
                 'appointment_id' => $appointment->id,
                 'duration' => $appointment->getDurationInSec(),

@@ -4,15 +4,18 @@
             {{ label}}
         </label>
         <div class="d-flex">
-            <div v-for="(item, idx) in images" :key="idx" @click="onChanged(item)"  
+            <div v-for="(item, idx) in images" :key="idx" @click="onChanged(item)"  role="button"
             class="btn btn-secondary btn-cell d-flex align-items-center" :class="getClassesImage(item)" :data-tt="item.sub">
+                <span class="dashicons" :class="[isItemChecked(item) ? 'dashicons-yes-alt text-primary':'dashicons-marker']"></span>
                 <div>
                     <div v-if="item.icon !== undefined">
                         <WapImage v-if="item.icontype===undefined" :faIcon="item.icon" size="md" />
                         <span v-if="item.icontype=='wp'" :class="'dashicons ' + getWPicon(item)"></span>
+                        <img v-if="item.icontype=='img'" :src="item.icon" />
                     </div>
                     
                     <div>{{ item.name }}</div>
+                    <div class="small" v-if="item.subname !== undefined">{{ item.subname }}</div>
                 </div>
             </div>
         </div>
@@ -120,5 +123,13 @@ export default {
 <style>
 .btn-secondary.is-invalid {
     border-color: #ed7575 !important;
+}
+.btn-secondary.btn-cell img{
+    filter: grayscale(1);
+}
+
+.btn-secondary.btn-cell.selected img,
+.btn-secondary.btn-cell:hover img{
+    filter: grayscale(0);
 }
 </style>

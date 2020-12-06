@@ -32,6 +32,11 @@ class Service
         return $this->type;
     }
 
+    public function getVideo()
+    {
+        return !empty($this->options['video']) ? $this->options['video'] : false;
+    }
+
     public function hasManyTypes()
     {
         return count($this->type) > 1;

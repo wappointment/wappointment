@@ -11,7 +11,7 @@
                     <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
                     <div><strong class="date-start">{{ startDatei18n }}</strong> {{timeLeft}}</div>
                     <div v-if="zoomSelected && isViewEventPage">
-                        <a v-if="zoomMeetingRoom" :href="zoomMeetingRoom" class="wbtn wbtn-primary wbtn-lg">{{ options.view.join }}</a>
+                        <a v-if="hasMeetingRoom" :href="hasMeetingRoom" class="wbtn wbtn-primary wbtn-lg">{{ options.view.join }}</a>
                         <div v-else>
                             <button class="wbtn wbtn-primary wbtn-lg disabled" disabled>{{ options.view.join }}</button>
                             <div class="small">{{ options.view.missing_url }} <a href="javascript:;" @click="refreshAppointment">{{ options.view.refresh }}</a></div>
@@ -228,8 +228,23 @@ export default {
         
     },
     computed: {
+        hasMeetingRoom(){
+            if(this.zoomMeetingRoom){
+                return this.zoomMeetingRoom
+            }
+            if(this.googleMeetingRoom){
+                return this.googleMeetingRoom
+            }
+        },
         zoomMeetingRoom(){
-            return this.appointment.options['providers'] !== undefined && this.appointment.options['providers']['zoom'] !== undefined && this.appointment.options['providers']['zoom']['join_url'] !== undefined ? this.appointment.options['providers']['zoom']['join_url']: false
+            return this.appointment.options['providers'] !== undefined 
+            && this.appointment.options['providers']['zoom'] !== undefined 
+            && this.appointment.options['providers']['zoom']['join_url'] !== undefined ? this.appointment.options['providers']['zoom']['join_url']: false
+        },
+        googleMeetingRoom(){
+            return this.appointment.options['providers'] !== undefined 
+            && this.appointment.options['providers']['google'] !== undefined 
+            && this.appointment.options['providers']['google']['google_meet_url'] !== undefined ? this.appointment.options['providers']['google']['google_meet_url']: false
         },
         startDatei18n(){
             return this.appointment.converted !== undefined ? this.appointment.converted :this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
