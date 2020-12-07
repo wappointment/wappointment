@@ -2,9 +2,12 @@
 
 namespace Wappointment\Routes;
 
+use Wappointment\Services\Settings;
+
 abstract class AbstractRoutes
 {
     protected $routes = [];
+    protected $disabled_modern_api_verbs = true;
 
     public function __construct()
     {
@@ -25,7 +28,6 @@ abstract class AbstractRoutes
 
     public function restApiInit()
     {
-
         foreach ($this->prepareRoutes() as $access => $actions) {
             foreach ($actions as $http_method => $route_controller_action) {
                 foreach ($route_controller_action as $route => $controller_method_args) {
@@ -69,7 +71,7 @@ abstract class AbstractRoutes
                                 $resourceObject['ns'] = $routeObject['ns'];
                             }
                             foreach ($resourceObject['methods'] as $resourceMethod) {
-                                $all_routes[$access][strtoupper($resourceMethod)][$uri_portion] = [
+                                $all_routes[$access][$this->getHTTP($resourceMethod)][$this->getURIPortion($resourceMethod, $uri_portion)] = [
                                     'ns' => $resourceObject['ns'],
                                     'controller' => $resourceObject['controller'],
                                     'method' => strtoupper($resourceMethod) == 'POST' ? 'save' : $resourceMethod,
@@ -81,13 +83,42 @@ abstract class AbstractRoutes
                             if (empty($resourceObject['ns'])) {
                                 $resourceObject['ns'] = $routeObject['ns'];
                             }
-                            $all_routes[$access][$method][$uri_portion] = $resourceObject;
+                            $all_routes[$access][$this->getHTTP($method)][$this->getURIPortion($method, $uri_portion)] = $resourceObject;
                         }
                     }
                 }
             }
         }
+
         return $all_routes;
+    }
+
+
+    public function replaceModernVerb($method)
+    {
+
+        if ($this->disabled_modern_api_verbs) {
+            $replace_by_post = ['DELETE', 'PUT', 'PATCH'];
+            if (in_array(strtoupper($method), $replace_by_post)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    public function getURIPortion($method, $uri)
+    {
+        if ($this->replaceModernVerb($method)) {
+            return $uri . '/' . strtolower($method);
+        }
+        return $uri;
+    }
+
+    public function getHTTP($method)
+    {
+        if ($this->replaceModernVerb($method)) {
+            return 'POST';
+        }
+        return strtoupper($method);
     }
 
     public function canExecutePublic($args)

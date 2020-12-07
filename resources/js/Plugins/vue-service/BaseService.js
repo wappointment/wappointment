@@ -30,7 +30,7 @@ class BaseService {
     }
 
     request(route, data, headers, method, timeout = 10000) {
-        
+
         let params = {
             method: method,
             baseURL: this.base ,
@@ -39,12 +39,26 @@ class BaseService {
             url: route,
             headers: Object.assign(this.headers, headers),
         }
+
+        if(window.apiWappointment.disabled_modern_api_verbs){
+            params = this.replaceModernVerbs(params)
+        }
+        
         //weird distinction from axios config between GET and other requests
         if(method.toUpperCase() == 'GET' || this.headers['Content-Type'] == 'application/x-www-form-urlencoded')  params['params'] = data
         else  params['data'] = data
         eventsBus.emits('beforeRequest')
         return axios(params)
           .then(result => this.success(result))
+    }
+
+    replaceModernVerbs(params){
+        //console.log('params.method',params.method)
+        if(['put','patch','delete'].indexOf(params.method) !== -1){
+            params.url += '/'+ params.method
+            params.method = 'post'
+        }
+        return params
     }
 
     success(result) {
