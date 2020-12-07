@@ -109,6 +109,10 @@
                 background-size: 30px 30px;
             }
 
+            .fc-event.past-event {
+                background-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, 1) }} !important;
+            }
+
             .fc-bgevent.opening{
                 opacity: 1;
                 border: 2px dashed {{ hx_rgb(viewData.preferences.cal_avail_col, 1) }};
@@ -1000,14 +1004,10 @@ export default {
 }
 
   .fc-event.past-event {
-    background-color: #4b6c97 !important;
     cursor:default;
     background-image: none !important;
   }
-  .fc-event.past-event:hover {
-    background-color: #4b6c97 !important;
-  }
-
+ 
   .fc-bg .fc-day, .fc-unthemed td.fc-day.fc-today, .fc-bgevent.opening, .fc-time-grid .fc-event, .fc-event{
     border-radius: 1rem;
   }

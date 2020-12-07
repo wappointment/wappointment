@@ -74,11 +74,11 @@ class DateTime
         return $unkownTimezones[$unknownTZ];
     }
 
-    public static function timeZToUtc($time)
+    public static function timeZToUtc($time, $timezone = 'UTC')
     {
         $time = \str_replace('Z', '', $time);
 
-        return (new Carbon($time, 'UTC'));
+        return (new Carbon($time, $timezone));
     }
 
     public static function converTotUtc($time, $timezone)

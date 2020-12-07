@@ -60,6 +60,11 @@
 
             }
 
+            .fc-event.past-event {
+                background-color: {{ hx_rgb(cal_appoint_col, 1) }} !important;
+            }
+
+
             .fc-bgevent.opening{
                 border: 2px dashed {{ hx_rgb(cal_avail_col, 1) }}!important;
                 background-color:{{ hx_rgb(cal_avail_col, 1) }}!important;
