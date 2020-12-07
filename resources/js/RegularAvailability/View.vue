@@ -1,6 +1,6 @@
 <template>
     <div v-if="dataLoaded">
-        <div v-if="minimal === undefined">
+        <div v-if="minimal === false">
             <p class="h6 text-muted"><span class="bullet-wap">1</span> 
                 <span class="bullet-title" v-if="viewData.staffs.length > 1"> Set who provides the appointments </span>
                 <span class="bullet-title" v-else> Modify your picture </span>
@@ -22,11 +22,12 @@
         </div>
         
         <div v-if="hasRegav">
-            <p v-if="minimal === undefined" class="h6 text-muted">
+            <p v-if="minimal === false" class="h6 text-muted">
                 <span class="bullet-wap">3</span> 
                 <span class="bullet-title"> Set your standard weekly schedule</span>
             </p>
-            <RegularAvailability :initValue="viewData.regav" :viewData="viewData" 
+ 
+            <RegularAvailability :initValue="getRegav" :viewData="viewData" :minimal="minimal"
             @updatedDays="updatedRA"
             @changedABD="changedABD"></RegularAvailability>
         </div>
@@ -34,17 +35,23 @@
 </template>
 
 <script>
-import RegularAvailability from '../../Components/RegularAvailability'
-import StaffSelector from '../../Components/StaffSelector'
-import TimeZones from '../../Components/TimeZones'
-import abstractView from '../Abstract'
-import StaffPicture from '../../Components/StaffPicture'
-import RequestMaker from '../../Modules/RequestMaker'
+import RegularAvailability from './RegularAvailability'
+import StaffSelector from '../Components/StaffSelector'
+import TimeZones from '../Components/TimeZones'
+import abstractView from '../Views/Abstract'
+import StaffPicture from '../Components/StaffPicture'
+import RequestMaker from '../Modules/RequestMaker'
 
 export default {
   extends: abstractView,
   components: window.wappointmentExtends.filter('RegavComponents', {RegularAvailability,TimeZones,StaffSelector, StaffPicture},{'RequestMaker':RequestMaker} ), 
-  props:['noback', 'minimal'],
+  props:{
+      noback:{},
+      minimal:{
+          type: Boolean,
+          default: false
+      }
+  },
   data() {
       return {
           viewName: 'regav',
@@ -55,12 +62,32 @@ export default {
       hasRegav(){
           return (this.viewData !== null && this.viewData.regav !== undefined) ? true:false
       },
+      getRegav(){
+          let regav = Object.assign({},this.viewData.regav)
+          if(this.viewData.regav.precise === undefined){
+              regav = this.convertRegavToPrecise(regav)
+          }
+          return regav
+      }
   },
   methods: {
+    convertRegavToPrecise(regav){
+        for (const key in this.viewData.regav) {
+            if (this.viewData.regav.hasOwnProperty(key)) {
+                for (let i = 0; i < this.viewData.regav[key].length; i++) {
+                    const el = this.viewData.regav[key][i]
+                    regav[key][i] = [el[0]*60, el[1]*60] //converting hours to minutes
+                }
+                 
+            }
+        }
+        return regav
+    },
     changed(){
         this.refreshInitValue()
     },
     updatedRA(openeDays){
+        openeDays.precise = true
         this.settingStaffSave('regav', openeDays) 
     },
     changedABD(value){

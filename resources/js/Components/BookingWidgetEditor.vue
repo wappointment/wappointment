@@ -24,82 +24,125 @@
                 </div>
                 
                 <div class="widget-fields-wrapper" >
-                    <div class="d-flex">
-                        <div class="d-flex align-items-center mb-2">
-                            <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit"  @click="toggleColor">
-                                <span v-if="colorEdit"><FontAwesomeIcon :icon="['fas', 'edit']" size="lg"/> Edit Steps</span>
-                                <span v-else><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Color</span>
+                    <div >
+                        <div>
+                            <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit" :class="{'selected' : !colorEdit}"  @click="toggleColor">
+                                <span><FontAwesomeIcon :icon="['fas', 'edit']" size="lg" /> Edit Text</span>
                             </button>
-                            <div class="d-flex flex-wrap" v-if="!colorEdit"> 
-                                <button v-if="widgetFields.general !== undefined" class="btn btn-secondary btn-xs m-1 tt-below" 
+                            <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit" :class="{'selected' : colorEdit}" @click="toggleColor">
+                                <span><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Color</span>
+                            </button>
+                        </div>
+                        <div class="d-flex align-items-center my-2">
+                            <div class="d-flex flex-wrap align-items-center" v-if="!colorEdit"> 
+                                <button v-if="widgetFields.general !== undefined" class="btn btn-link btn-xs mr-1 tt-below" 
                                 :class="{'selected': (step == 'general')}" @click="setStep('general', 'General')" data-tt="General"> General</button>
-                                <button v-for="(stepObj,idx) in editionsSteps" class="btn btn-secondary btn-xs m-1 tt-below" 
-                                :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key, getLabelForStep(stepObj.key))" :data-tt="stepObj.label"> Step {{ idx + 1 }}</button>
+                                <span class="small text-muted mr-1">></span>
+                                <template v-for="(stepObj,idx) in editionsSteps">
+                                     <button class="btn btn-link btn-xs mr-1 tt-below" 
+                                    :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key, getLabelForStep(stepObj.key))" :data-tt="stepObj.label"> Step {{ idx + 1 }}</button>
+                                    <span v-if="idx !== editionsSteps.length-1" class="small text-muted mr-1">></span>
+                                </template>
+                               
                             </div>
                         </div>
-                        
                     </div>
-                    <div>
+                    <div class="bwe-settings-bar">
                         <transition name="slide-fade-top">
                             <div class="colors-fields" v-if="colorEdit" >
                                 <fieldset v-for="(groupData, group_key) in options.colors" v-if="isMain('colors', group_key) || showAdvancedColors">
                                     <legend>{{ getLabel('colors', group_key) }}</legend>
-                                    <template v-for="(inputvalue, input_key) in groupData">
-                                        <component  v-if="isComponentTypeActive(inputvalue,'colors',group_key, input_key, true)" :key="input_key"  
+                                    <div v-for="(inputvalue, input_key) in groupData" v-if="canShowField('colors',group_key, input_key)" :data-tt="getFieldTip('colors',group_key, input_key) ? getFieldTip('colors',group_key, input_key) : false" class="tt-below">
+                                        <component v-if="isComponentTypeActive(inputvalue,'colors',group_key, input_key, true)" :key="input_key"  
                                             :is="getComponentType(inputvalue,input_key)" 
                                             v-model="options.colors[group_key][input_key]" 
-                                            @change="changedInput"
+                                            
                                             eventChange="input"
                                             :label="getLabel('colors', group_key, input_key)" 
                                             :ph="defaultSettings.colors[group_key][input_key]"
                                             :options="getOptions('colors', group_key, input_key)" 
                                             allowReset></component>
-                                    </template>
+                                    </div>
                                 </fieldset>
                                 <a class="my-2 small" href="javascript:;" v-if="!showAdvancedColors" @click="showAdvancedColors=true">Edit more colors</a>
                             </div>
                         </transition>
                     </div>
-                    <div v-if="!colorEdit" >
+                    <div class="bwe-settings-bar" v-if="!colorEdit" >
                         <div v-for="(stepObj,idx) in reverseEditionsSteps" :key="stepObj.key">
                             <transition name="slide-fade-top"  >
                                 <div class="widget-fields" v-if="isCurrentStep(stepObj.key)" :data-step="'Step '+(4-idx)+': '+stepObj.label" 
                                 :class="{'active-fields': (step == stepObj.key)}">
-                                    <template v-for="(inputvalue, group_key) in options[stepObj.key]">
-                                        <component  v-if="isComponentTypeActive(inputvalue,stepObj.key,group_key, group_key)" :key="group_key"  
-                                        :is="getComponentType(inputvalue,group_key)" 
-                                        v-model="options[stepObj.key][group_key]" 
-                                        @change="changedInput"
-                                        eventChange="input"
-                                        :label="getLabel(stepObj.key, group_key)" 
-                                        :ph="defaultSettings[stepObj.key][group_key]"
-                                        :options="getOptions(stepObj.key, group_key)" 
-                                        allowReset></component>
-                                    </template>
+                                    <div v-if="widgetFields[stepObj.key] !== undefined && widgetFields[stepObj.key].categories !== undefined">
+                                        <div :class="{'selected-tab': showCategory ==  cat_object.label}" v-for="(cat_object, catid) in widgetFields[stepObj.key].categories">
+                                            <div :class="[showCategory ==  cat_object.label ? 'btn btn-light btn-sm':'btn btn-link btn-sm']"  role="button" @click="showCategory = cat_object.label">
+                                                {{cat_object.label}} <span v-if="showCategory !=  cat_object.label">[+]</span>
+                                            </div>
+                                            <div v-if="showCategory ==  cat_object.label" class="ml-3 mt-3">
+                                                <div v-for="(fieldDescription, field_key) in cat_object.fields" :data-tt="getFieldTip(stepObj.key, field_key, catid) ? getFieldTip(stepObj.key, field_key, catid) : false" v-if="canShowField(stepObj.key, field_key)" class="tt-below">
+                                                    {{ changedInput(stepObj.key, field_key, options[stepObj.key][field_key]) }}
+                                                    <component v-if="isComponentTypeActive(options[stepObj.key][field_key],stepObj.key, field_key, field_key)" :key="field_key"  
+                                                    :is="getComponentType(options[stepObj.key][field_key],field_key)" 
+                                                    v-model="options[stepObj.key][field_key]" 
+                                                    @input="(e) => changedInput(stepObj.key, field_key, e)"
+                                                    eventChange="input"
+                                                    :label="fieldDescription.label" 
+                                                    :ph="defaultSettings[stepObj.key][field_key]"
+                                                    :options="fieldDescription.options !== undefined ? fieldDescription.options:{}" 
+                                                    allowReset></component>
+                                                    <div v-if="[undefined,false].indexOf(tagRemoved[stepObj.key + '_' + field_key]) === -1" class="small text-danger">
+                                                    You should leave the tag(s) {{ getTags(defaultSettings[stepObj.key][field_key]).join(', ') }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div v-else>
+                                        <div v-for="(inputvalue, field_key) in options[stepObj.key]" :data-tt="getFieldTip(stepObj.key, field_key) ? getFieldTip(stepObj.key, field_key) : false" v-if="canShowField(stepObj.key, field_key)" class="tt-below">
+                                            {{ changedInput(stepObj.key, field_key, inputvalue) }}
+                                            <component  v-if="isComponentTypeActive(inputvalue,stepObj.key, field_key, field_key)" :key="field_key"  
+                                            :is="getComponentType(inputvalue,field_key)" 
+                                            v-model="options[stepObj.key][field_key]" 
+                                            @input="(e) => changedInput(stepObj.key, field_key, e)"
+                                            eventChange="input"
+                                            :label="getLabel(stepObj.key, field_key)" 
+                                            :ph="defaultSettings[stepObj.key][field_key]"
+                                            :options="getOptions(stepObj.key, field_key)" 
+                                            allowReset></component>
+                                            <div v-if="[undefined,false].indexOf(tagRemoved[stepObj.key + '_' + field_key]) === -1" class="small text-danger">
+                                            You should leave the tag(s) {{ getTags(defaultSettings[stepObj.key][field_key]).join(', ') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
                                 </div>
                             </transition>
                         </div>
                         <transition name="slide-fade-top"  >
-                                <div class="widget-fields" v-if="isCurrentStep('general')" data-step="General" 
-                                :class="{'active-fields': (step == 'general')}">
-                                    <template v-for="(inputvalue, group_key) in options['general']">
-                                        <component  v-if="isComponentTypeActive(inputvalue,'general',group_key, group_key)" :key="group_key"  
-                                        :is="getComponentType(inputvalue,group_key)" 
-                                        v-model="options['general'][group_key]" 
-                                        @change="changedInput"
-                                        eventChange="input"
-                                        :label="getLabel('general', group_key)" 
-                                        :ph="defaultSettings['general'][group_key]"
-                                        :options="getOptions('general', group_key)" 
-                                        allowReset></component>
-                                    </template>
+                            <div class="widget-fields" v-if="isCurrentStep('general')" data-step="General" 
+                            :class="{'active-fields': (step == 'general')}">
+                                <div v-for="(inputvalue, field_key) in options['general']" :data-tt="getFieldTip('general', field_key) ? getFieldTip('general', field_key) : false" v-if="canShowField('general', field_key)" class="tt-below">
+                                    {{ changedInput('general', field_key, inputvalue) }}
+                                    <component  v-if="isComponentTypeActive(inputvalue,'general',field_key, field_key)" :key="field_key"  
+                                    :is="getComponentType(inputvalue,field_key)" 
+                                    v-model="options['general'][field_key]" 
+                                    @input="(e) => changedInput('general', field_key, e)"
+                                    eventChange="input"
+                                    :label="getLabel('general', field_key)" 
+                                    :ph="defaultSettings['general'][field_key]"
+                                    :options="getOptions('general', field_key)" 
+                                    allowReset></component>
+                                    <div v-if="[undefined,false].indexOf(tagRemoved['general_' + field_key]) === -1" class="small text-danger">
+                                        You should leave the tag(s) {{ getTags(defaultSettings['general'][field_key]).join(', ') }}
+                                    </div>
                                 </div>
-                            </transition>
+                            </div>
+                        </transition>
 
                     </div>
                     
                 </div>
-                <ColorPicker small v-model="tbgcolor" label="Test Different Background Color"></ColorPicker>
+                <ColorPicker v-if="colorEdit" small v-model="tbgcolor" label="Test Different Background Color"></ColorPicker>
             </div>
         </div>
     </div>
@@ -143,6 +186,8 @@ export default {
         textEdit: true,
         canSave: false,
         labelActiveStep: '',
+        tagRemoved: {},
+        showCategory: '',
         editionsSteps: [
             {
                 key: 'button',
@@ -231,6 +276,25 @@ export default {
 
 
     methods: {
+        
+        tagHasBeenRemoved(defaultVal, currentValue){
+            if(typeof defaultVal == "string"){
+                let tags = this.getTags(defaultVal)
+                if(tags === false) {
+                    return tags 
+                }
+                for (let i = 0; i < tags.length; i++) { //check whetehr the tags are presents in the string
+                    if(currentValue.indexOf(tags[i]) === -1 ){
+                        return true // tag has been removed
+                    }
+                }
+            }
+            return false
+        },
+        getTags(defaultVal){
+            const found = defaultVal.match(/\[[^\]]*]/g)
+            return Array.isArray(found) ? found:false
+        },
         dataChanged(newValue){
             this.options.demoData.form = newValue
         },
@@ -263,26 +327,86 @@ export default {
         stepChanged(step){
             
             this.setStep(step, this.getLabelForStep(step))
+            
         },
         getLabelForStep(step){
             for (let i = 0; i < this.editionsSteps.length; i++) {
                 if(step == this.editionsSteps[i].key) return 'Step '+(i+1)+': '+this.editionsSteps[i].label
             }
         },
-        changedInput(a,b){
-            //console.log('changedInput',a,b)
+
+        changedInput(step, group, value){
+            let key = step+'_'+group
+            this.tagRemoved[key] = this.tagHasBeenRemoved(this.defaultSettings[step][group], this.options[step][group])
         },
-        getFieldAdminInfos(section, key){
-            return (this.widgetFields !== null && this.widgetFields[section]!== undefined && this.widgetFields[section][key] !== undefined) ? this.widgetFields[section][key]:false
+
+        getFieldAdminInfos(section, key, catid = false){
+            // console.log('getFieldsAdminsINfos', section, key, this.widgetFields[section])
+            if(section == 'colors'){
+                let data = (this.widgetFields !== null && this.widgetFields[section]!== undefined && this.widgetFields[section]!== undefined && this.widgetFields[section][key] !== undefined) ? this.widgetFields[section][key]:false
+                return data !== false  && data.fields !== undefined && data.fields[catid] !== undefined? data.fields[catid]:data
+            }
+            if(catid !== false){
+                return (this.widgetFields !== null && this.widgetFields[section].categories[catid]!== undefined && this.widgetFields[section].categories[catid].fields!== undefined && this.widgetFields[section].categories[catid].fields[key] !== undefined) ? this.widgetFields[section].categories[catid].fields[key]:false
+            }
+            return (this.widgetFields !== null && this.widgetFields[section]!== undefined && this.widgetFields[section].fields!== undefined && this.widgetFields[section].fields[key] !== undefined) ? this.widgetFields[section].fields[key]:false
+        },
+
+        getFieldTip(section, key, catid = false){
+            let fieldInfos = this.getFieldAdminInfos(section, key, catid)
+            // if(section == 'colors') {
+            //     console.log('getFieldTip',section, key,fieldInfos)
+            // }
+             
+            return fieldInfos.tip !== undefined ? fieldInfos.tip : ''
+        },
+
+        canShowField(section, key, field_key = false){
+            let fieldConditions = this.getConditions(section, key)
+            if(field_key!== false){
+                let fieldInfos = this.getFieldAdminInfos(section, key, field_key)
+
+                if(fieldInfos === false || (fieldInfos.fields !== undefined && fieldInfos.fields[field_key] === undefined)) {
+                    return false
+                }
+            }
+            if(fieldConditions !== false){
+                let canShowField = true
+                for (let i = 0; i < fieldConditions.length; i++) {
+                    let condition = fieldConditions[i]
+                    if(this.getValueOnDottedKey(condition.key) !== condition.val){
+                        return false //failed conditions
+                    }
+                }
+                return canShowField
+            }
+            return true
+        },
+        getValueOnDottedKey(dottedKey){
+            let keys = []
+            if(dottedKey.indexOf('.') !== -1){
+                keys = dottedKey.split('.')
+            }else{
+                keys = [dottedKey]
+            }
+            return this.getDeepValue(this.options, keys)
+        },
+        getDeepValue(deepObject, keys){
+            let key1 = keys.shift()
+            let newDeepOrValue = deepObject[key1] !== undefined ? deepObject[key1]:false
+            return keys.length > 0 ? this.getDeepValue(newDeepOrValue, keys): newDeepOrValue
+        },
+        getConditions(section, key){
+            let fieldInfos = this.getFieldAdminInfos(section, key)
+            return fieldInfos.conditions !== undefined ? fieldInfos.conditions : false
         },
         getLabel(section, key, subkey=false){
             let fieldInfos = this.getFieldAdminInfos(section,key)
             if(subkey!== false && this.hasFieldKey(fieldInfos, subkey)){
-                return  fieldInfos.fields[subkey].label !== undefined ? fieldInfos.fields[subkey].label:subkey
+                return fieldInfos.fields[subkey].label !== undefined ? fieldInfos.fields[subkey].label:subkey
             }else{
-                return  fieldInfos !== false ? fieldInfos.label:key
+                return fieldInfos !== false ? fieldInfos.label:key
             }
-            
         },
         isMain(section, key){
             let fieldInfos = this.getFieldAdminInfos(section,key)
@@ -305,23 +429,7 @@ export default {
         isCurrentStep(testingStep){
             return this.step == testingStep
         },
-        isThisOrPreviousStep(testingStep){
-            let thistep = this.step
-            let found = this.editionsSteps.findIndex(function(element, idx){
-                return element.key == thistep
-            })
 
-            let steps = [];
-            //found++;
-            for (let i = 0; i < this.editionsSteps.length; i++) {
-                if(i > found) continue
-                const element = this.editionsSteps[i]
-                steps.push(element.key)
-            }
-            //let steps = this.editionsSteps.slice(0,found)
-            //console.log('this and prev','testing '+testingStep, 'found '+found, steps, 'found current step '+this.step+' at position '+steps.indexOf(thistep))
-            return steps.indexOf(testingStep) !== -1
-        },
         isExtraSet(key) {
             return ['button', 'selection', 'form', 'confirmation'].indexOf(key) === -1
         },
@@ -366,10 +474,15 @@ export default {
         setStep(step, labelActiveStep){
             this.step = step
             this.labelActiveStep = labelActiveStep
+
+            if(this.widgetFields[step]!== undefined && this.widgetFields[step].categories !== undefined){
+                this.showCategory = this.widgetFields[step].categories[0].label
+            }
         },
 
         toggleColor(){
             this.colorEdit=!this.colorEdit
+            this.step = 'general'
         },
         toggleText(){
             this.textEdit=!this.textEdit
@@ -378,6 +491,12 @@ export default {
 }
 </script>
 <style>
+.selected-tab{
+    background-color: #ececec;
+    padding: 0 .8em .4em 0;
+    border-radius: .4em;
+    border: 1px solid #b8b8f5;
+}
 .booking-widget-editor{
     min-height: 300px;
 }
@@ -401,6 +520,18 @@ export default {
     display: none;
 }
 
+.booking-widget-editor [data-tt]{
+    z-index: auto;
+}
+.booking-widget-editor [data-tt]::before{
+    z-index: 1;
+}
+
+.booking-widget-editor .bwe-settings-bar{
+    max-height: 80vh;
+    overflow: scroll;
+}
+
 .preview-book > .hover[data-tt]::before, .preview-book > .hover[data-tt]::after{
     visibility: visible;
     opacity: 1;
@@ -409,7 +540,7 @@ export default {
 
 .widget-wraper{
     box-shadow: inset 0 0 5px #959090;
-    width: 400px;
+    width: 430px;
 }
 
 @media (min-width: 1410px) { 
@@ -430,6 +561,7 @@ export default {
 }
 .widget-fields-wrapper {
     overflow: hidden;
+    margin-bottom: .4rem;
 }
 .widget-fields{
     opacity:.6;
@@ -463,10 +595,12 @@ export default {
 .widget-fields.active-fields::before, .widget-fields:hover::before{
     display:none;
 }
-
+.widget-fields .tt-below{
+    margin-bottom: .6em;
+}
 
 .preview-book .wap-front{
-    min-width: 300px;
+    min-width: 360px;
     margin: 1rem;
 }
 

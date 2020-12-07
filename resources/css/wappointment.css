@@ -42,6 +42,74 @@
     animation-timing-function: ease-in-out;
 }  
 
+.wappo-modal-on{
+    overflow: hidden;
+}
+.wappo-field-row{
+    margin-top: .6rem;
+}
+
+.wappo-feed-buttons{
+    display: flex;
+    align-items: center;
+    margin-top: .6rem;
+}
+.wappo-feed-buttons .button{
+    margin-right : .4rem;
+}
+#wappo-feedback h2{
+    color: #5d6164;
+}
+#wappo-feedback-skip {
+    margin-right:.4rem;
+    color: #979797;
+}
+
+#wappo-feedback{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    right: 0;
+    z-index: 99999;
+    background-color: rgba(0,0,0,.4);
+    display:none;
+    overflow: scroll;
+}
+#wappo-feedback.show{
+    display:block;
+}
+
+#wappo-feedback-content{
+    display: block;
+    position: relative;
+    top: 30%;
+    width: 400px;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 2rem;
+    margin: 0 auto;
+}
+
+.wappo-loader.wap-hidden,
+.reason-details.wap-hidden{
+    display:none;
+}
+
+.wappo-loader {
+    border: 6px solid #f3f3f3; /* Light grey */
+    border-top: 6px solid #6664cb; /* Blue */
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin .8s ease-in-out infinite;
+    margin: 0 auto;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 
 @keyframes justactivated {
     0% {

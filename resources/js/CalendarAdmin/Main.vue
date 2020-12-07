@@ -7,9 +7,9 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
                 <h1 class="h2 align-self-center"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
-                <FreeSlotsSelector :totalSlots="totalSlots" :viewingFreeSlot="viewingFreeSlot" 
-                :durations="getAllDurations" :duration="selectedDuration" :buffer="this.viewData.buffer_time"
-                @resizeSlots="resizeSlots" @getFreeSlots="getFreeSlots" @getEdition="getEdition"/>
+                <FreeSlotsSelector :intervals="getThisWeekIntervals" :viewingFreeSlot="viewingFreeSlot" 
+                :durations="getAllDurations" :duration="selectedDuration" :buffer="viewData.buffer_time"
+                 @getFreeSlots="getFreeSlots" @getEdition="getEdition" />
               </div>
               <div class="d-flex">
                 <TimeZones v-if="viewData!==null" :timezones="viewData.timezones_list" :staffTimezone="viewData.timezone" classW="align-self-center pr-2" 
@@ -23,8 +23,12 @@
       <div class="full-width center-content calendar-wrap full-width-layout">
         <div class="wrap">
             
-            <div class="calendar-overflow" v-if="fullCalOption!==undefined">
-              <div id="calendar">
+            <div  v-if="fullCalOption!==undefined">
+              <div id="calendar" @mouseover="showCalSettings=true" @mouseout="showCalSettings = lockCalSettings === false ? false:true" >
+                <div v-if="showCalSettings">
+                    <CalendarSettings :durations="getAllDurations" :duration="selectedDuration" :preferences="viewData.preferences" :pminH="minHour" :pmaxH="maxHour"
+                    @expanded="lockCalSettings=true" @reduced="lockCalSettings=false" @save="savePreferences" />
+                </div>
                 <FullCalendarWrapper ref="calendar" @isReady="fcalReady" :config="fullCalOption" />
               </div>
             </div>
@@ -92,10 +96,37 @@
             </div>
       </div>
     </div>
+    <v-style v-if="viewData!== null">
+            .fc-event-container .fc-event, 
+            .fc-container .fc-event {
+                border-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, 1) }};
+                background-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, 1) }};
+            }
+            .fc-event-container .fc-event.appointment-pending, 
+            .fc-container .fc-event.appointment-pending {
+                background-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, .7) }};
+                background-image: linear-gradient(45deg, transparent 25%, #92aaca 25%, #92aaca 50%, transparent 50%, transparent 75%, #92aaca 75%, #92aaca 100%);
+                background-size: 30px 30px;
+            }
+
+            .fc-bgevent.opening{
+                opacity: 1;
+                border: 2px dashed {{ hx_rgb(viewData.preferences.cal_avail_col, 1) }};
+                background-color:{{ hx_rgb(viewData.preferences.cal_avail_col, 1) }};
+                z-index: 1;
+            }
+                .fc-bgevent.opening.extra {
+                background-color: {{ hx_rgb(viewData.preferences.cal_avail_col, .8) }};
+                border: 2px dashed {{ hx_rgb(viewData.preferences.cal_avail_col, .8) }};
+                opacity: 1;
+                z-index: 2;
+            }
+        
+        </v-style>
   </div>
 </template>
 <script>
-import Regav from '../Views/Subpages/Regav'
+import Regav from '../RegularAvailability/View'
 import abstractView from '../Views/Abstract'
 import TimeZones from '../Components/TimeZones'
 import ControlBar from './ControlBar'
@@ -109,6 +140,7 @@ import momenttz from '../appMoment'
 import WelcomeModal from './WelcomeModal'
 import AppointmentRender from './AppointmentRender'
 import FreeSlotsSelector from './FreeSlotsSelector'
+import CalendarSettings from './CalendarSettings'
 import MixinRender from './MixinRender'
 import MixinBeautify from './MixinBeautify'
 import MixinSelection from './MixinSelection'
@@ -118,9 +150,9 @@ import StatusService from '../Services/V1/Status'
 
 import Intervals from '../Standalone/intervals'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
-
+import Colors from '../Modules/Colors'
 let mixins_object = window.wappointmentExtends.filter('BackendCalendarMixins', {AppointmentRender, MixinRender, MixinBeautify, MixinSelection})
-let mixins_array = []
+let mixins_array = [Colors]
 for (const key in mixins_object) {
   if (mixins_object.hasOwnProperty(key)) {
     mixins_array.push(mixins_object[key])
@@ -137,7 +169,8 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
       StatusFreeConfirm,
       StatusBusyConfirm,
       FreeSlotsSelector,
-      WelcomeModal
+      WelcomeModal,
+      CalendarSettings
   })
 
   /**
@@ -182,8 +215,8 @@ export default {
     intervalsCollection: null,
     fullCalOption: undefined,
     openedDays: [],
-    minHour: 7,
-    maxHour: 19,
+    minHour: null,
+    maxHour: null,
     events: [],
     intervals: {
       hours: 0,
@@ -196,7 +229,9 @@ export default {
     serviceStatus: null,
     openconfirm: false,
     hasBeenSetCalProps: false,
-    queryParameters: undefined
+    queryParameters: undefined,
+    showCalSettings: false,
+    lockCalSettings: false
   }),
 
   created(){
@@ -265,7 +300,6 @@ export default {
 
     displayTimezone() {
       return (this.selectedTimezone !== undefined) ? this.selectedTimezone : this.timezone
-
     },
     shortStDayDisplay(){
       return this.startTime.format(this.shortDayFormat+' '+this.viewData.time_format)
@@ -283,8 +317,12 @@ export default {
       return this.formatTime(this.endTime)
     },
     
+    
  },
   methods: {
+    getPref(pref = 'cal_duration', defaultVal= ''){
+      return [undefined,false, null,''].indexOf(this.viewData.preferences[pref]) === -1 ? this.viewData.preferences[pref]: defaultVal
+    },
     checkQueryParams(){
       if(window.savedQueries!== undefined ) {
         this.queryParameters = window.savedQueries
@@ -297,11 +335,37 @@ export default {
     resizeSlots(duration){
       this.setInterval(duration)
 
+      this.reloadAfterChange()
+    },
+    reloadAfterChange(){
       this.fullCalOption = undefined
       setTimeout(this.setFullCalOptions.bind(null, this.firstDay.format()), 100);
-
+    },
+    savePreferences(preferences){
+      this.minHour = preferences.minH
+      this.maxHour = preferences.maxH
+      this.viewData.preferences = preferences
+      this.resizeSlots(preferences.interval)
     },
 
+    async getEventsRequest(params) {
+        let p = {
+          start: params.start.format(), 
+          end: params.end.format(), 
+          timezone:params.timezone, 
+          view: this.currentView, 
+        }
+        if(this.viewingFreeSlot){
+          p.viewingFreeSlot = true
+        }
+          return await this.serviceEvent.call('get', p, {
+            'cal-maxH': this.maxHour,
+            'cal-minH': this.minHour,
+            'cal-duration': this.selectedDuration,
+            'cal-appoint-col': this.viewData.preferences.cal_appoint_col,
+            'cal-avail-col': this.viewData.preferences.cal_avail_col,
+          })
+      },
     
     fcalReady(){
       this.fcIsReady=true
@@ -393,9 +457,10 @@ export default {
             this.timezone = initTimezone // staff timezone
             this.selectedTimezone = initTimezone // display timezone
             this.showWelcomePopup = this.viewData.showWelcome
-            let duration_temp = [undefined,false].indexOf(this.viewData.cal_duration) === -1 ? this.viewData.cal_duration:this.viewData.durations[0]
-
-            this.setInterval(duration_temp)
+            
+            this.setInterval(this.getPref('cal_duration', this.viewData.durations[0]))
+            this.minHour = this.getPref('cal_minH', 7)
+            this.maxHour = this.getPref('cal_maxH', 19)
           }
           
           let defaultDate = false
@@ -598,14 +663,6 @@ export default {
         }
       },
 
-      async getEventsRequest(params) {
-        let p = {start: params.start.format(), end: params.end.format(), timezone:params.timezone, view: this.currentView, slotDuration: this.selectedDuration}
-        if(this.viewingFreeSlot){
-          p.viewingFreeSlot = true
-        }
-          return await this.serviceEvent.call('get', p)
-      },
-      
       isLoading(isLoading){
         this.observeNowIndicator()
       },
@@ -793,12 +850,7 @@ export default {
     opacity: .8 !important;
   }
 
-  .fc-bgevent.opening{
-    opacity: 1;
-    border: 2px dashed #f2f2f2;
-    background-color:rgb(242, 242, 242);
-    z-index: 1;
-  }
+  
 
   .fc-bgevent.debugging{
     opacity: 1;
@@ -808,12 +860,7 @@ export default {
   }
 
 
-  .fc-bgevent.opening.extra {
-      background-color: rgb(242, 242, 242);
-      border: 2px dashed #dadada;
-      opacity: 1;
-      z-index: 2;
-  }
+
 
   .fc-bgevent.busy, .fc-bgevent.calendar {
       z-index: 4;
@@ -934,11 +981,12 @@ export default {
     border-color: transparent;
   }
 
-  .fc-event-container .fc-event, 
-  .fc-container .fc-event {
-    background-color: #4b6c97;
-    border-color: #4b6c97;
-  }
+.fc-event-container.fc-mirror-container .fc-event{
+    background-color: rgba(172, 137, 196, 0.3) !important;
+    border-color: rgba(214, 179, 238, 0.3) !important;
+    font-size: 1.4rem;
+    text-align: center;
+}
 
 .fc-event-container.fc-mirror-container .fc-event{
     background-color: rgba(172, 137, 196, 0.3);
@@ -946,16 +994,10 @@ export default {
     font-size: 1.4rem;
     text-align: center;
 }
+
 .fc-event-container.fc-mirror-container .fc-event .fc-time{
     color:#776e6e;
 }
-
-  .fc-event-container .fc-event.appointment-pending, 
-  .fc-container .fc-event.appointment-pending {
-    background-color: #4b6c97;
-    background-image: linear-gradient(45deg, transparent 25%, #92aaca 25%, #92aaca 50%, transparent 50%, transparent 75%, #92aaca 75%, #92aaca 100%);
-    background-size: 30px 30px;
-  }
 
   .fc-event.past-event {
     background-color: #4b6c97 !important;
@@ -1108,8 +1150,9 @@ export default {
   }
   #calendar {
     min-width: 794px;
+    position: relative;
   }
-  
+
   .btn-default {
       background-color: #f3f3f3;
   }

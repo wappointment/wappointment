@@ -118,7 +118,7 @@
 import abstractView from './Abstract'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 import momenttz from '../appMoment'
-import Regav from './Subpages/Regav'
+import Regav from '../RegularAvailability/View'
 import Service from './Subpages/Service'
 import Widget from './Subpages/Widget'
 import EditCancelPage from './Subpages/EditCancelPage'
@@ -143,15 +143,11 @@ export default {
   props:['tablabel'],
   created(){
     this.mainCrumbLabel = this.tablabel
+    this.autoSelectSection()
   },
   data() {
     return {
       viewName: 'settingsgeneral',
-      showModal: false,
-      showRegav: false,
-      showService: false,
-      showWidget: false,
-      showEditPage: false,
       serviceBtnLabel: window.wappointmentExtends.filter('serviceBtnLabel', 'Service setup' ),
       isToggled: {
         date_format : false,
@@ -171,27 +167,28 @@ export default {
       ],
     };
   },
-  computed:{
-    getExtraClass(){
-      return this.showWidget ? 'biggerPop':''
-    },
-  },
+
   methods: {
+    autoSelectSection(){
+      switch (this.$route.name) {
+        case 'general_regav':
+          return this.goToRegav(false)
+        default:
+          break;
+      }
+    },
     savedPage(page_id){
       this.settingSave('booking_page', page_id)
       this.refreshInitValue()
     },
-    hideModal(){
-      this.showModal = false
-      this.showRegav = false
-      this.showService = false
-      this.showWidget = false
-      this.showEditPage = false
+
+    goToRegav(click = true) {
+      this.setCrumb('Regav', 'Weekly Availaibility', 'goToRegav')
+      if(click){
+        this.$router.push({name: 'general_regav'})
+      }
     },
 
-    goToRegav() {
-      this.setCrumb('Regav', 'Weekly Availaibility', 'goToRegav')
-    },
     goToService() {
       this.setCrumb('Service', this.serviceBtnLabel, 'goToService')
     },

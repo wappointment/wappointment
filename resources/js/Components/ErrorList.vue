@@ -70,3 +70,9 @@ export default {
 }
 </script>
 
+<style>
+
+  .updated.error ol{
+    margin-top: 1rem;
+  }
+</style>

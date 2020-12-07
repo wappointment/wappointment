@@ -57,7 +57,7 @@ const Wizard2Page = () => import(/* webpackChunkName: "group-wizard" */ './Views
 const Wizard3Page = () => import(/* webpackChunkName: "group-wizard2" */ './Views/Subpages/Wizard3')
 const Wizard4Page = () => import(/* webpackChunkName: "group-wizard2" */ './Views/Subpages/Wizard4')
 
-const RegavPage = () => import(/* webpackChunkName: "group-regav" */ './Views/Subpages/Regav')
+const RegavPage = () => import(/* webpackChunkName: "group-regav" */ './RegularAvailability/View')
 const ServicePage = () => import(/* webpackChunkName: "group-service" */ './Views/Subpages/Service')
 
 const WappointmentErrorFileNotLoading = () => import(/* webpackChunkName: "wappo-error" */ './Views/WappointmentErrorFileNotLoading')
@@ -128,11 +128,6 @@ const router = window.wappointmentrouter = new VueRouter({
           component: WizardPage,
           children: [
             {
-              path: 'regav',
-              name: 'regav',
-              component: RegavPage
-            },
-            {
                 path: 'service',
                 name: 'servicepage',
                 component: ServicePage
@@ -140,6 +135,11 @@ const router = window.wappointmentrouter = new VueRouter({
             {
                 path: 'general',
                 name: 'general',
+                component: SettingsPage
+            },
+            {
+                path: 'general_regav',
+                name: 'general_regav',
                 component: SettingsPage
             },
             {

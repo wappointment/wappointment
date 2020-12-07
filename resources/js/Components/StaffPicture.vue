@@ -11,11 +11,15 @@
             <span class="close close-gallery" @click="close"></span>
             <div class="d-flex justify-content-around">
                 <button class="staff-av btn btn-secondary" @click="revertToGravatar" :class="[isGravatar?'selected':'']">
-                    <img :src="gravatar" class="img-fluid" width="40">
+                    <span role="img"  class="wstaff-img"
+                        :style="'background-image: url("'+gravatar+'");'"
+                    ></span>
                     Default Gravatar
                 </button>
                 <button class="staff-av btn btn-secondary" @click="openGallery" :class="[!isGravatar?'selected':'']">
-                    <img v-if="!isGravatar" :src="src" class="img-fluid" width="40"> 
+                    <span v-if="!isGravatar" role="img"  class="wstaff-img"
+                        :style="'background-image: url("'+src+'");'"
+                    ></span>
                      Browse Media gallery
                 </button>
             </div>
@@ -93,10 +97,6 @@ export default {
     .staff-av {
         cursor: pointer;
     }
-    .picture-edit .staff-av img {
-        border-radius: .6rem;
-        margin-right: 1rem;
-    }
     .avatar-selection{
         position: absolute;
         background-color: #fff;
@@ -141,4 +141,12 @@ export default {
     .avatar-edit:hover span{
         display: block;
     }
+    .wstaff-img{
+        width: 46px;
+        height: 46px;
+        border-radius: 50%;
+        background-size: cover;
+        margin-right: 1rem;
+    }
+
 </style>

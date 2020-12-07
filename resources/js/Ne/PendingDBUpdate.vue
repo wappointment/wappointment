@@ -2,7 +2,6 @@
   <div >
       <WPNotice>
           <p>There are pending database updates : <button class="btn btn-primary btn-sm" @click="runMigrate">Run updates</button></p>
-          <p><small class="text-muted">It's always a good idea to create a database backup before running an update.</small></p>
       </WPNotice>
   </div>
 </template>

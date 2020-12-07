@@ -124,11 +124,7 @@ export default {
     font-size: 1.6em;
     line-height: 1.2em;
 }
-.align-items-center {
-    -webkit-box-align: center !important;
-    -ms-flex-align: center !important;
-    align-items: center !important;
-}
+
 .mb-2, .my-2 {
     margin-bottom: .5em !important;
 }

@@ -89,6 +89,10 @@ class Main extends AbstractRoutes
                 ],
             ],
             'POST' => [
+                '/send_feedback' => [
+                    'method' => 'sendFeedback',
+                    'controller' => 'AppController',
+                ],
                 '/app/migrate' => [
                     'method' => 'migrate',
                     'controller' => 'AppController',
@@ -172,6 +176,10 @@ class Main extends AbstractRoutes
                 ],
                 '/client' => [
                     'method' => 'save',
+                    'controller' => 'ClientController'
+                ],
+                '/client/delete' => [
+                    'method' => 'delete',
                     'controller' => 'ClientController'
                 ],
             ],

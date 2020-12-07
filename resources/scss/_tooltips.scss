@@ -61,6 +61,29 @@
   transform: rotate(180deg);
 }
 
+.tt-left[data-tt]:before {
+  left: -195%;
+  bottom: 0;
+}
+
+.tt-left[data-tt]:after {
+  left: 3px;
+  transform: rotate(-90deg);
+  top: 50%;
+}
+
+.tt-right[data-tt]:before {
+  right: -195%;
+  bottom: 0;
+}
+
+.tt-right[data-tt]:after {
+  right: 3px;
+  transform: rotate(90deg);
+  top: 50%;
+}
+
+
 .tt-danger[data-tt]::before{
   background-color: rgba($danger, 1);
 }

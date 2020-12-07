@@ -1,23 +1,23 @@
-=== Appointments Bookings - Wappointment ===
+=== Wappointment - Booking Calendar & Appointment Scheduling  ===
 Contributors: wappointment, benheu
-Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar
+Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, booking form
 Requires at least: 4.7
 Tested up to: 5.5
 Requires PHP: 7.0
-Stable tag: 1.8.1
+Stable tag: 1.9.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Appointment bookings made easy for personal coaches, teachers, therapists and service professionals of all kind
+Appointment scheduling for personal coaches, teachers, therapists and service professionals of all kind
 
 == Description ==
 
-Client focused **appointment booking system**, for personal coaches, teachers, therapists and service professionals of all kind.
-Get booked 24/7 with a really **intuitive booking form**.
+**Appointment booking calendar**, for personal coaches, teachers, therapists and service professionals of all kind.
+Get booked 24/7 with the most **intuitive booking form**.
 
-Built for anyone providing time based services to clients.
+Convert visitors into potential clients with a simple call to action.
 
-Wappointment is free and will remain **free forever**.
+The perfect Calendly alternative made for WordPress, except that the data is yours.
 
 https://www.youtube.com/watch?v=jUkiyejbuzg
 
@@ -88,17 +88,13 @@ And for any question or doubt, you can reach us:
 
 == Frequently Asked Questions ==
 
-**Can I customize the look and feel of the booking form?**
+**Can I change text and colors of the booking form?**
 
-We provide a very simple editor in which you can change the texts, colors and few other parameters of each step of the booking process. We plan on adding several templates in the future, meanwhile simply use css to make it exactly the way you want.
-
-**Can I set the duration of my appointment?**
-
-Of course. You decide the duration of your appointments whether it's 5 minutes, 10 minutes, ..., 4 hours, 8hours long. It's all up to you.
+You can change all the texts, colors and few other parameters of each step of the booking process. We plan on adding several templates in the future, meanwhile simply use css to make it exactly the way you want.
 
 **Can I set time limits for cancelling and rescheduling appointments?**
 
-You decide when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
+You can configure when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
 
 **Can I sync multiple calendars besides of my Google calendar?**
 
@@ -108,21 +104,17 @@ Sure you can, we allow up to 4 calendars in the ics format to be synched from. I
 
 Every 5 minutes we download your calendar and check for changes, we don't do it more often as it could be a heavy task depending on how big is your calendar.
 
-**I need 10 minutes to prepare between 2 appointments, how do I proceed?**
-
-You can set buffer time for that particular case, you can define it in the *Wappointment > Settings > Advanced*. When someone books you, you will become unavailable during the time of the appointment + buffer time
-
 **Why do reminders go out late sometimes?**
 
 It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
 
-**Why clients can book me 2 months ahead only?**
-
-By default your schedule is opened for the next 60 days, but you can change that value in *Wappointment > Settings > General > Weekly Availability*. For performance reason we recommend keeping it as low as possible. Just figure which value is right for your activity, 90days, 120 days, etc ...
-
 **Why does nobody receive my confirmations or reminders emails?**
 
 Your emails most likely go straight to SPAM or don't event reach your inbox. *Change the email sending method* in *Wappointment > Settings > Confirmations & Reminders* just go for the easy and reliable solution, [create a free account at SendGrid (100emails/day are free)](https://signup.sendgrid.com/) and configure Wappointment with the *SendGrid API*
+
+**I need 10 minutes to prepare between 2 appointments, how do I proceed?**
+
+You can set buffer time for that particular case, you can define it in the *Wappointment > Settings > Advanced*. When someone books you, you will become unavailable during the time of the appointment + buffer time
 
 == Installation ==
 
@@ -145,6 +137,55 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 1.9.5 - 2020-11-23 =
+* Fixed corrupted version
+
+= 1.9.4 - 2020-11-23 =
+* Corrected Appointments not showing in Admin Calendar on some websites
+
+= 1.9.3 - 2020-11-21 =
+* Fixed DB tables install issue on foreign key client_id
+* added colors preference in Admin calendar
+* added client delete button
+* setting your weekly availability works on tablets now
+* usability improved in the booking widget editor
+* automatic cleanup of weekly availability invalid values
+
+= 1.9.2 - 2020-10-31 =
+* corrected default behaviour on mobile, full screen mobile is OFF if auto-open is ON
+* added shortcode "pop_off" parameters to turn off pop behaviour and to force it too "pop"
+* added exception on timezone detection for "AUS Eastern Standard Time"
+
+= 1.9.1 - 2020-10-27 =
+* corrected issue with update information
+
+= 1.9.0 - 2020-10-26 =
+* Added precision mode on Weekly Availability, you can now set your weekly schedule each 10min, 15min, 20min, 30min
+* Added display preferences in Admin Calendar View
+* Pref1: You can now set the starting time and end time showing on screen (e.g.: from 8am til 11pm)
+* Pref2: You can now set the size of the interval for selection
+* mobile booking form is now full screen always for better usability
+* Improved Iphone scheduling form
+* fixed styling issues in booking form distorter button or header compact mode with long service name
+* fixed unkown eastern standard time on calendar sync
+
+= 1.8.3 - 2020-10-09 =
+* fixed styling issues in booking form
+* fixed unavailable booking slots close to current time appearing when they shouldn't
+* fixed usability issues in Booking widget editor
+
+= 1.8.2 - 2020-10-05 =
+* fixed various styling issue in the booking form
+* fixed broken email preview for appointment reminders
+* fixed large calendar version not expanding fully
+* reduced size of calendar buttons days
+* corrected calendar refresh in booking form
+* fixed account switch bug re showing update page
+* corrected error when booking appointment really close to starting time "left greater than right"
+* set min width of floating booking form to 320px
+* fixed missing error message in booking form
+* added feedback script on deactivation 
 
 = 1.8.1 - 2020-09-25 =
 * Backward issue resolved

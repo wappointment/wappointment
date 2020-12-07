@@ -55,7 +55,7 @@ export default {
         this.isFocused = true
     },
     unfocused (e) {
-        setTimeout(this.delayUnfocused, 100);
+        setTimeout(this.delayUnfocused, 400);
     },
     delayUnfocused(){
           this.isFocused = false

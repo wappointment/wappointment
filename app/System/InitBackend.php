@@ -93,11 +93,11 @@ class InitBackend
             true
         );
 
+
         $varJs = ['wizardStep' => Status::wizardStep()];
         if (Status::wizardComplete()) {
             $varJs = array_merge($varJs, [
                 'updatePages' => Status::newUpdates(),
-                'helloIgnore' => Status::helloPage(),
                 'defaultEmail' => wp_get_current_user()->user_email,
                 'days' => Status::installedForXDays(),
                 'addons' =>  \Wappointment\Services\Addons::getActive()
@@ -123,16 +123,33 @@ class InitBackend
             new \Wappointment\Services\Wappointment\VersionCheck;
         }
 
+        add_action('current_screen', [$this, 'enqueuePlugins']);
+
+
         if (!\WappointmentLv::function_exists('register_block_type')) {
             // Gutenberg is not active.
             return;
         }
     }
 
+    public function enqueuePlugins()
+    {
+        if (WPHelpers::isBackendPage('plugins')) {
+            wp_register_script(
+                WAPPOINTMENT_SLUG . '_feedbacks',
+                Helpers::assetUrl('js/feedbacks.js'),
+                ['jquery'],
+                null,
+                true
+            );
+            wp_enqueue_script(WAPPOINTMENT_SLUG . '_feedbacks');
+        }
+    }
+
     public function customPluginLinks($links)
     {
         $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_settings')) . '" >Settings</a>';
-        if (Status::installedForXDays() > 30) {
+        /* if (Status::installedForXDays() > 30) {
             $links[] = '<a href="https://wordpress.org/support/plugin/wappointment/reviews/#new-post" target="_blank" class="btn btn-outline-secondary text-dark ml-2">
                 Support us with stars
                 <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span>
@@ -150,7 +167,7 @@ class InitBackend
                 padding: 0;
             }
             </style>';
-        }
+        } */
 
         return $links;
     }

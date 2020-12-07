@@ -1,9 +1,9 @@
 <template>
     <div class="wap-head">
         <div v-for="staff in staffs"> 
-            <div class="d-flex align-items-center">
+            <div class="d-flex" :class="[isCompactHeader ? 'align-items-start':'align-items-center']">
                 <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="refreshClicked">
-                    <img :src="staff.a" :alt="staff.n">
+                    <div role="img" :style="getStyleBackground(staff)" :title="staff.n" class="wstaff-img"></div>
                     <div class="after" v-if="isStepSlotSelection">
                         <svg viewBox="0 0 32 32" class="ic-refresh" aria-hidden="true">
                             <path d="M27.1 14.313V5.396L24.158 8.34c-2.33-2.325-5.033-3.503-8.11-3.503C9.902 4.837 4.901 9.847 4.899 16c.001 6.152 5.003 11.158 11.15 11.16 4.276 0 9.369-2.227 10.836-8.478l.028-.122h-3.23l-.022.068c-1.078 3.242-4.138 5.421-7.613 5.421a8 8 0 0 1-5.691-2.359A7.993 7.993 0 0 1 8 16.001c0-4.438 3.611-8.049 8.05-8.049 2.069 0 3.638.58 5.924 2.573l-3.792 3.789H27.1z"/>
@@ -11,9 +11,9 @@
                     </div>
                 </div>
                 <div class="staff-desc">
-                    <strong>{{ staff.n }}</strong>
+                    <div><strong>{{ staff.n }}</strong></div>
                     <div class="header-service" v-if="service!== false && isCompactHeader">
-                        {{ service.name }}
+                        <span class="compact-servicename">{{ service.name }}</span>
                         <span class="wduration">{{duration}}{{getMinText}}</span>
                     </div>
                 </div>
@@ -43,7 +43,13 @@ export default {
             type:[Object, Boolean]
         },
         duration:{
-            type: [Boolean,Number]
+            type: [Boolean,Number, String]
+        },
+        appointmentSaved: {
+            type:Boolean
+        },
+        rescheduling: {
+            type: Boolean
         },
     },
     data: () => ({
@@ -61,6 +67,9 @@ export default {
               return
             } 
             this.$emit('refreshed')
+        },
+        getStyleBackground(staff){
+            return 'background-image: url("'+staff.a+'");'
         }
     },
     computed:{
@@ -98,10 +107,23 @@ export default {
   fill: #fff;
 }
 .wap-front .wap-head {
-    padding: .4em;
     position: absolute;
     width: 100%;
-    height: 56px;
+    height: 62px;
+    overflow: hidden;
+}
+.wap-front .wap-head:hover{
+    height: auto;
+    min-height:62px;
+}
+.wap-front .wap-head > div {
+    padding: 8px;
+}
+
+
+.wap-front .wap-form-body{
+    max-height: calc(85vh);
+    margin-top:62px;
 }
 
 .wap-front .wap-bf.show.has-scroll .wap-head {
@@ -112,9 +134,10 @@ export default {
     padding-left: .4em;
     line-height: 1.2;
     font-size: 1em;
+    width: 100%;
 }
 .wap-front .staff-av img{
-    max-width: 40px;
+    max-width: 46px;
     display: block;
     overflow: hidden;
     font-size: 12px;
@@ -122,5 +145,27 @@ export default {
 .wap-front .staff-av.norefresh {
     cursor: default;
 }
+.wap-front .header-service {
+    font-weight: normal;
+    font-size:.9em;
+}
+.wap-front .header-service .wduration{
+    font-weight: bold;
+    float: right;
+}
+
+.staff-av .wstaff-img{
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background-size: cover;
+    margin-right: 0;
+}
+.compact-servicename{
+    max-width: 75%;
+    display: inline-block;
+}
+
+
 </style>
 

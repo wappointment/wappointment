@@ -207,8 +207,13 @@
         box-shadow: none;
     }
     .nav-tabs .nav-link.active{
-        cursor:default;
-        color:#000;
+        cursor: default;
+        color:#595555;
+        background-color:#f4f4f4;
+    }
+
+    .bwe-tabs .nav-tabs .nav-link.active{
+        background-color:#dfcfdd;
     }
 
     .nav-tabs .nav-link {

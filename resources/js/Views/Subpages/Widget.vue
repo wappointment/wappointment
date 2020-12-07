@@ -1,6 +1,6 @@
 <template>
     <div v-if="widgetData!==null">
-      <div class="d-flex mt-4" v-if="!wizard">
+      <div class="d-flex mt-4 bwe-tabs" v-if="!wizard">
         <ul class="nav nav-tabs">
             <li class="nav-item">
                 <a class="nav-link" :class="{active:isTesting && !editing}" href="javascript:;" @click="showPreview">

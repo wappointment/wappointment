@@ -19,17 +19,42 @@ class SettingsStaffController extends RestController
         if ($request->input('key') == 'viewed_updates') {
             return Status::setViewedUpdated();
         }
-        if ($request->input('key') == 'hello_page') {
-            return Status::setHelloPage($request->input('val'));
+        $value = $request->input('val');
+        if ($request->input('key') == 'regav') {
+            $value = $this->regavClean($value); //clean invalid entry in regav
         }
-
-        $result = Settings::saveStaff($request->input('key'), $request->input('val'));
+        $result = Settings::saveStaff($request->input('key'), $value);
 
         if (in_array($request->input('key'), ['regav', 'availaible_booking_days'])) {
             (new \Wappointment\Services\Availability())->regenerate();
         }
 
         return $result;
+    }
+
+    protected function regavClean($regav)
+    {
+        foreach ($regav as $day => $blocks) {
+            if ($day === 'precise') {
+                $newblocks = $blocks;
+            } else {
+                $newblocks = [];
+
+                if (is_array($blocks) && !empty($blocks)) {
+                    foreach ($blocks as $key => $block) {
+                        if ($block[1] - $block[0] > 0) {
+                            $newblocks[] = $block;
+                        }
+                    }
+                }
+            }
+
+
+
+            $regav[$day] = $newblocks;
+        }
+
+        return $regav;
     }
 
     public function saveCal(Request $request)

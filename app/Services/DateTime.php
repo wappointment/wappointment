@@ -63,20 +63,24 @@ class DateTime
     {
         $unkownTimezones = [
             'Central Standard Time' => 'America/Chicago',
-            'Pacific Standard Time' => 'America/Los_Angeles'
+            'Pacific Standard Time' => 'America/Los_Angeles',
+            'Eastern Standard Time' => 'America/New_York',
+            'AUS Eastern Standard Time' => 'Australia/Sydney',
         ];
 
         if (!isset($unkownTimezones[$unknownTZ])) {
-            throw new \WappointmentException("Cannot recorgnize timezone '" . $unknownTZ . "'", 1);
+            throw new \WappointmentException("Cannot recognize timezone '" . $unknownTZ . "'", 1);
         }
         return $unkownTimezones[$unknownTZ];
     }
+
     public static function timeZToUtc($time)
     {
         $time = \str_replace('Z', '', $time);
 
         return (new Carbon($time, 'UTC'));
     }
+
     public static function converTotUtc($time, $timezone)
     {
         $time = str_replace('Z', '', $time);

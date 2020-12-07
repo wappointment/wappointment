@@ -23,12 +23,21 @@ class Segment
     {
         $intervals = [];
         foreach ($segments as $i => $segment) {
-            $intervals[$i] = \Achse\Math\Interval\Integer\IntegerIntervalFactory::create(
-                (int) $segment[0],
-                false,
-                (int) $segment[1],
-                false
-            );
+            try {
+                $intervals[$i] = \Achse\Math\Interval\Integer\IntegerIntervalFactory::create(
+                    (int) $segment[0],
+                    false,
+                    (int) $segment[1],
+                    false
+                );
+            } catch (\Throwable $th) {
+                /* \Wappointment\Models\Log::data([
+                    'info' => "Error with the segment ",
+                    'start' => $this->debugDate($segment[0]),
+                    'end' => $this->debugDate($segment[1])
+                ]); */
+                //throw new \WappointmentException("Error with the segment " . $segment[0] . ' - ' . $segment[1], 1);
+            }
         }
         return $intervals;
     }

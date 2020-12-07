@@ -10,6 +10,7 @@
             :location="location"
             :rescheduling="rescheduling"
             :appointmentSaved="appointmentSaved"
+            @refreshed="refreshClick"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
             @changeLocation="childChangedStep"
@@ -52,11 +53,11 @@
             </div>
         </template>
         <div v-else>
-            <div v-if="dataloaded">
+            <div v-if="dataloaded" class="wappointment-errors">
                 <div v-if="service">No appointments available</div>
                 <div v-else>Service not ready</div>
             </div>
-            <template>
+            <template v-else>
                 <div class="wappointment-errors" v-if="errorMessages.length > 0">
                     <div v-for="errorM in errorMessages">{{errorM}}</div>
                 </div>
@@ -96,10 +97,10 @@ let compDeclared = {
     'AppointmentTypeSelection': AppointmentTypeSelection
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
-
+let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Colors, Dates] )
 export default {
      extends: AbstractFront,
-     mixins: [Colors, Dates],
+     mixins: mixinsDeclared,
      props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid'],
      components: compDeclared, 
     data: () => ({
@@ -134,15 +135,15 @@ export default {
         this.currentTz = this.tzGuess()
         this.createdAt = this.getUnixNow()
         
-        if(this.step == 'button') {
-            this.$emit('changedStep','selection')
-        }
-
+    
         if(this.step !== null) {
             this.requiresScroll = true //booking widget editor requires scroll always
         }
+        window.addEventListener('resize', this.windowResized);
         
-
+    },
+    beforeDestroy(){
+        window.removeEventListener('resize', this.windowResized);
     },
 
     computed: {
@@ -209,7 +210,9 @@ export default {
        }
     },
     methods: {
-
+        windowResized(){
+            this.checkIfRequiresScroll()
+        },
         async convertDateRequest(data) {
             return await this.serviceBooking.call('convertDate', data)
         }, 
@@ -225,21 +228,26 @@ export default {
         },
         checkIfRequiresScrollDelay(){
             //console.log('first')
-            setTimeout(this.checkIfRequiresScroll, 200);
+            setTimeout(this.checkIfRequiresScroll, 200)
         },
         checkIfRequiresScroll(){
             //console.log('second')
             if(this.step !== null) {
                 return true //booking widget editor requires scroll always
             }
-            let heightDiv = document.getElementById(this.getWapBodyId).scrollHeight
-/*             console.log('wap-body scrollHeight inner class', heightDiv)
-            console.log('wap-body scrollHeight id', document.getElementById(this.getWapBodyId).scrollHeight)
+            let wrapperDiv = document.getElementById(this.wrapperid)
+            let wrapperDivHead = wrapperDiv.getElementsByClassName("wap-head")
 
- */
-            let heightWindow = window.innerHeight / 100 * 85
-            //console.log('85vh', heightWindow, window.innerHeight)
-            if(heightDiv > heightWindow){
+            let headHeight = 60
+            if(wrapperDivHead!== undefined && Array.isArray(wrapperDivHead) && wrapperDivHead[0] !== undefined) {
+                headHeight = wrapperDivHead[0].scrollHeight
+            }
+
+            let parentWindowHeight = wrapperDiv.scrollHeight - headHeight
+            let heightDiv = document.getElementById(this.getWapBodyId).scrollHeight
+/*             let heightWindow = window.innerHeight / 100 * 95
+            console.log(heightDiv, heightWindow, parentWindowHeight) */
+            if(heightDiv > parentWindowHeight){
                 //add scrollbar
                 //console.log(' TRUE 85vh', heightDiv ,heightWindow)
                 this.requiresScroll = true
@@ -338,7 +346,9 @@ export default {
 
 
         refreshClick() {
-            if(!this.isStepSlotSelection) return false
+            if(!this.isStepSlotSelection) {
+                return false
+            }
             this.currentStep = ''
             this.loading = true
             this.refreshInitValue()
@@ -378,7 +388,7 @@ export default {
                 this.currentStep = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', {service:this.service, duration:this.duration, location: this.location})
                 this.autoSelectLocation()
             }
-
+            this.$emit('changedStep',this.currentStep)
             this.loadStep(this.currentStep)
 
             if(this.loadedInit !== undefined){
@@ -633,6 +643,20 @@ export default {
   opacity: 1;
 }
 
+.wap-front .confirmation-cell .success,
+.wap-front .wap-form-body .success .text-conf {
+    color: var(--wappo-success-tx);
+}
+
+.wclosable .wclose::before, 
+.wclosable .wclose::after {
+    background-color: var(--wappo-pri-tx);
+}
+
+.wclosable .wclose:hover::before, 
+.wclosable .wclose:hover::after {
+    background-color: var(--wappo-pri-tx-lt);
+}
 
 .wap-bf button {
     font-size: .7em;
@@ -647,7 +671,6 @@ export default {
     font-size: .75em;
 }
 .wap-front.large-version .wrap-calendar {
-    overflow: auto;
     max-height: none;
 }
 .wap-front .wrap-calendar {
@@ -818,11 +841,70 @@ export default {
     max-width:400px;
     margin:0 auto;
 }
-.wap-front .wap-form-body{
-    max-height: calc(85vh);
-    margin-top:56px;
-}
+
 .wap-front .has-scroll .wap-form-body{
     overflow-y: scroll;
+    overflow-x: hidden;
 }
+
+.wap-front .wap-form-body,
+.wap-front .wlabel,
+.wap-front .wrap-calendar div
+{
+    color: var(--wappo-body-tx);
+}
+.wbtn.wbtn-secondary .wduration,
+.wbtn.wbtn-secondary .wap-img svg,
+.wbtn.wbtn-secondary .service-label .service-name,
+.wbtn.wbtn-secondary .service-label .service-price,
+.wbtn.wbtn-secondary .service-label .service-price .price-currency{
+    color: var(--wappo-sec-tx); 
+}
+
+.wap-front .wap-head .staff-desc, 
+.wap-front .wap-head strong {
+    color: var(--wappo-header-tx);
+}
+
+.wap-front .wap-head img{
+    border-radius: 50%;
+}
+.wap-front .wbtn-cell{
+    text-align: center;
+    padding: .4em;
+}
+
+.wap-front .form-control:focus {
+    outline: 0;
+}
+
+.wap-front .confirmation-cell .success {
+    padding: .2em .8em;
+    border-radius: 5px;
+    overflow: hidden;
+    font-size: .8em;
+}
+
+.wap-booking-fields .wap-field{
+    margin-bottom: .4em !important;
+}
+
+.wap-wid.wclosable > .wclose:hover::before, 
+.wap-wid.wclosable > .wclose:hover::after {
+    background-color: var(--wappo-header-tx);
+}
+
+.wap-front .wappointment-errors{
+    border-radius:.25em;
+    padding: .3em;
+    margin: .5em 0;
+}
+
+
+/* @media only screen and (max-width: 500px) {
+    .wap-front .has-scroll .wap-form-body{
+        max-height:75vh;
+    }
+} */
+
 </style>

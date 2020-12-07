@@ -28,6 +28,11 @@ module.exports = {
     aggregateTimeout: 2000,
     ignored: ['resources/Standalone/*.js', 'node_modules']
   },
+  optimization: {
+    splitChunks: {
+      automaticNameDelimiter: '-',
+    }
+  },
 /*   devServer: {
     hot: true,
     

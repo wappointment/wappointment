@@ -1,7 +1,7 @@
 <template>
-    <div>
+    <div class="d-flex align-items-center"> 
+        <label class="mr-2" :for="id">{{ label }} ({{ updatedValue }}{{ getunit }})</label>
         <input type="range" :id="id" v-model="updatedValue" :min="options.min" :max="options.max" :step="options.step">
-        <label :for="id">{{ label }} ({{ updatedValue }}{{ getunit }})</label>
     </div>
 </template>
 

@@ -6,15 +6,15 @@
                     <div v-if="appointment_starts_at">
                         <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline">
                             <WapImage :faIcon="['far','clock']" size="auto" />
-                            <span class="wml-2">{{ appointment_starts_at }}</span>
+                            <span class="welementname wml-2">{{ appointment_starts_at }}</span>
                             <span class="wclose" @click="back" ></span>
                         </div>
                     </div>
                 </div>
-                <div class="wappointment-errors" v-if="errors.length > 0">
-                    <div v-for="error in errors">
-                        {{ error }}
-                    </div>
+            </div>
+            <div class="wappointment-errors" v-if="errors.length > 0">
+                <div v-for="error in errors">
+                    {{ error }}
                 </div>
             </div>
             <AppointmentTypeSelection v-if="serviceHasTypes" 
@@ -274,6 +274,10 @@ export default {
 }
 </script>
 <style>
+
+.wap-front .wap-booking-fields label{
+    color: var(--wappo-body-tx);
+}
 .wap-front .phone-field .dropdown ul {
     position: initial;
     max-width: 266px;

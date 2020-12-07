@@ -9,7 +9,7 @@ class Status
 {
     public static $version = WAPPOINTMENT_VERSION;
     private static $last_step = 4;
-    private static $db_version_required = '1.2.0';
+    private static $db_version_required = '1.9.3';
 
     public static function isInstalled()
     {
@@ -34,16 +34,19 @@ class Status
 
     public static function canSeeUpdatePage()
     {
-
         return !static::seenUpdatePage();
     }
 
     public static function seenUpdatePage()
     {
         $update_seen = static::viewedUpdates();
-        return $update_seen && version_compare($update_seen, WAPPOINTMENT_VERSION) >= 0;
+        return $update_seen && version_compare($update_seen, static::getBaseVersion()) >= 0;
     }
 
+    public static function getBaseVersion()
+    {
+        return substr(WAPPOINTMENT_VERSION, 0, 3 - strlen(WAPPOINTMENT_VERSION));
+    }
 
 
     public static function hasPendingUpdates()
@@ -67,7 +70,7 @@ class Status
         return WPHelpers::setStaffOption(
             'viewed_updates',
             WAPPOINTMENT_VERSION,
-            Settings::get('activeStaffId'),
+            false,
             true
         );
     }
@@ -77,20 +80,6 @@ class Status
         return WPHelpers::getStaffOption('viewed_updates');
     }
 
-    public static function helloPage()
-    {
-        return WPHelpers::getStaffOption('hello_page');
-    }
-
-    public static function setHelloPage($value)
-    {
-        return WPHelpers::setStaffOption(
-            'hello_page',
-            $value,
-            Settings::get('activeStaffId'),
-            true
-        );
-    }
 
     public static function wizardStep()
     {

@@ -32,8 +32,20 @@ class EventsController extends RestController
         if ((bool) $request->input('viewingFreeSlot')) {
             return $this->debugAvailability();
         } else {
-            //we save the duration preference
-            (new Preferences)->save('cal_duration', $request->input('slotDuration'));
+            $pref_save = [];
+            $prob_pref = ['cal-duration', 'cal-minH', 'cal-maxH', 'cal-avail-col', 'cal-appoint-col'];
+            foreach ($prob_pref as $pref_key) {
+                if (!empty($request->header($pref_key)) && $request->header($pref_key) !== 'null') {
+                    $pref_save[str_replace('-', '_', $pref_key)] = $request->header($pref_key);
+                }
+            }
+
+            if (!empty($pref_save)) {
+                //we save the duration preference
+                (new Preferences)->saveMany($pref_save);
+            }
+            //dd($pref_save);
+
             return [
                 'events' => array_merge($this->events($request), $this->regavToBgEvent($request)),
                 'availability' => WPHelpers::getStaffOption('availability'), //$this->TESTprocessAvail(Settings::getStaff('availability')),
@@ -220,10 +232,13 @@ class EventsController extends RestController
             $dayName = $daysOfTheWeek[$startDate->dayOfWeek];
 
             foreach ($this->regav[$dayName] as $dayTimeblock) {
-                $start = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))
-                    ->hour($dayTimeblock[0]);
-                $end = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone))
-                    ->hour($dayTimeblock[1]);
+                $start = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone));
+                $end = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone));
+
+
+                $unit_added = !empty($this->regav['precise']) ? 'addMinutes' : 'addHours'; //detect precision mode
+                $start->$unit_added($dayTimeblock[0]);
+                $end->$unit_added($dayTimeblock[1]);
 
                 $bg_events[] = $this->setBgEvent($start, $end);
             }

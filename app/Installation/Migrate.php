@@ -11,8 +11,6 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
     public $migrationRepo;
     protected $migrations_folders = false;
 
-
-
     public function __construct($migrations_folder = false)
     {
         $this->capsule = Database::capsule();

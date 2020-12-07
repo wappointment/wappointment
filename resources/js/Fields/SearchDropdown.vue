@@ -1,10 +1,11 @@
 <template>
   <div>
     <div v-if="!isActive" @click.prevent.stop="makeActive(true)" 
-    class="clickable small text-muted container-values d-flex justify-content-between align-items-center form-control">
+    class="clickable small text-muted container-values d-flex justify-content-between align-items-center form-control label-wrapper active">
+        <label>{{ ph }}</label>
         <div v-if="icon" class="dashicons" :class="icon"></div> 
         <div v-if="emptyValue">{{ placeHolderLabel }}</div>
-        <div v-else>
+        <div v-else class="elementsContainer">
             <span v-if="hasMulti" class="d-flex flex-wrap">
                 <ValueCard v-if="value.length > 0" v-for="val in value" :key="val"
                         :value="val" @discard="discardElement">{{ displayElementFunc(getElement(val)) }}</ValueCard>
@@ -13,6 +14,7 @@
                 <ValueCard :key="value" :canDiscard="false"
                         :value="value">{{ displayElementFunc(getElement(value)) }}</ValueCard>
             </span>
+        
         </div>
         <div :class="arrowDownClass" ></div>
     </div>
@@ -234,6 +236,12 @@ export default {
     border-style: dashed;
     border-width: 5px 5px 0 5px;
     border-color: #dbdbdb transparent transparent transparent;
+}
+.clickable.container-values.label-wrapper{
+    padding-top: 18px;
+}
+.elementsContainer .value-card {
+    margin-bottom: 0;
 }
 
 </style>
