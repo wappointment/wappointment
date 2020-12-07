@@ -194,7 +194,7 @@ class ViewsData
             'front_page_id' => (int) Settings::get('front_page'),
             'front_page' => get_permalink((int) Settings::get('front_page')),
             'front_page_type' => get_post_type((int) Settings::get('front_page')),
-            'disabled_modern_api_verbs' =>  (bool)Settings::get('disabled_modern_api_verbs'),
+            //'disabled_modern_api_verbs' =>  (bool)Settings::get('disabled_modern_api_verbs'),
         ];
     }
 

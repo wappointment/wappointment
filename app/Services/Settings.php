@@ -98,7 +98,7 @@ class Settings
             'booking_page' => 0,
             'show_welcome' => false,
             'force_ugly_permalinks' => false,
-            'disabled_modern_api_verbs' => false
+            'disabled_modern_api_verbs' => true
         ];
     }
 

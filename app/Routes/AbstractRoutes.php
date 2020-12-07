@@ -7,7 +7,7 @@ use Wappointment\Services\Settings;
 abstract class AbstractRoutes
 {
     protected $routes = [];
-    protected $disabled_modern_api_verbs = false;
+    protected $disabled_modern_api_verbs = true;
 
     public function __construct()
     {
@@ -28,7 +28,6 @@ abstract class AbstractRoutes
 
     public function restApiInit()
     {
-        $this->disabled_modern_api_verbs = Settings::get('disabled_modern_api_verbs');
         foreach ($this->prepareRoutes() as $access => $actions) {
             foreach ($actions as $http_method => $route_controller_action) {
                 foreach ($route_controller_action as $route => $controller_method_args) {

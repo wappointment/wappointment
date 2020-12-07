@@ -23,7 +23,7 @@
                    Make Reschedule/Cancel page editable
                 </button>
               </div>
-              <div class="mt-3">
+              <div class="mt-3" v-if="false">
                   <label class="form-check-label" for="modern-api-verb">
                   <div class="d-flex align-items-center">
                     <input type="checkbox" v-model="viewData.disabled_modern_api_verbs" id="modern-api-verb" @change="changed(viewData.disabled_modern_api_verbs, 'disabled_modern_api_verbs', )">
