@@ -9,7 +9,25 @@
         <LargeButton @click="goToRegav" label="Weekly availability" :is_set="viewData.is_availability_set" ></LargeButton>
 
         <LargeButton @click="goToDotCom" :is_set="is_dotcom_connected !== false" >
-          Connect to <strong class="zoom-color"> <img :src="zoomImage" /> Zoom</strong> , <strong class="google-color"><img :src="googleImage" /> Google Calendar</strong> 
+          <div class="d-flex align-items-center" v-if="is_dotcom_connected !== false">
+            Connected to
+            <div v-if="servicesConnected.length > 0" class="d-flex">
+              <div class="ml-2 slot"  :data-tt="serviceDescription(servicekey)" v-for="servicekey in servicesConnected" >
+                <img :src="getServiceImage(servicekey)" />
+                {{ serviceLabel(servicekey) }}
+              </div>
+            </div>
+          </div> 
+          
+          <div class="d-flex align-items-center"  v-else>
+            Connect to <div class="d-flex" v-if="servicesNotConnected.length > 0">
+                        <span class="ml-2 slot"  :data-tt="serviceDescription(servicekey)" v-for="servicekey in servicesNotConnected" >
+                          <img :src="getServiceImage(servicekey)" />
+                          {{ serviceLabel(servicekey) }}
+                        </span>
+                      </div>
+          </div>
+          
         </LargeButton>
         <WapModal v-if="dotcomOpen" :show="dotcomOpen" marge @hide="dotcomOpen = false">
           <h4 slot="title" class="modal-title"> 
@@ -18,31 +36,39 @@
           <div class="wrapper-dotcom p-4">
             <div class="d-flex justify-content-center align-items-center flex-wrap flex-xl-nowrap">
               <div >
-                <h3 class="d-flex align-items-center mb-4">
+                <h3 class="d-flex align-items-center">
                   <span role="img" class="wstaff-img" :style="styleGravatar"></span>
                   <span>{{ viewData.activeStaffName }}</span>
                 </h3>
                 <div v-if="is_dotcom_connected">
-                  <span class="dashicons dashicons-yes-alt text-success"></span> 
-                  <span>Connected <a class="small" href="javascript:;" @click="disconnectWappo">disconnect</a></span>
-                  <div class="text-muted small">
-                    Connected services: 
-                    <span v-if="is_dotcom_connected.services.length > 0">
-                      <span class="slot"  v-for="servicekey in is_dotcom_connected.services" :class="servicekey+'-color'">
-                        <img :src="servicekey == 'zoom' ? zoomImage:googleImage" />
-                       {{ serviceLabel(servicekey) }}
-                      </span>
-                    </span>
-                    <span v-else class="text-danger">No service connected</span>
-                    <a class="small" href="javascript:;" @click="refresh">refresh</a>
+                  <a class="small" href="javascript:;" @click="refresh" data-tt="Refresh service status">refresh</a> - <a data-tt="Disconnect from Wappointment.com" class="small text-danger" href="javascript:;" @click="disconnectWappo">disconnect</a>
+                  
+                  <div class="wservices-list text-muted smal">
+                    <div class="d-flex">
+                      <div class="mr-2 label-title">Enabled services: </div>
+                      <div v-if="servicesConnected.length > 0">
+                        <div class="slot"  :data-tt="serviceDescription(servicekey)" v-for="servicekey in servicesConnected" >
+                          <img :src="getServiceImage(servicekey)" />
+                          {{ serviceLabel(servicekey) }}
+                        </div>
+                      </div>
+                    </div>
+                    <div class="d-flex text-muted" v-if="servicesNotConnected">
+                      <div class="mr-2 label-title">Disabled services: </div>
+                      <div v-if="servicesNotConnected.length > 0">
+                        <div class="slot disabled" :data-tt="serviceDescription(servicekey)" v-for="servicekey in servicesNotConnected" >
+                          <img :src="getServiceImage(servicekey)" />
+                          {{ serviceLabel(servicekey) }}
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div><a :href="addMoreService" target="_blank">Manage connected services</a></div>
+                  <div class="small"><a :href="addMoreService" target="_blank" data-tt="Enable new services from your account page on Wappointment.com">Enable/Disable services</a></div>
                 </div>
                 <div v-else>
                   <div class="mb-3">
                     <InputPh v-model="account_key" ph="Enter account code" /> 
                   </div>
-                  
                   <button class="btn btn-primary btn-block btn-lg mb-2" @click="connectToWappo">Connect Account</button>
                   <div class="text-muted">Don't have an account yet? <a :href="createAccount" target="_blank">Create your free account</a></div>
                 </div>
@@ -54,8 +80,8 @@
                   <li>Connect your favourite tools in seconds and automatically:</li>
                   <li>
                     <ol>
-                      <li>Create <strong class="zoom-color"><img :src="zoomImage" /> Zoom</strong> meetings</li>
-                      <li>Save appointments in <strong class="google-color"><img :src="googleImage" /> Google Calendar</strong></li>
+                      <li>Create <strong ><img :src="getServiceImage('zoom')" /> Zoom</strong> and <strong ><img :src="getServiceImage('googlemeet')" /> Google Meet</strong> meetings</li>
+                      <li>Save appointments in <strong ><img :src="getServiceImage('google')" /> Google Calendar</strong></li>
                       <li>and soon more to come ...</li>
                     </ol>
                   </li>
@@ -233,12 +259,7 @@ export default {
     resourcesUrl(){
       return window.apiWappointment.resourcesUrl+'images/'
     },
-    zoomImage(){
-      return this.resourcesUrl + 'zoom.png'
-    },
-    googleImage(){
-      return this.resourcesUrl + 'google-calendar.png'
-    },
+
     styleGravatar(){
         return 'background-image: url("'+this.viewData.gravatar+'");'
     },
@@ -247,11 +268,59 @@ export default {
     },
     addMoreService(){
       return window.apiWappointment.apiSite + '/client/account'
+    },
+    servicesNotConnected(){
+      let servicesNC = ['zoom','google', 'googlemeet']
+      if(this.is_dotcom_connected){
+        for (let i = 0; i < this.is_dotcom_connected.services.length; i++) {
+          const service = this.is_dotcom_connected.services[i]
+          servicesNC = servicesNC.filter(e => e.indexOf(service) === -1)
+        }
+      }
+      return servicesNC
+    },
+    servicesConnected(){
+      let servicesC = ['zoom','google', 'googlemeet']
+      if(this.is_dotcom_connected){
+        for (let i = 0; i < this.is_dotcom_connected.services.length; i++) {
+          const service = this.is_dotcom_connected.services[i]
+          servicesC = servicesC.filter(e => e.indexOf(service) !== -1)
+        }
+      }
+      return servicesC
     }
   },
   methods: {
+    getServiceImage(service){
+      switch (service) {
+        case 'zoom':
+          return this.resourcesUrl+'zoom.png'
+        case 'google':
+          return this.resourcesUrl+'google-calendar.png'
+        case 'googlemeet':
+          return this.resourcesUrl+'google-meet.png'
+      }
+    },
+    serviceDescription(service){
+      switch (service) {
+        case 'zoom':
+          return 'Automatically creates Zoom meeting for your new Video Meetings and save the meeting link in Wappointment'
+        case 'google':
+          return 'Automatically save new appointments to a secondary calendar in your Google Calendar account'
+        case 'googlemeet':
+          return 'Automatically generates Google Meet meetings for your new Video Meetings and save the meeting link in Wappointment'
+      }
+    },
+    
     serviceLabel(serviceKey){
-      return serviceKey == 'google' ? 'Google Calendar':serviceKey
+      switch (serviceKey) {
+        case 'zoom':
+          return 'Zoom'
+        case 'google':
+          return 'Google Calendar'
+        case 'googlemeet':
+          return 'Google Meet'
+      }
     },
     loaded(viewData){
           this.viewData = viewData.data
@@ -402,16 +471,22 @@ export default {
     position: relative;
 }
 .slot {
-    padding: .6em;
     border-radius: .3rem;
-    text-transform: capitalize;
-    margin: .2em;
+    font-size: 13px;
+}
+.slot img{
+  max-height: 20px;
+}
+.slot.disabled img {
+    filter:grayscale(1);
+}
+.slot.disabled:hover img {
+    filter:grayscale(0);
 }
 .btn-lg.btn-block{
   font-weight: bold;
 }
 .wrapper-dotcom{
-  background: #f7f7f7;
   border-radius: .4rem;
   max-width: 850px;
   margin: 0 auto;
@@ -433,5 +508,26 @@ export default {
     margin-right: auto;
     max-width: 960px;
     width: 60%;
+}
+.wservices-list {
+	background-color: #f0f0f0;
+	border-radius: .6em;
+  padding: 1rem;
+  width:300px;
+}
+.wservices-list .label-title{
+  width:116px;
+  font-size: .9rem;
+}
+.slot[data-tt]::before{
+  min-width: 300px;
+}
+.slot[data-tt]::before,
+.slot[data-tt]::after{
+  bottom: 140%;
+  left: 10px;
+}
+.wservices-list .slot {
+    margin-bottom: .9em;
 }
 </style>

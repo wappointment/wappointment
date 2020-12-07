@@ -121,7 +121,7 @@ class Init
             'baseUrl' => plugins_url(),
             'apiSite' => WAPPOINTMENT_SITE,
             'allowed' => Settings::get('wappointment_allowed'),
-            'disabled_modern_api_verbs' => (bool)Settings::get('disabled_modern_api_verbs'),
+            'disabled_modern_api_verbs' => true //(bool)Settings::get('disabled_modern_api_verbs'),
         ];
         if (is_user_logged_in()) {
             $variables['nonce'] = wp_create_nonce('wp_rest');

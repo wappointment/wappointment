@@ -73,6 +73,7 @@ export default {
 }
 .btn.btn-secondary.btn-cell.selected{
     border: 2px solid var(--primary);
+    background: #fff;
 }
 
 .btn-secondary.btn-cell .dashicons{

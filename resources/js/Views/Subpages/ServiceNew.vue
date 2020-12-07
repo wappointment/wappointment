@@ -83,7 +83,7 @@ export default {
                 cast: Array,
                 images: [
                   { value:'zoom', name:'Zoom', icon: window.apiWappointment.resourcesUrl+'images/zoom.png', icontype: 'img'},
-                  { value:'googlemeet', name:'Google Meet', icon: window.apiWappointment.resourcesUrl+'images/googlemeet.png', icontype: 'img'},
+                  { value:'googlemeet', name:'Google Meet', icon: window.apiWappointment.resourcesUrl+'images/google-meet.png', icontype: 'img'},
                 ],
                 conditions: [
                   { model:'type', values: ['zoom'] }

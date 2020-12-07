@@ -1,11 +1,11 @@
 <template>
     <div class="card cardb d-flex flex-row justify-content-between" @click="$emit('click')">
-        <span class="h5 my-1">
-            <span v-if="is_set" class="dashicons dashicons-yes-alt text-success" ></span> 
-            <span v-else class="dashicons dashicons-dismiss text-danger" ></span> 
-            <span v-if="label">{{ label }}</span>
-            <span v-else><slot></slot></span>
-        </span>
+        <div class="d-flex align-items-center h5 my-1">
+            <div v-if="is_set" class="dashicons dashicons-yes-alt text-success mr-2" ></div> 
+            <div v-else class="dashicons dashicons-dismiss text-danger mr-2" ></div> 
+            <div v-if="label">{{ label }}</div>
+            <div v-else><slot></slot></div>
+        </div>
         <button  class="btn btn-xs btn-secondary hidden">{{ isSetupLabel(is_set) }}</button>
     </div>
 </template>

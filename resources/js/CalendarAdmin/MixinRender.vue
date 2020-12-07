@@ -179,7 +179,7 @@ export default {
                 innerhtml += '<div  data-href="'+this.getZoomMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Zoom meeting" ><img src="'+window.apiWappointment.resourcesUrl+'images/zoom.png'+'" /></div>'
               }
               if(this.appointmentHasGoogleUrl(el.attr('data-id'))){
-                innerhtml += '<div  data-href="'+this.getGoogleMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Google meeting" ><img src="'+window.apiWappointment.resourcesUrl+'images/googlemeet.png'+'" /></div>'
+                innerhtml += '<div  data-href="'+this.getGoogleMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Google meeting" ><img src="'+window.apiWappointment.resourcesUrl+'images/google-meet.png'+'" /></div>'
               }
               
             } 
