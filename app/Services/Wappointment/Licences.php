@@ -83,7 +83,7 @@ class Licences extends API
             throw new \WappointmentException('You have no valid licence for your site');
         }
         throw new \WappointmentException(
-            $response->getHeader('reason-reject')[0] ?? 'Cannot connect to Wappointment.com'
+            !empty($response->getHeader('reason-reject')[0]) ? $response->getHeader('reason-reject')[0] : 'Cannot connect to Wappointment.com'
         );
     }
 }

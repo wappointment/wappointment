@@ -45,7 +45,7 @@ abstract class API
                 return $this->handle204Errors($response);
             }
             throw new \WappointmentException(
-                $response->getHeader('reason-reject')[0] ?? 'Cannot connect to Wappointment.com'
+                !empty($response->getHeader('reason-reject')[0]) ? $response->getHeader('reason-reject')[0] : 'Cannot connect to Wappointment.com'
             );
         }
         return json_decode($response->getBody()->getContents());

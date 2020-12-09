@@ -41,7 +41,7 @@ abstract class AbstractProcessor implements InterfaceProcessor
 
     public function get($field)
     {
-        return $this->data[$field] ?? false;
+        return !empty($this->data[$field]) ? $this->data[$field] : false;
     }
 
 
