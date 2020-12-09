@@ -55,10 +55,14 @@ abstract class RestController
         }
 
         try {
-            $methodName = $param->get_attributes()['args']['method'];
-            if (empty($methodName)) {
+            $args = $param->get_attributes()['args'];
+
+
+            if (empty($args['wparams']) || empty($args['wparams']['method'])) {
                 throw new \WappointmentException('There is no method defined', 1);
             }
+
+            $methodName = $args['wparams']['method'];
             $request = WPHelpers::requestGet($param->get_params());
 
             if ($methodName == 'index') {
@@ -67,11 +71,11 @@ abstract class RestController
 
             // wrap request with validated data
 
-            if (!empty($param->get_attributes()['args']['hint'])) {
-                if (class_exists($param->get_attributes()['args']['hint'])) {
-                    $class = $param->get_attributes()['args']['hint'];
+            if (!empty($args['wparams']['hint'])) {
+                if (class_exists($args['wparams']['hint'])) {
+                    $class = $args['wparams']['hint'];
                 } else {
-                    $class = '\\Wappointment\\Validators\\HttpRequest\\' . $param->get_attributes()['args']['hint'];
+                    $class = '\\Wappointment\\Validators\\HttpRequest\\' . $args['wparams']['hint'];
                 }
 
                 $request = new $class($request);

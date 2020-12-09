@@ -37,6 +37,7 @@ abstract class AbstractRoutes
                         continue;
                     }
                     $apiVersion = empty($controller_method_args['version']) ? 'v1' : $controller_method_args['version'];
+
                     register_rest_route(
                         WAPPOINTMENT_SLUG . '/' . $apiVersion,
                         $route,
@@ -46,8 +47,10 @@ abstract class AbstractRoutes
                             'permission_callback' => [$this, 'canExecute' . ucfirst($access)],
                             'args' => (empty($controller_method_args['args'])) ?
                                 [
-                                    'method' => $controller_method_args['method'],
-                                    'hint' => $controller_method_args['hint'] ?? false
+                                    'wparams' => [
+                                        'method' => $controller_method_args['method'],
+                                        'hint' => !empty($controller_method_args['hint']) ? $controller_method_args['hint'] : false
+                                    ]
                                 ] : $controller_method_args['args'],
                         ]
                     );
