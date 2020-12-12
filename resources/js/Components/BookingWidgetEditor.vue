@@ -26,10 +26,10 @@
                 <div class="widget-fields-wrapper" >
                     <div >
                         <div>
-                            <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit" :class="{'selected' : !colorEdit}"  @click="toggleColor">
+                            <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2 btn-switch-edit" :class="{'selected' : !colorEdit}"  @click="toggleColor">
                                 <span><FontAwesomeIcon :icon="['fas', 'edit']" size="lg" /> Edit Text</span>
                             </button>
-                            <button class="btn btn-secondary btn-xs mr-2 btn-switch-edit" :class="{'selected' : colorEdit}" @click="toggleColor">
+                            <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2 btn-switch-edit" :class="{'selected' : colorEdit}" @click="toggleColor">
                                 <span><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Color</span>
                             </button>
                         </div>

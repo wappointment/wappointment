@@ -77,7 +77,7 @@ export default {
 
             {
                 type: 'checkimages',
-                label: 'Service used for video meeting',
+                label: 'Video meeting provider',
                 radioMode: true,
                 model: 'options.video',
                 cast: Array,
@@ -108,7 +108,7 @@ export default {
             },
             {
                 type: 'countryselector',
-                label: 'Phone field accepted countries',
+                label: 'Accepted countries for phone field',
                 model: 'options.countries',
                 cast: Array,
                 conditions: [

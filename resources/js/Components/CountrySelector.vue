@@ -4,13 +4,19 @@
             <WLoader />
         </div>
         <label v-if="label" for="search-field">{{ label }}</label>
-        <div v-if="selectedCountries.length>0">
-            <div class="d-flex flex-wrap countryselected">
-                <div @click="clearSelection" class="btn btn-secondary btn-xs" role="button" ><span class="dashicons dashicons-trash"></span> Clear selection</div>
-                <div v-for="iso2 in selectedCountries" class="flg m-2" :data-tt="getCountryName(iso2)" :class="iso2.toLowerCase()">
+        <div v-if="selectedCountries.length>0" class="d-flex flex-wrap" >
+            
+            <div @click="clearSelection" class="btn btn-secondary btn-xs" role="button" >
+                <span class="dashicons dashicons-trash"></span> Clear countries
+            </div>
+
+            <draggable class="d-flex flex-wrap countryselected" v-model="selectedCountries" @change="$emit('selected',selectedCountries)" draggable=".flg" >
+                <div v-for="(iso2, idx) in selectedCountries" v-if="iso2 !== undefined" class="flg m-2" :key="idx+iso2" 
+                @mouseover="hovering=iso2" @mouseout="hovering=false" 
+                :data-tt="hovering? getCountryName:''" :class="iso2.toLowerCase()">
                     <span @click.prevent="removeCountry(iso2)" class="dashicons dashicons-dismiss"></span>
                 </div>
-            </div>
+            </draggable>
         </div>
         <div
         class="dropdown"
@@ -56,10 +62,11 @@
 <script>
 import allCountries from '../Standalone/all-countries'
 import ClickOutside from 'vue-click-outside'
+import draggable from 'vuedraggable'
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ './CountryStyle')
 export default {
     props: ['label','selected', 'required', 'hasErrors'],
-    components: {CountryStyle},
+    components: {CountryStyle, draggable},
     data: () => ({
         countries: allCountries,
         selectedCountries: [],
@@ -67,10 +74,11 @@ export default {
         selectedIndex: null,
         search: '',
         loading:false,
-        regions:[]
+        regions:[],
+        hovering: false
     }),
     created(){
-        if(this.selected!== undefined && this.selected.length > 0) this.selectedCountries = this.selected
+        if(this.selected!== undefined && this.selected.length > 0) this.selectedCountries = [].concat(this.selected)
         this.regions = this.getRegions()
     },
     computed: {
@@ -84,10 +92,20 @@ export default {
        sortedCountries() {
             let search = this.search.trim()
             return search == '' ? this.countries:this.countries.filter(this.searchFilter)
-        }
+        },
+        getCountryName(){
+            if(this.hovering){
+                for (let i = 0; i < this.countries.length; i++) {
+                    if(this.countries[i].iso2 == this.hovering) {
+                        return this.countries[i].name
+                    }
+                }
+            }
+        },
     },
 
     methods: {
+
         clickedRegion(pb,b){
             this[pb.fn]()
         },
@@ -243,11 +261,7 @@ export default {
             this.toggleDropdown()
             this.loading = false
         },
-        getCountryName(iso2){
-            for (let i = 0; i < this.countries.length; i++) {
-                if(this.countries[i].iso2 == iso2) return this.countries[i].name
-            }
-        },
+       
         getCountryByRegion(region){
             const countries = {
                 'north-africa': ['DZ','EG','LY','MA','SS','SD','TN','EH'],
@@ -429,6 +443,7 @@ export default {
 .country-selector .dropdown-item .flg {
   display: inline-block;
   margin-right: 5px;
+  cursor:grab;
 }
 .country-selector .selection {
   font-size: 0.8em;

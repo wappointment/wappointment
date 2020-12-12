@@ -223,6 +223,12 @@
             background-color: {{ hx_rgb(opts.colors.header.text, .7) }};
         }
 
+        .phone-field-wrap .dpselect .selection::after,
+        .phone-field-wrap strong{
+            color: #645a5a;
+        }
+        
+
         /** wrapper tag **/
         {{ '#'+wrapper }}.wap-front {
             font-size: {{ baseFontSize }};

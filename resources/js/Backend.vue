@@ -81,6 +81,15 @@ export default {
     top:5px;
     right:5px;
 }
+
+.btn-cell.selected {
+    border: 2px solid var(--primary);
+}
+.btn-link.selected {
+   color: #666;
+    text-decoration: underline solid var(--primary);
+}
+
 #wpcontent{
   padding-left: 0;
 }

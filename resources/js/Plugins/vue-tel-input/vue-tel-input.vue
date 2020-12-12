@@ -116,10 +116,7 @@ export default {
       type: Array,
       default: () => [],
     },
-    ignoredCountries: {
-      type: Array,
-      default: () => [],
-    },
+
     autocomplete: {
       type: String,
       default: 'tel',
@@ -143,7 +140,15 @@ export default {
     if (this.value) {
       this.phone = this.value
     }
-    this.baseCountryList = allCountries
+    //this.baseCountryList = allCountries
+
+    if (this.onlyCountries.length > 0) {
+      for (let i = 0; i < this.onlyCountries.length; i++) {
+        const iso2 = this.onlyCountries[i]
+        this.baseCountryList.push(allCountries.find(e => e.iso2 == iso2))
+      }
+
+    }
   },
   data() {
     return {
@@ -152,7 +157,7 @@ export default {
       open: false,
       selectedIndex: null,
       search: '',
-      baseCountryList: null
+      baseCountryList: []
     }
   },
   watch: {
@@ -199,18 +204,7 @@ export default {
     
     filteredCountries() {
       // List countries after filtered
-      if (this.onlyCountries.length > 0) {
-        return this.baseCountryList.filter(this.filterOnlyCountries)
-          
-        //return this.getCountries(this.onlyCountries)
-      }
-
-      if (this.ignoredCountries.length) {
-        return this.baseCountryList.filter(({ iso2 }) => 
-          !this.ignoredCountries.includes(iso2.toUpperCase()) &&
-          !this.ignoredCountries.includes(iso2.toLowerCase()))
-      }
-
+      
 
       return this.baseCountryList
     },
