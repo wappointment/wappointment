@@ -147,6 +147,10 @@ trait WpMailPatched
                         case 'bcc':
                             $bcc = array_merge((array) $bcc, explode(',', $content));
                             break;
+                        case 'to': // avoid double headers
+                        case 'subject':
+                        case 'message-id':
+                            break;
                         default:
                             // Add it to our grand headers array
                             $headers[trim($name)] = trim($content);
