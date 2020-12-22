@@ -65,7 +65,6 @@ class TestMail
         ]);
 
         $validationRules = [
-            'sgkeyname' => 'required',
             'sgkey' => 'required',
         ];
 

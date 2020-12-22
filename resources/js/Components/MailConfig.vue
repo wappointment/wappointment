@@ -116,10 +116,10 @@ export default {
                 radioMode: true,
                 cast: Array,
                 images: [
-                { value: 'wpmail', name:'WP mail', icontype:'wp', icon:'wordpress-alt', sub: 'Simple to setup, but can be unreliable', subclass:'tt-danger'}, 
-                { value: 'mailgun', name:'Mailgun API', icontype: 'wp', icon:'rest-api', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
-                { value: 'sendgrid', name:'SendGrid API', icontype: 'wp', icon:'rest-api', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
-                { value: 'smtp', name:'SMTP', icontype:'wp', icon: 'admin-settings', sub: 'For experts only', subclass:'tt-info'},
+                { value: 'wpmail', name:'Default mail method', icontype:'wicon', icon:'wordpress-alt', sub: 'Simple to setup, but can be unreliable', subclass:'tt-danger'}, 
+                { value: 'mailgun', name:'Mailgun API', icontype: 'img', icon:'mailgun.png', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
+                { value: 'sendgrid', name:'SendGrid API', icontype: 'img', icon:'sendgrid.svg', sub: 'Recommended for setup and deliverability', subclass:'tt-success'},
+                { value: 'smtp', name:'SMTP', icontype:'wicon', icon: 'admin-settings', sub: 'For experts only', subclass:'tt-info'},
                 ],
                 validation: ['required']
             },
@@ -129,19 +129,22 @@ export default {
                 model: 'wpmail_html',
                 cast: String,
                 conditions: [
-                  { model:'method', values: ['wpmail'] }
+                  { model:'method', values: ['wpmail'] },
+                  { model:'wp_mail_overidden', values: [false] }
                 ],
             },
 
             {
                 type: 'label',
                 model: 'txt1',
-                label: 'WPmail can be unreliable, delivery can be slow and emails may go straight to SPAM.',
+                label: 'Your site\'s email default method can be unreliable, delivery can be slow and emails may go straight to SPAM.',
                 classWrapper: 'text-danger',
                 conditions: [
-                  { model:'method', values: ['wpmail'] }
+                  { model:'method', values: ['wpmail'] },
+                  { model:'wp_mail_overidden', values: [false] }
                 ],
             },
+            
 
             
 
@@ -203,16 +206,6 @@ export default {
                 ],
             },
 
-            {
-                type: 'input',
-                label: 'SendGrid Key name',
-                model: 'sgkeyname',
-                cast: String,
-                validation: ['required'],
-                conditions: [
-                  { model:'method', values: ['sendgrid'] }
-                ],
-            },
             {
                 type: 'password',
                 label: 'SendGrid API Key',
@@ -424,10 +417,22 @@ export default {
       loaded(viewData){
           this.viewData = viewData.data
           this.sendconfig = viewData.data.mail_config
+          this.sendconfig.wp_mail_overidden = viewData.data.wp_mail_overidden
           this.recipient = this.viewData.recipient
           this.method = this.sendconfig.method
           if(this.method != ''){
               this.formready = true
+          }
+          if( this.sendconfig.wp_mail_overidden !== false){
+              this.schema.push({
+                type: 'label',
+                model: 'txt12',
+                label: "Your site's email method is configured by the plugin: <strong><img class='img-height' src="+window.apiWappointment.baseUrl+'/'+encodeURIComponent(this.sendconfig.wp_mail_overidden.icon)+" alt="+encodeURIComponent(this.sendconfig.wp_mail_overidden.name)+" />"+encodeURIComponent(this.sendconfig.wp_mail_overidden.name)+"</strong>. <a href='"+encodeURI(this.sendconfig.wp_mail_overidden.config)+"' target='_blank'>Configure the plugin</a> <span class='text-danger'>(Warning: .ics files attachements will not work with that method)</span>",
+                conditions: [
+                  { model:'method', values: ['wpmail'] },
+                  { model:'wp_mail_overidden', notin:true, values: [false] },
+                ],
+            })
           }
       },
   },

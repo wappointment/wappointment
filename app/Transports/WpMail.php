@@ -5,6 +5,7 @@ namespace Wappointment\Transports;
 use WappoSwift_Mime_SimpleMessage;
 use WappoSwift_MimePart;
 use WappoSwift_Attachment;
+use Wappointment\Services\Status;
 
 class WpMail extends Transport
 {
@@ -55,7 +56,7 @@ class WpMail extends Transport
         $this->setWpSettings();
 
         //if wpforms is installed
-        if (defined('WPMS_PLUGIN_VER')) {
+        if (Status::hasSmtpPlugin()) {
             add_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
             wp_mail($to, $message->getSubject(), $message->getBody());
             remove_filter('wp_mail_content_type', 'setHtmlContentType');

@@ -6,6 +6,7 @@ use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\Services\Staff;
 use Wappointment\WP\WidgetAPI;
+use Wappointment\Services\Status;
 
 class ViewsData
 {
@@ -227,6 +228,7 @@ class ViewsData
     {
         return [
             'mail_config' => Settings::get('mail_config'),
+            'wp_mail_overidden' => Status::hasSmtpPlugin(),
             'recipient' => wp_get_current_user()->user_email,
         ];
     }

@@ -6,6 +6,7 @@ use Wappointment\ClassConnect\Request;
 use Wappointment\Services\Reminder;
 use Wappointment\Models\Reminder as MReminder;
 use Wappointment\Services\Settings;
+use Wappointment\Services\Status;
 
 class ReminderController extends RestController
 {

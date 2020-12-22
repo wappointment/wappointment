@@ -10,8 +10,9 @@
                 <div>
                     <div v-if="item.icon !== undefined">
                         <WapImage v-if="item.icontype===undefined" :faIcon="item.icon" size="md" />
+                        <span v-if="item.icontype=='wicon'" :class="'wicon ' + item.icon"></span>
                         <span v-if="item.icontype=='wp'" :class="'dashicons ' + getWPicon(item)"></span>
-                        <img v-if="item.icontype=='img'" :src="item.icon" />
+                        <img v-if="item.icontype=='img'" class="img-height" :src="resourcesUrl+item.icon" :alt="item.alt" />
                     </div>
                     
                     <div>{{ item.name }}</div>
@@ -40,7 +41,9 @@ export default {
         },
     },
     computed: {
-
+        resourcesUrl(){
+            return window.apiWappointment.resourcesUrl+'images/'
+        },
         radioMode(){
             if(this.definition.radioMode === undefined) return false
             return this.definition.radioMode
@@ -131,5 +134,33 @@ export default {
 .btn-secondary.btn-cell.selected img,
 .btn-secondary.btn-cell:hover img{
     filter: grayscale(0);
+}
+.wicon{
+    font-family: dashicons;
+    display: inline-block;
+    line-height: 1;
+    font-weight: 400;
+    font-style: normal;
+    speak: never;
+    text-decoration: inherit;
+    text-transform: none;
+    text-rendering: auto;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    width: 20px;
+    height: 20px;
+    font-size: 20px;
+    vertical-align: top;
+    text-align: center;
+}
+.wicon.wordpress-alt::before {
+    content: "\f324";
+}
+.wicon.admin-settings::before {
+    content:"\f108";
+}
+
+.img-height{
+    height:40px;
 }
 </style>

@@ -33,17 +33,6 @@ class Mail
     public function send(\Wappointment\Messages\AbstractEmail $email)
     {
         $message = $email->renderMessage();
-        /*         if ($this->isWpMail()) {
-            //only text version for wpmail
-            $this->bodyVersion = $this->altVersion;
-            $this->body($message['body_text'])
-                ->subject($message['subject']);
-        } else {
-            $this
-                ->body($message['body'])
-                ->subject($message['subject'])
-                ->alt($message['body_text']); //tags already replace in renderBody
-        } */
 
         $this->body($message['body'])
             ->subject($message['subject'])

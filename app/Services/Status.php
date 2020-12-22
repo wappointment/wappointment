@@ -24,6 +24,18 @@ class Status
         }
     }
 
+    public static function hasSmtpPlugin()
+    {
+        if (defined('WPMS_PLUGIN_VER')) {
+            return [
+                'config' => 'admin.php?page=wp-mail-smtp',
+                'icon' => 'wp-mail-smtp/assets/images/logo.svg',
+                'name' => 'WP-Mail-SMTP',
+            ];
+        }
+        return false;
+    }
+
     public static function free($start, $end, $timezone, $request)
     {
         return self::create($start, $end, $timezone, MStatus::TYPE_FREE, $request);

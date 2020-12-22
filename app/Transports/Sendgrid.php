@@ -23,12 +23,6 @@ class Sendgrid extends Transport
      */
     protected $key;
 
-    /**
-     * The Sendgrid username.
-     *
-     * @var string
-     */
-    protected $username;
 
     /**
      * The Mailgun API end-point.
@@ -42,14 +36,12 @@ class Sendgrid extends Transport
      *
      * @param  \GuzzleHttp\ClientInterface  $client
      * @param  string  $key
-     * @param  string  $username
      * @return void
      */
-    public function __construct(ClientInterface $client, $username, $key)
+    public function __construct(ClientInterface $client, $key)
     {
         $this->key = $key;
         $this->client = $client;
-        $this->setUsername($username);
     }
 
 
@@ -198,27 +190,5 @@ class Sendgrid extends Transport
             'value' => $message->getBody(),
         ];
         return $content;
-    }
-
-    /**
-     * Get the username being used by the transport.
-     *
-     * @return string
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Set the username being used by the transport.
-     *
-     * @param  string  $username
-     * @return string
-     */
-    public function setUsername($username)
-    {
-
-        return $this->username = $username;
     }
 }

@@ -10,7 +10,6 @@ class SendgridEmail implements InterfaceEmailTransport
     {
         return new Sendgrid(
             new \GuzzleHttp\Client(['connect_timeout' => 60]),
-            $config['sgkeyname'],
             $config['sgkey']
         );
     }

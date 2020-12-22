@@ -254,9 +254,11 @@ export default {
                     }else{
                         conditions_failed = !this.passedCondition(condition)
                     }
+
+                    if(conditions_failed) return false
                     
                 }
-                if(conditions_failed) return false
+                
             }
             if(element.model!==undefined && this.visibles.indexOf(element.model) === -1) this.visibles.push(element.model)
             return true
