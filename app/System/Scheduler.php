@@ -25,11 +25,14 @@ class Scheduler
         foreach (\Wappointment\Services\Staff::getIds() as $staff_id) {
             $calendar_urls = self::getUrlsToScan($staff_id);
             $hasChanged = false;
-            foreach ($calendar_urls as $calurl) {
-                if ((new \Wappointment\Services\Calendar($calurl, $staff_id))->fetch()) {
-                    $hasChanged = true;
+            if (!empty($calendar_urls)) {
+                foreach ($calendar_urls as $calurl) {
+                    if ((new \Wappointment\Services\Calendar($calurl, $staff_id))->fetch()) {
+                        $hasChanged = true;
+                    }
                 }
             }
+
             //regenerate availability only when we get new events
             if ($hasChanged) {
                 self::regenerateAvailability();
@@ -131,11 +134,12 @@ class Scheduler
                 Settings::saveStaff('calurl', false, $staff_id);
             }
         }
-
-        foreach ($calendar_urls as $key => $calurl) {
-            if (empty($calurl)) {
-                unset($calendar_urls[$key]);
-                $require_save = true;
+        if (!empty($calendar_urls)) {
+            foreach ($calendar_urls as $key => $calurl) {
+                if (empty($calurl)) {
+                    unset($calendar_urls[$key]);
+                    $require_save = true;
+                }
             }
         }
 

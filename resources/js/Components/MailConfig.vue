@@ -385,6 +385,9 @@ export default {
         isSmtp(){
             return ['smtp'].indexOf(this.sendconfig.method) !== -1
         },
+        getImageUrl(){
+            return window.apiWappointment.baseUrl+'/'+encodeURIComponent(this.sendconfig.wp_mail_overidden.icon).replaceAll("%2F",'/')
+        }
     },
   methods: {
 
@@ -427,7 +430,7 @@ export default {
               this.schema.push({
                 type: 'label',
                 model: 'txt12',
-                label: "Your site's email method is configured by the plugin: <strong><img class='img-height' src="+window.apiWappointment.baseUrl+'/'+encodeURIComponent(this.sendconfig.wp_mail_overidden.icon)+" alt="+encodeURIComponent(this.sendconfig.wp_mail_overidden.name)+" />"+encodeURIComponent(this.sendconfig.wp_mail_overidden.name)+"</strong>. <a href='"+encodeURI(this.sendconfig.wp_mail_overidden.config)+"' target='_blank'>Configure the plugin</a> <span class='text-danger'>(Warning: .ics files attachments will not work with that method)</span>",
+                label: "Your site's email method is configured by the plugin: <strong><img class='img-height' src="+this.getImageUrl+" alt="+encodeURIComponent(this.sendconfig.wp_mail_overidden.name)+" />"+encodeURIComponent(this.sendconfig.wp_mail_overidden.name)+"</strong>. <a href='"+encodeURI(this.sendconfig.wp_mail_overidden.config)+"' target='_blank'>Configure the plugin</a> <span class='text-danger'>(Warning: .ics files attachments will not work with that method)</span>",
                 conditions: [
                   { model:'method', values: ['wpmail'] },
                   { model:'wp_mail_overidden', notin:true, values: [false] },
