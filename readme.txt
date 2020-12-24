@@ -1,14 +1,14 @@
-=== Wappointment - Appointment Bookings  ===
+=== Appointment Bookings for Zoom , GoogleMeet and more - Wapointment  ===
 Contributors: wappointment, benheu
-Tags: appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, booking form
+Tags: appointment scheduling, appointment booking, appointment booking calendar, zoom appointment booking, booking form
 Requires at least: 4.7
-Tested up to: 5.5
+Tested up to: 5.6
 Requires PHP: 7.0
 Stable tag: 1.9.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Appointment scheduling for personal coaches, teachers, therapists and service professionals of all kind
+Get clients to quickly book a meeting with you over Zoom , GoogleMeet , the phone or at your office
 
 == Appointment scheduling made easy ==
 
@@ -23,8 +23,12 @@ https://www.youtube.com/watch?v=jUkiyejbuzg
 
 == Get booked simply ==
 
-= Save Time Automate your Bookings =
-**Get booked 24/7**, Wappointment is basically a **booking assistant which never sleeps**.
+= Provide your appointments the way you like =
+* as a video Meeting over Zoom , GoogleMeet or Skype
+* over the Phone
+* or at your office
+
+= Sync new bookings automatically in your Google Calendar =
 
 = Avoid Double Bookings =
 Keep your availability updated using our powerful centralized system. 
@@ -56,12 +60,6 @@ Quickly define when and how many of them do they receive (1 day before appointme
 * Set your recurrent availability within seconds
 * Set your punctual availability and block your non-bookable time (non working days and hours, busy times, holidays, etc) in just few clicks
 * Select the timezone from which you operate
-
-= Define how you provide your services = 
-* Zoom video conference
-* By Phone (pick all or certain country allowed for the call)
-* By Skype
-* In Person at an address you specify
 
 = Appointments Settings =
 * Set the duration of your appointment 5 min, 10 min, 15 min , 60 min etc ...
@@ -140,6 +138,17 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.0.0 - 2020-12-25 =
+* Added Zoom Integration
+* Added Google Calendar 2-way Sync
+* Added Google Meet Integration
+* Improvement on Email editor
+* Style corrections
+* Client erase fixed
+* Fixed issue with sunday appointments not showing in the admin calendar for some timezones
+* Fixed issue on email headers, correcte double headers on sitee's method
+* Compatible with WP Mail SMTP plugin
 
 = 1.9.5 - 2020-11-23 =
 * Fixed corrupted version
