@@ -2,8 +2,6 @@
 
 namespace Wappointment\Messages;
 
-use Wappointment\Models\Client;
-use Wappointment\Models\Appointment;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Settings;
 

@@ -280,11 +280,14 @@ export default {
       return servicesNC
     },
     servicesConnected(){
-      let servicesC = ['zoom','google', 'googlemeet']
+      let servicesC = []
       if(this.is_dotcom_connected){
         for (let i = 0; i < this.is_dotcom_connected.services.length; i++) {
           const service = this.is_dotcom_connected.services[i]
-          servicesC = servicesC.filter(e => e.indexOf(service) !== -1)
+          servicesC.push(service)
+          if(service == 'google'){
+            servicesC.push('googlemeet')
+          }
         }
       }
       return servicesC

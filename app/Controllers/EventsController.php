@@ -9,7 +9,6 @@ use Wappointment\Services\DateTime;
 use Wappointment\Services\Status;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Models\Status as Mstatus;
-use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Services\Appointment;
 use Wappointment\Services\Preferences;
 use Wappointment\Services\Wappointment\DotCom;
@@ -74,7 +73,7 @@ class EventsController extends RestController
 
     public function delete(Request $request)
     {
-        $appointment = AppointmentModel::find($request->input('id'));
+        $appointment = $this->getAppointmentModel()::find($request->input('id'));
         if (Appointment::cancel($appointment)) {
             return ['message' => 'Appointment cancelled'];
         }
@@ -83,7 +82,7 @@ class EventsController extends RestController
 
     public function recordDotcom(Request $request)
     {
-        $appointment = AppointmentModel::with('client')->where('id', $request->input('id'))->first();
+        $appointment = $this->getAppointmentModel()::with('client')->where('id', $request->input('id'))->first();
         $acs_id = Settings::get('activeStaffId');
         $staff_id = empty($appointment->staff_id) ? $acs_id : (int)$appointment->staff_id;
         $dotcomapi = new DotCom;
@@ -138,13 +137,16 @@ class EventsController extends RestController
         }
         return $client;
     }
-
+    protected function getAppointmentModel()
+    {
+        return Central::get('AppointmentModel');
+    }
     private function getAppointments($start_at_string, $end_at_string)
     {
-        return AppointmentModel::with(['client' => function ($q) {
+        return $this->getAppointmentModel()::with(['client' => function ($q) {
             $q->withTrashed();
         }])
-            ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
+            ->where('status', '>=', $this->getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)
             ->where('start_at', '>=', $start_at_string)
             ->where('end_at', '<=', $end_at_string)
             ->get();

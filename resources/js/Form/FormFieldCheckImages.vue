@@ -12,7 +12,7 @@
                         <WapImage v-if="item.icontype===undefined" :faIcon="item.icon" size="md" />
                         <span v-if="item.icontype=='wicon'" :class="'wicon ' + item.icon"></span>
                         <span v-if="item.icontype=='wp'" :class="'dashicons ' + getWPicon(item)"></span>
-                        <img v-if="item.icontype=='img'" class="img-height" :src="resourcesUrl+item.icon" :alt="item.alt" />
+                        <img v-if="item.icontype=='img'" :class="[item.realsize ? '':'img-height']" :src="resourcesUrl+item.icon" :alt="item.alt" />
                     </div>
                     
                     <div>{{ item.name }}</div>
@@ -160,6 +160,19 @@ export default {
     content:"\f108";
 }
 
+.wicon.edit::before {
+    content: "\f464";
+}
+.wicon.trash::before {
+    content:"\f182";
+}
+.wicon.undo::before {
+    content:"\f171";
+}
+
+.wicon.plus-alt::before {
+    content:"\f502";
+}
 .img-height{
     height:40px;
 }

@@ -2,13 +2,9 @@
 
 namespace Wappointment\Messages;
 
-use Wappointment\Models\Client;
-use Wappointment\Models\Appointment;
-
 class AdminCanceledAppointmentEmail extends AbstractAdminEmail
 {
     use AttachesIcs, AdminGeneratesDefault;
-
 
     public function loadContent()
     {

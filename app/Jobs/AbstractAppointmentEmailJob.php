@@ -30,7 +30,6 @@ abstract class AbstractAppointmentEmailJob extends AbstractEmailJob
         ];
         if ($this->reminder_id) {
             $data['reminder_id'] = $this->reminder_id;
-            return new $emailClass($data);
         }
         return new $emailClass($data);
     }

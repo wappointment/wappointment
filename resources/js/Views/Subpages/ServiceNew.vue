@@ -82,8 +82,8 @@ export default {
                 model: 'options.video',
                 cast: Array,
                 images: [
-                  { value:'zoom', name:'Zoom', icon: window.apiWappointment.resourcesUrl+'images/zoom.png', icontype: 'img'},
-                  { value:'googlemeet', name:'Google Meet', icon: window.apiWappointment.resourcesUrl+'images/google-meet.png', icontype: 'img'},
+                  { value:'zoom', name:'Zoom', icon: 'zoom.png', icontype: 'img', realsize: true},
+                  { value:'googlemeet', name:'Google Meet', icon: 'google-meet.png', icontype: 'img', realsize: true},
                 ],
                 conditions: [
                   { model:'type', values: ['zoom'] }

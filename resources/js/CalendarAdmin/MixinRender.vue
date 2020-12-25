@@ -120,7 +120,7 @@ export default {
 
       appointmentHasZoomUrl(eventId){
         let appointment = this.findAppointmentById(eventId)
-        return appointment.extendedProps.options.providers !== undefined && appointment.extendedProps.options.providers.zoom !== undefined
+        return appointment.extendedProps.options.providers !== undefined && [undefined,false].indexOf(appointment.extendedProps.options.providers.zoom) === -1
       },
 
       appointmentHasGoogleUrl(eventId){

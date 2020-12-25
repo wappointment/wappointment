@@ -2,8 +2,6 @@
 
 namespace Wappointment\Messages;
 
-use Wappointment\Models\Client;
-use Wappointment\Models\Appointment;
 use Wappointment\Services\Settings;
 
 class AdminRescheduledAppointmentEmail extends AbstractAdminEmail

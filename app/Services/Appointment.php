@@ -5,17 +5,23 @@ namespace Wappointment\Services;
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Models\Client;
 use Wappointment\Helpers\Events;
+use Wappointment\Managers\Central;
 use Wappointment\WP\Helpers as WPHelpers;
 
 class Appointment
 {
     public static function delete($id)
     {
-        $status = AppointmentModel::destroy($id);
+        $status = static::getAppointmentModel()::destroy($id);
         if ($status) {
             (new Availability())->regenerate();
         }
         return $status;
+    }
+
+    protected static function getAppointmentModel()
+    {
+        return Central::get('AppointmentModel');
     }
 
     public static function create($data)
@@ -24,17 +30,17 @@ class Appointment
             $data['options'] = [];
         }
         $data['options']['buffer_time'] = (int) Settings::get('buffer_time');
-        return AppointmentModel::create($data);
+        return static::getAppointmentModel()::create($data);
     }
 
     public static function confirm($id)
     {
-        $oldAppointment = $appointment = AppointmentModel::where('id', $id)
-            ->where('status', AppointmentModel::STATUS_AWAITING_CONFIRMATION)->first();
+        $oldAppointment = $appointment = static::getAppointmentModel()::where('id', $id)
+            ->where('status', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)->first();
         if (empty($appointment)) {
             throw new \WappointmentException("Can't find appointment", 1);
         } else {
-            $result = $appointment->update(['status' => AppointmentModel::STATUS_CONFIRMED]);
+            $result = $appointment->update(['status' => static::getAppointmentModel()::STATUS_CONFIRMED]);
             if ($result) {
                 Events::dispatch(
                     'AppointmentConfirmedEvent',
@@ -47,7 +53,7 @@ class Appointment
 
     public static function patch($id, $data)
     {
-        $appointment = AppointmentModel::where('id', $id)->first();
+        $appointment = static::getAppointmentModel()::where('id', $id)->first();
         $oldAppointment = $appointment->replicate();
 
         $result = $appointment->update($data);
@@ -64,7 +70,7 @@ class Appointment
             throw new \WappointmentException('Appointment rescheduling is not allowed', 1);
         }
 
-        $appointment = AppointmentModel::where('edit_key', $edit_key)->first();
+        $appointment = static::getAppointmentModel()::where('edit_key', $edit_key)->first();
         $oldAppointment = $appointment->replicate();
         if (empty($appointment)) {
             throw new \WappointmentException("Can't find appointment", 1);
@@ -130,7 +136,7 @@ class Appointment
             'type' => $type,
             'client_id' => $client->id,
             'edit_key' => md5($client->id . $start_at),
-            'status' => $forceConfirmed ? AppointmentModel::STATUS_CONFIRMED : static::getDefaultStatus($service)
+            'status' => $forceConfirmed ? static::getAppointmentModel()::STATUS_CONFIRMED : static::getDefaultStatus($service)
         ];
 
         return static::book($appointmentData, $client, $forceConfirmed);
@@ -143,7 +149,7 @@ class Appointment
         $end_at_str = static::unixToDb($end_at);
 
 
-        if (AppointmentModel::where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
+        if (static::getAppointmentModel()::where('status', '>=', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)
             ->where(function ($query) use ($start_at_str, $end_at_str) {
                 $query->where(function ($query) use ($start_at_str, $end_at_str) {
                     $query->where('start_at', $start_at_str);
@@ -205,7 +211,7 @@ class Appointment
     {
         $appointment = static::create($data);
 
-        if ($appointment->status == AppointmentModel::STATUS_AWAITING_CONFIRMATION) {
+        if ($appointment->status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION) {
             Events::dispatch('AppointmentBookedEvent', ['appointment' => $appointment, 'client' => $client]);
         } else {
             Events::dispatch('AppointmentConfirmedEvent', ['appointment' => $appointment, 'client' => $client]);
@@ -242,8 +248,8 @@ class Appointment
             throw new \WappointmentException('Appointment cancellation is not allowed', 1);
         }
 
-        $appointment = AppointmentModel::where('edit_key', $edit_key)
-            ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)->first();
+        $appointment = static::getAppointmentModel()::where('edit_key', $edit_key)
+            ->where('status', '>=', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)->first();
 
         if (empty($appointment)) {
             throw new \WappointmentException("Can't find appointment", 1);
@@ -276,7 +282,7 @@ class Appointment
     protected static function getDefaultStatus($service)
     {
         $default_status = ((int) Settings::get('approval_mode') === 1) ?
-            AppointmentModel::STATUS_CONFIRMED : AppointmentModel::STATUS_AWAITING_CONFIRMATION;
+            static::getAppointmentModel()::STATUS_CONFIRMED : static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
 
         return apply_filters('wappointment_appointment_default_status', $default_status, $service);
     }

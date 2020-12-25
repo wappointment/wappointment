@@ -144,10 +144,11 @@ It requires work on your end but keeps your site safe and optimized.
 * Added Google Calendar 2-way Sync
 * Added Google Meet Integration
 * Improvement on Email editor
+* Phone countries can be ordered with Drag and Drop now
 * Style corrections
 * Client erase fixed
 * Fixed issue with sunday appointments not showing in the admin calendar for some timezones
-* Fixed issue on email headers, correcte double headers on sitee's method
+* Fixed issue on email headers, corrected double headers on site's method
 * Compatible with WP Mail SMTP plugin
 
 = 1.9.5 - 2020-11-23 =
