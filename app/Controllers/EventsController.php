@@ -4,6 +4,7 @@ namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Managers\Central;
 use Wappointment\Services\Settings;
 use Wappointment\Services\DateTime;
 use Wappointment\Services\Status;

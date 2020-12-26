@@ -42,7 +42,7 @@
         <div v-else>
             <div class="mt-4 p-3 text-center">
             <h2>Welcome to your Calendar page!</h2>
-            <img src="https://ps.w.org/wappointment/assets/screenshot-2.gif?rev=2301252" class="mb-3 rounded img-fluid mr-2">
+            <img :src="getInstalledImg" class="mb-3 rounded img-fluid mr-2" alt="See how your calendar works">
             <div class="m-auto sm-box sm-text align-self-center text-left text-muted rounded bg-light p-2 pl-5">
                 <p class="h6">From this page you will be able to:</p>
                 <ol class="ml-0 my-3">
@@ -82,6 +82,9 @@ export default {
     },
     getSubscribeEmail(){
         return this.passviewData.subscribe_email[0]
+    },
+    getInstalledImg(){
+        return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/installed.gif'
     }
   },
   methods: {

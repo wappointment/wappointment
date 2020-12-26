@@ -1,8 +1,8 @@
 <template>
   <div class="container m-4">
     <h1>Welcome to Wappointment</h1>
+    <img :src="getWelcomeImg" class="img-fluid" alt="Welcome to wappointment">
     <p class="h6 text-muted">Let's start with a quick setup</p>
-    
     <div v-if="suggest_ugly_links" class="bg-danger p-4 rounded">
       <div class="h5 text-white">Your site has permalinks "ON" but your server is not properly configured to handle them. </div>
       <div class="h6 text-white">You should configure either your server or switch to ugly permalinks. <a href="https://wordpress.org/support/article/using-permalinks/" target="_blank">Read about permalinks</a></div>
@@ -45,6 +45,7 @@ export default {
     created(){
       this.service = this.$vueService(new AppService)
     },
+
     methods: {
       async wizardStep1Request() {
           return await this.service.call('wizard', {step:'1'})
@@ -84,6 +85,11 @@ export default {
       redirectWizardStep1(){
         this.$router.push({name: 'wizard2'})
       }
-    }  
+    },
+    computed: {
+      getWelcomeImg(){
+        return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/welcome.png'
+      }
+    },
 }
 </script>

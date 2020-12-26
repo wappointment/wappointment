@@ -120,6 +120,7 @@ class Init
             'resourcesUrl' => Helpers::pluginUrl() . '/dist/',
             'baseUrl' => plugins_url(),
             'apiSite' => WAPPOINTMENT_SITE,
+            'version' => WAPPOINTMENT_VERSION,
             'allowed' => Settings::get('wappointment_allowed'),
             'disabled_modern_api_verbs' => true //(bool)Settings::get('disabled_modern_api_verbs'),
         ];

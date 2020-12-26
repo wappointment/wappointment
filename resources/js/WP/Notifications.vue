@@ -10,6 +10,7 @@
                 </ul>
                 <div v-if="isError">
                   <div class="border-top h5 pt-2 mt-2">Contact us, we'll help you!</div>
+                  <img :src="getErrorImg" class="mb-3 rounded img-fluid mr-2" alt="An error occurred, get help!">
                   <ContactButton :subject="title" buttonLabel="Open a ticket" :autofill="autofill" :messages="messages" />
                 </div>
             </div>
@@ -39,8 +40,12 @@ export default {
     computed: {
       isError(){
         return this.type == 'error'
+      },
+      getErrorImg(){
+        return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/'+encodeURIComponent(this.messages[0])+'/error.png'
       }
     },
+    
     data() {
       return {
           showDetails: false,
