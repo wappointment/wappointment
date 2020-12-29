@@ -15,6 +15,7 @@ class Feedback extends API
                 'reason' => $request->input('reason'),
                 'email' => $request->input('email'),
                 'details' => $request->input('details'),
+                'version' => WAPPOINTMENT_VERSION,
             ]
         ]);
 

@@ -69,7 +69,7 @@ export default {
     components: { BookingPageButton, InputPh: window.wappoGet('InputPh'),},
     data: () => ({
         showWelcomePopup: false,
-        welcomeComplete: false,
+        welcomeComplete: true,
         serviceWappointment: null,
   }),
   created(){
@@ -89,11 +89,7 @@ export default {
   },
   methods: {
     hideWelcome(){
-        if(!this.welcomeComplete){
-            this.sendIgnore()
-        }else{
-            this.showWelcomePopup = false
-        }
+        this.sendIgnore()
     },
     sendTestBooking(){
       this.request(this.sendTestBookingRequest, false, undefined,false,  this.closeAndRefreshWelcome)
@@ -109,7 +105,7 @@ export default {
     },
 
     closeAndRefreshWelcome(e){
-      this.welcomeComplete = true
+      this.showWelcomePopup = false
       this.$emit('refreshEvents')
     },
     

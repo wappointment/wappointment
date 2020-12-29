@@ -1,19 +1,20 @@
 <template>
     <WapModal  :show="show" @hide="hideModal" v-if="show">
-          <h4 slot="title" class="modal-title">You've just updated to version 1.9</h4>
+          <h4 slot="title" class="modal-title">This is Wappointment 2.0 
+          </h4>
           <div>
-              <h3>Precision on weekly availability and a few usability improvements</h3>
+              <h3  class="d-flex align-items-center">
+                <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
+                <span>Connect your appointments to Zoom, Google Calendar, Google Meet</span>     
+            </h3>
+            <iframe width="540" height="301" src="https://www.youtube.com/embed/wEE8yRh6pP4" 
+            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              <h5 class="my-2"> <span>Other Improvements</span></h5>
               <ol>
-                  <li class="my-2">You can now set your weekly availability with more precision each 10min, 15min, 20min, 30min instead of only each 60min
-                      <div><img class="mt-2 img-fluid" :src="getImage(2)" alt="Weekly availaibility precision" ></div>
-                  </li>
-                  <li class="my-2">Your admin calendar view is improved, you can now decide the start and end time to be shown (e.g.: from 8am til 11pm)
-                      <div><img class="mt-2 img-fluid" :src="getImage(1)" alt="Calendar admin prefernces" ></div>
-                  </li>
-                  <li class="my-2">Finally the booking form is now full screen always on your phone, just try it on your phone. It is so much better!</li>
-              </ol> 
-              
-
+                  <li class="my-2">Email editor has been improved</li>
+                  <li class="my-2">Phone input improved, flags can be reordered</li>
+                  <li class="my-2">Works with WP Mail SMTP plugin</li>
+              </ol>
               <div class="wrapping-update text-center" v-if="slideshow">
                   <div class="d-inline-flex m-2">
                       <div v-for="n in images">
@@ -45,6 +46,9 @@ export default {
 
 
     computed:{
+        getUpdateImg(){
+            return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/update.png'
+        },
         getUpdateImage(){
             return apiWappointment.apiSite + '/versions_update/v19/' + this.image_number + '.png'
         }

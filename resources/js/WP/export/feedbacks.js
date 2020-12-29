@@ -9,10 +9,12 @@ jQuery(function($){
                               '<div class="form-container">'+
                                   '<h1>Help us improve Wappointment!</h1>'+
                                   '<div>'+
-                                      '<h2>We are sorry to see you go... please let us know why are you deactivating the plugin:</h2>'+
+                                      '<h2>'+'<img src="'+window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/leaving_already.png'+'" class="img-fluid" alt="Leaving already">'+
+                                      'Let us know why are you deactivating</h2>'+
+                                      
                                       '<form id="wappo-feed-form"><div class="wappo-field-row"><label><input type="radio" name="reason" value="0"> I couldn\'t install it</label></div>'+
                                       '<div class="wappo-field-row"><label><input type="radio" name="reason" value="1"> It\'s missing a feature I need</label></div>'+
-                                      '<div class="wappo-field-row"><label><input type="radio" name="reason" value="2"> I have no use for it anymore</label></div>'+
+                                      '<div class="wappo-field-row"><label><input type="radio" name="reason" value="2"> I only needed it temporarly</label></div>'+
                                       '<div class="wappo-field-row"><label><input type="radio" name="reason" value="3"> Other reason</label></div>'+
                                       '<div class="wappo-field-row reason-details wap-hidden"><label><textarea id="reason-details" name="details" placeholder="Please specify"></textarea></label></div></form>'+
                                   '</div>'+

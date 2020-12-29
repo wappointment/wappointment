@@ -1,28 +1,33 @@
 <template>
   <div class="container m-4">
     <h1>Welcome to Wappointment</h1>
-    <img :src="getWelcomeImg" class="img-fluid" alt="Welcome to wappointment">
-    <p class="h6 text-muted">Let's start with a quick setup</p>
-    <div v-if="suggest_ugly_links" class="bg-danger p-4 rounded">
-      <div class="h5 text-white">Your site has permalinks "ON" but your server is not properly configured to handle them. </div>
-      <div class="h6 text-white">You should configure either your server or switch to ugly permalinks. <a href="https://wordpress.org/support/article/using-permalinks/" target="_blank">Read about permalinks</a></div>
-      <div class="d-flex p-2">
-        <a href="options-permalink.php" target="_blank" class="btn btn-secondary mr-2">Change permalinks configuration</a>
-        <a href="admin.php?page=wappointment_calendar&wappo_ugly_permalinks=1#/wizard1" class="btn btn-primary" >Continue With Wappointment Anyway</a>
+    <div class="d-flex align-items-center welcome-wrapper">
+      <div class="mr-4">
+        <h3>Let's start with a quick setup</h3>
+        <div v-if="suggest_ugly_links" class="bg-danger p-4 rounded">
+          <div class="h5 text-white">Your site has permalinks "ON" but your server is not properly configured to handle them. </div>
+          <div class="h6 text-white">You should configure either your server or switch to ugly permalinks. <a href="https://wordpress.org/support/article/using-permalinks/" target="_blank">Read about permalinks</a></div>
+          <div class="d-flex p-2">
+            <a href="options-permalink.php" target="_blank" class="btn btn-secondary mr-2">Change permalinks configuration</a>
+            <a href="admin.php?page=wappointment_calendar&wappo_ugly_permalinks=1#/wizard1" class="btn btn-primary" >Continue With Wappointment Anyway</a>
+          </div>
+          
+        </div>
+        <div v-else>
+            <p class="mt-4">
+            <button class="btn btn-primary btn-lg btn-block" @click="wizardStep1">Start setup</button>
+          </p>
+          <div class="small">
+            <div>Please, contact us if a problem occurs during the installation.</div>
+            <div>You can reach us at <a href="https://wappointment.com/support" target="_blank">https://wappointment.com/support</a></div>
+          </div>
+        </div>
       </div>
-      
+      <img :src="getWelcomeImg" class="img-fluid" alt="Welcome to wappointment">
     </div>
-    <div v-else>
-        <p class="mt-4">
-        <button class="btn btn-primary btn-xl" @click="wizardStep1">Start setup</button>
-      </p>
-      
-      <Notifications v-if="installationErrors.length > 0" :messages="installationErrors" :title="mainInstallationError"></Notifications>
-      <div v-else class="small">
-        <div>Please, contact us if a problem occurs during the installation.</div>
-        <div>You can reach us at <a href="https://wappointment.com/support" target="_blank">https://wappointment.com/support</a></div>
-      </div>
-    </div>
+    <Notifications v-if="installationErrors.length > 0" :messages="installationErrors" :title="mainInstallationError"></Notifications>
+    
+    
   </div>
 </template>
 
@@ -88,8 +93,16 @@ export default {
     },
     computed: {
       getWelcomeImg(){
-        return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/welcome.png'
+        return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/welcome.gif'
       }
     },
 }
 </script>
+<style >
+.welcome-wrapper{
+  width: 480px;
+  background: #f1ebff;
+  border-radius: .25rem;
+  padding: 1rem;
+}
+</style>

@@ -2,7 +2,7 @@
     <div>
         <div v-if="minimal === false" class="d-flex w100">
             
-            <div class="columnTitle" data-tt="Number of days in the future where you're made available">Available Booking Days</div> 
+            <div class="columnTitle" data-tt="Open your calendar for bookings for X days in the future">Available Booking Days</div> 
             <ClickRevealSlider :alwaysShow="true" 
             :value="viewData.availaible_booking_days" @change="changedCRS" />
         </div>

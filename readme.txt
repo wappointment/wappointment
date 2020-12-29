@@ -1,4 +1,4 @@
-=== Appointment Bookings for Zoom , GoogleMeet and more - Wapointment  ===
+=== Appointment Bookings for Zoom - GoogleMeet - and more | Wappointment  ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, appointment booking calendar, zoom appointment booking, booking form
 Requires at least: 4.7

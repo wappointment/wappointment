@@ -264,7 +264,7 @@ export default {
         return 'background-image: url("'+this.viewData.gravatar+'");'
     },
     createAccount(){
-      return window.apiWappointment.apiSite + '/register'
+      return window.apiWappointment.apiSite + '/register?site='+encodeURIComponent(apiWappointment.root)+'&version='+apiWappointment.version
     },
     addMoreService(){
       return window.apiWappointment.apiSite + '/client/account'

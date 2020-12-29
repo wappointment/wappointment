@@ -77,7 +77,7 @@ export default {
 
             {
                 type: 'checkimages',
-                label: 'Video meeting provider',
+                label: 'Select your video meeting app',
                 radioMode: true,
                 model: 'options.video',
                 cast: Array,
@@ -102,7 +102,7 @@ export default {
             },
              {
                 type: 'checkbox',
-                label: "Clients must provide a phone number",
+                label: "Clients must provide a phone number when booking",
                 model: 'options.phone_required',
                 cast: Boolean,
             },

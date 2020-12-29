@@ -153,6 +153,10 @@ class InitBackend
     public function customPluginLinks($links)
     {
         $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_settings')) . '" >Settings</a>';
+
+        if (Status::canSeeUpdatePage()) {
+            $links[] = '<a class="wappo_whatsnew" href="' . esc_url(WPHelpers::adminUrl('wappointment_calendar#see_whats_new')) . '" >See Improvements in v' . WAPPOINTMENT_VERSION . '</a>';
+        }
         /* if (Status::installedForXDays() > 30) {
             $links[] = '<a href="https://wordpress.org/support/plugin/wappointment/reviews/#new-post" target="_blank" class="btn btn-outline-secondary text-dark ml-2">
                 Support us with stars

@@ -42,6 +42,18 @@
     animation-timing-function: ease-in-out;
 }  
 
+.wappo_whatsnew{
+    color: #6664cb;
+font-weight: bold;
+font-size: 1.1em;
+text-decoration: underline !important;
+
+animation-name: updatesreview;
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: ease-in-out;
+}
+
 .wappo-modal-on{
     overflow: hidden;
 }
@@ -59,6 +71,11 @@
 }
 #wappo-feedback h2{
     color: #5d6164;
+    display: flex;
+    align-items: center;
+}
+#wappo-feedback img{
+    margin-right: 12px;
 }
 #wappo-feedback-skip {
     margin-right:.4rem;
@@ -111,6 +128,18 @@
     100% { transform: rotate(360deg); }
   }
 
+  @keyframes updatesreview {
+    0% {
+        color: #6664cb;
+    }
+    50% {
+        color: #ff691f;
+    }
+    100% {
+        color: #6664cb;
+    }
+
+}
 @keyframes justactivated {
     0% {
         background-color: #ededff;

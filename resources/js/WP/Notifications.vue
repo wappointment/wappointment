@@ -3,14 +3,19 @@
         <div v-if="messages.length > 0" class="static notify" :class="type" role="alert">
             <div class="countdown"></div>
             <div class="content">
-                <div class="h3" v-if="title">{{ title }}</div>
-                <a v-if="!showDetails" href="javascript:;" @click="showDetails=true">Show details</a>
-                <ul class="list-message" v-else>
-                  <li v-for="message in messages">{{ message }}</li>
-                </ul>
+                <div class="d-flex">
+                  <img :src="getErrorImg" class="mb-3 rounded img-fluid mr-2" alt="An error occurred, get help!">
+                  <div>
+                    <div class="h3" v-if="title">{{ title }}</div>
+                    <a v-if="!showDetails" href="javascript:;" @click="showDetails=true">Show details</a> 
+                    <ul class="list-message" v-else>
+                      <li v-for="message in messages">{{ message }}</li>
+                    </ul>
+                  </div>
+                </div>
+                
                 <div v-if="isError">
                   <div class="border-top h5 pt-2 mt-2">Contact us, we'll help you!</div>
-                  <img :src="getErrorImg" class="mb-3 rounded img-fluid mr-2" alt="An error occurred, get help!">
                   <ContactButton :subject="title" buttonLabel="Open a ticket" :autofill="autofill" :messages="messages" />
                 </div>
             </div>
@@ -42,7 +47,7 @@ export default {
         return this.type == 'error'
       },
       getErrorImg(){
-        return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/'+encodeURIComponent(this.messages[0])+'/error.png'
+        return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/'+this.fixedEncodeURIComponent(this.messages[0])+'/error.png'
       }
     },
     
@@ -51,6 +56,14 @@ export default {
           showDetails: false,
       } 
   },
+
+  methods:{
+    fixedEncodeURIComponent(str) {
+      return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+        return '%' + c.charCodeAt(0).toString(16);
+      });
+    } 
+  }
 }
 </script>
 <style>

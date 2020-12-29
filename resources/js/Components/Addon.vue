@@ -92,7 +92,7 @@ export default {
         },
         learnAddonUrl(){
             let url = this.addon.options.product_page !== undefined ? this.addon.options.product_page : this.buyAddonUrl
-            url += '?utm_source=plugin&utm_medium=link&utm_campaign=addons_'+this.addon.key
+            url += '?utm_source=plugin&utm_medium=link&utm_campaign=addons_'+this.addon.key+'&site='+encodeURIComponent(apiWappointment.root)+'&version='+apiWappointment.version
          return url
        },
         
