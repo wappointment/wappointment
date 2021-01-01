@@ -191,3 +191,23 @@ export default {
 }
 </script>
 
+<style>
+.widget-wraper{
+    box-shadow: inset 0 0 5px #959090;
+    width: 430px;
+}
+
+@media (min-width: 1410px) { 
+    .widget-wraper{
+        width: 850px !important;
+    }
+}
+
+@media (max-width: 876px) { 
+    .widget-wraper{
+        padding: 0 !important;
+        padding-top: 1rem !important;
+    }
+}
+
+</style>

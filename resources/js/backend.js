@@ -47,7 +47,7 @@ Vue.use(VueRouter)
 
 const CalendarPage = () => import(/* webpackChunkName: "group-calendar" */ './CalendarAdmin/Main')
 const ClientsPage = () => import(/* webpackChunkName: "group-clients" */ './Views/Clients')
-const SettingsPage = () => import(/* webpackChunkName: "group-settings" */ './Views/Settings')
+const SettingsPage = () => import(/* webpackChunkName: "group-settings" */ './Settings/Main')
 const AddonsPage = () => import(/* webpackChunkName: "group-addons" */ './Views/Addons')
 const HelpPage = () => import(/* webpackChunkName: "group-help" */ './Ne/Help')
 
@@ -74,7 +74,7 @@ const router = window.wappointmentrouter = new VueRouter({
       {
           path: 'settings',
           name: 'wappointment_settings',
-          redirect: { name: 'general'}
+          redirect: { name: 'calendars'}
       },
       {
         path: 'clients',
@@ -133,8 +133,8 @@ const router = window.wappointmentrouter = new VueRouter({
                 component: ServicePage
             },
             {
-                path: 'general',
-                name: 'general',
+                path: 'calendars',
+                name: 'calendars',
                 component: SettingsPage
             },
             {
@@ -148,18 +148,18 @@ const router = window.wappointmentrouter = new VueRouter({
                 component: SettingsPage
             },
             {
-                path: 'notifications',
-                name: 'notifications',
+                path: 'services',
+                name: 'services',
                 component: SettingsPage
             },
             {
-                path: 'reminders',
-                name: 'reminders',
+                path: 'emailsnsms',
+                name: 'emailsnsms',
                 component: SettingsPage
             },
             {
-                path: 'sync',
-                name: 'sync',
+                path: 'appearance',
+                name: 'appearance',
                 component: SettingsPage
             },
             {
@@ -172,7 +172,7 @@ const router = window.wappointmentrouter = new VueRouter({
                 name: 'addonstab',
                 component: SettingsPage
             }
-            
+
           ]
       },
 

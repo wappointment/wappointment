@@ -201,20 +201,20 @@
 </template>
 
 <script>
-import abstractView from './Abstract'
+import abstractView from '../Views/Abstract'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 import momenttz from '../appMoment'
 import Regav from '../RegularAvailability/View'
-import Service from './Subpages/Service'
-import Widget from './Subpages/Widget'
-import EditCancelPage from './Subpages/EditCancelPage'
+import Service from '../Views/Subpages/Service'
+import Widget from '../Settings/WidgetShow'
+import EditCancelPage from '../Views/Subpages/EditCancelPage'
 import LargeButton from '../Components/LargeSettingsButton'
 import hasBreadcrumbs from '../Mixins/hasBreadcrumbs'
 import weekDays from "../Components/weekDays"
 import RequestMaker from '../Modules/RequestMaker'
-import AbstractListing from './AbstractListing'
+import AbstractListing from '../Views/AbstractListing'
 import DurationCell from '../BookingForm/DurationCell'
-import BookingPageButton from '../Components/Widget/BookingPageButton'
+import BookingPageButton from '../Settings/BookingPageButton'
 
 export default {
   extends: abstractView,

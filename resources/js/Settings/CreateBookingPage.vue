@@ -1,31 +1,33 @@
 <template>
     <div class="d-flex">
-        <div class="booking-widget-editor-wizard">
-            <Widget v-if="showWidget" :wizard="true" :params="params"></Widget>
+        <div class="booking-widget-editor-wizard wrapper-widget-style" >
+            <Front v-if="showWidget" classEl="wappointment_widget" :attributesEl="params" />
         </div>
-        <div v-if="booking_page_id === 0">
+        <div v-if="booking_page_id === 0" class="ml-2">
             <div>
-                <label><input type="checkbox" v-model="bookingpage"> Create a booking page</label>
-                    <div v-if="bookingpage">
-                        <div class="d-flex">
-                            <InputPh v-model="page.title" ph="Page title"/>
-                            <div role="button" v-if="!editpagedetails" class="btn btn-link btn-xs" @click="editpagedetails=true">Edit page</div>
-                        </div>
-                        <div v-if="editpagedetails">
-                            <InputPh v-model="page.slug" ph="Page slug"/>
-                            <div>
-                                <input type="radio" id="publish" v-model="page.status" value="publish">
-                                <label for="male">Publish</label>
-                                <input type="radio" id="draft"  v-model="page.status" value="draft">
-                                <label for="female">Draft</label>
-                            </div>
-                        </div>
-                        <div class="my-2">Widget's settings</div>
-                        <div v-if="bookingpage" class="pl-4 small" >
-                            <ShortcodeGenerator @change="updateShortCode" :title="widgetDefault.button.title" :preview="false"/>
-                        </div>
-                        <button v-if="save" class="btn btn-secondary" @click="createPage">Create Page</button>
+                <label v-if="!forceCreation">
+                    <input type="checkbox" v-model="bookingpage"> Create a booking page
+                </label>
+                <div v-if="bookingpage || forceCreation">
+                    <div class="d-flex">
+                        <InputPh v-model="page.title" ph="Page title"/>
+                        <div role="button" v-if="!editpagedetails" class="btn btn-link btn-xs" @click="editpagedetails=true">Edit page</div>
                     </div>
+                    <div v-if="editpagedetails">
+                        <InputPh v-model="page.slug" ph="Page slug"/>
+                        <div>
+                            <input type="radio" id="publish" v-model="page.status" value="publish">
+                            <label for="male">Publish</label>
+                            <input type="radio" id="draft"  v-model="page.status" value="draft">
+                            <label for="female">Draft</label>
+                        </div>
+                    </div>
+                    <div class="my-2">Widget's settings</div>
+                    <div v-if="bookingpage || forceCreation" class="pl-4 small" >
+                        <ShortcodeGenerator @change="updateShortCode" title="Book now" :preview="false"/>
+                    </div>
+                    <button v-if="save" class="btn btn-secondary" @click="createPage">Create Page</button>
+                </div>
             </div>
             
         </div>
@@ -35,10 +37,10 @@
     </div>
 </template>
 <script>
-import Widget from '../../Views/Subpages/Widget'
-import abstractView from '../../Views/Abstract'
+import Front from '../Front'
+import abstractView from '../Views/Abstract'
 import ShortcodeGenerator from './ShortcodeGenerator'
-import WPPagesService from '../../Services/WP/Pages' 
+import WPPagesService from '../Services/WP/Pages' 
 export default {
     extends: abstractView,
     props: {
@@ -50,6 +52,10 @@ export default {
             type:Object,
         },
         save: {
+            type:Boolean,
+            default: false
+        }, 
+        forceCreation: {
             type:Boolean,
             default: false
         }, 
@@ -81,7 +87,7 @@ export default {
         }
     },
     components: { 
-        Widget,
+        Front,
         ShortcodeGenerator,
         InputPh: window.wappoGet('InputPh') 
     },
@@ -121,7 +127,6 @@ export default {
             this.showWidget = true
             
         },
-
         
   } 
 
@@ -130,5 +135,9 @@ export default {
 <style>
 .booking-widget-editor-wizard{
     width: 600px;
+}
+.wrapper-widget-style{
+    box-shadow: inset 0px 0px 10px 0 rgba(0,0,0,.2);
+    padding: 1rem;
 }
 </style>

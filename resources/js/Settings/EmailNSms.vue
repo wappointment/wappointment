@@ -56,7 +56,7 @@ import EditReminders from '../Components/EditReminders'
 import MailConfig from '../Components/MailConfig'
 import Scroll from '../Modules/Scroll'
 import Checkbox from '../Fields/Checkbox'
-import abstractView from './Abstract'
+import abstractView from '../Views/Abstract'
 import reminderTypeLabel from '../Mixins/reminderTypeLabel'
 
 export default {

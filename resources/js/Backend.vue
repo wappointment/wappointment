@@ -1,6 +1,6 @@
 <template>
     <transition name="fade" mode="out-in">
-      <div class="wappointment-wrap" :data-tt="changing">
+      <div class="wappointment-wrap" >
           <div v-if="!db_update">
               <UpdateInformation />
           </div>

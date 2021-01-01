@@ -197,13 +197,49 @@ class ViewsData
 
     private function settingsadvanced()
     {
+
         return [
             'buffer_time' => Settings::get('buffer_time'),
             'front_page_id' => (int) Settings::get('front_page'),
             'front_page' => get_permalink((int) Settings::get('front_page')),
             'front_page_type' => get_post_type((int) Settings::get('front_page')),
-            //'disabled_modern_api_verbs' =>  (bool)Settings::get('disabled_modern_api_verbs'),
+            // advanced
+            'approval_mode' => Settings::get('approval_mode'),
+            'today_formatted' => DateTime::i18nDateTime(time(), Settings::getStaff('timezone')),
+            'date_format' => Settings::get('date_format'),
+            'time_format' => Settings::get('time_format'),
+            'date_time_union' => Settings::get('date_time_union', ' - '),
+            'allow_cancellation' => Settings::get('allow_cancellation'),
+            'allow_rescheduling' => Settings::get('allow_rescheduling'),
+            'week_starts_on' => Settings::get('week_starts_on'),
+            'hours_before_booking_allowed' => Settings::get('hours_before_booking_allowed'),
+            'hours_before_cancellation_allowed' => Settings::get('hours_before_cancellation_allowed'),
+            'hours_before_rescheduling_allowed' => Settings::get('hours_before_rescheduling_allowed'),
+            'timezone' => Settings::getStaff('timezone'),
+            'config' => [
+                'approval_mode' => Settings::get('approval_mode'),
+            ],
+            //notifications
+            'weekly_summary' => Settings::get('weekly_summary'),
+            'weekly_summary_day' => Settings::get('weekly_summary_day'),
+            'weekly_summary_time' => Settings::get('weekly_summary_time'),
+            'daily_summary' => Settings::get('daily_summary'),
+            'daily_summary_time' => Settings::get('daily_summary_time'),
+            'notify_new_appointments' => Settings::get('notify_new_appointments'),
+            'notify_canceled_appointments' => Settings::get('notify_canceled_appointments'),
+            'notify_rescheduled_appointments' => Settings::get('notify_rescheduled_appointments'),
+            'email_notifications' => Settings::get('email_notifications'),
+            'mail_status' => (bool) Settings::get('mail_status'),
+
         ];
+
+        // return [
+        //     'buffer_time' => Settings::get('buffer_time'),
+        //     'front_page_id' => (int) Settings::get('front_page'),
+        //     'front_page' => get_permalink((int) Settings::get('front_page')),
+        //     'front_page_type' => get_post_type((int) Settings::get('front_page')),
+        //     //'disabled_modern_api_verbs' =>  (bool)Settings::get('disabled_modern_api_verbs'),
+        // ];
     }
 
     private function wizardinit()

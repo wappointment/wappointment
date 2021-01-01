@@ -24,7 +24,7 @@
 
 <script>
 import Service from '../Views/Subpages/Service'
-import Widget from '../Views/Subpages/Widget'
+import Widget from '../Settings/WidgetShow'
 import Regav from '../RegularAvailability/View'
 import abstractView from '../Views/Abstract'
 import RequestMaker from '../Modules/RequestMaker'

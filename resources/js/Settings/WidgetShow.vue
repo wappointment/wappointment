@@ -2,25 +2,15 @@
     <div v-if="widgetData!==null">
       <div class="d-flex mt-4 bwe-tabs" v-if="!wizard">
         <ul class="nav nav-tabs">
-            <li class="nav-item">
-                <a class="nav-link" :class="{active:isTesting && !editing}" href="javascript:;" @click="showPreview">
-                    <span class="dashicons dashicons-visibility"></span> 1 - Preview
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" :class="{active:isTesting && editing}" href="javascript:;" @click="showTesting">
-                    <span class="dashicons dashicons-edit"></span> 2 - Customize
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" :class="{active:!isTesting}" href="javascript:;" @click="showIntegrate">
-                    <span class="dashicons dashicons-layout"></span> 3 - Insert
+            <li class="nav-item" v-for="(step ,index) in stepsAllowed">
+                <a class="nav-link" :class="{active: shownStep(step) }" href="javascript:;" @click="showStep(step)">
+                    <span class="dashicons dashicons-visibility"></span> {{ index + 1}} - {{step}}
                 </a>
             </li>
         </ul>
             
       </div>  
-      <div v-if="isTesting">
+      <div v-if="isWidgetShown">
           <transition name="slide-fade-top">
             <BookingWidgetEditor  :bgcolor="getBgColor" :editingMode="editing" :widgetFields="widgetFields" :shortcodeParams="params"
             :config="viewData.config" :preoptions="widgetData" :defaultSettings="widgetDefault" :frontAvailability="frontAvailability" />
@@ -37,10 +27,11 @@
 </template>
 
 <script>
-import wizardLayout from '../abstractWizardLayout'
-import BookingWidgetEditor from '../../Components/BookingWidgetEditor'
-import WidgetInsert from '../../Components/WidgetInsert'
+import wizardLayout from '../Views/abstractWizardLayout'
+import BookingWidgetEditor from '../Components/BookingWidgetEditor'
+import WidgetInsert from '../Components/WidgetInsert'
 export default {
+    name: 'WidgetShow',
   extends: wizardLayout,
   props:{
       wizard: {
@@ -50,33 +41,37 @@ export default {
       params:{
           type:Object,
           default: undefined
+      },
+      stepsAllowed:{
+          type:Array,
+          default: ()=> ['Preview','Customize','Insert']
       }
   },
   data() {
       return {
           colors: '#ffffff',
           viewName: 'widget',
-          isTesting: true,
+          isWidgetShown: true,
           editing:false,
+          showingStep: ''
       } 
   },
 
   components: { BookingWidgetEditor, WidgetInsert },
+  created(){
+      this.showStep(this.stepsAllowed[0])
+  },
   methods: {
-      showPreview(){
-          this.showTesting()
-          this.editing = false
+      shownStep(step){
+          return this.showingStep == step
       },
-      showTesting(){
-          this.editing = true
-          this.isTesting = true
+      showStep(step){
+          this.showingStep = step
+          this.editing = ['Preview', 'Insert'].indexOf(step) === -1 
+          this.isWidgetShown = ['Preview', 'Customize'].indexOf(step) !== -1
       },
-      showIntegrate(){
-          this.isTesting = false
-      }
   },
   computed: {
-
       widgetData(){
           return (this.viewData !== null && this.viewData.widget !== undefined)?  this.viewData.widget:null
       },

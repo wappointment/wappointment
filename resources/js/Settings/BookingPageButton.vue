@@ -14,7 +14,7 @@
         </div>
         <WapModal v-if="showCreateBookingPage" large :show="showCreateBookingPage" @hide="showCreateBookingPage = false">
             <h4 slot="title" class="modal-title">Create a booking page</h4>
-            <CreateBookingPage :widgetDefault="viewData.widget" :save="true" @saved="savedPage"/>
+            <CreateBookingPage :widgetDefault="viewData.widget" :save="true"  @saved="savedPage"/>
         </WapModal >
     </div>
 </template>

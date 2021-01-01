@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import abstractView from './Abstract'
+import abstractView from '../Views/Abstract'
 import RequestMaker from '../Modules/RequestMaker'
 export default {
   extends: abstractView,

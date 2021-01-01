@@ -7,24 +7,25 @@
             <span class="nav-link" :class="{'active' : isActive(key)}" @click="changeTab(key)">{{ tab.label }}</span>
         </li>
     </ul>
+
     <div class="tab-content" id="myTabContent" :data-active-page="activeTab">
-        <div class="tab-pane fade" :class="{'show active' : isActive('general')}" v-if="isActive('general')">
-            <settingsGeneral @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.general.label"></settingsGeneral>
+        <div class="tab-pane fade" :class="{'show active' : isActive('calendars')}" v-if="isActive('calendars')">
+            <settingsCalendars @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.calendars.label" />
         </div>
-        <div class="tab-pane fade" :class="{'show active' : isActive('notifications')}" v-if="isActive('notifications')">
-            <settingsNotifications @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.notifications.label"></settingsNotifications>
+        <div class="tab-pane fade" :class="{'show active' : isActive('services')}" v-if="isActive('services')">
+            <settingsServices @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.services.label" />
         </div>
-        <div class="tab-pane fade" :class="{'show active' : isActive('reminders')}" v-if="isActive('reminders')">
-            <settingsReminders @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.reminders.label"></settingsReminders>
+        <div class="tab-pane fade" :class="{'show active' : isActive('emailsnsms')}" v-if="isActive('emailsnsms')">
+            <settingsEmailNSms @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.emailsnsms.label" />
         </div>
-        <div class="tab-pane fade" :class="{'show active' : isActive('sync')}" v-if="isActive('sync')">
-            <settingsSync @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.advanced.label"></settingsSync>
+        <div class="tab-pane fade" :class="{'show active' : isActive('appearance')}" v-if="isActive('appearance')">
+            <SettingsAppearance @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.appearance.label" />
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('advanced')}" v-if="isActive('advanced')">
-            <settingsAdvanced @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.advanced.label"></settingsAdvanced>
+            <settingsAdvanced @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.advanced.label" />
         </div>
         <div class="tab-pane fade" :class="{'show active' : isActive('addonstab')}" v-if="isActive('addonstab')">
-            <settingsAddons @fullyLoaded="$emit('fullyLoaded')" ></settingsAddons>
+            <settingsAddons @fullyLoaded="$emit('fullyLoaded')" />
         </div>
     </div>
     
@@ -33,13 +34,13 @@
 
 <script>
 
-import abstractView from './Abstract'
-import settingsGeneral from './SettingsGeneral'
-import settingsNotifications from './SettingsNotifications'
-import settingsReminders from './SettingsReminders'
-import SettingsSync from './SettingsSync'
-import settingsAdvanced from './SettingsAdvanced'
-import settingsAddons from './SettingsAddons'
+import abstractView from '../Views/Abstract'
+import settingsCalendars from './Calendars'
+import settingsServices from './Services'
+import settingsEmailNSms from './EmailNSms'
+import SettingsAppearance from './Appearance'
+import settingsAdvanced from './Advanced'
+import settingsAddons from './Addons'
 
 export default {
   extends: abstractView,
@@ -47,17 +48,17 @@ export default {
         service: null,
         //activeTab: 'general',
         tabs:{
-            general:{
-                label: 'General'
+            calendars:{
+                label: 'Calendars & Staffs'
             },
-            reminders:{
-                label: 'Confirmations & Reminders'
+            services:{
+                label: 'Services'
             },
-            notifications:{
-                label: 'Admin notifications'
+            emailsnsms:{
+                label: 'Email & SMS'
             },
-            sync:{
-                label: 'Sync'
+            appearance:{
+                label: 'Appearance'
             },
             advanced:{
                 label: 'Advanced'
@@ -66,11 +67,11 @@ export default {
     }),
 
     components: {
-      settingsGeneral,
-      settingsNotifications,
-      settingsReminders,
+      settingsCalendars,
+      settingsServices,
+      settingsEmailNSms,
       settingsAdvanced,
-      SettingsSync,
+      SettingsAppearance,
       settingsAddons
     },
 
