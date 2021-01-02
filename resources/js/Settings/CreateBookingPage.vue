@@ -3,7 +3,7 @@
         <div class="booking-widget-editor-wizard wrapper-widget-style" >
             <Front v-if="showWidget" classEl="wappointment_widget" :attributesEl="params" />
         </div>
-        <div v-if="booking_page_id === 0" class="ml-2">
+        <div v-if="booking_page_id === 0" class="ml-4">
             <div>
                 <label v-if="!forceCreation">
                     <input type="checkbox" v-model="bookingpage"> Create a booking page
@@ -26,7 +26,7 @@
                     <div v-if="bookingpage || forceCreation" class="pl-4 small" >
                         <ShortcodeGenerator @change="updateShortCode" title="Book now" :preview="false"/>
                     </div>
-                    <button v-if="save" class="btn btn-secondary" @click="createPage">Create Page</button>
+                    <button v-if="save" class="btn btn-primary btn-lg btn-block" @click="createPage">Create Page</button>
                 </div>
             </div>
             
@@ -139,5 +139,6 @@ export default {
 .wrapper-widget-style{
     box-shadow: inset 0px 0px 10px 0 rgba(0,0,0,.2);
     padding: 1rem;
+    border-radius: 2rem;
 }
 </style>

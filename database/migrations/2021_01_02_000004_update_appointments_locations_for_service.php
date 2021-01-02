@@ -1,0 +1,63 @@
+<?php
+
+
+use Wappointment\Models\Appointment;
+use Wappointment\Models\Location;
+
+class UpdateAppointmentsLocationsForService extends Wappointment\Installation\MigrateHasServices
+{
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        if ($this->hasMultiService()) {
+            return;
+        }
+        $service_free = \Wappointment\Services\Service::getObject();
+        $types_id = [];
+        $widgetSettings = (new \Wappointment\Services\WidgetSettings)->get();
+        $data = [];
+        $data['skype'] = ['label' => $widgetSettings['form']['byskype'], 'type' => Location::TYPE_SKYPE];
+        $data['phone'] = ['label' => $widgetSettings['form']['byphone'], 'type' => Location::TYPE_PHONE];
+        $data['physical'] = ['label' => $widgetSettings['form']['inperson'], 'type' => Location::TYPE_AT_LOCATION];
+        $data['zoom'] = ['label' => $widgetSettings['form']['byzoom'], 'type' => Location::TYPE_ZOOM];
+        foreach ($service_free->service['type'] as $type_int => $type) {
+            $types_id[$type] = Location::create([
+                'name' => $data[$type]['label'],
+                'type' => $data[$type]['type'],
+                'options' => $this->getOptions($type, $service_free->service)
+            ]);
+        }
+
+        $reflectionAppointment = new ReflectionClass('\\Wappointment\\Models\\Appointment');
+        foreach ($types_id as $type => $location) {
+            Appointment::where('type', $reflectionAppointment->getConstant('TYPE_' . strtoupper($type)))->update(['location_id' => $location->id]);
+        }
+    }
+
+    protected function getOptions($type, $service)
+    {
+        $new_options = ['type' => $type];
+        switch ($type) {
+            case 'phone':
+                $new_options['countries'] = $service['options']['countries'];
+                break;
+            case 'physical':
+                $new_options['address'] = $service['address'];
+                break;
+        }
+        return $new_options;
+    }
+
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
+    public function down()
+    {
+    }
+}

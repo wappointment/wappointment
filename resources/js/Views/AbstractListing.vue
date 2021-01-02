@@ -80,7 +80,8 @@ export default {
             
         },
         failedLoadingElements(fail){
-            this.$WapModal().notifyError('Error Loading elements')
+            let message = fail.response !== undefined && fail.response.data !== undefined && fail.response.data.message !== undefined ? fail.response.data.message:''
+            this.$WapModal().notifyError('Error Loading elements('+message+')')
         },
         loadElements(params) {
             if(params === undefined) params = {}

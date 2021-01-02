@@ -1,10 +1,10 @@
 <template>
     <div v-if="widgetData!==null">
-      <div class="d-flex mt-4 bwe-tabs" v-if="!wizard">
+      <div class="d-flex mt-4 ml-4 bwe-tabs" v-if="!wizard">
         <ul class="nav nav-tabs">
             <li class="nav-item" v-for="(step ,index) in stepsAllowed">
                 <a class="nav-link" :class="{active: shownStep(step) }" href="javascript:;" @click="showStep(step)">
-                    <span class="dashicons dashicons-visibility"></span> {{ index + 1}} - {{step}}
+                    <span class="dashicons" :class="getClassTabIcon(step)"></span> {{ index + 1}} - {{step}}
                 </a>
             </li>
         </ul>
@@ -70,6 +70,18 @@ export default {
           this.editing = ['Preview', 'Insert'].indexOf(step) === -1 
           this.isWidgetShown = ['Preview', 'Customize'].indexOf(step) !== -1
       },
+      getClassTabIcon(step){
+          switch (step) {
+              case 'Preview':
+                  return 'dashicons-visibility'
+              case 'Customize':
+                  return 'dashicons-edit'
+              case 'Insert':
+                  return 'dashicons-layout'
+              default:
+                  break;
+          }
+      }
   },
   computed: {
       widgetData(){

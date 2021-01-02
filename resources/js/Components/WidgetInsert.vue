@@ -25,8 +25,8 @@
                     <ShortcodeGenerator @change="updateShortCode" :title="title"/>
                 </div>
                 
-                <div class="h3 m-4 text-muted"> > </div>
-                <div class="ml-4">
+                <div class="h3 m-4 text-primary"> >> </div>
+                <div :data-tt="shortcode">
                     <p class="m-0">Your shortcode: </p>
                     <ClickCopy :value="shortcode"></ClickCopy>
                 </div>
@@ -108,4 +108,9 @@ export default {
 #buttons-block .btn-secondary.btn-cell .dashicons{
     position: initial;
 }
+#buttons-block .btn-secondary.btn-cell{
+    display: flex;
+    align-items: center;
+}
+
 </style>

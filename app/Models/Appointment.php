@@ -97,10 +97,48 @@ class Appointment extends Model
         return apply_filters('wappointment_service_location', $location, $this);
     }
 
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
+    }
+
+    public function toArraySpecial()
+    {
+        $array = parent::toArray();
+
+        $array['start_at'] = $this->start_at->timestamp;
+        $array['end_at'] = $this->end_at->timestamp;
+        $array['type'] = $this->getLocationSlug();
+
+        unset($array['id']);
+        return $array;
+    }
+
     public function getLocationVideo()
     {
-        return $this->type == self::TYPE_ZOOM ? $this->getServiceVideo() : false;
+        $location = Location::find($this->location_id);
+
+        return !empty($location) && !empty($location->options['video']) ? $location->options['video'] : false;
     }
+
+    // public function toArraySpecial()
+    // {
+    //     $appointment = parent::toArray();
+
+    //     $appointment['start_at'] = $this->start_at->timestamp;
+    //     $appointment['end_at'] = $this->end_at->timestamp;
+    //     $appointment['type'] = $this->getLocationSlug();
+    //     $appointment['converted'] = DateTime::i18nDateTime((int) $appointment['start_at'], $this->client->getTimezone());
+
+    //     return $appointment;
+    // }
+
+
+    // public function getLocationVideo()
+    // {
+    //     return $this->type == self::TYPE_ZOOM ? $this->getServiceVideo() : false;
+    // }
+
     public function getServiceVideo()
     {
         return $this->getService()->getVideo();
@@ -156,17 +194,6 @@ class Appointment extends Model
         return self::TYPE_ZOOM;
     }
 
-    public function toArraySpecial()
-    {
-        $appointment = parent::toArray();
-
-        $appointment['start_at'] = $this->start_at->timestamp;
-        $appointment['end_at'] = $this->end_at->timestamp;
-        $appointment['type'] = $this->getLocationSlug();
-        $appointment['converted'] = DateTime::i18nDateTime((int) $appointment['start_at'], $this->client->getTimezone());
-
-        return $appointment;
-    }
 
     public function getFullDurationInSec()
     {

@@ -65,6 +65,10 @@ class Main extends AbstractRoutes
                     'methods' => ['post', 'delete'],
                     'controller' => 'StatusController'
                 ],
+                '/services/service' => [
+                    'methods' => ['get', 'post', 'delete'],
+                    'controller' => 'ServicesController'
+                ],
             ],
             'GET' => [
                 '/addons/check' => [
@@ -197,6 +201,10 @@ class Main extends AbstractRoutes
                 '/client/delete' => [
                     'method' => 'delete',
                     'controller' => 'ClientController'
+                ],
+                '/services/service/reorder' => [
+                    'controller' => 'ServicesController',
+                    'method' => 'reorder',
                 ],
             ],
         ]

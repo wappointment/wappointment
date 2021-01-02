@@ -1,14 +1,14 @@
 <template>
   <div class="container-fluid">
-    <h1>Settings</h1>
+    <h1 class="px-2">Settings</h1>
     
-    <ul class="nav nav-tabs row" id="myTab" role="tablist">
+    <ul class="nav nav-tabs row px-4" id="myTab" role="tablist">
         <li v-for="(tab, key) in tabs" class="nav-item">
             <span class="nav-link" :class="{'active' : isActive(key)}" @click="changeTab(key)">{{ tab.label }}</span>
         </li>
     </ul>
 
-    <div class="tab-content" id="myTabContent" :data-active-page="activeTab">
+    <div class="tab-content p-2" id="myTabContent" :data-active-page="activeTab">
         <div class="tab-pane fade" :class="{'show active' : isActive('calendars')}" v-if="isActive('calendars')">
             <settingsCalendars @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.calendars.label" />
         </div>
