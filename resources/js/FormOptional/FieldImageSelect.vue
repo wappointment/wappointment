@@ -29,7 +29,7 @@
                     </div>
                     <div class="d-flex align-items-center" v-if="hasImage">
                         <div class="mr-4">
-                            <img :src="wp_image.src" class="img-fluid rounded" :width="preview.width">
+                            <img :src="wp_image.src" class="img-fluid rounded" :width="preview.width" />
                         </div>
                         <div>
                             <a class="btn btn-secondary" href="javascript:;" @click.prevent.stop="clearImage">Clear</a>

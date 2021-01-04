@@ -1,5 +1,7 @@
 <script>
+import RequiresAddon from '../Mixins/RequiresAddon'
 export default {
+    mixins: [RequiresAddon],
     props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr'],
     watch: {
         updatedValue(newVal, oldVal){

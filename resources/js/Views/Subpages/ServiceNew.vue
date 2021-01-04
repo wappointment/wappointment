@@ -59,7 +59,7 @@ export default {
               cast: String,
             },
             {
-                type: 'opt-ss-multidurations',
+                type: 'opt-multidurations',
                 label: 'Service duration(s)',
                 model: 'options.durations',
                 cast: String,
@@ -75,14 +75,14 @@ export default {
                 }
             },
             {
-                type: 'opt-ss-checklocations',
+                type: 'opt-modality',
                 label: 'Delivery modality',
                 model: 'locations_id',
                 cast: Array,
                 checklistOptions: { value:'id'}
             },
             {
-              type: 'opt-ss-customfields',
+              type: 'opt-customfields',
               label: 'When client select this service, display following fields',
               model: 'options.fields',
               bus: true,

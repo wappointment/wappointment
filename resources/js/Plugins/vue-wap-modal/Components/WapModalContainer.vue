@@ -27,6 +27,7 @@ export default {
       title: '',
       content: '',
       screenshot: false,
+      classes: {},
       options: {},
       prompt: false,
       pResolve: null,
@@ -39,16 +40,16 @@ export default {
     };
   },
   watch: {
+
    cleared(val){
      if(this.notifications.length > 0 && this.notifications.length == val.length){
        this.notifications = []
       this.cleared = []
      }
    },
+
    show(val){
-     
      for (let i = 0; i < this.list_body_elements.length; i++) {
-       const element = this.list_body_elements[i]
        this.list_body_elements[i].style.filter = (val === true) ? 'blur(1px)':''
        //wp hack
        let is_wpbackend = document.getElementsByClassName('wp-toolbar')
@@ -58,8 +59,8 @@ export default {
          this.list_body_elements[i].style.marginTop =  (val === true) ?  '-32px':''
        }
      }
-
    }
+
   },
   created(){
     for (let i = 0; i < document.body.childNodes.length; i++) {
@@ -70,15 +71,20 @@ export default {
       }
     }
   },
+
   computed: {
+
     hasActiveNotifications(){
       return this.notifications.length > 0
     }
   },
+
   methods: {
+
     isActive(notif){
       return this.cleared.indexOf(notif.id) == -1 
     },
+
     notifyHasExpired(id){
       this.cleared.push(id)
     },
@@ -86,9 +92,11 @@ export default {
     notifySuccess(title,duration){
       this.queueNotification(title, 'success',duration)
     },
+
     notifyError(title){
       this.queueNotification(title, 'error')
     },
+
     queueNotification(title, type = 'success',duration = 5){
       this.notifications.push({
         title: title,
@@ -97,6 +105,7 @@ export default {
         duration: duration
       })
     },
+
     showModal(title, content, screenshot = false){
         this.show = true
         this.prompt = false
@@ -108,6 +117,13 @@ export default {
         //blur bg
         document.getElementById('wpwrap').style.filter = 'blur(2px)'
     },
+
+    showPremium(title, content, screenshot = false){
+        
+        this.showModal(title, content, screenshot)
+        this.options = {classes:['premium']}
+    },
+
     request(promise, optionalCallback = null){
       if(this.$passedStore !== undefined) {
         this.$passedStore.commit('clearErrors')
@@ -123,14 +139,15 @@ export default {
       
       return new Promise(this.promiseCallback)
     },
+
     successRequest(s){
       this.show = false
       this.pResolve(s)
       if(this.finalCallback!== null){
         this.finalCallback(s)
       }
-      
     },
+
     failRequest(e){
       this.show = false
       this.pReject(e)
@@ -138,6 +155,7 @@ export default {
         this.finalCallback(e)
       }
     },
+
     confirm(options){
       this.options = options
       this.title = options.title
@@ -155,15 +173,18 @@ export default {
       this.pResolve = resolve
       this.pReject = reject
     },
+
     canceled(){
       if(this.pResolve !== null) {
         this.pResolve(false)
       }
     },
+
     confirmed(remember){
       let response = this.options.remember === undefined ? true: {result: true, remember: remember} 
       this.pResolve(response)
     },
+
     hideModal(){
         this.show = false
         this.loader = false

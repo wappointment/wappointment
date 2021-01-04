@@ -3,7 +3,7 @@
         <div class="loader-wrap d-flex align-items-center" v-if="loader">
             <WLoader></WLoader>
         </div>
-        <div v-else class="wapmodal-content" :class="[marge ? 'marge ':'',right ? 'right ':'',screenshot ? 'screenshot':'standard', noscroll ? ' noscroll':'', large ? ' large':'']">
+        <div v-else class="wapmodal-content" :class="generateClasses">
             <div class="wapmodal-header d-flex justify-content-between align-items-center">
                 <slot name="title"></slot>
                 <span @click.prevent="hideModal" class="close"></span>
@@ -69,24 +69,23 @@ export default {
     },
     options: {
         type: Object,
-        default: null
     },
     classExtra: {
         type:String,
         default: ''
-    }
+    },
   },
   data: () => ({
     remember: true,
   }),
   created(){
       if(this.show === true){
-          document.body.classList.add("wappo-popup")
+          document.body.classList.add('wappo-popup')
       }
   },
   destroyed(){
       if(document.getElementsByClassName('wapmodal').length === 0){
-          document.body.classList.remove("wappo-popup")
+          document.body.classList.remove('wappo-popup')
       }
       
   },
@@ -99,6 +98,31 @@ export default {
       },
       rememberIsOn(){
           return this.options.remember !== undefined
+      },
+      generateClasses(){
+        let obj = {}
+        let keys = ['marge', 'right', 'noscroll', 'large']
+
+        for (let i = 0; i < keys.length; i++) {
+            if(this[keys[i]] === true){
+                obj[keys[i]] = true
+            }
+        }
+
+        if(this.options !== undefined && this.options.classes !== undefined && this.options.classes.length > 0){
+            for (let i = 0; i < this.options.classes.length; i++) {
+                obj[this.options.classes[i]] = true
+            }
+        }
+
+        if(this.screenshot){
+            obj.screenshot = true
+        }else{
+            obj.standard = true
+        }
+
+
+        return obj
       }
   },
   methods: {
@@ -114,6 +138,7 @@ export default {
         this.$emit('canceled')
         this.$emit('hide')
     },
+    
   }  
 }
 </script>

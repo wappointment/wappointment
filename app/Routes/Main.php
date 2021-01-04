@@ -91,6 +91,14 @@ class Main extends AbstractRoutes
                     'controller' => 'ClientController',
                     'method' => 'index',
                 ],
+                '/services/location' => [
+                    'controller' => 'LocationsController',
+                    'method' => 'get',
+                ],
+                '/services/custom_fields' => [
+                    'method' => 'get',
+                    'controller' => 'CustomFieldsController'
+                ],
             ],
             'POST' => [
                 '/events/record' => [

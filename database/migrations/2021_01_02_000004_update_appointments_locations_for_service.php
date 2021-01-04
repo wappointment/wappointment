@@ -24,11 +24,11 @@ class UpdateAppointmentsLocationsForService extends Wappointment\Installation\Mi
         $data['phone'] = ['label' => $widgetSettings['form']['byphone'], 'type' => Location::TYPE_PHONE];
         $data['physical'] = ['label' => $widgetSettings['form']['inperson'], 'type' => Location::TYPE_AT_LOCATION];
         $data['zoom'] = ['label' => $widgetSettings['form']['byzoom'], 'type' => Location::TYPE_ZOOM];
-        foreach ($service_free->service['type'] as $type_int => $type) {
-            $types_id[$type] = Location::create([
-                'name' => $data[$type]['label'],
-                'type' => $data[$type]['type'],
-                'options' => $this->getOptions($type, $service_free->service)
+        foreach ($data as $type_key => $typeData) {
+            $types_id[$type_key] = Location::create([
+                'name' => $typeData['label'],
+                'type' => $typeData['type'],
+                'options' => $this->getOptions($type_key, $service_free->service)
             ]);
         }
 

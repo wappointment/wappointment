@@ -7,10 +7,11 @@
 
 <script>
 import WappoServiceService from '../Services/V1/Services'
-import abstractView from '../Views/Abstract'
+//import abstractView from '../Views/Abstract'
 import ServiceModulable from '../Views/Subpages/ServiceNew'
+import Service from '../Views/Subpages/Service'
 export default {
-  extends: abstractView,
+  extends: Service,
   components:{ServiceModulable},
     props: {
         subview: {
