@@ -3,7 +3,7 @@
         <div class="text-muted mt-4">Insert the booking form in a new page, within an existing page or within a widget area</div>
         <div class="d-flex my-4" >
             <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2" :class="{selected: showPage}" @click="showArea('page')">
-                <span class="dashicons dashicons-welcome-add-page"></span> In a new page
+                <span class="dashicons dashicons-welcome-add-page"></span> Create a new page
             </button>
             <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2" :class="{selected: showPost}" @click="showArea('post')">
                 <span class="dashicons dashicons-shortcode"></span> Using a Shortcode
@@ -14,7 +14,8 @@
         </div>
         <div v-if="showPage">
             <div class="mt-4">
-                <CreateBookingPage ref="createpage" :forceCreation="true" :save="true" :widgetDefault="widgetDefault" :page_id="booking_page_id" />
+                <CreateBookingPage ref="createpage" :forceCreation="true" :save="true" 
+                :widgetDefault="widgetDefault" :page_id="booking_page_id" :page_link="page_link" />
             </div>
         </div>
         <div v-if="showPost">
@@ -53,7 +54,7 @@ import VideoIframe from '../Ne/VideoIframe'
 import CreateBookingPage from '../Settings/CreateBookingPage' 
 export default {
     mixins: [Helpers], 
-    props:['title'],  
+    props:['title','page_id', 'page_link'],  
     components: {ClickCopy, VideoIframe, ShortcodeGenerator, CreateBookingPage}, 
     data: () => ({
         area: 'page',
@@ -65,6 +66,9 @@ export default {
             }
         }
     }),
+    created(){
+        this.booking_page_id = this.page_id
+    },
     computed: {
 
         showWidget(){

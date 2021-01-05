@@ -18,11 +18,16 @@ export default {
         };
     },
     methods: {
-        requiresAddon(addon_key){
+        requiresAddon(addon_key, message = ''){
             this.$WapModal().showPremium(
-                `You need the addon ${this.addonsDetails[addon_key].label} in order to access that feature`,
-                `Register your site on wappointment.com and get 50% off on all of our products (limited time offer)`,
-            )
+                message !== '' ? message:'Unlock this feature',
+                '<h3>Unlock premium feature with our addon "'+this.addonsDetails[addon_key].label+'"</h3>' +
+                '<p class="text-muted">Register your site on wappointment.com and get <strong> 50% off on all of our <a href="https://wappointment.com/addons" target="_blank">addons</a></strong> (limited time offer)</p>',
+            ).then((result) => {
+                if(result === true){
+                    console.log('register site')
+                } 
+            })
         },
     }
 };

@@ -30,9 +30,10 @@ import draggable from 'vuedraggable'
 import Pagination from '../Views/Pagination'
 import WPListingHelp from '../WP/ScreenListing'
 import Ordering from './Ordering'
+import RequiresAddon from '../Mixins/RequiresAddon'
 
 export default {
-    mixins: [RequestMaker, Ordering],
+    mixins: [RequestMaker, Ordering, RequiresAddon],
     data: () => ({
         mainService: null,
         elements: [],

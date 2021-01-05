@@ -159,7 +159,10 @@ export default {
             
         },
         showService(){
-0
+            if(this.elements.length > 2){
+                return this.requiresAddon('services', '3 services max allowed')
+            }
+
             if(this.crumb){
                 this.$emit('updateCrumb',[
                     { target: 'goToMain', label: 'General'},
@@ -170,6 +173,7 @@ export default {
                 this.currentView = 'add'
                 this.elementPassed = null
             }
+            
         },
         showListing(){
             if(this.crumb){

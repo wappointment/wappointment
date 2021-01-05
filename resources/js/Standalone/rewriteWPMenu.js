@@ -3,7 +3,7 @@ export default function (pagename) {
     window.jQuery(function($){
         $('#toplevel_page_wappointment_calendar li.current, #toplevel_page_wappointment_calendar li a.current').removeClass('current')
         let testpagename = pagename
-        if(['general','reminders', 'notifications', 'advanced', 'addonstab'].indexOf(testpagename) !== -1){
+        if(['calendars','services','emailsnsms', 'appearance', 'advanced', 'addonstab'].indexOf(testpagename) !== -1){
           testpagename = 'wappointment_settings'
         }
         let menuIndex = window.wappointmentBackMenus.indexOf(testpagename) + 2

@@ -38,6 +38,7 @@ class Scheduler
                 self::regenerateAvailability();
             }
         }
+        dd('sync calendars after');
     }
 
 
@@ -90,12 +91,9 @@ class Scheduler
      */
     public static function dailyProcess()
     {
-        try {
-            self::regenerateAvailability(); // we at least regenerate once a day to avoid empty calendar after aa while without a booking
-            self::checkLicence();
-        } catch (\Exception $e) {
-            //silent execution
-        }
+        self::regenerateAvailability(); // we at least regenerate once a day to avoid empty calendar after aa while without a booking
+        self::checkLicence();
+        dd('after dailyProcess');
     }
 
 

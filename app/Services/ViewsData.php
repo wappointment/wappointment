@@ -82,7 +82,9 @@ class ViewsData
             ],
             'bgcolor' => WPHelpers::getThemeBgColor(),
             'more' => get_theme_mods(),
-            'widgetFields' => (new \Wappointment\Services\WidgetSettings)->adminFieldsInfo()
+            'widgetFields' => (new \Wappointment\Services\WidgetSettings)->adminFieldsInfo(),
+            'booking_page_id' => (int) Settings::get('booking_page'),
+            'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
         ]);
     }
 
@@ -98,6 +100,7 @@ class ViewsData
     private function calendar()
     {
         $staff_timezone = Settings::getStaff('timezone');
+        $services = \Wappointment\Models\Service::get();
         return  apply_filters('wappointment_back_calendar', [
             'regav' => Settings::getStaff('regav'),
             'availability' => WPHelpers::getStaffOption('availability'),
@@ -119,10 +122,29 @@ class ViewsData
             'showWelcome' => Settings::get('show_welcome'),
             'subscribe_email' => Settings::get('email_notifications'),
             'welcome_site' => get_site_url(),
-            'cal_duration' => Service::get()['duration'],
             'preferences' => (new Preferences)->preferences,
             'is_dotcom_connected' => Settings::getStaff('dotcom'),
+            'services' => $services,
+            'locations' => \Wappointment\Models\Location::get(),
+            'custom_fields' => \Wappointment\Services\CustomFields::get(),
+            'durations' => $this->extractDurations($services),
+            'cal_duration' => (new Preferences)->get('cal_duration'),
         ]);
+    }
+
+    protected function extractDurations($services)
+    {
+        $durations = $services->map(function ($item, $key) {
+            $innerdur = [];
+            foreach ($item['options']['durations'] as $key => $array) {
+                $innerdur[] = $array['duration'];
+            }
+            return $innerdur;
+        });
+
+        $durations_filtered = array_filter($durations->flatten()->unique()->toArray());
+        sort($durations_filtered);
+        return $durations_filtered;
     }
 
     private function settingsgeneral()
@@ -232,14 +254,6 @@ class ViewsData
             'mail_status' => (bool) Settings::get('mail_status'),
 
         ];
-
-        // return [
-        //     'buffer_time' => Settings::get('buffer_time'),
-        //     'front_page_id' => (int) Settings::get('front_page'),
-        //     'front_page' => get_permalink((int) Settings::get('front_page')),
-        //     'front_page_type' => get_post_type((int) Settings::get('front_page')),
-        //     //'disabled_modern_api_verbs' =>  (bool)Settings::get('disabled_modern_api_verbs'),
-        // ];
     }
 
     private function wizardinit()
@@ -277,10 +291,12 @@ class ViewsData
         }
         return $avails;
     }
+
     private function all_versions_changes()
     {
         return ['versions' => \Wappointment\System\Status::allUpdates()];
     }
+
     private function front_availability()
     {
         $staff_availability = [];

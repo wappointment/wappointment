@@ -54,8 +54,8 @@ class Widget extends WidgetAbstract
     {
         if (!empty($_REQUEST['action']) && $_REQUEST['action'] == 'elementor_ajax') {
             $definition['notice_elementor'] = [
-                'label' => 'The style of the button can be changed from <a href="admin.php?page=wappointment_settings#/general" target="_blank">Wappointment > General >
-                Booking Widget setup</a> ',
+                'label' => 'The style of the button can be changed from <a href="admin.php?page=wappointment_settings#/appearance" target="_blank">Wappointment > Settings >
+                Appearance</a> ',
                 'class' => 'elementor-control-field-description'
             ];
         }

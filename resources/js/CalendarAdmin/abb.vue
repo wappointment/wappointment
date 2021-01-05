@@ -79,6 +79,9 @@
                             </div>
                         </div>
                     </div>
+
+                    
+
                 </div>
 
             </div>
@@ -90,39 +93,16 @@
     </div>
 </template>
 <script>
-import AppointmentTypeSelection from './AppointmentTypeSelection'
-import ClientService from '../Services/V1/Client'
-import RequestMaker from '../Modules/RequestMaker'
-import {isEmail, isEmpty} from 'validator'
-import PhoneInput from '../BookingForm/PhoneInput'
-import FormInputs from '../BookingForm/Form'
-import StyleGenerator from '../Components/StyleGenerator'
 import ServiceSelection from '../BookingForm/ServiceSelection.vue'
 import DurationSelection from '../BookingForm/DurationSelection.vue'
 import LocationSelection from '../BookingForm/LocationSelection.vue'
 import FieldsGenerated from '../BookingForm/FieldsGenerated.vue'
-import WappoServiceBooking from '../Services/V1/BookingN'
+import WappoServiceBooking from '../Services/V1/Booking'
+import StyleGenerator from '../Components/StyleGenerator'
 export default {
-    props: ['viewData','startTime', "endTime", "realEndTime"],
-    mixins:[RequestMaker],
-    components: {AppointmentTypeSelection, PhoneInput, FormInputs, StyleGenerator, ServiceSelection, DurationSelection, LocationSelection, FieldsGenerated},
+    components: {ServiceSelection, DurationSelection, LocationSelection, FieldsGenerated, StyleGenerator},
+    props:['viewData', 'startTime', 'endTime', 'realEndTime'],
     data: () => ({
-        clientSearching:false,
-        clientsResults: [],
-        bookingForm: {
-            email: '',
-            phone: '',
-            skype: '',
-            name: '',
-        },
-        clientSelected:false,
-        clientid: false,
-        serviceClient: null,
-        showDropdown: false,
-        selectedAppointmentType: false,
-        phoneValid: false,
-        errorsOnFields: {},
-        prevEmail: '',
         service: false,
         duration:false,
         durationSelectedFC:false,
@@ -132,7 +112,6 @@ export default {
         endTimeParam: false,
     }),
     created(){
-        this.serviceClient = this.$vueService(new ClientService)
         this.bookingForm = {email: ''}
         
         this.serviceBooking = this.$vueService(new WappoServiceBooking)
@@ -143,155 +122,33 @@ export default {
         }
         this.durationSelectedFC = (this.realEndTime.unix() - this.startTime.unix())/60
     },
-    watch: {
-      bookingForm: {
-          handler: function(newValue){
-            this.changedFormValue(newValue)
-          },
-          deep: true
-      },
-
-    },
     computed: {
-        isToday(){
-            return this.firstDay!== undefined && this.lastDay !== undefined && this.firstDay.unix() < momenttz().unix() && this.lastDay.unix() > momenttz().unix()
-        },
-
-        preferredCountries(){
-            return this.viewData.preferredCountries
-        },
-
-        skypeValid(){
-            return /^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/.test(this.bookingForm.skype)
-        },
-
-        phoneSelected(){
-            return this.selectedAppointmentType == 'phone'
-        },
-
-        skypeSelected(){
-            return this.selectedAppointmentType == 'skype'
-        },
-
-        validators(){
-            return {
-                'isEmail': isEmail,
-                'isEmpty': isEmpty,
-            }
-        },
-
         hasMoreThanOneService(){
             return this.services.length > 1
         },
-
         hasMoreThanOneDuration(){
             return this.service && this.service.options.durations.length > 1
         },
-
         hasMoreThanOneLocation(){
             return this.service && this.service.locations !==undefined && this.service.locations.length > 1
         },
-
         allSelected(){
             return this.service && this.duration && this.location
         },
-
         readyToBook(){
             return this.allSelected && (
                 (this.bookingForm.clientid !== undefined && [false,undefined].indexOf(this.bookingForm.clientid) === -1)  || 
                 (Object.keys(this.errorsOnFields).length < 1 && this.validators['isEmail'](this.bookingForm.email))
             )
         },
-
         formHasErrors(){
             return Object.keys(this.errorsOnFields).length > 0
         },
-
         hasErrorEmail(){
             return [undefined,false].indexOf(this.errorsOnFields['email']) === -1
         }
     },
-    
     methods:{
-        changedFormValue(newValue) {
-            this.errorsOnFields = {}
-            if(newValue.email!== undefined && newValue.email.length > 4 
-            && newValue.email.indexOf('@')!== -1 && this.prevEmail != newValue.email){
-                this.searchClient(newValue.email)
-                this.prevEmail = newValue.email
-            }
-
-            if(newValue.name!== undefined && isEmpty(newValue.name) ) this.errorsOnFields.name = true
-            if(newValue.email!== undefined && isEmpty(newValue.email) || !isEmail(newValue.email)) this.errorsOnFields.email = true
-            if(newValue.phone!== undefined && this.phoneSelected && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
-            if(newValue.skype!== undefined && this.skypeSelected && (isEmpty(newValue.skype) || !this.skypeValid)) this.errorsOnFields.skype = true
-
-        },
-    
-        
-        canShowDropdown(){
-            if(this.clientsResults.length > 0){
-                this.showDropdown = true
-            }
-        },
-        clearDropdownDelay(){
-            setTimeout(this.clearDropDown, 100);
-        },
-        clearDropDown(){
-            this.showDropdown = false
-        },
-        onInput({ number, isValid, country }) {
-            this.bookingForm.phone = number
-            this.phoneValid = isValid
-        },
-        selectingAppointmentType(type){
-            this.bookingForm.type=type
-            
-            this.selectedAppointmentType = type
-            this.changedFormValue(this.bookingForm)
-        },
-        clearClientSelection(){
-            this.bookingForm.clientid = false
-            this.clientSelected = false
-        },
-
-        searchClient(){
-            if(!this.clientSearching){
-                this.clientSearching = true
-                this.showDropdown = true
-                this.clientsResults = []
-                this.searchClientRequest(this.bookingForm.email).then(
-                function(result){
-                    return this.clientsFound(result)
-                }.bind(this),
-                function(err){
-                    return this.clientsError(err)
-                }.bind(this))
-            }
-        },
-        async searchClientRequest(email) {
-            return await this.serviceClient.call('search', {email: email})
-        },
-        clientsFound(result){
-            this.clientSearching = false
-            if(result.data!== undefined && result.data.length > 0){
-                this.clientsResults = result.data
-            }
-            
-        },
-        clientsError(){
-            this.clientSearching = false
-        },
-        confirmNewBookingRequest(){
-            if(this.readyToBook) {
-                this.request(this.bookingRequest,{start:this.startTime, end:this.endTime},  undefined,false, this.refreshEvents)
-            }
-        
-        },
-        refreshEvents(){
-            this.$emit('confirmed')
-        },
-
         getFieldLabel(namekey){
             for (let i = 0; i < this.viewData.custom_fields.length; i++) {
                 const element = this.viewData.custom_fields[i]
@@ -357,7 +214,6 @@ export default {
             }
             this.changeLocation()
         },
-
         async bookingRequest(params) {
 
           return await this.serviceBooking.call('bookadmin', Object.assign({ 
@@ -369,6 +225,28 @@ export default {
               duration: this.duration,
               }, this.bookingForm))
         },
+        
     }
 }
 </script>
+<style>
+.selected-service{
+    border-radius: .5rem;
+    margin: 1rem 0;
+    padding: .5rem !important;
+    background-color: var(--white);
+    color: var(--dark);
+    display: inline-block;
+    border: 2px dashed var(--primary);
+}
+
+.selected-service .text-dark, .selected-service .text-primary {
+    background-color: var(--secondary);
+    padding: .3em;
+    border-radius: .3em;
+}
+
+.hide-cf{
+    display:none;
+}
+</style>

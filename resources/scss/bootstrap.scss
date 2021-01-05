@@ -197,6 +197,8 @@
     }
     .nav-tabs .nav-link {
         cursor:pointer;
+        border-top-left-radius: .8rem;
+        border-top-right-radius: .8rem;
     }
     .nav-tabs .nav-item.show .nav-link, 
     .nav-tabs .nav-link.active{

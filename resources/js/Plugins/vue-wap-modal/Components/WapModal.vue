@@ -11,6 +11,16 @@
             <div class="wapmodal-body" :class="classExtra">
                 <div class="wapmodal-body-wrapper">
                     <slot></slot>
+                    <div v-if="isPremium">
+                        <div class="d-flex justify-content-center" >
+                            <div class="w-100 mr-4">
+                                <button class="btn btn-secondary btn-block btn-lg" @click="canceled">{{ labelCancel }}</button>
+                            </div>
+                            <div class="w-100">
+                                <button class="btn btn-primary btn-block btn-lg m-0" @click="confirmed">{{ options.premiumGetDiscount }}</button>
+                            </div> 
+                        </div>
+                    </div>
                     <div v-if="prompt">
                         <div class="d-flex justify-content-center" >
                             <div class="w-100 mr-4">
@@ -90,6 +100,9 @@ export default {
       
   },
   computed:{
+      isPremium(){
+          return this.options!== undefined && this.options.classes !== undefined && this.options.classes.indexOf('premium') !== -1
+      },
       labelCancel(){
           return this.options.cancel !== undefined ? this.options.cancel:'Back'
       },

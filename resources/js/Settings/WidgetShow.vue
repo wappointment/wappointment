@@ -18,7 +18,8 @@
       </div>
       <div v-else>
           <transition name="slide-fade-top">
-            <WidgetInsert  :title="viewData.widget.button.title" />
+            <WidgetInsert  :title="viewData.widget.button.title" :page_id="viewData.booking_page_id"
+            :page_link="viewData.booking_page_url" />
           </transition>
       </div>
       

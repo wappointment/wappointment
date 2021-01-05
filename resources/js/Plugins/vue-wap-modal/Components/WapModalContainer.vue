@@ -122,6 +122,9 @@ export default {
         
         this.showModal(title, content, screenshot)
         this.options = {classes:['premium']}
+        this.options.premiumGetDiscount = 'Get Discount'
+
+        return new Promise(this.promiseCallback)
     },
 
     request(promise, optionalCallback = null){

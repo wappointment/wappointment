@@ -8,7 +8,7 @@ class Licences extends API
 {
     private function hasLicenceInstalled()
     {
-        return $this->getSiteKey(); //&& WPHelpers::getOption('site_details');
+        return !empty($this->getSiteKey()) && !empty(WPHelpers::getOption('site_details'));
     }
 
     public function register($product_key)

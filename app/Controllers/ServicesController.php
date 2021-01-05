@@ -16,7 +16,8 @@ class ServicesController extends RestController
         if (version_compare(Status::dbVersion(), '2.1.0') < 0) {
             throw new \WappointmentException("You must run a database update first", 1);
         }
-        return ServiceModel::orderBy('sorting')->get();
+
+        return ServiceModel::orderBy('sorting')->take(3)->get();
     }
 
     public function save(Request $request)
