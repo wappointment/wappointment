@@ -38,7 +38,6 @@ class Scheduler
                 self::regenerateAvailability();
             }
         }
-        dd('sync calendars after');
     }
 
 
@@ -93,7 +92,6 @@ class Scheduler
     {
         self::regenerateAvailability(); // we at least regenerate once a day to avoid empty calendar after aa while without a booking
         self::checkLicence();
-        dd('after dailyProcess');
     }
 
 

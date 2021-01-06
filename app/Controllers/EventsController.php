@@ -45,7 +45,6 @@ class EventsController extends RestController
                 //we save the duration preference
                 (new Preferences)->saveMany($pref_save);
             }
-            //dd($pref_save);
 
             return [
                 'events' => array_merge($this->events($request), $this->regavToBgEvent($request)),
@@ -197,12 +196,10 @@ class EventsController extends RestController
         $recurringBusy = Mstatus::where('recur', '>', Mstatus::RECUR_NOT)
             ->where('muted', '<', 1)
             ->get();
-        /* dd($recurringBusy->toArray()); */
         $sixtydaysinsecs = 60 * 24 * 3600;
         $punctualEvent = Status::expand($recurringBusy, $ends_at_carbon->timestamp + $sixtydaysinsecs);
 
         $statusEvents = $statusEvents->concat($punctualEvent);
-        //dd($statusEvents);
         foreach ($statusEvents as $event) {
             $addedEvent = [
                 'start' => $event->start_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),

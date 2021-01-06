@@ -25,12 +25,7 @@ class IsSmtp extends \Rakit\Validation\Rules\Required
         if ((new Ping($value, $portTested, 5))->run() !== -1) {
             return true;
         }
-        /* foreach ($ports as $port) {
-            if ((new Ping($value, $port, 1))->run() !== -1) {
-                return true;
-            }
-        } */
-        //dd('test');
+
         $this->message .= ' ' . $portTested;
 
         return false;

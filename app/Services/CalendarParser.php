@@ -169,7 +169,6 @@ class CalendarParser
     {
 
         $timezonekey = 'X-WR-TIMEZONE';
-        //dd($vcalObject->$timezonekey, $vcalObject->{'X-WR-TIMEZONE'});
         $this->timezone = $this->findTimezone((string) $vcalObject->$timezonekey);
     }
 

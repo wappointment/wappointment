@@ -118,7 +118,6 @@ class Helpers
         }
 
         $setting = get_user_option(self::$option_prefix . '_' . strtolower($option_name), $staff_id);
-        //dd($setting, self::$option_prefix . '_' . strtolower($option_name), $staff_id);
         return (empty($setting)) ? $default : $setting;
     }
 
@@ -127,12 +126,10 @@ class Helpers
         if ($staff_id === false) {
             $staff_id = Settings::get('activeStaffId');
         }
-        // dd($option_name, $value);
         return update_user_option($staff_id, self::$option_prefix . '_' . strtolower($option_name), $value, $global);
     }
     public static function transferStaffOptions($old_staff_id, $new_staff_id)
     {
-        //dd($old_staff_id, $new_staff_id);
         if ((int)$old_staff_id === (int)$new_staff_id) {
             return;
         }

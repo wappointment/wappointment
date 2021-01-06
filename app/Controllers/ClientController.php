@@ -37,7 +37,6 @@ class ClientController extends RestController
         if (!empty($request->input('per_page'))) {
             Settings::saveStaff('per_page', $request->input('per_page'));
         }
-        //dd(Settings::getStaff('per_page', 10));
         return [
             'page' => $request->input('page'),
             'viewData' => [

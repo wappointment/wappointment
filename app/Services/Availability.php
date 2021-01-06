@@ -47,7 +47,6 @@ class Availability
         $end = $today->copy()->addDays($this->days);
         $start_at_string = $today->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $end->format(WAPPOINTMENT_DB_FORMAT);
-        // dd($start_at_string);
 
         $statusEvents = MStatus::where('muted', '<', 1)
             ->where(function ($query) use ($end_at_string, $start_at_string) {
@@ -60,7 +59,6 @@ class Availability
             ->orderBy('start_at')
             ->get();
 
-        //dd($statusEvents->toArray());
         $statusBusy = $statusEvents->where('type', MStatus::TYPE_BUSY);
 
         $notrecurringBusy = $statusBusy->where('recur', MStatus::RECUR_NOT);
@@ -91,7 +89,6 @@ class Availability
         $appointments = $this->segmentService->convertModel($appointments);
 
         // substract appointments to availability
-        //dd($appointments);
         $this->availabilities = $this->segmentService->substract($this->availabilities, $appointments);
 
         // substract busy times to availability

@@ -24,7 +24,7 @@ export default {
             classses = 'wbtn wbtn-cell wbtn-secondary wbtn-service d-flex align-items-center'
  
             if(this.selected === true){
-                classses+= ' selected'
+                classses += ' selected'
             }
             return classses
         },

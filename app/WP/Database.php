@@ -33,7 +33,6 @@ class Database
         }
         $this->charset =  $wpdb->charset;
         $this->collate =  $wpdb->collate;
-        //dd(ini_get('mysqli.default_port'));
     }
 
     public function getDbName()

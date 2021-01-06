@@ -119,6 +119,16 @@ class WidgetSettings
             'button' => 'Reschedule',
             'confirm' => 'Confirm',
         ],
+        'service_selection' => [
+            'select_service' => 'Select a service',
+            'check_price_right' => false
+        ],
+        'service_duration' => [
+            'select_duration' => 'Select a duration',
+        ],
+        'service_location' => [
+            'select_location' => 'Select a location',
+        ],
     ];
 
     private $fields = [
@@ -288,7 +298,8 @@ class WidgetSettings
                 ],
             ]
 
-        ]
+        ],
+
     ];
 
     private $db_settings = [];

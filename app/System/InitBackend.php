@@ -112,7 +112,6 @@ class InitBackend
             }
 
             $varJs['canSeeUpdate'] = Status::canSeeUpdatePage();
-            //dd($varJs);
         }
         wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', WAPPOINTMENT_SLUG . 'Admin', $varJs);
 

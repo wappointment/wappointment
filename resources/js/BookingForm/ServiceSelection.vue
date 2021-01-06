@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import ServiceButton from './ServiceButton.vue'
+import ServiceButton from './ServiceButton'
 export default {
     props:['services','relations','options', 'admin', 'viewData'],
           

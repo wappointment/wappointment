@@ -156,7 +156,6 @@ class Addons extends API
             }
         }
         if (!empty($status['errorMessage'])) {
-            //dd($status['errorMessage']);
             throw new \Exception($status['errorMessage']);
         }
         return [

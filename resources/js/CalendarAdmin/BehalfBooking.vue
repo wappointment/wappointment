@@ -12,7 +12,7 @@
                 <ServiceSelection @serviceSelected="serviceSelected" :options="viewData.widget" :services="viewData.services" :admin="true"/>
             </div>
             <div v-if="service && !duration" class="p-2">
-                <DurationSelection  @durationSelected="durationSelected" :service="service"/>
+                <DurationSelection  @durationSelected="durationSelected" :service="service" :options="viewData.widget"/>
                 <div>
                     Your calendar selection : 
                     <span class="text-primary" v-if="duration !== durationSelectedFC" data-tt="Change duration" @click.stop.prevent="backToOriginalDuration">{{ durationSelectedFC }}min</span> 
@@ -71,7 +71,7 @@
                         <FieldsGenerated @changed="changedBF" :disabledEmail="true"
                         :validators="validators" :custom_fields="viewData.custom_fields" 
                         :service="service" :location="location" :data="bookingForm" 
-                        :options="viewData.widget" :disabledButtons="disabledButtons" />
+                        :options="viewData.widget" />
 
                         <div v-if="formHasErrors" class="error">
                             <div v-for="(error,namekeyidx) in errorsOnFields">
