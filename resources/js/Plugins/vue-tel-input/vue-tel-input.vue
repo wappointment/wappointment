@@ -270,13 +270,7 @@ export default {
       return countrylist
     },
   },
-          /* if (~typedCountryI) {
-          this.selectedIndex = this.preferredCountries.length + typedCountryI;
-          let selEle = this.$refs.list.children[this.selectedIndex];
-          if (selEle.offsetTop < this.$refs.list.scrollTop || selEle.offsetTop + selEle.clientHeight > this.$refs.list.scrollTop + this.$refs.list.clientHeight) {
-            this.$refs.list.scrollTop = selEle.offsetTop - this.$refs.list.clientHeight / 2;
-          }
-        } */
+
   methods: {
     filterOnlyCountries ({ iso2 }) {
       return this.onlyCountries.includes(iso2.toUpperCase())
@@ -299,14 +293,7 @@ export default {
        * 2. Use the first country from preferred list (if available) or all countries list
        */
       this.activeCountry = this.findCountry(this.preferredCountries[0]) || this.filteredCountries[0]
-      /**
-       * 3. Check if fetching country based on user's IP is allowed, set it as the default country
-       */
-      /* if (!this.disabledFetchingCountry) {
-        getCountry().then((res) => {
-          this.activeCountry = this.findCountry(res) || this.activeCountry;
-        });
-      } */
+
     },
     /**
      * Get the list of countries from the list of iso2 code

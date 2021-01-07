@@ -1,6 +1,6 @@
 <template>
     <transition name="slide-fade">
-        <div v-if="mounted" >
+        <div v-if="mounted">
             <div class="form-summary text-center" v-if="isCompactHeader">
                 <div class="my-2">
                     <div v-if="appointment_starts_at">
@@ -17,56 +17,21 @@
                     {{ error }}
                 </div>
             </div>
-            <AppointmentTypeSelection v-if="serviceHasTypes" 
-            :options="options" 
-            :typeSelected="selection" 
-            :typesAllowed="service.type"
-            @selectType="selectType" />
             <transition name="slide-fade">
-                <div v-if="selection">
-                    
-                    <div class="wap-booking-fields">
-                        <div v-if="physicalSelected" class="address-service">
-                            <BookingAddress :service="service">
-                                <WapImage faIcon="map-marked-alt" size="md" />
-                            </BookingAddress>
-                        </div>
-                        <div class="wap-field field-required" :class="hasError('name')">
-                            <label for="name">{{options.form.fullname}}</label>
-                            <p class="d-flex">
-                                <input class="form-control" id="name" type="text" autocomplete="name" v-model="bookingForm.name" :required="true">
-                            </p>
-                        </div>
-                        <div class="wap-field field-required" :class="hasError('email')">
-                            <label for="email">{{options.form.email}}</label>
-                            <p class="d-flex">
-                                <input type="email" id="email" class="form-control" autocomplete="email" v-model="bookingForm.email" :required="true">
-                            </p>
-                        </div>
-                        <div v-if="requirePhoneInput" class="wap-field field-required" :class="hasError('phone')">
-                            <label :for="phoneId">{{options.form.phone}}</label>
-                            <PhoneInput 
-                            :phone="bookingForm.phone"
-                            :countries="service.options.countries"
-                            @onInput="onInput" 
-                            @getId="getId"
-                            ></PhoneInput>
-                        </div>
-                        <div v-if="skypeSelected" class="wap-field field-required" :class="hasError('skype')">
-                            <label for="skype">{{options.form.skype}}</label>
-                            <p class="d-flex">
-                                <input class="form-control" type="text" id="skype" v-model="bookingForm.skype">
-                            </p>
-                        </div>
+                <div>
+                    <FieldsGenerated @changed="changedBF" @dataDemoChanged="dataDemoChanged" 
+                    :validators="validators" :custom_fields="custom_fields" 
+                    :service="service" :location="location" :data="data" 
+                    :options="options" :disabledButtons="disabledButtons" />
+                
+                    <div v-if="termsIsOn" class="wap-terms" v-html="getTerms"></div>
 
-                        <div v-if="termsIsOn" class="wap-terms" v-html="getTerms"></div>
-                    </div>
                 </div>
             </transition>
-            <div v-if="selection" class="d-flex wbtn-confirm my-2">
-                <span class="wbtn-secondary wbtn" role="button" @click="back">{{options.form.back}}</span>
-                <span v-if="canSubmit" class="wbtn-primary wbtn flex-fill m-0" role="button" @click="confirm">{{options.form.confirm}}</span>
-                <span v-else class="wbtn-primary wbtn wbtn-disabled flex-fill m-0" role="button" disabled>{{options.form.confirm}}</span>
+            <div class="d-flex wbtn-confirm">
+                <div class="mr-2"><span class="wbtn-secondary wbtn" @click="back">{{options.form.back}}</span></div>
+                <span  v-if="canSubmit" class="wbtn-primary wbtn flex-fill mr-0" @click="confirm">{{options.form.confirm}}</span>
+                <span v-else class="wbtn-primary wbtn disabled flex-fill mr-0" disabled>{{options.form.confirm}}</span>
             </div>
             <CountryStyle/>
         </div>
@@ -75,73 +40,63 @@
 
 <script>
 import AbstractFront from './AbstractFront'
-import BookingAddress from './Address'
-import PhoneInput from './PhoneInput'
 import Strip from '../Helpers/Strip'
-import AppointmentTypeSelection from './AppointmentTypeSelection'
 import {isEmail, isEmpty} from 'validator'
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
 import MixinTypeSelected from './MixinTypeSelected'
+import WappoServiceBooking from '../Services/V1/BookingN'
+import FieldsGenerated from './FieldsGenerated'
 export default {
     extends: AbstractFront,
     mixins: [ Strip, MixinTypeSelected],
-    props: ['service', 'selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations', 'appointment_starts_at'],
+    props: ['service', 'selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations', 'appointment_starts_at',
+    'duration','location','custom_fields'],
     components: {
-        BookingAddress,
-        PhoneInput,
         CountryStyle,
-        AppointmentTypeSelection
+        FieldsGenerated
     }, 
     data: () => ({
-        bookingForm: {
-            email: '',
-            phone: '',
-            skype: '',
-            name: '',
-        },
+
         phoneId:'',
         phoneValid: false,
         errorsOnFields: {},
         mounted: false,
         disabledButtons: false,
+        bookingFormExtended: null,
     }),
-    watch: {
-        bookingForm: {
-            handler: function(newValue) {
-                this.errorsOnFields = {}
 
-                if(isEmpty(newValue.name) ) this.errorsOnFields.name = true
-                if(isEmpty(newValue.email) || !isEmail(newValue.email)) this.errorsOnFields.email = true
-                if(this.requirePhoneInput && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
-                if(this.skypeSelected && (isEmpty(newValue.skype) || !this.skypeValid)) this.errorsOnFields.skype = true
-                if(this.disabledButtons) {
-                    this.options.eventsBus.emits('dataDemoChanged', newValue)
-                } 
-            },
-            deep: true
-        }
-    },
     created(){
-        this.tryPrefill()
-        if(this.options.demoData !== undefined){
-            this.bookingForm = this.options.demoData.form 
-            this.selection = this.bookingForm.type
+        
+        this.serviceAppointmentService = this.$vueService(new WappoServiceBooking)
+        if(this.options!== undefined && this.options.demoData !== undefined){
             this.disabledButtons = true
         }
+        
     },
     mounted(){
-        if(this.service !== false && !this.serviceHasTypes) {
-            this.selectDefaultType()
-        }
         this.mounted = true
-        if(Object.keys(this.data).length > 1){
-            this.bookingForm = Object.assign({},this.data)
-            if(this.bookingForm.type!==undefined){
-                this.selection = this.bookingForm.type
-            }
-        }
-
     },
+    // created(){
+    //     this.tryPrefill()
+    //     if(this.options.demoData !== undefined){
+    //         this.bookingForm = this.options.demoData.form 
+    //         this.selection = this.bookingForm.type
+    //         this.disabledButtons = true
+    //     }
+    // },
+    // mounted(){
+    //     if(this.service !== false && !this.serviceHasTypes) {
+    //         this.selectDefaultType()
+    //     }
+    //     this.mounted = true
+    //     if(Object.keys(this.data).length > 1){
+    //         this.bookingForm = Object.assign({},this.data)
+    //         if(this.bookingForm.type!==undefined){
+    //             this.selection = this.bookingForm.type
+    //         }
+    //     }
+
+    // },
     computed: {
         isCompactHeader(){
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
@@ -152,9 +107,7 @@ export default {
         termsIsOn(){
             return this.options.form.check_terms === true
         },
-        canSubmit(){
-            return this.selection && Object.keys(this.errorsOnFields).length < 1 && !this.dataEmpty
-        },
+        
         requirePhoneInput(){
             return this.phoneSelected || [undefined,false,''].indexOf(this.service.options.phone_required) === -1 
         },
@@ -162,9 +115,7 @@ export default {
         skypeValid(){
             return /^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/.test(this.bookingForm.skype)
         },
-        serviceHasTypes(){
-            return this.service.type.length > 1 
-        },
+        
         dataEmpty(){
             for (const key in this.bookingForm) {
                 if (this.bookingForm.hasOwnProperty(key)) {
@@ -178,7 +129,16 @@ export default {
                 'isEmail': isEmail,
                 'isEmpty': isEmpty,
             }
-        }
+        },
+        canSubmit(){
+            return  Object.keys(this.errorsOnFields).length < 1
+        },
+        
+        serviceHasTypes(){
+            return true 
+        },
+
+
     },
     methods: {
         getId(id){
@@ -190,56 +150,7 @@ export default {
                 this.bookingForm.name = window.apiWappointment.wp_user.name
             }
         },
-        back(){
-            if(this.disabledButtons) {
-              this.options.eventsBus.emits('stepChanged', 'selection')
-              return
-            } 
-            
-            this.$emit('back', this.relations.prev,{selectedSlot:false, location:''})
-            
-        },
-        
-        confirm(){
-            if(this.disabledButtons) {
-              this.options.eventsBus.emits('stepChanged', 'confirmation')
-              return
-            } 
-            let data = this.bookingForm
-            data.time = this.selectedSlot
-            data.type = this.selection
-            data.ctz = this.timeprops.ctz
-            //turns loading mode on in parent
-            this.$emit('loading', {loading:true, dataSent: data})
-            //create request
-            this.saveBookingRequest(data)
-            .then(this.appointmentBooked)
-            .catch(this.appointmentBookingError)
-        },
-        
-
-        async saveBookingRequest(data) {
-            return await this.serviceBooking.call('save', data)
-        }, 
-
-        appointmentBooked(result){
-            let relationnext = window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, 
-            {result:result, service: this.service} )
-            
-            this.$emit('confirmed', relationnext , {
-                appointmentSavedData:result.data.appointment, 
-                isApprovalManual:(result.data.status == 0), 
-                appointmentSaved: true, 
-                appointmentKey: result.data.appointment.edit_key, 
-                loading: false
-            })
-        },
-
-        appointmentBookingError(error){
-            this.$emit('serviceError',error)
-        },
-
-        
+    
         selectDefaultType(){
             this.selection = this.service.type[0]
         },
@@ -261,6 +172,70 @@ export default {
         onInput({ number, isValid, country }) {
             this.bookingForm.phone = number
             this.phoneValid = isValid
+        },
+
+        changedBF(newval, errors){
+            this.bookingFormExtended = newval
+            this.errorsOnFields = errors
+        },
+        dataDemoChanged(newValue){
+            if(this.disabledButtons) {
+                this.options.eventsBus.emits('dataDemoChanged', newValue)
+            } 
+        },
+        back(){
+            if(this.disabledButtons) {
+              this.options.eventsBus.emits('stepChanged', 'selection')
+              return
+            } 
+            
+            this.$emit('back', this.relations.prev,{selectedSlot:false})
+        },
+
+        confirm(){
+            if(this.disabledButtons) {
+              this.options.eventsBus.emits('stepChanged', 'confirmation')
+              return
+            } 
+            let data = this.bookingFormExtended
+            data.time = this.selectedSlot
+            data.ctz = this.timeprops.ctz
+            data.service = this.service.id
+            data.location = this.location.id
+            data.duration = this.duration
+            //turns loading mode on in parent
+            this.$emit('loading', {loading:true, dataSent: data})
+            //create request
+            this.saveBookingRequest(data)
+            .then(this.appointmentBooked)
+            .catch(this.appointmentBookingError)
+        },
+
+
+        async saveBookingRequest(data) {
+            return await this.serviceAppointmentService.call('save', data)
+        }, 
+
+        appointmentBooked(result){
+            if(result.data.result !== undefined){
+                let relationnext = window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, {result:result, service: this.service} )
+
+                this.$emit('confirmed', relationnext, {
+                    appointmentSavedData:result.data.appointment, 
+                    isApprovalManual:(result.data.status == 0), 
+                    appointmentSaved: true, 
+                    appointmentKey: result.data.appointment.edit_key, 
+                    loading: false
+                })
+            }else{
+                this.$emit('loading', {loading:false})
+                this.appointmentBookingError({message: 'Error in booking request response'})
+            }
+            
+        },
+
+        appointmentBookingError(error){
+            this.$emit('serviceError',error)
         },
     }
 

@@ -16,7 +16,7 @@
                 @onInput="onInputPhone"
                 :keyInput="fieldObject.namekey"
                 @getId="getId"
-                ></PhoneInput>
+                />
             </div>
             <Checkboxes v-if="'checkboxes' == fieldObject.type" :name="fieldObject.namekey" 
             :error="getError(fieldObject.namekey)" :options="fieldObject" v-model="bookingFormExtended[fieldObject.namekey]" />
@@ -40,6 +40,8 @@ import Radios from '../BookingForm/Fields/Radios.vue'
 import Checkbox from '../BookingForm/Fields/Checkbox.vue'
 import Dropdown from '../BookingForm/Fields/Dropdown.vue'
 import TextArea from '../BookingForm/Fields/TextArea.vue'
+import BookingAddress from './Address'
+import PhoneInput from './PhoneInput'
 export default {
     components: {
         TextInput,
@@ -47,7 +49,9 @@ export default {
         Radios,
         Checkbox,
         Dropdown,
-        TextArea
+        TextArea,
+        BookingAddress,
+        PhoneInput
     },
     props:['duration', 'location', 'custom_fields', 'data', 'disabledButtons', 'options', 'service', 'validators', 'disabledEmail'],
     data: () => ({
@@ -109,7 +113,7 @@ export default {
             return this.locationObj.type == 3
         },
         getPhoneCountries(){
-            return this.phoneSelected? this.location.options.countries:this.service.options.countries
+            return this.phoneSelected ? this.location.options.countries:this.service.options.countries
         }
     },
     methods: {
