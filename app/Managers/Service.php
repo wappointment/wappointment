@@ -21,6 +21,9 @@ class Service
 
     public static function hasZoom($service)
     {
+        if (!method_exists(Central::get('Service'), 'hasZoom')) {
+            return false;
+        }
         return Central::get('Service')::hasZoom($service);
     }
 }
