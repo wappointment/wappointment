@@ -139,7 +139,10 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.0.0 - 2020-12-25 =
+= 2.0.1 - 2021-01-?? =
+* Fixed issue ics
+
+= 2.0.0 - 2021-01-09 =
 * Added Zoom Integration
 * Added Google Calendar 2-way Sync
 * Added Google Meet Integration

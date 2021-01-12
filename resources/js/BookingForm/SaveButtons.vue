@@ -57,11 +57,27 @@ export default {
         eventTitle(){
             return this.service.name + ' - ' + this.staff.n
         },
+        getAppointmentDetails(){
+            switch (appointment.type) {
+                case 'phone':
+                    return 'Appointment over the phone'
+                case 'zoom':
+                    return 'Appointment is a Video meeting'+"\n Meeting will be accessible on that link below "
+                case 'skype':
+                    return 'Appointment on Skype'
+                case 'physical':
+                    return "\n"+'Appointment at this address'+ "\n" + eventLocation
+            
+
+            }
+        },
+
          eventDescription(){
-            return ''
+             return this.getAppointmentDetails() + "\n-----------------------------------" +
+             "\nBooked with " + apiWappointment.apiSite
         },
         encodedEventDescription(){
-            return '' 
+            return encodeURIComponent(this.eventDescription) 
         },
         encodedEventTZ(){
             return encodeURIComponent(this.currentTz)

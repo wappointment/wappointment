@@ -19,16 +19,6 @@ class Calendar
         $this->staff_id = $staff_id;
         $this->calendar_logs = WPHelpers::getStaffOption('calendar_logs');
     }
-    /* old
-        last-calendar-id
-        last-calendar-parsed
-        last-calendar-process
-        last-calendar-checked
-    WPHelpers::deleteStaffOption('last-calendar-id', $staff_id);
-    WPHelpers::deleteStaffOption('last-calendar-checked', $staff_id);
-    WPHelpers::deleteStaffOption('last-calendar-parsed', $staff_id);
-    WPHelpers::deleteStaffOption('last-calendar-process', $staff_id);
-    */
 
     public function refetch()
     {

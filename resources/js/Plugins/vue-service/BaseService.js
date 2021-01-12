@@ -40,9 +40,7 @@ class BaseService {
             headers: Object.assign(this.headers, headers),
         }
 
-        if(window.apiWappointment.disabled_modern_api_verbs){
-            params = this.replaceModernVerbs(params)
-        }
+        params = this.replaceModernVerbs(params)
         
         //weird distinction from axios config between GET and other requests
         if(method.toUpperCase() == 'GET' || this.headers['Content-Type'] == 'application/x-www-form-urlencoded')  params['params'] = data
