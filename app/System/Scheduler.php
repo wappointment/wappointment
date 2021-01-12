@@ -21,9 +21,6 @@ class Scheduler
      */
     public static function syncCalendar()
     {
-        \Wappointment\Models\Log::data([
-            'info' => "Started syncCalendar ",
-        ]);
         foreach (\Wappointment\Services\Staff::getIds() as $staff_id) {
             $calendar_urls = WPHelpers::getStaffOption('cal_urls', $staff_id);
             $hasChanged = false;
@@ -40,9 +37,6 @@ class Scheduler
                 self::regenerateAvailability();
             }
         }
-        \Wappointment\Models\Log::data([
-            'info' => "Ended syncCalendar ",
-        ]);
     }
 
 
