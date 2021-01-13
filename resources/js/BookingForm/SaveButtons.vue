@@ -82,7 +82,7 @@ export default {
                     return 'Appointment over the phone'
                 case 'zoom':
                     return 'Appointment is a Video meeting'+
-                    "\n Meeting will be accessible on the link below " +
+                    "\n Meeting will be accessible from the link below " +
                     "\n " + apiWappointment.frontPage + '&view=view-event&appointmentkey=' + this.appointment.edit_key;
                 case 'skype':
                     return 'Appointment on Skype '+
