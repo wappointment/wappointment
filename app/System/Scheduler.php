@@ -56,10 +56,11 @@ class Scheduler
             if (!$lock->alreadySet()) {
                 $lock->set();
                 \Wappointment\Services\Queue::process();
-                static::checkDotCom();
+
                 $lock->release();
             }
         }
+        static::checkDotCom();
     }
 
     /**

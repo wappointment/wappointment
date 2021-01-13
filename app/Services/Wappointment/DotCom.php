@@ -21,7 +21,6 @@ class DotCom extends API
 
     public function checkForUpdates()
     {
-
         // 0 - only check if site connected
         if (!empty($this->site_key)) {
             // 1 - retrieve appointments data

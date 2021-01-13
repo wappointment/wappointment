@@ -7,6 +7,9 @@
         <span class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToIcal)">
             <WapImage :faIcon="['fab', 'windows']" size="md" /> <span class="ml-2">Outlook</span>
         </span>
+        <span class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToOutlookOnline)">
+            <WapImage :faIcon="['fab', 'windows']" size="md" /> <span class="ml-2">Outlook Live</span>
+        </span>
         <span class="wbtn-secondary wbtn d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToIcal)">
             <WapImage :faIcon="['fab', 'apple']" size="md" /> <span class="ml-2">iCal</span>
         </span>
@@ -27,6 +30,7 @@ export default {
         goToUrl(url){
             window.open(url)
         },
+
         toIsoString(date){
             return date.toISOString().replace(/-|:|\.\d+/g, '');
         },
@@ -35,15 +39,19 @@ export default {
         isoFormat(){
             return convertDateFormatPHPtoMoment('Ymd') + '[T]' + convertDateFormatPHPtoMoment('His')
         },
+
         startDate(){
             return momenttz.unix(this.appointment.start_at)
         },
+
         getDuration(){
             return this.service.duration
         },
+
         endDate(){
             return momenttz.unix(this.appointment.end_at)
         },
+
         formattedStartDate(){
             return this.startDate.format(this.isoFormat)
         },
@@ -51,40 +59,69 @@ export default {
         formattedEndDate(){
             return this.endDate.format(this.isoFormat)
         },
+
+        formattedStartDateMS(){
+            return this.startDate.toISOString()
+        },
+        
+        formattedEndDateMS(){
+            return this.endDate.toISOString()
+        },
+
         encodedEventTitle(){
             return encodeURIComponent(this.eventTitle)
         },
+
         eventTitle(){
             return this.service.name + ' - ' + this.staff.n
         },
+
         getAppointmentDetails(){
-            switch (appointment.type) {
+            switch (this.appointment.type) {
                 case 'phone':
                     return 'Appointment over the phone'
                 case 'zoom':
-                    return 'Appointment is a Video meeting'+"\n Meeting will be accessible on that link below "
+                    return 'Appointment is a Video meeting'+
+                    "\n Meeting will be accessible on the link below " +
+                    "\n " + apiWappointment.frontPage + '&view=view-event&appointmentkey=' + this.appointment.edit_key;
                 case 'skype':
-                    return 'Appointment on Skype'
+                    return 'Appointment on Skype '+
+                    "\n We will call you on " + this.getSkypeUsername
                 case 'physical':
-                    return "\n"+'Appointment at this address'+ "\n" + eventLocation
-            
-
+                    return "\n"+'Appointment at this address'+ "\n" + this.eventLocation
             }
         },
 
+        getLinks(){
+            return "\n\n Reschedule: \n" + apiWappointment.frontPage + '&view=reschedule-event&appointmentkey=' + this.appointment.edit_key+
+            "\n Cancel: \n" + apiWappointment.frontPage + '&view=cancel-event&appointmentkey=' + this.appointment.edit_key
+        },
+
+        getSkypeUsername(){
+            return this.appointment.client.options !== undefined && this.appointment.client.options.skype !==undefined ?  this.appointment.client.options.skype:''
+        },
+
          eventDescription(){
-             return this.getAppointmentDetails() + "\n-----------------------------------" +
+             return this.getAppointmentDetails + this.getLinks + "\n-----------------------------------" +
              "\nBooked with " + apiWappointment.apiSite
         },
+        eventDescriptionMS(){
+             return this.getAppointmentDetails + "\n-----------------------------------" +
+             "\nBooked with " + apiWappointment.apiSite
+        },
+
         encodedEventDescription(){
             return encodeURIComponent(this.eventDescription) 
         },
+
         encodedEventTZ(){
             return encodeURIComponent(this.currentTz)
         },
+
         eventLocation(){
-            return this.service.address
+            return this.physicalSelected ? this.service.address:this.appointment.type
         },
+
         encodedEventLocation(){
             return encodeURIComponent(this.eventLocation)
         },
@@ -92,13 +129,14 @@ export default {
         saveToGoogle(){
             let url = 'http://www.google.com/calendar/event?action=TEMPLATE'
             url += '&text=' + this.encodedEventTitle;
-            url += '&dates=' + this.formattedStartDate + '/' + this.formattedEndDate;
+            url += '&dates=' + this.formattedStartDate + '/' + this.formattedEndDate
             url += '&ctz=' + this.encodedEventTZ
-            if (this.physicalSelected) {
-                url += '&location=' + this.encodedEventLocation;
-            }
+            url += '&trp=true'
+            url += '&sprop=' + apiWappointment.apiSite
+            url += '&details=' + this.encodedEventDescription
+            url += '&location=' + this.encodedEventLocation
+            
             return url
-
         },
         
          saveToIcal() {
@@ -121,18 +159,17 @@ export default {
             );
         },
 
-  
         saveToOutlookOnline() {
 
-            let url = 'http://calendar.live.com/calendar/calendar.aspx?rru=addevent&'
-            url += 'summary=' + this.encodedEventTitle
-            url += '&dtstart=' + this.formattedStartDate.slice(0, -1) 
-            url += '&dtend=' + this.formattedEndDate.slice(0, -1)
+            // https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&
+            // startdt=2020-12-31T19:30:00Z&enddt=2020-12-31T22:30:00Z&subject=Birthday&body=With%20clowns%20and%20stuff&location=North%20Pole
+            let url = 'https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent'
+            url += '&subject=' + encodeURIComponent(this.eventTitle.replaceAll(' ',"\n"))
+            url += '&startdt=' + this.formattedStartDateMS 
+            url += '&enddt=' + this.formattedEndDateMS
             //url += '&ctz=' + this.encodedEventTZ
-            if (this.physicalSelected) {
-                url += '&location=' + this.encodedEventLocation
-            }
-            url += '&description=' + this.encodedEventDescription
+            url += '&location=' + encodeURIComponent(this.eventLocation.replaceAll(' ',"\n"))
+            url += '&body=' + encodeURIComponent(this.eventDescriptionMS.replaceAll(' ',"\n"))
             return url
 
         },
@@ -144,10 +181,8 @@ export default {
             url += '&st=' + this.formattedStartDate 
             url += '&et=' + this.formattedEndDate;
             //url += '&ctz=' + this.encodedEventTZ
-            if (this.physicalSelected) {
-                url += '&in_loc=' + this.encodedEventLocation;
-            }
-            url += '&descdescription=' + this.encodedEventDescription;
+            url += '&in_loc=' + this.encodedEventLocation;
+            url += '&desc=' + this.encodedEventDescription;
             return url
 
         },

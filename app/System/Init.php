@@ -122,7 +122,7 @@ class Init
             'apiSite' => WAPPOINTMENT_SITE,
             'version' => WAPPOINTMENT_VERSION,
             'allowed' => Settings::get('wappointment_allowed'),
-            'front_page' => get_permalink((int) Settings::get('front_page')),
+            'frontPage' => get_permalink((int) Settings::get('front_page')),
         ];
         if (is_user_logged_in()) {
             $variables['nonce'] = wp_create_nonce('wp_rest');

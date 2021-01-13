@@ -5,18 +5,24 @@ export default {
         selection: false,
     }),
 
+    methods:{
+        appointmentIsType(type){
+            return this.selection == type || (this.appointment !== undefined && this.appointment.type!== undefined && this.appointment.type == type)
+        }
+    },
+
     computed: {
         phoneSelected(){
-            return this.selection == 'phone'
+            return this.appointmentIsType('phone')
         },
         physicalSelected(){
-            return this.selection == 'physical'
+            return this.appointmentIsType('physical')
         },
         skypeSelected(){
-            return this.selection == 'skype'
+            return this.appointmentIsType('skype')
         },
         zoomSelected(){
-            return this.selection == 'zoom'
+            return this.appointmentIsType('zoom')
         },
     },
 }
