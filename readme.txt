@@ -142,6 +142,7 @@ It requires work on your end but keeps your site safe and optimized.
 = 2.0.1 - 2021-01-?? =
 * Added Save booking button for Outlook Live
 * Added Join Zoom Google Meet Meeting link straight in the admin email confirmation
+* Fixed SMTP encryption issue SSL and TLS to send booking confirmation
 * Fixed issue ics in emails Zoom Google Meet meeting room information is missing
 * Fixed issue ics in booking confirmation step for iCal and Outlook
 
