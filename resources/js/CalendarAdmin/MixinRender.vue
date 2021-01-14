@@ -106,7 +106,7 @@ export default {
 
       hasDotcomButnoProvider(eventId){
         let appointment = this.findAppointmentById(eventId)
-        return appointment.extendedProps.options.providers === undefined && this.hasDotcom()
+        return appointment.extendedProps.options !== undefined && appointment.extendedProps.options.providers === undefined && this.hasDotcom()
       },
 
       hasDotcom(){
