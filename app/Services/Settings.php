@@ -223,11 +223,9 @@ class Settings
     public static function getStaff($setting_key, $staff_id = false)
     {
         $settingsStaff = static::getStaffValues($staff_id);
-        //dd($settingsStaff);
         $value = static::defaultStaff($setting_key);
         if (isset($settingsStaff[$setting_key])) {
             $value = $settingsStaff[$setting_key];
-            //dd('ccurent val', $value);
         }
 
         $preparedValue = static::prepare($setting_key, $value);
@@ -259,11 +257,9 @@ class Settings
             $values[$setting_key] = $value;
 
             WPHelpers::setStaffOption(static::$key_option, $values, $staff_id);
-            //dd('saveStaff', $value);
 
             static::updateLocalStaffSettings($staff_id, $values);
 
-            //dd($values[$setting_key]);
             $methodAfterSaved = $setting_key . 'Saved';
             if (method_exists(static::class, $methodAfterSaved)) {
                 static::$methodAfterSaved($staff_id);
@@ -440,7 +436,6 @@ class Settings
     protected static function activeStaffIdBeforeSave($newStaffId)
     {
         //transfer all staff id settings to the right full owner
-        //dd('current ' . Settings::get('activeStaffId'), 'old ' . $newStaffId);
         WPHelpers::transferStaffOptions(Settings::get('activeStaffId'), $newStaffId);
     }
 
@@ -448,7 +443,6 @@ class Settings
     {
 
         $values = self::email_notificationsGetTransform($value);
-        //dd($values);
         foreach ($values as $value) {
             if (!self::emailField($value)) {
                 return false;

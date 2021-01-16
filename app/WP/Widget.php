@@ -59,7 +59,6 @@ class Widget extends WidgetAbstract
                 'class' => 'elementor-control-field-description'
             ];
         }
-        //dd($definition);
         return $definition;
     }
 

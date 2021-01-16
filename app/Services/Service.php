@@ -49,7 +49,6 @@ class Service implements ServiceInterface
         $service = static::get('service'); // to test the existing service
 
         $serviceData['options'] = array_merge($service['options'], $serviceData['options']);
-        //dd($service, $serviceData);
         $serviceData = apply_filters('wappointment_service_before_saved', $serviceData, $service);
         //  return $serviceData;
         $resultSave = (bool) Settings::save('service', $serviceData);
@@ -64,7 +63,6 @@ class Service implements ServiceInterface
 
     public static function patch($service_id, $data)
     {
-        //dd('$service_id, $data', $service_id, $data);
         $serviceDB = static::get('service');
         $data['options'] = array_merge($serviceDB['options'], $data['options']);
         $serviceDB = array_merge($serviceDB, $data);

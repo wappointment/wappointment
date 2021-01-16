@@ -47,7 +47,6 @@ class Forms
                     break;
             }
         }
-        //dd($formHtml);
         return $formHtml;
     }
 

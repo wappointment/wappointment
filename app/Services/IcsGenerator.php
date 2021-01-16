@@ -159,7 +159,7 @@ class IcsGenerator
 
         if ($appointment->isZoom()) {
             $description .= "\n\nAppointment is a Video meeting";
-            $description .= "\nMeeting will be accessible from the link below " .
+            $description .= "\nMeeting will be accessible from the link below: " .
                 "\n " . $appointment->getLinkViewEvent();
         }
 

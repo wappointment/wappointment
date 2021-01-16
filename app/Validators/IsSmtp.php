@@ -30,7 +30,6 @@ class IsSmtp extends \Rakit\Validation\Rules\Required
                 return true;
             }
         } */
-        //dd('test');
         $this->message .= ' ' . $portTested;
 
         return false;

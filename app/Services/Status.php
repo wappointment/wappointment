@@ -67,11 +67,9 @@ class Status
     public static function expand($recurringBusy, $until = false)
     {
         $punctualEvents = [];
-        //echo 'until ' . Carbon::createFromTimestamp($until)->toDayDateTimeString() . "\n";
         foreach ($recurringBusy as $recurring) {
             $punctualEvents = array_merge($punctualEvents, self::generateRecurring($recurring, $until));
         }
-        //dd('endpunctual');
         return $punctualEvents;
     }
 

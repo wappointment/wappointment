@@ -27,7 +27,7 @@ trait AdminGeneratesDefault
         }
 
         if ($appointment->isZoom()) {
-            $dataEmail[] = 'Video meeting: <a href="' . $appointment->getLinkViewEvent() . '" >Join meeting room</a>';
+            $dataEmail[] = 'Video meeting: <a href="' . $appointment->getLinkViewEvent() . '" >Begin the meeting</a>';
         }
 
         return apply_filters('wappointment_admin_email_fields', $dataEmail, $client, $appointment);
