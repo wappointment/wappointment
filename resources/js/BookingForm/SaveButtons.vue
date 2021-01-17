@@ -94,7 +94,7 @@ export default {
 
         getLinks(){
             return "\n\n Reschedule: \n" + apiWappointment.frontPage + '&view=reschedule-event&appointmentkey=' + this.appointment.edit_key+
-            "\n Cancel: \n" + apiWappointment.frontPage + '&view=cancel-event&appointmentkey=' + this.appointment.edit_key
+            "\n\n Cancel: \n" + apiWappointment.frontPage + '&view=cancel-event&appointmentkey=' + this.appointment.edit_key
         },
 
         getSkypeUsername(){

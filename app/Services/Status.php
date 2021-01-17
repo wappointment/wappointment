@@ -30,7 +30,14 @@ class Status
             return [
                 'config' => 'admin.php?page=wp-mail-smtp',
                 'icon' => 'wp-mail-smtp/assets/images/logo.svg',
-                'name' => 'WP-Mail-SMTP',
+                'name' => 'WP Mail SMTP',
+            ];
+        }
+        if (defined('POST_SMTP_VER')) {
+            return [
+                'config' => 'admin.php?page=postman',
+                'icon' => 'post-smtp/style/images/badge.png',
+                'name' => 'Post SMTP',
             ];
         }
         return false;

@@ -2,7 +2,7 @@
     <div class="reduced" v-if="viewData!== null">
         <WAPFormGenerator ref="mcformgenerator" :schema="schema" :data="sendconfig" 
             @submit="sendTestEmail" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
-            labelButton="Save" @ready="readytosubmit" :autocomplete="false">
+            labelButton="Save" :validStart="true" @ready="readytosubmit" :autocomplete="false">
         </WAPFormGenerator>
         <!-- Ports links -->
         <div v-if="showSmtpPorts" class="form-group valid col-md-12 field-radios">
@@ -21,7 +21,7 @@
         <div v-if="hasMethod">
             <hr>
             <!-- From address setup -->
-            <div class="form-group valid required col-md-12 field-input">
+            <div class="form-group valid required col-md-12 field-input" v-if="mailFromOtherPlugin">
                 
                 <div>
                     <div v-if="showFrom" class="d-flex">
@@ -40,7 +40,6 @@
             <!-- Submit button -->
             <div class="d-flex align-items-start">
                 <div class="ml-2 d-flex align-items-center">
-                    
                     <button type="button" class="btn  btn-primary mr-2" 
                     :class="{disabled: !canSend}" 
                     :disabled="!canSend" @click="$refs.mcformgenerator.submitTrigger()"><span class="dashicons dashicons-email"></span> Save and Send test email</button>
@@ -387,6 +386,12 @@ export default {
         },
         getImageUrl(){
             return window.apiWappointment.baseUrl+'/'+encodeURIComponent(this.sendconfig.wp_mail_overidden.icon).replaceAll("%2F",'/')
+        },
+        mailFromOtherPlugin(){
+            return this.sendconfig!== undefined &&  this.sendconfig.wp_mail_overidden !== false
+        },
+        getNameMailPlugin(){
+            return encodeURIComponent(this.sendconfig.wp_mail_overidden.name).replaceAll('%20',' ')
         }
     },
   methods: {
@@ -420,6 +425,7 @@ export default {
       loaded(viewData){
           this.viewData = viewData.data
           this.sendconfig = viewData.data.mail_config
+          this.sendconfig.v = '2.0.1'
           this.sendconfig.wp_mail_overidden = viewData.data.wp_mail_overidden
           this.recipient = this.viewData.recipient
           this.method = this.sendconfig.method
@@ -430,7 +436,10 @@ export default {
               this.schema.push({
                 type: 'label',
                 model: 'txt12',
-                label: "Your site's email method is configured by the plugin: <strong><img class='img-height' src="+this.getImageUrl+" alt="+encodeURIComponent(this.sendconfig.wp_mail_overidden.name)+" />"+encodeURIComponent(this.sendconfig.wp_mail_overidden.name)+"</strong>. <a href='"+encodeURI(this.sendconfig.wp_mail_overidden.config)+"' target='_blank'>Configure the plugin</a> <span class='text-danger'>(Warning: .ics files attachments will not work with that method)</span>",
+                label: "<div class='d-flex align-items-center'><img class='img-height-logo mr-2' src='"+this.getImageUrl+"' alt='"+this.getNameMailPlugin+"' />"+
+                        "<div><strong>"+this.getNameMailPlugin+"</strong> is currently the plugin in charge of sending emails on your site. "+
+                        //"<a href='"+encodeURI(this.sendconfig.wp_mail_overidden.config)+"' target='_blank'>Configure it</a>"+
+                        "<div class='text-danger'>Warning: .ics files attachments will not work with that method, <strong>use SendGrid, Mailgun or SMTP instead</strong></div></div></div>",
                 conditions: [
                   { model:'method', values: ['wpmail'] },
                   { model:'wp_mail_overidden', notin:true, values: [false] },
@@ -462,6 +471,13 @@ export default {
     font-size: 40px;
     height: 40px;
     width: 40px;
+}
+.img-height-logo{
+    max-height: 70px;
+    filter: grayscale(1);
+}
+.d-flex.align-items-center:hover .img-height-logo{
+    filter: none;
 }
 .form-wrapppo .label-formgen {
     display: block;

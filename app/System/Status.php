@@ -16,7 +16,6 @@ class Status
         return (bool) self::installationTime();
     }
 
-
     public static function installationTime()
     {
         return WPHelpers::getOption('installation_completed');
@@ -84,11 +83,6 @@ class Status
     public static function dbVersionUpdateComplete()
     {
         return WPHelpers::setOption('db_version', self::$db_version_required);
-    }
-
-    public static function hasCorePendingUpdates()
-    {
-        return false;
     }
 
     public static function setViewedUpdated()

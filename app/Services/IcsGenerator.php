@@ -169,8 +169,8 @@ class IcsGenerator
 
         if ($canCanCelOrRescheduleOrBoth) {
             $description .= "\n\nNeed to modify this event?\n\n";
-            $description .= Settings::get('allow_cancellation') ? "Cancel (until " . $appointment->cancelLimit() . ") : \n" . $appointment->getLinkCancelEvent() . "\n\n" : '';
             $description .= Settings::get('allow_rescheduling') ? "Reschedule (until " . $appointment->rescheduleLimit() . ") : \n" . $appointment->getLinkRescheduleEvent() . "\n\n" : '';
+            $description .= Settings::get('allow_cancellation') ? "Cancel (until " . $appointment->cancelLimit() . ") : \n" . $appointment->getLinkCancelEvent() . "\n\n" : '';
         }
         $description .= "\n-----------------------------------";
 
