@@ -82,8 +82,8 @@ export default {
                     return 'Appointment over the phone'
                 case 'zoom':
                     return 'Appointment is a Video meeting'+
-                    "\n Meeting will be accessible from the link below " +
-                    "\n " + apiWappointment.frontPage + '&view=view-event&appointmentkey=' + this.appointment.edit_key;
+                    "\n Meeting will be accessible from the link below:" +
+                    "\n " + apiWappointment.frontPage + '&view=view-event&appointmentkey=' + this.appointment.edit_key + ' '
                 case 'skype':
                     return 'Appointment on Skype '+
                     "\n We will call you on " + this.getSkypeUsername
@@ -101,13 +101,12 @@ export default {
             return this.appointment.client.options !== undefined && this.appointment.client.options.skype !==undefined ?  this.appointment.client.options.skype:''
         },
 
-         eventDescription(){
-             return this.getAppointmentDetails + this.getLinks + "\n-----------------------------------" +
+         eventDescription(withLinks = true){
+             return this.getAppointmentDetails + (withLinks ?this.getLinks:'') + "\n-----------------------------------" +
              "\nBooked with " + apiWappointment.apiSite
         },
         eventDescriptionMS(){
-             return this.getAppointmentDetails + "\n-----------------------------------" +
-             "\nBooked with " + apiWappointment.apiSite
+             return this.eventDescription(false)
         },
 
         encodedEventDescription(){

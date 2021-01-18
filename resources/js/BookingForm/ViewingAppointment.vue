@@ -9,11 +9,14 @@
                     <h2 v-if="!isSaveEventPage">{{getText('title')}}</h2>
                     <div>{{ client.name }} - {{ client.email }}</div>
                     <div><strong>{{ service.name }}</strong> - <span class="wduration">{{service.duration}}{{getMinText}}</span></div>
-                    <div><strong class="date-start">{{ startDatei18n }}</strong> {{timeLeft}}</div>
+                    <div :class="{'old-schedule': justRescheduled}">
+                        <strong class="date-start">{{ startDatei18n }}</strong> 
+                        <span v-if="!justRescheduled">{{timeLeft}}</span>
+                    </div>
                     <div v-if="zoomSelected && isViewEventPage">
                         <a v-if="hasMeetingRoom" :href="hasMeetingRoom" class="wbtn wbtn-primary wbtn-lg">{{ options.view.join }}</a>
                         <div v-else>
-                            <div class="small">{{ options.view.missing_url }}</div>
+                            <div class="h4">{{ options.view.missing_url }}</div>
                         </div>
                     </div>
                 </div>
@@ -25,7 +28,7 @@
                     </div>
                 </div>
                 <div v-else>
-                    <RescheduleForm v-if="showReschedule" :appointmentkey="appointmentkey" :rescheduleData="rescheduleData" :options="options" ></RescheduleForm>
+                    <RescheduleForm v-if="showReschedule" :appointmentkey="appointmentkey" :rescheduleData="rescheduleData" :options="options" @changedStep="changedRescheduleStep"></RescheduleForm>
                     <div v-if="showCancelConfirmation">
                         <div v-if="appointmentCanceled">
                             <p class="h4">{{getText('confirmed')}}</p>
@@ -117,6 +120,7 @@ export default {
         momenttz: momenttz,
         timeLeft: '',
         timeLeftId: false,
+        rescheduledConfirmed: false
     }),
     created(){
         this.currentTz = this.tzGuess()
@@ -138,6 +142,11 @@ export default {
         }
     },
     methods: {
+        changedRescheduleStep(rescheduleStep){
+            if(rescheduleStep == 'BookingFormConfirmation'){
+                this.rescheduledConfirmed = true
+            }
+        },
         initCountDown(){
             this.initDate = new Date()
             this.initDate.setTime(this.selectedSlot*1000)
@@ -229,6 +238,9 @@ export default {
         
     },
     computed: {
+        justRescheduled(){
+            return this.showReschedule && this.rescheduledConfirmed
+        },
         hasMeetingRoom(){
             if(this.zoomMeetingRoom){
                 return this.zoomMeetingRoom
@@ -300,5 +312,8 @@ export default {
 .wbtn.wbtn-lg{
     font-size: 1.4em;
     margin: .4em 0;
+}
+.old-schedule{
+    text-decoration: line-through;
 }
 </style>

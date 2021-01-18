@@ -1,5 +1,5 @@
 <template>
-    <BookingForm serviceAction="rescheduling" :appointmentkey="appointmentkey" :rescheduleData="rescheduleData" :options="options"></BookingForm>
+    <BookingForm serviceAction="rescheduling" :appointmentkey="appointmentkey" @changedStep="changedStep" :rescheduleData="rescheduleData" :options="options"></BookingForm>
 </template>
 
 <script>
@@ -24,13 +24,10 @@ export default {
         })
     }, 
     extends: AbstractFront,
-    data: () => ({
-       
-    }),
-    
+    methods:{
+        changedStep(currentStep){
+            this.$emit('changedStep', currentStep)
+        }
+    }
 }
 </script>
-
-<style>
-
-</style>
