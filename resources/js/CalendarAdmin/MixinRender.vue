@@ -106,7 +106,7 @@ export default {
 
       hasDotcomButnoProvider(eventId){
         let appointment = this.findAppointmentById(eventId)
-        return appointment.extendedProps.options !== undefined && appointment.extendedProps.options.providers === undefined && this.hasDotcom()
+        return [undefined, null].indexOf(appointment.extendedProps.options) === -1  && appointment.extendedProps.options.providers === undefined && this.hasDotcom()
       },
 
       hasDotcom(){
@@ -139,69 +139,84 @@ export default {
         let appointment = this.findAppointmentById(eventId)
         return appointment.extendedProps.options.providers.google.google_meet_url
       },
+      isBackgroundEvent(el){
+        return el.attr('data-rendering')!== undefined && el.attr('data-rendering')=='background'
+      },
+      getCrib(el){
+        if(!this.isBackgroundEvent(el)){
+          return '<div class="crib yel">Appointment</div>'
+        }
 
-      attachEvent(el) {
-        el.addClass('hover')
+        if(el.hasClass('extra')) {
+          return '<div class="crib blue">Punctual Availability</div>'
+        }
+        if(el.hasClass('busy')){
+            return '<div class="crib red">Busy</div>'
+        }
+        //
+        return el.hasClass('recurrent') ? '<div class="crib orange">Personal Calendar recurs <span class="dashicons dashicons-update"></span></div>' + this.getCalTitle(el): '<div class="crib orange">Personal Calendar</div>' + this.getCalTitle(el)
+      },
 
-        if(el.attr('data-only-delete')!==undefined){
-          let innerhtml ='<div class="fill-event">'
+      getCalTitle(el){
+          return (el.attr('data-calendar-title')!== undefined && el.children('.cal-title').length == 0) ? '<div class="cal-title">'+el.attr('data-calendar-title')+'</div>' : ''
+      },
 
-          if(el.attr('data-rendering')!== undefined && el.attr('data-rendering')=='background'){
-            if(el.hasClass('extra')) {
-              innerhtml += '<div class="crib blue">Punctual Availability</div>'
-            }else{
-              if(el.hasClass('busy')){
-                innerhtml += '<div class="crib red">Busy</div>'
-              }else{
-                if(el.hasClass('recurrent')){
-                  innerhtml += '<div class="crib orange">Personal Calendar recurs <span class="dashicons dashicons-update"></span></div>'
-                }else{
-                  innerhtml += '<div class="crib orange">Personal Calendar</div>'
-                }
-                if(el.attr('data-calendar-title')!== undefined){
-                    if(el.children('.cal-title').length == 0){
-                      innerhtml += '<div class="cal-title">'+el.attr('data-calendar-title')+'</div>'
-                    }
-                }
-              }
-              
-            }
-          }else{
-            innerhtml += '<div class="crib yel">Appointment</div>'
-          }
+      getConfirmOrViewButton( el, rendering,){
+        if(this.isAppointmentConfirmed(rendering)) return '<button data-tt="View appointment details" class="btn btn-xs btn-light viewElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-visibility"></span></button>'
+        return !this.isAppointmentPending(rendering) ? '': '<button data-tt="Confirm appointment" class="btn btn-xs btn-light confirmElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-yes"></span></button>'
+      },
+
+      isAppointmentVideoUpcoming(el){
+        return !el.hasClass('past-event') && this.hasDotcom() && this.appointmentIsZoom(el.attr('data-id'))
+      },
+      getZoomGoogleMeetButton(el){
+        if(!this.isAppointmentVideoUpcoming(el) ) {
+          return ''
+        }
+        if(this.appointmentHasZoomUrl(el.attr('data-id'))){
+          return '<div data-href="'+this.getZoomMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Zoom meeting" >'+
+          '<img src="'+window.apiWappointment.resourcesUrl+'images/zoom.png'+'" /></div>'
+        }
           
-          if(!el.hasClass('past-event') || (el.hasClass('past-event') && this.isAppointmentEvent(el.attr('data-rendering')))){
-            innerhtml += '<div class="d-flex justify-content-center align-items-center mx-4 ctrlbar">'
-            let services = [undefined, false].indexOf(this.viewData.is_dotcom_connected) !== -1 ? []:this.viewData.is_dotcom_connected.services
-            if(!el.hasClass('past-event') && this.hasDotcomButnoProvider(el.attr('data-id'))) innerhtml += '<button class="btn btn-xs btn-light recordDotcom" data-tt="Send details for '+services.join(', ')+'" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-cloud-upload"></span></button>'
-            if(!el.hasClass('past-event') && this.hasDotcom()  && this.appointmentIsZoom(el.attr('data-id')) ){
-              if(this.appointmentHasZoomUrl(el.attr('data-id'))){
-                innerhtml += '<div  data-href="'+this.getZoomMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Zoom meeting" ><img src="'+window.apiWappointment.resourcesUrl+'images/zoom.png'+'" /></div>'
-              }
-              if(this.appointmentHasGoogleUrl(el.attr('data-id'))){
-                innerhtml += '<div  data-href="'+this.getGoogleMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Google meeting" ><img src="'+window.apiWappointment.resourcesUrl+'images/google-meet.png'+'" /></div>'
-              }
-              
-            } 
-            if(this.isAppointmentConfirmed(el.attr('data-rendering'))) innerhtml += '<button data-tt="View appointment details" class="btn btn-xs btn-light viewElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-visibility"></span></button>'
-            if(this.isAppointmentPending(el.attr('data-rendering'))) innerhtml += '<button data-tt="Confirm appointment" class="btn btn-xs btn-light confirmElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-yes"></span></button>'
-            
-            if(!el.hasClass('past-event')){
-              if(this.isAppointmentEvent(el.attr('data-rendering'))) {
-                innerhtml += '<button class="btn btn-xs btn-light cancelAppointment" data-tt="Cancel appointment" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-dismiss"></span></button>'
-              }else{
-                let spanIcon = el.hasClass('calendar') ? '<span class="dashicons dashicons-controls-volumeoff"></span> ': '<span class="dashicons dashicons-trash"></span>'
-                innerhtml += '<button data-tt="Mute Event" class="btn btn-xs btn-light deleteElement" data-id="'+el.attr('data-id')+'">'+spanIcon+'</button>'
-              }
-                
-            }
-            
-            innerhtml += '</div>'
-          }
-          innerhtml += '</div>'// endfill-event
-          
+        return this.appointmentHasGoogleUrl(el.attr('data-id'))? '<div data-href="'+this.getGoogleMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Google meeting" >'+
+                '<img src="'+window.apiWappointment.resourcesUrl+'images/google-meet.png'+'" /></div>': ''
+      },
 
-          if(this.isAppointmentEvent(el.attr('data-rendering'))){
+      getCancelOrMuteButton(el, isAppointmentEvent){
+        if(el.hasClass('past-event')){
+          return ''
+        }
+        
+        if(isAppointmentEvent) {
+          return '<button class="btn btn-xs btn-light cancelAppointment" data-tt="Cancel appointment" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-dismiss"></span></button>'
+        }else{
+          let spanIcon = el.hasClass('calendar') ? '<span class="dashicons dashicons-controls-volumeoff"></span> ': '<span class="dashicons dashicons-trash"></span>'
+          return '<button data-tt="Mute Event" class="btn btn-xs btn-light deleteElement" data-id="'+el.attr('data-id')+'">'+spanIcon+'</button>'
+        }
+      },
+      getActionButtons(el, isAppointmentEvent){
+        if (!(!el.hasClass('past-event') || (el.hasClass('past-event') && isAppointmentEvent))) {
+          return ''
+        }
+        let innerhtml = '<div class="d-flex justify-content-center align-items-center mx-4 ctrlbar">'
+        let services = [undefined, false].indexOf(this.viewData.is_dotcom_connected) !== -1 ? []:this.viewData.is_dotcom_connected.services
+        if(!el.hasClass('past-event') && this.hasDotcomButnoProvider(el.attr('data-id')) && isAppointmentEvent) {
+          innerhtml += '<button class="btn btn-xs btn-light recordDotcom" data-tt="Send details for '+services.join(', ')+'" data-id="'+el.attr('data-id')+'">'+
+                        '<span class="dashicons dashicons-cloud-upload"></span>'+
+                        '</button>'
+        }
+        innerhtml += this.getZoomGoogleMeetButton(el)
+        
+        innerhtml += this.getConfirmOrViewButton(el, el.attr('data-rendering'))
+        
+        innerhtml += this.getCancelOrMuteButton(el, isAppointmentEvent)
+        
+        return innerhtml + '</div>'
+
+      },
+
+      attachClickEventsToButtons(innerhtml, isAppointmentEvent, el){
+        if(isAppointmentEvent){
             //el.find('.fc-content').append(innerhtml)
             el.find('.fc-bg').append(innerhtml)
             el.find('.cancelAppointment').on( "click", this.cancelAppointment)
@@ -214,6 +229,19 @@ export default {
             el.append(innerhtml)
             el.find('.deleteElement').on( "click", this.deleteElement)
           }
+      },
+      attachEvent(el) {
+        el.addClass('hover')
+
+        if(el.attr('data-only-delete') !== undefined){
+          let innerhtml ='<div class="fill-event">'
+          const isAppointmentEvent = this.isAppointmentEvent(el.attr('data-rendering'))
+
+          innerhtml += this.getCrib(el)
+          
+          innerhtml +=  this.getActionButtons(el, isAppointmentEvent)
+          innerhtml += '</div>'// endfill-event
+          this.attachClickEventsToButtons(innerhtml, isAppointmentEvent, el)
           
         }else{
           if(el.hasClass('opening')){

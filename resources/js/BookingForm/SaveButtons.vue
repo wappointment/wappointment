@@ -23,9 +23,10 @@
 
 import momenttz from '../appMoment'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
-
+const lnb = "\\n"
 export default {
     props: ['service', 'staff', 'currentTz', 'physicalSelected','appointment', 'showResult'],
+
     methods: {
         goToUrl(url){
             window.open(url)
@@ -34,6 +35,7 @@ export default {
         toIsoString(date){
             return date.toISOString().replace(/-|:|\.\d+/g, '');
         },
+         
     },
     computed: {
         isoFormat(){
@@ -81,36 +83,34 @@ export default {
                 case 'phone':
                     return 'Appointment over the phone'
                 case 'zoom':
+                    let link_view = apiWappointment.frontPage + '&view=view-event&appointmentkey=' + this.appointment.edit_key
                     return 'Appointment is a Video meeting'+
-                    "\n Meeting will be accessible from the link below:" +
-                    "\n " + apiWappointment.frontPage + '&view=view-event&appointmentkey=' + this.appointment.edit_key + ' '
+                    lnb + "Meeting will be accessible from the link below:" +
+                    lnb + "<a href='"+link_view+"' target='_blank'>"+ link_view + '</a>'
                 case 'skype':
                     return 'Appointment on Skype '+
-                    "\n We will call you on " + this.getSkypeUsername
+                    lnb + "We will call you on " + this.getSkypeUsername
                 case 'physical':
-                    return "\n"+'Appointment at this address'+ "\n" + this.eventLocation
+                    return lnb + 'Appointment at this address'+ 
+                    lnb + this.eventLocation
             }
         },
 
         getLinks(){
-            return "\n\n Reschedule: \n" + apiWappointment.frontPage + '&view=reschedule-event&appointmentkey=' + this.appointment.edit_key+
-            "\n\n Cancel: \n" + apiWappointment.frontPage + '&view=cancel-event&appointmentkey=' + this.appointment.edit_key
+            return lnb + lnb + "Reschedule: " + lnb +  apiWappointment.frontPage + '&view=reschedule-event&appointmentkey=' + this.appointment.edit_key+
+            lnb + lnb + "Cancel: " + lnb + apiWappointment.frontPage + '&view=cancel-event&appointmentkey=' + this.appointment.edit_key
         },
 
         getSkypeUsername(){
             return this.appointment.client.options !== undefined && this.appointment.client.options.skype !==undefined ?  this.appointment.client.options.skype:''
         },
 
-         eventDescription(withLinks = true){
-             return this.getAppointmentDetails + (withLinks ?this.getLinks:'') + "\n-----------------------------------" +
-             "\nBooked with " + apiWappointment.apiSite
+        eventDescription(){
+             return this.getAppointmentDetails + this.getLinks + lnb + "-----------------------------------" +
+             lnb + "Booked with " + apiWappointment.apiSite
         },
-        eventDescriptionMS(){
-             return this.eventDescription(false)
-        },
-
         encodedEventDescription(){
-            return encodeURIComponent(this.eventDescription) 
+            return encodeURIComponent(this.eventDescription.replaceAll("\\n", '<br/>'))
         },
 
         encodedEventTZ(){
@@ -122,20 +122,7 @@ export default {
         },
 
         encodedEventLocation(){
-            return encodeURIComponent(this.eventLocation)
-        },
-
-        saveToGoogle(){
-            let url = 'http://www.google.com/calendar/event?action=TEMPLATE'
-            url += '&text=' + this.encodedEventTitle;
-            url += '&dates=' + this.formattedStartDate + '/' + this.formattedEndDate
-            url += '&ctz=' + this.encodedEventTZ
-            url += '&trp=true'
-            url += '&sprop=' + apiWappointment.apiSite
-            url += '&details=' + this.encodedEventDescription
-            url += '&location=' + this.encodedEventLocation
-            
-            return url
+            return encodeURIComponent(this.eventLocation.replaceAll("\\n", '<br/>'))
         },
         
          saveToIcal() {
@@ -158,17 +145,28 @@ export default {
             );
         },
 
+
+        saveToGoogle(){
+            let url = 'http://www.google.com/calendar/event?action=TEMPLATE'
+            url += '&text=' + this.encodedEventTitle;
+            url += '&dates=' + this.formattedStartDate + '/' + this.formattedEndDate
+            url += '&ctz=' + this.encodedEventTZ
+            url += '&trp=true'
+            url += '&sprop=' + apiWappointment.apiSite
+            url += '&details=' + this.encodedEventDescription
+            url += '&location=' + this.encodedEventLocation
+            
+            return url
+        },
+
         saveToOutlookOnline() {
 
-            // https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&
-            // startdt=2020-12-31T19:30:00Z&enddt=2020-12-31T22:30:00Z&subject=Birthday&body=With%20clowns%20and%20stuff&location=North%20Pole
             let url = 'https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent'
             url += '&subject=' + encodeURIComponent(this.eventTitle.replaceAll(' ',"\n"))
             url += '&startdt=' + this.formattedStartDateMS 
             url += '&enddt=' + this.formattedEndDateMS
-            //url += '&ctz=' + this.encodedEventTZ
-            url += '&location=' + encodeURIComponent(this.eventLocation.replaceAll(' ',"\n"))
-            url += '&body=' + encodeURIComponent(this.eventDescriptionMS.replaceAll(' ',"\n"))
+            url += '&location=' + encodeURIComponent(this.eventLocation.replaceAll("\\n", '<br/>').replaceAll(' ',"\n"))
+            url += '&body=' + encodeURIComponent(this.eventDescription.replaceAll("\\n", '<br/>').replaceAll(' ',"\n"))
             return url
 
         },
@@ -176,12 +174,11 @@ export default {
         saveToYahoo() {
 
             let url = 'https://calendar.yahoo.com/?v=60&view=d&type=20'
-            url += '&title=' + this.encodedEventTitle;
+            url += '&title=' + this.encodedEventTitle
             url += '&st=' + this.formattedStartDate 
-            url += '&et=' + this.formattedEndDate;
-            //url += '&ctz=' + this.encodedEventTZ
-            url += '&in_loc=' + this.encodedEventLocation;
-            url += '&desc=' + this.encodedEventDescription;
+            url += '&et=' + this.formattedEndDate
+            url += '&in_loc=' + encodeURIComponent(this.eventLocation.replaceAll("\\n", "\n"))
+            url += '&desc=' + encodeURIComponent(this.eventDescription.replaceAll("\\n", "\n"))
             return url
 
         },

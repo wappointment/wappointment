@@ -188,7 +188,7 @@ class DotCom extends API
                 'appointment_id' => $appointment->id,
                 'duration' => $appointment->getDurationInSec(),
                 'location' => $appointment->type == 0 ? $appointment->getServiceAddress() : $appointment->getLocation(),
-                'timezone' => Settings::getStaff('timezone', $appointment->staff_id),
+                'timezone' => Settings::getStaff('timezone', $this->staff_id),
                 'emails' => [
                     $appointment->client->email
                 ]
