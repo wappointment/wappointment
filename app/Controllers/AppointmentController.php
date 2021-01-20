@@ -21,13 +21,14 @@ class AppointmentController extends RestController
             throw new \WappointmentException("Can't find appointment", 1);
         }
         $appointmentData = $appointment->toArraySpecial();
-
+        $appointmentData['edit_key'] = $request->input('appointmentkey');
         if (Settings::get('allow_rescheduling')) {
             $appointmentData['canRescheduleUntil'] = $appointment->canRescheduleUntilTimestamp();
         }
         if (Settings::get('allow_cancellation')) {
             $appointmentData['canCancelUntil'] = $appointment->canCancelUntilTimestamp();
         }
+
         return [
             'appointment' => $appointmentData,
             'client' => $appointment->client()->select(['name', 'email', 'options'])->first(),

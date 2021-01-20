@@ -4,6 +4,7 @@ namespace Wappointment\Controllers;
 
 use Wappointment\Services\Client;
 use Wappointment\Services\Appointment;
+use Wappointment\Services\Settings;
 use Wappointment\Validators\HttpRequest\Booking;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Request;
@@ -17,14 +18,23 @@ class BookingController extends RestController
             return WPHelpers::restError('Review your fields', 500, $booking->getErrors());
         }
 
-        $result = Client::book($booking);
-        if (isset($result['errors'])) {
-            return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['errors']);
+        $appointment = Client::book($booking);
+        if (isset($appointment['errors'])) {
+            return WPHelpers::restError('Impossible to proceed with the booking', 500, $appointment['errors']);
         }
 
-        $appointment = $result->toArraySpecial();
+        $appointmentArray = $appointment->toArraySpecial();
 
-        return ['result' => true, 'appointment' => (new \Wappointment\ClassConnect\Collection($appointment))->except(['rest_route', 'id', 'client_id'])];
+        if (Settings::get('allow_rescheduling')) {
+            $appointmentArray['canRescheduleUntil'] = $appointment->canRescheduleUntilTimestamp();
+        }
+        if (Settings::get('allow_cancellation')) {
+            $appointmentArray['canCancelUntil'] = $appointment->canCancelUntilTimestamp();
+        }
+        return [
+            'appointment' => (new \Wappointment\ClassConnect\Collection($appointmentArray))->except(['rest_route', 'id', 'client_id'])
+
+        ];
     }
 
     public function reschedule(Request $request)

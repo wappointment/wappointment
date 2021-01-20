@@ -39,7 +39,7 @@ class Status
     public static function seenUpdatePage()
     {
         $update_seen = static::viewedUpdates();
-        return $update_seen && version_compare($update_seen, static::getBaseVersion()) >= 0;
+        return $update_seen && version_compare($update_seen, WAPPOINTMENT_VERSION) >= 0;
     }
 
     public static function getBaseVersion()
@@ -51,6 +51,7 @@ class Status
     public static function hasPendingUpdates()
     {
         $current_version = self::dbVersion();
+
         return version_compare($current_version, self::$db_version_required) < 0;
     }
 
@@ -123,6 +124,7 @@ class Status
                 return $toView;
             }
         }
+
         return $toView;
     }
 

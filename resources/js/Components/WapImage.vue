@@ -129,6 +129,15 @@ export default {
     width: 25px;
 }
 
+.wap-icon-image.saveb{
+    height: 30px;
+    width: 30px;
+    filter:grayscale(1);
+}
+.wbtn-secondary:hover .wap-icon-image.saveb{
+    filter:none;
+}
+
 .wap-icon-image.sm {
     height: 15px;
     width: 15px;
