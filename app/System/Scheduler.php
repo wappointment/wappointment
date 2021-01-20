@@ -89,8 +89,13 @@ class Scheduler
      */
     public static function dailyProcess()
     {
-        self::regenerateAvailability(); // we at least regenerate once a day to avoid empty calendar after aa while without a booking
-        self::checkLicence();
+        try {
+            self::regenerateAvailability();
+            // we at least regenerate once a day to avoid empty calendar after aa while without a booking
+            self::checkLicence();
+        } catch (\Exception $e) {
+            //silent
+        }
     }
 
 
