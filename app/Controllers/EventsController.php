@@ -82,7 +82,7 @@ class EventsController extends RestController
 
     public function recordDotcom(Request $request)
     {
-        $appointment = $this->getAppointmentModel()::with('client')->where('id', $request->input('id'))->first();
+        $appointment = $this->getAppointmentModel()::with('client')->where('id', (int)$request->input('id'))->first();
         $acs_id = Settings::get('activeStaffId');
         $staff_id = empty($appointment->staff_id) ? $acs_id : (int)$appointment->staff_id;
         $dotcomapi = new DotCom;

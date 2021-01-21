@@ -38,7 +38,8 @@ class Reminder
 
         if (isset($reminderData['id']) && $reminderData['id'] > 0) {
             $reminderData['options'] = json_encode($reminderData['options']);
-            return (bool) MReminder::where('id', $reminderData['id'])->update($reminderData);
+            return (bool) MReminder::where('id', (int)$reminderData['id'])
+                ->update($reminderData);
         } else {
             return (bool) MReminder::create($reminderData);
         }

@@ -111,6 +111,9 @@ class SettingsStaffController extends RestController
 
     public function disconnectCal(Request $request)
     {
+        if (is_array($request->input('calendar_id'))) {
+            throw new \WappointmentException("Malformed parameter", 1);
+        }
         $calendar_id = $request->input('calendar_id');
         $calurls = WPHelpers::getStaffOption('cal_urls');
         if (empty($calendar_id) || empty($calurls[$calendar_id])) {

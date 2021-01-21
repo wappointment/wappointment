@@ -47,7 +47,8 @@ class DotCom extends API
 
 
                 if (!empty($requires_update)) {
-                    $retrieved_appointments = Appointment::select('id', 'options')->whereIn('id', array_keys($requires_update))->get();
+                    $retrieved_appointments = Appointment::select('id', 'options')
+                        ->whereIn('id', array_keys($requires_update))->get();
 
                     foreach ($retrieved_appointments as $updatingAppointment) {
                         $options = empty($updatingAppointment->options) ? [] : $updatingAppointment->options;

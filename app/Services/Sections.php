@@ -36,7 +36,9 @@ class Sections
                 ->where('start_at', '>=', self::tsToDBString((int) $this->start_at))
                 ->where('end_at', '<=', self::tsToDBString((int) $this->end_at));
         }
-        $this->appointments = $queryAppointments->orderBy('start_at')->orderBy('end_at')->get();
+        $this->appointments = $queryAppointments->orderBy('start_at')
+            ->orderBy('end_at')
+            ->get();
     }
 
     public function setAvailabilities()

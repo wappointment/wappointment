@@ -12,6 +12,9 @@ class AppointmentController extends RestController
 {
     public function get(Request $request)
     {
+        if (is_array($request->input('appointmentkey'))) {
+            throw new \WappointmentException("Malformed parameter", 1);
+        }
         $appointment = AppointmentModel::select(['start_at', 'status', 'end_at', 'type', 'client_id', 'options'])
             ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
             ->where('edit_key', $request->input('appointmentkey'))

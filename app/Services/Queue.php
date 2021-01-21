@@ -52,7 +52,7 @@ class Queue
     {
         $query = Job::where('queue', $queue)->where('reserved_at', 0);
         if (!empty($params['staff_id'])) {
-            $query->where('appointment_id', $params['staff_id']);
+            $query->where('appointment_id', (int)$params['staff_id']);
         }
         if ($query->exists()) {
             return;
@@ -82,7 +82,9 @@ class Queue
     public static function resetTimedoutJobs()
     {
 
-        $jobsTimedOut = Job::where('reserved_at', '>', 0)->where('reserved_at', '<', time() - static::DELAY_TIMEOUT_RETRY)->get();
+        $jobsTimedOut = Job::where('reserved_at', '>', 0)
+            ->where('reserved_at', '<', time() - static::DELAY_TIMEOUT_RETRY)
+            ->get();
 
         foreach ($jobsTimedOut as $key => $job) {
             $job->attempts++;
@@ -178,7 +180,8 @@ class Queue
 
     public static function cancelAppointmentJob($appointment_id)
     {
-        Job::where('queue', '!=', 'availability')->where('appointment_id', $appointment_id)
+        Job::where('queue', '!=', 'availability')
+            ->where('appointment_id', (int)$appointment_id)
             ->delete();
     }
 
