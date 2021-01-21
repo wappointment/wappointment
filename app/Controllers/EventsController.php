@@ -155,6 +155,7 @@ class EventsController extends RestController
 
     private function events(Request $request)
     {
+
         $ends_at_carbon = DateTime::timeZToUtc($request->input('end'))->setTimezone('UTC');
         $start_at_string = DateTime::timeZToUtc($request->input('start'))->setTimezone('UTC')->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $ends_at_carbon->format(WAPPOINTMENT_DB_FORMAT);
@@ -198,7 +199,8 @@ class EventsController extends RestController
             ->where('muted', '<', 1)
             ->get();
 
-        $punctualEvent = Status::expand($recurringBusy);
+        $maxts = (new \Wappointment\Services\Availability())->getMaxTs();
+        $punctualEvent = Status::expand($recurringBusy, $maxts < $ends_at_carbon->timestamp ? $maxts : $ends_at_carbon->timestamp);
 
         $statusEvents = $statusEvents->concat($punctualEvent);
         foreach ($statusEvents as $event) {
