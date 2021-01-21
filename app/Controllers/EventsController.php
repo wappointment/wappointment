@@ -141,6 +141,7 @@ class EventsController extends RestController
     {
         return Central::get('AppointmentModel');
     }
+
     private function getAppointments($start_at_string, $end_at_string)
     {
         return $this->getAppointmentModel()::with(['client' => function ($q) {
@@ -196,8 +197,8 @@ class EventsController extends RestController
         $recurringBusy = Mstatus::where('recur', '>', Mstatus::RECUR_NOT)
             ->where('muted', '<', 1)
             ->get();
-        $sixtydaysinsecs = 60 * 24 * 3600;
-        $punctualEvent = Status::expand($recurringBusy, $ends_at_carbon->timestamp + $sixtydaysinsecs);
+
+        $punctualEvent = Status::expand($recurringBusy);
 
         $statusEvents = $statusEvents->concat($punctualEvent);
         foreach ($statusEvents as $event) {
@@ -249,7 +250,7 @@ class EventsController extends RestController
 
         $daysOfTheWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-        while (count($daysOfTheWeek) > 0) {
+        while (!empty($daysOfTheWeek)) {
             $dayName = $daysOfTheWeek[$startDate->dayOfWeek];
 
             foreach ($this->regav[$dayName] as $dayTimeblock) {

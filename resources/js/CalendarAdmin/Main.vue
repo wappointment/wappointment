@@ -763,8 +763,12 @@ export default {
   .fc-event, .fc-bgevent{
     transition: all .3s ease-in-out;
   }
-  .fc-bgevent{
-    overflow:hidden;
+  .cal-title {
+    border-radius: .5rem .5rem 0 0;
+      min-height: 25px;
+  }
+  .fc-bgevent .fill-event{
+    border-radius: .5rem;
   }
   .fc-event.past-event .fc-resizer{
     display: none;
@@ -858,7 +862,7 @@ export default {
 
   .fc-bgevent.debugging{
     opacity: 1;
-    border-radius: 0.5rem;
+    border-radius: .5rem;
     z-index: 1;
     background-color: #94d576;
   }
@@ -868,7 +872,7 @@ export default {
 
   .fc-bgevent.busy, .fc-bgevent.calendar {
       z-index: 4;
-      border-radius: 0.5rem;
+      border-radius: .5rem;
       background-color:rgb(242, 242, 242);
       border: 2px dashed #dadada;
       background-size: auto auto;
@@ -916,7 +920,7 @@ export default {
   .fc-bg .fc-day.fc-past{
     border: 2px solid #f3f3f3;
       z-index: 3;
-      border-radius: 0.5rem;
+      border-radius: .5rem;
       background-color: #f9f9f9;
       background-size: auto auto;
   }
@@ -1069,7 +1073,7 @@ export default {
   border: 2px solid #f3f3f3;
   border-bottom: 2px dashed #6664cb;
   z-index: 3;
-  border-radius: 0.5rem;
+  border-radius: .5rem;
   background-color: #f9f9f9;
   background-size: auto auto;
 }
@@ -1227,7 +1231,7 @@ export default {
 #calendar .btn-xs.btn-light {
   font-size: 1rem;
   border-radius: 8rem !important;
-  padding-top: 0.1rem !important;
+  padding-top: .1rem !important;
 }
 
 

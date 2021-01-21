@@ -74,6 +74,9 @@ class Status
     public static function expand($recurringBusy, $until = false)
     {
         $punctualEvents = [];
+        if ($until === false) {
+            $until =  (new \Wappointment\Services\Availability())->getMaxTs();
+        }
         foreach ($recurringBusy as $recurring) {
             $punctualEvents = array_merge($punctualEvents, self::generateRecurring($recurring, $until));
         }
@@ -87,15 +90,17 @@ class Status
         $i = 0;
         self::$diff = $statusRecurrent->end_at->timestamp - $statusRecurrent->start_at->timestamp;
         $next = self::getNext($statusRecurrent, $from, $until);
+
+
         while ($next) {
             $newEvents[] = $next;
             $from = $next->end_at->timestamp;
             $i++;
-            if ($i > 50) {
+            if ($i > 300) {
                 throw new \WappointmentException('Error Infinite loop', 1);
             }
             $next = self::getNext($next, $from, $until);
-            if ($next->start_at->timestamp <= $from) {
+            if (empty($next) || $next->start_at->timestamp <= $from) {
                 break; //if increment doesn't occur we just give up
             }
         }
@@ -107,7 +112,6 @@ class Status
     {
 
         if ($from < $until) {
-            //$start_at = $statusRecurrent->start_at->timestamp < time() ? Carbon::now() : $statusRecurrent->start_at;
             $start_at =  $statusRecurrent->start_at;
             switch ($statusRecurrent->recur) {
                 case MStatus::RECUR_DAILY:
@@ -118,6 +122,8 @@ class Status
                     return self::getNextMonthly($statusRecurrent, $start_at, $from, $until);
                 case MStatus::RECUR_YEARLY:
                     return self::getNextYearly($statusRecurrent, $start_at, $from, $until);
+                default:
+                    return false;
             }
         }
 
@@ -161,7 +167,6 @@ class Status
 
             $start_at->addDay();
 
-
             if ($weekWhenEnter != $start_at->weekNumberInMonth && $interval > 1) {
                 if ($start_at->weekNumberInMonth != 1 && $start_at->weekNumberInMonth != 0) {
                     $start_at = $start_at_copy->addWeeks($interval)->startOfWeek()->copy();
@@ -178,20 +183,7 @@ class Status
         );
         $copyOriginTZ = $start_at->setTime($origintimedate->hour, $origintimedate->minute)->copy();
 
-        /*
-        if ($statusRecurrent->options['title'] == 'Test wonder')
-        echo 'Origin ' . ' full date ' . $copyOriginTZ->toDayDateTimeString() . "\n";
-        */
         $start_at = $copyOriginTZ->tz('UTC')->copy();
-
-        /*       if ($statusRecurrent->options['title'] == 'Test wonder') {
-            echo $statusRecurrent->options['title'] . "\n";
-            echo 'Origin UTC ' . ' full date ' . $copyOriginTZ->toDayDateTimeString() . "\n";
-            echo 'Day of week ' . $start_at->dayOfWeek .
-            ' full date ' . $start_at->toDayDateTimeString() . "\n";
-            echo '---------------------------------------------'  . "\n";
-        } */
-
 
         if ($start_at->timestamp > $until) {
             return false;
@@ -203,7 +195,6 @@ class Status
 
     private static function getNextMonthly($statusRecurrent, $start_at, $from, $until)
     {
-
         $interval = self::getInterval($statusRecurrent);
         $dayofthemonth = self::getMonthDay($statusRecurrent);
 
@@ -227,8 +218,6 @@ class Status
 
         $i = 0;
         while ($start_at->timestamp < $from) {
-            //echo 'mini inter ' . $interval . ' : ' . $i . ' ' . $start_at->toDateTimeString() . "\n";
-
             $start_at->tz($statusRecurrent->options['origin_tz'])
                 ->addMonths($interval)
                 ->startOfMonth();
@@ -289,12 +278,6 @@ class Status
             $carbonNewStart->day = $dayofthemonth;
         }
 
-        /*  $origintimedate = Carbon::parse(
-            $statusRecurrent->options['origin_start'],
-            $statusRecurrent->options['origin_tz']
-        );
-        $carbonNewStart->hour = $origintimedate->hour;
-        $carbonNewStart->minute = $origintimedate->minute; */
         $carbonNewStart->hour = $hour;
         $carbonNewStart->minute = $minute;
 
@@ -334,10 +317,6 @@ class Status
             $statusRecurrent->options['origin_tz']
         )->setTime($origintimedate->hour, $origintimedate->minute)->copy();
         $newCopy->start_at = $copyOriginTZ->tz('UTC')->copy();
-
-        //old
-        //$newCopy->start_at = $start_at->setTime($statusRecurrent->start_at->hour, $statusRecurrent->start_at->minute);
-
 
         $newCopy->end_at = Carbon::createFromTimestamp($start_at->timestamp + self::$diff);
         $newCopy->id = $statusRecurrent->id;
