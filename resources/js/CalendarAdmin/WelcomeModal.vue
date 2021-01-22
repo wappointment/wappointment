@@ -42,14 +42,17 @@
         <div v-else>
             <div class="mt-4 p-3 text-center">
             <h2>Welcome to your Calendar page!</h2>
-                <div class="sm-box align-self-start text-left text-muted rounded bg-light p-2 pl-5">
-                    <p class="h6">From here you can:</p>
-                    <ol class="ml-0 my-3">
-                        <li>Review your availability and appointments</li>
-                        <li>Block times when you're busy</li>
-                        <li>Add extra Bookable time</li>
-                        <li>Book appointments on behalf of your clients</li>
-                    </ol>
+                <div class="d-flex">
+                    <img :src="getInstalledImg" class="mb-3 rounded img-fluid mr-4" alt="See how your calendar works">
+                    <div class="sm-box align-self-start text-left text-muted rounded bg-light p-2 pl-5">
+                        <p class="h6">From here you can:</p>
+                        <ol class="ml-0 my-3">
+                            <li>Review your availability and appointments</li>
+                            <li>Block times when you're busy</li>
+                            <li>Add extra Bookable time</li>
+                            <li>Book appointments on behalf of your clients</li>
+                        </ol>
+                    </div>
                 </div>
             </div>
             
