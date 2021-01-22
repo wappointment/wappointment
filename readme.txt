@@ -1,10 +1,10 @@
-=== Appointment Bookings for Zoom - GoogleMeet - and more | Wappointment  ===
+=== Appointment Bookings for Zoom GoogleMeet and more - Wappointment  ===
 Contributors: wappointment, benheu
-Tags: appointment scheduling, appointment booking, appointment booking calendar, zoom appointment booking, booking form
+Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
 Requires at least: 4.7
 Tested up to: 5.6
 Requires PHP: 7.0
-Stable tag: 1.9.5
+Stable tag: 2.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -139,7 +139,14 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.0.0 - 2020-12-25 =
+= 2.0.1 - 2021-01-20 =
+* Added Save to calendar button for Outlook Live
+* Added Join Zoom Google Meet Meeting link straight in the admin email confirmation
+* Fixed SMTP encryption issue SSL and TLS to send booking confirmation
+* Fixed issue ics in emails Zoom Google Meet meeting room information is missing
+* Fixed issue ics in booking confirmation step for iCal and Outlook
+
+= 2.0.0 - 2021-01-09 =
 * Added Zoom Integration
 * Added Google Calendar 2-way Sync
 * Added Google Meet Integration

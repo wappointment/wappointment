@@ -82,7 +82,7 @@ class EventsController extends RestController
 
     public function recordDotcom(Request $request)
     {
-        $appointment = $this->getAppointmentModel()::with('client')->where('id', $request->input('id'))->first();
+        $appointment = $this->getAppointmentModel()::with('client')->where('id', (int)$request->input('id'))->first();
         $acs_id = Settings::get('activeStaffId');
         $staff_id = empty($appointment->staff_id) ? $acs_id : (int)$appointment->staff_id;
         $dotcomapi = new DotCom;
@@ -141,6 +141,7 @@ class EventsController extends RestController
     {
         return Central::get('AppointmentModel');
     }
+
     private function getAppointments($start_at_string, $end_at_string)
     {
         return $this->getAppointmentModel()::with(['client' => function ($q) {
@@ -154,6 +155,7 @@ class EventsController extends RestController
 
     private function events(Request $request)
     {
+
         $ends_at_carbon = DateTime::timeZToUtc($request->input('end'))->setTimezone('UTC');
         $start_at_string = DateTime::timeZToUtc($request->input('start'))->setTimezone('UTC')->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $ends_at_carbon->format(WAPPOINTMENT_DB_FORMAT);
@@ -196,8 +198,9 @@ class EventsController extends RestController
         $recurringBusy = Mstatus::where('recur', '>', Mstatus::RECUR_NOT)
             ->where('muted', '<', 1)
             ->get();
-        $sixtydaysinsecs = 60 * 24 * 3600;
-        $punctualEvent = Status::expand($recurringBusy, $ends_at_carbon->timestamp + $sixtydaysinsecs);
+
+        $maxts = (new \Wappointment\Services\Availability())->getMaxTs();
+        $punctualEvent = Status::expand($recurringBusy, $maxts < $ends_at_carbon->timestamp ? $maxts : $ends_at_carbon->timestamp);
 
         $statusEvents = $statusEvents->concat($punctualEvent);
         foreach ($statusEvents as $event) {
@@ -249,7 +252,7 @@ class EventsController extends RestController
 
         $daysOfTheWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
-        while (count($daysOfTheWeek) > 0) {
+        while (!empty($daysOfTheWeek)) {
             $dayName = $daysOfTheWeek[$startDate->dayOfWeek];
 
             foreach ($this->regav[$dayName] as $dayTimeblock) {

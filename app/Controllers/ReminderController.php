@@ -14,7 +14,6 @@ class ReminderController extends RestController
         'id', 'subject', 'type', 'event', 'locked', 'published', 'options'
     ];
 
-
     public function save(Request $request)
     {
         $requested = $request->except(['rest_route', 'locked', 'email_logo', 'label']);
@@ -22,9 +21,8 @@ class ReminderController extends RestController
         $this->saveImage($request);
         if ($this->isTrueOrFail(Reminder::save($requested))) {
             return ['message' => 'Reminder saved'];
-        } else {
-            throw new \WappointmentException('Couldn\'t save preview', 1);
         }
+        throw new \WappointmentException('Couldn\'t save preview', 1);
     }
     protected function saveImage(Request $request)
     {
@@ -37,18 +35,16 @@ class ReminderController extends RestController
         $this->saveImage($request);
         if ($this->isTrueOrFail(Reminder::save($request->except(['rest_route', 'locked', 'email_logo', 'label'])))) {
             return ['message' => 'Reminder updated'];
-        } else {
-            throw new \WappointmentException('Couldn\'t update reminder', 1);
         }
+        throw new \WappointmentException('Couldn\'t update reminder', 1);
     }
 
     public function preview(Request $request)
     {
         if ($this->isTrueOrFail(Reminder::preview($request->input('reminder'), $request->input('recipient')))) {
             return ['message' => 'Reminder preview sent'];
-        } else {
-            throw new \WappointmentException('Couldn\'t send preview', 1);
         }
+        throw new \WappointmentException('Couldn\'t send preview', 1);
     }
 
     public function delete(Request $request)

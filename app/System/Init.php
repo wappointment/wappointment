@@ -12,7 +12,7 @@ class Init
 
     public function __construct()
     {
-        $this->is_installed = $this->isInstalledAndUpdated();
+        $this->is_installed = Status::isInstalled();
 
         WPHelpers::requestCapture();
         if (defined('WAPPOINTMENT_PDO_FAIL')) {
@@ -21,7 +21,6 @@ class Init
         } else {
             Database::capsule();
         }
-
 
         if ($this->is_installed) {
             Listeners::init();
@@ -38,16 +37,12 @@ class Init
         }
     }
 
-    private function isInstalledAndUpdated()
-    {
-        return (Status::isInstalled() && !Status::hasCorePendingUpdates());
-    }
-
     public function initNotInstalled()
     {
         new InitPreinstall();
         add_action('wp_print_scripts', [$this, 'jsVariables']);
     }
+
     public function baseInit()
     {
         add_action('wp_print_scripts', [$this, 'jsVariables']);
@@ -62,13 +57,33 @@ class Init
         } else {
             Scheduler::processQueue();
         }
+        $this->checkSMTPValueEncryption();
     }
 
+    /**
+     * Correcting an update bug for users using the SMTP mail config
+     * from 2.0.0 to 2.0.1 simply defaults to non encrypted smtp
+     * TODO legacy remove once 2.1+ takes over
+     *
+     * @return void
+     */
+    public function checkSMTPValueEncryption()
+    {
+        if (Status::dbVersion() == '1.9.3') {
+            $mail_config = Settings::get('mail_config');
+            if ($mail_config['method'] == 'smtp' && empty($mail_config['v']) && !empty($mail_config['encryption'])) {
+                $mail_config['v'] = '2.0.1';
+                $mail_config['encryption'] = '';
+                Settings::save('mail_config', $mail_config);
+            }
+        }
+    }
 
     public function registeringWidget()
     {
         register_widget('Wappointment\WP\Widget');
     }
+
     protected function getRestUrl()
     {
         if (!empty($_GET['wappo_ugly_permalinks'])) {
@@ -122,7 +137,7 @@ class Init
             'apiSite' => WAPPOINTMENT_SITE,
             'version' => WAPPOINTMENT_VERSION,
             'allowed' => Settings::get('wappointment_allowed'),
-            'disabled_modern_api_verbs' => true //(bool)Settings::get('disabled_modern_api_verbs'),
+            'frontPage' => get_permalink((int) Settings::get('front_page')),
         ];
         if (is_user_logged_in()) {
             $variables['nonce'] = wp_create_nonce('wp_rest');

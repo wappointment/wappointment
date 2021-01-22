@@ -27,23 +27,16 @@ class WpMail extends Transport
         return $this->configSave['from_address'];
     }
 
-    public function wpMailContentType()
-    {
-        return 'text/html';
-    }
-
     public function setWpSettings()
     {
         add_filter('wpMailFromName', [$this, 'wpMailFromName']);
         add_filter('wpMailFrom', [$this, 'wpMailFrom']);
-        add_filter('wpMailContentType', [$this, 'wpMailContentType']);
     }
 
     public function unsetWpSettings()
     {
         remove_filter('wpMailFromName', [$this, 'wpMailFromName']);
         remove_filter('wpMailFrom', [$this, 'wpMailFrom']);
-        remove_filter('wpMailContentType', [$this, 'wpMailContentType']);
     }
 
     public function send(WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
@@ -55,16 +48,16 @@ class WpMail extends Transport
         $message->setBcc([]);
         $this->setWpSettings();
 
-        //if wpforms is installed
+        //if wpforms or other smtp plugins is installed
         if (Status::hasSmtpPlugin()) {
             add_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
             wp_mail($to, $message->getSubject(), $message->getBody());
-            remove_filter('wp_mail_content_type', 'setHtmlContentType');
+            remove_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
         } else {
             if (!empty($this->configSave['wpmail_html'])) {
                 add_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
                 $this->wpMail($to, $message->getSubject(), $this->multipartBody($message), $message->getHeaders(), $this->getAttachments($message));
-                remove_filter('wp_mail_content_type', 'setHtmlContentType');
+                remove_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
             } else {
                 wp_mail($to, $message->getSubject(), $message->getBody(), $message->getHeaders());
             }
@@ -105,7 +98,7 @@ class WpMail extends Transport
 
     public function setHtmlContentType()
     {
-        return 'multipart/alternative';
+        return \Wappointment\Services\Status::hasSmtpPlugin() ? 'text/html' : 'multipart/alternative';
     }
 
     /**

@@ -52,6 +52,8 @@ class IcsGenerator
     public function summary($appointments, $cancelled = false)
     {
         foreach ($appointments as $appointment) {
+            $appointment = $this->fillClient($appointment);
+
             if ($appointment instanceof Appointment && $appointment->client instanceof Client) { //ignore mssing data
                 if ($cancelled) {
                     $this->cancelled($appointment, $appointment->client);
@@ -60,6 +62,16 @@ class IcsGenerator
                 }
             }
         }
+    }
+
+    public function fillClient($appointment)
+    {
+        if (is_array($appointment->client)) {
+            $clientObject = new Client;
+            $clientObject->fill($appointment->client);
+            $appointment->client = $clientObject;
+        }
+        return $appointment;
     }
 
     protected function generateEvent(Appointment $appointment, Client $client, $staff, $addparams = [], $mergeparams = [])
@@ -145,19 +157,24 @@ class IcsGenerator
             }
         }
 
+        if ($appointment->isZoom()) {
+            $description .= "\n\nAppointment is a Video meeting";
+            $description .= "\nMeeting will be accessible from the link below: " .
+                "\n " . $appointment->getLinkViewEvent();
+        }
+
         $description = apply_filters('wappointment_ics_description', $description, $appointment);
 
         $canCanCelOrRescheduleOrBoth = Settings::get('allow_rescheduling') ? true : (Settings::get('allow_cancellation') ? true : false);
 
         if ($canCanCelOrRescheduleOrBoth) {
             $description .= "\n\nNeed to modify this event?\n\n";
-            $description .= Settings::get('allow_cancellation') ? "Cancel (until " . $appointment->cancelLimit() . ") : \n" . $appointment->getLinkCancelEvent() . "\n\n" : '';
             $description .= Settings::get('allow_rescheduling') ? "Reschedule (until " . $appointment->rescheduleLimit() . ") : \n" . $appointment->getLinkRescheduleEvent() . "\n\n" : '';
+            $description .= Settings::get('allow_cancellation') ? "Cancel (until " . $appointment->cancelLimit() . ") : \n" . $appointment->getLinkCancelEvent() . "\n\n" : '';
         }
         $description .= "\n-----------------------------------";
-        $description .= "\nPowered by https://wappointment.com";
 
-        return $description;
+        return $description . "\nBooked with https://wappointment.com";
     }
 
     protected function appointments($staff_id, $start = false, $end = false)

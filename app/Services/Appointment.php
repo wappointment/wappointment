@@ -35,7 +35,7 @@ class Appointment
 
     public static function confirm($id)
     {
-        $oldAppointment = $appointment = static::getAppointmentModel()::where('id', $id)
+        $oldAppointment = $appointment = static::getAppointmentModel()::where('id', (int)$id)
             ->where('status', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)->first();
         if (empty($appointment)) {
             throw new \WappointmentException("Can't find appointment", 1);
@@ -53,7 +53,7 @@ class Appointment
 
     public static function patch($id, $data)
     {
-        $appointment = static::getAppointmentModel()::where('id', $id)->first();
+        $appointment = static::getAppointmentModel()::where('id', (int)$id)->first();
         $oldAppointment = $appointment->replicate();
 
         $result = $appointment->update($data);
@@ -69,7 +69,9 @@ class Appointment
         if (!(bool) Settings::get('allow_rescheduling')) {
             throw new \WappointmentException('Appointment rescheduling is not allowed', 1);
         }
-
+        if (is_array($edit_key)) {
+            throw new \WappointmentException("Malformed parameter", 1);
+        }
         $appointment = static::getAppointmentModel()::where('edit_key', $edit_key)->first();
         $oldAppointment = $appointment->replicate();
         if (empty($appointment)) {
@@ -247,7 +249,9 @@ class Appointment
         if (!(bool) Settings::get('allow_cancellation')) {
             throw new \WappointmentException('Appointment cancellation is not allowed', 1);
         }
-
+        if (is_array($edit_key)) {
+            throw new \WappointmentException("Malformed parameter", 1);
+        }
         $appointment = static::getAppointmentModel()::where('edit_key', $edit_key)
             ->where('status', '>=', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)->first();
 

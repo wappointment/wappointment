@@ -21,7 +21,6 @@ class DotCom extends API
 
     public function checkForUpdates()
     {
-
         // 0 - only check if site connected
         if (!empty($this->site_key)) {
             // 1 - retrieve appointments data
@@ -48,7 +47,8 @@ class DotCom extends API
 
 
                 if (!empty($requires_update)) {
-                    $retrieved_appointments = Appointment::select('id', 'options')->whereIn('id', array_keys($requires_update))->get();
+                    $retrieved_appointments = Appointment::select('id', 'options')
+                        ->whereIn('id', array_keys($requires_update))->get();
 
                     foreach ($retrieved_appointments as $updatingAppointment) {
                         $options = empty($updatingAppointment->options) ? [] : $updatingAppointment->options;
@@ -189,7 +189,7 @@ class DotCom extends API
                 'appointment_id' => $appointment->id,
                 'duration' => $appointment->getDurationInSec(),
                 'location' => $appointment->type == 0 ? $appointment->getServiceAddress() : $appointment->getLocation(),
-                'timezone' => Settings::getStaff('timezone', $appointment->staff_id),
+                'timezone' => Settings::getStaff('timezone', $this->staff_id),
                 'emails' => [
                     $appointment->client->email
                 ]

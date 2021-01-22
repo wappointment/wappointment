@@ -97,6 +97,10 @@ export default {
         autocomplete: {
             type: Boolean,
             default:true
+        },
+        validStart: {
+            type: Boolean,
+            default:false
         }
     },
     components: CoreFields.components,
@@ -118,6 +122,9 @@ export default {
         this.refresh()
         if(this.modelHolder.id !== undefined){
             this.isValid = true
+        }
+        if(this.validStart){
+            this.runningValidation()
         }
     },
 

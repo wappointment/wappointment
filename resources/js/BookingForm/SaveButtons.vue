@@ -7,6 +7,9 @@
         <span class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToIcal)">
             <WapImage :faIcon="['fab', 'windows']" size="md" /> <span class="ml-2">Outlook</span>
         </span>
+        <span class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToOutlookOnline)">
+            <WapImage :faIcon="['fab', 'windows']" size="md" /> <span class="ml-2">Outlook Live</span>
+        </span>
         <span class="wbtn-secondary wbtn d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToIcal)">
             <WapImage :faIcon="['fab', 'apple']" size="md" /> <span class="ml-2">iCal</span>
         </span>
@@ -20,30 +23,101 @@
 
 import momenttz from '../appMoment'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
-
+const lnb = "\\n"
 export default {
     props: ['service', 'staff', 'currentTz', 'physicalSelected','appointment', 'showResult'],
+
     methods: {
         goToUrl(url){
             window.open(url)
         },
+
         toIsoString(date){
             return date.toISOString().replace(/-|:|\.\d+/g, '');
         },
+
+        getTitle(title, html = false){
+            return (html?'<strong>':'')+title+(html?'</strong>':'')
+        },
+         
+        getAppointmentDetails(html = false){
+            switch (this.appointment.type) {
+                case 'phone':
+                    return this.getTitle('Appointment over the phone.', html)+
+                    lnb + "We will call you on " + this.getClientPhone
+                case 'zoom':
+                    return this.getTitle('Appointment is a Video meeting.', html)+
+                    lnb + "Meeting will be accessible from the link below:" +
+                    lnb + this.generateLink('view-event', html, 'Begin Meeting')
+                case 'skype':
+                    return this.getTitle('Appointment on Skype.', html)+
+                    lnb + "We will call you on " + this.getSkypeUsername
+                case 'physical':
+                    return lnb + this.getTitle('Appointment is taking place at this address', html)+ 
+                    lnb + this.eventLocation
+            }
+        },
+
+        eventDescription(html = false){
+             let pwd_link = "Booked with " + this.getLink(apiWappointment.apiSite, html)
+             return this.getAppointmentDetails(html) + this.getLinks(html) + lnb + this.getLineSeparator('_', pwd_link.length/2) +
+             lnb + lnb + pwd_link
+        },
+
+        getLineSeparator(char = '-', length = 30){
+            let string = ''
+            while (string.length < length+1){
+                string += char
+            }
+            return string
+        },
+        
+        generateLink(typeLink = 'view-event', html = false, label = ''){
+
+            let url = apiWappointment.frontPage + '&view='+typeLink+'&appointmentkey=' + this.appointment.edit_key
+            return this.getLink(url, html , label )
+        },
+
+        getLink(url, html = false, label = ''){
+            return (html ? "<a href='"+url+"' target='_blank'>":'')+ (html && label!= '' ?label:url) + (html ? "</a>":'')
+        },
+         getLinks(html = false){
+            if(html){
+                return lnb + lnb +  (this.canReschedule? this.generateLink('reschedule-event', html, 'Reschedule'):'') + 
+                ((this.canCancel && this.canReschedule) ?' - ':'') 
+                + (this.canCancel ? this.generateLink('cancel-event', html, 'Cancel'):'')
+            }
+            return (this.canReschedule? lnb + lnb + "Reschedule: " + lnb +  this.generateLink('reschedule-event'):'') +
+            (this.canCancel ? lnb + lnb + "Cancel: " + lnb + this.generateLink('cancel-event'):'')
+        },
+        getUnixNow(){
+            return momenttz().unix()
+        }
     },
     computed: {
+        canCancel(){
+            return this.appointment.canCancelUntil !== undefined && this.getUnixNow() < this.appointment.canCancelUntil
+        },
+        canReschedule(){
+            return this.appointment.canRescheduleUntil!== undefined && this.getUnixNow() < this.appointment.canRescheduleUntil
+        },
+
         isoFormat(){
             return convertDateFormatPHPtoMoment('Ymd') + '[T]' + convertDateFormatPHPtoMoment('His')
         },
+
         startDate(){
             return momenttz.unix(this.appointment.start_at)
         },
+
         getDuration(){
             return this.service.duration
         },
+
         endDate(){
             return momenttz.unix(this.appointment.end_at)
         },
+
         formattedStartDate(){
             return this.startDate.format(this.isoFormat)
         },
@@ -51,41 +125,39 @@ export default {
         formattedEndDate(){
             return this.endDate.format(this.isoFormat)
         },
+
+        formattedStartDateMS(){
+            return this.startDate.toISOString()
+        },
+        
+        formattedEndDateMS(){
+            return this.endDate.toISOString()
+        },
+
         encodedEventTitle(){
             return encodeURIComponent(this.eventTitle)
         },
+
         eventTitle(){
             return this.service.name + ' - ' + this.staff.n
         },
-         eventDescription(){
-            return ''
+
+        getSkypeUsername(){
+            return this.appointment.client.options !== undefined && this.appointment.client.options.skype !==undefined ?  this.appointment.client.options.skype:''
         },
-        encodedEventDescription(){
-            return '' 
+        getClientPhone(){
+            return this.appointment.client.options !== undefined && this.appointment.client.options.phone !==undefined ?  this.appointment.client.options.phone:''
         },
+
         encodedEventTZ(){
             return encodeURIComponent(this.currentTz)
         },
+
         eventLocation(){
-            return this.service.address
-        },
-        encodedEventLocation(){
-            return encodeURIComponent(this.eventLocation)
-        },
-
-        saveToGoogle(){
-            let url = 'http://www.google.com/calendar/event?action=TEMPLATE'
-            url += '&text=' + this.encodedEventTitle;
-            url += '&dates=' + this.formattedStartDate + '/' + this.formattedEndDate;
-            url += '&ctz=' + this.encodedEventTZ
-            if (this.physicalSelected) {
-                url += '&location=' + this.encodedEventLocation;
-            }
-            return url
-
+            return this.physicalSelected ? this.service.address:this.appointment.type
         },
         
-         saveToIcal() {
+        saveToIcal() {
 
             return encodeURI(
                 'data:text/calendar;charset=utf8,' +
@@ -97,7 +169,7 @@ export default {
                 'DTSTART:'      + this.formattedStartDate,
                 'DTEND:'        + this.formattedEndDate,
                 'SUMMARY:'      + this.eventTitle,
-                'DESCRIPTION:'  + this.eventDescription,
+                'DESCRIPTION:'  + this.eventDescription(),
                 'LOCATION:'     + this.eventLocation,
                 'END:VEVENT',
                 'END:VCALENDAR'
@@ -105,36 +177,39 @@ export default {
             );
         },
 
-  
+        saveToYahoo() {
+            let url = 'https://calendar.yahoo.com/?v=60&view=d&type=20'
+            url += '&title=' + this.encodedEventTitle
+            url += '&st=' + this.formattedStartDate 
+            url += '&et=' + this.formattedEndDate
+            url += '&in_loc=' + encodeURIComponent(this.eventLocation.replaceAll('\n', ', '))
+            url += '&desc=' + encodeURIComponent(this.eventDescription().replaceAll("\\n", "\n"))
+            return url
+        },    
+    
+        saveToGoogle(){
+            let url = 'http://www.google.com/calendar/event?action=TEMPLATE'
+            url += '&text=' + this.encodedEventTitle;
+            url += '&dates=' + this.formattedStartDate + '/' + this.formattedEndDate
+            url += '&ctz=' + this.encodedEventTZ
+            url += '&trp=true'
+            url += '&sprop=' + apiWappointment.apiSite
+            url += '&details=' + encodeURIComponent(this.eventDescription(true).replaceAll("\\n", '<br/>'))
+            url += '&location=' + encodeURIComponent(this.eventLocation.replaceAll('\n', ', '))
+            return url
+        },
+
         saveToOutlookOnline() {
 
-            let url = 'http://calendar.live.com/calendar/calendar.aspx?rru=addevent&'
-            url += 'summary=' + this.encodedEventTitle
-            url += '&dtstart=' + this.formattedStartDate.slice(0, -1) 
-            url += '&dtend=' + this.formattedEndDate.slice(0, -1)
-            //url += '&ctz=' + this.encodedEventTZ
-            if (this.physicalSelected) {
-                url += '&location=' + this.encodedEventLocation
-            }
-            url += '&description=' + this.encodedEventDescription
+            let url = 'https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent'
+            url += '&subject=' + encodeURIComponent(this.eventTitle.replaceAll(' ',"\n"))
+            url += '&startdt=' + this.formattedStartDateMS 
+            url += '&enddt=' + this.formattedEndDateMS
+            url += '&location=' + encodeURIComponent(this.eventLocation.replaceAll('\n', ', ').replaceAll(' ',"\n"))
+            url += '&body=' + encodeURIComponent(this.eventDescription(true).replaceAll("\\n", '<br/>').replaceAll(' ',"\n"))
             return url
-
         },
-
-        saveToYahoo() {
-
-            let url = 'https://calendar.yahoo.com/?v=60&view=d&type=20'
-            url += '&title=' + this.encodedEventTitle;
-            url += '&st=' + this.formattedStartDate 
-            url += '&et=' + this.formattedEndDate;
-            //url += '&ctz=' + this.encodedEventTZ
-            if (this.physicalSelected) {
-                url += '&in_loc=' + this.encodedEventLocation;
-            }
-            url += '&descdescription=' + this.encodedEventDescription;
-            return url
-
-        },
+        
     }
 }
 </script>

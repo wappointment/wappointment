@@ -11,6 +11,9 @@ class Client
 
     public static function save($data)
     {
+        if (is_array($data['email'])) {
+            throw new \WappointmentException("Malformed parameter", 1);
+        }
         //create or load client account
         $client = MClient::withTrashed()->where('email', $data['email'])->first();
 
@@ -44,6 +47,9 @@ class Client
 
     public static function book(Booking $booking)
     {
+        if (is_array($booking->get('email'))) {
+            throw new \WappointmentException("Malformed parameter", 1);
+        }
         //create or load client account
         $client = MClient::withTrashed()->where('email', $booking->get('email'))->first();
         if (!empty($client) && !empty($client->deleted_at)) {

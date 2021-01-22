@@ -16,7 +16,7 @@
     "@fullcalendar/timegrid": "^4.3.0",
     "@fullcalendar/vue": "^4.3.1",
     "@tinymce/tinymce-vue": "^2.1.0",
-    "axios": "0.18.*",
+    "axios": "^0.21.1",
     "bootstrap": "^4.2.1",
     "browser-info": "^1.2.0",
     "calendar-js": "^1.4.4",

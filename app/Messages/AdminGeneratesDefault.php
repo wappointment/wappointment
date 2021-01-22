@@ -25,6 +25,11 @@ trait AdminGeneratesDefault
         if (!empty($client->getSkype())) {
             $dataEmail[] = "Client's skype: " . sanitize_text_field($client->getSkype());
         }
+
+        if ($appointment->isZoom()) {
+            $dataEmail[] = 'Video meeting: <a href="' . $appointment->getLinkViewEvent() . '" >Begin the meeting</a>';
+        }
+
         return apply_filters('wappointment_admin_email_fields', $dataEmail, $client, $appointment);
     }
 }

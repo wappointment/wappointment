@@ -29,6 +29,12 @@ class Availability
         $this->regav = Settings::getStaff('regav', $this->staff_id);
         $this->days = (int) Settings::getStaff('availaible_booking_days', $this->staff_id);
     }
+
+    public function getMaxTs()
+    {
+        return time() + ($this->days * 24 * 3600);
+    }
+
     /**
      * Regenerate all  by default ?
      *
@@ -95,7 +101,6 @@ class Availability
         $busy_status = $this->segmentService->convertModel($newBusyStatuses->all());
         $this->availabilities = $this->segmentService->substract($this->availabilities, $busy_status);
 
-        //$this->availabilities = $segmentService->flatten($this->availabilities);
         $this->reOrder();
 
         WPHelpers::setStaffOption('since_last_refresh', 0, $this->staff_id);
@@ -128,7 +133,6 @@ class Availability
                 }
                 while ($min_time->gt($start)) {
                     $start = $start->addMinutes(Service::getObject()->duration);
-                    continue;
                 }
 
                 $availability[] = [
@@ -142,9 +146,9 @@ class Availability
         return $availability;
     }
 
-    private function expandRecurring($recurringBusy, $end)
+    private function expandRecurring($recurringBusy, $endTs)
     {
-        return Status::expand($recurringBusy, $end);
+        return Status::expand($recurringBusy, $endTs);
     }
 
     private function reOrder()
@@ -159,13 +163,5 @@ class Availability
         }
 
         $this->availabilities = $newAvail;
-    }
-
-    private function patch($staff_id, $start, $end, $busy = true)
-    {
-        // remove availability
-        if ($busy) {
-        } else { //add availability
-        }
     }
 }

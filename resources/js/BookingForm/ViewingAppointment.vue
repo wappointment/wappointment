@@ -8,13 +8,15 @@
                 <div class="summary-event" :class="view">
                     <h2 v-if="!isSaveEventPage">{{getText('title')}}</h2>
                     <div>{{ client.name }} - {{ client.email }}</div>
-                    <div><strong>{{ service.name }}</strong> <DurationCell :show="true" :duration="service.duration"/></div>
-                    <div><strong class="date-start">{{ startDatei18n }}</strong> {{timeLeft}}</div>
+                    <div><strong>{{ service.name }}</strong> - <span class="wduration">{{service.duration}}{{getMinText}}</span></div>
+                    <div :class="{'old-schedule': justRescheduled}">
+                        <strong class="date-start">{{ startDatei18n }}</strong> 
+                        <span v-if="!justRescheduled">{{timeLeft}}</span>
+                    </div>
                     <div v-if="zoomSelected && isViewEventPage">
                         <a v-if="hasMeetingRoom" :href="hasMeetingRoom" class="wbtn wbtn-primary wbtn-lg">{{ options.view.join }}</a>
                         <div v-else>
-                            <button class="wbtn wbtn-primary wbtn-lg disabled" disabled>{{ options.view.join }}</button>
-                            <div class="small">{{ options.view.missing_url }} <a href="javascript:;" @click="refreshAppointment">{{ options.view.refresh }}</a></div>
+                            <div class="h4">{{ options.view.missing_url }}</div>
                         </div>
                     </div>
                 </div>
@@ -26,7 +28,7 @@
                     </div>
                 </div>
                 <div v-else>
-                    <RescheduleForm v-if="showReschedule" :appointmentkey="appointmentkey" :rescheduleData="rescheduleData" :options="options" ></RescheduleForm>
+                    <RescheduleForm v-if="showReschedule" :appointmentkey="appointmentkey" :rescheduleData="rescheduleData" :options="options" @changedStep="changedRescheduleStep"></RescheduleForm>
                     <div v-if="showCancelConfirmation">
                         <div v-if="appointmentCanceled">
                             <p class="h4">{{getText('confirmed')}}</p>
@@ -76,6 +78,8 @@ import RescheduleForm from './RescheduleForm'
 import ViewingAppointmentMixin from './ViewingAppointmentMixin'
 import MixinTypeSelected from './MixinTypeSelected'
 import momenttz from '../appMoment'
+import minText from './minText'
+
 let mixins = {ViewingAppointmentMixin:ViewingAppointmentMixin}
 mixins = window.wappointmentExtends.filter('ViewingAppointmentMixin', mixins)
 
@@ -89,7 +93,7 @@ compos = window.wappointmentExtends.filter('FrontMainViews', compos )
 
 export default {
      
-    mixins: [Dates, mixins.ViewingAppointmentMixin, MixinTypeSelected],
+    mixins: [minText, Dates, mixins.ViewingAppointmentMixin, MixinTypeSelected],
     extends: AbstractFront,
     components: compos, 
     props: ['appointmentkey', 'view', 'options'],
@@ -115,7 +119,8 @@ export default {
         rescheduleData: null,
         momenttz: momenttz,
         timeLeft: '',
-        timeLeftId: false
+        timeLeftId: false,
+        rescheduledConfirmed: false
     }),
     created(){
         this.currentTz = this.tzGuess()
@@ -137,6 +142,11 @@ export default {
         }
     },
     methods: {
+        changedRescheduleStep(rescheduleStep){
+            if(rescheduleStep == 'BookingFormConfirmation'){
+                this.rescheduledConfirmed = true
+            }
+        },
         initCountDown(){
             this.initDate = new Date()
             this.initDate.setTime(this.selectedSlot*1000)
@@ -153,7 +163,7 @@ export default {
 
             // return results
             if (milisecondsleft < 0) {
-                this.timeLeft = this.options.view.started 
+                this.timeLeft = ''
                 clearInterval(this.timeLeftId)
             }else{
                 // unites left
@@ -228,6 +238,9 @@ export default {
         
     },
     computed: {
+        justRescheduled(){
+            return this.showReschedule && this.rescheduledConfirmed
+        },
         hasMeetingRoom(){
             if(this.zoomMeetingRoom){
                 return this.zoomMeetingRoom
@@ -299,5 +312,8 @@ export default {
 .wbtn.wbtn-lg{
     font-size: 1.4em;
     margin: .4em 0;
+}
+.old-schedule{
+    text-decoration: line-through;
 }
 </style>

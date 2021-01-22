@@ -114,8 +114,16 @@ class TipTap
         foreach ($bodyArray as $keyValuePair) {
             foreach ($keyValuePair as $key => $value) {
                 $conversionMethod = 'tiptap' . ucfirst($key);
-
-                $convertedArray[] = self::$conversionMethod($value);
+                if (!is_array($value)) {
+                    $value = [[
+                        'p' => $value
+                    ]];
+                }
+                foreach ($value as $val) {
+                    foreach ($val as $typeval => $linevalue) {
+                        $convertedArray[] = self::$conversionMethod($linevalue, $typeval);
+                    }
+                }
             }
         }
 
@@ -171,6 +179,7 @@ class TipTap
         }
         $tag_replacement = '<detectedtag>';
         $tempstring = str_replace($wrapped_tags, $tag_replacement, $value);
+
         $arrayString = explode($tag_replacement, $tempstring);
         $newArrayString = [];
         foreach ($arrayString as $key => $value) {
@@ -231,64 +240,72 @@ class TipTap
         return $newArrayString;
     }
 
+    protected static function typeToOptions($type = 'p')
+    {
+        if (strlen($type) == 2 && $type[0] == 'h') {
+            return [
+                'type' => 'heading',
+                'attrs' => [
+                    'level' => (int)$type[1],
+                ]
+            ];
+        }
+
+        return ['type' => 'paragraph'];
+    }
     protected static function tiptapH3($value)
     {
-        $attributes = [
-            'type' => 'heading',
-            'attrs' => [
-                'level' => 3,
-            ]
-        ];
-
-        return self::integrateContent($attributes, $value);
+        return self::integrateContent(self::typeToOptions('h3'), $value);
     }
 
-    protected static function tiptapP($value)
+    protected static function tiptapP($value, $type = 'p')
     {
-        return self::integrateContent(['type' => 'paragraph'], $value);
+        return self::integrateContent(self::typeToOptions($type), $value);
     }
 
-    protected static function tiptapPb($value)
+    protected static function tiptapPb($value, $type = 'p')
     {
-        return self::integrateContent(['type' => 'paragraph', 'marks' => [["type" => "bold"]]], $value);
+        $options = self::typeToOptions($type);
+        $options['marks'] = [["type" => "bold"]];
+        return self::integrateContent($options, $value);
     }
 
-    protected static function tiptapPhysical($value)
+    protected static function tiptapPhysical($value, $type = 'p')
     {
         return [
             'type' => 'cblockphysical',
             'content' => [
-                self::integrateContent(['type' => 'paragraph'], $value)
+                self::integrateContent(self::typeToOptions($type), $value)
             ]
         ];
     }
 
-    protected static function tiptapPhone($value)
+    protected static function tiptapPhone($value, $type = 'p')
     {
         return [
             'type' => 'cblockphone',
             'content' => [
-                self::integrateContent(['type' => 'paragraph'], $value)
+                self::integrateContent(self::typeToOptions($type), $value)
             ]
         ];
     }
 
-    protected static function tiptapSkype($value)
+    protected static function tiptapSkype($value, $type = 'p')
     {
         return [
             'type' => 'cblockskype',
             'content' => [
-                self::integrateContent(['type' => 'paragraph'], $value)
+                self::integrateContent(self::typeToOptions($type), $value)
             ]
         ];
     }
 
-    protected static function tiptapZoom($value)
+    protected static function tiptapZoom($value, $type = 'p')
     {
         return [
             'type' => 'cblockzoom',
             'content' => [
-                self::integrateContent(['type' => 'paragraph'], $value)
+                self::integrateContent(self::typeToOptions($type), $value)
             ]
         ];
     }

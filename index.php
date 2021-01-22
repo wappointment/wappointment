@@ -6,13 +6,13 @@ if (!defined('ABSPATH')) {
 
 /**
  * Plugin Name: Wappointment
- * Version: 1.9.5
+ * Version: 2.0.1
  * Plugin URI: https://wappointment.com
- * Description: Appointment booking system for personal coaches, teachers, therapists and service professionals of all kind
+ * Description: Get clients to quickly book a meeting with you over Zoom , GoogleMeet , the phone or at your office
  * Author: Wappointment
  * Author URI: https://wappointment.com
  * Requires at least: 4.7
- * Tested up to: 5.5
+ * Tested up to: 5.6
  *
  * Text Domain: wappointment
  *
@@ -31,7 +31,7 @@ if (!defined('ABSPATH')) {
  * GNU General Public License for more details.
  */
 
-define('WAPPOINTMENT_VERSION', '1.9.5');
+define('WAPPOINTMENT_VERSION', '2.0.1');
 define('WAPPOINTMENT_PHP_MIN', '7.0.0');
 define('WAPPOINTMENT_NAME', 'Wappointment');
 define('WAPPOINTMENT_SLUG', strtolower(WAPPOINTMENT_NAME));

@@ -14,6 +14,9 @@ class Admin
         if ($client_id > 0) {
             $client = MClient::find($client_id);
         } else {
+            if (is_array($booking->get('email'))) {
+                throw new \WappointmentException("Malformed parameter", 1);
+            }
             $client = MClient::where('email', $booking->get('email'))->first();
         }
 

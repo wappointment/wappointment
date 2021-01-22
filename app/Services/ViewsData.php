@@ -225,6 +225,7 @@ class ViewsData
             'front_page_id' => (int) Settings::get('front_page'),
             'front_page' => get_permalink((int) Settings::get('front_page')),
             'front_page_type' => get_post_type((int) Settings::get('front_page')),
+
             // advanced
             'approval_mode' => Settings::get('approval_mode'),
             'today_formatted' => DateTime::i18nDateTime(time(), Settings::getStaff('timezone')),
@@ -252,6 +253,7 @@ class ViewsData
             'notify_rescheduled_appointments' => Settings::get('notify_rescheduled_appointments'),
             'email_notifications' => Settings::get('email_notifications'),
             'mail_status' => (bool) Settings::get('mail_status'),
+
 
         ];
     }

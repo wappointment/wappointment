@@ -77,6 +77,7 @@ class InitBackend
             WAPPOINTMENT_SLUG . '-admin-wap',
             plugins_url(WAPPOINTMENT_SLUG . '/dist/css/wappointment-admin.css')
         );
+
         wp_register_script(
             WAPPOINTMENT_SLUG . '_backend',
             Helpers::assetUrl('main.js'),
