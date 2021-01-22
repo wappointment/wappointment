@@ -22,14 +22,19 @@ class Main extends AbstractRoutes
             ],
             'POST' => [
                 '/booking' => [
-                    'controller' => 'BookingController',
+                    'controller' => 'LegacyBookingController',
                     'method' => 'save',
                     'hint' => 'Booking'
                 ],
                 '/convertdate' => [
                     'controller' => 'BookingController',
                     'method' => 'convertDate',
-                ]
+                ],
+                '/services/booking' => [
+                    'controller' => 'BookingController',
+                    'method' => 'save',
+                    'hint' => 'Booking'
+                ],
             ],
             'PATCH' => [
                 '/booking' => [

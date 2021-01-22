@@ -285,7 +285,6 @@ export default {
                     for (let i = 0; i < fields_src[key].length; i++) {
                         let cfieldslist = []
                         for (let j = 0; j < this.customFields.length; j++) {
-
                              cfieldslist.push(this.customFields[j]['namekey'])
                         }
                         

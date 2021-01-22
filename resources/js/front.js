@@ -18,7 +18,8 @@ Vue.component('v-style', {
         return createElement('style', this.$slots.default)
     }
 });
-
+import get from 'lodash/get'
+Object.defineProperty(Vue.prototype, '$__get', { value: get })
 const vuesInstances = [];
 const vues = document.querySelectorAll(".wappointment_page, .wappointment_widget");
 

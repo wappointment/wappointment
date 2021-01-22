@@ -70,8 +70,8 @@
 <script>
 import AbstractFront from './AbstractFront'
 import Intervals from '../Standalone/intervals'
-import Colors from "../Modules/Colors"
-import Dates from "../Modules/Dates"
+import Colors from '../Modules/Colors'
+import Dates from '../Modules/Dates'
 import BookingFormConfirmation from './Confirmation'
 import RescheduleConfirm from './RescheduleConfirm'
 import BookingCalendar from './Calendar'
@@ -81,7 +81,6 @@ import BookingFormSummary from './AppointmentSummary'
 import DurationCell from './DurationCell'
 BookingFormHeader.components = {DurationCell}
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
-import convertDateFormatPHPtoJS from '../Standalone/convertDateFormatPHPtoJS'
 import browserLang from '../Standalone/browserLang'
 import AppointmentTypeSelection from './AppointmentTypeSelection'
 
@@ -134,7 +133,6 @@ export default {
         this.refreshInitValue()
         this.currentTz = this.tzGuess()
         this.createdAt = this.getUnixNow()
-        
     
         if(this.step !== null) {
             this.requiresScroll = true //booking widget editor requires scroll always
@@ -152,9 +150,6 @@ export default {
         },
         appointmentStartsAt(){
             return this.converted 
-        },
-        getStaffs(){
-            return this.viewData.staffs !== undefined ? this.viewData.staffs:[]
         },
         serviceSelected(){
             return this.service !== false
@@ -245,17 +240,8 @@ export default {
 
             let parentWindowHeight = wrapperDiv.scrollHeight - headHeight
             let heightDiv = document.getElementById(this.getWapBodyId).scrollHeight
-/*             let heightWindow = window.innerHeight / 100 * 95
-            console.log(heightDiv, heightWindow, parentWindowHeight) */
-            if(heightDiv > parentWindowHeight){
-                //add scrollbar
-                //console.log(' TRUE 85vh', heightDiv ,heightWindow)
-                this.requiresScroll = true
-            }else{
-                //remove scrollbar
-                //console.log(' FALSE 85vh',  heightDiv ,heightWindow)
-                this.requiresScroll = false
-            }
+
+            this.requiresScroll = heightDiv > parentWindowHeight // add or remove scrollbar
         },
         childChangedStep(newStep, dataChanged){
             if(typeof dataChanged == 'object' && Object.keys(dataChanged).length > 0) {
@@ -426,9 +412,13 @@ export default {
             this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
             
             if(this.service !== false){
-                this.duration = this.service.duration !== undefined ? this.service.duration : window.wappointmentExtends.filter('durationDefault', this.service)
+                this.duration = this.getFirstDuration(this.service)
                 this.location = this.service.type !== undefined ? '' : window.wappointmentExtends.filter('locationDefault', this.service)
             } 
+        },
+
+        getFirstDuration(service){
+            return this.$__get(service, 'options.durations.0.duration')
         },
 
         setComponentLists(){
@@ -501,6 +491,7 @@ export default {
                         options:"options",
                         relatedComps: 'relatedComps', 
                         appointment_starts_at: 'appointmentStartsAt',
+                        custom_fields: 'viewData.custom_fields'
                     },
                     listeners: {
                         back:'childChangedStep',

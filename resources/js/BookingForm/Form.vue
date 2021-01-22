@@ -56,7 +56,6 @@ export default {
         FieldsGenerated
     }, 
     data: () => ({
-
         phoneId:'',
         phoneValid: false,
         errorsOnFields: {},
@@ -76,27 +75,7 @@ export default {
     mounted(){
         this.mounted = true
     },
-    // created(){
-    //     this.tryPrefill()
-    //     if(this.options.demoData !== undefined){
-    //         this.bookingForm = this.options.demoData.form 
-    //         this.selection = this.bookingForm.type
-    //         this.disabledButtons = true
-    //     }
-    // },
-    // mounted(){
-    //     if(this.service !== false && !this.serviceHasTypes) {
-    //         this.selectDefaultType()
-    //     }
-    //     this.mounted = true
-    //     if(Object.keys(this.data).length > 1){
-    //         this.bookingForm = Object.assign({},this.data)
-    //         if(this.bookingForm.type!==undefined){
-    //             this.selection = this.bookingForm.type
-    //         }
-    //     }
 
-    // },
     computed: {
         isCompactHeader(){
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
