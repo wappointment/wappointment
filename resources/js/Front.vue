@@ -3,7 +3,7 @@
         <StyleGenerator :options="opts" :wrapper="elementId" :largeVersion="largeVersion"></StyleGenerator>
         <div v-if="isPage" :class="'step-'+stepName">
             <BookingForm v-if="isBookingPage" :options="opts" :wrapperid="elementId" @changedStep="stepChanged"></BookingForm>
-            <ViewingAppointment v-else  :options="opts" :view="getParameterByName('view')" :appointmentkey="getParameterByName('appointmentkey')"></ViewingAppointment>
+            <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
         </div>
         
         <div :class="{'wap-abs':hasCloseCross && isMobilePhone && autoPop}">
@@ -118,6 +118,9 @@ export default {
         },
         isBottomRight(){
           return this.brFixed !== undefined && this.brFixed === true
+        },
+        getView(){
+          return this.step || this.getParameterByName('view')
         }
 
     },

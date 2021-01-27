@@ -418,7 +418,7 @@ export default {
         },
 
         getFirstDuration(service){
-            return this.$__get(service, 'options.durations.0.duration')
+            return this.__get(service, 'options.durations.0.duration')
         },
 
         setComponentLists(){

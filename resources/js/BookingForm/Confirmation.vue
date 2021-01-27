@@ -81,6 +81,8 @@ export default {
 
         if(this.options.demoData !== undefined){
             this.options.eventsBus.listens('dataDemoChanged', this.dataChanged)
+        }else{
+            this.triggerWEvent('wappo_confirmed')
         }
     },
     computed: {
