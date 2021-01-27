@@ -19,6 +19,16 @@ Vue.component('v-style', {
     }
 });
 
+Vue.mixin({
+    methods: {
+        triggerWEvent(eventName){
+            const event = document.createEvent('Event')
+            event.initEvent(eventName, true, true)
+            document.dispatchEvent(event)
+        }
+    }
+});
+
 const vuesInstances = [];
 const vues = document.querySelectorAll(".wappointment_page, .wappointment_widget");
 
