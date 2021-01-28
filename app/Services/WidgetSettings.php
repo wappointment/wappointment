@@ -99,7 +99,6 @@ class WidgetSettings
         'view' => [
             'join' => 'Join Meeting',
             'missing_url' => 'The meeting room link will appear once it is time to start.',
-            'refresh' => 'refresh',
             'timeleft' => '([days_left]d [hours_left]h [minutes_left]m [seconds_left]s)',
         ],
         'cancel' => [

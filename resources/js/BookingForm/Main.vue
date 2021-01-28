@@ -146,7 +146,7 @@ export default {
 
     computed: {
         isCompactHeader(){
-            return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
+            return this.options.general === undefined || !this.__isEmpty(this.options.general.check_header_compact_mode)
         },
         appointmentStartsAt(){
             return this.converted 
@@ -198,7 +198,7 @@ export default {
            return timeprops
        },
        getStaffs(){
-           return this.viewData !== undefined && this.viewData.staffs !== undefined ? this.viewData.staffs: []
+           return this.__get(this,'viewData.staffs', [])
        },
        getWapBodyId(){
            return 'wapbody'+this.wrapperid
@@ -418,7 +418,7 @@ export default {
         },
 
         getFirstDuration(service){
-            return this.$__get(service, 'options.durations.0.duration')
+            return this.__get(service, 'options.durations.0.duration')
         },
 
         setComponentLists(){

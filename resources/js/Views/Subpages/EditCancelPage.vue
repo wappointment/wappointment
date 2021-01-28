@@ -1,27 +1,34 @@
 <template>
     <div class="container-fluid">
       <div v-if="dataLoaded">
-          <h1>Edit Cancel/Reschedule page</h1>
+          <h1>Edit {{ getPageName}}</h1>
           
           <div class="booking-widget-editor d-flex">
             <div class="widget-wraper p-3 mr-3">
               <div class="clear pt-2">
-                <h1>{{ isCancelPage ? viewData.widget.cancel.page_title: viewData.widget.reschedule.page_title}}</h1>
-                <Front v-if="displayed" :options="widgetData" classEl="wappointment_page" :step="stepPassed"></Front>
+                <h1 v-if="!isViewPage">{{ isCancelPage ? viewData.widget.cancel.page_title: viewData.widget.reschedule.page_title}}</h1>
+                <Front v-if="displayed" :options="widgetData" classEl="wappointment_page" :step="step"></Front>
               </div>
             </div>
           
             <div>
               <div class="row no-gutters">
                   <transition name="fade">
-                      <div class="col-12 p-0">
+                      <div class="d-flex mb-2">
                           <div class="d-flex step-skip justify-content-between"> 
-                              <button v-for="(stepObj,idx) in editionsSteps" class="btn btn-secondary btn-xs mr-2" 
+                              <button v-for="(stepObj,idx) in editionsSteps" class="btn btn-secondary btn-cell btn-xs ml-0 mr-2" 
                               :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key)" >{{ stepObj.label }}</button>
                           </div>
                       </div>
                   </transition>
               </div>
+              <transition name="slide-fade-top">
+                <div v-if="isViewPage">
+                    <InputPh v-model="viewData.widget.view.join" :ph="widgetDefault.view.join" allowReset/>
+                    <InputPh v-model="viewData.widget.view.missing_url" :ph="widgetDefault.view.missing_url" allowReset/>
+                    <InputPh v-model="viewData.widget.view.timeleft" :ph="widgetDefault.view.timeleft" allowReset/>
+                </div>
+              </transition>
               <transition name="slide-fade-top">
                 <div v-if="isCancelPage">
                     <InputPh v-model="viewData.widget.cancel.page_title" :ph="widgetDefault.cancel.page_title" allowReset/>
@@ -34,7 +41,7 @@
                 </div>
               </transition>
               <transition name="slide-fade-top">
-                <div v-if="!isCancelPage">
+                <div v-if="isReschedulePage">
                     <InputPh v-model="viewData.widget.reschedule.page_title" :ph="widgetDefault.reschedule.page_title" allowReset/>
                     <InputPh v-model="viewData.widget.reschedule.title" :ph="widgetDefault.reschedule.title" allowReset/>
                     <InputPh v-model="viewData.widget.reschedule.button" :ph="widgetDefault.reschedule.button" allowReset/>
@@ -65,11 +72,14 @@ export default {
   data() {
       return {
           viewName: 'widgetcancel',
-          step: 'cancel-event',
-          stepPassed: 'cancel-event',
+          step: 'view-event',
           displayed: true,
           options: null,
           editionsSteps: [
+            {
+                key: 'view-event',
+                label: 'View Page'
+            },
             {
                 key: 'cancel-event',
                 label: 'Cancel Page'
@@ -82,8 +92,17 @@ export default {
       } 
   },
   computed: {
+    getPageName(){
+      return this.editionsSteps.find(o => o.key === this.step).label
+    },
     isCancelPage(){
       return 'cancel-event' == this.step
+    },
+    isReschedulePage(){
+      return 'reschedule-event' == this.step
+    },
+    isViewPage(){
+      return 'view-event' == this.step
     },
     widgetData(){
       if(this.viewData !== null && this.viewData.widget !== undefined){
@@ -106,23 +125,35 @@ export default {
   },
   created(){
     this.options = {}
+    let start_at = (this.preselection()/1000)+(3*3600)
     this.options.demoData = {
           appointmentData: {
             "appointment":
           {
-            "start_at":this.preselection(),
-            "end_at":this.preselection()+(3600),
+            "start_at": start_at,
+            "end_at":start_at+(3600),
             "type":"phone",
-            "canRescheduleUntil":this.preselection()-(3600*3),
-            "canCancelUntil":this.preselection()-(3600*3)
+            "canRescheduleUntil":start_at-(3600*3),
+            "canCancelUntil":start_at-(3600*3),
+            'options': {
+              'provider':{
+                'zoom':{
+                  'join_url': '#zmeeting_url'
+                },
+                'google':{
+                  'google_meet_url': '#gmeeting_url'
+                }
+              }
+            }
           },
           "client":{
             "name":"John Patrick",
-            "email":"jp@email"+this.preselection()+".com",
+            "email":"jp@email"+start_at+".com",
             "options":{
               "phone":"+33 6 51 02 48 81",
               "skype":"j.patrick",
-              "tz":"Europe\/Paris"
+              "tz":"Europe\/Paris",
+              
               }
             },
             "service":{
@@ -151,7 +182,6 @@ export default {
     setStep(step){
         this.displayed = false
         this.step = step
-        this.stepPassed = step
 
         setTimeout(this.displayTimeout, 100);
         

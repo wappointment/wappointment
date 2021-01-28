@@ -18,8 +18,16 @@ Vue.component('v-style', {
         return createElement('style', this.$slots.default)
     }
 });
-import get from 'lodash/get'
-Object.defineProperty(Vue.prototype, '$__get', { value: get })
+Vue.mixin({
+    methods: {
+        triggerWEvent(eventName){
+            const event = document.createEvent('Event')
+            event.initEvent(eventName, true, true)
+            document.dispatchEvent(event)
+        },
+    }
+});
+
 const vuesInstances = [];
 const vues = document.querySelectorAll(".wappointment_page, .wappointment_widget");
 
