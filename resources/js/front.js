@@ -5,6 +5,7 @@ import Front from './Front'
 import VueService from './Plugins/vue-service'
 import WLoader from './Components/Loaders/BigCalendar'
 import VueWapModal from './Plugins/vue-wap-modal'
+import __get from 'lodash/get'
 
 const WapImage = () => import(/* webpackChunkName: "WapImage" */ './Components/WapImage')
 
@@ -20,13 +21,15 @@ Vue.component('v-style', {
 });
 Vue.mixin({
     methods: {
+
         triggerWEvent(eventName){
             const event = document.createEvent('Event')
             event.initEvent(eventName, true, true)
             document.dispatchEvent(event)
-        },
+        }
     }
 });
+
 
 const vuesInstances = [];
 const vues = document.querySelectorAll(".wappointment_page, .wappointment_widget");
