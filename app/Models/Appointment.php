@@ -121,24 +121,6 @@ class Appointment extends Model
         return !empty($location) && !empty($location->options['video']) ? $location->options['video'] : false;
     }
 
-    // public function toArraySpecial()
-    // {
-    //     $appointment = parent::toArray();
-
-    //     $appointment['start_at'] = $this->start_at->timestamp;
-    //     $appointment['end_at'] = $this->end_at->timestamp;
-    //     $appointment['type'] = $this->getLocationSlug();
-    //     $appointment['converted'] = DateTime::i18nDateTime((int) $appointment['start_at'], $this->client->getTimezone());
-
-    //     return $appointment;
-    // }
-
-
-    // public function getLocationVideo()
-    // {
-    //     return $this->type == self::TYPE_ZOOM ? $this->getServiceVideo() : false;
-    // }
-
     public function getServiceVideo()
     {
         return $this->getService()->getVideo();

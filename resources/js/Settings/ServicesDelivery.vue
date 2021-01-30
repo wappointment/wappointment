@@ -1,6 +1,7 @@
 <template>
     <div>
         <div v-if="deliveryListing">
+            <button @click="addElement" class="btn btn-outline-primary btn my-2">Add new</button>
             <div class="table-responsive table-hover">
                 <table class="table">
                     <thead>
@@ -75,7 +76,9 @@ export default {
         }
     },
     methods: {
-
+        addElement(){
+            this.requiresAddon('services', 'Add more Modality')
+        },
         loadElements() { // overriding
             if(this.currentView == 'listing') {
                 this.request(this.requestElements,{},undefined,false,this.loadedElements,this.failedLoadingElements)

@@ -21,11 +21,6 @@ class Main extends AbstractRoutes
                 ],
             ],
             'POST' => [
-                '/booking' => [
-                    'controller' => 'LegacyBookingController',
-                    'method' => 'save',
-                    'hint' => 'Booking'
-                ],
                 '/convertdate' => [
                     'controller' => 'BookingController',
                     'method' => 'convertDate',
@@ -34,6 +29,11 @@ class Main extends AbstractRoutes
                     'controller' => 'BookingController',
                     'method' => 'save',
                     'hint' => 'Booking'
+                ],
+                '/booking' => [
+                    'controller' => 'LegacyBookingController',
+                    'method' => 'save',
+                    'hint' => 'LegacyBooking'
                 ],
             ],
             'PATCH' => [
@@ -218,6 +218,11 @@ class Main extends AbstractRoutes
                 '/services/service/reorder' => [
                     'controller' => 'ServicesController',
                     'method' => 'reorder',
+                ],
+                '/services/booking/admin' => [
+                    'controller' => 'BookingController',
+                    'method' => 'adminBook',
+                    'hint' => 'BookingAdmin'
                 ],
             ],
         ]

@@ -18,15 +18,17 @@ class ImportService extends Wappointment\Installation\MigrateHasServices
         }
         $service_free = \Wappointment\Services\Service::getObject();
 
-        $serviceObj = ServiceModel::create([
-            'name' => $service_free->service['name'],
-            'options' => $this->getOptions($service_free->service),
-        ]);
+        if ($service_free->service['name'] !== '') { //doesnt run for new installation just upgrades
+            $serviceObj = ServiceModel::create([
+                'name' => $service_free->service['name'],
+                'options' => $this->getOptions($service_free->service),
+            ]);
 
-        $locations = Location::get();
-        $serviceObj->locations()->attach($locations);
+            $locations = Location::get();
+            $serviceObj->locations()->attach($locations);
 
-        Appointment::where('id', '>', 0)->update(['service_id' => $serviceObj->id]);
+            Appointment::where('id', '>', 0)->update(['service_id' => $serviceObj->id]);
+        }
     }
     /**
      * Restructuring the service's options

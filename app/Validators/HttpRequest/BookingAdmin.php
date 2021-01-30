@@ -2,8 +2,6 @@
 
 namespace Wappointment\Validators\HttpRequest;
 
-use Wappointment\Services\CustomFields;
-
 class BookingAdmin extends Booking
 {
 
@@ -12,6 +10,7 @@ class BookingAdmin extends Booking
     public function generateValidation($inputs)
     {
         $this->validationRulesArray = [
+            'name' => 'required_if:email',
             'email' => 'present|email',
             'start' => 'required|min:' . time(),
             'end' => 'required|min:' . time(),
@@ -21,29 +20,5 @@ class BookingAdmin extends Booking
             'duration' => 'required|min:5',
             'clientid' => ''
         ];
-
-        if (empty($inputs['clientid'])) {
-            $custom_fields = CustomFields::get();
-            foreach ($this->service->options['fields'] as $key => $field) {
-                foreach ($custom_fields as $key => $cfield) {
-                    if ($cfield['namekey'] == $field && empty($this->validationRulesArray[$field])) {
-                        $this->validationRulesArray[$field] = !empty($cfield['validations']) ? $cfield['validations'] : '';
-                        if ($this->validationRulesArray[$field] == '') {
-                            $this->validationRulesArray[$field]  = !empty($cfield['required']) ? 'required' : '';
-                        }
-                    }
-                }
-            }
-            foreach ($this->location->options['fields'] as $key => $field) {
-                foreach ($custom_fields as $key => $cfield) {
-                    if ($cfield['namekey'] == $field && empty($this->validationRulesArray[$field])) {
-                        $this->validationRulesArray[$field] = !empty($cfield['validations']) ? $cfield['validations'] : '';
-                        if ($this->validationRulesArray[$field] == '') {
-                            $this->validationRulesArray[$field]  = !empty($cfield['required']) ? 'required' : '';
-                        }
-                    }
-                }
-            }
-        }
     }
 }

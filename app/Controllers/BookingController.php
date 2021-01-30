@@ -2,13 +2,13 @@
 
 namespace Wappointment\Controllers;
 
-use WappointmentAddonServices\Services\Client;
-use WappointmentAddonServices\Validators\HttpRequest\Booking;
-use WappointmentAddonServices\Validators\HttpRequest\BookingAdmin;
+use Wappointment\Services\Client;
+use Wappointment\Validators\HttpRequest\Booking;
+use Wappointment\Validators\HttpRequest\BookingAdmin;
 use Wappointment\WP\Helpers as WPHelpers;
-use WappointmentAddonServices\Services\Admin;
+use Wappointment\Services\Admin;
 use Wappointment\Services\Settings;
-use WappointmentAddonServices\Models\Appointment as AppointmentModel;
+use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Services\Appointment;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Services\DateTime;

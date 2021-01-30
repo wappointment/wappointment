@@ -260,7 +260,7 @@ class Booking extends LegacyBooking
     {
         $this->validateService($inputs);
         $this->validateLocation($inputs);
-        $this->validateConditions($inputs);
+        //$this->validateConditions($inputs);
         $this->generateValidation($inputs);
         $inputs[static::$startKey] = (int) $inputs[static::$startKey];
         return $inputs;

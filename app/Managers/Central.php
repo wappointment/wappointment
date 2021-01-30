@@ -9,7 +9,7 @@ class Central
 {
     protected $services = [
         'Service' => [
-            'class' => \Wappointment\Services\Service::class,
+            'class' => \Wappointment\Services\Services::class,
             'implements' => \Wappointment\Services\ServiceInterface::class
         ],
         'Client' => [
