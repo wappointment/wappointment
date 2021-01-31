@@ -3,8 +3,10 @@
         <div v-if="messages.length > 0" class="static notify" :class="type" role="alert">
             <div class="countdown"></div>
             <div class="content">
-                <div class="d-flex">
-                  <img :src="getErrorImg" class="mb-3 rounded img-fluid mr-2" alt="An error occurred, get help!">
+                <div class="d-flex align-items-center">
+                  <div class="mr-4" >
+                    <img :src="getErrorImg" class="rounded img-fluid err-img" alt="An error occurred, get help!">
+                  </div>
                   <div>
                     <div class="h3" v-if="title">{{ title }}</div>
                     <a v-if="!showDetails" href="javascript:;" @click="showDetails=true">Show details</a> 
@@ -126,5 +128,8 @@ export default {
 }
 .list-message {
   list-style: inside disclosure-closed;
+}
+.err-img{
+  min-width:64px;
 }
 </style>

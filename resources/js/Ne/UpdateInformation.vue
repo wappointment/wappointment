@@ -5,28 +5,32 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.0.1 is about fixing bugs and improvements</span>     
+                <span>V2.0.2 Zoom and Google Calendar bugs fixing</span>     
             </h3>
             <div class="intro">
-                <div>We've worked hard these last 10 days after releasing a major release 2.0.0 .</div>
-                <div><strong>2.0.0</strong> was about integrating with important tools : <strong><img :src="resourcesUrl+'zoom.png'" /> Zoom</strong>
-                    , <strong><img :src="resourcesUrl+'google-calendar.png'" /> Google Calendar</strong> and <strong><img :src="resourcesUrl+'google-meet.png'" /> Google Meet</strong>.
+                <div>Our <strong><img :src="resourcesUrl+'zoom.png'" /> Zoom</strong>
+                    , <strong><img :src="resourcesUrl+'google-calendar.png'" /> Google Calendar</strong> integrations are getting better by the day.
                 </div>
                 <div class="mb-2">
-                    Obviously being a new version, there were quite a few bugs and there might be a few more that we're still unaware of.
+                    Few of you were experiencing issue in connecting your Site to your Wappointment.com account, it should be working for everyone now.
                 </div>
-                <div>Luckily some of you are really helping improving Wappointment every day with quality feedback.</div>
-                <h3 class="text-white my-2">Many thanks for your patience!</h3>
-                <div>Maintaining Wappointment is hard, but it gets a lot easier when you join in.</div>
-                <div>So please don't hesitate to drop us a line for anything, we'll be happy to chat.</div>
+                <div>
+                    Also for those of you crazy about metrics, we've added a JS hook so that you can count each time a client successfully books an appointment. (it will work for any analytics tool) <a href="javascript:;" @click="showCode=true">View code sample</a>
+                    <pre v-if="showCode"><code>
+document.addEventListener('wappo_confirmed', function (e) {
+    //insert analytics code below
+
+}, false);
+</code></pre>
+                </div>
             </div>
 
-            <h5>Changelog 2.0.1</h5>
+            <h5>Changelog 2.0.2</h5>
             <ol>
-                <li class="my-2">Email sending is now working with the popular SMTP plugins: <strong>WP Mail SMTP</strong> and <strong>Post SMTP</strong></li>
-                <li class="my-2">Added Meeting link straight in the admin email confirmation</li>
-                <li class="my-2">Added Save to calendar button for Outlook Live</li>
-                <li class="my-2">Fixing of the Save to calendar buttons, working now with Zoom and Google Meet</li>
+                <li class="my-2">Added js hook for analytics on booking confirmation</li>
+                <li class="my-2">Added missing editable text for appointment viewing</li>
+                <li class="my-2">Fixed error when trying to Connect account to Zoom and Google Calendar</li>
+                <li class="my-2">Fixed calendar loading unlimited loop error with recurrent event</li>
             </ol>
             <h5>2 min - Introduction video about Zoom/Google Calendar integrations</h5>
             <iframe width="540" height="301" src="https://www.youtube.com/embed/wEE8yRh6pP4" 
@@ -46,7 +50,8 @@ export default {
         images : [1,2],
         image_number: 1,
         interval:false,
-        slideshow: false
+        slideshow: false,
+        showCode: false
     }),
 
 
@@ -117,5 +122,14 @@ export default {
     color: #fff;
     line-height: 1.8;
     margin: 1rem 0;
+}
+.update-section pre{
+    background: #353535;
+    border-radius: 1rem;
+    padding: 0 1rem;
+    font-size: .8em;
+}
+.update-section a{
+    color: var(--orange);
 }
 </style>
