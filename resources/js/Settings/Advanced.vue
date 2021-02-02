@@ -273,7 +273,15 @@ export default {
         return await this.service.call('freshinstall')
     },
     updatePage(){
-      this.request(this.updatePageRequest,  undefined, undefined,false, this.updateViewData)
+      this.$WapModal().confirm({
+          title: 'Are you sure you need this?',
+          content: 'This is useful only to 1% of the users<br/>Basically instead of using a <strong>CPT</strong>(Custom Post Type) for Reschedule, Cancel and View page of your appointment you will use a standard Page'
+        }).then((result) => {
+          if(result === true){
+              this.request(this.updatePageRequest,  undefined, undefined,false, this.updateViewData)
+          } 
+        })
+      
     },
     updateViewData(response){
       this.viewData = response.data

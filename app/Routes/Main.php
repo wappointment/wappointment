@@ -70,9 +70,13 @@ class Main extends AbstractRoutes
                     'methods' => ['post', 'delete'],
                     'controller' => 'StatusController'
                 ],
-                '/services/service' => [
+                '/services' => [
                     'methods' => ['get', 'post', 'delete'],
                     'controller' => 'ServicesController'
+                ],
+                '/calendars' => [
+                    'methods' => ['get', 'post', 'delete'],
+                    'controller' => 'CalendarsController'
                 ],
             ],
             'GET' => [
@@ -215,8 +219,12 @@ class Main extends AbstractRoutes
                     'method' => 'delete',
                     'controller' => 'ClientController'
                 ],
-                '/services/service/reorder' => [
+                '/services/reorder' => [
                     'controller' => 'ServicesController',
+                    'method' => 'reorder',
+                ],
+                '/calendars/reorder' => [
+                    'controller' => 'CalendarsController',
                     'method' => 'reorder',
                 ],
                 '/services/booking/admin' => [

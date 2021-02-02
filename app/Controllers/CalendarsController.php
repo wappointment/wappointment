@@ -7,16 +7,35 @@ use Wappointment\Controllers\RestController;
 use Wappointment\Models\Service as ServiceModel;
 use Wappointment\Services\Services;
 use Wappointment\Services\VersionDB;
+use Wappointment\Services\Settings;
 
-class ServicesController extends RestController
+class CalendarsController extends RestController
 {
     public function get()
     {
         if (VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES)) {
-            throw new \WappointmentException("You must run a database update first", 1);
+            return $this->getlegacy();
         }
 
-        return ServiceModel::orderBy('sorting')->take(3)->get();
+        return ServiceModel::orderBy('sorting')->take(2)->get();
+    }
+
+    public function getlegacy()
+    {
+
+
+
+        return [
+            [
+                'name' => Settings::getStaff('display_name'),
+                'regav' => Settings::getStaff('regav'),
+                'tz' => Settings::getStaff('timezone'),
+                'services' => [
+                    \Wappointment\Services\Service::get()
+                ],
+                'connected' => Settings::getStaff('dotcom'),
+            ]
+        ];
     }
 
     public function save(Request $request)

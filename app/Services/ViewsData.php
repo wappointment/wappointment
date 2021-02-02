@@ -7,6 +7,7 @@ use Wappointment\ClassConnect\Carbon;
 use Wappointment\Services\Staff;
 use Wappointment\WP\WidgetAPI;
 use Wappointment\Services\Status;
+use Wappointment\Managers\Service as ManageService;
 
 class ViewsData
 {
@@ -72,6 +73,7 @@ class ViewsData
 
     private function widget()
     {
+
         return apply_filters('wappointment_back_widget_editor', [
             'front_availability' => $this->front_availability(),
             'widget' => (new WidgetSettings)->get(),
@@ -100,8 +102,8 @@ class ViewsData
     private function calendar()
     {
         $staff_timezone = Settings::getStaff('timezone');
-        $services = \Wappointment\Models\Service::get();
-        return  apply_filters('wappointment_back_calendar', [
+        $services = ManageService::all();
+        $data = [
             'regav' => Settings::getStaff('regav'),
             'availability' => WPHelpers::getStaffOption('availability'),
             'timezone' => $staff_timezone,
@@ -110,13 +112,12 @@ class ViewsData
             'timezones_list' => DateTime::tz(),
             'now' => (new Carbon())->setTimezone($staff_timezone)->format('Y-m-d\TH:i:00'),
             'service' => Service::get(),
-            'durations' => [Service::get()['duration']],
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'preferredCountries' => Service::getObject()->getCountries(),
             'buffer_time' => Settings::get('buffer_time'),
-            'widget' => (new \Wappointment\Services\WidgetSettings)->get(),
+            'widget' => (new WidgetSettings)->get(),
             'booking_page_id' => (int) Settings::get('booking_page'),
             'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
             'showWelcome' => Settings::get('show_welcome'),
@@ -125,26 +126,16 @@ class ViewsData
             'preferences' => (new Preferences)->preferences,
             'is_dotcom_connected' => Settings::getStaff('dotcom'),
             'services' => $services,
-            'locations' => \Wappointment\Models\Location::get(),
-            'custom_fields' => \Wappointment\Services\CustomFields::get(),
-            'durations' => $this->extractDurations($services),
+            'durations' => ManageService::extractDurations($services),
             'cal_duration' => (new Preferences)->get('cal_duration'),
-        ]);
-    }
+        ];
 
-    protected function extractDurations($services)
-    {
-        $durations = $services->map(function ($item, $key) {
-            $innerdur = [];
-            foreach ($item['options']['durations'] as $key => $array) {
-                $innerdur[] = $array['duration'];
-            }
-            return $innerdur;
-        });
+        if (VersionDB::canServices()) {
+            $data['locations'] = \Wappointment\Models\Location::get();
+            $data['custom_fields'] = CustomFields::get();
+        }
 
-        $durations_filtered = array_filter($durations->flatten()->unique()->toArray());
-        sort($durations_filtered);
-        return $durations_filtered;
+        return  apply_filters('wappointment_back_calendar', $data);
     }
 
     private function settingsgeneral()
@@ -319,7 +310,7 @@ class ViewsData
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'now' => (new Carbon())->format('Y-m-d\TH:i:00'),
             'buffer_time' => Settings::get('buffer_time'),
-            'services' => Services::all(),
+            'services' => ManageService::all(),
             'site_lang' => substr(get_locale(), 0, 2),
             'custom_fields' => \Wappointment\Services\CustomFields::get()
         ]);

@@ -26,4 +26,21 @@ class Service
         }
         return Central::get('Service')::hasZoom($service);
     }
+
+    public static function extractDurations($services)
+    {
+        //'durations' => [Service::get()['duration']],
+
+        $durations = $services->map(function ($item, $key) {
+            $innerdur = [];
+            foreach ($item['options']['durations'] as $key => $array) {
+                $innerdur[] = $array['duration'];
+            }
+            return $innerdur;
+        });
+
+        $durations_filtered = array_filter($durations->flatten()->unique()->toArray());
+        sort($durations_filtered);
+        return $durations_filtered;
+    }
 }

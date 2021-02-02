@@ -9,7 +9,7 @@ class Central
 {
     protected $services = [
         'Service' => [
-            'class' => \Wappointment\Services\Services::class,
+            'class' => \Wappointment\Services\Service::class,
             'implements' => \Wappointment\Services\ServiceInterface::class
         ],
         'Client' => [
@@ -20,6 +20,16 @@ class Central
         ]
     ];
 
+    public function __construct()
+    {
+        $this->setOverride();
+    }
+
+    /**
+     * Class is statically generated when instance or get is called satically
+     *
+     * @return void
+     */
     public static function instance()
     {
         static $manager_instance = null;
@@ -65,5 +75,12 @@ class Central
             throw new \WappointmentException("Central: " . $serviceName . ' class ' . $class . ' not implementing ' . $service['implements'], 1);
         }
         $this->services[$serviceName]['class'] = $class;
+    }
+
+    private function setOverride()
+    {
+        foreach ($this->services as $serviceKey => $serviceDefinition) {
+            $this->services[$serviceKey] = apply_filters('wappointment_central_service_' . strtolower($serviceKey), $serviceDefinition);
+        }
     }
 }

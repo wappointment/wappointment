@@ -1,22 +1,22 @@
 import ApiV1 from './ApiV1'
-export default class ServicesService extends ApiV1 {
+export default class CalendarsService extends ApiV1 {
         endpoints() {
             return {
                 save: { 
                     method: 'post', 
-                    route: '/services' 
+                    route: '/calendars' 
                 },
                 index: {
                     method: 'get',
-                    route: '/services'
+                    route: '/calendars'
                 },
                 delete: {
                     method: 'delete',
-                    route: '/services'
+                    route: '/calendars'
                 },
                 reorder: {
                     method: 'post',
-                    route: '/services/reorder'
+                    route: '/calendars/reorder'
                 },
             };
         }

@@ -5,6 +5,7 @@ namespace Wappointment\System;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Config\Database;
 use Wappointment\Services\Settings;
+use Wappointment\Services\VersionDB;
 
 class Init
 {
@@ -69,7 +70,7 @@ class Init
      */
     public function checkSMTPValueEncryption()
     {
-        if (Status::dbVersion() == '1.9.3') {
+        if (VersionDB::equal(VersionDB::CAN_DEL_CLIENT)) {
             $mail_config = Settings::get('mail_config');
             if ($mail_config['method'] == 'smtp' && empty($mail_config['v']) && !empty($mail_config['encryption'])) {
                 $mail_config['v'] = '2.0.1';

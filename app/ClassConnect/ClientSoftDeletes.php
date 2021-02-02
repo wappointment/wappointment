@@ -2,9 +2,9 @@
 
 namespace Wappointment\ClassConnect;
 
-use Wappointment\System\Status;
+use Wappointment\Services\VersionDB;
 
-if (version_compare(Status::dbVersion(), '1.9.3') >= 0) {
+if (VersionDB::atLeast(VersionDB::CAN_DEL_CLIENT)) {
     trait ClientSoftDeletes
     {
         use SoftDeletes;

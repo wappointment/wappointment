@@ -199,10 +199,11 @@
         cursor:pointer;
         border-top-left-radius: .8rem;
         border-top-right-radius: .8rem;
+        margin-right: .6rem;
     }
     .nav-tabs .nav-item.show .nav-link, 
     .nav-tabs .nav-link.active{
-        border: 2px solid #e1e1e1;
+        border: 2px solid #aaa9e1;
         border-bottom: none;
     }
     .nav-tabs .nav-link:focus{
@@ -212,7 +213,7 @@
         cursor: default;
         color:#fff;
         font-weight: bold;
-        background-color:#7372a8;
+        background-color:#b5b4e6;
     }
 
     .nav-tabs .nav-link {
