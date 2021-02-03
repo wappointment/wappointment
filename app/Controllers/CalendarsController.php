@@ -24,7 +24,6 @@ class CalendarsController extends RestController
     {
 
 
-
         return [
             [
                 'name' => Settings::getStaff('display_name'),
