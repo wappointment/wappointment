@@ -4,6 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\Models\Status;
+use Wappointment\System\Status as SystemStatus;
 
 class CalendarParser
 {
@@ -104,9 +105,14 @@ class CalendarParser
         return [
             'detected' => count($this->statusEvents),
             'deleted' => $this->deleteRemovedEvents($uids),
-            'inserted' => Status::upsert($this->statusEvents->toArray()),
+            'inserted' => $this->insertIgnoreOrUpsert($this->statusEvents->toArray()),
             'duration' => round(microtime(true) - $start, 2)
         ];
+    }
+
+    private function insertIgnoreOrUpsert($array)
+    {
+        return version_compare(SystemStatus::dbVersion(), '2.0.3') >= 0 ? Status::upsert($array) : Status::insertIgnore($array);
     }
 
     private function deleteRemovedEvents($uids)
