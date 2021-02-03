@@ -104,7 +104,7 @@ class CalendarParser
         return [
             'detected' => count($this->statusEvents),
             'deleted' => $this->deleteRemovedEvents($uids),
-            'inserted' => Status::insertIgnore($this->statusEvents->toArray()),
+            'inserted' => Status::upsert($this->statusEvents->toArray()),
             'duration' => round(microtime(true) - $start, 2)
         ];
     }
