@@ -16,7 +16,7 @@
             <WapModal :show="edit" @hide="close" large>
                 <h4 slot="title" class="modal-title">Select an Image</h4>
                 <div>
-                    <div v-if="selected_image !== null">
+                    <div v-if="selected_image !== null && selected_image.media_details.sizes !== undefined">
                         <div class="btn btn-secondary" 
                         v-for="(image_size, thumbkey) in getImagesThumb(selected_image.media_details.sizes)"  @click="changeSize(image_size)">
                             <div class="text-center">
@@ -157,8 +157,11 @@ export default {
             this.selected_image = element
             this.wp_image = {wp_id: element.id, src: this.wp_image.src }
             let selectedsize = format === undefined ? this.size:format
-            if(element.media_details!== undefined && element.media_details.sizes[selectedsize]!== undefined){
+
+            if(element.media_details.sizes!== undefined && element.media_details.sizes[selectedsize]!== undefined){
                 this.wp_image.src = element.media_details.sizes[selectedsize].source_url
+            }else{
+                this.wp_image.src = element.source_url
             }
             
         },

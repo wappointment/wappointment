@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="isImage">
-            <img :class="getClass" :src="getFormatObject.source_url" :height="sizePreview"
+            <img :class="getClass" :src="getSelectedUrl" :height="sizePreview"
             :alt="getTitle" :title="getTitle" >
         </template>
         <template v-else>
@@ -45,6 +45,11 @@ export default {
         if(this.thumbnail) this.sizePreview = '100'
         else this.sizePreview = this.size
     },
+    methods:{
+        getFormatObject(){
+            return this.element.media_details.sizes[this.format] !== undefined ? this.element.media_details.sizes[this.format]:this.element.media_details.sizes.full
+        },
+    },
     computed:{
         getClass(){
             let classString = this.isSelected ? ' selected ':''
@@ -52,11 +57,12 @@ export default {
             return classString
         },
         getTitle(){
-            return this.element.media_details.image_meta.title
+            return this.element.media_details.image_meta !== undefined ? this.element.media_details.image_meta.title:this.element.slug
         },
-        getFormatObject(){
-            return this.element.media_details.sizes[this.format] !== undefined ? this.element.media_details.sizes[this.format]:this.element.media_details.sizes.full
+        getSelectedUrl(){
+            return this.element.media_details.sizes !== undefined ? this.getFormatObject().source_url :this.element.source_url
         },
+        
         isImage(){
             return this.element.media_type == 'image'
         },

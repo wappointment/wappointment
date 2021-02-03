@@ -187,7 +187,7 @@ class DotCom extends API
                 'video' => $appointment->getLocationVideo(),
                 'starts_at' => $appointment->start_at->timestamp,
                 'appointment_id' => $appointment->id,
-                'duration' => $appointment->getDurationInSec(),
+                'duration' => $appointment->getFullDurationInSec(),
                 'location' => $appointment->type == 0 ? $appointment->getServiceAddress() : $appointment->getLocation(),
                 'timezone' => Settings::getStaff('timezone', $this->staff_id),
                 'emails' => [

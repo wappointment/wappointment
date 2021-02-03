@@ -93,12 +93,15 @@ class Availability
             ->get();
 
         $appointments = $this->segmentService->convertModel($appointments);
+        $appointments = $this->segmentService->flatten($appointments);
 
         // substract appointments to availability
         $this->availabilities = $this->segmentService->substract($this->availabilities, $appointments);
 
         // substract busy times to availability
         $busy_status = $this->segmentService->convertModel($newBusyStatuses->all());
+        $busy_status = $this->segmentService->flatten($busy_status);
+
         $this->availabilities = $this->segmentService->substract($this->availabilities, $busy_status);
 
         $this->reOrder();

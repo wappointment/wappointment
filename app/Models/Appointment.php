@@ -56,7 +56,7 @@ class Appointment extends Model
 
     public function getTitle()
     {
-        return $this->getStatusTag() . $this->getServiceName() . ' ' . $this->getDuration() . ' - ' . $this->client->name;
+        return $this->getStatusTag() . $this->getServiceName() . ' ' . $this->getDuration() . $this->getBuffer() . ' - ' . $this->client->name;
     }
 
     public function getStatusTag()
@@ -189,13 +189,23 @@ class Appointment extends Model
 
     public function getDurationInSec()
     {
-        $buffer_time = isset($this->options) && isset($this->options['buffer_time']) ? ((int) $this->options['buffer_time']) * 60 : 0;
-        return $this->getFullDurationInSec() - $buffer_time;
+        return $this->getFullDurationInSec() - $this->getBufferInSec();
     }
 
     public function getDuration()
     {
         return ($this->getDurationInSec() / 60) . 'min';
+    }
+
+    public function getBufferInSec()
+    {
+        return  isset($this->options) && isset($this->options['buffer_time']) ? ((int) $this->options['buffer_time']) * 60 : 0;
+    }
+
+    public function getBuffer()
+    {
+        $buffer = $this->getBufferInSec();
+        return $buffer > 0 ? '(+' . ($buffer / 60) . 'min)' : '';
     }
 
     public function getStartsDayAndTime($timezone)
