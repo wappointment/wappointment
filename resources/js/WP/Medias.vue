@@ -13,7 +13,7 @@
                             <button class="btn btn-primary dropdown-toggle" @click.prevent.capture.stop="showFormat = !showFormat" type="button" id="dropdownMenuButton">
                                 <span class="sr-only">Toggle Dropdown</span>
                             </button>
-                            <div class="dropdown-menu" :class="{'show':showFormat}" aria-labelledby="dropdownMenuButton">
+                            <div v-if="element.media_details.sizes !== undefined" class="dropdown-menu" :class="{'show':showFormat}" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item" 
                                 v-for="(image_details, image_size) in element.media_details.sizes" @click.prevent.capture.stop="$emit('confirmed', selected, image_size)" >
                                     {{ image_size }} ({{ image_details.width }}*{{ image_details.height }} )
