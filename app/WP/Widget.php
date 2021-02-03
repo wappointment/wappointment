@@ -28,7 +28,7 @@ class Widget extends WidgetAbstract
             }
         }
         $button_title = !empty($instance['button_title']) ? esc_html($instance['button_title']) : 'Book now!';
-        return '<button class="wappointment_widget" ' . $htmlAttributes . '>' . $button_title . '</button>';
+        return '<button class="wappointment_widget" style="display:none"' . $htmlAttributes . '>' . $button_title . '</button>';
     }
 
 
