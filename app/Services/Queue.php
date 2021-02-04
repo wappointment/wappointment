@@ -14,7 +14,11 @@ class Queue
 
     public static function process($take = 10)
     {
-        $jobs = self::loadBatch($take);
+        try { // avoid issue when uninstalling tables
+            $jobs = self::loadBatch($take);
+        } catch (\Throwable $th) {
+            $jobs = [];
+        }
         if (count($jobs) > 0) {
             foreach ($jobs as $job) {
                 self::run($job);
