@@ -24,7 +24,7 @@ class ViewsData
     private function regav()
     {
         $gravatar_img = get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
-        $staff_name = Settings::getStaff('display_name');
+
         return apply_filters('wappointment_back_regav', [
             'regav' => Settings::getStaff('regav'),
             'availaible_booking_days' => Settings::getStaff('availaible_booking_days'),
@@ -33,7 +33,7 @@ class ViewsData
             'activeStaffAvatar' => Settings::getStaff('avatarId') ?
                 wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
             'activeStaffGravatar' => $gravatar_img,
-            'activeStaffName' => empty($staff_name) ? (new \Wappointment\WP\Staff(Settings::get('activeStaffId')))->name : $staff_name,
+            'activeStaffName' => Staff::getName(),
             'activeStaffAvatarId' => Settings::getStaff('avatarId'),
             'timezone' => Settings::getStaff('timezone'),
             'timezones_list' => DateTime::tz(),
@@ -142,7 +142,6 @@ class ViewsData
     {
         $service = Service::get();
         $widget = (new WidgetSettings)->get();
-        $staff_name = Settings::getStaff('display_name');
 
         return [
             // general
@@ -171,7 +170,7 @@ class ViewsData
             'bgcolor' => WPHelpers::getThemeBgColor(),
             'is_dotcom_connected' => Settings::getStaff('dotcom'),
             'gravatar' => get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]),
-            'activeStaffName' => empty($staff_name) ? (new \Wappointment\WP\Staff(Settings::get('activeStaffId')))->name : $staff_name,
+            'activeStaffName' => Staff::getName(),
         ];
     }
 

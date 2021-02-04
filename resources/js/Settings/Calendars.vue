@@ -24,13 +24,25 @@
                                 <div>{{ calendar.tz }}</div>
                             </td>
                             <td>
-                                {{ calendar.regav }}
+                                <div class="d-flex">
+                                    <div v-for="(hours,day) in getUsedDays(calendar.regav)" :data-tt="convertHours(hours)">
+                                        {{ day }}
+                                    </div>
+                                </div>
                             </td>
                             <td>
-                                {{ calendar.services }}
+                                <div class="d-flex">
+                                    <div v-for="service in calendar.services">
+                                        {{ service.name }}
+                                    </div>
+                                </div>
                             </td>
                             <td>
-                                {{ calendar.connected }}
+                                <div class="d-flex">
+                                    <div v-for="connection in calendar.connected.services">
+                                        {{ connection }}
+                                    </div>
+                                </div>
                             </td>
                         </tr>
 
@@ -79,7 +91,22 @@ export default {
         }
     },
     methods: {
-
+        getUsedDays(regav){
+            return Object.keys(regav).filter((e,idx) => idx!== 'precise' && e.length > 0)
+            .reduce((obj, key) => {
+                if(regav[key].length > 0){
+                    obj[key]=regav[key]
+                }
+                return obj
+            }, {});
+        },
+        convertHours(arrayH){
+            let stringg = ''
+            for (let i = 0; i < arrayH.length; i++) {
+                stringg = arrayH[i][0]+'h - '+arrayH[i][1]+'h'
+            }
+            return stringg
+        },
         loadElements() { // overriding
             if(this.currentView == 'listing') {
                 this.request(this.requestElements,{},undefined,false,this.loadedElements,this.failedLoadingElements)

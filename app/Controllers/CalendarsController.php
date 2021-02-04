@@ -8,6 +8,7 @@ use Wappointment\Models\Service as ServiceModel;
 use Wappointment\Services\Services;
 use Wappointment\Services\VersionDB;
 use Wappointment\Services\Settings;
+use Wappointment\Services\Staff;
 
 class CalendarsController extends RestController
 {
@@ -22,11 +23,9 @@ class CalendarsController extends RestController
 
     public function getlegacy()
     {
-
-
         return [
             [
-                'name' => Settings::getStaff('display_name'),
+                'name' => Staff::getName(),
                 'regav' => Settings::getStaff('regav'),
                 'tz' => Settings::getStaff('timezone'),
                 'services' => [

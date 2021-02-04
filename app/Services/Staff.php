@@ -23,6 +23,12 @@ class Staff
         return $staffs;
     }
 
+    public static function getName()
+    {
+        $staff_name = Settings::getStaff('display_name');
+        return empty($staff_name) ? (new \Wappointment\WP\Staff(Settings::get('activeStaffId')))->name : $staff_name;
+    }
+
     public static function getIds()
     {
         return [Settings::get('activeStaffId')];
