@@ -62,6 +62,22 @@ class DotCom extends API
         }
     }
 
+    public function notifyReset()
+    {
+        // 0 - only check if site connected
+        if (!empty($this->site_key) && $this->isConnected()) {
+            $response = $this->client->request(
+                'POST',
+                $this->call('/api/reseted'),
+                [
+                    'form_params' => $this->getParams(['account_key' => $this->account_key]),
+                    'connect_timeout' => 5
+                ]
+            );
+            return $this->processResponse($response);
+        }
+    }
+
     public function hasPendingChanges($appointments, $appointments_update)
     {
         return md5(json_encode($appointments)) !== md5(json_encode($appointments_update));

@@ -6,6 +6,7 @@ use Wappointment\Config\Database;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\WP\Scheduler as WPScheduler;
 use Wappointment\ClassConnect\Capsule;
+use Wappointment\Services\Wappointment\DotCom;
 
 class Reset
 {
@@ -14,6 +15,7 @@ class Reset
 
         do_action('wappointment_reset');
         sleep(2); //giving time for revert on addons
+        $this->dotComInforms();
 
         $this->removeStaffSettings();
 
@@ -22,6 +24,14 @@ class Reset
         $this->removeCoreSettings();
 
         WPScheduler::clearScheduler();
+    }
+
+    private function dotComInforms()
+    {
+        $acs_id = Settings::get('activeStaffId');
+        $dotcomapi = new DotCom;
+        $dotcomapi->setStaff($acs_id);
+        $dotcomapi->notifyReset();
     }
 
     private function removeStaffSettings()
