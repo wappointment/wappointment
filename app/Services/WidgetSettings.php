@@ -91,7 +91,7 @@ class WidgetSettings
             'duration' => 'Duration:',
             'pending' => 'The appointment is pending and should be quickly confirmed',
             'skype' => 'The appointment will take place on Skype, we will call you on this account:',
-            'zoom' => 'The appointment will take place by Video meeting online, [meeting_link]get the meeting room[/meeting_link].',
+            'zoom' => 'The appointment will take place by Video meeting online, the link will show [meeting_link]here[/meeting_link].',
             'phone' => 'The appointment will take place over the phone, we will call you on this number:',
             'physical' => 'The appointment will take place at this address:',
             'savetocal' => 'Save it to your calendar'
@@ -282,6 +282,7 @@ class WidgetSettings
                         'skype' => ['tip' => 'Skype appointments only'],
                         'phone' => ['tip' => 'Phone appointments only'],
                         'physical' => ['tip' => 'On site appointments only'],
+                        'zoom' => ['tip' => 'Video appointments only'],
                     ]
                 ],
             ]
