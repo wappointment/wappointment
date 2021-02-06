@@ -473,19 +473,7 @@ export default {
     min-height: 800px;
     position: relative;
 }
-.slot {
-    border-radius: .3rem;
-    font-size: 13px;
-}
-.slot img{
-  max-height: 20px;
-}
-.slot.disabled img {
-    filter:grayscale(1);
-}
-.slot.disabled:hover img {
-    filter:grayscale(0);
-}
+
 .btn-lg.btn-block{
   font-weight: bold;
 }
@@ -522,15 +510,6 @@ export default {
   width:116px;
   font-size: .9rem;
 }
-.slot[data-tt]::before{
-  min-width: 300px;
-}
-.slot[data-tt]::before,
-.slot[data-tt]::after{
-  bottom: 140%;
-  left: 10px;
-}
-.wservices-list .slot {
-    margin-bottom: .9em;
-}
+
+
 </style>

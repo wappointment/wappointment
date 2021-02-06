@@ -3,7 +3,7 @@
     <div class="picture-edit">
         <div @click="changePicture" class="text-center mr-2 preview-avatar">
             <div class="avatar-edit">
-                <img :src="src" class="img-fluid rounded" width="40">
+                <img :src="src" class="img-fluid wrounded" width="40">
                 <span class="small text-primary" href="javascript:;">edit</span>
             </div>
         </div>

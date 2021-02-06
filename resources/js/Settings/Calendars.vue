@@ -8,27 +8,37 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
-                            <th scope="col">Regular Availability</th>
+                            <th scope="col">Weekly Availability</th>
                             <th scope="col">Services</th>
                             <th scope="col">Connections</th>
                         </tr>
                     </thead>
-                    <draggable @change="orderChanged" v-model="elements" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.length > 0">
+                    <draggable @change="orderChanged" v-model="elements.calendars" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.calendars.length > 0">
 
-                        <tr  class="row-click" v-for="(calendar, idx) in elements">
+                        <tr  class="row-click" v-for="(calendar, idx) in elements.calendars">
                             <td>
                                 <div @mouseover="">{{ idx + 1 }} </div> 
                             </td>
                             <td>
-                                <div>{{ calendar.name }}</div>
-                                <div>{{ calendar.tz }}</div>
+                                <div class="d-flex">
+                                    <div><img :src="calendar.avatar" class="img-fluid wrounded" width="40" /></div>
+                                    <div class="ml-2">
+                                        <div>{{ calendar.name }}</div>
+                                        <small>{{ calendar.timezone }}</small>
+                                    </div>
+                                </div>
+                                
                             </td>
                             <td>
                                 <div class="d-flex">
-                                    <div v-for="(hours,day) in getUsedDays(calendar.regav)" :data-tt="convertHours(hours)">
-                                        {{ day }}
+                                    <div v-for="(hours,day) in getUsedDays(calendar.regav)"  class="dayLabel mr-2">
+                                        <div :data-tt="getDayLabel(day)">{{ getDayLabel(day)[0] }}</div>
+                                        <div class="d-flex">
+                                            <div class="available-slot mr-1" v-for="hour in hours" :data-tt="convertHours(hour)"></div>
+                                        </div>
                                     </div>
                                 </div>
+                                <a href="javascript:;" @click="editAvailability(calendar)">edit</a>
                             </td>
                             <td>
                                 <div class="d-flex">
@@ -38,11 +48,7 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="d-flex">
-                                    <div v-for="connection in calendar.connected.services">
-                                        {{ connection }}
-                                    </div>
-                                </div>
+                               <Connections :connections="calendar.connected.services"/>
                             </td>
                         </tr>
 
@@ -60,6 +66,10 @@
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
             <CalendarsAddEdit :element="elementPassed" @saved="hasBeenSavedDeleted"/>
         </div>
+        <div v-if="calendarRegav">
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
+            <WeeklyAvailability :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs"/>
+        </div>
     </div>
 </template>
 
@@ -67,11 +77,15 @@
 
 import ServiceCalendar from '../Services/V1/Calendars'
 import CalendarsAddEdit from './CalendarsAddEdit'
+import WeeklyAvailability from '../RegularAvailability/Edit'
+import Connections from '../RegularAvailability/Connections'
 export default {
     extends: window.wappoGet('AbstractListing'),
     components:{
         DurationCell: window.wappoGet('DurationCell'),
-        CalendarsAddEdit
+        CalendarsAddEdit,
+        WeeklyAvailability,
+        Connections
     },
     data: () => ({
         currentView: 'listing',
@@ -88,9 +102,20 @@ export default {
         },
         calendarAdd(){
             return ['add','edit'].indexOf(this.currentView) !== -1
+        },
+        calendarRegav(){
+            return this.currentView == 'regav'
         }
     },
     methods: {
+
+        editAvailability(calendar){
+            this.elementPassed = calendar
+            this.currentView = 'regav'
+        },
+        getDayLabel(daykey){
+            return daykey
+        },
         getUsedDays(regav){
             return Object.keys(regav).filter((e,idx) => idx!== 'precise' && e.length > 0)
             .reduce((obj, key) => {
@@ -100,12 +125,8 @@ export default {
                 return obj
             }, {});
         },
-        convertHours(arrayH){
-            let stringg = ''
-            for (let i = 0; i < arrayH.length; i++) {
-                stringg = arrayH[i][0]+'h - '+arrayH[i][1]+'h'
-            }
-            return stringg
+        convertHours(hours){
+            return (hours[0]/60)+'h - '+(hours[1]/60)+'h'
         },
         loadElements() { // overriding
             if(this.currentView == 'listing') {
@@ -155,7 +176,10 @@ export default {
             }
         },
         showCalendar(){
-            if(this.elements.length > 2){
+            if(this.elements.db_required){
+                return this.requiresAddon('services', 'You need to update your Database first')
+            }
+            if(this.elements.calendars.length > 2){
                 return this.requiresAddon('services', '3 services max allowed')
             }
 
@@ -190,5 +214,16 @@ export default {
 .location {
     margin: .2rem;
     color: #717171;
+}
+.dayLabel {
+    text-transform: capitalize;
+}
+.available-slot{
+    background-color: #ccc;
+    width: .3rem;
+    height: 1rem;
+}
+.available-slot:hover{
+    background-color: #37792a;
 }
 </style>

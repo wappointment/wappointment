@@ -4,36 +4,30 @@ namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
 use Wappointment\Controllers\RestController;
-use Wappointment\Models\Service as ServiceModel;
+use Wappointment\Models\Service as CalendarsModel;
 use Wappointment\Services\Services;
 use Wappointment\Services\VersionDB;
-use Wappointment\Services\Settings;
 use Wappointment\WP\Staff;
+use Wappointment\Services\Staff as StaffServices;
+use Wappointment\Services\DateTime;
 
 class CalendarsController extends RestController
 {
     public function get()
     {
-        if (VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES)) {
-            return $this->getlegacy();
-        }
+        $calendars = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES) ? $this->getlegacy() : CalendarsModel::orderBy('sorting')->take(2)->get();
 
-        return ServiceModel::orderBy('sorting')->take(2)->get();
+        return [
+            'timezones_list' => DateTime::tz(),
+            'calendars' => $calendars,
+            'staffs' => StaffServices::getWP(),
+        ];
     }
 
     public function getlegacy()
     {
-        $staff = new Staff;
         return [
-            [
-                'name' => $staff->name,
-                'regav' => Settings::getStaff('regav'),
-                'tz' => $staff->timezone,
-                'services' => [
-                    \Wappointment\Services\Service::get()
-                ],
-                'connected' => Settings::getStaff('dotcom'),
-            ]
+            (new Staff)->fullData()
         ];
     }
 
@@ -54,7 +48,6 @@ class CalendarsController extends RestController
         $result = Services::reorder($data['id'], $data['new_sorting']);
         return ['message' => 'Service has been saved', 'result' => $result];
     }
-
 
     public function delete(Request $request)
     {

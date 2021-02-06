@@ -4,7 +4,7 @@ namespace Wappointment\WP;
 
 use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
-use Wappointment\Services\Staff as StaffService;
+use Wappointment\Services\Service;
 
 class Staff
 {
@@ -26,13 +26,26 @@ class Staff
             throw new \WappointmentException("Can't load staff information", 1);
         }
         $this->id = $staff_id;
-
-        $this->avatar = Settings::getStaff('avatarId') ?
-            wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] :
-            get_avatar_url(Settings::get('activeStaffId'), ['size' => 46]);
+        $this->gravatar = get_avatar_url(Settings::get('activeStaffId'), ['size' => 46]);
+        $this->avatar = Settings::getStaff('avatarId') ? wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $this->gravatar;
         $dname = Settings::getStaff('display_name');
         $this->name = !empty($dname) ? $dname : $this->getUserDisplayName();
         $this->timezone = Settings::getStaff('timezone', $staff_id);
+    }
+
+    public function fullData()
+    {
+        return [
+            'id' => $this->id,
+            'avatar' => $this->avatar,
+            'gravatar' => $this->gravatar,
+            'name' => $this->name,
+            'avb' => Settings::getStaff('availaible_booking_days'),
+            'regav' => Settings::getStaff('regav'),
+            'timezone' => $this->timezone,
+            'services' => [Service::get()],
+            'connected' => Settings::getStaff('dotcom'),
+        ];
     }
 
     public function getUserDisplayName()

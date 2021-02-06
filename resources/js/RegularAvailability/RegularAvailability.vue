@@ -4,7 +4,7 @@
             
             <div class="columnTitle" data-tt="Open your calendar for bookings for X days in the future">Available Booking Days</div> 
             <ClickRevealSlider :alwaysShow="true" 
-            :value="viewData.availaible_booking_days" @change="changedCRS" />
+            :value="viewData.avb" @change="changedCRS" />
         </div>
 
         <div class="commands-frame d-flex" @mouseover="showControls=true" @mouseout="showControls=false">
