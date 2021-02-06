@@ -2,7 +2,7 @@
     <div >
         <div v-if="calendarListing">
             <button @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
-            <div class="table-responsive table-hover">
+            <div class="table-responsive table-hover" v-if="loadedData">
                 <table class="table">
                     <thead>
                         <tr>
@@ -11,6 +11,7 @@
                             <th scope="col">Weekly Availability</th>
                             <th scope="col">Services</th>
                             <th scope="col">Connections</th>
+                            <th scope="col">External calendars</th>
                         </tr>
                     </thead>
                     <draggable @change="orderChanged" v-model="elements.calendars" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.calendars.length > 0">
@@ -50,6 +51,28 @@
                             <td>
                                <Connections :connections="calendar.connected.services"/>
                             </td>
+                            <td>
+                               <div v-if="calendar.calendar_urls!== false && Object.keys(calendar.calendar_urls).length > 0" class="card cardb p-2 px-3 mt-1 unclickable" v-for="(single_url, calendar_id) in calendar.calendar_urls" >
+                                    <div class="d-flex flex-row justify-content-between">
+                                        <div>
+                                        <div>
+                                            <span class="dashicons dashicons-yes text-success" ></span> 
+                                            Calendar {{ calendar_id}}
+                                            <small class="hidden ml-4 text-primary">{{ single_url}}</small>
+                                        </div>
+                                        <p class="vsmall text-muted m-0 ml-4">
+                                        Last checked: <span class="data-item">{{ lastChecked(calendar_id,calendar) }}</span> | 
+                                        Last changed: <span class="data-item">{{ lastChanged(calendar_id,calendar) }}</span> | 
+                                        Process duration: <span class="data-item">{{ calDuration(calendar_id, calendar) }}</span></p>
+                                        </div>
+                                        <button  class="align-self-start btn btn-xs btn-link hidden" data-tt="Disconnect Calendar" @click="disconnectCalendar(calendar_id)"><span class="dashicons dashicons-dismiss"></span></button>
+                                    </div>                  
+                                    
+                                </div>
+                                <div>
+                                    <button class="btn btn-xs btn-outline-primary" @click="goToSync(calendar)" data-tt="Make sure clients can't book you when you're busy">Add calendar</button>
+                                </div>
+                            </td>
                         </tr>
 
                     </draggable>
@@ -70,6 +93,15 @@
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
             <WeeklyAvailability :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs"/>
         </div>
+        <WapModal v-if="showModal" :show="showModal" @hide="hideModal" large noscroll>
+            <h4 slot="title" class="modal-title"> 
+            <span>Connect Personal calendar</span>
+            </h4>
+
+            <Sync @savedSync="savedSync" @errorSaving="errorSavingCalendar" noback></Sync>
+        
+            <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideModal">Close</button>
+        </WapModal>
     </div>
 </template>
 
@@ -79,19 +111,24 @@ import ServiceCalendar from '../Services/V1/Calendars'
 import CalendarsAddEdit from './CalendarsAddEdit'
 import WeeklyAvailability from '../RegularAvailability/Edit'
 import Connections from '../RegularAvailability/Connections'
+import CalUrl from '../Modules/CalUrl'
+import Sync from '../Views/Subpages/Sync'
 export default {
     extends: window.wappoGet('AbstractListing'),
     components:{
         DurationCell: window.wappoGet('DurationCell'),
         CalendarsAddEdit,
         WeeklyAvailability,
-        Connections
+        Connections,
+        Sync
     },
+    mixins:[CalUrl],
     data: () => ({
         currentView: 'listing',
         viewName:'empty',
         elementPassed: null,
-        calendarsOrder: []
+        calendarsOrder: [],
+        showModal: false
     }),
     created(){
         this.mainService = this.$vueService(new ServiceCalendar)
@@ -108,7 +145,15 @@ export default {
         }
     },
     methods: {
-
+        hideModal(){
+            this.showModal = false
+        },
+        goToSync(calendar) {
+            if(calendar.calendar_urls!== false && Object.keys(calendar.calendar_urls).length > 3){
+                return
+            }
+            this.showModal = true
+        },
         editAvailability(calendar){
             this.elementPassed = calendar
             this.currentView = 'regav'
@@ -207,6 +252,7 @@ export default {
             }
 
         },
+
     }
 }   
 </script>

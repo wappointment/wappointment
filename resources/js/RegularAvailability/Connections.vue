@@ -1,9 +1,8 @@
 <template>
     <div  class="d-flex">
-        <div v-for="connectionKey in allConnections" class="ml-2 slot" :class="{disabled: isConnected(connectionKey)}"  
+        <div v-for="connectionKey in allConnections" class="ml-2 slot" :class="{disabled: !isConnected(connectionKey)}"  
             :data-tt="connectionDescription(connectionKey)"  >
             <img :src="connectionImage(connectionKey)" />
-            {{ connectionLabel(connectionKey) }}
         </div>
     </div>
 </template>

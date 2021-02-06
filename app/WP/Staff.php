@@ -45,6 +45,8 @@ class Staff
             'timezone' => $this->timezone,
             'services' => [Service::get()],
             'connected' => Settings::getStaff('dotcom'),
+            'calendar_urls' => WPHelpers::getStaffOption('cal_urls'),
+            'calendar_logs' => WPHelpers::getStaffOption('calendar_logs'),
         ];
     }
 
