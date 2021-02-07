@@ -9,7 +9,7 @@ class Status
 {
     public static $version = WAPPOINTMENT_VERSION;
     private static $last_step = 4;
-    private static $db_version_required = '1.9.3';
+    private static $db_version_required = '2.0.3';
 
     public static function isInstalled()
     {
