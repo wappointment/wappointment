@@ -22,6 +22,7 @@ export default class AppService extends ApiV1{
             migrate: {
                 method: 'post',
                 route: 'app/migrate',
+                timeout: 30000
             },
             connectdotcom: {
                 method: 'post',

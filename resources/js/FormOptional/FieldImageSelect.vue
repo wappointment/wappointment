@@ -138,6 +138,7 @@ export default {
         clearImage(){
             this.wp_image = {}
             this.selected_image = null
+            this.confirmSelectedImage()
         },
         changePicture(){
             this.edit = true

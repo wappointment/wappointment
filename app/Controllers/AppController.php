@@ -11,13 +11,13 @@ class AppController extends RestController
     {
         $migrator = new \Wappointment\Installation\Migrate;
         $migrated = $migrator->migrate();
-        \Wappointment\System\Status::dbVersionUpdateComplete();
+
         if (!empty($migrated)) {
             \Wappointment\System\Status::dbVersionUpdateComplete();
             return ['message' => 'Database has been updated', 'migrated' => $migrated];
         }
 
-        return ['message' => 'Database could not be updated', 'result' => false];
+        throw new \WappointmentException("Database could not be updated", 1);
     }
 
     public function sendFeedback(Request $request)

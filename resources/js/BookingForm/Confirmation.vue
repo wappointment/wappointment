@@ -37,6 +37,8 @@
         <div class="wdescription" v-if="skypeSelected">
             {{options.confirmation.skype}} <strong>{{ getClientSkype }}</strong> 
         </div>
+         <div class="wdescription" v-if="zoomSelected" v-html="getZoomWithLink">
+        </div>
         <div class="wdescription my-2 text-center">
             <transition name="slide-fade">
                 <SaveButtons v-if="showSaveButtons" :service="service" :showResult="showResult" :appointment="appointment"
@@ -92,7 +94,12 @@ export default {
         getClientSkype(){
             return this.showResult.client !== undefined ? this.showResult.client.options.skype : this.showResult.skype
         },
-
+        getZoomWithLink(){
+            let url = apiWappointment.frontPage + '&view=view-event&appointmentkey=' + this.appointment.edit_key
+            return this.options.confirmation.zoom
+            .replace('[meeting_link]', '<a href="'+url+'" target="_blank">')
+            .replace('[/meeting_link]', '</a>')
+        }
     },
     methods: {
         dataChanged(dataNew){
