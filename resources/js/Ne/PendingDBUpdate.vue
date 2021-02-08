@@ -1,7 +1,7 @@
 <template>
   <div >
       <WPNotice>
-          <p>There are pending database updates : <button class="btn btn-primary btn-sm" @click="runMigrate">Run updates</button></p>
+          <p>Wappointment has improvements requiring a Database update: <button class="btn btn-primary btn-sm" @click="runMigrate">Run update</button></p>
       </WPNotice>
   </div>
 </template>

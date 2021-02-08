@@ -26,7 +26,6 @@ class AlterStatusesTable2 extends Wappointment\Installation\Migrate
             throw $th;
         }
 
-
         $this->refetch();
     }
 
@@ -45,7 +44,7 @@ class AlterStatusesTable2 extends Wappointment\Installation\Migrate
 
             //regenerate availability only when we get new events
             if ($hasChanged) {
-                (new \Wappointment\Services\Availability())->regenerate();
+                (new \Wappointment\Services\Availability($staff_id))->regenerate();
             }
         }
     }
