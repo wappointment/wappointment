@@ -49,9 +49,6 @@ export default {
         this.hideAndRefresh()
     },
     disconnectCalendarSuccess(response){
-        this.viewData.calendar_url = response.data.calendar_url
-        this.viewData.calendar_logs = response.data.calendar_logs
-        this.calendarCount = Object.keys(this.viewData.calendar_url).length
         this.$WapModal().notifySuccess(response.data.message)
     },
     errorSavingCalendar(error){
@@ -61,6 +58,34 @@ export default {
         this.hideAndRefresh()
         this.$WapModal().notifySuccess(response.data.message)
     },
+    hideAndRefresh(){
+      this.hideModal()
+      this.loadElements()
+    },
+    refreshManually(){
+      this.request(this.refreshCalendarsRequest, {}, undefined,false, this.disconnectCalendarSuccess)
+    },
+    async refreshCalendarsRequest() {
+        return await this.serviceSettingStaff.call('refreshCalendars')
+    },
   },
 };
 </script>
+<style >
+.cal-icon .card{
+  max-width: none;
+  width: 640px;
+}
+.wappointment-wrap p.vsmall{
+  font-size:.8rem;
+}
+.unclickable{
+  cursor:default !important;
+}
+.data-item{
+  border: 1px solid #d9d9d9;
+  border-radius: .25rem;
+  padding: .2rem;
+  background-color: #f0f0f0;
+}
+</style>

@@ -1,77 +1,53 @@
 <template>
-    <div  class="d-flex">
-        <div v-for="connectionKey in allConnections" class="ml-2 slot" :class="{disabled: !isConnected(connectionKey)}"  
+    <div :class="{'d-flex':!vertical}">
+        <div v-for="connectionKey in orderedConnections" class="mr-2 slot tt-lg" :class="{disabled: !isConnected(connectionKey)}"  
             :data-tt="connectionDescription(connectionKey)"  >
-            <img :src="connectionImage(connectionKey)" />
+            <img :src="connectionImage(connectionKey)" :alt="connectionLabel(connectionKey)"/>
+            <span v-if="showLabel">{{ connectionLabel(connectionKey) }}</span>
         </div>
     </div>
 </template>
 
 <script>
+import Abstract from '../Views/Abstract'
+import ConnectionsMixins from './ConnectionsMixins'
 export default {
+    extends: Abstract,
+    mixins: [ConnectionsMixins],
     props: {
         connections:{
-            type:Array,
+            type: Array,
+            default: []
         },
-        allConnections:{
-            type:Array,
-            default: () => ['zoom','google', 'googlemeet']
-        }
+        showLabel:{
+            type: Boolean,
+            value: false
+        },
+        vertical:{
+            type: Boolean,
+            value: false
+        },
     },
-
+    data: () => ({
+        availableConnections: ['zoom','google', 'googlemeet'],
+    }),
     computed: {
-        resourcesUrl(){
-            return window.apiWappointment.resourcesUrl+'images/'
+        orderedConnections(){
+            return this.availableConnections.sort(this.sortConnections)
         },
-        servicesConnected(){
-            let servicesC = []
-            if(this.is_dotcom_connected){
-                for (let i = 0; i < this.connections.length; i++) {
-                    const service = this.connections[i]
-                    servicesC.push(service)
-                    if(service == 'google'){
-                        servicesC.push('googlemeet')
-                    }
-                }
-            }
-            return servicesC
-        }
     },
     methods:{
+        boolToInt(bool){
+            return bool ? 1:0
+        },
+        sortConnections(a,b){
+            console.log('a,b',a,b,this.boolToInt(this.isConnected(b)) - this.boolToInt(this.isConnected(a)) )
+            return this.boolToInt(this.isConnected(b)) - this.boolToInt(this.isConnected(a)) 
+        },
         isConnected(connectionKey){
-            return this.connections.indexOf(connectionKey) !== -1
+            return this.connections.find(e => connectionKey.indexOf(e) !== -1)
         },
-        connectionImage(connectionKey){
-            switch (connectionKey) {
-                case 'zoom':
-                return this.resourcesUrl+'zoom.png'
-                case 'google':
-                return this.resourcesUrl+'google-calendar.png'
-                case 'googlemeet':
-                return this.resourcesUrl+'google-meet.png'
-            }
-        },
-        connectionDescription(connectionKey){
-            switch (connectionKey) {
-                case 'zoom':
-                return 'Automatically creates Zoom meeting for your new Video Meetings and save the meeting link in Wappointment'
-                case 'google':
-                return 'Automatically save new appointments to a secondary calendar in your Google Calendar account'
-                case 'googlemeet':
-                return 'Automatically generates Google Meet meetings for your new Video Meetings and save the meeting link in Wappointment'
-            }
-        },
-
-        connectionLabel(connectionKey){
-            switch (connectionKey) {
-                case 'zoom':
-                return 'Zoom'
-                case 'google':
-                return 'Google Calendar'
-                case 'googlemeet':
-                return 'Google Meet'
-            }
-        },
+        
     }
 }
 </script>
@@ -88,14 +64,6 @@ export default {
 }
 .slot.disabled:hover img {
     filter:grayscale(0);
-}
-.slot[data-tt]::before{
-  min-width: 300px;
-}
-.slot[data-tt]::before,
-.slot[data-tt]::after{
-  bottom: 140%;
-  left: 10px;
 }
 .wservices-list .slot {
     margin-bottom: .9em;

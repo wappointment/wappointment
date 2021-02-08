@@ -205,7 +205,6 @@ router.beforeEach((to, from, next) => {
 router.onError((error) => {
   window.backWappoError = error
   router.push({ name: 'wappointment_error'})
-
 })
 
   window.jQuery(function($){ // scan certain link to apply a routing

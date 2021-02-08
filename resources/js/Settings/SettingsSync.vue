@@ -131,16 +131,11 @@ export default {
 };
 </script>
 <style>
-.wappointment-wrap p.vsmall{
-  font-size:.8rem;
-}
 .data-item{
   border: 1px solid #d9d9d9;
   border-radius: .25rem;
   padding: .2rem;
   background-color: #f0f0f0;
 }
-.unclickable{
-  cursor:default !important;
-}
+
 </style>
