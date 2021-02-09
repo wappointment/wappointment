@@ -22,7 +22,7 @@
                             </td>
                             <td>
                                 <div class="d-flex">
-                                    <div><img :src="calendar.avatar" class="img-fluid wrounded" width="40" /></div>
+                                    <div><img :src="calendar.avatar" class="img-fluid wrounded" width="40" :alt="calendar.name" /></div>
                                     <div class="ml-2">
                                         <div>{{ calendar.name }}</div>
                                         <small>{{ calendar.timezone }}</small>
@@ -31,15 +31,7 @@
                                 
                             </td>
                             <td>
-                                <div class="d-flex">
-                                    <div v-for="(hours,day) in getUsedDays(calendar.regav)"  class="dayLabel mr-2">
-                                        <div :data-tt="getDayLabel(day)">{{ getDayLabel(day)[0] }}</div>
-                                        <div class="d-flex">
-                                            <div class="available-slot mr-1" :class="{'mx-1':idhx <1}" v-for="(hour, idhx) in hours" :data-tt="convertHours(hour)"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <a href="javascript:;" @click="editAvailability(calendar)">edit</a>
+                                <CalendarsRegav @edit="editAvailability" :calendar="calendar" />
                             </td>
                             <td>
                                 <div class="d-flex">
@@ -49,9 +41,9 @@
                                 </div>
                             </td>
                             <td>
-                               <Connections :connections="calendar.connected.services !== undefined ? []:calendar.connected.services"/>
-                               <a v-if="calendar.connected" href="javascript:;" @click="goToDotCom(calendar)">edit</a>
-                               <button v-else class="btn btn-xs btn-outline-primary tt-lg mt-2" @click="goToDotCom(calendar)">connect</button>
+                               <Connections :connections="calendar.connected.services === undefined ? []:calendar.connected.services"/>
+                               <a v-if="calendar.connected" href="javascript:;" class="small" @click="goToDotCom(calendar)">edit</a>
+                               <button v-else class="btn btn-xs btn-outline-primary tt-lg mt-2" @click="goToDotCom(calendar)">Connect Account</button>
                             </td>
                             <td>
                                <div class="d-flex" v-if="calendar.calendar_urls!== false && Object.keys(calendar.calendar_urls).length > 0">
@@ -104,14 +96,12 @@
             <Sync @savedSync="savedSync" @errorSaving="errorSavingCalendar" noback></Sync>
             
         </WapModal>
-        <WapModal v-if="dotcomOpen" :show="dotcomOpen" @hide="dotcomOpen = false">
+        <WapModal v-if="dotcomOpen" :show="dotcomOpen!==false" @hide="dotcomOpen = false">
             <h4 slot="title" class="modal-title"> 
                 Connect to Zoom, Google Calendar etc...
             </h4>
             <CalendarsIntegrations :calendar="dotcomOpen" />
         </WapModal>
-
-        
     </div>
 </template>
 
@@ -125,6 +115,7 @@ import CalUrl from '../Modules/CalUrl'
 import SettingsSave from '../Modules/SettingsSave'
 import Sync from '../Views/Subpages/Sync'
 import CalendarsIntegrations from './CalendarsIntegrations'
+import CalendarsRegav from './CalendarsRegav'
 export default {
     extends: window.wappoGet('AbstractListing'),
     components:{
@@ -133,7 +124,8 @@ export default {
         WeeklyAvailability,
         Connections,
         Sync,
-        CalendarsIntegrations
+        CalendarsIntegrations,
+        CalendarsRegav
     },
     mixins:[CalUrl, SettingsSave],
     data: () => ({
@@ -159,6 +151,10 @@ export default {
         }
     },
     methods: {
+        editAvailability(calendar){
+            this.elementPassed = calendar
+            this.currentView = 'regav'
+        },
         hideModal(){
             this.showModal = false
             this.dotcomOpen = false
@@ -175,25 +171,7 @@ export default {
         calendarLimitReached(calendar){
             return calendar.calendar_urls!== false && Object.keys(calendar.calendar_urls).length > 3
         },
-        editAvailability(calendar){
-            this.elementPassed = calendar
-            this.currentView = 'regav'
-        },
-        getDayLabel(daykey){
-            return daykey
-        },
-        getUsedDays(regav){
-            return Object.keys(regav).filter((e,idx) => idx!== 'precise' && e.length > 0)
-            .reduce((obj, key) => {
-                if(regav[key].length > 0){
-                    obj[key]=regav[key]
-                }
-                return obj
-            }, {});
-        },
-        convertHours(hours){
-            return (hours[0]/60)+'h - '+(hours[1]/60)+'h'
-        },
+        
         loadElements() { // overriding
             if(this.currentView == 'listing') {
                 this.request(this.requestElements,{},undefined,false,this.loadedElements,this.failedLoadingElements)
@@ -243,10 +221,10 @@ export default {
         },
         showCalendar(){
             if(this.elements.db_required){
-                return this.requiresAddon('services', 'You need to update your Database first')
+                return this.$WapModal().notifyError('Run database updates first')
             }
-            if(this.elements.calendars.length > 2){
-                return this.requiresAddon('services', '3 services max allowed')
+            if(this.elements.calendars.length > 1){
+                return this.requiresAddon('staff', '3 calendars max allowed')
             }
 
             if(this.crumb){
@@ -282,19 +260,6 @@ export default {
     margin: .2rem;
     color: #717171;
 }
-.dayLabel {
-    text-transform: capitalize;
-    text-align: center;
-}
-.available-slot{
-    background-color: #ccc;
-    width: .3rem;
-    height: 1rem;
-}
-.available-slot:hover{
-    background-color: #37792a;
-}
-
 .cal-icon{
     position: relative;
 }

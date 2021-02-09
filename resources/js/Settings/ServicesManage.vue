@@ -12,9 +12,9 @@
                             <th scope="col">Delivery Modalities <a href="javascript:;" @click="$emit('changeView', 'delivery')">Manage</a></th>
                         </tr>
                     </thead>
-                    <draggable @change="orderChanged" v-model="elements" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.length > 0">
+                    <draggable @change="orderChanged" v-model="elements.services" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.services.length > 0">
 
-                        <tr  class="row-click" v-for="(service, idx) in elements">
+                        <tr  class="row-click" v-for="(service, idx) in elements.services">
                             <td>
                                 <div @mouseover="">{{ idx + 1 }} </div> 
                             </td>
@@ -138,7 +138,10 @@ export default {
             }
         },
         showService(){
-            if(this.elements.length > 2){
+            if(this.elements.db_required){
+                return this.$WapModal().notifyError('Run database updates first')
+            }
+            if(this.elements.services.length > 2){
                 return this.requiresAddon('services', '3 services max allowed')
             }
 

@@ -7,7 +7,7 @@
           <div class="d-flex">
               <h1>Service Setup</h1>
           </div>
-          <ServicePage v-if="viewData!==null" ref="servicepage" :buttons="false"
+          <ServicePage v-if="viewData!==null" ref="servicepage" :buttons="false" :minimal="true" 
            :dataPassed="viewData.service" @saved="finallyGoNext" @ready="ready"></ServicePage>
         </div>
         

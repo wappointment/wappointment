@@ -2,10 +2,8 @@
     <div>
         <WAPFormGenerator ref="formgenerator" :buttons="buttons" :schema="schemaParsed" :data="modelHolder" 
         @submit="save" @back="$emit('back')" @ready="isReady" :errors="errorsPassed" :key="formKey" 
-        labelButton="Save" v-bind="extraOptions">
-        </WAPFormGenerator>
+        labelButton="Save" v-bind="extraOptions" :minimal="minimal" />
     </div>
-
 </template>
 
 <script>
@@ -13,10 +11,9 @@ import ServiceService from '../../Services/V1/Service'
 import abstractView from '../Abstract'
 export default {
   extends: abstractView,
-  props:['dataPassed', 'servicesService', 'extraOptions', 'buttons'],
+  props:['dataPassed', 'servicesService', 'extraOptions', 'buttons', 'minimal'],
   data() {
       return {
-          
           serviceService: null,
           modelHolder: {             
             name: '',

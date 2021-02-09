@@ -1,5 +1,5 @@
 <template>
-    <div :class="{'d-flex':!vertical}">
+    <div :class="[vertical ?'wservices-list text-muted':'d-flex']">
         <div v-for="connectionKey in orderedConnections" class="mr-2 slot tt-lg" :class="{disabled: !isConnected(connectionKey)}"  
             :data-tt="connectionDescription(connectionKey)"  >
             <img :src="connectionImage(connectionKey)" :alt="connectionLabel(connectionKey)"/>
@@ -41,8 +41,7 @@ export default {
             return bool ? 1:0
         },
         sortConnections(a,b){
-            console.log('a,b',a,b,this.boolToInt(this.isConnected(b)) - this.boolToInt(this.isConnected(a)) )
-            return this.boolToInt(this.isConnected(b)) - this.boolToInt(this.isConnected(a)) 
+            return this.boolToInt(this.isConnected(b)) - this.boolToInt(this.isConnected(a))
         },
         isConnected(connectionKey){
             return this.connections.find(e => connectionKey.indexOf(e) !== -1)
@@ -64,6 +63,16 @@ export default {
 }
 .slot.disabled:hover img {
     filter:grayscale(0);
+}
+.wservices-list {
+    background-color: #f0f0f0;
+    border-radius: .6em;
+    padding: 1rem;
+    width:300px;
+}
+.wservices-list .label-title{
+    width:116px;
+    font-size: .9rem;
 }
 .wservices-list .slot {
     margin-bottom: .9em;

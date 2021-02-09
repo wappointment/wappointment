@@ -15,9 +15,11 @@ class CalendarsController extends RestController
 {
     public function get()
     {
-        $calendars = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES) ? $this->getlegacy() : CalendarsModel::orderBy('sorting')->take(2)->get();
+        $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
+        $calendars = $db_update_required ? $this->getlegacy() : CalendarsModel::orderBy('sorting')->take(2)->get();
 
         return [
+            'db_required' => $db_update_required,
             'timezones_list' => DateTime::tz(),
             'calendars' => $calendars,
             'staffs' => StaffServices::getWP(),

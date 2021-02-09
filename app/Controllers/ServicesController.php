@@ -7,16 +7,25 @@ use Wappointment\Controllers\RestController;
 use Wappointment\Models\Service as ServiceModel;
 use Wappointment\Services\Services;
 use Wappointment\Services\VersionDB;
+use Wappointment\Managers\Service;
 
 class ServicesController extends RestController
 {
+
     public function get()
     {
-        if (VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES)) {
-            throw new \WappointmentException("You must run a database update first", 1);
-        }
+        $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
+        $services = $db_update_required ? $this->getlegacy() : ServiceModel::orderBy('sorting')->take(2)->get();
 
-        return ServiceModel::orderBy('sorting')->take(3)->get();
+        return [
+            'db_required' => $db_update_required,
+            'services' => $services,
+        ];
+    }
+
+    public function getlegacy()
+    {
+        return Service::all();
     }
 
     public function save(Request $request)

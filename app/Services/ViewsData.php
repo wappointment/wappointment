@@ -27,7 +27,7 @@ class ViewsData
 
         return apply_filters('wappointment_back_regav', [
             'regav' => Settings::getStaff('regav'),
-            'availaible_booking_days' => Settings::getStaff('availaible_booking_days'),
+            'avb' => Settings::getStaff('availaible_booking_days'),
             'staffs' => Staff::getWP(),
             'activeStaffId' => (int)Settings::get('activeStaffId'),
             'activeStaffAvatar' => Settings::getStaff('avatarId') ?

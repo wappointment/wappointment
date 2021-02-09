@@ -11,14 +11,12 @@
                     <div>{{ item.name }}</div>
                 </div>
             </template>
-            <transition name="fade">
-                <div @click="addLocation" class="btn btn-secondary btn-cell add-location d-flex align-items-center" >
-                    <div>
-                        <span class="wicon plus-alt text-primary" ></span>
-                        <div>Add Delivery Modality</div>
-                    </div>
+            <div v-if="!minimal" @click="addLocation" class="btn btn-secondary btn-cell add-location d-flex align-items-center" >
+                <div>
+                    <span class="wicon plus-alt text-primary" ></span>
+                    <div>Add Delivery Modality</div>
                 </div>
-            </transition>
+            </div>
         </div>
     </div>
 </template>

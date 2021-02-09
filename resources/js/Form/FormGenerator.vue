@@ -10,7 +10,7 @@
                     :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
                         <div :class="{'d-none': inVisibles(subelement)}">
                             <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" 
-                            :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true"
+                            :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true" :minimal="minimal"
                             @loaded="loadedField(keydi, skeydi)"
                             v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement)" 
                             :definition="subelement"  :errors="getErrors(subelement)" />
@@ -21,7 +21,7 @@
                     <div :class="{'d-none': inVisibles(element)}">
                         <component :is="getFormComponent(element)" :value="getModelValue(element)" 
                         :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true"
-                    @loaded="loadedField(keydi)" :errors="getErrors(element)"
+                    @loaded="loadedField(keydi)" :errors="getErrors(element)" :minimal="minimal"
                     v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :definition="element"/>
                     </div>
                     
@@ -101,7 +101,11 @@ export default {
         validStart: {
             type: Boolean,
             default:false
-        }
+        },
+        minimal: {
+            type: Boolean,
+            default:false
+        },
     },
     components: CoreFields.components,
     data: () => ({
