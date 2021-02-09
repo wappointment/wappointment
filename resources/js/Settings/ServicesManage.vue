@@ -56,7 +56,7 @@
         </div>
         <div v-if="serviceAdd">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
-            <ServicesEditLegacy v-if="currentView=='editLegacy'" :element="elementPassed" @saved="hasBeenSavedDeleted"/>
+            <ServicesEditLegacy v-if="currentView=='editLegacy'" :legacy="true" :element="elementPassed" @saved="hasBeenSavedDeleted"/>
             <ServicesAddEdit v-else :element="elementPassed" @saved="hasBeenSavedDeleted"/>
         </div>
     </div>

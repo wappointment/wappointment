@@ -1,14 +1,17 @@
 <template>
     <div class="container-fluid" v-if="dataLoaded">
-      <ServiceModulable :dataPassed="model" :buttons="true"/>
+      <ServiceLegacy v-if="legacy" :dataPassed="model" :buttons="true"/>
+      <ServiceModulable v-else :dataPassed="model" :buttons="true"/>
     </div>
 </template>
 
 <script>
 import abstractView from '../Abstract'
 import ServiceModulable from './ServiceNew'
+import ServiceLegacy from './ServiceLegacy'
 export default {
   extends: abstractView,
+  props: ['legacy'],
   data() {
       return {
           viewName: 'service',
@@ -25,7 +28,7 @@ export default {
       } 
   },
 
-  components: { ServiceModulable },
+  components: { ServiceModulable, ServiceLegacy},
 
   methods: {
     initMethod(){
