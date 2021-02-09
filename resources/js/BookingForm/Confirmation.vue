@@ -95,7 +95,7 @@ export default {
             return this.showResult.client !== undefined ? this.showResult.client.options.skype : this.showResult.skype
         },
         getZoomWithLink(){
-            let url = apiWappointment.frontPage + '&view=view-event&appointmentkey=' + this.appointment.edit_key
+            let url = apiWappointment.frontPage + (apiWappointment.frontPage.indexOf('?') === -1 ? '?':'&' )+'view=view-event&appointmentkey=' + this.appointment.edit_key
             return this.options.confirmation.zoom
             .replace('[meeting_link]', '<a href="'+url+'" target="_blank">')
             .replace('[/meeting_link]', '</a>')
