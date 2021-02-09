@@ -196,20 +196,9 @@ class DotCom extends API
 
     protected function getAppointmentDetails($appointment)
     {
+        $tz = Settings::getStaff('timezone', $this->staff_id);
         return [
-            'appointment' => [
-                'title' => $appointment->getTitle(),
-                'type' => $appointment->type,
-                'video' => $appointment->getLocationVideo(),
-                'starts_at' => $appointment->start_at->timestamp,
-                'appointment_id' => $appointment->id,
-                'duration' => $appointment->getFullDurationInSec(),
-                'location' => $appointment->type == 0 ? $appointment->getServiceAddress() : $appointment->getLocation(),
-                'timezone' => Settings::getStaff('timezone', $this->staff_id),
-                'emails' => [
-                    $appointment->client->email
-                ]
-            ],
+            'appointment' => $appointment->toDotcom($tz),
             'account_key' => $this->account_key
         ];
     }
