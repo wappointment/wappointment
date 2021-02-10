@@ -25,12 +25,11 @@
                     :options="options" :disabledButtons="disabledButtons" />
                 
                     <div v-if="termsIsOn" class="wap-terms" v-html="getTerms"></div>
-
                 </div>
             </transition>
             <div class="d-flex wbtn-confirm">
                 <div class="mr-2"><span class="wbtn-secondary wbtn" @click="back">{{options.form.back}}</span></div>
-                <span  v-if="canSubmit" class="wbtn-primary wbtn flex-fill mr-0" @click="confirm">{{options.form.confirm}}</span>
+                <span v-if="canSubmit" class="wbtn-primary wbtn flex-fill mr-0" @click="confirm">{{options.form.confirm}}</span>
                 <span v-else class="wbtn-primary wbtn disabled flex-fill mr-0" disabled>{{options.form.confirm}}</span>
             </div>
             <CountryStyle/>
@@ -50,7 +49,7 @@ export default {
     extends: AbstractFront,
     mixins: [ Strip, MixinTypeSelected],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations', 'appointment_starts_at',
-    'duration','location','custom_fields'],
+    'duration', 'location', 'custom_fields'],
     components: {
         CountryStyle,
         FieldsGenerated
