@@ -9,8 +9,8 @@
                     </div>
                 </h3>
                 <div v-if="calendar.connected">
+                    <div>Connected to wappointment.com with: <strong>{{calendar.connected.account_key }}</strong></div>
                     <a class="small" href="javascript:;" @click="refresh" data-tt="Refresh service status">refresh</a> - <a data-tt="Disconnect from Wappointment.com" class="small text-danger" href="javascript:;" @click="disconnectWappo">disconnect</a>
-                    
                     <Connections :connections="calendar.connected.services" :vertical="true" :showLabel="true" />
                     <div class="small"><a :href="addMoreService" target="_blank" data-tt="Enable new services from your account page on Wappointment.com">Enable/Disable services</a></div>
                 </div>

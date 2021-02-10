@@ -1,9 +1,9 @@
 <template>
-    <div :class="[vertical ?'wservices-list text-muted':'d-flex']">
-        <div v-for="connectionKey in orderedConnections" class="mr-2 slot tt-lg" :class="{disabled: !isConnected(connectionKey)}"  
+    <div :class="[vertical ?'wservices-list wintegrations text-muted':'d-flex wintegrations']">
+        <div v-for="connectionKey in orderedConnections" class="d-flex mr-2 slot tt-lg align-items-center" :class="{disabled: !isConnected(connectionKey)}"  
             :data-tt="connectionDescription(connectionKey)"  >
             <img :src="connectionImage(connectionKey)" :alt="connectionLabel(connectionKey)"/>
-            <span v-if="showLabel">{{ connectionLabel(connectionKey) }}</span>
+            <span v-if="showLabel" class="ml-2">{{ connectionLabel(connectionKey) }}</span>
         </div>
     </div>
 </template>
@@ -76,5 +76,18 @@ export default {
 }
 .wservices-list .slot {
     margin-bottom: .9em;
+    color: #535353;
+}
+.wservices-list .slot.disabled {
+    color: #b9b2b2;
+}
+
+.wintegrations .slot.tt-lg[data-tt]::before {
+    background-color: rgba(83, 168, 65, 0.8);
+    content: '\2714 ' attr(data-tt);
+}
+.wintegrations .slot.disabled.tt-lg[data-tt]::before {
+    background-color: rgba(144, 144, 159, 0.8);
+    content: '\2716 ' attr(data-tt);
 }
 </style>

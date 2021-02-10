@@ -268,9 +268,8 @@ export default {
         },
         registerCustomFields(){
 
-            if(this.locationObj.options.fields === undefined || !Array.isArray(this.locationObj.options.fields)){
-                this.locationObj.options.fields = []
-            }
+            this.locationObj.options.fields = this.__get(this, 'locationObj.options.fields') || []
+            
             if(this.phoneSelected){
                 if(this.locationObj.options.fields.indexOf('phone') === -1)this.locationObj.options.fields.unshift('phone')
             }
