@@ -114,18 +114,21 @@ class Appointment extends Model
         return $array;
     }
 
-    public function getLocationVideoLegacy()
-    {
-        $location = Location::find($this->location_id);
-
-        return !empty($location) && !empty($location->options['video']) ? $location->options['video'] : false;
-    }
 
     public function getLocationVideo()
     {
-        $location = Location::find($this->location_id);
+        if ($this->location_id > 0) {
+            $location = Location::find($this->location_id);
 
-        return !empty($location) && !empty($location->options['video']) ? $location->options['video'] : false;
+            return !empty($location) && !empty($location->options['video']) ? $location->options['video'] : false;
+        } else {
+            return $this->getLocationVideoLegacy();
+        }
+    }
+
+    public function getLocationVideoLegacy()
+    {
+        return $this->type == self::TYPE_ZOOM ? $this->getServiceVideo() : false;
     }
 
     public function getServiceVideo()

@@ -30,7 +30,9 @@ class Service
     public static function extractDurations($services)
     {
         //'durations' => [Service::get()['duration']],
-
+        if (count($services) == 1 && !empty($services[0]['duration'])) {
+            return [$services[0]['duration']];
+        }
         $durations = $services->map(function ($item, $key) {
             $innerdur = [];
             foreach ($item['options']['durations'] as $key => $array) {
