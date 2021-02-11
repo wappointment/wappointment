@@ -1,7 +1,7 @@
 <template>
     <div v-if="mounted" class="wap-booking-fields">
         <div v-if="physicalSelected" class="address-service">
-            <BookingAddress :service="location">
+            <BookingAddress :service="locationObj">
                 <WapImage faIcon="map-marked-alt" size="md" />
             </BookingAddress>
         </div>
@@ -71,10 +71,7 @@ export default {
             this.bookingFormExtended = this.options.demoData.form 
         }
 
-        this.locationObj = Object.assign({},this.location)
-        this.registerCustomFields()
-        this.initBookingForm()
-        this.tryPrefill()
+        this.initForm()
     },
     mounted(){
         this.mounted = true
@@ -103,6 +100,22 @@ export default {
         }
     },
     computed: {
+        isLegacy(){
+            return this.service.type !== undefined
+        },
+        getServiceFields(){
+            return this.isLegacy ? this.legacyGetServiceFields:this.service.options.fields
+        },
+        legacyGetServiceFields(){
+            let fields = ['name', 'email']
+            if(this.phoneSelected || [undefined,'', false].indexOf(this.service.options.phone_required) === -1){
+                fields.push('phone')
+            }
+            if(this.skypeSelected){
+                fields.push('skype')
+            }
+            return fields
+        },
         phoneSelected(){
             return this.locationObj.type == 2
         },
@@ -113,10 +126,51 @@ export default {
             return this.locationObj.type == 3
         },
         getPhoneCountries(){
-            return this.phoneSelected ? this.location.options.countries:this.service.options.countries
+            return this.phoneSelected ? this.locationObj.options.countries:this.service.options.countries
         }
     },
     methods: {
+        initForm(){
+            this.locationObj = Object.assign({},this.convertLocationLegacy(this.location))
+
+            this.registerCustomFields()
+            this.initBookingForm()
+            this.tryPrefill()
+        },
+        convertLocationLegacy(location){
+            if(typeof location =='string'){
+                switch (location) {
+                    case 'physical':
+                        return {
+                            options:{
+                                address: this.service.address
+                            },
+                            type:1
+                        }
+                    case 'phone':
+                        return {
+                            options:{
+                                countries: this.service.options.countries
+                            },
+                            type:2
+                        }
+                    case 'skype':
+                        return {
+                            options:{},
+                            type:3
+                        }
+                    case 'zoom':
+                        return {
+                            options:{},
+                            type:5
+                        }
+                
+                    default:
+                        break;
+                }
+            }
+            return location
+        },
         getId(id){
             this.phoneId = id
         },
@@ -234,8 +288,8 @@ export default {
             this.bookingFormExtended = Object.assign({}, bf)
             if(Object.keys(this.data).length > 1){
                 for (const key in this.bookingFormExtended) {
-                    if (this.bookingFormExtended.hasOwnProperty(key)) {
-                        if(this.data[key]!== undefined) this.bookingFormExtended[key] = this.data[key]
+                    if (this.bookingFormExtended.hasOwnProperty(key) && this.data[key]!== undefined) {
+                        this.bookingFormExtended[key] = this.data[key]
                     }
                 }
             
@@ -251,11 +305,7 @@ export default {
                                 customF.name = this.options.form['fullname']
                                 return customF
                             case 'email':
-                                customF.name = this.options.form[customF.namekey]
-                                return customF
                             case 'phone':
-                                customF.name = this.options.form[customF.namekey]
-                                return customF
                             case 'skype':
                                 customF.name = this.options.form[customF.namekey]
                                 return customF
@@ -266,19 +316,26 @@ export default {
                 }
             }
         },
+        insertCustomFields(){
+            if(this.locationObj.options === undefined){
+                return false
+            }
+            if(this.locationObj.options.fields === undefined || !Array.isArray(this.locationObj.options.fields)){
+                this.locationObj.options.fields = []
+            }
+            if(this.phoneSelected && this.locationObj.options.fields.indexOf('phone') === -1){
+                this.locationObj.options.fields.unshift('phone') //inser phone to the beginning
+            }
+            if(this.skypeSelected && this.locationObj.options.fields.indexOf('skype') === -1){
+                this.locationObj.options.fields.unshift('skype') //inser skype to the beginning
+            }
+        },
         registerCustomFields(){
-
-            this.locationObj.options.fields = this.__get(this, 'locationObj.options.fields') || []
-            
-            if(this.phoneSelected){
-                if(this.locationObj.options.fields.indexOf('phone') === -1)this.locationObj.options.fields.unshift('phone')
+            let fields_src = {'src1': this.getServiceFields}
+            if(!this.isLegacy){
+                this.insertCustomFields()
+                fields_src.src2 = this.locationObj.options.fields
             }
-            if(this.skypeSelected){
-                if(this.locationObj.options.fields.indexOf('skype') === -1)this.locationObj.options.fields.unshift('skype')
-            }
-            
-    
-            let fields_src = {'src1':this.service.options.fields, 'src2':this.locationObj.options.fields}
             for (const key in fields_src) {
                 if (fields_src.hasOwnProperty(key) && fields_src[key] !== undefined) {
                     for (let i = 0; i < fields_src[key].length; i++) {

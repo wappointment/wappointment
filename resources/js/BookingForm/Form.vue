@@ -17,8 +17,13 @@
                     {{ error }}
                 </div>
             </div>
+            <AppointmentTypeSelection v-if="legacyServiceHasTypes" 
+            :options="options" 
+            :typeSelected="selection" 
+            :typesAllowed="service.type"
+            @selectType="selectType" />
             <transition name="slide-fade">
-                <div>
+                <div v-if="showFormInputs">
                     <FieldsGenerated @changed="changedBF" @dataDemoChanged="dataDemoChanged" 
                     :validators="validators" :custom_fields="custom_fields" 
                     :service="service" :location="location" :data="data" 
@@ -30,7 +35,7 @@
             <div class="d-flex wbtn-confirm">
                 <div class="mr-2"><span class="wbtn-secondary wbtn" @click="back">{{options.form.back}}</span></div>
                 <span v-if="canSubmit" class="wbtn-primary wbtn flex-fill mr-0" @click="confirm">{{options.form.confirm}}</span>
-                <span v-else class="wbtn-primary wbtn disabled flex-fill mr-0" disabled>{{options.form.confirm}}</span>
+                <span v-else class="wbtn-primary wbtn wbtn-disabled flex-fill mr-0" disabled>{{options.form.confirm}}</span>
             </div>
             <CountryStyle/>
         </div>
@@ -38,6 +43,8 @@
 </template>
 
 <script>
+
+import AppointmentTypeSelection from './AppointmentTypeSelection'
 import AbstractFront from './AbstractFront'
 import Strip from '../Helpers/Strip'
 import {isEmail, isEmpty} from 'validator'
@@ -52,7 +59,8 @@ export default {
     'duration', 'location', 'custom_fields'],
     components: {
         CountryStyle,
-        FieldsGenerated
+        FieldsGenerated,
+        AppointmentTypeSelection
     }, 
     data: () => ({
         phoneId:'',
@@ -61,6 +69,7 @@ export default {
         mounted: false,
         disabledButtons: false,
         bookingFormExtended: null,
+        canDisplayInputs: false
     }),
 
     created(){
@@ -112,11 +121,13 @@ export default {
             return  Object.keys(this.errorsOnFields).length < 1
         },
         
-        serviceHasTypes(){
-            return true 
+        legacyServiceHasTypes(){
+            return this.service.type !== undefined && this.service.type.length > 1
         },
 
-
+        showFormInputs(){
+            return this.canDisplayInputs && (!this.legacyServiceHasTypes || (this.legacyServiceHasTypes && typeof this.location == 'string' && this.location !== ''))
+        }
     },
     methods: {
         getId(id){
@@ -140,6 +151,12 @@ export default {
             this.bookingForm = bookingForm
             this.bookingForm.type = type
             this.$emit('selectedLocation', type)
+            this.canDisplayInputs = false
+            setTimeout(this.setCanDisplay, 100);
+        },
+
+        setCanDisplay(){
+            this.canDisplayInputs = true
         },
 
         hasError(field){
@@ -199,8 +216,8 @@ export default {
                 let relationnext = window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, {result:result, service: this.service} )
 
                 this.$emit('confirmed', relationnext, {
-                    appointmentSavedData:result.data.appointment, 
-                    isApprovalManual:(result.data.status == 0), 
+                    appointmentSavedData: result.data.appointment, 
+                    isApprovalManual: result.data.status == 0, 
                     appointmentSaved: true, 
                     appointmentKey: result.data.appointment.edit_key, 
                     loading: false

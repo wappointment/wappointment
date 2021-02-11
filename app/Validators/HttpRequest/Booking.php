@@ -58,10 +58,12 @@ class Booking extends LegacyBooking
             }
         }
     }
+
     public function getFields()
     {
         return array_keys($this->validationRulesArray);
     }
+
     protected function validationRules()
     {
         return $this->validationRulesArray;
