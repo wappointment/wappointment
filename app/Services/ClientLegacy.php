@@ -49,6 +49,6 @@ class ClientLegacy
 
 
         //book with that client
-        return $client->book($booking);
+        return $client->bookLegacy($booking);
     }
 }

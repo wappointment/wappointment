@@ -34,7 +34,7 @@
             </transition>
             <div class="d-flex wbtn-confirm">
                 <div class="mr-2"><span class="wbtn-secondary wbtn" @click="back">{{options.form.back}}</span></div>
-                <span v-if="canSubmit" class="wbtn-primary wbtn flex-fill mr-0" @click="confirm">{{options.form.confirm}}</span>
+                <span v-if="canSubmit" class="wbtn-primary wbtn flex-fill mr-0" @click="confirmSwitch">{{options.form.confirm}}</span>
                 <span v-else class="wbtn-primary wbtn wbtn-disabled flex-fill mr-0" disabled>{{options.form.confirm}}</span>
             </div>
             <CountryStyle/>
@@ -52,9 +52,10 @@ const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Compo
 import MixinTypeSelected from './MixinTypeSelected'
 import WappoServiceBooking from '../Services/V1/BookingN'
 import FieldsGenerated from './FieldsGenerated'
+import FormMixinLegacy from './FormMixinLegacy'
 export default {
     extends: AbstractFront,
-    mixins: [ Strip, MixinTypeSelected],
+    mixins: [ Strip, MixinTypeSelected, FormMixinLegacy],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations', 'appointment_starts_at',
     'duration', 'location', 'custom_fields'],
     components: {
@@ -85,6 +86,9 @@ export default {
     },
 
     computed: {
+        isLegacy(){
+            return this.service.type !== undefined
+        },
         isCompactHeader(){
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
         },
@@ -186,7 +190,9 @@ export default {
             
             this.$emit('back', this.relations.prev,{selectedSlot:false})
         },
-
+        confirmSwitch(){
+            return this.isLegacy ? this.confirmLegacy():this.confirm()
+        },
         confirm(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'confirmation')

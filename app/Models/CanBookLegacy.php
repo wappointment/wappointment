@@ -2,7 +2,7 @@
 
 namespace Wappointment\Models;
 
-use Wappointment\Services\Appointment as AppointmentService;
+use Wappointment\Services\AppointmentLegacy as AppointmentServiceLegacy;
 use Wappointment\Services\Service;
 
 trait CanBookLegacy
@@ -11,6 +11,7 @@ trait CanBookLegacy
     {
         $startTime = $bookingRequest->get('time');
         $type = $bookingRequest->get('type');
+
         $service = Service::get();
 
         //test type is allowed
@@ -22,7 +23,7 @@ trait CanBookLegacy
 
         //test that this is bookable
         if ($forceConfirmed) {
-            $hasBeenBooked = AppointmentService::adminBook(
+            $hasBeenBooked = AppointmentServiceLegacy::adminBook(
                 $this,
                 $startTime,
                 $startTime + $this->getRealDuration($service),
@@ -30,7 +31,7 @@ trait CanBookLegacy
                 $service
             );
         } else {
-            $hasBeenBooked = AppointmentService::tryBook(
+            $hasBeenBooked = AppointmentServiceLegacy::tryBook(
                 $this,
                 $startTime,
                 $startTime + $this->getRealDuration($service),
@@ -38,6 +39,8 @@ trait CanBookLegacy
                 $service
             );
         }
+
+
 
         if (!$hasBeenBooked) {
             throw new \WappointmentException('Error cannot book at this time', 1);

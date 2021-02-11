@@ -16,6 +16,7 @@ class LegacyBookingController extends RestController
         }
 
         $appointment = ClientLegacy::book($booking);
+
         if (isset($appointment['errors'])) {
             return WPHelpers::restError('Impossible to proceed with the booking', 500, $appointment['errors']);
         }
