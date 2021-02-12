@@ -105,16 +105,16 @@
                   >{{ elink.label }}</a>
                 </div>
               </div>
-              <div class="dropdown" v-if="definition.multiple_service_type" data-tt="Show selection only when condition is met">
+              <div class="dropdown" v-if="definition.multiple_service_type" :data-tt="selectionIsOn ? 'Show selection only when condition is met':'Select text to enable'">
                 <button
                   class="btn btn-secondary dropdown-toggle"
-                  :class="{ 'active': (nodes.cblockphysical.active()|| nodes.cblockskype.active() || nodes.cblockphone.active() || nodes.cblockzoom.active()) }"
+                   :class="{'disabled':!selectionIsOn, 'active': (nodes.cblockphysical.active()|| nodes.cblockskype.active() || nodes.cblockphone.active() || nodes.cblockzoom.active())}"
                   type="button"
                   @click="toggleDDP('ddpc')"
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
-                >Show only</button>
+                >Shows when</button>
                 <div
                   class="dropdown-menu"
                   :class="{'show':ddpc}"
@@ -124,22 +124,22 @@
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockphone.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockphone')"
-                  >For Phone appointments</a>
+                  >Phone appointments</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockskype.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockskype')"
-                  >For Skype appointments</a>
+                  >Skype appointments</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockzoom.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockzoom')"
-                  >For Video meetings appointments</a>
+                  >Video appointments</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockphysical.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockphysical')"
-                  >For appointments at an address</a>
+                  >Appointment at an address</a>
                 </div>
               </div>
             </div>

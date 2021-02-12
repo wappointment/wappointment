@@ -11,6 +11,6 @@ export default class ConditionalPhoneBlockNode extends ConditionalBlockNode {
 	}
 
 	get tooltip() {
-		return 'Show only for phone appointment'
+		return 'Shows when phone appointment'
 	}
 }

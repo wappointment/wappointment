@@ -11,6 +11,6 @@ export default class ConditionalZoomBlockNode extends ConditionalBlockNode {
 	}
 
 	get tooltip() {
-		return 'Show only for Video Meetings appointment'
+		return 'Shows when Video appointment'
 	}
 }
