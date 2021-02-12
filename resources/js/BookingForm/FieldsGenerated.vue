@@ -5,11 +5,11 @@
                 <WapImage faIcon="map-marked-alt" size="md" />
             </BookingAddress>
         </div>
-        <div v-for="fieldObject in customFields" class="wap-field">
+        <div v-if="customFields.length > 0" v-for="fieldObject in customFields" class="wap-field">
             <TextInput v-if="showOnlyIfEmailOrText(fieldObject)" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="fieldObject" v-model="bookingFormExtended[fieldObject.namekey]" />
+            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
             <div class="field-required"  v-if="fieldObject.type == 'phone'" :class="hasError(fieldObject.namekey)">
-                <label :for="phoneId">{{options.form.phone}}</label>
+                <label :for="phoneId">{{getFieldObject(fieldObject).name}}</label>
                 <PhoneInput 
                 :phone="bookingFormExtended[fieldObject.namekey]"
                 :countries="getPhoneCountries"
@@ -19,15 +19,15 @@
                 />
             </div>
             <Checkboxes v-if="'checkboxes' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="fieldObject" v-model="bookingFormExtended[fieldObject.namekey]" />
+            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
             <Radios v-if="'radios' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="fieldObject" v-model="bookingFormExtended[fieldObject.namekey]" />
+            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
             <Checkbox v-if="'checkbox' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="fieldObject" v-model="bookingFormExtended[fieldObject.namekey]" />
+            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
             <Dropdown v-if="'select' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="fieldObject" v-model="bookingFormExtended[fieldObject.namekey]" />
+            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
              <TextArea v-if="'textarea' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="fieldObject" v-model="bookingFormExtended[fieldObject.namekey]" />
+            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
         </div>
     </div>
 </template>
@@ -63,11 +63,12 @@ export default {
         phoneStatus:{},
         mounted: false,
         locationObj: null,
-        phoneId: ''
+        phoneId: '',
+
     }),
     created(){
         
-        if(this.options !== undefined && this.options.demoData !== undefined){
+        if(this.isDemo){
             this.bookingFormExtended = this.options.demoData.form 
         }
 
@@ -83,7 +84,6 @@ export default {
 
                 for (const key in newValue) {
                     if (newValue.hasOwnProperty(key)) {
- 
                         let result = this.isFieldValid(key, newValue[key])
                         if(result !== true){
                             this.errorsOnFields[key] = result
@@ -97,9 +97,13 @@ export default {
                 this.$emit('changed', this.bookingFormExtended, this.errorsOnFields)
             },
             deep: true
-        }
+        },
     },
     computed: {
+        isDemo(){
+            return this.options !== undefined && this.options.demoData !== undefined
+        },
+        
         isLegacy(){
             return this.service.type !== undefined
         },
@@ -130,6 +134,14 @@ export default {
         }
     },
     methods: {
+
+        getFieldObject(fieldObject){
+            let namekey = fieldObject.namekey=='name' ? 'fullname':fieldObject.namekey
+            if(this.isDemo && this.options.form[namekey] !== undefined){
+                fieldObject.name = this.options.form[namekey]
+            }
+            return fieldObject
+        },
         initForm(){
             this.locationObj = Object.assign({},this.convertLocationLegacy(this.location))
 

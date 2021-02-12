@@ -222,11 +222,9 @@ export default {
             
         },
         checkIfRequiresScrollDelay(){
-            //console.log('first')
             setTimeout(this.checkIfRequiresScroll, 200)
         },
         checkIfRequiresScroll(){
-            //console.log('second')
             if(this.step !== null) {
                 return true //booking widget editor requires scroll always
             }
@@ -773,9 +771,11 @@ export default {
     padding: .375em .75em;
 }
 
-.wap-front .phone-field input.tel, .wap-front input.form-control {
+.wap-front .phone-field input.tel, 
+.wap-front input.form-control {
     font-size: 16px;
     height: calc(2.25em + 2px);
+    margin: 0;
 }
 
 .wap-front .form-control::-ms-expand {

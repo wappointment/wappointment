@@ -113,7 +113,6 @@ export default {
             return await this.serviceWPMedia.call('get', params)
         },
         loadedMedias(r){
-            //console.log('r',r)
             this.total = parseInt(r.headers['x-wp-total'])
 
             this.pages = parseInt(r.headers['x-wp-totalpages'])

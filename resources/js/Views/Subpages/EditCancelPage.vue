@@ -201,12 +201,10 @@ export default {
     },
 
     successRequest(result) {
-      //console.log('successRequest',result.data)
     },
 
     // this method is called after response wrong from request make by execute method
     failedRequest(error) {
-      //console.log('failedRequest',error)
     },
 
     savedWidgetSuccess(s){

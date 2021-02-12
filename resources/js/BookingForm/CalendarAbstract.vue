@@ -426,16 +426,12 @@ export default {
                     start = momenttz.tz(this.now.clone(), this.currentTz)
                 }
                 until = start.clone().add(1, 'day').startOf('day')
-/*                 console.log('now',this.now.format() )
-                console.log('Today is ', this.todayDay, start.format()) */
-                //let dayIntervals = this.intervalsCollection.get(start, start.clone().endOf('day'), true)
-               //console.log(start.format(), until.format())
+
             }else {
                 let prefixDay = ''
                 let prefixMonth = ''
                 if( daynumber < 10 ) prefixDay = '0' //otherwise invalid moment
                 if( this.realMonthNumber < 10 ) prefixMonth = '0'
-                //console.log(this.yearNumber+'-'+prefixMonth+this.realMonthNumber+'-'+prefixDay+daynumber)
                 start = momenttz.tz(this.yearNumber + '-' + prefixMonth + this.realMonthNumber + '-' + prefixDay+daynumber, this.currentTz).startOf('day')
                 until = start.clone().add(1, 'day')
             }

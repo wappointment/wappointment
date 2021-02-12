@@ -25,7 +25,6 @@ export default {
                 '<p class="text-muted">Register your site on wappointment.com and get <strong> 50% off on all of our <a href="https://wappointment.com/addons" target="_blank">addons</a></strong> (limited time offer)</p>',
             ).then((result) => {
                 if(result === true){
-                    console.log('register site')
                 } 
             })
         },

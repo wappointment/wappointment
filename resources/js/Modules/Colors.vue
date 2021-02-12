@@ -14,7 +14,6 @@ export default {
         },
        hexToRgbA(hex){
         if (typeof hex !== 'string' || nonHexChars.test(hex) || !validHexSize.test(hex)) {
-          console.log('Expected a valid hex string')
           return '#ccc';
         }
         

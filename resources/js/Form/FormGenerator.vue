@@ -322,7 +322,6 @@ export default {
             for (let j = 0; j < values.length; j++) {
                 const value = values[j]
                 
-                //console.log('value match',condition.values, value, condition.values.indexOf(value))
                 if(condition.values.indexOf(value) !== -1){
                     at_least_one = true
                 }
@@ -447,8 +446,6 @@ export default {
          },
          runValidation(){
 
-             //this.errorsData = {}
-             //console.log('runvaldiation mholder', this.modelHolder)
              const modelKeys = Object.keys(this.modelHolder)
              this.isValid = true
              for (let i = 0; i < modelKeys.length; i++) {

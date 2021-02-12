@@ -72,10 +72,7 @@ export default {
             if(this.size == 'md'){
                 return '2x'
             }
-  /*           if(['auto', 'md'].indexOf(this.size) !== -1){
-                return ''
-            } */
-            //console.log('this.size', Date.now(), this.size)
+
             return this.size
         },
         getClassIcon(){

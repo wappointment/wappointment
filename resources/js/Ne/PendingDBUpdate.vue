@@ -1,5 +1,5 @@
 <template>
-  <div >
+  <div class="wappo-db-update">
       <WPNotice>
           <p>Wappointment has improvements requiring a Database update: <button class="btn btn-primary btn-sm" @click="runMigrate">Run update</button></p>
       </WPNotice>
@@ -37,3 +37,8 @@ export default {
     }
 }
 </script>
+<style>
+.wappo-db-update .sub{
+    font-size: .9rem;
+}
+</style>

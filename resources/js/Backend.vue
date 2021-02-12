@@ -38,7 +38,7 @@ export default {
     }),
     created(){
         if(window.wappointmentAdmin.hasPendingUpdates!== undefined ){
-            this.db_update = true
+            this.db_update = window.wappointmentAdmin.hasPendingUpdates
         }
         if(window.wappointmentAdmin.hasMessages!== undefined ){
             this.has_messages = window.wappointmentAdmin.hasMessages

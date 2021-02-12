@@ -47,14 +47,12 @@ class Status
         return substr(WAPPOINTMENT_VERSION, 0, 3 - strlen(WAPPOINTMENT_VERSION));
     }
 
-
     public static function hasPendingUpdates()
     {
         $current_version = self::dbVersion();
 
         return version_compare($current_version, self::$db_version_required) < 0;
     }
-
 
     public static function hasMessages()
     {

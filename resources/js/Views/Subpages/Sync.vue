@@ -1,10 +1,10 @@
 <template>
     <div class="container-fluid" v-if="dataLoaded">
         <div class="d-flex">
-            <h1>Connect Personal Calendar</h1>
+            <h1>Connect External Calendar</h1>
         </div>
         
-        <p class="h6 text-muted">Connect your personal calendar, to automatically lock times when you're already busy</p>
+        <p class="h6 text-muted">Connect your external calendars, to automatically lock times when you're already busy</p>
         <div id="buttons-block">
             <div>
                 <label for="calurl">Paste your calendar URL</label>

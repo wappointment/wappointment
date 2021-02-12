@@ -105,6 +105,9 @@ export default {
         dataChanged(dataNew){
             this.showResult = dataNew
             this.selection = this.showResult.type
+            if(this.options.demoData !== undefined && this.selection === undefined && this.service.type !== undefined){
+                this.selection = this.service.type[0]
+            }
         }
     }
 }

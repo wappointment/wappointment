@@ -178,7 +178,6 @@ export default {
         },
 
         savedError(result){
-            //console.log('savedError', result)
         },
 
         removeLocation(item,idx){

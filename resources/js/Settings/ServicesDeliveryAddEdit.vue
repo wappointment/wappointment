@@ -117,7 +117,6 @@ export default {
         if(this.element !== null) {
             this.modelHolder = Object.assign({}, this.element)
         }
-        console.log('this.modelHolder',this.modelHolder)
         
     },
     computed:{
@@ -137,7 +136,6 @@ export default {
             //refresh providers
         },
         savedError(result){
-            //console.log('savedError', result)
         },
     }  
 }

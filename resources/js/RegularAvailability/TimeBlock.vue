@@ -82,7 +82,6 @@ export default {
 
         },
         onResizeSnapped(y,h){
-            //console.log('onResizeSnapped','y',y,'h',h)
             this.start = this.getHourStart(y)
             this.end = this.getHourEnd(y,h)
         },

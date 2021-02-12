@@ -107,12 +107,10 @@ export default {
       setSkeletonProperties(){
 
         let daysProperties = this.daysProperties
-        //console.log('daysProperties',daysProperties)
         window.jQuery('.fc-content-skeleton tr td').each(function( index ) {
           if(window.jQuery(this).hasClass('fc-axis')){
 
           }else{
-            //console.log((index+1)+' '+daysProperties[index+1])
             if(daysProperties[index-1]=='fc-past') {
               window.jQuery(this).addClass('skel-past')
             }

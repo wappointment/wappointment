@@ -79,7 +79,9 @@ export default {
         if(this.options!== undefined && this.options.demoData !== undefined){
             this.disabledButtons = true
         }
-        
+        if(this.isLegacy && (this.service.type.length == 1 || this.disabledButtons) ){
+            this.selectType(this.service.type[0])
+        }
     },
     mounted(){
         this.mounted = true
@@ -126,7 +128,7 @@ export default {
         },
         
         legacyServiceHasTypes(){
-            return this.service.type !== undefined && this.service.type.length > 1
+            return this.isLegacy && this.service.type.length > 1
         },
 
         showFormInputs(){
@@ -154,6 +156,7 @@ export default {
             this.bookingForm = {}
             this.bookingForm = bookingForm
             this.bookingForm.type = type
+            this.dataDemoChanged(this.bookingForm)
             this.$emit('selectedLocation', type)
             this.canDisplayInputs = false
             setTimeout(this.setCanDisplay, 100);
@@ -176,9 +179,11 @@ export default {
         changedBF(newval, errors){
             this.bookingFormExtended = newval
             this.errorsOnFields = errors
+            this.dataDemoChanged(newval)
         },
         dataDemoChanged(newValue){
             if(this.disabledButtons) {
+                newValue.type = this.selection
                 this.options.eventsBus.emits('dataDemoChanged', newValue)
             } 
         },

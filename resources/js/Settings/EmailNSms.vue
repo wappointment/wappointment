@@ -75,8 +75,6 @@ export default {
  props:['tablabel'],
   created(){
     this.mainCrumbLabel = this.tablabel
-
-    //console.log('settings reminder created')
     this.refreshInitValue()
   },
   computed: {
@@ -146,7 +144,6 @@ export default {
       this.remindersLoaded = false
       this.loading = true
       this.resetModel();
-      //console.log('refreshInitvalue start 2 ')
       if(this.remindersLoaded === false) {
         this.request(this.initValueRequest, undefined,undefined,false,  this.loaded)
       }

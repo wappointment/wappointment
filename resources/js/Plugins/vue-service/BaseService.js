@@ -51,7 +51,6 @@ class BaseService {
     }
 
     replaceModernVerbs(params){
-        //console.log('params.method',params.method)
         if(['put','patch','delete'].indexOf(params.method) !== -1){
             params.url += '/'+ params.method
             params.method = 'post'

@@ -235,7 +235,6 @@ export default {
             this.eventsBus.emits('customfieldsUpdate', fieldsEmit)
         },
         savedError(result){
-            //console.log('savedError', result)
         },
         
         async saveCFRequest(params) {

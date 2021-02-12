@@ -74,7 +74,6 @@
             },
             fireMethod(...options) {
                 if(!this.apiReady()) {
-                    //console.log('API not ready for call fireMethod', ...options)
                 }
                 if(options.indexOf('today') !== -1) return this.getApi.today()
                 if(options.indexOf('next') !== -1) return this.getApi.gotodate()
@@ -87,7 +86,6 @@
 
              option(optioname, optionvalue) {
                  if(!this.apiReady()) {
-                    //console.log('API not ready for call option', optioname, optionvalue)
                 }
 
                 return this.getApi.setOption(optioname, optionvalue)

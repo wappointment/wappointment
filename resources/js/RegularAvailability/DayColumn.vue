@@ -131,7 +131,6 @@ export default {
         },
       draggingMove(e){
 
-         //if(this.isDragging)console.log(e)
          if(!this.isDragging || !(e.target.className=='events' || e.target.className=='drag-helper' || e.target.className=='ghost')) {
              return;
          }
@@ -151,9 +150,8 @@ export default {
     
       },
       
-      getHeight(timeBlock){
-          //console.log('this.heightUnit',this.heightUnit)
-          return (timeBlock[1]-timeBlock[0]) 
+      getHeight(timeBlockData){
+          return (timeBlockData[1]-timeBlockData[0]) 
       },
 
       getY(hour){

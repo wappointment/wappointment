@@ -46,7 +46,6 @@ export default {
         }, 
 
         appointmentRescheduled(result){
-            //console.log('result',result.data)
             let data = result.data
             data.appointmentkey = this.timeprops.appointmentkey
             data.time = this.selectedSlot

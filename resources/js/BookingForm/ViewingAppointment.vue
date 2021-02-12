@@ -226,7 +226,6 @@ export default {
             this.appointmentCanceled = true
         },
         appointmentCancelError(){
-            //console.log('couldnt cancel')
         },
         rescheduleEvent(){
             if(this.disabledButtons) return false

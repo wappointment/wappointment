@@ -341,7 +341,6 @@ export default {
         },
 
         getFieldAdminInfos(section, key, catid = false){
-            // console.log('getFieldsAdminsINfos', section, key, this.widgetFields[section])
             if(section == 'colors'){
                 let data = (this.widgetFields !== null && this.widgetFields[section]!== undefined && this.widgetFields[section]!== undefined && this.widgetFields[section][key] !== undefined) ? this.widgetFields[section][key]:false
                 return data !== false  && data.fields !== undefined && data.fields[catid] !== undefined? data.fields[catid]:data
@@ -354,9 +353,6 @@ export default {
 
         getFieldTip(section, key, catid = false){
             let fieldInfos = this.getFieldAdminInfos(section, key, catid)
-            // if(section == 'colors') {
-            //     console.log('getFieldTip',section, key,fieldInfos)
-            // }
              
             return fieldInfos.tip !== undefined ? fieldInfos.tip : ''
         },
