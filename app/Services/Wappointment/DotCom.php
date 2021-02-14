@@ -22,10 +22,11 @@ class DotCom extends API
     public function checkForUpdates()
     {
         // 0 - only check if site connected
-        if (!empty($this->site_key)) {
+        if (!empty($this->site_key) && WPHelpers::getOption('appointments_must_refresh')) {
             // 1 - retrieve appointments data
             $appointments = $this->getAppointments();
             if (empty($appointments)) {
+                $this->clearMustRefresh();
                 return false;
             }
 
@@ -60,6 +61,17 @@ class DotCom extends API
                 WPHelpers::setOption('appointments_update', $appointments);
             }
         }
+        $this->clearMustRefresh();
+    }
+
+    public function clearMustRefresh()
+    {
+        WPHelpers::setOption('appointments_must_refresh', false);
+    }
+
+    public function setMustRefresh()
+    {
+        WPHelpers::setOption('appointments_must_refresh', true);
     }
 
     public function notifyReset()
@@ -156,6 +168,7 @@ class DotCom extends API
         $result = $this->processResponse($response);
         if ($result) {
             $appointment->sentToDotCom();
+            $this->setMustRefresh();
             return ['message' => 'Appointment created!'];
         } else {
             throw new \WappointmentException("Failed creating", 1);
@@ -171,6 +184,7 @@ class DotCom extends API
 
         $result = $this->processResponse($response);
         if ($result) {
+            $this->setMustRefresh();
             return ['message' => 'Appointment updated!'];
         } else {
             throw new \WappointmentException("Failed updating", 1);
@@ -188,6 +202,7 @@ class DotCom extends API
 
         $result = $this->processResponse($response);
         if ($result) {
+            $this->setMustRefresh();
             return ['message' => 'Appointment deleted!'];
         } else {
             throw new \WappointmentException("Failed deleting", 1);
