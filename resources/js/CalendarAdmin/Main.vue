@@ -362,7 +362,7 @@ export default {
         if(this.viewingFreeSlot){
           p.viewingFreeSlot = true
         }
-          return await this.serviceEvent.call('get', p, {
+          return await this.serviceEvent.call('list', p, {
             'cal-maxH': this.maxHour,
             'cal-minH': this.minHour,
             'cal-duration': this.selectedDuration,

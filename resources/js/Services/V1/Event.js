@@ -7,9 +7,9 @@ export default class ServiceEvent extends ApiV1{
                 method: 'post', 
                 route: 'events'
             },
-            get: {
-                method: 'get',
-                route: 'events'
+            list: {
+                method: 'post',
+                route: 'events/list'
             },
             patch: {
                 method: 'patch',
