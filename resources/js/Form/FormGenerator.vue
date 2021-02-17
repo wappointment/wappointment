@@ -140,11 +140,9 @@ export default {
     },
     methods: {
         refresh(){
-            console.log('this.errorsData a ',this.errors, Object.keys(this.errors).length)
             if(Object.keys(this.errors).length > 0){
                 this.errorsData = Object.assign({}, this.errors)
                 this.submitted = true
-                console.log('this.errorsData b',this.errorsData)
             }
             
             if(this.modelHolder === null || this.replaceRefresh === true){
