@@ -7,24 +7,30 @@ use Wappointment\ClassConnect\SoftDeletes;
 
 class Service extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, CanLimit;
     protected $dates = ['deleted_at'];
     protected $table = 'wappo_services';
     protected $with = ['locations'];
     protected $visible = ['id', 'name', 'options', 'locations', 'sorting'];
     protected $hidden = ['pivot'];
-    protected $fillable = [
-        'name', 'options', 'sorting'
-    ];
-
+    protected $fillable = ['name', 'options', 'sorting'];
     protected $casts = [
         'options' => 'array',
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->limited = 3;
+    }
+
 
     public function locations()
     {
         return $this->belongsToMany('Wappointment\Models\Location', 'wappo_service_location');
     }
+
 
     public function hasDuration($duration)
     {

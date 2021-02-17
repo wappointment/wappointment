@@ -28,15 +28,16 @@ export default {
         },
 
         demoConfigure(step_name){
-            
+            let comp_data_step = this.isLegacy ? this.getChildComponentDataForStepLegacy(step_name, this.options.editionsSteps): this.getChildComponentDataForStep(step_name, this.options.editionsSteps)
             let component_name = window.wappointmentExtends.filter('BFDemoGetChildComponentForStep', this.getChildComponentForStep(step_name), {step_name: step_name} ) 
-            let component_data = window.wappointmentExtends.filter('BFDemoGetChildComponentDataForStep', this.getChildComponentDataForStep(step_name, this.options.editionsSteps), 
+            let component_data = window.wappointmentExtends.filter('BFDemoGetChildComponentDataForStep', comp_data_step, 
             {step_name: step_name, bookingFormObject: this, editionsSteps: this.options.editionsSteps}) 
 
             this.childChangedStep(component_name ,component_data)
         },
 
-        getChildComponentDataForStep(step_name, editionsSteps){
+        getChildComponentDataForStepLegacy(step_name, editionsSteps){
+
             let data = {}
             let calendar_at = editionsSteps.findIndex((element) => element.key == 'selection')
             let form_at = editionsSteps.findIndex((element) => element.key == 'form')
@@ -68,7 +69,55 @@ export default {
             return data
         },
 
-        getChildComponentForStep(step_name){
+        getChildComponentDataForStep(step_name, editionsSteps){
+            let data = {}
+
+            let service_selection = editionsSteps.findIndex((element) => element.key == 'service_selection')
+            let duration_selection = editionsSteps.findIndex((element) => element.key == 'service_duration')
+            let location_selection = editionsSteps.findIndex((element) => element.key == 'service_location')
+            let calendar_at = editionsSteps.findIndex((element) => element.key == 'selection')
+            let form_at = editionsSteps.findIndex((element) => element.key == 'form')
+            let confirmation_at = editionsSteps.findIndex((element) => element.key == 'confirmation')
+
+            let cursor_at = editionsSteps.findIndex((element) => element.key == step_name)
+
+            if(cursor_at < calendar_at) {
+                data.selectedSlot = false
+                data.appointmentSaved = false
+                data.dataSent = {}
+            }
+
+            if(cursor_at > 0) {
+                data.service = false
+                data.duration = false
+                data.location = false
+            }
+
+            if(cursor_at > service_selection) {
+                data.service = this.services[0]
+            }
+            if(cursor_at > duration_selection) {
+                data.duration = data.service.options.durations[0].duration
+            }
+            if(cursor_at > location_selection) {
+                data.location =  data.service.locations[0]
+            }
+
+            if(cursor_at > calendar_at) {
+                data.selectedSlot = this.getSlotAvailableForDemo()
+                
+            }
+            
+            if(cursor_at > form_at) {
+                data.appointmentSaved = true
+                
+                data.dataSent = this.passedDataSent !== null ? this.passedDataSent:this.options.demoData.form
+            }
+
+            return data
+        },
+
+        getChildComponentForStepLegacy(step_name){
             switch (step_name) {
                 case 'selection':
                     return 'BookingCalendar'
@@ -77,6 +126,19 @@ export default {
                 case 'confirmation':
                     return 'BookingFormConfirmation'
             }
+        },
+
+        getChildComponentForStep(step_name) {
+
+            switch (step_name) {
+                case 'service_selection':
+                    return 'BookingServiceSelection'
+                case 'service_duration':
+                    return 'BookingDurationSelection'
+                case 'service_location':
+                    return 'BookingLocationSelection'
+            }
+            return this.getChildComponentForStepLegacy(step_name)
         },
 
         getSlotAvailableForDemo(){

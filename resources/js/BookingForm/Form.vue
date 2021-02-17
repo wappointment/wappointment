@@ -53,9 +53,10 @@ import MixinTypeSelected from './MixinTypeSelected'
 import WappoServiceBooking from '../Services/V1/BookingN'
 import FieldsGenerated from './FieldsGenerated'
 import FormMixinLegacy from './FormMixinLegacy'
+import MixinLegacy from './MixinLegacy'
 export default {
     extends: AbstractFront,
-    mixins: [ Strip, MixinTypeSelected, FormMixinLegacy],
+    mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations', 'appointment_starts_at',
     'duration', 'location', 'custom_fields'],
     components: {
@@ -79,18 +80,21 @@ export default {
         if(this.options!== undefined && this.options.demoData !== undefined){
             this.disabledButtons = true
         }
-        if(this.isLegacy && (this.service.type.length == 1 || this.disabledButtons) ){
-            this.selectType(this.service.type[0])
+        if(this.isLegacy){
+            if(this.service.type.length == 1 || this.disabledButtons){
+                this.selectType(this.service.type[0])
+            }
+        }else{
+            this.setCanDisplay(this.location)
         }
+        
     },
+
     mounted(){
         this.mounted = true
     },
 
     computed: {
-        isLegacy(){
-            return this.service.type !== undefined
-        },
         isCompactHeader(){
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
         },

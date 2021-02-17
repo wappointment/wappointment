@@ -14,7 +14,7 @@ class Services implements ServiceInterface
 {
     public static function all()
     {
-        $services = ServiceModel::orderBy('sorting')->get();
+        $services = ServiceModel::orderBy('sorting')->fetch();
         return $services->filter(function ($service, $key) {
             return count($service->locations) > 0;
         })->all();
@@ -24,7 +24,7 @@ class Services implements ServiceInterface
     {
         $validator = new RakitValidator;
         $validation_messages = [
-            'location' => 'Please select how do you perform the service',
+            'locations_id' => 'Please select how do you deliver the service',
         ];
         $validator->setMessages(apply_filters('wappointment_service_validation_messages', $validation_messages));
         $validator->addValidator('hasvalues', new HasValues());
@@ -38,6 +38,7 @@ class Services implements ServiceInterface
             'options.durations.*.duration' => 'required|numeric',
             'locations_id' => 'required|array',
         ];
+
         $validationRules = apply_filters('wappointment_service_validation_rules', $validationRules);
         $validation = $validator->make($serviceData, $validationRules);
 
@@ -71,6 +72,10 @@ class Services implements ServiceInterface
         $serviceDB = null;
         if (!empty($serviceData['id'])) {
             $serviceDB = ServiceModel::find($serviceData['id']);
+        } else {
+            if (!ServiceModel::canCreate()) {
+                throw new \WappointmentValidationException("Cannot save Services");
+            }
         }
 
         $serviceData = apply_filters('wappointment_service_before_saved', $serviceData, $serviceDB);
@@ -107,10 +112,12 @@ class Services implements ServiceInterface
         ServiceModel::where('sorting', '>', $old_service->sorting)->decrement('sorting');
         return ServiceModel::where('id', $service_id)->delete();
     }
+
     public static function getService($service = false, $service_id = false)
     {
         return self::get($service_id);
     }
+
     public static function get($service_id = false)
     {
         return ServiceModel::find($service_id);

@@ -36,7 +36,7 @@
 
                 <div class="wrap-calendar p-2" :class="'step-'+currentStep">
                     <div v-if="loading">
-                        <Loader></Loader>
+                        <Loader />
                     </div>
                     <div :class="{'hide-loading':loading}">
                         <div v-if="currentStep == loadingStep && isCompVisible(currentStep)">
@@ -83,6 +83,11 @@ BookingFormHeader.components = {DurationCell}
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 import browserLang from '../Standalone/browserLang'
 import AppointmentTypeSelection from './AppointmentTypeSelection'
+import BookingServiceSelection from './ServiceSelection'
+import BookingDurationSelection from './DurationSelection'
+import BookingLocationSelection from './LocationSelection'
+import MixinLegacy from './MixinLegacy'
+
 
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
@@ -90,13 +95,16 @@ let compDeclared = {
     'BookingCalendar': BookingCalendar,
     'BookingFormInputs':BookingFormInputs,
     'BookingFormHeader': BookingFormHeader,
+    'BookingServiceSelection': BookingServiceSelection,
+    'BookingDurationSelection': BookingDurationSelection,
+    'BookingLocationSelection': BookingLocationSelection,
     'DurationCell': DurationCell,
     'abstractFront':AbstractFront,
     'BookingFormSummary': BookingFormSummary,
     'AppointmentTypeSelection': AppointmentTypeSelection
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
-let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Colors, Dates] )
+let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Colors, Dates, MixinLegacy] )
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
@@ -145,6 +153,7 @@ export default {
     },
 
     computed: {
+
         isCompactHeader(){
             return this.options.general === undefined || !this.__isEmpty(this.options.general.check_header_compact_mode)
         },
@@ -219,7 +228,6 @@ export default {
         loadStep(step){
             this.loadingStep = step
             this.fetchFormattedDate()
-            
         },
         checkIfRequiresScrollDelay(){
             setTimeout(this.checkIfRequiresScroll, 200)
@@ -327,8 +335,6 @@ export default {
             return true
         },
 
-
-
         refreshClick() {
             if(!this.isStepSlotSelection) {
                 return false
@@ -357,7 +363,7 @@ export default {
             this.dataloaded = true
 
             this.setServiceDurationLocation()
-
+    
             this.setComponentLists()
 
             if(this.rescheduling) {
@@ -369,7 +375,9 @@ export default {
                 this.location = this.rescheduleData.location
 
             }else{
-                this.currentStep = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', {service:this.service, duration:this.duration, location: this.location})
+                let stepdata = {service:this.service, duration:this.duration, location: this.location}
+                let stepfirst = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', stepdata)
+                this.currentStep = this.selectFirstStep(stepfirst, stepdata)
                 this.autoSelectLocation()
             }
             this.$emit('changedStep',this.currentStep)
@@ -379,6 +387,13 @@ export default {
                 this.loadedInit(this.step)
             }
             
+        },
+
+        selectFirstStep(step_name, params) {
+            if(params.service === false) return 'BookingServiceSelection'
+            if(params.service !== false && params.duration === false) return 'BookingDurationSelection'
+            if(params.service !== false && params.duration !== false && params.location === false) return 'BookingLocationSelection'
+            return step_name
         },
 
         autoSelectLocation(){
@@ -407,7 +422,9 @@ export default {
         setServiceDurationLocation(){
             this.services = this.viewData.services
 
-            this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
+            if(this.isLegacy || this.services.length <2){
+                this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
+            }
             
             if(this.service !== false){
                 this.duration = this.getFirstDuration(this.service)
@@ -526,10 +543,86 @@ export default {
 
                 },
             }
-            
+            if(!this.isLegacy){
+                componentsList = this.updateComponentList(componentsList)
+            }
             this.componentsList = window.wappointmentExtends.filter('componentsList', componentsList,
              {service: this.service, rescheduling:this.rescheduling} )
         },
+
+        updateComponentList(componentsList){
+
+            componentsList['BookingFormInputs'].props.custom_fields = "viewData.custom_fields"
+
+            componentsList['BookingCalendar'].props.location = "location"
+            componentsList['BookingCalendar'].props.viewData = "viewData"
+
+            componentsList['BookingServiceSelection'] = {
+                name: 'BookingServiceSelection',
+                conditions: {
+                    'serviceSelected':false,
+                    'appointmentSaved':false,
+                    'rescheduling':false,
+                },
+                props: {
+                    services:"services",
+                    options: 'options',
+                    viewData: 'viewData'
+                },
+                listeners: {
+                    serviceSelected:'childChangedStep'
+                },
+                relations:{
+                    'next': 'BookingDurationSelection',
+                }
+            }
+
+            componentsList['BookingDurationSelection'] = {
+                name: 'BookingDurationSelection',
+                conditions: {
+                    'serviceSelected':true,
+                    'durationSelected':false,
+                    'appointmentSaved':false,
+                    'rescheduling':false,
+                },
+                props: {
+                    service:"service",
+                    options: 'options'
+                },
+                listeners: {
+                    durationSelected:'childChangedStep',
+                    backToService:'childChangedStep'
+                },
+                relations:{
+                    'next': 'BookingLocationSelection',
+                    'prev': 'BookingServiceSelection',
+                }
+            }
+
+            componentsList['BookingLocationSelection'] = {
+                name: 'BookingLocationSelection',
+                conditions: {
+                    'serviceSelected':true,
+                    'durationSelected':true,
+                    'locationSelected':false,
+                    'appointmentSaved':false,
+                    'rescheduling':false,
+                },
+                props: {
+                    service:"service",
+                    options: 'options'
+                },
+                listeners: {
+                    locationSelected:'childChangedStep',
+                    backToDuration:'childChangedStep'
+                },
+                relations:{
+                    'next': 'BookingCalendar',
+                    'prev': 'BookingDurationSelection',
+                }
+            }
+            return componentsList
+        }
         
         
     }

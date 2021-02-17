@@ -1,5 +1,4 @@
 <template>
-    <!-- <div @mouseover="showControls=true" @mouseout="showControls=false"> -->
     <div>
         <div v-if="label" class="mb-2">
             {{ label}} 
@@ -19,7 +18,6 @@
                             <span data-tt="Remove">
                                 <span class="wicon trash" @click.stop.capture="removeCF(item, idx)"></span>
                             </span>
-
                         </div>
                     </transition>
                 </div>

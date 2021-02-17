@@ -18,6 +18,11 @@
                 </div>
             </div>
         </div>
+        <div class="small text-danger" v-if="hasErrors">
+            <div v-for="error in errors">
+                {{ error }}
+            </div>
+        </div>
     </div>
 </template>
 
@@ -122,15 +127,6 @@ export default {
                   { model:'type', values: [2] }
                 ],
             },
-            {
-                type: 'opt-ss-customfields',
-                label: 'When client selects this modality, display following fields',
-                model: 'options.fields',
-                bus: true,
-                cast: Array,
-                watchParent: 'type',
-                checklistOptions: { value:'namekey'}
-            },
           ]
     }),
     computed: {
@@ -150,6 +146,9 @@ export default {
 
             if(this.isItemChecked(item)){
                 classses+= ' selected'
+            }
+            if(this.hasErrors){
+                 classses+= ' is-invalid'
             }
             return classses
         },

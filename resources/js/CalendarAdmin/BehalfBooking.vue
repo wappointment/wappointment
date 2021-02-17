@@ -3,10 +3,21 @@
         <StyleGenerator :options="viewData.widget" wrapper="wrapperAdmin"></StyleGenerator>
         <div class="mb-2">
             <h3>Book an appointment for your client</h3>
-            <div v-if="service" class="selected-service">
-                <span class="text-primary" data-tt="Change service" @click.stop.prevent="changeService">{{ service.name }}</span> 
-                <span :class="[hasMoreThanOneDuration ? 'text-primary':'text-dark']" v-if="duration" :data-tt="hasMoreThanOneDuration ? 'Change duration':false" @click.stop.prevent="changeDuration">{{ duration }}min</span> 
-                <span :class="[hasMoreThanOneLocation ? 'text-primary':'text-dark']" v-if="location" :data-tt="hasMoreThanOneLocation ? 'Change location':false" @click.stop.prevent="changeLocation">{{ location.name }}</span>
+            <div v-if="service" class="selected-service d-flex">
+                <span class="d-flex align-items-center" 
+                :class="[hasMoreThanOneService ? 'wbtn wbtn-cell wbtn-secondary wbtn-service':'wbtn wbtn-cell btn-outline-secondary disabled text-muted']" data-tt="Change service" @click.stop.prevent="changeService">
+                    <WapImage v-if="serviceHasIcon" :element="service" :desc="service.name" size="md" /> 
+                    <span class="ml-2">{{ service.name }}</span>
+                </span> 
+                <span class=" d-flex align-items-center wbtn wbtn-cell wbtn-secondary wbtn-service" 
+                 v-if="duration" :data-tt="hasMoreThanOneDuration ? 'Change duration':false" @click.stop.prevent="changeDuration">
+                    {{ duration }}min
+                </span> 
+                <span class="d-flex align-items-center" 
+                :class="[hasMoreThanOneLocation ? 'wbtn wbtn-cell wbtn-secondary wbtn-service':'wbtn wbtn-cell btn-outline-secondary disabled text-muted']" v-if="location" :data-tt="hasMoreThanOneLocation ? 'Change location':false" @click.stop.prevent="changeLocation">
+                    <WapImage :element="location" :desc="location.name" size="md" /> 
+                    <span class="ml-2">{{ location.name }}</span>
+                </span>
             </div>
             <div v-if="!service && hasMoreThanOneService">
                 <ServiceSelection @serviceSelected="serviceSelected" :options="viewData.widget" :services="viewData.services" :admin="true"/>
@@ -19,7 +30,7 @@
                 </div>
             </div>
             
-            <div v-if="service && !location" class="p-2">
+            <div v-if="service && duration && !location" class="p-2">
                 <LocationSelection v-if="hasMoreThanOneLocation"  @locationSelected="locationSelected"  :service="service"/>
             </div>
             
@@ -27,11 +38,11 @@
                 <div v-if="clientSelected">
                     <div class="d-flex align-items-center">
                         <div class="mr-2">
-                        <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name">
+                            <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name" />
                         </div>
                         <div>
-                        <h6 class="m-0">{{ clientSelected.name }}</h6>
-                        <small>{{ clientSelected.email }}</small>
+                            <h6 class="m-0">{{ clientSelected.name }}</h6>
+                            <small>{{ clientSelected.email }}</small>
                         </div>
                     </div>
                     <a class="text-primary" href="javascript:;" @click="clearClientSelection">Change client</a>
@@ -50,20 +61,20 @@
 
                         <div>
                             <div class="dd-search-results" v-if="showDropdown" >
-                            <div v-if="clientsResults.length>0">
-                                <div class="btn btn-light d-flex align-items-center" v-for="client in clientsResults" @click="selectClient(client)">
-                                    <div class="mr-2">
-                                    <img class="rounded-circle" :src="client.avatar" :title="client.name">
-                                    </div>
-                                    <div>
-                                    <h6 class="m-0 text-left">{{ client.name }}</h6>
-                                    <small>{{ client.email }}</small>
+                                <div v-if="clientsResults.length>0">
+                                    <div class="btn btn-light d-flex align-items-center" v-for="client in clientsResults" @click="selectClient(client)">
+                                        <div class="mr-2">
+                                            <img class="rounded-circle" :src="client.avatar" :title="client.name">
+                                        </div>
+                                        <div>
+                                            <h6 class="m-0 text-left">{{ client.name }}</h6>
+                                            <small>{{ client.email }}</small>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div v-if="clientSearching">
-                                Loading ...
-                            </div>
+                                <div v-if="clientSearching">
+                                    Loading ...
+                                </div>
                             </div>  
                         </div>
                     </div>
@@ -153,6 +164,12 @@ export default {
 
     },
     computed: {
+        serviceHasIcon(){
+            return this.service.options.icon != ''
+        },
+        locationHasIcon(){
+            return this.location.options.icon != ''
+        },
         isToday(){
             return this.firstDay!== undefined && this.lastDay !== undefined && this.firstDay.unix() < momenttz().unix() && this.lastDay.unix() > momenttz().unix()
         },
@@ -235,7 +252,7 @@ export default {
             }
         },
         clearDropdownDelay(){
-            setTimeout(this.clearDropDown, 100);
+            setTimeout(this.clearDropDown, 100)
         },
         clearDropDown(){
             this.showDropdown = false
@@ -338,7 +355,7 @@ export default {
             }
         },
         changeLocation(){
-            this.location = this.hasMoreThanOneLocation ? false:this.service.locations[0]
+            this.location = this.hasMoreThanOneLocation || this.service === false ? false:this.service.locations[0]
         },
         changeDuration(){
             this.duration = false
@@ -372,3 +389,26 @@ export default {
     }
 }
 </script>
+<style>
+.selected-service{
+    border-radius: .5rem;
+    margin: 1rem 0;
+    padding: .5rem !important;
+    background-color: var(--white);
+    color: var(--dark);
+    display: inline-block;
+    border: 2px dashed var(--primary);
+}
+
+.selected-service .text-dark, .selected-service .text-primary {
+    background-color: var(--secondary);
+    padding: .3em;
+    border-radius: .3em;
+}
+
+#wrapperAdmin .wbtn.wbtn-secondary.wbtn-cell .service-label{
+    text-align: left;
+    margin: 0 .8em;
+}
+
+</style>

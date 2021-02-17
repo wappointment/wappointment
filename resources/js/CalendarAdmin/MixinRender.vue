@@ -1,4 +1,3 @@
-
 <script>
 export default {
 
@@ -186,12 +185,12 @@ export default {
         if(el.hasClass('past-event')){
           return ''
         }
-        
         if(isAppointmentEvent) {
           return '<button class="btn btn-xs btn-light cancelAppointment" data-tt="Cancel appointment" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-dismiss"></span></button>'
         }else{
+          let labelDelete = el.hasClass('calendar') ? 'Mute Event': 'Delete event'
           let spanIcon = el.hasClass('calendar') ? '<span class="dashicons dashicons-controls-volumeoff"></span> ': '<span class="dashicons dashicons-trash"></span>'
-          return '<button data-tt="Mute Event" class="btn btn-xs btn-light deleteElement" data-id="'+el.attr('data-id')+'">'+spanIcon+'</button>'
+          return '<button data-tt="'+labelDelete+'" class="btn btn-xs btn-light deleteElement" data-id="'+el.attr('data-id')+'">'+spanIcon+'</button>'
         }
       },
       getActionButtons(el, isAppointmentEvent){

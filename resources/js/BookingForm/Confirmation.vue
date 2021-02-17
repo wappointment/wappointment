@@ -15,7 +15,7 @@
             </div>
             <div>
                 <span class="wlabel">{{options.confirmation.duration}}</span>
-                <span>{{service.duration}}{{getMinText}}</span>
+                <span>{{calculateDuration}}{{getMinText}}</span>
             </div>
             
         </div>
@@ -23,11 +23,11 @@
         <div v-if="physicalSelected">
             <div class="wdescription">{{options.confirmation.physical}} </div>
             <div class="address-service">
-                <BookingAddress :service="service">
+                <BookingAddress :service="isLegacy ? service:locationObj">
                     <WapImage :faIcon="'map-marked-alt'" size="md" /> </BookingAddress>
             </div>
             
-            <BookingAddress :iframe="true" :service="service">
+            <BookingAddress :iframe="true" :service="isLegacy ? service:locationObj">
                 <WapImage :faIcon="'map-marked-alt'" size="md" /> 
             </BookingAddress>
         </div>
@@ -56,12 +56,14 @@ import BookingAddress from './Address'
 import SaveButtons from './SaveButtons'
 import minText from './minText'
 import MixinTypeSelected from './MixinTypeSelected'
+import MixinLegacy from './MixinLegacy'
+
 export default {
     components: {
         BookingAddress,
         SaveButtons,
     }, 
-    mixins: [minText, MixinTypeSelected],
+    mixins: [minText, MixinTypeSelected, MixinLegacy],
     props: [
         'appointment',
         'service', 
@@ -75,11 +77,22 @@ export default {
     data: () => ({
         showSaveButtons: false,
         showResult: null,
+        locationObj: null
     }),
 
     created(){
         this.showResult = this.result
         this.selection = this.showResult.type
+
+        if(this.showResult.location_id !== undefined) this.showResult.location = this.showResult.location_id
+        if(this.service.locations !== undefined){
+            for (let i = 0; i < this.service.locations.length; i++) {
+                const element = this.service.locations[i]
+                if(element.id == this.showResult.location){
+                    this.locationObj = element
+                }
+            }
+        }
 
         if(this.options.demoData !== undefined){
             this.options.eventsBus.listens('dataDemoChanged', this.dataChanged)
@@ -88,6 +101,13 @@ export default {
         }
     },
     computed: {
+
+        demoDuration(){
+            return this.service.duration !== undefined ? this.service.duration:this.service.options.durations[0].duration
+        },
+        calculateDuration(){
+            return this.appointment === false ? this.demoDuration: this.appointment.duration_sec / 60
+        },
         getClientPhone(){
             return this.showResult.client !== undefined ? this.showResult.client.options.phone : this.showResult.phone
         },
@@ -99,7 +119,28 @@ export default {
             return this.options.confirmation.zoom
             .replace('[meeting_link]', '<a href="'+url+'" target="_blank">')
             .replace('[/meeting_link]', '</a>')
-        }
+        },
+        phoneSelected(){
+             if(this.locationObj!== null){
+                 return this.locationObj.type == 2
+            }else{
+                return this.selectedServiceType == 'phone'
+            }
+        },
+        physicalSelected(){
+            if(this.locationObj!== null){
+                 return this.locationObj.type == 1
+            }else{
+                return this.selectedServiceType == 'physical'
+            }
+        },
+        skypeSelected(){
+            if(this.locationObj!== null){
+                 return this.locationObj.type == 3
+            }else{
+                return this.selectedServiceType == 'skype'
+            }
+        },
     },
     methods: {
         dataChanged(dataNew){
@@ -108,6 +149,7 @@ export default {
             if(this.options.demoData !== undefined && this.selection === undefined && this.service.type !== undefined){
                 this.selection = this.service.type[0]
             }
+            this.selectedServiceType = this.showResult.type
         }
     }
 }

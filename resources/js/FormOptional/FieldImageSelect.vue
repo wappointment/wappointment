@@ -17,8 +17,9 @@
                 <h4 slot="title" class="modal-title">Select an Image</h4>
                 <div>
                     <div v-if="selected_image !== null && selected_image.media_details.sizes !== undefined">
-                        <div class="btn btn-secondary" 
-                        v-for="(image_size, thumbkey) in getImagesThumb(selected_image.media_details.sizes)"  @click="changeSize(image_size)">
+                        <div v-for="(image_size, thumbkey) in getImagesThumb(selected_image.media_details.sizes)"
+                        class="btn btn-secondary mr-2 btn-cell" :class="{selected: isSelectedSize(image_size.key)}"
+                        @click="changeSize(image_size)">
                             <div class="text-center">
                                 <img :src="image_size.source_url" :width="setImageWidth(image_size)" />
                                 <div>
@@ -27,7 +28,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center" v-if="hasImage">
+                    <div class="d-flex align-items-center mt-2" v-if="hasImage">
                         <div class="mr-4">
                             <img :src="wp_image.src" class="img-fluid rounded" :width="preview.width" />
                         </div>
@@ -93,6 +94,7 @@ export default {
         this.preview = this.definition.preview !== undefined ? this.definition.preview:this.preview
     },
     computed:{
+        
         hasImage(){
             return this.wp_image !== undefined && this.wp_image.src !== undefined
         },
@@ -109,6 +111,9 @@ export default {
         }
     },
     methods:{
+        isSelectedSize(testedKey){          
+            return this.selected_size !== null && this.selected_size.key !== undefined && this.selected_size.key == testedKey
+        },
         confirmSelectedImage(){
             this.close()
             this.updatedValue = this.wp_image

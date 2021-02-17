@@ -188,10 +188,40 @@ export default {
         labelActiveStep: '',
         tagRemoved: {},
         showCategory: '',
+        editionsStepsLegacy: [
+            {
+                key: 'button',
+                label: 'Booking button'
+            },
+            {
+                key: 'selection',
+                label: 'Slot selection'
+            },
+            {
+                key: 'form',
+                label: 'Form'
+            },
+            {
+                key: 'confirmation',
+                label: 'Confirmation'
+            }
+        ],
         editionsSteps: [
             {
                 key: 'button',
                 label: 'Booking button'
+            },
+            {
+                key: 'service_selection',
+                label: 'Service selection'
+            },
+            {
+                key: 'service_duration',
+                label: 'Duration selection'
+            },
+            {
+                key: 'service_location',
+                label: 'Location selection'
             },
             {
                 key: 'selection',
@@ -211,7 +241,7 @@ export default {
     }),
 
     created(){
-        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.editionsSteps,  this.config )
+        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.isLegacy? this.editionsStepsLegacy:this.editionsSteps,  this.config )
         this.reverseEditionsSteps = this.editionsSteps.slice(0).reverse()
         this.options = Object.assign ({}, this.preoptions)
         this.options.editionsSteps = this.editionsSteps
@@ -237,6 +267,9 @@ export default {
     },
 
     computed: {
+        isLegacy(){
+            return this.frontAvailability.services.length < 2 && this.frontAvailability.services[0].type !== undefined
+        },
         pendingByDefault(){
             return this.config.approval_mode > 1
         },

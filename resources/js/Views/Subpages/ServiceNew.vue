@@ -1,6 +1,6 @@
 <template>
     <div>
-        <WAPFormGenerator ref="formgenerator" :buttons="buttons" :schema="schemaParsed" :data="modelHolder" 
+        <WAPFormGenerator ref="fgaddservice" :buttons="buttons" :schema="schemaParsed" :data="modelHolder" 
         @submit="save" @back="$emit('back')" @ready="isReady" :errors="errorsPassed" :key="formKey" 
         labelButton="Save" v-bind="extraOptions" :minimal="minimal" />
     </div>
@@ -140,6 +140,7 @@ export default {
         this.errors = e.response.data.data.errors.validations
         this.formKey = 'form' + ((new Date()).getTime())
       }
+      this.$refs.fgaddservice.reRender()
       this.serviceError(e)
     },
     async saveServiceRequest() {

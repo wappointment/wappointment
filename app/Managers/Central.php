@@ -2,6 +2,8 @@
 
 namespace Wappointment\Managers;
 
+use Wappointment\Services\VersionDB;
+
 /**
  * Singleton to replace specific core classes with addons classes
  */
@@ -23,6 +25,9 @@ class Central
     public function __construct()
     {
         $this->setOverride();
+        if (VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES)) {
+            $this->services['Service']['class'] = \Wappointment\Services\Services::class;
+        }
     }
 
     /**

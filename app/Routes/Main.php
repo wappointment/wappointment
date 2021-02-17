@@ -78,6 +78,10 @@ class Main extends AbstractRoutes
                     'methods' => ['get', 'post', 'delete'],
                     'controller' => 'CalendarsController'
                 ],
+                '/services/location' => [
+                    'methods' => ['get', 'post', 'delete'],
+                    'controller' => 'LocationsController'
+                ],
             ],
             'GET' => [
                 '/addons/check' => [
@@ -100,10 +104,7 @@ class Main extends AbstractRoutes
                     'controller' => 'ClientController',
                     'method' => 'index',
                 ],
-                '/services/location' => [
-                    'controller' => 'LocationsController',
-                    'method' => 'get',
-                ],
+
                 '/services/custom_fields' => [
                     'method' => 'get',
                     'controller' => 'CustomFieldsController'

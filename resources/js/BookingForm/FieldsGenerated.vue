@@ -34,14 +34,15 @@
 
 <script>
 
-import TextInput from '../BookingForm/Fields/TextInput.vue'
-import Checkboxes from '../BookingForm/Fields/Checkboxes.vue'
-import Radios from '../BookingForm/Fields/Radios.vue'
-import Checkbox from '../BookingForm/Fields/Checkbox.vue'
-import Dropdown from '../BookingForm/Fields/Dropdown.vue'
-import TextArea from '../BookingForm/Fields/TextArea.vue'
+import TextInput from './Fields/TextInput.vue'
+import Checkboxes from './Fields/Checkboxes.vue'
+import Radios from './Fields/Radios.vue'
+import Checkbox from './Fields/Checkbox.vue'
+import Dropdown from './Fields/Dropdown.vue'
+import TextArea from './Fields/TextArea.vue'
 import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
+import MixinLegacy from './MixinLegacy'
 export default {
     components: {
         TextInput,
@@ -54,6 +55,7 @@ export default {
         PhoneInput
     },
     props:['duration', 'location', 'custom_fields', 'data', 'disabledButtons', 'options', 'service', 'validators', 'disabledEmail'],
+    mixins: [MixinLegacy],
     data: () => ({
         customFields: [],
         bookingFormExtended: {
@@ -102,10 +104,6 @@ export default {
     computed: {
         isDemo(){
             return this.options !== undefined && this.options.demoData !== undefined
-        },
-        
-        isLegacy(){
-            return this.service.type !== undefined
         },
         getServiceFields(){
             return this.isLegacy ? this.legacyGetServiceFields:this.service.options.fields

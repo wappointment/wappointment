@@ -118,7 +118,6 @@ class WidgetSettings
         ],
         'service_selection' => [
             'select_service' => 'Select a service',
-            'check_price_right' => false
         ],
         'service_duration' => [
             'select_duration' => 'Select a duration',
@@ -242,7 +241,6 @@ class WidgetSettings
 
         ],
         'form' => [
-
             'categories' => [
                 [
                     'label' => 'Appointment Modalities',
@@ -311,13 +309,25 @@ class WidgetSettings
         $this->merged_settings = empty($this->db_settings) ?
             $this->defaultSettings() : $this->merge($this->defaultSettings(), $this->db_settings);
     }
+
     public function defaultSettings()
     {
         return apply_filters('wappointment_widget_settings_default', $this->settings);
     }
+
     public function defaultFields()
     {
-        return apply_filters('wappointment_widget_fields_default', $this->fields);
+        return apply_filters('wappointment_widget_fields_default', $this->getFields());
+    }
+
+    protected function getFields()
+    {
+        if (VersionDB::canServices()) {
+            unset($this->fields['form']['categories'][0]);
+            $this->fields['form']['categories'] = array_values($this->fields['form']['categories']);
+        }
+
+        return $this->fields;
     }
 
     public function get()

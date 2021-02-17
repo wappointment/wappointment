@@ -46,7 +46,6 @@ export default {
   extends: abstractView,
     data: () => ({
         service: null,
-        //activeTab: 'general',
         tabs:{
             calendars:{
                 label: 'Calendars & Staffs'
@@ -83,8 +82,11 @@ export default {
         
     },
     computed: {
+        convertedName(){
+            return this.$route.name === 'modalities' ? 'services':this.$route.name
+        },
         activeTab(){
-            return this.$route.name.indexOf('_') === -1 ? this.$route.name : this.$route.name.split('_')[0]
+            return this.convertedName.indexOf('_') === -1 ? this.convertedName : this.convertedName.split('_')[0]
         }
     },
     methods: {

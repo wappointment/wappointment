@@ -1,6 +1,6 @@
 <template>
     <div :class="getClasses" @click="selectService(service)">
-        <WapImage :element="service" :desc="service.name" size="lg" />
+        <WapImage v-if="serviceHasIcon" :element="service" :desc="service.name" size="lg" />
         <div class="service-label" >
             <div class="service-name" >{{ service.name }}</div>
             <div class="description" v-if="hasDesc(service)">{{ service.options.description }}</div>
@@ -31,6 +31,9 @@ export default {
         currency(){
             return window.wappointment_woocommerce !== undefined ? window.wappointment_woocommerce.currency_symbol:''
         },
+        serviceHasIcon(){
+            return this.service.options.icon != ''
+        }
     },
     methods:{
         hasDesc(service){

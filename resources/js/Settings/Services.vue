@@ -31,6 +31,7 @@ export default {
         if(this.subview !== ''){
             this.currentView = this.subview
         }
+        
         this.elementPassed = this.element
     },
     computed: {
@@ -52,6 +53,9 @@ export default {
         },
 
         showDeliveries(){
+            if(this.$route.name == 'services'){
+                this.$router.push({name: 'modalities'})
+            }
             this.updateCrumb([
                     { target: 'showListing', label: 'Services', subview: 'listing' },
                     { target: 'showDeliveries', label: 'Delivery Modalities' , disabled: true},
@@ -80,6 +84,9 @@ export default {
         },
 
         showListing(){
+            if(this.$route.name == 'modalities'){
+                this.$router.push({name: 'services'})
+            }
             this.crumbs = []  
             this.currentView = 'listing'
         },

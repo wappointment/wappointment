@@ -1,7 +1,7 @@
 <template>
     <form @submit.prevent.stop="submitTrigger" class="form-wrapppo" :class="classWrapper" :autocomplete="autocomplete?'on':'off'">
         <div v-if="!formIsReady" class="loading-overlay d-flex align-items-center">
-            <WLoader></WLoader>
+            <WLoader />
         </div>
         <div v-if="reload" class="fields-wrap" >
             <template v-for="(element, keydi) in schema">
@@ -37,8 +37,6 @@
 </template>
 
 <script>
-import AbstractField from './AbstractField'
-import RequestMaker from '../Modules/RequestMaker'
 import eventsBus from '../eventsBus'
 import CoreFieldss from './CoreFields'
 import DotKey from '../Modules/DotKey'
@@ -133,9 +131,6 @@ export default {
     },
 
     computed: {
-        submittedErrors(){
-            return Object.keys(this.errors).length > 0
-        },
         hasErrors(){
             return Object.keys(this.errorsData).length > 0
         },
@@ -145,9 +140,11 @@ export default {
     },
     methods: {
         refresh(){
-            if(this.submittedErrors){
+            console.log('this.errorsData a ',this.errors, Object.keys(this.errors).length)
+            if(Object.keys(this.errors).length > 0){
                 this.errorsData = Object.assign({}, this.errors)
                 this.submitted = true
+                console.log('this.errorsData b',this.errorsData)
             }
             
             if(this.modelHolder === null || this.replaceRefresh === true){
@@ -175,7 +172,6 @@ export default {
             let fieldsType = CoreFields.inputTypes
             let elementType = element.type.indexOf('-') === -1 ? 'core-'+element.type:element.type
 
-            
             return fieldsType[elementType]!== undefined ? fieldsType[elementType]:'FormFieldInput'
         },
         inVisibles(element){

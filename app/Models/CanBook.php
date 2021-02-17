@@ -3,7 +3,7 @@
 namespace Wappointment\Models;
 
 use Wappointment\Services\Appointment as AppointmentService;
-use Wappointment\Services\Service;
+use Wappointment\Models\Service;
 
 trait CanBook
 {
@@ -16,7 +16,7 @@ trait CanBook
         $start_at = $bookingRequest->get('time');
 
         if ($bookingRequest->get('service')) {
-            $service = Service::find($bookingRequest->get('service'));
+            $service = Service::find((int)$bookingRequest->get('service'));
             if (empty($service)) {
                 throw new \WappointmentException("Error cannot load the service", 1);
             }

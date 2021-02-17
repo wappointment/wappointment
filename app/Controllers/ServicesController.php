@@ -15,9 +15,10 @@ class ServicesController extends RestController
     public function get()
     {
         $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
-        $services = $db_update_required ? $this->getlegacy() : ServiceModel::orderBy('sorting')->take(2)->get();
+        $services = $db_update_required ? $this->getlegacy() : ServiceModel::orderBy('sorting')->fetch();
 
         return [
+            'limit_reached' => ServiceModel::canCreate() ? false : ServiceModel::MaxRows() . ' services max allowed',
             'db_required' => $db_update_required,
             'services' => $services,
         ];

@@ -153,6 +153,11 @@ const router = window.wappointmentrouter = new VueRouter({
                 component: SettingsPage
             },
             {
+              path: 'modalities',
+              name: 'modalities',
+              component: SettingsPage
+          },
+            {
                 path: 'emailsnsms',
                 name: 'emailsnsms',
                 component: SettingsPage

@@ -8,7 +8,7 @@
                 <h1 class="h2 align-self-center" @click="refreshEvents"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
                 <FreeSlotsSelector :intervals="getThisWeekIntervals" :viewingFreeSlot="viewingFreeSlot" 
-                :durations="getAllDurations" :duration="selectedDuration" :buffer="viewData.buffer_time"
+                :durations="getAllDurations" :buffer="viewData.buffer_time"
                  @getFreeSlots="getFreeSlots" @getEdition="getEdition" />
               </div>
               <div class="d-flex">

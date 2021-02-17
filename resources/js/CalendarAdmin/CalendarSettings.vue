@@ -101,11 +101,7 @@ export default {
     }),
     components: {ColorPicker},
     created(){
-        for (let i = 0; i < this.durations.length; i++) {
-            if(this.baseDurations.indexOf(this.durations[i]) === -1){
-                this.baseDurations.push(this.durations[i])
-            }
-        }
+        this.initBaseDurations()
         this.selectedDuration = this.duration
         this.minHour = this.pminH
         this.maxHour = this.pmaxH
@@ -115,10 +111,16 @@ export default {
         if([undefined, null].indexOf(this.preferences.cal_avail_col) === -1){
             this.cal_appoint_col = this.preferences.cal_appoint_col
         }
-        
-        
     },
     methods:{
+        initBaseDurations(){
+            for (let i = 0; i < this.durations.length; i++) {
+                if(this.baseDurations.indexOf(this.durations[i]) === -1){
+                    this.baseDurations.push(this.durations[i])
+                }
+            }
+            this.baseDurations.sort((a,b) => a > b)
+        },
         showPref(){
             this.showPreferences=true 
             this.$emit('expanded')

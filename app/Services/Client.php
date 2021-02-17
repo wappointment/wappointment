@@ -1,9 +1,9 @@
 <?php
 
-namespace WappointmentAddonServices\Services;
+namespace Wappointment\Services;
 
-use WappointmentAddonServices\Models\Client as MClient;
-use WappointmentAddonServices\Validators\HttpRequest\Booking;
+use Wappointment\Models\Client as MClient;
+use Wappointment\Validators\HttpRequest\Booking;
 
 class Client
 {

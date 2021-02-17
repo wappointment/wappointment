@@ -9,7 +9,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Service</th>
                             <th scope="col">Durations</th>
-                            <th scope="col">Delivery Modalities <a href="javascript:;" v-if="!requiresDBUpgrade" @click="$emit('changeView', 'delivery')">Manage</a></th>
+                            <th scope="col">Delivery Modalities <a href="javascript:;" v-if="!requiresDBUpgrade" @click="goToDelivery">Manage</a></th>
                         </tr>
                     </thead>
                     <draggable @change="orderChanged" v-model="elements.services" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.services.length > 0">
@@ -20,7 +20,8 @@
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <WapImage :element="service" :config="{mauto:false}" :desc="service.name" size="lg" /> <div class="ml-2">{{ service.name }}</div>
+                                    <WapImage v-if="serviceHasIcon(service)" :element="service" :config="{mauto:false}" :desc="service.name" size="lg" /> 
+                                    <div class="ml-2">{{ service.name }}</div>
                                     <div class="actions ml-4 text-muted">
                                         <span data-tt="Sort" v-if="elements.services.length > 1" ><span class="dashicons dashicons-move"></span></span>
                                         <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(service)"></span></span>
@@ -82,6 +83,9 @@ export default {
     }),
     created(){
         this.mainService = this.$vueService(new WappoServiceService)
+        if(this.$route.name === 'modalities'){
+            this.goToDelivery()
+        }
     },
     computed: {
         serviceListing(){
@@ -92,41 +96,41 @@ export default {
         },
         requiresDBUpgrade(){
             return this.elements.db_required 
+        },
+        limitReached(){
+            return this.elements.limit_reached
         }
     },
     methods: {
+        goToDelivery(){
+            this.$emit('changeView', 'delivery')
+        },
+        serviceHasIcon(service){
+            return service.options.icon != ''
+        },
         isLegacy(service){
-            return service.options.durations === undefined
+            return service.type !== undefined
         },
         getDurations(service){
-            if(!this.isLegacy(service)){
-                return service.options.durations
-            }else{
-                return [
-                    {
-                        duration: service.duration
-                    }
-                ]
-            }
+            return this.isLegacy(service) ? [{duration: service.duration}]:service.options.durations
         },
         getLocations(service){
             if(!this.isLegacy(service)){
-                return service.options.types
-            }else{
-                let newTypes = []
-                for (let i = 0; i < service.type.length; i++) {
-                    newTypes.push({
-                        name: service.type[i],
-                        type: service.type[i],
-                        options:{}
-                    })
-                }
-                return newTypes
+                return service.locations
             }
+            let newTypes = []
+            for (let i = 0; i < service.type.length; i++) {
+                newTypes.push({
+                    name: service.type[i],
+                    type: service.type[i],
+                    options:{}
+                })
+            }
+            return newTypes
         },
         loadElements() { // overriding
             if(this.currentView == 'listing') {
-                this.request(this.requestElements,{},undefined,false,this.loadedElements,this.failedLoadingElements)
+                this.request(this.requestElements, {}, undefined, false, this.loadedElements, this.failedLoadingElements)
             }
         },
         orderChanged(val){
@@ -144,7 +148,9 @@ export default {
                 this.loadElements()
             }
             
-            if(result.data.message!==undefined)this.$WapModal().notifySuccess(result.data.message)
+            if(result.data.message!==undefined) {
+                this.$WapModal().notifySuccess(result.data.message)
+            }
         },
         deleteService(service_id){
             this.$WapModal().confirm({
@@ -175,8 +181,8 @@ export default {
             if(this.requiresDBUpgrade){
                 return this.$WapModal().notifyError('Run database updates first')
             }
-            if(this.elements.services.length > 2){
-                return this.requiresAddon('services', '3 services max allowed')
+            if(this.elements.limit_reached !== false){
+                return this.requiresAddon('services', this.elements.limit_reached)
             }
 
             if(this.crumb){

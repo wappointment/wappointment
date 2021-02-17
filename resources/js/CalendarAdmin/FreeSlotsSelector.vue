@@ -22,17 +22,16 @@
 
 <script>
 export default {
-    props: ['intervals', 'viewingFreeSlot', 'durations', 'duration', 'buffer'],
+    props: ['intervals', 'viewingFreeSlot', 'durations',  'buffer'],
     data: () => ({
         toggle: false,
         selectedDuration: 0,
     }),
     created(){
-        this.selectedDuration = this.duration
+        this.selectedDuration = this.durations[0]
     },
     methods:{
         selectDuration(duration){
-            
             this.selectedDuration = duration
             this.toggle = false
         }

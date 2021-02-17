@@ -21,10 +21,10 @@
                                     <WapImage :element="locationObj" :config="{mauto:false}" :desc="locationObj.name" size="md" /> 
                                     <div class="ml-2">{{ locationObj.name }}</div>
                                     <div class="actions ml-4 text-muted">
-                                        <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
+                                        <!-- <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span> -->
                                         <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(locationObj)"></span></span>
-                                        <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(locationObj.id)"></span></span>
-                                        <span>(id: {{ locationObj.id }})</span>
+                                        <!-- <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(locationObj.id)"></span></span>
+                                        <span>(id: {{ locationObj.id }})</span> -->
                                     </div>
                                 </div>
                                 

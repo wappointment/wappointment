@@ -1,13 +1,13 @@
 <template>
     <div class="container-fluid">
-      <WAPFormGenerator ref="fg-addlocation" :schema="schemaLocation" :data="modelHolder" 
-        @submit="saveLocation" @back="back" :errors="errorsPassed" :key="'formKey'" labelButton="Save" :backbutton="true" backbuttonLabel="Cancel" />
+      <WAPFormGenerator ref="fgaddlocation" :schema="schemaLocation" :data="modelHolder" 
+        @submit="saveLocation" :errors="errorsPassed" :key="'formKey'" labelButton="Save" :backbutton="true" backbuttonLabel="Cancel" />
     </div>
 </template>
 
 <script>
 import abstractView from '../Views/Abstract'
-
+import WappoServiceLocation from '../Services/V1/Location'
 export default {
   extends: abstractView,
     props: {
@@ -22,7 +22,6 @@ export default {
     },
     data: () => ({
         servicesService: null,
-        errorsAddLocation: {},
         modelHolder: {             
             name: '',
             type: 1,
@@ -102,40 +101,70 @@ export default {
                   { model:'type', values: [2] }
                 ],
             },
-            {
-                type: 'opt-ss-customfields',
-                label: 'When client selects this modality, display following fields',
-                model: 'options.fields',
-                bus: true,
-                cast: Array,
-                watchParent: 'type',
-                checklistOptions: { value:'namekey'}
-            },
           ]
     }),
     created(){
         if(this.element !== null) {
             this.modelHolder = Object.assign({}, this.element)
         }
-        
+        this.mainService = this.$vueService(new WappoServiceLocation)
     },
     computed:{
         errorsPassed(){
-          return this.errorsAddLocation
+          return this.errorMessages.validations === undefined ? {}:this.errorMessages.validations
         },
     },
     methods: {
         saveLocation(model){
-            this.request(this.saveLocationsRequest, model, undefined,false, this.savedSuccess, this.savedError)
+            this.request(this.saveLocationsRequest, model, undefined,false, this.savedSuccess, this.serviceErrorWrap)
+        },
+         async saveLocationsRequest(params) {
+            return await this.mainService.call('save',params) 
         },
         savedSuccess(result){
             this.itemsLoaded = result.data.locations
-            //this.itemsLoaded[this.editedItem] = result.data.location
-            this.hideAddLocation()
-            //close popup 
-            //refresh providers
+
+            this.$emit('saved', result)
         },
-        savedError(result){
+        serviceErrorWrap(e){
+            this.$refs.fgaddlocation.reRender()
+            return this.serviceError(e)
+        },
+
+        removeLocation(item,idx){
+            this.$WapModal().confirm({
+                title: 'Do you really want to delete this location?',
+            }).then((response) => {
+                if(response !== false){
+                    this.request(this.removeLocationRequest, {id:item.id}, undefined,false, this.deletedSuccess)
+                }
+            }) 
+        },
+
+        async removeLocationRequest(id){
+            return await this.mainService.call('delete',id) 
+        },
+        
+        deletedSuccess(result){
+            if(result.data.result){
+                let itemsLoaded = []
+                for (let i = 0; i < this.itemsLoaded.length; i++) {
+                    if(this.itemsLoaded[i].id != result.data.deleted){
+                        itemsLoaded.push(this.itemsLoaded[i])
+                    }
+                    
+                }
+                this.itemsLoaded = itemsLoaded
+            }
+            this.serviceSuccess(result)
+        },
+       
+        loadedLocations(result){
+            this.itemsLoaded = result.data
+        },
+
+        async loadLocationsRequest() {
+            return await this.mainService.call('index') 
         },
     }  
 }
