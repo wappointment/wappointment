@@ -54,7 +54,7 @@ class Main extends AbstractRoutes
                     'controller' => 'AddonsController'
                 ],
                 '/events' => [
-                    'methods' => ['get', 'post', 'delete', 'patch', 'put'],
+                    'methods' => ['post', 'delete', 'patch', 'put'],
                     'controller' => 'EventsController'
                 ],
                 '/reminder' => [
@@ -165,6 +165,10 @@ class Main extends AbstractRoutes
                     'method' => 'save',
                     'controller' => 'EventsController',
                     'hint' => 'BookingAdmin'
+                ],
+                '/events/list' => [
+                    'method' => 'get',
+                    'controller' => 'EventsController',
                 ],
                 '/freshinstall' => [
                     'controller' => 'DebugController',
