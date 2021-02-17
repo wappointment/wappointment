@@ -639,20 +639,28 @@ export default {
     min-width: 280px;
 }
 
-
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;
     margin: .4em 0;
 }
 
-.wap-front .mr-2{
-    margin-right: .3em !important;
+.wap-front .mr-2,
+.wap-front .mx-2{
+    margin-right: .4em !important;
 }
-.wap-front .ml-2{
-    margin-left: .3em !important;
+.wap-front .ml-2,
+.wap-front .mx-2{
+    margin-left: .4em !important;
 }
-.wap-front .mb-2{
-    margin-bottom: .3em !important;
+
+.wap-front .mb-2,
+.wap-front .my-2{
+    margin-bottom: .4em !important;
+}
+
+.wap-front .mt-2,
+.wap-front .my-2{
+    margin-top: .4em !important;
 }
 .wap-front .p-2 {
     padding: .5em !important;

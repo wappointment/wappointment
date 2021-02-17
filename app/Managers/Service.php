@@ -4,6 +4,12 @@ namespace Wappointment\Managers;
 
 class Service
 {
+
+    public static function model()
+    {
+        return Central::get('ServiceModel');
+    }
+
     public static function all()
     {
         return Central::get('Service')::all();

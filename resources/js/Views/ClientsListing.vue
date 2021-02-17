@@ -1,12 +1,13 @@
 <template>
     <div>
-        <div class="table-responsive table-hover">
+        <div class="table-hover">
             <table class="table">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Client</th>
                         <th scope="col">Phone</th>
+                        <th scope="col">Skype</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -35,7 +36,10 @@
                             
                         </td>
                         <td>
-                        {{ getPhone(client) }}
+                            {{ getPhone(client) }}
+                        </td>
+                        <td>
+                            {{ getSkype(client) }}
                         </td>
                     </tr>
                     <tr v-else>
@@ -63,6 +67,10 @@ export default {
 
         getPhone(client){
           return client.options.phone !== undefined ? client.options.phone:'---'
+        },
+
+        getSkype(client){
+          return client.options.skype !== undefined ? client.options.skype:'---'
         },
 
         afterLoaded(response){

@@ -4,8 +4,11 @@
             <WPListingHelp @perPage="perPage" v-if="per_page" :per_page="per_page"/>
             <div class="d-flex align-items-center">
               <h1 class="my-3 mr-3" @click="reloadListing">Clients</h1>
-              <button type="button" class="btn btn-outline-primary d-flex align-items-center" @click.prevent.stop="addClient">
-                  <span class="dashicons dashicons-plus-alt text-primary mr-2" ></span> Add Client
+              <button type="button" class="btn btn-outline-primary d-flex align-items-center mr-2" @click.prevent.stop="addClient">
+                <span class="dashicons dashicons-plus-alt text-primary mr-2" ></span> Add Client
+              </button>
+              <button type="button" class="btn btn-outline-primary d-flex align-items-center" @click.prevent.stop="addCustomField">
+                <span class="dashicons dashicons-filter text-primary mr-2" ></span> Add Custom Field
               </button>
             </div>
             <div v-if="Object.keys(clientListing).length > 1" class="d-flex align-items-center">
@@ -13,13 +16,10 @@
             </div>
             
             <component ref="listing" :is="view" @editClient="editClient" @deleteClient="deleteClient" @loaded="loadedResult"/>
-
         </template>
         <template v-else>
-            <button class="btn btn-link btn-xs mb-2" @click="back"> < Back</button>
-            <WAPFormGenerator  ref="formgenerator" :schema="schema" classWrapper="clientage-form" :data="clientDataToSave" 
-            @submit="saveClient"  >
-            </WAPFormGenerator>
+          <button class="btn btn-link btn-xs mb-2" @click="back"> < Back</button>
+          <WAPFormGenerator ref="formgenerator" :schema="schema" classWrapper="clientage-form" :data="clientDataToSave" @submit="saveClient" />
         </template>
   </div>
 </template>
@@ -30,12 +30,13 @@ import MainClients from './ClientsListing'
 import WPListingHelp from '../WP/ScreenListing'
 import ClientsService from '../Services/V1/Client'
 import Request from '../Modules/RequestMaker'
+import RequiresAddon from '../Mixins/RequiresAddon'
 
 let client_listing = window.wappointmentExtends.filter('clientListing', {MainClients})
 
 export default {
     components: Object.assign({WPListingHelp}, client_listing),
-    mixins: [Request],
+    mixins: [Request, RequiresAddon],
     data: () => ({
         mainService: null,
         clientDataToSave: null,
@@ -135,6 +136,10 @@ export default {
                 phone:'',
             },
           }
+        },
+
+        addCustomField(){
+          this.requiresAddon('services', 'Create your own Custom Field')
         },
 
         editClient(client){

@@ -2,7 +2,7 @@
     <div >
         <div v-if="serviceListing">
             <button @click="showService" class="btn btn-outline-primary btn my-2">Add new</button>
-            <div class="table-responsive table-hover" v-if="elements.services !== undefined">
+            <div class="table-hover" v-if="elements.services !== undefined">
                 <table class="table">
                     <thead>
                         <tr>

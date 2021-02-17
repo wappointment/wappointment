@@ -3,7 +3,7 @@
 namespace Wappointment\Validators\HttpRequest;
 
 use Wappointment\Validators\Phone;
-use Wappointment\Models\Service as ServiceModel;
+use Wappointment\Managers\Service as ServiceCentral;
 use Wappointment\Models\Location as LocationModel;
 use Wappointment\Services\CustomFields;
 use Wappointment\Services\Settings as SettingsCore;
@@ -87,7 +87,7 @@ class Booking extends LegacyBooking
         if (!is_numeric($inputs['service'])) {
             throw new \WappointmentException("Service data error", 1);
         }
-        $service = ServiceModel::find((int)$inputs['service']);
+        $service = ServiceCentral::model()::find((int)$inputs['service']);
         if (empty($service)) {
             throw new \WappointmentException("Service data error 2", 1);
         }

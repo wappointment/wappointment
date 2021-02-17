@@ -4,7 +4,6 @@ namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
 use Wappointment\Controllers\RestController;
-use Wappointment\Models\Service as ServiceModel;
 use Wappointment\Services\Services;
 use Wappointment\Services\VersionDB;
 use Wappointment\Managers\Service;
@@ -14,11 +13,12 @@ class ServicesController extends RestController
 
     public function get()
     {
+        $serviceModel = Service::model();
         $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
-        $services = $db_update_required ? $this->getlegacy() : ServiceModel::orderBy('sorting')->fetch();
+        $services = $db_update_required ? $this->getlegacy() : $serviceModel::orderBy('sorting')->fetch();
 
         return [
-            'limit_reached' => ServiceModel::canCreate() ? false : ServiceModel::MaxRows() . ' services max allowed',
+            'limit_reached' => $serviceModel::canCreate() ? false : $serviceModel::MaxRows() . ' services max allowed',
             'db_required' => $db_update_required,
             'services' => $services,
         ];

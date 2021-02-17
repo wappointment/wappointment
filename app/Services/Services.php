@@ -2,7 +2,7 @@
 
 namespace Wappointment\Services;
 
-use Wappointment\Models\Service as ServiceModel;
+use Wappointment\Managers\Service as ServiceCentral;
 use Wappointment\Services\ServiceInterface;
 use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Validators\HasValues;
@@ -12,9 +12,14 @@ use Wappointment\Models\Location as LocationModel;
 
 class Services implements ServiceInterface
 {
+    public static function getModel()
+    {
+        return ServiceCentral::model();
+    }
     public static function all()
     {
-        $services = ServiceModel::orderBy('sorting')->fetch();
+
+        $services = static::getModel()::orderBy('sorting')->fetch();
         return $services->filter(function ($service, $key) {
             return count($service->locations) > 0;
         })->all();
@@ -71,9 +76,9 @@ class Services implements ServiceInterface
     {
         $serviceDB = null;
         if (!empty($serviceData['id'])) {
-            $serviceDB = ServiceModel::find($serviceData['id']);
+            $serviceDB = static::getModel()::find($serviceData['id']);
         } else {
-            if (!ServiceModel::canCreate()) {
+            if (!static::getModel()::canCreate()) {
                 throw new \WappointmentValidationException("Cannot save Services");
             }
         }
@@ -83,7 +88,7 @@ class Services implements ServiceInterface
         if (!empty($serviceDB)) {
             $serviceDB->update($serviceData);
         } else {
-            $serviceDB = ServiceModel::create($serviceData);
+            $serviceDB = static::getModel()::create($serviceData);
         }
         if (!empty($serviceData['locations_id'])) {
             $serviceDB->locations()->sync($serviceData['locations_id']);
@@ -97,7 +102,7 @@ class Services implements ServiceInterface
     {
         $serviceDB = null;
         if (!empty($service_id)) {
-            $serviceDB = ServiceModel::find($service_id);
+            $serviceDB = static::getModel()::find($service_id);
         }
         if (empty($serviceDB)) {
             throw new \WappointmentException("Error patching service (service suite)", 1);
@@ -108,9 +113,10 @@ class Services implements ServiceInterface
 
     public static function delete($service_id = false)
     {
-        $old_service = ServiceModel::find($service_id);
-        ServiceModel::where('sorting', '>', $old_service->sorting)->decrement('sorting');
-        return ServiceModel::where('id', $service_id)->delete();
+        $serviceModel = static::getModel();
+        $old_service = $serviceModel::find($service_id);
+        $serviceModel::where('sorting', '>', $old_service->sorting)->decrement('sorting');
+        return $serviceModel::where('id', $service_id)->delete();
     }
 
     public static function getService($service = false, $service_id = false)
@@ -120,7 +126,7 @@ class Services implements ServiceInterface
 
     public static function get($service_id = false)
     {
-        return ServiceModel::find($service_id);
+        return static::getModel()::find($service_id);
     }
 
     public static function getObject($service_id = false)
@@ -131,7 +137,7 @@ class Services implements ServiceInterface
 
     public static function total()
     {
-        return ServiceModel::where('id', '>', 0)->count();
+        return static::getModel()::where('id', '>', 0)->count();
     }
 
     public static function hasZoom($service)
@@ -147,13 +153,14 @@ class Services implements ServiceInterface
 
     public static function reorder($id, $neworder)
     {
-        $old_service = ServiceModel::find($id);
+        $serviceModel = static::getModel();
+        $old_service = $serviceModel::find($id);
         if ($old_service->sorting > $neworder) {
-            ServiceModel::where('sorting', '>=', $neworder)->where('sorting', '<', $old_service->sorting)->increment('sorting');
+            $serviceModel::where('sorting', '>=', $neworder)->where('sorting', '<', $old_service->sorting)->increment('sorting');
         } else {
-            ServiceModel::where('sorting', '>', $old_service->sorting)->where('sorting', '<=', $neworder)->decrement('sorting');
+            $serviceModel::where('sorting', '>', $old_service->sorting)->where('sorting', '<=', $neworder)->decrement('sorting');
         }
 
-        return ServiceModel::where('id', $id)->update(['sorting' => $neworder]);
+        return $serviceModel::where('id', $id)->update(['sorting' => $neworder]);
     }
 }

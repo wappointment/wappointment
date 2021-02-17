@@ -1,11 +1,15 @@
 <template>
     <div v-if="locations.length>0">
       <div class="title wtitle" v-if="options!==undefined">{{options.service_location.select_location}}</div>
-      <div class="d-flex flex-wrap" :class="getClass">
-          <div v-for="(location,idx) in locations" :class="getClasses" @click="selectLocation(location)">
-            <WapImage :element="location" :desc="location.name" size="md" /> {{ location.name }}
+      <div class="d-flex flex-wrap">
+        <div v-for="(location,idx) in locations" class="d-flex align-items-center" :class="getClasses" @click="selectLocation(location)">
+            <WapImage class="mx-2" :element="location" :desc="location.name" size="md" />
+            <div class="service-label">
+                <div>{{ location.name }}</div>
+            </div>
         </div>
       </div>
+      
     </div>
 </template>
 
@@ -23,7 +27,8 @@ export default {
     computed:{
         getClasses(){
             return window.wappointment_services === undefined || 
-            (window.wappointment_services.is_admin === undefined ) || (this.options !== undefined && this.options.demoData !== undefined) ? 'wbtn wbtn-cell wbtn-secondary':'btn btn-cell btn-secondary'
+            (window.wappointment_services.is_admin === undefined ) || (this.options !== undefined && this.options.demoData !== undefined) ? 
+            'wbtn wbtn-cell wbtn-service wbtn-secondary':'btn btn-cell btn-service btn-secondary'
         },
         locations(){
             return this.service.locations
