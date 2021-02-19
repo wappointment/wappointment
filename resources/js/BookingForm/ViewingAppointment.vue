@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="view.indexOf('addonView') === 0">
-          <component :is="view" @loading="changeLoading" :options="options" :momenttz="momenttz" :convertDateFormat="convertDateFormat"></component>
+          <component :is="view" @loading="changeLoading" :options="options" :momenttz="momenttz" :convertDateFormat="convertDateFormat" />
         </template>
         <template v-else>
             <div v-if="loadedAppointment">
@@ -37,7 +37,7 @@
                         </div>
                         <div v-else>
                             <div v-if="loading">
-                                <WLoader></WLoader>
+                                <WLoader />
                             </div>
                             <div v-else>
                                 <p class="h4">{{ getText('confirmation') }}</p>
@@ -60,7 +60,7 @@
             </div>
             <div v-else>
                 <div v-if="loading">
-                    <WLoader></WLoader>
+                    <WLoader />
                 </div>
                 <div v-else>{{errorLoading}}</div>
             </div>

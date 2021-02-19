@@ -4,7 +4,6 @@ import FieldTimezone from './FieldTimezone'
 import FieldPhone from './FieldPhone'
 import FieldModality from './FieldModality'
 import FieldMultiDuration from './FieldMultiDuration'
-import FieldCustomField from './FieldCustomField'
 
 window.wappointmentExtends.add('FormGeneratorFields', function (allComponents, extraComponents) {
     allComponents['FieldTipTap'] = FieldTipTap
@@ -13,7 +12,6 @@ window.wappointmentExtends.add('FormGeneratorFields', function (allComponents, e
     allComponents['FieldPhone'] = FieldPhone
     allComponents['FieldModality'] = FieldModality
     allComponents['FieldMultiDuration'] = FieldMultiDuration
-    allComponents['FieldCustomField'] = FieldCustomField
     return allComponents
 })
 

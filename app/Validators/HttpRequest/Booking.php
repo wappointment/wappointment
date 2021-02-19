@@ -6,8 +6,6 @@ use Wappointment\Validators\Phone;
 use Wappointment\Managers\Service as ServiceCentral;
 use Wappointment\Models\Location as LocationModel;
 use Wappointment\Services\CustomFields;
-use Wappointment\Services\Settings as SettingsCore;
-use Wappointment\ClassConnect\Carbon;
 
 class Booking extends LegacyBooking
 {
@@ -15,6 +13,7 @@ class Booking extends LegacyBooking
     public $location = null;
     protected $validationRulesArray = [];
     public static $startKey = 'time';
+
     protected function validationMessages()
     {
         return [
@@ -122,147 +121,23 @@ class Booking extends LegacyBooking
         }
     }
 
-    public function validateConditions($inputs)
-    {
-        $unix_start = $inputs[static::$startKey];
-        $unix_end = $inputs[static::$startKey] + $inputs['duration'];
-
-        //check if there are conditions for that appointment
-        if (!$this->locationServiceBookableAt($unix_start, $unix_end)) {
-            throw new \WappointmentException("Cannot book that service(" . $this->service->name . " ) or location(" . $this->location->name . " ) at that time", 1);
-        }
-    }
-    public function testPassLocation($condition)
-    {
-        if (!empty($condition['locations'])) {
-            return in_array($this->location->id, $condition['locations']);
-        }
-        return true;
-    }
-    public function testPassService($condition)
-    {
-        if (!empty($condition['services'])) {
-            return in_array($this->service->id, $condition['services']);
-        }
-        return true;
-    }
-    public function locationServiceBookableAt($unix_start, $unix_end)
-    {
-        $conditions = $this->getConditionsAt($unix_start, $unix_end);
-        if (!empty($conditions)) {
-            //check if there is a location conditions
-            foreach ($conditions as $key => $condition) {
-                //test location and service
-                if ($this->testPassLocation($condition) && $this->testPassService($condition)) {
-                    return true; //if both pass return true
-                }
-            }
-            return false; //there are conditions, but none is satisfying both our parameters
-        }
-        return true; // if there are no conditions then we pass
-    }
-
-
-    public function getConditionsAt($unix_start, $unix_end)
-    {
-        static $conditionsOut = false;
-        if ($conditionsOut !== false) {
-            return $conditionsOut;
-        }
-
-        //convert time to staff's time
-        $tz = SettingsCore::getStaff('timezone');
-        $cStart = Carbon::createFromTimestamp($unix_start)->setTimezone($tz);
-        $cEnd = Carbon::createFromTimestamp($unix_end)->setTimezone($tz);
-
-        //get conditions at that time
-        //from regav and from punctual time
-        return array_merge($this->getRegavConditions($cStart, $cEnd), $this->getPunctualConditions($unix_start, $unix_end));
-    }
-
-    public function getPunctualConditions($unix_start, $unix_end)
-    {
-        $carbon_start = Carbon::createFromTimestamp($unix_start);
-        $carbon_end = Carbon::createFromTimestamp($unix_end);
-
-        $conditions = \WappointmentAddonServices\Services\Conditions::get('punctual');
-
-        $conditionsOut = [];
-        foreach ($conditions as $key => $condition) {
-            if (!empty($condition['conditions'])) {
-                if ($condition['start'] < $carbon_start->timestamp && $condition['end'] > $carbon_start->timestamp) {
-                    //part or entire slot is covered by this, in which case we return the conditions
-                    $conditionsOut[] = $condition['conditions'];
-                } else {
-                    if ($condition['end'] > $carbon_end->timestamp && $condition['start'] < $carbon_end->timestamp) {
-                        //part or entire slot is covered by this, in which case we return the conditions
-                        $conditionsOut[] = $condition['conditions'];
-                    }
-                }
-            }
-        }
-
-        return $conditionsOut;
-    }
-
-    public function getRegavConditions($cStart, $cEnd)
-    {
-        $conditions = \WappointmentAddonServices\Services\Conditions::get('regular');
-
-        $dayKeys = [$this->getDayKey($cStart)];
-        if ($cStart->dayOfWeekIso != $cEnd->dayOfWeekIso) {
-            $dayKeys[] = [$this->getDayKey($cEnd)];
-        }
-
-        $conditionsOut = [];
-        foreach ($dayKeys as $i => $dayKey) {
-            //dd('condi test', $dayKey, $conditions[$dayKey]);
-            if (!empty($conditions[$dayKey])) {
-                foreach ($conditions[$dayKey] as $key => $hours) {
-                    if ($i == 0) { // first day
-                        if ($hours[0] <= $cStart->hour && $hours[1] >= $cStart->hour) {
-                            //part or entire slot is covered by this, in which case we return the conditions
-                            $conditionsOut[] = $hours[2];
-                        }
-                    } else { // second day
-                        if ($hours[1] >= $cEnd->hour && $hours[0] <= $cEnd->hour) {
-                            //part or entire slot is covered by this, in which case we return the conditions
-                            $conditionsOut[] = $hours[2];
-                        }
-                    }
-                }
-            }
-        }
-
-        return $conditionsOut;
-    }
-
-    public function getDayKey($carbonDate)
-    {
-        switch ($carbonDate->dayOfWeekIso) {
-            case 1:
-                return 'monday';
-            case 2:
-                return 'tuesday';
-            case 3:
-                return 'wednesday';
-            case 4:
-                return 'thursday';
-            case 5:
-                return 'friday';
-            case 6:
-                return 'saturday';
-            case 7:
-                return 'sunday';
-        }
-    }
-
+    // public function ()
+    // {
+    //     $regav = SettingsCore::get('regav');
+    //     !empty($regav['precise']) && $regav['precise'] === true;
+    //     dd($regav);
+    // }
 
     public function prepareInputs($inputs): array
     {
         $this->validateService($inputs);
         $this->validateLocation($inputs);
-        //$this->validateConditions($inputs);
+
+        $result = apply_filters('wappointment_validate_booking', true, $inputs, $this->service, $this->location, static::$startKey);
+        if ($result !== true) {
+            throw new \WappointmentException("Error Processing Request", 1);
+        }
+
         $this->generateValidation($inputs);
         $inputs[static::$startKey] = (int) $inputs[static::$startKey];
         return $inputs;
@@ -272,6 +147,7 @@ class Booking extends LegacyBooking
     {
         return $this->service;
     }
+
     public function preparedData()
     {
         $custom_fields = $this->getFields();

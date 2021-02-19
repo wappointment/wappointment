@@ -23,7 +23,7 @@
                 <ServiceSelection @serviceSelected="serviceSelected" :options="viewData.widget" :services="viewData.services" :admin="true"/>
             </div>
             <div v-if="service && !duration" class="p-2">
-                <DurationSelection  @durationSelected="durationSelected" :service="service" :options="viewData.widget"/>
+                <DurationSelection @durationSelected="durationSelected" :service="service" :options="viewData.widget" />
                 <div>
                     Your calendar selection : 
                     <span class="text-primary" v-if="duration !== durationSelectedFC" data-tt="Change duration" @click.stop.prevent="backToOriginalDuration">{{ durationSelectedFC }}min</span> 
@@ -31,7 +31,7 @@
             </div>
             
             <div v-if="service && duration && !location" class="p-2">
-                <LocationSelection v-if="hasMoreThanOneLocation"  @locationSelected="locationSelected"  :service="service"/>
+                <LocationSelection v-if="hasMoreThanOneLocation" @locationSelected="locationSelected" :service="service" :options="viewData.widget" />
             </div>
             
             <div v-if="allSelected">
@@ -108,10 +108,10 @@ import {isEmail, isEmpty} from 'validator'
 import PhoneInput from '../BookingForm/PhoneInput'
 import FormInputs from '../BookingForm/Form'
 import StyleGenerator from '../Components/StyleGenerator'
-import ServiceSelection from '../BookingForm/ServiceSelection.vue'
-import DurationSelection from '../BookingForm/DurationSelection.vue'
-import LocationSelection from '../BookingForm/LocationSelection.vue'
-import FieldsGenerated from '../BookingForm/FieldsGenerated.vue'
+import ServiceSelection from '../BookingForm/ServiceSelection'
+import DurationSelection from '../BookingForm/DurationSelection'
+import LocationSelection from '../BookingForm/LocationSelection'
+import FieldsGenerated from '../BookingForm/FieldsGenerated'
 import WappoServiceBooking from '../Services/V1/BookingN'
 export default {
     props: ['viewData','startTime', "endTime", "realEndTime"],

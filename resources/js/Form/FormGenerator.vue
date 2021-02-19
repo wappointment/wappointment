@@ -27,7 +27,7 @@
                     
                 </div>
             </template>
-            <slot></slot>
+            <slot />
             <div v-if="buttons">
                 <button v-if="backbutton" class="btn btn-secondary" type="button" @click.prevent="$emit('back')">{{ backbuttonLabel }}</button>
                 <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent.stop="submitTrigger">{{ buttonLabel }}</button>

@@ -20,8 +20,7 @@ export default {
             return [undefined, false].indexOf(this.options.service_selection.check_price_right) === -1
         },
         getClasses(){
-            let classses = window.wappointment_services === undefined || window.wappointment_services.is_admin === undefined ? 'wbtn wbtn-cell wbtn-secondary wbtn-service':'btn btn-cell btn-secondary btn-service'
-            classses = 'wbtn wbtn-cell wbtn-secondary wbtn-service d-flex align-items-center'
+            let classses = 'wbtn wbtn-cell wbtn-secondary wbtn-service d-flex align-items-center'
  
             if(this.selected === true){
                 classses += ' selected'

@@ -71,8 +71,10 @@
 
                   </div>
                   <div v-else>
-                    <BehalfBooking v-if="shownAppointmentForm" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"
-                      :timezone="displayTimezone" @cancelled="hideModal" @confirmed="confirmedStatus" @updateEndTime="updateEndTime"/>
+                    <BehalfBooking v-if="shownAppointmentForm" 
+                    :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" 
+                    :viewData="viewData" :timezone="displayTimezone" 
+                    @cancelled="hideModal" @confirmed="confirmedStatus" @updateEndTime="updateEndTime"/>
 
                     <StatusBusyConfirm v-if="shownBusyConfirm" 
                     :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :viewData="viewData"  
@@ -1298,6 +1300,10 @@ export default {
 
 .calendar-wrap .welcome-list li{
   margin-bottom:0;
+}
+
+.calendar-wrap .wbtn.wbtn-secondary.wbtn-cell{
+    margin: .5rem;
 }
   
 </style>

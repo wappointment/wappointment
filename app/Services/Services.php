@@ -132,7 +132,6 @@ class Services implements ServiceInterface
     public static function getObject($service_id = false)
     {
         return new \Wappointment\Decorators\Service(static::get($service_id));
-        return new \WappointmentAddonServices\Decorators\Service(static::get($service_id));
     }
 
     public static function total()
