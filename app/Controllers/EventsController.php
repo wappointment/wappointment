@@ -259,7 +259,6 @@ class EventsController extends RestController
                 $start = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone));
                 $end = (new Carbon($startDate->format(WAPPOINTMENT_DB_FORMAT . ':00'), $regavTimezone));
 
-
                 $unit_added = !empty($this->regav['precise']) ? 'addMinutes' : 'addHours'; //detect precision mode
                 $start->$unit_added($dayTimeblock[0]);
                 $end->$unit_added($dayTimeblock[1]);

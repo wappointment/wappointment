@@ -35,6 +35,7 @@ class Appointment extends Model
     {
         return \Wappointment\Services\Staff::getById($this->staff_id);
     }
+
     public function getLocationSlug()
     {
         switch ($this->type) {
@@ -221,11 +222,7 @@ class Appointment extends Model
     public function getStartsDayAndTime($timezone)
     {
         return !empty($this->start_at) ? DateTime::i18nDateTime($this->start_at->timestamp, $timezone) : '';
-        /*         return $this->start_at
-            ->timezone($timezone)
-            ->format(Settings::get('date_format') . Settings::get('date_time_union') . Settings::get('time_format')); */
     }
-
 
     private function getPageLink($view = 'reschedule-event')
     {
@@ -250,11 +247,7 @@ class Appointment extends Model
             return \Wappointment\Services\Service::getObject();
         }
         if (empty($services[$this->service_id])) {
-            $services[$this->service_id] = apply_filters(
-                'wappointment_get_appointment_service',
-                \Wappointment\Services\Service::getObject(),
-                $this->service_id
-            );
+            $services[$this->service_id] = \Wappointment\Services\Services::getObject($this->service_id);
         }
         return $services[$this->service_id];
     }

@@ -80,7 +80,7 @@ class Service implements ServiceInterface
 
     public static function all()
     {
-        return apply_filters('wappointment_get_services', [static::get()]);
+        return [static::get()];
     }
 
     public static function hasZoom($service)

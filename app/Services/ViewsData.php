@@ -291,17 +291,8 @@ class ViewsData
 
     private function front_availability()
     {
-        $staff_availability = [];
-        $staffs = [];
-        foreach (Staff::getIds() as $staff_id) {
-            $staff = new \Wappointment\WP\Staff($staff_id);
-            $staff_availability[$staff_id] = $staff->getAvailability();
-            $staffs[] = $staff->toArray();
-        }
-
         return apply_filters('wappointment_front_availability', [
-            'staffs' => $staffs,
-            'availability' => $staff_availability,
+            'staffs' => Staff::get(),
             'week_starts_on' => Settings::get('week_starts_on'),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),

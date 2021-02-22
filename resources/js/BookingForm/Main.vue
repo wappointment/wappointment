@@ -61,7 +61,7 @@
                 <div class="wappointment-errors" v-if="errorMessages.length > 0">
                     <div v-for="errorM in errorMessages">{{errorM}}</div>
                 </div>
-                <div v-else><Loader></Loader></div>
+                <div v-else><Loader /></div>
             </template>
         </div>
     </div>
@@ -355,8 +355,7 @@ export default {
             this.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
 
             this.startDay = this.viewData.week_starts_on
-            let firstStaff = this.getDefaultStaff()
-            this.intervalsCollection = new Intervals(this.viewData.availability[firstStaff.id])
+            this.intervalsCollection = new Intervals(this.getDefaultStaff().availability)
 
             this.setMomentLocale()
 
@@ -506,7 +505,8 @@ export default {
                         options:"options",
                         relatedComps: 'relatedComps', 
                         appointment_starts_at: 'appointmentStartsAt',
-                        custom_fields: 'viewData.custom_fields'
+                        custom_fields: 'viewData.custom_fields',
+                        staffs:  'viewData.staffs'
                     },
                     listeners: {
                         back:'childChangedStep',

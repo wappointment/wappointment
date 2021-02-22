@@ -18,7 +18,7 @@ class Staff
     {
         $staffs = [];
         foreach (static::getIds() as $staff_id) {
-            $staffs[$staff_id] = (new \Wappointment\WP\Staff($staff_id))->toArray();
+            $staffs[] = (new \Wappointment\WP\Staff($staff_id))->toArray();
         }
         return $staffs;
     }

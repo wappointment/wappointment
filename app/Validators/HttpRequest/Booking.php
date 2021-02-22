@@ -121,13 +121,6 @@ class Booking extends LegacyBooking
         }
     }
 
-    // public function ()
-    // {
-    //     $regav = SettingsCore::get('regav');
-    //     !empty($regav['precise']) && $regav['precise'] === true;
-    //     dd($regav);
-    // }
-
     public function prepareInputs($inputs): array
     {
         $this->validateService($inputs);

@@ -40,13 +40,13 @@ class Staff
             'avatar' => $this->avatar,
             'gravatar' => $this->gravatar,
             'name' => $this->name,
-            'avb' => Settings::getStaff('availaible_booking_days'),
-            'regav' => Settings::getStaff('regav'),
+            'avb' => $this->getAvb(),
+            'regav' => $this->getRegav(),
             'timezone' => $this->timezone,
             'services' => [Service::get()],
-            'connected' => Settings::getStaff('dotcom'),
-            'calendar_urls' => WPHelpers::getStaffOption('cal_urls'),
-            'calendar_logs' => WPHelpers::getStaffOption('calendar_logs'),
+            'connected' => $this->getDotcom(),
+            'calendar_urls' => $this->getCalendarUrls(),
+            'calendar_logs' => $this->getCalendarLogs(),
         ];
     }
 
@@ -70,12 +70,38 @@ class Staff
 
     public function toArray()
     {
-        return [
+        return apply_filters('wappointment_staff_data', [
             'id' => $this->id,
             'a' => $this->avatar,
             'n' => $this->name,
             't' => $this->timezone,
-        ];
+            'availability' => $this->getAvailability(),
+        ], $this);
+    }
+
+    public function getRegav()
+    {
+        return Settings::getStaff('regav', $this->id);
+    }
+
+    public function getAvb()
+    {
+        return Settings::getStaff('availaible_booking_days', $this->id);
+    }
+
+    public function getDotcom()
+    {
+        return Settings::getStaff('dotcom', $this->id);
+    }
+
+    public function getCalendarUrls()
+    {
+        return WPHelpers::getStaffOption('cal_urls', $this->id);
+    }
+
+    public function getCalendarLogs()
+    {
+        return WPHelpers::getStaffOption('calendar_logs', $this->id);
     }
 
     public function emailAddress()

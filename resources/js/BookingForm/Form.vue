@@ -57,8 +57,9 @@ import MixinLegacy from './MixinLegacy'
 export default {
     extends: AbstractFront,
     mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy],
-    props: ['service', 'selectedSlot', 'options', 'errors', 'data', 'timeprops', 'relations', 'appointment_starts_at',
-    'duration', 'location', 'custom_fields'],
+    props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
+    'timeprops', 'relations', 'appointment_starts_at',
+    'duration', 'location', 'custom_fields', 'staffs'],
     components: {
         CountryStyle,
         FieldsGenerated,
@@ -71,7 +72,8 @@ export default {
         mounted: false,
         disabledButtons: false,
         bookingFormExtended: null,
-        canDisplayInputs: false
+        canDisplayInputs: false,
+        staff: null
     }),
 
     created(){
@@ -86,8 +88,8 @@ export default {
             }
         }else{
             this.setCanDisplay(this.location)
+            this.setStaff()
         }
-        
     },
 
     mounted(){
@@ -140,9 +142,14 @@ export default {
         }
     },
     methods: {
+        setStaff(staff_key = false){
+            this.staff = staff_key ? this.staffs[staff_key]:this.staffs[0]
+        },
+
         getId(id){
             this.phoneId = id
         },
+
         tryPrefill(){
             if(window.apiWappointment.wp_user !== undefined){
                 this.bookingForm.email = window.apiWappointment.wp_user.email
@@ -175,6 +182,7 @@ export default {
             if(this.errorsOnFields[field] !== undefined && this.errorsOnFields[field]===true) return 'isInvalid'
             return 'isValid'
         },
+
         onInput({ number, isValid, country }) {
             this.bookingForm.phone = number
             this.phoneValid = isValid
@@ -185,23 +193,26 @@ export default {
             this.errorsOnFields = errors
             this.dataDemoChanged(newval)
         },
+
         dataDemoChanged(newValue){
             if(this.disabledButtons) {
                 newValue.type = this.selection
                 this.options.eventsBus.emits('dataDemoChanged', newValue)
             } 
         },
+
         back(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'selection')
               return
             } 
-            
             this.$emit('back', this.relations.prev,{selectedSlot:false})
         },
+
         confirmSwitch(){
             return this.isLegacy ? this.confirmLegacy():this.confirm()
         },
+
         confirm(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'confirmation')
@@ -213,6 +224,7 @@ export default {
             data.service = this.service.id
             data.location = this.location.id
             data.duration = this.duration
+            data.staff = this.staff.id
             //turns loading mode on in parent
             this.$emit('loading', {loading:true, dataSent: data})
             //create request
@@ -220,7 +232,6 @@ export default {
             .then(this.appointmentBooked)
             .catch(this.appointmentBookingError)
         },
-
 
         async saveBookingRequest(data) {
             return await this.serviceAppointmentService.call('save', data)
