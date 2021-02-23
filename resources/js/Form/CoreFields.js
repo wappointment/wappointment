@@ -23,7 +23,6 @@ let allComponents = window.wappointmentExtends.filter( 'FormGeneratorFields', {F
     FormFieldAddress, FormFieldDuration,FormFieldCountrySelector, FormFieldLabel, FormFieldUpload, FormFieldDate,FormFieldTextarea},
     { AbstractField, RequestMaker } )
 let inputTypes = {}
-
 for (const key in allComponents) {
     if (allComponents.hasOwnProperty(key)) {
         inputTypes[allComponents[key].name] = key

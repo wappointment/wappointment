@@ -116,8 +116,8 @@ export default {
             setTimeout(this.removeDelay, 100)
         },
         cleanObject(ObjectToClean) {
-        return Object.entries(ObjectToClean).reduce((a,[k,v]) => (v === undefined ? a : {...a, [k]:v}), {})
-      },
+            return Object.entries(ObjectToClean).reduce((a,[k,v]) => (v === undefined ? a : {...a, [k]:v}), {})
+        },
         removeDelay(){
             this.updatedValue = this.tempUpdated
             this.tempUpdated = null
