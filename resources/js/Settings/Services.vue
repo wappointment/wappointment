@@ -1,17 +1,15 @@
 <template>
     <div >
         <BreadCrumbs v-if="crumbs.length>0" :crumbs="crumbs" @click="goTo"/>
-        <ServicesDelivery v-if="serviceDeliveries" @changeView="changeView" />
-        <ServicesManage v-else @changeView="changeView"/>
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
 import hasBreadcrumbs from '../Mixins/hasBreadcrumbs'
-import ServicesManage from './ServicesManage'
-import ServicesDelivery from './ServicesDelivery'
+
 export default {
-    components: {ServicesDelivery, ServicesManage},
+    //components: {ServicesDelivery, ServicesManage},
     mixins: [hasBreadcrumbs],
     props: {
         crumb:{

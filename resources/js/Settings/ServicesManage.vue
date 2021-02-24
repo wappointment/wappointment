@@ -103,7 +103,7 @@ export default {
     },
     methods: {
         goToDelivery(){
-            this.$emit('changeView', 'delivery')
+            this.$router.push({name:'modalities'})
         },
         serviceHasIcon(service){
             return service.options.icon != ''

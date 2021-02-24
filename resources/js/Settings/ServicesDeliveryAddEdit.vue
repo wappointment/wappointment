@@ -24,7 +24,7 @@ export default {
         servicesService: null,
         modelHolder: {             
             name: '',
-            type: 1,
+            type: 5,
             options: {
               icon: '',
               address: '',

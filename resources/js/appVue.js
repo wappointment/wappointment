@@ -9,6 +9,7 @@ window.wappointmentExtends = wappoExtend
 window.wappoGet = function(name, from = 'commons'){
     let components_list = window.wappointmentExtends.get(from)
     if(typeof components_list !== 'object' || Object.keys(components_list).length ==0 ){
+        console.log('components_list',components_list)
         throw "wappoGet: Collection is empty "+ name+ " from " + from
     }
     if([undefined,null,{}].indexOf(components_list[name]) !== -1){

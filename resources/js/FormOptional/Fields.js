@@ -4,7 +4,7 @@ import FieldTimezone from './FieldTimezone'
 import FieldPhone from './FieldPhone'
 import FieldModality from './FieldModality'
 import FieldMultiDuration from './FieldMultiDuration'
-console.log('FieldMultiDuration')
+import FieldCustomField from './FieldCustomField'
 window.wappointmentExtends.add('FormGeneratorFields', function (allComponents, extraComponents) {
     allComponents['FieldTipTap'] = FieldTipTap
     allComponents['FieldImageSelect'] = FieldImageSelect
@@ -12,7 +12,7 @@ window.wappointmentExtends.add('FormGeneratorFields', function (allComponents, e
     allComponents['FieldPhone'] = FieldPhone
     allComponents['FieldModality'] = FieldModality
     allComponents['FieldMultiDuration'] = FieldMultiDuration
-    console.log('added FieldMultiDuration')
+    allComponents['FieldCustomField'] = FieldCustomField
     return allComponents
 })
 

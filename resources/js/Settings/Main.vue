@@ -83,7 +83,7 @@ export default {
     },
     computed: {
         convertedName(){
-            return this.$route.name === 'modalities' ? 'services':this.$route.name
+            return ['modalities', 'modalities_add', 'modalities_edit'].indexOf(this.$route.name) !== -1  ? 'services':this.$route.name
         },
         activeTab(){
             return this.convertedName.indexOf('_') === -1 ? this.convertedName : this.convertedName.split('_')[0]

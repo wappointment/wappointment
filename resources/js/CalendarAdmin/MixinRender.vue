@@ -86,7 +86,6 @@ export default {
       },
 
       modifyRegav(event){
-        //this.$router.push({ name: 'regav'})
         this.showRegularAv = true
         event.stopPropagation()
       },

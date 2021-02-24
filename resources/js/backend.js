@@ -9,14 +9,15 @@ import DurationCell from './BookingForm/DurationCell'
 import PhoneInput from './BookingForm/PhoneInput'
 import AbstractListing from './Views/AbstractListing'
 import momenttz from './appMoment'
+import wappoExtend from './Standalone/extends.js'
+window.wappointmentExtends = wappoExtend
 
 window.wappointmentExtends.store('commons', {AbstractListing, PhoneInput, InputPh, ClickCopy, VideoIframe, FontAwesomeIcon, DurationCell, momenttz})
 
 import VueRouter from 'vue-router'
 import Backend from './Backend'
 import VueWapModal from './Plugins/vue-wap-modal'
-import wappoExtend from './Standalone/extends.js'
-window.wappointmentExtends = wappoExtend
+
 import FieldsOptional from './FormOptional/Fields.js'
 import FormGenerator from './Form/FormGenerator'
 import StickyBar from './Components/StickyBar'
@@ -26,7 +27,10 @@ import VueService from './Plugins/vue-service'
 import rewriteWPMenu from './Standalone/rewriteWPMenu'
 import routerSetupRedirect from './Standalone/routerSetupRedirect'
 import routerQueryRedirect from './Standalone/routerQueryRedirect'
+import getRoutePush from './Standalone/getRoutePush'
+import ServicesDelivery from './Settings/ServicesDelivery'
 
+//ServicesDelivery = window.wappointmentExtends.filter('ServicesDelivery', ServicesDelivery)
 
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
@@ -59,6 +63,9 @@ const Wizard4Page = () => import(/* webpackChunkName: "group-wizard2" */ './View
 
 const RegavPage = () => import(/* webpackChunkName: "group-regav" */ './RegularAvailability/View')
 const ServicePage = () => import(/* webpackChunkName: "group-service" */ './Views/Subpages/Service')
+
+
+const ServicesManage = () => import(/* webpackChunkName: "group-service-manage" */ './Settings/ServicesManage')
 
 const WappointmentErrorFileNotLoading = () => import(/* webpackChunkName: "wappo-error" */ './Views/WappointmentErrorFileNotLoading')
 
@@ -149,14 +156,37 @@ const router = window.wappointmentrouter = new VueRouter({
             },
             {
                 path: 'services',
-                name: 'services',
-                component: SettingsPage
+                component: SettingsPage,
+                children: [
+                  {
+                    name: 'services',
+                      path: '',
+                      component: ServicesManage
+                  }
+                ]
             },
             {
               path: 'modalities',
-              name: 'modalities',
-              component: SettingsPage
-          },
+              component: SettingsPage,
+              children: [
+                {
+                    path: '',
+                    name: 'modalities',
+                    component: ServicesDelivery
+                },
+                {
+                    path: 'add',
+                    name: 'modalities_add',
+                    component: ServicesDelivery
+                }
+                ,
+                {
+                    path: 'edit/:id',
+                    name: 'modalities_edit',
+                    component: ServicesDelivery
+                }
+              ]
+            },
             {
                 path: 'emailsnsms',
                 name: 'emailsnsms',
@@ -189,10 +219,9 @@ const router = window.wappointmentrouter = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   
-  
   if(to.query.page!== undefined && to.query.page.indexOf('wappointment_')!==-1){
     if(['wappointment_calendar', 'wappointment_settings'].indexOf(to.query.page) !== -1 && to.hash.indexOf('#/') !== -1){
-        next({ name: to.hash.replace('#/','')})
+      next(getRoutePush(to.hash))
       }else{
         if(to.path == window.apiWappointment.base_admin && to.query.page=='wappointment_calendar' && to.query.start !== undefined){
           //we save the query parameters for later use start, end , timezone

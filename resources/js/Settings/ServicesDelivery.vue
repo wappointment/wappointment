@@ -1,6 +1,7 @@
 <template>
     <div>
         <div v-if="deliveryListing">
+            <div><button class="btn btn-link btn-xs mb-2" @click="backToServices"> < Back to services</button></div>
             <button @click="addElement" class="btn btn-outline-primary btn my-2">Add new</button>
             <div class="table-hover">
                 <table class="table">
@@ -43,7 +44,7 @@
 
         </div>
         <div v-if="deliveryAdd">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back to list</button>
             <ServicesDeliveryAddEdit :element="elementPassed" @saved="hasBeenSavedDeleted"/>
         </div>
     </div>
@@ -67,6 +68,7 @@ export default {
     created(){
         this.mainService = this.$vueService(new WappoServiceLocation)
     },
+   
     computed: {
         deliveryListing(){
             return this.currentView == 'listing'
@@ -76,12 +78,24 @@ export default {
         }
     },
     methods: {
+        backToServices(){
+            this.$router.push({name:'services'})
+        },
+        selectElement(modality_id){
+            this.editElement(this.elements.find(e => e.id == modality_id))
+        },
         addElement(){
             this.requiresAddon('services', 'Add more Modality')
         },
         loadElements() { // overriding
-            if(this.currentView == 'listing') {
-                this.request(this.requestElements,{},undefined,false,this.loadedElements,this.failedLoadingElements)
+            this.request(this.requestElements,{},undefined,false,this.loadedElements,this.failedLoadingElements)
+        },
+        afterLoaded(response){
+            if(['modalities_add','modalities_edit'].indexOf(this.$route.name) !== -1){
+                this.currentView = this.$route.name.replace('modalities_','')
+                if(this.currentView == 'edit'){
+                    this.selectElement(this.$route.params.id)
+                }
             }
         },
         orderChanged(val){
@@ -114,6 +128,7 @@ export default {
             }else{
                 this.currentView = 'edit'
                 this.elementPassed = element
+                this.$router.push({name:'modalities_edit', params:{id:element.id}})
             }
         },
 
@@ -126,6 +141,7 @@ export default {
               }else{
                 this.currentView = 'listing'
                 this.elementPassed = null
+                this.$router.push({name:'modalities'})
             }
 
         },

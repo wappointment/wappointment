@@ -195,8 +195,9 @@ export default {
     .fimage-edit i.dashicons{
         width: 50px;
         height: 50px;
-        font-size: 50px;
+        font-size: 40px;
         color: #b9b6b6;
+        padding-top: 5px;
     }
 
 
@@ -230,10 +231,9 @@ export default {
         cursor: pointer;
         border-radius: .2rem;
         overflow: hidden;
+        border-radius: 50%;
     }
-    .preview-fimage.preview-selected{
-        border-radius: 2rem;
-    }
+
     .preview-fimage:hover{
         border: 1px solid #6664cb;
     }
