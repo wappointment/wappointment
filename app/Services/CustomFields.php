@@ -63,8 +63,6 @@ class CustomFields
 
     public static function get()
     {
-        $fields = self::$core_fields;
-
-        return $fields;
+        return self::$core_fields;
     }
 }

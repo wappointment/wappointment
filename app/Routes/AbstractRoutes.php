@@ -2,8 +2,6 @@
 
 namespace Wappointment\Routes;
 
-use Wappointment\Services\Settings;
-
 abstract class AbstractRoutes
 {
     protected $routes = [];
@@ -100,30 +98,17 @@ abstract class AbstractRoutes
 
     public function replaceModernVerb($method)
     {
-
-        if ($this->disabled_modern_api_verbs) {
-            $replace_by_post = ['DELETE', 'PUT', 'PATCH'];
-            if (in_array(strtoupper($method), $replace_by_post)) {
-                return true;
-            }
-        }
-        return false;
+        return $this->disabled_modern_api_verbs && in_array(strtoupper($method), ['DELETE', 'PUT', 'PATCH']);
     }
 
     public function getURIPortion($method, $uri)
     {
-        if ($this->replaceModernVerb($method)) {
-            return $uri . '/' . strtolower($method);
-        }
-        return $uri;
+        return $this->replaceModernVerb($method) ? $uri . '/' . strtolower($method) : $uri;
     }
 
     public function getHTTP($method)
     {
-        if ($this->replaceModernVerb($method)) {
-            return 'POST';
-        }
-        return strtoupper($method);
+        return $this->replaceModernVerb($method) ? 'POST' : strtoupper($method);
     }
 
     public function canExecutePublic($args)

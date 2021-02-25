@@ -3,12 +3,12 @@
 namespace Wappointment\Controllers;
 
 use Wappointment\Controllers\RestController;
-use Wappointment\Services\CustomFields;
+use Wappointment\Managers\Central;
 
 class CustomFieldsController extends RestController
 {
     public function get()
     {
-        return CustomFields::get();
+        return Central::get('CustomFields')::get();
     }
 }

@@ -5,7 +5,7 @@ namespace Wappointment\Validators\HttpRequest;
 use Wappointment\Validators\Phone;
 use Wappointment\Managers\Service as ServiceCentral;
 use Wappointment\Models\Location as LocationModel;
-use Wappointment\Services\CustomFields;
+use Wappointment\Managers\Central;
 
 class Booking extends LegacyBooking
 {
@@ -35,7 +35,7 @@ class Booking extends LegacyBooking
             'duration' => 'required|min:5'
         ];
 
-        $custom_fields = CustomFields::get();
+        $custom_fields = Central::get('CustomFields')::get();
         foreach ($this->service->options['fields'] as $key => $field) {
             foreach ($custom_fields as $key => $cfield) {
                 if ($cfield['namekey'] == $field && empty($this->validationRulesArray[$field])) {

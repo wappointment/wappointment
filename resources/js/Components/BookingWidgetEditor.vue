@@ -463,22 +463,22 @@ export default {
             return ['button', 'selection', 'form', 'confirmation'].indexOf(key) === -1
         },
         isComponentTypeActive(value, section, group_key, key, onlycolors=false){
+            if(value === undefined) {
+                return false
+            }
             if(value[0] == '#'){
                 return onlycolors===true && this.colorEdit && this.getVisibility(section, group_key, key)
             }else{
-                if(onlycolors===true) return false
-                return this.getVisibility(section, key)
+                return onlycolors===true? false:this.getVisibility(section, key)
             }
         },
 
         getComponentType(value, type){
-
             if(['check_','slide_'].indexOf(type.substr(0,6)) !== -1){
                 return type.substr(0,6) == 'check_' ? 'FormFieldCheckbox':'FormFieldSlider'
             }else{
                 return value[0] == '#' ? 'ColorPicker':'InputPh'
             }
-            
         },
         allowedType(type){
             return this.config.service.type.indexOf(type) !== -1

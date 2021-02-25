@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="wpage px-4 pb-2">
         <div v-if="label" class="mb-2">
             {{ label}} 
         </div>
@@ -9,12 +9,18 @@
                 <div :key="idx" @click="onChangedWrapped(item)"  
                 class="btn btn-secondary btn-cell align-self-start" 
                 :class="{'is-invalid':hasErrors,'core-field':item.core !== undefined,'custom-field':item.core === undefined, noclick: item.always !== undefined}">
-                    <div> 
-                        <span v-if="item.required || item.core !== undefined" class="text-danger" data-tt="Required">*</span> 
-                        <input @click.prevent type="checkbox" :disabled="item.always !== undefined" 
-                        :checked="(isItemChecked(item) || item.always !== undefined)" 
-                        :class="{'is-invalid':hasErrors, selected: (isItemChecked(item) || item.always !== undefined), noclick: item.always !== undefined}"> {{ item.name }}
-                    </div>
+                    <div> <span v-if="item.required || item.core !== undefined" class="text-danger" data-tt="Required">*</span> <input @click.prevent type="checkbox" :disabled="item.always !== undefined" :checked="(isItemChecked(item) || item.always !== undefined)" :class="{'is-invalid':hasErrors, selected: (isItemChecked(item) || item.always !== undefined), noclick: item.always !== undefined}"> {{ item.name }}</div>
+                    <transition name="fade">
+                        <div v-if="showControls && item.core === undefined" class="edit-button">
+                            <span data-tt="Edit">
+                                <span class="wicon edit" @click.stop.capture="editCF(item, idx)"></span>
+                            </span>
+                            <span data-tt="Remove">
+                                <span class="wicon trash" @click.stop.capture="removeCF(item, idx)"></span>
+                            </span>
+
+                        </div>
+                    </transition>
                 </div>
             </template>
 

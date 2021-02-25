@@ -56,7 +56,6 @@ class Scheduler
             if (!$lock->alreadySet()) {
                 $lock->set();
                 \Wappointment\Services\Queue::process();
-
                 $lock->release();
             }
         }

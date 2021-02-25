@@ -2,7 +2,7 @@
     <div>
         <div v-if="deliveryListing">
             <div><button class="btn btn-link btn-xs mb-2" @click="backToServices"> < Back to services</button></div>
-            <button @click="addElement" class="btn btn-outline-primary btn my-2">Add new</button>
+            <button @click="addElement" class="btn btn-outline-primary btn my-2">Add modality</button>
             <div class="table-hover">
                 <table class="table">
                     <thead>
@@ -44,7 +44,7 @@
 
         </div>
         <div v-if="deliveryAdd">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back to list</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back to modalities</button>
             <ServicesDeliveryAddEdit :element="elementPassed" @saved="hasBeenSavedDeleted"/>
         </div>
     </div>
@@ -54,8 +54,9 @@
 
 import WappoServiceLocation from '../Services/V1/Location'
 import ServicesDeliveryAddEdit from './ServicesDeliveryAddEdit'
+import AbstractListing from '../Views/AbstractListing'
 export default {
-    extends: window.wappoGet('AbstractListing'),
+    extends: AbstractListing,
     components:{
         ServicesDeliveryAddEdit
     },

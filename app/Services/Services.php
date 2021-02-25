@@ -76,7 +76,7 @@ class Services implements ServiceInterface
     {
         $serviceDB = null;
         if (!empty($serviceData['id'])) {
-            $serviceDB = static::getModel()::find($serviceData['id']);
+            $serviceDB = static::getModel()::findOrFail($serviceData['id']);
         } else {
             if (!static::getModel()::canCreate()) {
                 throw new \WappointmentValidationException("Cannot save Services");
@@ -102,7 +102,7 @@ class Services implements ServiceInterface
     {
         $serviceDB = null;
         if (!empty($service_id)) {
-            $serviceDB = static::getModel()::find($service_id);
+            $serviceDB = static::getModel()::findOrFail($service_id);
         }
         if (empty($serviceDB)) {
             throw new \WappointmentException("Error patching service (service suite)", 1);

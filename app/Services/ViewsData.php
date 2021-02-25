@@ -8,6 +8,7 @@ use Wappointment\Services\Staff;
 use Wappointment\WP\WidgetAPI;
 use Wappointment\Services\Status;
 use Wappointment\Managers\Service as ManageService;
+use Wappointment\Managers\Central;
 
 class ViewsData
 {
@@ -132,7 +133,7 @@ class ViewsData
 
         if (VersionDB::canServices()) {
             $data['locations'] = \Wappointment\Models\Location::get();
-            $data['custom_fields'] = CustomFields::get();
+            $data['custom_fields'] = Central::get('CustomFields')::get();
         }
 
         return  apply_filters('wappointment_back_calendar', $data);
@@ -302,7 +303,7 @@ class ViewsData
             'buffer_time' => Settings::get('buffer_time'),
             'services' => ManageService::all(),
             'site_lang' => substr(get_locale(), 0, 2),
-            'custom_fields' => \Wappointment\Services\CustomFields::get()
+            'custom_fields' => Central::get('CustomFields')::get()
         ]);
     }
 }

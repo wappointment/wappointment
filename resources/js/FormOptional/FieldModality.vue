@@ -58,76 +58,7 @@ export default {
               fields:[]
             }
           },
-        schemaLocation: [
-            {
-              type: 'row',
-              class: 'd-flex flex-wrap flex-sm-nowrap align-items-top fieldthumb',
-              classEach: 'mr-2',
-              fields: [
-                  {
-                    type: 'opt-imageselect',
-                    model: 'options.icon',
-                    cast: String,
-                },
-                {
-                    type: 'input',
-                    label: 'Name',
-                    model: 'name',
-                    cast: String,
-                    class: 'input-360'
-                },
-                
-              ]
-            },
-            {
-                type: 'checkimages',
-                label: 'Select Type',
-                model: 'type',
-                images: [
-                  { value:5, name:'Video meeting', icon: ['fas', 'video'], sub:'(Zoom, Google meet, ...)'},
-                  { value:1, name:'At an address', icon: 'map-marked-alt', sub:'For physical address'},
-                  { value:2, name:'By Phone', icon: 'phone', sub:'Includes a phone number field'},
-                  { value:3, name:'By Skype', icon: ['fab', 'skype'], sub:'Includes a skype username field'},
-                  { value:4, name:'Custom' , sub:'Set your own modality'},
-                ],
-                labelSearchKey: 'name',
-                cast: String,
-                radioMode: true
-            },
-            {
-                type: 'checkimages',
-                label: 'Video meeting provider',
-                radioMode: true,
-                model: 'options.video',
-                cast: Array,
-                images: [
-                  { value:'zoom', name:'Zoom', icon: 'zoom.png', icontype: 'img' , realsize: true},
-                  { value:'googlemeet', name:'Google Meet', icon: 'google-meet.png', icontype: 'img' , realsize: true},
-                ],
-                conditions: [
-                  { model:'type', values: [5] }
-                ],
-                validation: ['required']
-            },
-            {
-                type: 'address',
-                label: 'Address',
-                model: 'options.address',
-                conditions: [
-                  { model:'type', values: [1] }
-                ],
-                cast: String,
-            },
-            {
-                type: 'countryselector',
-                label: 'Phone field accepted countries',
-                model: 'options.countries',
-                cast: String,
-                conditions: [
-                  { model:'type', values: [2] }
-                ],
-            },
-          ]
+        
     }),
     computed: {
         items() {

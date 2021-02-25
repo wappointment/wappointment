@@ -101,6 +101,16 @@ export default {
                   { model:'type', values: [2] }
                 ],
             },
+            {
+              type: 'opt-customfields',
+              label: 'When client select this modality, display following fields',
+              model: 'options.fields',
+              bus: true,
+              listenBus: true,
+              cast: Array,
+              checklistOptions: { value:'namekey'}
+            },
+            
           ]
     }),
     created(){

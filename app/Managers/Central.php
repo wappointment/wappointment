@@ -22,6 +22,9 @@ class Central
         ],
         'AppointmentModel' => [
             'class' => \Wappointment\Models\Appointment::class,
+        ],
+        'CustomFields' => [
+            'class' => \Wappointment\Services\CustomFields::class,
         ]
     ];
 

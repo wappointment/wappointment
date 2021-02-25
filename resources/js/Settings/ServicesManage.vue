@@ -1,7 +1,7 @@
 <template>
     <div >
         <div v-if="serviceListing">
-            <button @click="showService" class="btn btn-outline-primary btn my-2">Add new</button>
+            <button @click="showService" class="btn btn-outline-primary btn my-2">Add service</button>
             <div class="table-hover" v-if="elements.services !== undefined">
                 <table class="table">
                     <thead>
@@ -68,10 +68,12 @@
 import WappoServiceService from '../Services/V1/Services'
 import ServicesAddEdit from './ServicesAddEdit'
 import ServicesEditLegacy from '../Views/Subpages/Service'
+import AbstractListing from '../Views/AbstractListing'
+import DurationCell from '../BookingForm/DurationCell'
 export default {
-    extends: window.wappoGet('AbstractListing'),
+    extends: AbstractListing,
     components:{
-        DurationCell: window.wappoGet('DurationCell'),
+        DurationCell,
         ServicesAddEdit,
         ServicesEditLegacy
     },

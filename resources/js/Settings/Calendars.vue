@@ -116,10 +116,12 @@ import SettingsSave from '../Modules/SettingsSave'
 import Sync from '../Views/Subpages/Sync'
 import CalendarsIntegrations from './CalendarsIntegrations'
 import CalendarsRegav from './CalendarsRegav'
+import DurationCell from '../BookingForm/DurationCell'
+import AbstractListing from '../Views/AbstractListing'
 export default {
-    extends: window.wappoGet('AbstractListing'),
+    extends: AbstractListing,
     components:{
-        DurationCell: window.wappoGet('DurationCell'),
+        DurationCell,
         CalendarsAddEdit,
         WeeklyAvailability,
         Connections,

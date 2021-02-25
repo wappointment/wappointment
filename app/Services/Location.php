@@ -3,11 +3,10 @@
 namespace Wappointment\Services;
 
 use Wappointment\Models\Location as LocationModel;
-use Wappointment\Models\Service;
 use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Validators\HasValues;
 use Wappointment\Validators\RequiredIfHas;
-use Wappointment\Validators\RequiredIfFields;
+use Wappointment\Managers\Service as ServiceManager;
 
 class Location
 {
@@ -50,19 +49,13 @@ class Location
     {
         $serviceDB = null;
         if (!empty($locationData['id'])) {
-            $serviceDB = LocationModel::find($locationData['id']);
+            $serviceDB = LocationModel::findOrFail($locationData['id']);
         } else {
-            if (!Service::canCreate()) {
+            if (!ServiceManager::model()::canCreate()) {
                 throw new \WappointmentValidationException("Cannot save Modality");
             }
         }
 
-        if (!empty($serviceDB)) {
-            $serviceDB->update($locationData);
-        } else {
-            $serviceDB = LocationModel::create($locationData);
-        }
-
-        return $serviceDB;
+        return !empty($serviceDB) ? $serviceDB->update($locationData) : LocationModel::create($locationData);
     }
 }
