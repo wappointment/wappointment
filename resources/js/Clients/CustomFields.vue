@@ -9,7 +9,12 @@
                 <div :key="idx" @click="onChangedWrapped(item)"  
                 class="btn btn-secondary btn-cell align-self-start" 
                 :class="{'is-invalid':hasErrors,'core-field':item.core !== undefined,'custom-field':item.core === undefined, noclick: item.always !== undefined}">
-                    <div> <span v-if="item.required || item.core !== undefined" class="text-danger" data-tt="Required">*</span> <input @click.prevent type="checkbox" :disabled="item.always !== undefined" :checked="(isItemChecked(item) || item.always !== undefined)" :class="{'is-invalid':hasErrors, selected: (isItemChecked(item) || item.always !== undefined), noclick: item.always !== undefined}"> {{ item.name }}</div>
+                    <div> 
+                        <span v-if="item.required || item.core !== undefined" class="text-danger" data-tt="Required">*</span> 
+                        <input @click.prevent type="checkbox" :disabled="item.always !== undefined" :checked="(isItemChecked(item) || item.always !== undefined)" 
+                        :class="{'is-invalid':hasErrors, selected: (isItemChecked(item) || item.always !== undefined), noclick: item.always !== undefined}"> 
+                        {{ item.name }}
+                    </div>
                     <transition name="fade">
                         <div v-if="showControls && item.core === undefined" class="edit-button">
                             <span data-tt="Edit">
@@ -262,53 +267,3 @@ export default {
     }
 }
 </script>
-<style>
-.check-locations.check-cfields .btn.btn-secondary.btn-cell.add-CF {
-    background-color: transparent;
-    border: 2px dashed var(--secondary);
-    color: var(--gray);
-    font-size: .7rem;
-}
-.check-locations.check-cfields .btn.btn-secondary.btn-cell.add-CF:hover {
-    border-color: var(--primary);
-}
-.check-locations.check-cfields .btn.btn-secondary.btn-cell{
-    width: auto;
-    background-color: #fff;
-    border: 0;
-}
-.custom-image{
-    width: 25px;
-    text-align: center;
-    margin: 0 auto;
-}
-.custom-image img{
-    max-width: 100%;
-    height: auto;
-    border-radius: .25rem
-}
-.edit-button{
-    cursor: pointer;
-    color: var(--gray);
-    text-align: center;
-    font-size: .7rem;
-}
-
-.btn.btn-secondary.btn-cell.noclick{
-    cursor: not-allowed;
-}
-
-.btn-secondary.btn-cell.noclick.selected.active, 
-.btn-secondary.btn-cell.noclick.selected:active {
-    background-color: #666;
-    color: #fff;
-}
-.check-locations.check-cfields .btn.btn-secondary.btn-cell{
-    margin:0 .5rem .5rem .5rem;
-}
-.showControls.check-locations.check-cfields .btn.btn-secondary.btn-cell.custom-field{
-    margin-bottom:2.5rem;
-}
-
-
-</style>

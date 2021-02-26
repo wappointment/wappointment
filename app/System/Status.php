@@ -49,9 +49,18 @@ class Status
 
     public static function hasPendingUpdates()
     {
-        $current_version = self::dbVersion();
+        return static::coreRequiresDBUpdate() || static::addonRequiresDBUpdate();
+    }
 
-        return version_compare($current_version, self::$db_version_required) < 0;
+    public static function coreRequiresDBUpdate()
+    {
+        return version_compare(self::dbVersion(), self::$db_version_required) < 0;
+    }
+
+    public static function addonRequiresDBUpdate()
+    {
+        $addons_updates = apply_filters('wappointment_addons_requires_update', []);
+        return !empty($addons_updates) ? $addons_updates : false;
     }
 
     public static function hasMessages()

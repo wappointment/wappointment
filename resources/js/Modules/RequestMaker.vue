@@ -4,6 +4,9 @@ if(window.wapRequests === undefined) {
   window.wapRunning = false
 }
 export default {
+  data: () => ({
+    errorMessages:[],
+  }),
   methods: {
       queueExecuteOne(){
         if(window.wapRunning === false){

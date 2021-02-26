@@ -143,7 +143,7 @@ export default {
         initForm(){
             this.locationObj = Object.assign({},this.convertLocationLegacy(this.location))
 
-            this.registerCustomFields()
+            this.filterCustomFields()
             this.initBookingForm()
             this.tryPrefill()
         },
@@ -286,7 +286,6 @@ export default {
                 
             }
 
-            
             return true
         },
         initBookingForm(){
@@ -340,28 +339,34 @@ export default {
                 this.locationObj.options.fields.unshift('skype') //inser skype to the beginning
             }
         },
-        registerCustomFields(){
-            let fields_src = {'src1': this.getServiceFields}
+        filterCustomFields(){
+            let fields_src = {'src1': this.reorderFields(this.getServiceFields)}
             if(!this.isLegacy){
                 this.insertCustomFields()
-                fields_src.src2 = this.locationObj.options.fields
+                fields_src.src2 = this.reorderFields(this.locationObj.options.fields) 
             }
             for (const key in fields_src) {
                 if (fields_src.hasOwnProperty(key) && fields_src[key] !== undefined) {
                     for (let i = 0; i < fields_src[key].length; i++) {
                         let cfieldslist = []
                         for (let j = 0; j < this.customFields.length; j++) {
-                             cfieldslist.push(this.customFields[j]['namekey'])
+                            cfieldslist.push(this.customFields[j]['namekey'])
                         }
                         
                         if(cfieldslist.indexOf(fields_src[key][i]) === -1){
                             let cf_found = this.getCFOptions(fields_src[key][i])
-                            if(cf_found!== undefined)this.customFields.push(cf_found)
+                            if(cf_found!== undefined){
+                                this.customFields.push(cf_found)
+                            }
                         } 
                          
                     }
                 }
             }
+        },
+
+        reorderFields(sourceFields){
+            return this.custom_fields.filter(e => sourceFields.indexOf(e.namekey) !== -1).map(el => el.namekey)
         },
 
         hasError(field){

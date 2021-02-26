@@ -300,9 +300,5 @@ export default {
 .check-locations.check-cfields .btn.btn-secondary.btn-cell{
     margin:0 .5rem .5rem .5rem;
 }
-.showControls.check-locations.check-cfields .btn.btn-secondary.btn-cell.custom-field{
-    margin-bottom:2.5rem;
-}
-
 
 </style>

@@ -114,6 +114,7 @@ class InitBackend
 
             $varJs['canSeeUpdate'] = Status::canSeeUpdatePage();
         }
+
         wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', WAPPOINTMENT_SLUG . 'Admin', $varJs);
 
         wp_enqueue_script(WAPPOINTMENT_SLUG . '_backend_menu');

@@ -34,6 +34,7 @@ trait WpMailPatched
 
         return $phpmailer;
     }
+
     public function wpMail($to, $subject, $message, $headers = '', $attachments = array())
     {
         // Compact the input, apply the filters, and extract them back out
@@ -150,6 +151,7 @@ trait WpMailPatched
                         case 'to': // avoid double headers
                         case 'subject':
                         case 'message-id':
+                        case 'date':
                             break;
                         default:
                             // Add it to our grand headers array

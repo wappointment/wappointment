@@ -205,7 +205,6 @@ let WappoBackroutes = [
 
 ]
 
-
   function runWappo() {
     WappoBackroutes = window.wappointmentExtends.filter('WappoBackroutes', WappoBackroutes)
     const router = window.wappointmentrouter = new VueRouter({

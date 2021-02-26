@@ -156,6 +156,10 @@ export default {
             this.replaceRefresh = replaceRefresh
             setTimeout(this.reRenderDelay, 100)
         },
+        setErrors(errorsObject){
+            this.errorsData = errorsObject
+            this.reRender()
+        },
         reRenderDelay(){
             this.formIsReady = true
             this.reload = true

@@ -2,6 +2,8 @@
 
 namespace Wappointment\Addons;
 
+use Wappointment\WP\Helpers as WPHelpers;
+
 abstract class AbstractBoot implements Boot
 {
     public static $addon_key;
@@ -17,6 +19,7 @@ abstract class AbstractBoot implements Boot
     public static $has_installation;
     public static $setting_key;
     public static $instructions;
+    public static $addon_db_version_required;
 
     public static function getAddonSlug()
     {
@@ -30,8 +33,23 @@ abstract class AbstractBoot implements Boot
             return;
         }
 
+        if ((is_admin() || strpos($_SERVER['REQUEST_URI'], 'wappointment/v1/app/migrate') !== false) && static::requiresDbUpdate()) {
+            add_filter('wappointment_addons_requires_update', [static::$name_space . 'Boot', 'addToListOfDbUpdates']);
+        }
         //only triggerred once the plugin is ready to be used
         static::installedFilters();
+    }
+
+    public static function addToListOfDbUpdates($addons_require_db_update)
+    {
+        if (method_exists(static::$name_space . 'Boot', 'runDbMigrate')) {
+            $addons_require_db_update[] = [
+                'key' => static::$addon_key,
+                'namespace' => static::$name_space . 'Boot',
+            ];
+        }
+
+        return $addons_require_db_update;
     }
 
     public static function addonStatusWrapper($package)
@@ -50,6 +68,40 @@ abstract class AbstractBoot implements Boot
             }
         }
         return $package;
+    }
+
+    public static function requiresDbUpdate()
+    {
+        if (static::$addon_db_version_required) {
+            return static::addonDbVersion() === false ? true : version_compare(static::addonDbVersion(), static::$addon_db_version_required) < 0;
+        }
+        return false;
+    }
+
+    public static function getAddonsVersions($reset = false)
+    {
+        static $addons_versions = false;
+        if ($addons_versions === false) {
+            $addons_versions = WPHelpers::getOption('addons_db_version', []);
+        }
+        if ($reset !== false) {
+            $addons_versions = $reset;
+        }
+        return $addons_versions;
+    }
+
+    public static function addonDbVersion()
+    {
+        $addons_versions = static::getAddonsVersions();
+        return !empty($addons_versions[static::$addon_key]) ? $addons_versions[static::$addon_key] : false;
+    }
+
+    public static function setAddonDbVersion()
+    {
+        $addons_versions = static::getAddonsVersions();
+        $addons_versions[static::$addon_key] = static::$addon_db_version_required;
+        static::getAddonsVersions($addons_versions);
+        return WPHelpers::setOption('addons_db_version', $addons_versions);
     }
 
     public static function canRun()

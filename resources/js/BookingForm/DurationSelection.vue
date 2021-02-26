@@ -1,7 +1,7 @@
 <template>
     <div v-if="durationsOrdered.length>0">
       <div class="title wtitle" v-if="options!==undefined">{{options.service_duration.select_duration}}</div>
-      <div class="d-flex flex-wrap " :class="getClass">
+      <div class="d-flex flex-wrap justify-content-around" >
         <div class="wbtn wbtn-cell wbtn-duration wbtn-secondary d-flex align-items-center" role="button" v-for="(duration,idx) in durationsOrdered"  @click="selectDuration(duration)">
             <span class="mr-2 wduration" :class="{wsold: canSell(duration)}">{{duration.duration}}{{options.general.min}}</span>
             <span v-if="canSell(duration)" class="wprice">{{ getPrice(duration) }}</span>
@@ -24,9 +24,6 @@ export default {
     computed:{
         getClasses(){
             return window.wappointment_services === undefined || window.wappointment_services.is_admin === undefined ? 'wbtn wbtn-secondary wbtn-cell':'btn btn-secondary btn-cell'
-        },
-        getClass(){
-            return {'justify-content-center': this.options !== undefined}
         },
         durationsOrdered(){
             return this.service.options.durations.sort((a,b) => a.duration > b.duration ?1:-1)

@@ -4,11 +4,11 @@
             <WPListingHelp @perPage="perPage" v-if="per_page" :per_page="per_page"/>
             <div class="d-flex align-items-center">
               <h1 class="my-3 mr-3" @click="reloadListing">Clients</h1>
-              <button type="button" class="btn btn-outline-primary d-flex align-items-center mr-2" @click.prevent.stop="addClient">
+              <!-- <button type="button" class="btn btn-outline-primary d-flex align-items-center mr-2" @click.prevent.stop="addClient">
                 <span class="dashicons dashicons-plus-alt text-primary mr-2" ></span> Add Client
-              </button>
+              </button> -->
               <button type="button" class="btn btn-outline-primary d-flex align-items-center" @click.prevent.stop="addCustomField">
-                <span class="dashicons dashicons-filter text-primary mr-2" ></span> Add Custom Field
+                <span class="dashicons dashicons-id text-primary mr-2" ></span> Add Custom Field
               </button>
             </div>
             <div v-if="Object.keys(clientListing).length > 1" class="d-flex align-items-center">
