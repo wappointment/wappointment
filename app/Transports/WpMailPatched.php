@@ -149,6 +149,7 @@ trait WpMailPatched
                             break;
                         case 'to': // avoid double headers
                         case 'subject':
+                        case 'date':
                         case 'message-id':
                             break;
                         default:
