@@ -139,7 +139,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.0.3 - 2021-02-23 =
+= 2.0.3 - 2021-03-01 =
 * Improved calendar synch 
 * Fixed issue with availability calculation on edge case
 * Hide button on preload of booking form
