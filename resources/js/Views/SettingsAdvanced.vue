@@ -24,11 +24,13 @@
                 </button>
               </div>
 
-              <hr/>
-              <div class="mt-3">
-                <button class="btn btn-danger btn-sm" @click="startResetConfirm">
-                  <span class="dashicons dashicons-image-rotate"></span> Uninstall
-                </button>
+              <div v-if="viewData.debug">
+                <hr/>
+                <div class="mt-3" >
+                  <button class="btn btn-danger btn-sm" @click="startResetConfirm">
+                    <span class="dashicons dashicons-image-rotate"></span> Uninstall
+                  </button>
+                </div>
               </div>
             </div>
       </div>

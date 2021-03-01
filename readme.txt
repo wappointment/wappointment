@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.6
 Requires PHP: 7.0
-Stable tag: 2.0.2
+Stable tag: 2.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,15 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.0.3 - 2021-03-01 =
+* Improved calendar synch 
+* Fixed issue with availability calculation on edge case
+* Hide button on preload of booking form
+* Improved Google - Zoom connection for better performances
+* Added missing confirmation message for video meetings
+* Fixed bug on Zoom, Google meet link in appointment confirmation
+* Fixed edge case admin calendar not loading events
 
 = 2.0.2 - 2021-01-31 =
 * Added js hook for analytics on booking confirmation
