@@ -3,7 +3,7 @@
 use Wappointment\ClassConnect\Capsule;
 use Wappointment\Config\Database;
 
-class CreateCalendarsTable extends Wappointment\Installation\MigrateHasServices
+class CreateCalendarsTable extends Wappointment\Installation\Migrate
 {
 
     /**
@@ -14,14 +14,14 @@ class CreateCalendarsTable extends Wappointment\Installation\MigrateHasServices
     public function up()
     {
 
-        if ($this->hasMultiService()) {
-            return;
-        }
         Capsule::schema()->create(Database::$prefix_self . '_calendars', function ($table) {
             $table->increments('id');
+            $table->string('name');
+            $table->string('account_key')->nullable();
             $table->unsignedBigInteger('wp_uid')->default(0);
             $table->unsignedTinyInteger('sorting')->default(0);
-            $table->mediumText('options')->nullable();
+            $table->text('options')->nullable();
+            $table->mediumText('availability')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

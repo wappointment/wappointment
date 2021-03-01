@@ -49,8 +49,6 @@ class SettingsStaffController extends RestController
                 }
             }
 
-
-
             $regav[$day] = $newblocks;
         }
 

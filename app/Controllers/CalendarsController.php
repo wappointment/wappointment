@@ -4,9 +4,10 @@ namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
 use Wappointment\Controllers\RestController;
-use Wappointment\Models\Service as CalendarsModel;
+use Wappointment\Models\Calendar as CalendarsModel;
 use Wappointment\Services\Services;
 use Wappointment\Services\VersionDB;
+use Wappointment\WP\StaffLegacy;
 use Wappointment\WP\Staff;
 use Wappointment\Services\Staff as StaffServices;
 use Wappointment\Services\DateTime;
@@ -16,19 +17,29 @@ class CalendarsController extends RestController
     public function get()
     {
         $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
-        $calendars = $db_update_required ? $this->getlegacy() : CalendarsModel::orderBy('sorting')->take(2)->get();
+        $calendars = $db_update_required ? $this->getStafflegacy() : $this->getCalendarsStaff();
         return [
             'db_required' => $db_update_required,
             'timezones_list' => DateTime::tz(),
-            'calendars' => $this->getlegacy(),
+            'calendars' => $calendars,
             'staffs' => StaffServices::getWP(),
         ];
     }
 
-    public function getlegacy()
+    public function getCalendarsStaff()
+    {
+        $calendars = CalendarsModel::orderBy('sorting')->get();
+        $staffs = [];
+        foreach ($calendars->toArray() as $key => $calendar) {
+            $staffs[] = (new Staff($calendar))->fullData();
+        }
+        return $staffs;
+    }
+
+    public function getStafflegacy()
     {
         return [
-            (new Staff)->fullData()
+            (new StaffLegacy)->fullData()
         ];
     }
 

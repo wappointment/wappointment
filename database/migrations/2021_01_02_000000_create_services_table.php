@@ -21,7 +21,7 @@ class CreateServicesTable extends Wappointment\Installation\MigrateHasServices
             $table->increments('id');
             $table->string('name');
             $table->unsignedTinyInteger('sorting')->default(0);
-            $table->mediumText('options')->nullable();
+            $table->text('options')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

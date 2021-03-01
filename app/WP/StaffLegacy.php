@@ -2,49 +2,44 @@
 
 namespace Wappointment\WP;
 
+use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Service;
 
-class Staff
+class StaffLegacy
 {
     public $wp_user = null;
     public $id = null;
     public $avatar = null; //avatar
     public $name = null; //staffname
-    public $timezone = null; //staff timezone
-    public $gravatar = '';
-    public $availability = '';
-    public $staff_data = [];
+    public $timezone = null; //staff timezon
 
-    public function __construct($staff_data = [])
+    public function __construct($staff_id = false)
     {
-        if (empty($staff_data)) {
-            throw new \WappointmentException("Can't load staff information", 1);
+        if ($staff_id === false) {
+            $staff_id = Settings::get('activeStaffId');
         }
-        $this->staff_data = $staff_data;
-
-        $this->id = (int)$this->staff_data['wp_uid'];
-        $this->wp_user = get_userdata($this->id);
+        $this->wp_user = get_userdata($staff_id);
         unset($this->wp_user->data->user_pass);
         unset($this->wp_user->data->user_activation_key);
         if (empty($this->wp_user)) {
             throw new \WappointmentException("Can't load staff information", 1);
         }
-
-        $this->gravatar = get_avatar_url($this->id, ['size' => 46]);
-        $this->avatar = $this->staff_data['options']['avatar_id'] ? wp_get_attachment_image_src($this->staff_data['options']['avatar_id'])[0] : $this->gravatar;
-        $this->name = $staff_data['name'];
-        $this->timezone = $this->staff_data['options']['timezone'];
-        $this->availability = $this->staff_data['availability'];
+        $this->id = $staff_id;
+        $this->gravatar = get_avatar_url(Settings::get('activeStaffId'), ['size' => 46]);
+        $this->avatar = Settings::getStaff('avatarId') ? wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $this->gravatar;
+        $dname = Settings::getStaff('display_name');
+        $this->name = !empty($dname) ? $dname : $this->getUserDisplayName();
+        $this->timezone = Settings::getStaff('timezone', $staff_id);
     }
 
     public function fullData()
     {
         return [
             'id' => $this->id,
+            'name' => $this->name,
             'avatar' => $this->avatar,
             'gravatar' => $this->gravatar,
-            'name' => $this->name,
             'avb' => $this->getAvb(),
             'regav' => $this->getRegav(),
             'timezone' => $this->timezone,
@@ -55,10 +50,22 @@ class Staff
         ];
     }
 
+    public function getUserDisplayName()
+    {
+        return empty($this->wp_user->display_name) ?
+            $this->wp_user->first_name . ' ' . $this->wp_user->last_name : $this->wp_user->display_name;
+    }
+
+    public function getFirstName()
+    {
+        return $this->wp_user->first_name;
+    }
 
     public function getAvailability()
     {
-        return $this->staff_data['availability'];
+        if ($this->id > 0) {
+            return WPHelpers::getStaffOption('availability', $this->id);
+        }
     }
 
     public function toArray()
@@ -74,22 +81,22 @@ class Staff
 
     public function getRegav()
     {
-        return $this->staff_data['options']['regav'];
+        return Settings::getStaff('regav', $this->id);
     }
 
     public function getAvb()
     {
-        return $this->staff_data['options']['avb'];
+        return Settings::getStaff('availaible_booking_days', $this->id);
     }
 
     public function getDotcom()
     {
-        return $this->staff_data['options']['dotcom'];
+        return Settings::getStaff('dotcom', $this->id);
     }
 
     public function getCalendarUrls()
     {
-        return $this->staff_data['options']['calurl'];
+        return WPHelpers::getStaffOption('cal_urls', $this->id);
     }
 
     public function getCalendarLogs()

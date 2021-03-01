@@ -20,7 +20,7 @@ class CreateLocationsTable extends Wappointment\Installation\MigrateHasServices
             $table->string('name');
             $table->unsignedTinyInteger('type')->default(1);
             $table->tinyInteger('status')->default(0);
-            $table->mediumText('options')->nullable();
+            $table->text('options')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
