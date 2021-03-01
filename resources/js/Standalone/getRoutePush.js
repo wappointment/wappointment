@@ -13,6 +13,5 @@ export default function routePush(hash = false, to = false) {
       pushtorout =  {name: params_array[0].replace('_', '')}
     }
   }
-  console.log('pushtorout',pushtorout)
   return pushtorout
 }

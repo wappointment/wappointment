@@ -20,7 +20,7 @@ class CalendarsController extends RestController
         return [
             'db_required' => $db_update_required,
             'timezones_list' => DateTime::tz(),
-            'calendars' => $calendars,
+            'calendars' => $this->getlegacy(),
             'staffs' => StaffServices::getWP(),
         ];
     }
