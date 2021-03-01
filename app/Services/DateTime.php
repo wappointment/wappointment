@@ -66,10 +66,12 @@ class DateTime
             'Pacific Standard Time' => 'America/Los_Angeles',
             'Eastern Standard Time' => 'America/New_York',
             'AUS Eastern Standard Time' => 'Australia/Sydney',
+            'W. Europe Standard Time' => 'Europe/Brussels',
+            'Afghanistan Standard Time' => 'Asia/Kabul',
         ];
 
         if (!isset($unkownTimezones[$unknownTZ])) {
-            throw new \WappointmentException("Cannot recognize timezone '" . $unknownTZ . "'", 1);
+            throw new \WappointmentException("Cannot recognize non standard timezone : '" . $unknownTZ . "'", 1);
         }
         return $unkownTimezones[$unknownTZ];
     }
