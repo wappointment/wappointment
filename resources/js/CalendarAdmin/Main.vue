@@ -463,8 +463,10 @@ export default {
             this.showWelcomePopup = this.viewData.showWelcome
             
             this.setInterval(this.getPref('cal_duration', this.viewData.durations[0]))
-            this.minHour = this.getPref('cal_minH', 7)
-            this.maxHour = this.getPref('cal_maxH', 19)
+            let min_max = this.getMinMaxHourFromRegav()
+
+            this.minHour = min_max.min < this.getPref('cal_minH')? min_max.min:this.getPref('cal_minH')
+            this.maxHour = min_max.max > this.getPref('cal_maxH')? min_max.max:this.getPref('cal_maxH')
           }
           
           let defaultDate = false
@@ -472,6 +474,37 @@ export default {
             defaultDate = this.toMoment(this.queryParameters.start.replace(' ','+')).format()
           }
           this.setFullCalOptions(defaultDate)
+      },
+
+      getMinMaxHourFromRegav(){
+        let min = 7
+        let max = 19
+        let min_max = this.getMinMaxRegav()
+        if(this.openedDays.precise !== undefined){
+          min_max.min = min_max.min/60
+          min_max.max = min_max.max/60
+        }
+        return {
+          min:  min_max.min < min ? min_max.min:min, 
+          max: min_max.max > max ? min_max.max:max, 
+        }
+      },
+      getMinMaxRegav(){
+        let min = false
+        let max = false
+        for (const key in this.openedDays) {
+          if (this.openedDays.hasOwnProperty(key)) {
+            const daysSlots = this.openedDays[key]
+            if(Array.isArray(daysSlots) && daysSlots.length > 0){
+              for (let i = 0; i < daysSlots.length; i++) {
+                min = daysSlots[i][0] < min || min === false ?daysSlots[i][0]:min
+                max = daysSlots[i][1] > max || max === false ?daysSlots[i][1]:max
+              }
+            }
+            
+          }
+        }
+        return {min:min, max:max}
       },
       
       setFullCalOptions(defaultDate = false){
