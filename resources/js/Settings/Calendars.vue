@@ -83,7 +83,7 @@
         </div>
         <div v-if="calendarAdd">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
-            <CalendarsAddEdit :element="elementPassed" @saved="hasBeenSavedDeleted"/>
+            <CalendarsAddEdit :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs" @saved="hasBeenSavedCalendar"/>
         </div>
         <div v-if="calendarRegav">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
@@ -153,6 +153,9 @@ export default {
         }
     },
     methods: {
+        hasBeenSavedCalendar(element){
+            console.log('hasBeenSavedCalendar',element)
+        },
         editAvailability(calendar){
             this.elementPassed = calendar
             this.currentView = 'regav'
@@ -226,7 +229,7 @@ export default {
                 return this.$WapModal().notifyError('Run database updates first')
             }
             if(this.elements.calendars.length > 1){
-                return this.requiresAddon('staff', '3 calendars max allowed')
+                return this.requiresAddon('staff', '2 calendars max allowed')
             }
 
             if(this.crumb){
@@ -237,7 +240,15 @@ export default {
                 ], 'add')
             }else{
                 this.currentView = 'add'
-                this.elementPassed = null
+                this.elementPassed = {
+                  avatar:'',
+                  gravatar: '',
+                  name: '',
+                  id: '',
+                  timezone: this.elements.staffDefault.timezone,
+                  regav: this.elements.staffDefault.regav,
+                  avb: this.elements.staffDefault.availaible_booking_days
+              }
             }
             
         },

@@ -25,7 +25,10 @@ class Central
         ],
         'CustomFields' => [
             'class' => \Wappointment\Services\CustomFields::class,
-        ]
+        ],
+        'CalendarModel' => [
+            'class' => \Wappointment\Models\Calendar::class,
+        ],
     ];
 
     public function __construct()

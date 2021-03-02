@@ -14,6 +14,9 @@ export default {
                 twilio:{
                     label: 'Twilio SMS',
                 },
+                staff:{
+                    label: 'Calendars & Staff',
+                },
             },
         };
     },
@@ -22,7 +25,7 @@ export default {
             this.$WapModal().showPremium(
                 message !== '' ? message:'Unlock this feature',
                 '<h3>Unlock premium feature with our addon "'+this.addonsDetails[addon_key].label+'"</h3>' +
-                '<p class="text-muted">Register your site on wappointment.com and get <strong> 50% off on all of our <a href="https://wappointment.com/addons" target="_blank">addons</a></strong> (limited time offer)</p>',
+                '<p class="text-muted"> <a href="https://wappointment.com/addons" target="_blank">Get a licence</a> now for our addons</p>',
             ).then((result) => {
                 if(result === true){
                 } 

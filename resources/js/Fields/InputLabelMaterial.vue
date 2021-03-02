@@ -1,5 +1,5 @@
 <template>
-    <LabelMaterial :allowReset="canReset" @reseted="reseted">
+    <LabelMaterial :allowReset="canReset" @reseted="reseted" :valuePassed="value">
         <input class="form-control" type="text" :value="value" @keyup.enter.prevent="updatedValue" @focusout="updatedValue" ref="input" :placeholder="valueInit" @input="changeInput" >
     </LabelMaterial>
 </template>

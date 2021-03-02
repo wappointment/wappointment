@@ -1,9 +1,6 @@
 <template>
-    <div v-if="staffLoaded">
-        <span v-if="this.staffs.length == 1">{{ displayElementFunc(staffs[0]) }}</span>
-        <SearchStaff v-else v-model="staffId" :ph="labelDefault" :elements="staffs" 
-            idKey="ID" labelSearchKey="display_name" :displayElement="displayElementFunc"></SearchStaff>
-    </div>
+    <SearchStaff v-if="staffLoaded" v-model="staffId" :ph="labelDefault" :elements="staffs" 
+            idKey="ID" labelSearchKey="display_name" :displayElement="displayElementFunc" />
 </template>
 
 <script>
@@ -24,8 +21,10 @@ export default {
         }
     },
     created(){
-        if(this.activeStaffId!==false){
+        if([false,undefined,''].indexOf(this.activeStaffId) === -1){
             this.staffId = this.activeStaffId
+        }else{
+            this.staffId = this.staffs[0].ID
         }
     },
     methods:{
@@ -40,8 +39,14 @@ export default {
     },
     watch: {
         staffId: function (newId, oldId) {
-            if(oldId !== false) this.$emit('updateStaff', newId)
+            this.$emit('updateStaff', newId)
         }
     },
 }
 </script>
+<style>
+.clickable.label-wrapper,
+.elementsContainer .label-wrapper{
+    margin-bottom: 0!important;
+}
+</style>

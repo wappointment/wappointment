@@ -1,65 +1,166 @@
 <template>
-    <div class="container-fluid">
-      <ServiceModulable :dataPassed="model" 
-      :servicesService="servicesService" @saved="$emit('saved')"/>
+    <div>
+        <div >
+            <p class="h6 text-muted">
+                <span class="bullet-wap">1</span> 
+                <span class="bullet-title"> Select account </span>
+            </p>
+            <div  class="d-flex align-items-center mb-2">
+                <StaffPicture v-if="calendarSelected.name!=''" :src="calendarSelected.avatar" :gravatar="calendarSelected.gravatar" @changed="changedPicture" />
+                <div v-if="calendarSelected.name!=''" class="mr-2 changename">
+                    <InputPh v-model="calendarSelected.name" ph="Name" @updatedValue="updateStaffName" />
+                </div>
+                <StaffSelector :staffs="staffs" :activeStaffId="calendarSelected.id" @updateStaff="updateStaff" />
+            </div>
+            
+            <small class="text-muted" > In order to change the user(email) in charge <a href="users.php" target="_blank">add a WordPress user</a> or edit the current one </small>
+            
+            <p class="h6 text-muted">
+                <span class="bullet-wap">2</span> 
+                <span class="bullet-title"> Set a timezone</span>
+            </p>
+            <TimeZones classW="d-flex" :timezones="timezones_list" 
+            :defaultTimezone="calendarSelected.timezone" @updateTimezone="updateTimezone" typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control" />
+            <hr>
+        </div>
+        
+        <p  class="h6 text-muted">
+            <span class="bullet-wap">3</span> 
+            <span class="bullet-title"> Set standard weekly schedule</span>
+        </p>
+
+        <RegularAvailability :initValue="getRegav" :viewData="calendarSelected" 
+        @updatedDays="updatedRA"
+        @changedABD="changedABD" />
     </div>
 </template>
 
 <script>
-import WappoServiceService from '../Services/V1/Services'
-//import abstractView from '../Views/Abstract'
-import ServiceModulable from '../Views/Subpages/ServiceNew'
-import Service from '../Views/Subpages/Service'
+import RegularAvailability from '../RegularAvailability/RegularAvailability'
+import StaffSelector from '../Components/StaffSelector'
+import TimeZones from '../Components/TimeZones'
+import abstractView from '../Views/Abstract'
+import StaffPicture from '../Components/StaffPicture'
+import RequestMaker from '../Modules/RequestMaker'
+import ServiceCalendar from '../Services/V1/Calendars'
+
 export default {
-  extends: Service,
-  components:{ServiceModulable},
-    props: {
-        subview: {
-            type: String,
-            default:''
-        },
-        element: {
+    extends: abstractView,
+    components: window.wappointmentExtends.filter('RegavComponents', {RegularAvailability,TimeZones,StaffSelector, StaffPicture},{'RequestMaker':RequestMaker} ), 
+    props:{
+        calendar:{
             type: Object,
-            default:null
+            default: false
+        },
+        timezones_list:{
+            type: Object,
+        },
+        staffs:{
+            type: Array,
         },
     },
-    data: () => ({
-        servicesService: null,
-    }),
+    data() {
+        return {
+            calendarSelected:{}
+        } 
+    },
     created(){
-        this.servicesService = this.$vueService(new WappoServiceService)
-        if(this.element !== null) {
-            this.model = Object.assign({}, this.element)
-            this.model.locations_id = this.model.locations.map(el => el.id)
-            delete this.model.locations
-        }
-        
-        if(this.model.options.fields === undefined){
-            this.model.options.fields = []
-        }
-
-        if(this.model.options.fields.length == 0){
-            this.model.options.fields.push('email')
-            this.model.options.fields.push('name')
-        }
-        
+        this.calendarSelected = Object.assign({}, this.calendar)
+        this.mainService = this.$vueService(new ServiceCalendar)
     },
 
-    methods: {
-        initMethod(){
-        },
-        loaded(viewData){
-        },
-    }  
+  computed: {
+      getRegav(){
+          let regav = Object.assign({},this.calendar.regav)
+          if(this.calendar.regav.precise === undefined){
+              regav = this.convertRegavToPrecise(regav)
+          }
+          return regav
+      },
+      
+  },
+  methods: {
+    convertRegavToPrecise(regav){
+        for (const key in this.calendar.regav) {
+            if (this.calendar.regav.hasOwnProperty(key)) {
+                for (let i = 0; i < this.calendar.regav[key].length; i++) {
+                    const el = this.calendar.regav[key][i]
+                    regav[key][i] = [el[0]*60, el[1]*60] //converting hours to minutes
+                }
+            }
+        }
+        return regav
+    },
+
+    updatedRA(regavUpdated){
+        regavUpdated.precise = true
+        this.calendarSelected.regav = regavUpdated
+    },
+    changedABD(avbUpdated){
+        this.calendarSelected.avb = avbUpdated
+    },
+
+    changedPicture(value){
+        if(value > 0){
+            this.request(this.getAvatarRequest,{id:value},undefined,false,this.avatarLoaded)
+        }else{
+            this.calendarSelected.avatar = ''
+        }
+    },
+    avatarLoaded(response){
+        this.calendarSelected.avatar = response.data.avatar
+    },
+    async getAvatarRequest(params){
+        return await this.mainService.call('getAvatar',params)
+    },
+
+    updateTimezone(selectedTimezone){
+        this.calendarSelected.timezone = selectedTimezone
+    },
+    updateStaffName(value){
+        this.calendarSelected.name = value
+    },
+    updateStaff(selectedStaff){
+        this.calendarSelected.id = selectedStaff
+        this.calendarSelected.gravatar = this.selectGravatar(selectedStaff)
+        this.calendarSelected.name = this.selectDefaultName(selectedStaff)
+    },
+
+    findUserById(staffId){
+        return this.staffs.find(e => e.ID == staffId)
+    },
+    selectGravatar(staffId){
+        let found = this.findUserById(staffId)
+        return found !== undefined ? found.gravatar:''
+    },
+    selectDefaultName(staffId){
+        let found = this.findUserById(staffId)
+        return found !== undefined ? found.display_name:''
+    }
+
+  }  
 }
 </script>
 <style >
-.wappointment-wrap textarea.form-control {
-    min-width:420px;
+.bullet-title{
+    color: #777;
+    border-bottom: 1px solid #c2c1cc;
+    font-weight: bold;
 }
-.wappointment-wrap .input-360 input {
-    min-width:360px;
+.bullet-wap{
+    border: 1px solid var(--primary);
+    padding: .35rem;
+    border-radius: 1.2rem;
+    height: 2rem;
+    width: 2rem;
+    display: inline-block;
+    text-align: center;
+    font-size: 1rem;
+    color: var(--primary);
+    margin-right: .5rem;
+    background-color: #fff;
 }
-
-
+.changename .label-wrapper{
+    margin-bottom: 0 !important;
+}
 </style>

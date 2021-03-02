@@ -3,7 +3,7 @@
     <div class="picture-edit">
         <div @click="changePicture" class="text-center mr-2 preview-avatar">
             <div class="avatar-edit">
-                <img :src="src" class="img-fluid wrounded" width="40">
+                <img :src="src || gravatar" class="img-fluid wrounded" width="40" alt="avatar" />
                 <span class="small text-primary" href="javascript:;">edit</span>
             </div>
         </div>
@@ -71,15 +71,15 @@ export default {
             this.saveNewAvatarRequest()
         },
         saveGravatarRequest(){
-            this.settingStaffSave('avatarId', false) 
+            this.afterSuccess(false) 
         },
         saveNewAvatarRequest(){
-            this.settingStaffSave('avatarId', this.selectedId) 
+            this.afterSuccess(this.selectedId) 
         },
-        afterSuccess(result){
+        afterSuccess(selected){
             this.close()
             this.selectedId = false
-            this.$emit('changed')
+            this.$emit('changed', selected)
         }
     },
     computed:{
@@ -121,12 +121,13 @@ export default {
         top: 10px;
     }
     .preview-avatar{
-        border: 1px solid #eee;
         cursor: pointer;
-        border-radius: 0.3rem;
     }
-    .preview-avatar:hover{
-        border: 1px solid #6664cb;
+    .preview-avatar .wrounded{
+        border: 1px solid #eee;
+    }
+    .preview-avatar:hover .wrounded{
+        border: 2px solid #6664cb;
     }
     .avatar-edit{
         position:relative;
@@ -134,7 +135,7 @@ export default {
     .avatar-edit span{
         position: absolute;
         display: none;
-        bottom: -4px;
+        bottom: -15px;
         left: 8px;
     }
     .avatar-edit:hover span{
