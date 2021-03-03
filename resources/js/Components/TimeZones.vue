@@ -58,6 +58,7 @@ export default {
     created(){
         if(this.wizard === true) this.initSave = true
         this.timezone = this.defaultTimezone == ''? momenttz.tz.guess():this.defaultTimezone
+        this.$emit('initTimezone', this.timezone, this.firstTrigger)
         if(this.classW!='') this.classWrapper = this.classW
     },
     methods:{

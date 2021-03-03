@@ -12,9 +12,11 @@ class AppointmentLegacy
 {
     public static function delete($id)
     {
-        $status = static::getAppointmentModel()::destroy($id);
+        $appointment = static::getAppointmentModel()::find($id);
+
+        $status = $appointment->destroy($id);
         if ($status) {
-            (new Availability())->regenerate();
+            (new Availability($appointment->staff_id))->regenerate();
         }
         return $status;
     }
@@ -273,6 +275,7 @@ class AppointmentLegacy
 
         $client = $appointment->client()->first();
         $staff_id_regenerate = $appointment->getStaffId();
+        dd($appointment->getStaffId(), $appointment->toArray());
         $appointment->incrementSequence();
         $result = $appointment->destroy($appointment->id);
 

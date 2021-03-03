@@ -25,8 +25,9 @@ class SettingsStaffController extends RestController
         }
         $result = Settings::saveStaff($request->input('key'), $value);
 
+        //TODO Legacy remove at some point
         if (in_array($request->input('key'), ['regav', 'availaible_booking_days'])) {
-            (new \Wappointment\Services\Availability())->regenerate();
+            (new \Wappointment\Services\Availability())->regenerate(); //legacy
         }
 
         return $result;

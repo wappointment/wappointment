@@ -119,6 +119,7 @@ class Settings
 
     public static function staffDefaults()
     {
+        //dd(WPHelpers::getWPOption('timezone_string'));
         $timezone = WPHelpers::getWPOption('timezone_string');
         //if (empty($timezone)) $timezone = 'UTC';
         return [

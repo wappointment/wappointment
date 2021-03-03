@@ -6,6 +6,7 @@ use Wappointment\ClassConnect\Carbon;
 use Wappointment\Models\Status as MStatus;
 use Wappointment\Models\Appointment;
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Managers\Central;
 
 class Availability
 {
@@ -16,18 +17,27 @@ class Availability
     private $timezone = '';
     private $regav = [];
     private $segmentService = null;
+    private $staff = null;
+    private $isLegacy = true;
 
     public function __construct($staff_id = false)
     {
         $this->segmentService = new Segment();
-
-        if ($staff_id === false) {
+        $this->isLegacy = !VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES);
+        if ($staff_id === false) { //could be in legacy but fail safe for a default one in case
             $staff_id = Settings::get('activeStaffId');
         }
-        $this->staff_id = $staff_id;
-        $this->timezone = Settings::getStaff('timezone', $this->staff_id);
-        $this->regav = Settings::getStaff('regav', $this->staff_id);
-        $this->days = (int) Settings::getStaff('availaible_booking_days', $this->staff_id);
+        if ($this->isLegacy) {
+            $this->staff_id = $staff_id;
+            $this->timezone = Settings::getStaff('timezone', $this->staff_id);
+            $this->regav = Settings::getStaff('regav', $this->staff_id);
+            $this->days = (int) Settings::getStaff('availaible_booking_days', $this->staff_id);
+        } else {
+            $this->staff = is_numeric($staff_id) ? Central::get('CalendarModel')::findOrFail($staff_id) : $staff_id;
+            $this->timezone = $this->staff->options['timezone'];
+            $this->regav = $this->staff->options['regav'];
+            $this->days = (int)$this->staff->options['avb'];
+        }
     }
 
     public function getMaxTs()
@@ -41,7 +51,7 @@ class Availability
      * @param boolean $staff_id
      * @return void
      */
-    public function regenerate()
+    public function regenerate($save = true)
     {
 
         // get regular avail and apply for x time from now
@@ -106,9 +116,26 @@ class Availability
 
         $this->reOrder();
 
+        return $save ? ($this->isLegacy ? $this->saveLegacy() : $this->save()) : $this->availabilities;
+    }
+
+    private function saveLegacy()
+    {
         WPHelpers::setStaffOption('since_last_refresh', 0, $this->staff_id);
         //save it to the db
         return WPHelpers::setStaffOption('availability', $this->availabilities, $this->staff_id);
+    }
+
+    private function save()
+    {
+        $options = $this->staff->options;
+        $options['since_last_refresh'] = 0;
+
+        //save it to the db
+        return $this->staff->update([
+            'availability' => $this->availabilities,
+            'options' => $options,
+        ]);
     }
 
     private function generateAvailabilityWithRA()

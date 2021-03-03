@@ -4,14 +4,14 @@ namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
 use Wappointment\Controllers\RestController;
-use Wappointment\Models\Calendar as CalendarsModel;
-use Wappointment\Services\Services;
 use Wappointment\Services\VersionDB;
 use Wappointment\WP\StaffLegacy;
 use Wappointment\WP\Staff;
 use Wappointment\Services\Staff as StaffServices;
 use Wappointment\Services\Settings;
 use Wappointment\Services\DateTime;
+use Wappointment\Services\Calendars;
+use Wappointment\Managers\Central;
 
 class CalendarsController extends RestController
 {
@@ -23,6 +23,7 @@ class CalendarsController extends RestController
             'db_required' => $db_update_required,
             'timezones_list' => DateTime::tz(),
             'calendars' => $calendars,
+            'limit_reached' => Central::get('CalendarModel')::canCreate() ? false : Central::get('CalendarModel')::MaxRows() . ' services max allowed',
             'staffs' => StaffServices::getWP(),
             'staffDefault' => Settings::staffDefaults()
         ];
@@ -36,7 +37,7 @@ class CalendarsController extends RestController
 
     public function getCalendarsStaff()
     {
-        $calendars = CalendarsModel::orderBy('sorting')->get();
+        $calendars = Central::get('CalendarModel')::orderBy('sorting')->fetch();
         $staffs = [];
         foreach ($calendars->toArray() as $key => $calendar) {
             $staffs[] = (new Staff($calendar))->fullData();
@@ -53,11 +54,12 @@ class CalendarsController extends RestController
 
     public function save(Request $request)
     {
-        $data = $request->only(['id', 'name', 'options', 'locations_id']);
+
+        $data = $request->all();
         if (empty($data['id'])) {
-            $data['sorting'] = Services::total();
+            $data['sorting'] = Calendars::total();
         }
-        $result = Services::save($data);
+        $result = Calendars::save($data);
         return ['message' => 'Service has been saved', 'result' => $result];
     }
 
@@ -65,13 +67,13 @@ class CalendarsController extends RestController
     {
         $data = $request->only(['id', 'new_sorting']);
 
-        $result = Services::reorder($data['id'], $data['new_sorting']);
+        $result = Calendars::reorder($data['id'], $data['new_sorting']);
         return ['message' => 'Service has been saved', 'result' => $result];
     }
 
     public function delete(Request $request)
     {
-        Services::delete($request->input('id'));
+        Calendars::delete($request->input('id'));
         // clean order
         return ['message' => 'Service deleted', 'result' => true];
     }

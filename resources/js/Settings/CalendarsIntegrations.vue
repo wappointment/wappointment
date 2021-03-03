@@ -74,7 +74,11 @@ export default {
     },
     methods: {
         refresh() {
-            this.request(this.refreshWappoRequest,{},null, false,this.successRefreshed)
+            let data_save = {account_key: this.account_key}
+            if(this.calendar.wp_uid !== undefined){
+                data_save.id = this.calendar.id
+            }
+            this.request(this.refreshWappoRequest,data_save,null, false,this.successRefreshed)
         },
 
         async refreshWappoRequest() {
@@ -88,7 +92,11 @@ export default {
         },
 
         connectToWappo() {
-            this.request(this.connectToWappoRequest,{account_key: this.account_key},null, false,this.successConnected)
+            let data_save = {account_key: this.account_key}
+            if(this.calendar.wp_uid !== undefined){
+                data_save.id = this.calendar.id
+            }
+            this.request(this.connectToWappoRequest,data_save,null, false,this.successConnected)
         },
 
         async connectToWappoRequest(params) {
@@ -96,7 +104,11 @@ export default {
         },
 
         disconnectWappo(){
-            this.request(this.disconnectToWappoRequest,{},null,false, this.successDisconnected)
+            let data_save = {}
+            if(this.calendar.wp_uid !== undefined){
+                data_save.id = this.calendar.id
+            }
+            this.request(this.disconnectToWappoRequest,data_save,null,false, this.successDisconnected)
         },
 
         async disconnectToWappoRequest(params) {

@@ -1,37 +1,42 @@
 <template>
     <div>
-        <div >
-            <p class="h6 text-muted">
-                <span class="bullet-wap">1</span> 
-                <span class="bullet-title"> Select account </span>
-            </p>
-            <div  class="d-flex align-items-center mb-2">
-                <StaffPicture v-if="calendarSelected.name!=''" :src="calendarSelected.avatar" :gravatar="calendarSelected.gravatar" @changed="changedPicture" />
-                <div v-if="calendarSelected.name!=''" class="mr-2 changename">
-                    <InputPh v-model="calendarSelected.name" ph="Name" @updatedValue="updateStaffName" />
+        <div>
+            <div>
+                <p class="h6 text-muted">
+                    <span class="bullet-wap">1</span> 
+                    <span class="bullet-title"> Select account </span>
+                </p>
+                <div  class="d-flex align-items-center mb-2">
+                    <StaffPicture v-if="calendarSelected.name!=''" :src="calendarSelected.avatar" :gravatar="calendarSelected.gravatar" @changed="changedPicture" />
+                    <div v-if="calendarSelected.name!=''" class="mr-2 changename">
+                        <InputPh v-model="calendarSelected.name" ph="Name" @updatedValue="updateStaffName" />
+                    </div>
+                    <StaffSelector :staffs="staffs" :activeStaffId="calendarSelected.wp_uid" @updateStaff="updateStaff" />
                 </div>
-                <StaffSelector :staffs="staffs" :activeStaffId="calendarSelected.id" @updateStaff="updateStaff" />
+                
+                <small class="text-muted" > In order to change the user(email) in charge <a href="users.php" target="_blank">add a WordPress user</a> or edit the current one </small>
+                
+                <p class="h6 text-muted">
+                    <span class="bullet-wap">2</span> 
+                    <span class="bullet-title"> Set a timezone</span>
+                </p>
+                <TimeZones classW="d-flex" :timezones="timezones_list" 
+                :defaultTimezone="calendarSelected.timezone" @updateTimezone="updateTimezone" typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control" />
+                <hr>
             </div>
             
-            <small class="text-muted" > In order to change the user(email) in charge <a href="users.php" target="_blank">add a WordPress user</a> or edit the current one </small>
-            
-            <p class="h6 text-muted">
-                <span class="bullet-wap">2</span> 
-                <span class="bullet-title"> Set a timezone</span>
+            <p  class="h6 text-muted">
+                <span class="bullet-wap">3</span> 
+                <span class="bullet-title"> Set standard weekly schedule</span>
             </p>
-            <TimeZones classW="d-flex" :timezones="timezones_list" 
-            :defaultTimezone="calendarSelected.timezone" @updateTimezone="updateTimezone" typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control" />
-            <hr>
-        </div>
-        
-        <p  class="h6 text-muted">
-            <span class="bullet-wap">3</span> 
-            <span class="bullet-title"> Set standard weekly schedule</span>
-        </p>
 
-        <RegularAvailability :initValue="getRegav" :viewData="calendarSelected" 
-        @updatedDays="updatedRA"
-        @changedABD="changedABD" />
+            <RegularAvailability :initValue="getRegav" :viewData="calendarSelected" 
+            @updatedDays="updatedRA"
+            @changedABD="changedABD" />
+        </div>
+        <div v-if="requireSave" class="save-buttons">
+            <button class="btn btn-primary" @click="saveCalendar">Save</button>
+        </div>
     </div>
 </template>
 
@@ -43,7 +48,7 @@ import abstractView from '../Views/Abstract'
 import StaffPicture from '../Components/StaffPicture'
 import RequestMaker from '../Modules/RequestMaker'
 import ServiceCalendar from '../Services/V1/Calendars'
-
+import momenttz from '../appMoment'
 export default {
     extends: abstractView,
     components: window.wappointmentExtends.filter('RegavComponents', {RegularAvailability,TimeZones,StaffSelector, StaffPicture},{'RequestMaker':RequestMaker} ), 
@@ -59,16 +64,31 @@ export default {
             type: Array,
         },
     },
+    
     data() {
         return {
-            calendarSelected:{}
+            calendarSelected: false,
+            requireSave: false,
         } 
     },
     created(){
         this.calendarSelected = Object.assign({}, this.calendar)
         this.mainService = this.$vueService(new ServiceCalendar)
+        if(this.calendarSelected.timezone == ''){
+            this.calendarSelected.timezone = momenttz.tz.guess()
+        }
     },
+    watch: {
+      calendarSelected: {
+          handler: function(newValue, old){
+            if(old !== false){
+                this.requireSave = true
+            }
+          },
+          deep: true
+      },
 
+    },
   computed: {
       getRegav(){
           let regav = Object.assign({},this.calendar.regav)
@@ -99,7 +119,16 @@ export default {
     changedABD(avbUpdated){
         this.calendarSelected.avb = avbUpdated
     },
-
+    saveCalendar(){
+        this.request(this.saveCalendarRequest,this.calendarSelected,undefined,false,this.calendarSaved)
+    },
+    async saveCalendarRequest(params){
+        return await this.mainService.call('save',params)
+    },
+    calendarSaved(response){
+        this.serviceSuccess(response)
+        this.$emit('saved', response)
+    },
     changedPicture(value){
         if(value > 0){
             this.request(this.getAvatarRequest,{id:value},undefined,false,this.avatarLoaded)
@@ -121,7 +150,10 @@ export default {
         this.calendarSelected.name = value
     },
     updateStaff(selectedStaff){
-        this.calendarSelected.id = selectedStaff
+        if(this.calendarSelected.wp_uid ==selectedStaff){
+            return
+        }
+        this.calendarSelected.wp_uid = selectedStaff
         this.calendarSelected.gravatar = this.selectGravatar(selectedStaff)
         this.calendarSelected.name = this.selectDefaultName(selectedStaff)
     },
@@ -162,5 +194,15 @@ export default {
 }
 .changename .label-wrapper{
     margin-bottom: 0 !important;
+}
+.save-buttons{
+    box-shadow: 0px 8px 34px 0 rgba(0,0,0,.1);
+    position: fixed;
+    bottom: 0;
+    z-index: 999999;
+    padding: 1rem;
+    min-width: 200px;
+    background: #fff;
+    border-radius: .5rem .5rem 0 0;
 }
 </style>

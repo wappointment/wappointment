@@ -12,7 +12,7 @@ class Calendars
 {
     public static function getModel()
     {
-        return Central::get('CalendarModel')::model();
+        return Central::get('CalendarModel');
     }
 
     public static function all()
@@ -23,27 +23,36 @@ class Calendars
         })->all();
     }
 
-    public static function save($serviceData)
+    public static function save($calendarData)
     {
         $validator = new RakitValidator;
-        $validation_messages = [
-            'locations_id' => 'Please select how do you deliver the service',
-        ];
-        $validator->setMessages(apply_filters('wappointment_service_validation_messages', $validation_messages));
-        $validator->addValidator('hasvalues', new HasValues());
-        $validator->addValidator('required_if_has', new RequiredIfHas());
-        $validator->addValidator('required_if_fields', new RequiredIfFields());
+        // $validator->addValidator('hasvalues', new HasValues());
+        // $validator->addValidator('required_if_has', new RequiredIfHas());
+        // $validator->addValidator('required_if_fields', new RequiredIfFields());
 
         $validationRules = [
             'name' => 'required',
-            'options' => '',
-            'options.durations' => 'required|array',
-            'options.durations.*.duration' => 'required|numeric',
-            'locations_id' => 'required|array',
+            'avatar' => '',
+            'gravatar' => '',
+            'timezone' => 'required',
+            'id' => '',
+            'wp_uid' => '',
+            'regav' => 'required|array',
+            'avb' => 'required|numeric',
         ];
 
-        $validationRules = apply_filters('wappointment_service_validation_rules', $validationRules);
-        $validation = $validator->make($serviceData, $validationRules);
+        if ($calendarData['wp_uid'] > 0) {
+            $query = static::getModel()::where('wp_uid', $calendarData['wp_uid']);
+            if ($calendarData['id'] > 0) {
+                $query->where('id', '!=', $calendarData['id']);
+            }
+            if ($query->first()) {
+                throw new \WappointmentException("Select another WordPress account this one is already used for another calendar", 1);
+            }
+        }
+
+        $validationRules = apply_filters('wappointment_calendar_validation_rules', $validationRules);
+        $validation = $validator->make($calendarData, $validationRules);
 
         $validation->validate();
 
@@ -52,35 +61,46 @@ class Calendars
             return $validation->errors()->toArray();
         }
 
-        return static::saveService($serviceData);
+        return static::saveCalendar($calendarData);
     }
 
-    public static function saveService($serviceData)
+    public static function saveCalendar($calendarData)
     {
-        $serviceDB = null;
-        if (!empty($serviceData['id'])) {
-            $serviceDB = static::getModel()::findOrFail($serviceData['id']);
+
+        $calendarDB = null;
+        if (!empty($calendarData['id'])) {
+            $calendarDB = static::getModel()::findOrFail($calendarData['id']);
         } else {
-            if (!static::getModel()::canCreate()) {
-                throw new \WappointmentValidationException("Cannot save Calendar");
+            if (!Central::get('CalendarModel')::canCreate()) {
+                throw new \WappointmentValidationException("Cannot save Calendar .");
             }
         }
 
-        $serviceData = apply_filters('wappointment_service_before_saved', $serviceData, $serviceDB);
+        $calendarData = apply_filters('wappointment_calendar_before_saved', $calendarData, $calendarDB);
 
-        if (!empty($serviceDB)) {
-            $serviceDB->update($serviceData);
+        $calendarData['options'] = static::dataToOptions($calendarData, $calendarDB);
+        $calendarData['availability'] = (new \Wappointment\Services\Availability($calendarDB))->regenerate(false);
+        if (!empty($calendarDB)) {
+            $calendarDB->update($calendarData);
         } else {
-            $serviceDB = static::getModel()::create($serviceData);
-        }
-        if (!empty($serviceData['locations_id'])) {
-            $serviceDB->locations()->sync($serviceData['locations_id']);
+            $calendarDB = static::getModel()::create($calendarData);
         }
 
-        do_action('wappointment_service_saved', $serviceData);
-        return $serviceDB;
+        do_action('wappointment_calendar_saved', $calendarData);
+        return $calendarDB;
     }
 
+    public static function dataToOptions($calendarData, $calendarDB)
+    {
+        $optiondb = !empty($calendarDB->options) ? $calendarDB->options : [];
+        return array_merge($optiondb, [
+            'avatar' => $calendarData['avatar'],
+            'gravatar' => $calendarData['gravatar'],
+            'timezone' => $calendarData['timezone'],
+            'regav' => $calendarData['regav'],
+            'avb' => $calendarData['avb'],
+        ]);
+    }
 
     public static function delete($service_id = false)
     {
@@ -88,11 +108,6 @@ class Calendars
         $old_service = $serviceModel::find($service_id);
         $serviceModel::where('sorting', '>', $old_service->sorting)->decrement('sorting');
         return $serviceModel::where('id', $service_id)->delete();
-    }
-
-    public static function getService($service = false, $service_id = false)
-    {
-        return self::get($service_id);
     }
 
     public static function get($service_id = false)

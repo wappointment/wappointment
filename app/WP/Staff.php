@@ -9,6 +9,7 @@ class Staff
 {
     public $wp_user = null;
     public $id = null;
+    public $wp_uid = null;
     public $avatar = null; //avatar
     public $name = null; //staffname
     public $timezone = null; //staff timezone
@@ -23,16 +24,17 @@ class Staff
         }
         $this->staff_data = $staff_data;
 
-        $this->id = (int)$this->staff_data['wp_uid'];
-        $this->wp_user = get_userdata($this->id);
+        $this->id = (int)$this->staff_data['id'];
+        $this->wp_uid = (int)$this->staff_data['wp_uid'];
+        $this->wp_user = get_userdata($this->wp_uid);
         unset($this->wp_user->data->user_pass);
         unset($this->wp_user->data->user_activation_key);
         if (empty($this->wp_user)) {
             throw new \WappointmentException("Can't load staff information", 1);
         }
 
-        $this->gravatar = get_avatar_url($this->id, ['size' => 46]);
-        $this->avatar = $this->staff_data['options']['avatar_id'] ? wp_get_attachment_image_src($this->staff_data['options']['avatar_id'])[0] : $this->gravatar;
+        $this->gravatar = get_avatar_url($this->wp_uid, ['size' => 46]);
+        $this->avatar = !empty($this->staff_data['options']['avatar_id']) ? wp_get_attachment_image_src($this->staff_data['options']['avatar_id'])[0] : $this->gravatar;
         $this->name = $staff_data['name'];
         $this->timezone = $this->staff_data['options']['timezone'];
         $this->availability = $this->staff_data['availability'];
@@ -42,6 +44,7 @@ class Staff
     {
         return [
             'id' => $this->id,
+            'wp_uid' => $this->wp_uid,
             'avatar' => $this->avatar,
             'gravatar' => $this->gravatar,
             'name' => $this->name,
@@ -64,7 +67,7 @@ class Staff
     public function toArray()
     {
         return apply_filters('wappointment_staff_data', [
-            'id' => $this->id,
+            'id' => $this->wp_uid,
             'a' => $this->avatar,
             'n' => $this->name,
             't' => $this->timezone,
@@ -84,17 +87,17 @@ class Staff
 
     public function getDotcom()
     {
-        return $this->staff_data['options']['dotcom'];
+        return !empty($this->staff_data['options']['dotcom']) ? $this->staff_data['options']['dotcom'] : false;
     }
 
     public function getCalendarUrls()
     {
-        return $this->staff_data['options']['calurl'];
+        return !empty($this->staff_data['options']['calurl']) ? $this->staff_data['options']['calurl'] : [];
     }
 
     public function getCalendarLogs()
     {
-        return WPHelpers::getStaffOption('calendar_logs', $this->id);
+        return WPHelpers::getStaffOption('calendar_logs', $this->wp_uid);
     }
 
     public function emailAddress()

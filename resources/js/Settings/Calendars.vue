@@ -1,5 +1,5 @@
 <template>
-    <div >
+    <div>
         <div v-if="calendarListing">
             <button @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
             <div class="table-hover" v-if="loadedData">
@@ -16,18 +16,26 @@
                     </thead>
                     <draggable @change="orderChanged" v-model="elements.calendars" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.calendars.length > 0">
 
-                        <tr  class="row-click" v-for="(calendar, idx) in elements.calendars">
+                        <tr class="row-click" v-for="(calendar, idx) in elements.calendars">
                             <td>
                                 {{ idx + 1 }}
                             </td>
                             <td>
-                                <div class="d-flex">
-                                    <div><img :src="calendar.avatar" class="img-fluid wrounded" width="40" :alt="calendar.name" /></div>
+                                <div class="d-flex align-items-center">
+                                    <div>
+                                        <img :src="calendar.avatar" class="img-fluid wrounded" width="40" :alt="calendar.name" />
+                                    </div>
                                     <div class="ml-2">
                                         <div>{{ calendar.name }}</div>
                                         <small>{{ calendar.timezone }}</small>
                                     </div>
+                                    <div class="actions ml-4 text-muted">
+                                        <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
+                                        <!-- <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(locationObj.id)"></span></span>
+                                        <span>(id: {{ locationObj.id }})</span> -->
+                                    </div>
                                 </div>
+                                
                                 
                             </td>
                             <td>
@@ -83,7 +91,8 @@
         </div>
         <div v-if="calendarAdd">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
-            <CalendarsAddEdit :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs" @saved="hasBeenSavedCalendar"/>
+            <CalendarsAddEdit :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs" 
+            @saved="hasBeenSavedDeleted"/>
         </div>
         <div v-if="calendarRegav">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
@@ -96,7 +105,7 @@
             <Sync @savedSync="savedSync" @errorSaving="errorSavingCalendar" noback></Sync>
             
         </WapModal>
-        <WapModal v-if="dotcomOpen" :show="dotcomOpen!==false" @hide="dotcomOpen = false">
+        <WapModal v-if="dotcomOpen" :show="dotcomOpen!==false" large @hide="dotcomOpen = false">
             <h4 slot="title" class="modal-title"> 
                 Connect to Zoom, Google Calendar etc...
             </h4>
@@ -153,12 +162,10 @@ export default {
         }
     },
     methods: {
-        hasBeenSavedCalendar(element){
-            console.log('hasBeenSavedCalendar',element)
-        },
+
         editAvailability(calendar){
             this.elementPassed = calendar
-            this.currentView = 'regav'
+            this.currentView = this.elements.db_required ? 'regav':'edit'
         },
         hideModal(){
             this.showModal = false
@@ -179,11 +186,11 @@ export default {
         
         loadElements() { // overriding
             if(this.currentView == 'listing') {
-                this.request(this.requestElements,{},undefined,false,this.loadedElements,this.failedLoadingElements)
+                this.request(this.requestElements, {}, undefined, false, this.loadedElements, this.failedLoadingElements)
             }
         },
         orderChanged(val){
-            this.request(this.reorderRequest,{id:val.moved.element.id, 'new_sorting':val.moved.newIndex},undefined,false,this.hasBeenSavedNoReload)
+            this.request(this.reorderRequest,{ id:val.moved.element.id, 'new_sorting':val.moved.newIndex }, undefined, false, this.hasBeenSavedNoReload)
         },
         async reorderRequest(params){
            return await this.mainService.call('reorder',params)
@@ -197,7 +204,9 @@ export default {
                 this.loadElements()
             }
             
-            if(result.data.message!==undefined)this.$WapModal().notifySuccess(result.data.message)
+            if(result.data.message!==undefined){
+                this.$WapModal().notifySuccess(result.data.message)
+            }
         },
         deleteCalendar(calendar_id){
             this.$WapModal().confirm({
@@ -228,8 +237,8 @@ export default {
             if(this.elements.db_required){
                 return this.$WapModal().notifyError('Run database updates first')
             }
-            if(this.elements.calendars.length > 1){
-                return this.requiresAddon('staff', '2 calendars max allowed')
+            if(this.elements.limit_reached !== false){
+                return this.requiresAddon('staff', this.elements.limit_reached)
             }
 
             if(this.crumb){
