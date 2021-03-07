@@ -19,7 +19,7 @@ class Status
             $status = Mstatus::destroy($id);
         }
         if ($status) {
-            (new \Wappointment\Services\Availability())->regenerate();
+            (new \Wappointment\Services\Availability($statusObject->staff_id))->regenerate();
             return $statusObject;
         }
     }
@@ -43,28 +43,29 @@ class Status
         return false;
     }
 
-    public static function free($start, $end, $timezone, $request)
+    public static function free($start, $end, $timezone, $request, $staff_id = null)
     {
-        return self::create($start, $end, $timezone, MStatus::TYPE_FREE, $request);
+        return self::create($start, $end, $timezone, MStatus::TYPE_FREE, $request, $staff_id);
     }
 
-    public static function busy($start, $end, $timezone)
+    public static function busy($start, $end, $timezone, $staff_id = null)
     {
-        return self::create($start, $end, $timezone, MStatus::TYPE_BUSY);
+        return self::create($start, $end, $timezone, MStatus::TYPE_BUSY, null, $staff_id);
     }
 
-    protected static function create($start, $end, $timezone, $type, $request = null)
+    protected static function create($start, $end, $timezone, $type, $request = null, $staff_id = null)
     {
         $arrayCreate = [
             'start_at' => DateTime::converTotUtc($start, $timezone),
             'end_at' => DateTime::converTotUtc($end, $timezone),
             'type' => (int) $type,
+            'staff_id' => $staff_id
         ];
 
         $resultObject = MStatus::create($arrayCreate);
 
         if ($resultObject) {
-            (new \Wappointment\Services\Availability())->regenerate();
+            (new \Wappointment\Services\Availability($staff_id))->regenerate();
             do_action('wappointment_admin_status_created', $resultObject, $request);
         }
 
@@ -160,7 +161,6 @@ class Status
         $start_at->tz($statusRecurrent->options['origin_tz'])->addDays($daysAdded);
 
         $weekWhenEnter = $start_at->weekNumberInMonth;
-
 
         $i = 0;
         //while these conditions are not met we go to the next record to find a match

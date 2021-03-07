@@ -17,10 +17,7 @@ class Calendars
 
     public static function all()
     {
-        $services = static::getModel()::orderBy('sorting')->fetch();
-        return $services->filter(function ($service, $key) {
-            return count($service->locations) > 0;
-        })->all();
+        return static::getModel()::orderBy('sorting')->fetch();
     }
 
     public static function save($calendarData)
@@ -97,9 +94,32 @@ class Calendars
             'avatar' => $calendarData['avatar'],
             'gravatar' => $calendarData['gravatar'],
             'timezone' => $calendarData['timezone'],
-            'regav' => $calendarData['regav'],
+            'regav' => static::regavClean($calendarData['regav']),
             'avb' => $calendarData['avb'],
         ]);
+    }
+
+    public static function regavClean($regav)
+    {
+        foreach ($regav as $day => $blocks) {
+            if ($day === 'precise') {
+                $newblocks = $blocks;
+            } else {
+                $newblocks = [];
+
+                if (is_array($blocks) && !empty($blocks)) {
+                    foreach ($blocks as $key => $block) {
+                        if ($block[1] - $block[0] > 0) {
+                            $newblocks[] = $block;
+                        }
+                    }
+                }
+            }
+
+            $regav[$day] = $newblocks;
+        }
+
+        return $regav;
     }
 
     public static function delete($service_id = false)

@@ -14,17 +14,19 @@ class CalendarParser
     protected $content;
     protected $statusEvents;
     protected $timezone = false;
+    protected $staff_id = 0;
 
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($url, $content)
+    public function __construct($url, $content, $staff_id = 0)
     {
         $this->url = $url;
         $this->source = md5($this->url);
         $this->content = $content;
+        $this->staff_id = $staff_id;
     }
 
     public function handle()
@@ -95,7 +97,7 @@ class CalendarParser
                 'type' => STATUS::TYPE_BUSY,
                 'eventkey' => md5($this->source . (string) $vevent->UID . (string) $vevent->CREATED),
                 'options' => $this->getOptions($vevent, $until, $recur),
-                'staff_id' => Settings::get('activeStaffId')
+                'staff_id' => $this->staff_id
             ];
 
             $this->statusEvents->push($dataInsert);

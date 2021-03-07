@@ -9,33 +9,36 @@ class AvailabilityGetter
     private $staff = [];
     public $start_at = false;
     public $end_at = false;
+    private $isLegacy = true;
 
     /**
      * start_at & end_at utc timestamps
      */
-    public function __construct($start_at = false, $end_at = false)
+    public function __construct($staff = null)
     {
-        $this->start_at = $start_at;
-        $this->end_at = $end_at;
-
-        foreach (Staff::getIds() as $staff_id) {
-            $this->staff[$staff_id] = [
-                'availability' => $this->getSection($staff_id),
-                'timezone' => Settings::getStaff('timezone', $staff_id),
-                'ra' => Settings::getStaff('regav', $staff_id),
-            ];
+        if (!empty($staff)) {
+            $this->isLegacy = false;
+            $this->selectedStaff = $staff;
+        } else {
+            foreach (Staff::getIds() as $staff_id) {
+                $this->staff[$staff_id] = [
+                    'availability' => $this->getSection($staff_id),
+                    'timezone' => Settings::getStaff('timezone', $staff_id),
+                    'ra' => Settings::getStaff('regav', $staff_id),
+                ];
+            }
         }
     }
 
 
     public function getStaff($staff_id)
     {
-        return $this->staff[$staff_id]['availability'];
+        return $this->isLegacy ? $this->staff[$staff_id]['availability'] : $this->selectedStaff->availability;
     }
 
     private function getSection($staff_id)
     {
-        $availabilities = WPHelpers::getStaffOption('availability', $staff_id);
+        $availabilities = $this->isLegacy ? WPHelpers::getStaffOption('availability', $staff_id) : $this->selectedStaff->availability;
         if (!$this->start_at || !$this->end_at) {
             return $availabilities;
         }
@@ -64,11 +67,13 @@ class AvailabilityGetter
 
     public function isAvailable($start_at, $end_at, $staff_id)
     {
-        foreach ($this->staff[$staff_id]['availability'] as $segment) {
+        //dd('isAVailable ' . $staff_id, $start_at, $end_at, $this->getStaff($staff_id));
+        foreach ($this->getStaff($staff_id) as $segment) {
             if ($segment[0] <= $start_at && $segment[1] >= $end_at) {
                 return true;
             }
         }
+
         return false;
     }
 }

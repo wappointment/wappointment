@@ -114,7 +114,7 @@ import LocationSelection from '../BookingForm/LocationSelection'
 import FieldsGenerated from '../BookingForm/FieldsGenerated'
 import WappoServiceBooking from '../Services/V1/BookingN'
 export default {
-    props: ['viewData','startTime', "endTime", "realEndTime"],
+    props: ['viewData','startTime', "endTime", "realEndTime", 'activeStaff'],
     mixins:[RequestMaker],
     components: {AppointmentTypeSelection, PhoneInput, FormInputs, StyleGenerator, ServiceSelection, DurationSelection, LocationSelection, FieldsGenerated},
     data: () => ({
@@ -384,6 +384,7 @@ export default {
               service: this.service.id,
               location: this.location.id,
               duration: this.duration,
+              staff_id: this.activeStaff.id !== undefined?this.activeStaff.id:null,
               }, this.bookingForm))
         },
     }

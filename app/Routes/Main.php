@@ -186,18 +186,6 @@ class Main extends AbstractRoutes
                     'controller' => 'SettingsStaffController',
                     'method' => 'save',
                 ],
-                '/settingsstaff/savecal' => [
-                    'controller' => 'SettingsStaffController',
-                    'method' => 'saveCal',
-                ],
-                '/settingsstaff/disconnect' => [
-                    'controller' => 'SettingsStaffController',
-                    'method' => 'disconnectCal',
-                ],
-                '/settingsstaff/refreshcalendars' => [
-                    'controller' => 'SettingsStaffController',
-                    'method' => 'refreshCalendars',
-                ],
 
                 '/reminderpreview' => [
                     'controller' => 'ReminderController',
@@ -241,6 +229,18 @@ class Main extends AbstractRoutes
                 '/calendars/avatar' => [
                     'method' => 'getAvatar',
                     'controller' => 'CalendarsController'
+                ],
+                '/calendars/savecal' => [
+                    'method' => 'saveCal',
+                    'controller' => 'CalendarsController'
+                ],
+                '/calendars/refreshcalendars' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'refreshCalendars',
+                ],
+                '/calendars/disconnect' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'disconnectCal',
                 ],
             ],
         ]

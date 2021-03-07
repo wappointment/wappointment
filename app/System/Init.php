@@ -56,6 +56,8 @@ class Init
         if (\WappointmentLv::isTest() === false) {
             new Scheduler();
         } else {
+            //Scheduler::syncCalendar();
+            //dd('hh');
             Scheduler::processQueue();
         }
         $this->checkSMTPValueEncryption();

@@ -104,14 +104,11 @@ class ViewsData
     {
         $staff_timezone = Settings::getStaff('timezone');
         $services = ManageService::all();
+        
         $data = [
-            'regav' => Settings::getStaff('regav'),
-            'availability' => WPHelpers::getStaffOption('availability'),
-            'timezone' => $staff_timezone,
             'week_starts_on' => Settings::get('week_starts_on'),
             'wizard_step' => WPHelpers::getOption('wizard_step'),
             'timezones_list' => DateTime::tz(),
-            'now' => (new Carbon())->setTimezone($staff_timezone)->format('Y-m-d\TH:i:00'),
             'service' => Service::get(),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
@@ -125,87 +122,28 @@ class ViewsData
             'subscribe_email' => Settings::get('email_notifications'),
             'welcome_site' => get_site_url(),
             'preferences' => (new Preferences)->preferences,
-            'is_dotcom_connected' => Settings::getStaff('dotcom'),
+            //'is_dotcom_connected' => Settings::getStaff('dotcom'),
             'services' => $services,
             'durations' => ManageService::extractDurations($services),
             'cal_duration' => (new Preferences)->get('cal_duration'),
         ];
 
         if (VersionDB::canServices()) {
+            $data['staff'] = Calendars::all();
+            $data['timezone'] = $data['staff'][0]->options['timezone'];
             $data['locations'] = \Wappointment\Models\Location::get();
             $data['custom_fields'] = Central::get('CustomFields')::get();
+            $data['now'] = (new Carbon())->setTimezone($data['timezone'])->format('Y-m-d\TH:i:00');
+            $data['regav'] = $data['staff'][0]->options['regav'];
+            $data['availability'] = $data['staff'][0]->availability;
+        }else{
+            $data['regav'] = Settings::getStaff('regav');
+            $data['availability'] = WPHelpers::getStaffOption('availability');
+            $data['timezone'] = $staff_timezone;
+            $data['now'] = (new Carbon())->setTimezone($staff_timezone)->format('Y-m-d\TH:i:00');
         }
 
         return  apply_filters('wappointment_back_calendar', $data);
-    }
-
-    private function settingsgeneral()
-    {
-        $service = Service::get();
-        $widget = (new WidgetSettings)->get();
-
-        return [
-            // general
-            'approval_mode' => Settings::get('approval_mode'),
-            'today_formatted' => DateTime::i18nDateTime(time(), Settings::getStaff('timezone')),
-            'date_format' => Settings::get('date_format'),
-            'time_format' => Settings::get('time_format'),
-            'date_time_union' => Settings::get('date_time_union', ' - '),
-            'allow_cancellation' => Settings::get('allow_cancellation'),
-            'allow_rescheduling' => Settings::get('allow_rescheduling'),
-            'week_starts_on' => Settings::get('week_starts_on'),
-            'hours_before_booking_allowed' => Settings::get('hours_before_booking_allowed'),
-            'is_availability_set' => empty(WPHelpers::getStaffOption('availability')) ? false : true,
-            'is_service_set' => empty($service['type']) && empty($service['name']) ? false : true,
-            'is_widget_set' => empty($widget['form']) ? false : true,
-            'hours_before_cancellation_allowed' => Settings::get('hours_before_cancellation_allowed'),
-            'hours_before_rescheduling_allowed' => Settings::get('hours_before_rescheduling_allowed'),
-            'timezone' => Settings::getStaff('timezone'),
-            'widget' => (new WidgetSettings)->get(),
-            'booking_page_id' => (int) Settings::get('booking_page'),
-            'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
-            'config' => [
-                'service' => Service::get(),
-                'approval_mode' => Settings::get('approval_mode'),
-            ],
-            'bgcolor' => WPHelpers::getThemeBgColor(),
-            'is_dotcom_connected' => Settings::getStaff('dotcom'),
-            'gravatar' => get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]),
-            'activeStaffName' => Staff::getName(),
-        ];
-    }
-
-    private function settingsnotifications()
-    {
-        return [
-            'weekly_summary' => Settings::get('weekly_summary'),
-            'weekly_summary_day' => Settings::get('weekly_summary_day'),
-            'weekly_summary_time' => Settings::get('weekly_summary_time'),
-            'daily_summary' => Settings::get('daily_summary'),
-            'daily_summary_time' => Settings::get('daily_summary_time'),
-            'notify_new_appointments' => Settings::get('notify_new_appointments'),
-            'notify_canceled_appointments' => Settings::get('notify_canceled_appointments'),
-            'notify_rescheduled_appointments' => Settings::get('notify_rescheduled_appointments'),
-            'email_notifications' => Settings::get('email_notifications'),
-            'mail_status' => (bool) Settings::get('mail_status'),
-            'timezone' => Settings::getStaff('timezone'),
-            'time_format' => Settings::get('time_format'),
-        ];
-    }
-
-    private function settingssync()
-    {
-        $calurl = WPHelpers::getStaffOption('cal_urls');
-        return [
-            'is_calendar_sync_set' => empty($calurl) ? false : true,
-            'timezone' => Settings::getStaff('timezone'),
-            'date_format' => Settings::get('date_format'),
-            'time_format' => Settings::get('time_format'),
-            'date_time_union' => Settings::get('date_time_union', ' - '),
-            'calendar_logs' => WPHelpers::getStaffOption('calendar_logs'),
-            'calendar_url' => $calurl,
-            'oldcal' => empty(Settings::getStaff('calurl')) ? false : true
-        ];
     }
 
     private function settingsadvanced()
@@ -245,7 +183,6 @@ class ViewsData
             'notify_rescheduled_appointments' => Settings::get('notify_rescheduled_appointments'),
             'email_notifications' => Settings::get('email_notifications'),
             'mail_status' => (bool) Settings::get('mail_status'),
-
 
         ];
     }

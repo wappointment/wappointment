@@ -6,6 +6,7 @@ if(window.wapRequests === undefined) {
 export default {
   data: () => ({
     errorMessages:[],
+    mainService: null
   }),
   methods: {
       queueExecuteOne(){

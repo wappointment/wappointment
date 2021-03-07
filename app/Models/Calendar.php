@@ -4,7 +4,6 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\SoftDeletes;
-use Wappointment\WP\Staff;
 
 class Calendar extends Model
 {
@@ -22,5 +21,20 @@ class Calendar extends Model
     public function services()
     {
         return $this->belongsToMany('Wappointment\Models\Service', 'wappo_calendar_service');
+    }
+
+    public function getCalUrls()
+    {
+        return !empty($this->options['cal_urls']) ? $this->options['cal_urls'] : [];
+    }
+
+    public function getRegav()
+    {
+        return !empty($this->options['regav']) ? $this->options['regav'] : [];
+    }
+
+    public function getTimezone()
+    {
+        return !empty($this->options['timezone']) ? $this->options['timezone'] : 'UTC';
     }
 }

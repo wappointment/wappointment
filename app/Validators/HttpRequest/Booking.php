@@ -6,11 +6,13 @@ use Wappointment\Validators\Phone;
 use Wappointment\Managers\Service as ServiceCentral;
 use Wappointment\Models\Location as LocationModel;
 use Wappointment\Managers\Central;
+use Wappointment\Models\Calendar;
 
 class Booking extends LegacyBooking
 {
     protected $service = null;
     public $location = null;
+    public $staff = null;
     protected $validationRulesArray = [];
     public static $startKey = 'time';
 
@@ -32,7 +34,8 @@ class Booking extends LegacyBooking
             'ctz' => '',
             'location' => 'required|min:1',
             'service' => 'required|min:1',
-            'duration' => 'required|min:5'
+            'duration' => 'required|min:5',
+            'staff_id' => ''
         ];
 
         $custom_fields = Central::get('CustomFields')::get();
@@ -70,6 +73,7 @@ class Booking extends LegacyBooking
 
     protected function addValidators()
     {
+
         $location = LocationModel::find((int)$this->request->input('location'));
 
         if (LocationModel::TYPE_PHONE === $location->type) {
@@ -123,10 +127,12 @@ class Booking extends LegacyBooking
 
     public function prepareInputs($inputs): array
     {
+        $this->staff = Calendar::findOrFail((int)$inputs['staff_id']);
         $this->validateService($inputs);
         $this->validateLocation($inputs);
 
-        $result = apply_filters('wappointment_validate_booking', true, $inputs, $this->service, $this->location, static::$startKey);
+        $result = apply_filters('wappointment_validate_booking', true, $inputs, $this->service, $this->location, static::$startKey, $this->staff);
+
         if ($result !== true) {
             throw new \WappointmentException("Error Processing Request", 1);
         }

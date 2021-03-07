@@ -18,9 +18,7 @@ trait CanBookLegacy
         if (!in_array($type, $service['type'])) {
             throw new \WappointmentException('Error booking type not allowed2', 1);
         }
-
         $type = (int) call_user_func('Wappointment\Models\Appointment::getType' . ucfirst($type));
-
         //test that this is bookable
         if ($forceConfirmed) {
             $hasBeenBooked = AppointmentServiceLegacy::adminBook(

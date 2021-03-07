@@ -24,7 +24,8 @@
             <div class="wdescription">{{options.confirmation.physical}} </div>
             <div class="address-service">
                 <BookingAddress :service="isLegacy ? service:locationObj">
-                    <WapImage :faIcon="'map-marked-alt'" size="md" /> </BookingAddress>
+                    <WapImage :faIcon="'map-marked-alt'" size="md" /> 
+                </BookingAddress>
             </div>
             
             <BookingAddress :iframe="true" :service="isLegacy ? service:locationObj">

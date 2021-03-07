@@ -9,6 +9,7 @@ class Client
 {
     public static function book(Booking $booking)
     {
+
         //create or load client account
         $client = MClient::where('email', $booking->get('email'))->first();
         $dataClient = $booking->preparedData();

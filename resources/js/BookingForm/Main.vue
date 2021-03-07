@@ -1,7 +1,7 @@
 <template>
     <div class="wap-bf" :class="{show: canBeBooked, 'has-scroll':requiresScroll}">
         <template v-if="canBeBooked">
-            <BookingFormHeader :staffs="getStaffs" 
+            <BookingFormHeader v-if="showHeader" :staffs="getStaffs" 
             :isStepSlotSelection="isStepSlotSelection"
             :options="options"
             :service="service" 
@@ -10,11 +10,11 @@
             :location="location"
             :rescheduling="rescheduling"
             :appointmentSaved="appointmentSaved"
-            @refreshed="refreshClick"
+            :staff="selectedStaff"
+            @changeStaff="changeStaff"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
             @changeLocation="childChangedStep"
-            @changeStaff="childChangedStep"
             />
             <div class="wap-form-body" :id="getWapBodyId" >
                 <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
@@ -27,11 +27,9 @@
                 :startsAt="appointmentStartsAt"
                 :location="location"
                 :appointmentSaved="appointmentSaved"
-                @refreshed="refreshClick"
                 @changeService="childChangedStep"
                 @changeDuration="childChangedStep"
                 @changeLocation="childChangedStep"
-                @changeStaff="childChangedStep"
                 />
 
                 <div class="wrap-calendar p-2" :class="'step-'+currentStep">
@@ -133,7 +131,9 @@ export default {
         currentStep: 'BookingCalendar',
         loadingStep: '',
         converted:false,
-        requiresScroll: false
+        requiresScroll: false,
+        selectedStaff: null,
+        showHeader:true
     }),
 
     mounted () {
@@ -192,7 +192,7 @@ export default {
        },
        
        staff(){
-           return this.getDefaultStaff()
+           return this.selectedStaff
        },
        timeprops(){
            let timeprops = {
@@ -214,6 +214,16 @@ export default {
        }
     },
     methods: {
+        changeStaff(newStaff){
+            console.log(newStaff)
+            this.showHeader = false
+            this.selectedStaff = newStaff
+            this.refreshAvail()
+            setTimeout(this.showHeaderLater, 100);
+        },
+        showHeaderLater(){
+            this.showHeader = true
+        },
         windowResized(){
             this.checkIfRequiresScroll()
         },
@@ -349,13 +359,18 @@ export default {
                 return this.viewData.staffs[0]
             }
         },
+        
+        refreshAvail(){
+            this.intervalsCollection = new Intervals(this.selectedStaff.availability)
+        },
 
         loadedAfter() {
             this.time_format = convertDateFormatPHPtoMoment(this.viewData.time_format)
             this.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
 
             this.startDay = this.viewData.week_starts_on
-            this.intervalsCollection = new Intervals(this.getDefaultStaff().availability)
+            this.selectedStaff = this.getDefaultStaff()
+            this.refreshAvail()
 
             this.setMomentLocale()
 
@@ -496,6 +511,7 @@ export default {
                     },
                     props: {
                         selectedSlot:"selectedSlot",
+                        selectedStaff:"selectedStaff",
                         timeprops: 'timeprops', 
                         service:"service",
                         duration:"duration",
@@ -534,7 +550,7 @@ export default {
                         result:"dataSent",
                         options:"options",
                         isApprovalManual:"isApprovalManual",
-                        staff:"staff", 
+                        staff:"selectedStaff", 
                         appointment_starts_at: 'appointmentStartsAt',
                     },
                     listeners: {

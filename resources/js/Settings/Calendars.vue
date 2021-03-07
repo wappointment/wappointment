@@ -54,23 +54,23 @@
                                <button v-else class="btn btn-xs btn-outline-primary tt-lg mt-2" @click="goToDotCom(calendar)">Connect Account</button>
                             </td>
                             <td>
-                               <div class="d-flex" v-if="calendar.calendar_urls!== false && Object.keys(calendar.calendar_urls).length > 0">
-                                   <div class="unclickable cal-icon" v-for="(single_url, calendar_id) in calendar.calendar_urls" >
+                               <div class="d-flex" v-if="getExternals(calendar)">
+                                   <div class="unclickable cal-icon" v-for="(single_url, calendar_id) in getExternals(calendar)" >
                                         <div class="dashicons dashicons-calendar-alt"></div>
                                         <div class="card cardb p-2 px-3 mt-1 cal-desc">
                                             <div class="d-flex flex-row justify-content-between ">
                                                 <div>
                                                     <div class="small text-primary">{{ single_url}}</div>
                                                     <p class="vsmall text-muted m-0">
-                                                    Last checked: <span class="data-item">{{ lastChecked(calendar_id,calendar) }}</span> | 
-                                                    Last changed: <span class="data-item">{{ lastChanged(calendar_id,calendar) }}</span> | 
+                                                    Last checked: <span class="data-item">{{ lastChecked(calendar_id, calendar) }}</span> | 
+                                                    Last changed: <span class="data-item">{{ lastChanged(calendar_id, calendar) }}</span> | 
                                                     Process duration: <span class="data-item">{{ calDuration(calendar_id, calendar) }}</span></p>
                                                 </div>
-                                                <button class="align-self-start btn btn-xs btn-link hidden" data-tt="Disconnect Calendar" @click="disconnectCalendar(calendar_id)"><span class="dashicons dashicons-dismiss"></span></button>
+                                                <button class="align-self-start btn btn-xs btn-link hidden" data-tt="Disconnect Calendar" @click="disconnectCalendar(calendar_id, calendar.id)"><span class="dashicons dashicons-dismiss"></span></button>
                                             </div>  
                                         </div>
                                     </div>
-                                    <a class="small d-flex align-items-center" href="javascript:;" @click="refreshManually"><span class="dashicons dashicons-update"></span> Refresh all</a>
+                                    <a class="small d-flex align-items-center" href="javascript:;" @click="refreshManually(calendar.id)"><span class="dashicons dashicons-update"></span> Refresh all</a>
                                 </div>
                                 <div>
                                     <button class="btn btn-xs btn-outline-primary tt-lg" v-if="!calendarLimitReached(calendar)"
@@ -102,14 +102,14 @@
             <h4 slot="title" class="modal-title"> 
                 <span>Connect Personal calendar</span>
             </h4>
-            <Sync @savedSync="savedSync" @errorSaving="errorSavingCalendar" noback></Sync>
+            <CalendarsExternal :calendar_id="calendar_main_id" @savedSync="savedSync" @errorSaving="errorSavingCalendar" noback />
             
         </WapModal>
         <WapModal v-if="dotcomOpen" :show="dotcomOpen!==false" large @hide="dotcomOpen = false">
             <h4 slot="title" class="modal-title"> 
                 Connect to Zoom, Google Calendar etc...
             </h4>
-            <CalendarsIntegrations :calendar="dotcomOpen" />
+            <CalendarsIntegrations @reload="reloadListing" :calendar="dotcomOpen" />
         </WapModal>
     </div>
 </template>
@@ -122,7 +122,7 @@ import WeeklyAvailability from '../RegularAvailability/Edit'
 import Connections from '../RegularAvailability/Connections'
 import CalUrl from '../Modules/CalUrl'
 import SettingsSave from '../Modules/SettingsSave'
-import Sync from '../Views/Subpages/Sync'
+import CalendarsExternal from './CalendarsExternal'
 import CalendarsIntegrations from './CalendarsIntegrations'
 import CalendarsRegav from './CalendarsRegav'
 import DurationCell from '../BookingForm/DurationCell'
@@ -134,7 +134,7 @@ export default {
         CalendarsAddEdit,
         WeeklyAvailability,
         Connections,
-        Sync,
+        CalendarsExternal,
         CalendarsIntegrations,
         CalendarsRegav
     },
@@ -145,7 +145,8 @@ export default {
         elementPassed: null,
         calendarsOrder: [],
         showModal: false,
-        dotcomOpen: false
+        dotcomOpen: false,
+        calendar_main_id: false
     }),
     created(){
         this.mainService = this.$vueService(new ServiceCalendar)
@@ -162,7 +163,18 @@ export default {
         }
     },
     methods: {
-
+        reloadListing(){
+            this.hideModal()
+            this.showListing()
+            this.loadElements()
+        },
+        getExternals(calendar){
+            if(calendar.calendar_urls!== undefined){
+                return calendar.calendar_urls!== false && Object.keys(calendar.calendar_urls).length > 0 ? calendar.calendar_urls:false
+            }else{
+                return calendar.options.calendar_urls!== false && Object.keys(calendar.options.calendar_urls).length > 0? calendar.options.calendar_urls:false
+            }
+        },
         editAvailability(calendar){
             this.elementPassed = calendar
             this.currentView = this.elements.db_required ? 'regav':'edit'
@@ -175,6 +187,7 @@ export default {
             if(this.calendarLimitReached(calendar)){
                 return
             }
+            this.calendar_main_id = calendar.id
             this.showModal = true
         },
         goToDotCom(calendar){
@@ -200,22 +213,50 @@ export default {
         },
         hasBeenSavedDeleted(result, reload = true){
             if(reload) {
-                this.showListing()
-                this.loadElements()
+                this.reloadListing()
             }
             
             if(result.data.message!==undefined){
                 this.$WapModal().notifySuccess(result.data.message)
             }
         },
-        deleteCalendar(calendar_id){
+        deleteCalendar(calendar_id, calendar_main_id){
             this.$WapModal().confirm({
                 title: 'Do you really want to delete this calendar?',
             }).then((response) => {
                 if(response !== false){
-                    this.request(this.deleteRequest,{id:calendar_id},undefined,false,this.hasBeenSavedDeleted)
+                    this.request(this.deleteRequest,{id:calendar_id, staff_id: calendar_main_id},undefined,false,this.hasBeenSavedDeleted)
                 }
             })
+        },
+
+        disconnectCalendar(calendar_id, calendar_main_id){
+            this.$WapModal().confirm({
+                title: 'Confirm calendar disconnection?',
+            }).then((response) => {
+
+                if(response === false){
+                    return
+                }
+
+                this.request(this.disconnectCalendarRequest, {calendar_id: calendar_id,  staff_id: calendar_main_id}, undefined,false, this.disconnectCalendarSuccess)
+            }) 
+            
+            
+        },
+        async disconnectCalendarRequest(params) {
+            return await this.mainService.call('disconnectCal', params) 
+        },
+        disconnectCalendarSuccess(response){
+            this.$WapModal().notifySuccess(response.data.message)
+            this.reloadListing()
+        },
+
+        refreshManually(id){
+            this.request(this.refreshCalendarsRequest, {staff_id: id}, undefined,false, this.disconnectCalendarSuccess)
+        },
+        async refreshCalendarsRequest(params) {
+            return await this.mainService.call('refreshCalendars', params)
         },
 
         async deleteRequest(params){

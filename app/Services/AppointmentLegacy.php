@@ -99,7 +99,7 @@ class AppointmentLegacy
 
     protected static function appointmentModified($appointment, $oldAppointment)
     {
-        (new Availability())->regenerate();
+        (new Availability($appointment->staff_id))->regenerate();
 
         Events::dispatch(
             'AppointmentRescheduledEvent',
@@ -116,21 +116,21 @@ class AppointmentLegacy
         return \Wappointment\ClassConnect\Carbon::createFromTimestamp($unixTS)->toDateTimeString();
     }
 
-    public static function tryBook(Client $client, $start_at, $end_at, $type, $service)
+    public static function tryBook(Client $client, $start_at, $end_at, $type, $service, $staff_id = null)
     {
-        if (static::canBook($start_at, $end_at)) {
-            return static::processBook($client, $start_at, $end_at, $type, $service);
+        if (static::canBook($start_at, $end_at, false, $staff_id)) {
+            return static::processBook($client, $start_at, $end_at, $type, $service, false, $staff_id);
         }
     }
 
-    public static function adminBook(Client $client, $start_at, $end_at, $type, $service)
+    public static function adminBook(Client $client, $start_at, $end_at, $type, $service, $staff_id = null)
     {
-        if (static::canBook($start_at, $end_at, true)) {
-            return static::processBook($client, $start_at, $end_at, $type, $service, true);
+        if (static::canBook($start_at, $end_at, true, $staff_id)) {
+            return static::processBook($client, $start_at, $end_at, $type, $service, true, $staff_id);
         }
     }
 
-    protected static function processBook(Client $client, $start_at, $end_at, $type, $service, $forceConfirmed = false)
+    protected static function processBook(Client $client, $start_at, $end_at, $type, $service, $forceConfirmed = false, $staff_id = null)
     {
         $start_at = static::unixToDb($start_at);
         $end_at = static::unixToDb($end_at);
@@ -140,20 +140,28 @@ class AppointmentLegacy
             'type' => $type,
             'client_id' => $client->id,
             'edit_key' => md5($client->id . $start_at),
-            'status' => $forceConfirmed ? static::getAppointmentModel()::STATUS_CONFIRMED : static::getDefaultStatus($service)
+            'status' => $forceConfirmed ? static::getAppointmentModel()::STATUS_CONFIRMED : static::getDefaultStatus($service),
+            'staff_id' => static::isLegacy() ? $staff_id : $staff_id->id
         ];
-
         return static::book($appointmentData, $client, $forceConfirmed);
     }
 
-    protected static function canBook($start_at, $end_at, $is_admin = false)
+    public static function isLegacy()
+    {
+        return VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
+    }
+
+    protected static function canBook($start_at, $end_at, $is_admin = false, $staff_id = null)
     {
         //test that this is not a double booking scenario
         $start_at_str = static::unixToDb($start_at);
         $end_at_str = static::unixToDb($end_at);
 
-
-        if (static::getAppointmentModel()::where('status', '>=', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)
+        $queryAppointment = static::getAppointmentModel()::where('status', '>=', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION);
+        if (!static::isLegacy()) {
+            $queryAppointment->where('staff_id', $staff_id->id);
+        }
+        if ($queryAppointment
             ->where(function ($query) use ($start_at_str, $end_at_str) {
                 $query->where(function ($query) use ($start_at_str, $end_at_str) {
                     $query->where('start_at', $start_at_str);
@@ -204,10 +212,18 @@ class AppointmentLegacy
             return true;
         }
 
-        //test that were in the booking availability
-        if ((new AvailabilityGetter())->isAvailable($start_at, $end_at, Settings::get('activeStaffId'))) {
-            return true;
+        if (static::isLegacy()) {
+            //test that were in the booking LEGACY
+            if ((new AvailabilityGetter())->isAvailable($start_at, $end_at, Settings::get('activeStaffId'))) {
+                return true;
+            }
+        } else {
+            //test that were in the booking availability
+            if ((new AvailabilityGetter($staff_id))->isAvailable($start_at, $end_at, $staff_id->id)) {
+                return true;
+            }
         }
+
         throw new \WappointmentException('Slot not available', 1);
     }
 
@@ -225,16 +241,16 @@ class AppointmentLegacy
         //if availability has not been refreshed for a while we refresh it now otherwise we queue a job for it
         if (!defined('DISABLE_WP_CRON') || $is_admin === true) {
             //when web cron is disabled we need an immediate refresh of availability
-            (new Availability())->regenerate();
+            (new Availability($data['staff_id']))->regenerate();
         } else {
             if ((int) WPHelpers::getStaffOption('since_last_refresh') > 2) {
-                (new Availability())->regenerate();
+                (new Availability($data['staff_id']))->regenerate();
             } else {
                 $count_since_last_refresh = (int) WPHelpers::getStaffOption('since_last_refresh', false, 0) + 1;
                 WPHelpers::setStaffOption('since_last_refresh', $count_since_last_refresh);
                 \Wappointment\Services\Queue::tryPush(
                     'Wappointment\Jobs\AvailabilityRegenerate',
-                    ['staff_id' => Settings::get('activeStaffId')],
+                    ['staff_id' => $data['staff_id']],
                     'availability'
                 );
             }
@@ -275,7 +291,6 @@ class AppointmentLegacy
 
         $client = $appointment->client()->first();
         $staff_id_regenerate = $appointment->getStaffId();
-        dd($appointment->getStaffId(), $appointment->toArray());
         $appointment->incrementSequence();
         $result = $appointment->destroy($appointment->id);
 

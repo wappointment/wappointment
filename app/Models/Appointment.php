@@ -6,6 +6,8 @@ use Wappointment\ClassConnect\Model;
 use Wappointment\Services\Settings;
 use Wappointment\Services\DateTime;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Services\Appointment as ServicesAppointment;
+use Wappointment\Services\VersionDB;
 
 class Appointment extends Model
 {
@@ -33,7 +35,11 @@ class Appointment extends Model
 
     public function getStaff()
     {
-        return \Wappointment\Services\Staff::getById($this->staff_id);
+        if (VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES)) {
+            return \Wappointment\Services\Staff::getById($this->staff_id);
+        } else {
+            return Calendar::first($this->staff_id);
+        }
     }
 
     public function getLocationSlug()
@@ -95,7 +101,8 @@ class Appointment extends Model
                 $location = 'Video meeting';
                 break;
         }
-        return apply_filters('wappointment_service_location', $location, $this);
+        return ServicesAppointment::getLocation($location, $this);
+        //return apply_filters('wappointment_service_location', $location, $this);
     }
 
     public function service()
@@ -254,7 +261,8 @@ class Appointment extends Model
 
     public function getServiceAddress()
     {
-        return apply_filters('wappointment_get_service_address', $this->getService()->address, $this);
+        return ServicesAppointment::getAddress($this->getService()->address, $this);
+        //return apply_filters('wappointment_get_service_address', $this->getService()->address, $this);
     }
 
     public function getLinkAddEventToCalendar()

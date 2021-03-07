@@ -2,7 +2,6 @@
 
 namespace Wappointment\WP;
 
-use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Service;
 
 class Staff
@@ -67,7 +66,7 @@ class Staff
     public function toArray()
     {
         return apply_filters('wappointment_staff_data', [
-            'id' => $this->wp_uid,
+            'id' => $this->id,
             'a' => $this->avatar,
             'n' => $this->name,
             't' => $this->timezone,
@@ -92,12 +91,12 @@ class Staff
 
     public function getCalendarUrls()
     {
-        return !empty($this->staff_data['options']['calurl']) ? $this->staff_data['options']['calurl'] : [];
+        return !empty($this->staff_data['options']['cal_urls']) ? $this->staff_data['options']['cal_urls'] : [];
     }
 
     public function getCalendarLogs()
     {
-        return WPHelpers::getStaffOption('calendar_logs', $this->wp_uid);
+        return !empty($this->staff_data['options']['calendar_logs']) ? $this->staff_data['options']['calendar_logs'] : [];
     }
 
     public function emailAddress()

@@ -65,7 +65,6 @@ class AdminLegacy
         }
 
         $type = (int) call_user_func('Wappointment\Models\Appointment::getType' . ucfirst($type));
-
         //test that this is bookable
         $hasBeenBooked = Appointment::adminBook($client, $start, $end, $type, $service);
         if (!$hasBeenBooked) {

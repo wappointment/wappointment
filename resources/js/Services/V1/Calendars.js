@@ -22,6 +22,18 @@ export default class CalendarsService extends ApiV1 {
                     method: 'post',
                     route: '/calendars/avatar'
                 },
+                saveCal: { 
+                    method: 'post', 
+                    route: '/calendars/savecal'
+                },
+                refreshCalendars: { 
+                    method: 'post', 
+                    route: '/calendars/refreshcalendars'
+                },
+                disconnectCal: { 
+                    method: 'post', 
+                    route: '/calendars/disconnect'
+                },
             };
         }
     }

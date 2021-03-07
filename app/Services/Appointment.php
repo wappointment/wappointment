@@ -8,21 +8,21 @@ use Wappointment\Models\Appointment as AppointmentModel;
 
 class Appointment extends AppointmentLegacy
 {
-    public static function tryBook(Client $client, $start_at, $end_at, $type, $service)
+    public static function tryBook(Client $client, $start_at, $end_at, $type, $service, $staff_id = null)
     {
-        if (static::canBook($start_at, $end_at)) {
-            return static::processBook($client, $start_at, $end_at, $type, $service);
+        if (static::canBook($start_at, $end_at, false, $staff_id)) {
+            return static::processBook($client, $start_at, $end_at, $type, $service, false, $staff_id);
         }
     }
 
-    public static function adminBook(Client $client, $start_at, $end_at, $type, $service)
+    public static function adminBook(Client $client, $start_at, $end_at, $type, $service, $staff_id = null)
     {
-        if (static::canBook($start_at, $end_at, true)) {
-            return static::processBook($client, $start_at, $end_at, $type, $service, true);
+        if (static::canBook($start_at, $end_at, true, $staff_id)) {
+            return static::processBook($client, $start_at, $end_at, $type, $service, true, $staff_id);
         }
     }
 
-    protected static function processBook(Client $client, $start_at, $end_at, $type, $service, $forceConfirmed = false)
+    protected static function processBook(Client $client, $start_at, $end_at, $type, $service, $forceConfirmed = false, $staff_id = null)
     {
         $start_at = static::unixToDb($start_at);
         $end_at = static::unixToDb($end_at);
@@ -36,20 +36,24 @@ class Appointment extends AppointmentLegacy
             'status' => $forceConfirmed ? AppointmentModel::STATUS_CONFIRMED : static::getDefaultStatus($service),
             'service_id' => $client->bookingRequest->get('service'),
             'location_id' => $location->id,
-            'duration' => $client->bookingRequest->get('duration')
+            'duration' => $client->bookingRequest->get('duration'),
+            'staff_id' => $staff_id->id
         ];
-
         return static::book($appointmentData, $client, $forceConfirmed);
     }
 
-    public static function adminCalendarGetAppointments($appointments, $params)
+    public static function adminCalendarGetAppointments($params)
     {
-
-        return AppointmentModel::with('client', 'service')
+        $appointmentsQuery  = AppointmentModel::with('client', 'service')
             ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
             ->where('start_at', '>=', $params['start_at'])
-            ->where('end_at', '<=', $params['end_at'])
-            ->get();
+            ->where('end_at', '<=', $params['end_at']);
+
+        if (!empty($params['staff_id'])) {
+            $appointmentsQuery->where('staff_id', $params['staff_id']);
+        }
+
+        return $appointmentsQuery->get();
     }
 
     public static function adminCalendarUpdateAppointmentArray($addedEvent, $appointment)

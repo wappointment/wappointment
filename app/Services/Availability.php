@@ -33,6 +33,9 @@ class Availability
             $this->regav = Settings::getStaff('regav', $this->staff_id);
             $this->days = (int) Settings::getStaff('availaible_booking_days', $this->staff_id);
         } else {
+            if (empty($staff_id)) {
+                throw new \WappointmentException("Cant regenerate", 1);
+            }
             $this->staff = is_numeric($staff_id) ? Central::get('CalendarModel')::findOrFail($staff_id) : $staff_id;
             $this->timezone = $this->staff->options['timezone'];
             $this->regav = $this->staff->options['regav'];
@@ -43,6 +46,25 @@ class Availability
     public function getMaxTs()
     {
         return time() + ($this->days * 24 * 3600);
+    }
+
+
+    public function syncAndRegen($forceRegen = false)
+    {
+        $calendar_urls = $this->staff->getCalUrls();
+        $hasChanged = false;
+        if (!empty($calendar_urls) && is_array($calendar_urls)) {
+            foreach ($calendar_urls as $calurl) {
+                if ((new \Wappointment\Services\Calendar($calurl, $this->staff, false))->fetch()) {
+                    $hasChanged = true;
+                }
+            }
+        }
+
+        //regenerate availability only when we get new events
+        if ($hasChanged || $forceRegen) {
+            $this->regenerate();
+        }
     }
 
     /**
@@ -64,7 +86,7 @@ class Availability
         $start_at_string = $today->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $end->format(WAPPOINTMENT_DB_FORMAT);
 
-        $statusEvents = MStatus::where('muted', '<', 1)
+        $statusEventQuery = MStatus::where('muted', '<', 1)
             ->where(function ($query) use ($end_at_string, $start_at_string) {
                 $query->where(function ($qry) use ($end_at_string, $start_at_string) {
                     $qry->where('start_at', '<', $end_at_string)
@@ -72,9 +94,13 @@ class Availability
                 })
                     ->orWhere('recur', '>', MStatus::RECUR_NOT);
             })
-            ->orderBy('start_at')
-            ->get();
+            ->orderBy('start_at');
 
+        if (!$this->isLegacy) {
+            $statusEventQuery->where('staff_id', $this->staff->id);
+        }
+
+        $statusEvents = $statusEventQuery->get();
         $statusBusy = $statusEvents->where('type', MStatus::TYPE_BUSY);
 
         $notrecurringBusy = $statusBusy->where('recur', MStatus::RECUR_NOT);
@@ -97,10 +123,15 @@ class Availability
         $this->availabilities = $this->segmentService->flatten($collection);
 
         // get appointments
-        $appointments = Appointment::where('start_at', '>=', $start_at_string)
+        $appointmentQuery = Appointment::where('start_at', '>=', $start_at_string)
             ->where('status', '>=', Appointment::STATUS_AWAITING_CONFIRMATION)
-            ->where('end_at', '<=', $end_at_string)
-            ->get();
+            ->where('end_at', '<=', $end_at_string);
+
+        if (!$this->isLegacy) {
+            $appointmentQuery->where('staff_id', $this->staff->id);
+        }
+
+        $appointments = $appointmentQuery->get();
 
         $appointments = $this->segmentService->convertModel($appointments);
         $appointments = $this->segmentService->flatten($appointments);

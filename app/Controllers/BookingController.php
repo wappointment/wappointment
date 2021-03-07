@@ -45,9 +45,11 @@ class BookingController extends RestController
     }
     public function save(Booking $booking)
     {
+
         if ($booking->hasErrors()) {
             return WPHelpers::restError('Review your fields', 500, $booking->getErrors());
         }
+
         $result = Client::book($booking);
         if (isset($result['errors'])) {
             return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['errors']);

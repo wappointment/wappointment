@@ -25,13 +25,12 @@ trait CanBook
         $end_at = $start_at + $this->getRealDuration(['duration' => $duration]);
 
         if ($forceConfirmed) {
-            $hasBeenBooked = AppointmentService::adminBook($this, $start_at, $end_at, false, $service);
+            $hasBeenBooked = AppointmentService::adminBook($this, $start_at, $end_at, false, $service, $bookingRequest->staff);
         } else {
-            $hasBeenBooked = AppointmentService::tryBook($this, $start_at, $end_at, false, $service);
+            $hasBeenBooked = AppointmentService::tryBook($this, $start_at, $end_at, false, $service, $bookingRequest->staff);
         }
 
         //test that this is bookable
-        //$hasBeenBooked = AppointmentService::tryBook($this, $start_at, $end_at, false, $service);
         if (!$hasBeenBooked) {
             throw new \WappointmentException('Error cannot book at this time', 1);
         }
@@ -43,8 +42,9 @@ trait CanBook
         $this->bookingRequest = $booking;
         $end = $booking->get('end');
 
+        $staff_id = empty($booking->get('staff_id')) ? null : $booking->get('staff_id');
         //test that this is bookable
-        $hasBeenBooked = AppointmentService::adminBook($this, $booking->get('start'), $end, 'unused', $booking->getService());
+        $hasBeenBooked = AppointmentService::adminBook($this, $booking->get('start'), $end, 'unused', $booking->getService(), $staff_id);
         if (!$hasBeenBooked) {
             throw new \WappointmentException('Error cannot book at this time', 1);
         }

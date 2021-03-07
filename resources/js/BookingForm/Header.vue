@@ -1,21 +1,27 @@
 <template>
-    <div class="wap-head">
-        <div v-for="staff in staffs"> 
+    <div class="wap-head" :class="{showall:staffSelection}">
+        <div class="d-flex" v-if="!staffSelection" :class="[isCompactHeader ? 'align-items-start':'align-items-center']">
+            <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="showAllStaff" >
+                <div class="avatar-pills">
+                    <div v-for="(staffI,i) in staffsFilterd" role="img" :style="getStyleBackground(staffI, i)" :title="staffI.n" class="wstaff-img"></div>
+                    <div role="img" :style="getStyleBackground(staff,staffs.length)" :title="staff.n" class="wstaff-img"></div>
+                </div>
+            </div>
+            <div class="staff-desc">
+                <div><strong>{{ staff.n }}</strong></div>
+                <div class="header-service" v-if="service!== false && isCompactHeader">
+                    <span class="compact-servicename">{{ service.name }}</span>
+                    <span class="wduration">{{duration}}{{getMinText}}</span>
+                </div>
+            </div>
+        </div>
+        <div v-else v-for="staffRow in staffs" > 
             <div class="d-flex" :class="[isCompactHeader ? 'align-items-start':'align-items-center']">
-                <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="refreshClicked">
-                    <div role="img" :style="getStyleBackground(staff)" :title="staff.n" class="wstaff-img"></div>
-                    <div class="after" v-if="isStepSlotSelection">
-                        <svg viewBox="0 0 32 32" class="ic-refresh" aria-hidden="true">
-                            <path d="M27.1 14.313V5.396L24.158 8.34c-2.33-2.325-5.033-3.503-8.11-3.503C9.902 4.837 4.901 9.847 4.899 16c.001 6.152 5.003 11.158 11.15 11.16 4.276 0 9.369-2.227 10.836-8.478l.028-.122h-3.23l-.022.068c-1.078 3.242-4.138 5.421-7.613 5.421a8 8 0 0 1-5.691-2.359A7.993 7.993 0 0 1 8 16.001c0-4.438 3.611-8.049 8.05-8.049 2.069 0 3.638.58 5.924 2.573l-3.792 3.789H27.1z"/>
-                        </svg>
-                    </div>
+                <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="changeStaff(staffRow)">
+                    <div role="img" :style="getStyleBackground(staffRow)" :title="staffRow.n" class="wstaff-img"></div>
                 </div>
                 <div class="staff-desc">
-                    <div><strong>{{ staff.n }}</strong></div>
-                    <div class="header-service" v-if="service!== false && isCompactHeader">
-                        <span class="compact-servicename">{{ service.name }}</span>
-                        <span class="wduration">{{duration}}{{getMinText}}</span>
-                    </div>
+                    <div><strong>{{ staffRow.n }}</strong></div>
                 </div>
             </div>
         </div>
@@ -29,6 +35,9 @@ export default {
     props: {
         staffs: {
             type: Array, default: []
+        },
+        staff:{
+            type:[Object]
         },
 
         isStepSlotSelection:{
@@ -54,6 +63,7 @@ export default {
     },
     data: () => ({
         disabledButtons: false,
+        staffSelection:false
     }),
     created(){
         if(this.options.demoData !== undefined){
@@ -61,18 +71,26 @@ export default {
         }
     },
     methods:{
-        refreshClicked(){
+        showAllStaff(){
+            this.staffSelection = true
+        },
+        changeStaff(staff){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'selection')
               return
             } 
-            this.$emit('refreshed')
+            this.staffSelection = false
+            this.$emit('changeStaff', staff)
         },
-        getStyleBackground(staff){
-            return 'background-image: url("'+staff.a+'");'
+        getStyleBackground(staff, i = false){
+            return 'background-image: url("'+staff.a+'");' + (i === false?'':'margin-left:0.'+(i*3)+'em;')
         }
     },
     computed:{
+        staffsFilterd(){
+            let staff = this.staffSelection
+            return this.staffs.filter(e => e.id != staff.id)
+        },
         isCompactHeader(){
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
         },
@@ -115,6 +133,9 @@ export default {
 .wap-front .wap-head:hover{
     height: auto;
     min-height:62px;
+}
+.wap-front .wap-head.showall{
+    height:100%;
 }
 .wap-front .wap-head > div {
     padding: 8px;
@@ -160,12 +181,19 @@ export default {
     border-radius: 50%;
     background-size: cover;
     margin-right: 0;
+    box-shadow: -2px 0px 2px 0 rgba(0,0,0,.4);
+    border:1px solid #d5d5d5;
 }
 .compact-servicename{
     max-width: 75%;
     display: inline-block;
 }
-
+.avatar-pills{
+    display:grid;
+}
+.avatar-pills .wstaff-img{
+    grid-area:1 / 1 / 2 / 2;
+}
 
 </style>
 

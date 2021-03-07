@@ -35,7 +35,6 @@ import RequiresAddon from '../Mixins/RequiresAddon'
 export default {
     mixins: [RequestMaker, Ordering, RequiresAddon],
     data: () => ({
-        mainService: null,
         elements: [],
         pagination: null,
         loadedData: false,

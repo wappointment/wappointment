@@ -5,6 +5,9 @@ namespace Wappointment\Services;
 use Wappointment\Models\WPUser;
 use Wappointment\Models\WPUserMeta;
 use Wappointment\ClassConnect\Request;
+use Wappointment\Managers\Central;
+use Wappointment\WP\Staff as WPStaff;
+use Wappointment\WP\StaffLegacy;
 
 class Staff
 {
@@ -16,12 +19,28 @@ class Staff
 
     public static function get()
     {
+        $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
+        return $db_update_required ? static::getStafflegacy() : static::getCalendarsStaff();
+    }
+
+    public static function getCalendarsStaff()
+    {
+        $calendars = Central::get('CalendarModel')::orderBy('sorting')->fetch();
         $staffs = [];
-        foreach (static::getIds() as $staff_id) {
-            $staffs[] = (new \Wappointment\WP\Staff($staff_id))->toArray();
+
+        foreach ($calendars->toArray() as $key => $calendar) {
+            $staffs[] = (new WPStaff($calendar))->toArray();
         }
         return $staffs;
     }
+
+    public static function getStafflegacy()
+    {
+        return [
+            (new StaffLegacy)->toArray()
+        ];
+    }
+
 
     public static function getName()
     {

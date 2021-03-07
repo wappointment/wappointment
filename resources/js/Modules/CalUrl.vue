@@ -6,7 +6,7 @@ export default {
     getPropertyCal(keyprop, calendar_id,calendar){
       return calendar.calendar_logs[calendar_id] !== undefined && calendar.calendar_logs[calendar_id][keyprop] !== undefined ? calendar.calendar_logs[calendar_id][keyprop]:false
     },
-    lastChecked(calendar_id,calendar){
+    lastChecked(calendar_id, calendar){
       return this.unixToDateTime(this.getPropertyCal('last-checked', calendar_id,calendar), calendar.timezone)
     },
     lastChanged(calendar_id, calendar){
@@ -29,28 +29,12 @@ export default {
     },
 
  
-    disconnectCalendar(calendar_id){
-        this.$WapModal().confirm({
-            title: 'Confirm calendar disconnection?',
-            }).then((response) => {
-
-                if(response === false){
-                    return
-                }
-                this.request(this.disconnectCalendarRequest, {calendar_id: calendar_id}, undefined,false, this.disconnectCalendarSuccess)
-            }) 
-        
-    },
-    async disconnectCalendarRequest(params) {
-        return await this.serviceSettingStaff.call('disconnectCal', params) 
-    },
+    
     importCalendarSuccess(response){
         this.$WapModal().notifySuccess(response.data.message)
         this.hideAndRefresh()
     },
-    disconnectCalendarSuccess(response){
-        this.$WapModal().notifySuccess(response.data.message)
-    },
+    
     errorSavingCalendar(error){
         this.$WapModal().notifyError(error.response.data.message)
     },
@@ -62,12 +46,7 @@ export default {
       this.hideModal()
       this.loadElements()
     },
-    refreshManually(){
-      this.request(this.refreshCalendarsRequest, {}, undefined,false, this.disconnectCalendarSuccess)
-    },
-    async refreshCalendarsRequest() {
-        return await this.serviceSettingStaff.call('refreshCalendars')
-    },
+    
   },
 };
 </script>

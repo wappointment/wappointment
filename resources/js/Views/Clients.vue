@@ -38,7 +38,6 @@ export default {
     components: Object.assign({WPListingHelp}, client_listing),
     mixins: [Request, RequiresAddon],
     data: () => ({
-        mainService: null,
         clientDataToSave: null,
         per_page: false,
         view: 'MainClients',

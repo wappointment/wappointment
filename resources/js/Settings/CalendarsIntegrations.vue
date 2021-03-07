@@ -89,6 +89,8 @@ export default {
         },
         successConnected(response){
             this.is_dotcom_connected = response.data.data.dotcom
+            this.$WapModal().notifySuccess(response.data.message,1)
+            this.$emit('reload')
         },
 
         connectToWappo() {
@@ -118,7 +120,7 @@ export default {
         successDisconnected(response){
             this.is_dotcom_connected = false
             this.$WapModal().notifySuccess(response.data.message,1)
-            window.location.reload()
+            this.$emit('reload')
         },
 
     }

@@ -59,7 +59,7 @@ export default {
     mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
     'timeprops', 'relations', 'appointment_starts_at',
-    'duration', 'location', 'custom_fields', 'staffs'],
+    'duration', 'location', 'custom_fields', 'staffs','selectedStaff'],
     components: {
         CountryStyle,
         FieldsGenerated,
@@ -143,7 +143,7 @@ export default {
     },
     methods: {
         setStaff(staff_key = false){
-            this.staff = staff_key ? this.staffs[staff_key]:this.staffs[0]
+            this.staff = this.selectedStaff
         },
 
         getId(id){
@@ -224,7 +224,7 @@ export default {
             data.service = this.service.id
             data.location = this.location.id
             data.duration = this.duration
-            data.staff = this.staff.id
+            data.staff_id = this.staff.id
             //turns loading mode on in parent
             this.$emit('loading', {loading:true, dataSent: data})
             //create request

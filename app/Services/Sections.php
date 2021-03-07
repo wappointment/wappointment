@@ -5,6 +5,9 @@ namespace Wappointment\Services;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\Models\Appointment;
 
+/**
+ * USed for summary emails
+ */
 class Sections
 {
     private $start_at = false;

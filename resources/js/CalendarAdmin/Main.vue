@@ -7,6 +7,13 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
                 <h1 class="h2 align-self-center" @click="refreshEvents"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
+                <div class="d-flex" v-if="viewData.staff !== undefined">
+                  <div v-for="staff in viewData.staff" class="cal-staff-img" 
+                  :class="{activeStaff:activeStaff.id==staff.id}" @click="changeActiveStaff(staff)" 
+                  :data-tt="staff.name" >
+                    <img :src="staff.options.avatar" class="wstaff-img" />
+                  </div>
+                </div>
                 <FreeSlotsSelector :intervals="getThisWeekIntervals" :viewingFreeSlot="viewingFreeSlot" 
                 :durations="getAllDurations" :buffer="viewData.buffer_time"
                  @getFreeSlots="getFreeSlots" @getEdition="getEdition" />
@@ -20,7 +27,7 @@
         </div>
       </StickyBar>
 
-      <div class="full-width center-content calendar-wrap full-width-layout">
+      <div class="full-width center-content calendar-wrap full-width-layout" >
         <div class="wrap">
             
             <div  v-if="fullCalOption!==undefined">
@@ -72,16 +79,16 @@
                   </div>
                   <div v-else>
                     <BehalfBooking v-if="shownAppointmentForm" 
-                    :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" 
+                    :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :activeStaff="activeStaff"
                     :viewData="viewData" :timezone="displayTimezone" 
                     @cancelled="hideModal" @confirmed="confirmedStatus" @updateEndTime="updateEndTime"/>
 
                     <StatusBusyConfirm v-if="shownBusyConfirm" 
-                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :viewData="viewData"  
+                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :activeStaff="activeStaff" :viewData="viewData"  
                     @confirmed="confirmedStatus" @cancelled="hideModal"/>
 
                     <StatusFreeConfirm v-if="shownFreeConfirm" 
-                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :viewData="viewData"
+                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :activeStaff="activeStaff" :viewData="viewData"
                     @confirmed="confirmedStatus" @cancelled="hideModal"/>
                   </div>
 
@@ -237,7 +244,8 @@ export default {
     hasBeenSetCalProps: false,
     queryParameters: undefined,
     showCalSettings: false,
-    lockCalSettings: false
+    lockCalSettings: false,
+    activeStaff: null,
   }),
 
   created(){
@@ -245,7 +253,7 @@ export default {
     this.serviceStatus = this.$vueService(new StatusService)
     
     this.checkQueryParams()
-
+    
   },
 
  watch: {
@@ -261,6 +269,12 @@ export default {
   },
  
  computed: {
+   activeAvailability(){
+     return this.activeStaff.availability
+   },
+   activeRegav(){
+     return this.activeStaff.options.regav
+   },
    getAllDurations(){
      return this.viewData.durations
    },
@@ -326,6 +340,14 @@ export default {
     
  },
   methods: {
+    changeActiveStaff(staff){
+      this.activeStaff = staff
+      if(this.queryParameters !== undefined){
+        this.queryParameters.timezone = this.activeStaff.options.timezone
+      }
+      
+      this.reload(true)
+    },
     getPref(pref = 'cal_duration', defaultVal= ''){
       return [undefined,false, null,''].indexOf(this.viewData.preferences[pref]) === -1 ? this.viewData.preferences[pref]: defaultVal
     },
@@ -345,7 +367,7 @@ export default {
     },
     reloadAfterChange(){
       this.fullCalOption = undefined
-      setTimeout(this.setFullCalOptions.bind(null, this.firstDay.format()), 100);
+      setTimeout(this.setFullCalOptions.bind(null, this.firstDay.format()), 100)
     },
     savePreferences(preferences){
       this.minHour = preferences.minH
@@ -360,6 +382,9 @@ export default {
           end: params.end.format(), 
           timezone:params.timezone, 
           view: this.currentView, 
+        }
+        if(this.activeStaff.id!==undefined){
+          p.staff_id = this.activeStaff.id
         }
         if(this.viewingFreeSlot){
           p.viewingFreeSlot = true
@@ -447,21 +472,31 @@ export default {
         
         return hours + ':' + minutes
       },
-      loaded(viewData, reloaded = false){
+      loaded(viewData, reloaded = false, staffChange=false){
           this.viewData = viewData.data
+          
+          if(staffChange === false){
+            if(this.queryParameters !== undefined && this.queryParameters.staff !== undefined){
+              let staffid = this.queryParameters.staff
+              this.activeStaff = this.viewData.staff.find(e => e.id ==staffid)
+            }else{
+              this.activeStaff = this.viewData.staff[0]
+            }
+            
+          }
+
+          this.openedDays = this.activeRegav
+          this.intervalsCollection = new Intervals(this.activeAvailability)
+          let initTimezone = (this.queryParameters !== undefined)? this.queryParameters.timezone:this.activeStaff.options.timezone
+          this.timezone = initTimezone // staff timezone
+          this.selectedTimezone = initTimezone // display timezone
+
           if(reloaded === false){
             
-            this.openedDays = this.viewData.regav
-
-            this.intervalsCollection = new Intervals(this.viewData.availability)
             this.viewData.time_format = convertDateFormatPHPtoMoment(this.viewData.time_format)
             this.viewData.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
             this.setMinAndMax()
             
-            
-            let initTimezone = (this.queryParameters !== undefined)? this.queryParameters.timezone:this.viewData.timezone
-            this.timezone = initTimezone // staff timezone
-            this.selectedTimezone = initTimezone // display timezone
             this.showWelcomePopup = this.viewData.showWelcome
             
             this.setInterval(this.getPref('cal_duration', this.viewData.durations[0]))
@@ -476,7 +511,9 @@ export default {
             defaultDate = this.toMoment(this.queryParameters.start.replace(' ','+')).format()
           }
           this.setFullCalOptions(defaultDate)
+
       },
+
 
       getMinMaxHourFromRegav(){
         let min = 7
@@ -565,13 +602,14 @@ export default {
               this.fullCalOption.props.defaultDate = defaultDate
             }
       },
-      loadAgain(){
-        this.loaded({data:Object.assign({},this.viewData)}, true)
+      loadAgain(staffChange){
+        console.log('staffChange',staffChange)
+        this.loaded({data:Object.assign({},this.viewData)}, true, staffChange)
       },
-      reload(){
+      reload(staffChange = false){
         this.fullCalOption = undefined
         this.fcIsReady = false
-        setTimeout(this.loadAgain, 100)
+        setTimeout(this.loadAgain.bind(null,staffChange), 100)
       },
 
       toMoment(FullCaldateString, timezone = false, debug=false){
@@ -732,17 +770,19 @@ export default {
       },
       writeHistory(){
         if(this.firstDay !== undefined){
-          window.history.pushState(
-          {
-            query: {
+          this.queryParameters = {
               page: 'wappointment_calendar',
               start: this.firstDay.format(),
               end: this.lastDay.format(),
               timezone: this.displayTimezone,
+              staff: this.activeStaff.id,
             }
+          window.history.pushState(
+          {
+            query: Object.assign({},this.queryParameters)
           },
           'Calendar week ' + this.firstDay.format() + ' - ' + this.lastDay.format(),
-          'admin.php?page=wappointment_calendar&start=' + this.firstDay.format() + '&end=' + this.lastDay.format() + '&timezone=' + this.displayTimezone
+          'admin.php?page=wappointment_calendar&start=' + this.firstDay.format() + '&end=' + this.lastDay.format() + '&timezone=' + this.displayTimezone + '&staff='+this.activeStaff.id
         )
         }
         
@@ -1338,5 +1378,33 @@ export default {
 .calendar-wrap .wbtn.wbtn-secondary.wbtn-cell{
     margin: .5rem;
 }
-  
+
+.cal-staff-img{
+  border-radius: 50%;
+}
+
+
+.cal-staff-img .wstaff-img{
+  transition: all .3s ease-in-out;
+  background-color:#fff;
+  box-shadow: 0px 8px 10px 0 rgba(0,0,0,.02);
+  margin: 0 .4rem !important;
+}
+
+.cal-staff-img .wstaff-img{
+  filter:grayscale(.9);
+}
+
+.cal-staff-img.activeStaff .wstaff-img{
+  border: 2px solid var(--primary);
+  filter:grayscale(0);
+  transform: scale(1);
+}
+.cal-staff-img .wstaff-img:hover{
+  filter:grayscale(0);
+  border: 1px dashed var(--primary);
+  box-shadow: 0px 8px 10px 0 rgba(0,0,0,.08);
+  transform: scale(1.05);
+}
+
 </style>
