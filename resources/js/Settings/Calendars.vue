@@ -22,8 +22,9 @@
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <div>
+                                    <div class="calendar-pic" :class="[calendar.status == 1 ? 'active':'inactive']">
                                         <img :src="calendar.avatar" class="img-fluid wrounded" width="40" :alt="calendar.name" />
+                                        <span role="button" class="status" :data-tt="[calendar.status == 1 ? 'Active':'Inactive']" @click="toggleStatus(calendar,idx)"></span>
                                     </div>
                                     <div class="ml-2">
                                         <div>{{ calendar.name }}</div>
@@ -163,6 +164,7 @@ export default {
         }
     },
     methods: {
+        
         reloadListing(){
             this.hideModal()
             this.showListing()
@@ -215,10 +217,7 @@ export default {
             if(reload) {
                 this.reloadListing()
             }
-            
-            if(result.data.message!==undefined){
-                this.$WapModal().notifySuccess(result.data.message)
-            }
+
         },
         deleteCalendar(calendar_id, calendar_main_id){
             this.$WapModal().confirm({
@@ -229,7 +228,21 @@ export default {
                 }
             })
         },
-
+        toggleStatus(calendar, idx){
+            this.request(this.toggleRequest,{ id:calendar.id}, undefined, false, this.hasBeenToggled.bind(null,idx))
+        },
+        hasBeenToggled(idx, response){
+            let calendarsSaved = this.elements.calendars
+            calendarsSaved[idx].status = calendarsSaved[idx].status == 1 ? 0:1
+            this.elements.calendars = []
+            setTimeout(this.reFeedCalendars.bind(null,calendarsSaved), 100);
+        },
+        reFeedCalendars(calendarsSaved){
+            this.elements.calendars = calendarsSaved
+        },
+        async toggleRequest(params){
+           return await this.mainService.call('toggle',params)
+        },
         disconnectCalendar(calendar_id, calendar_main_id){
             this.$WapModal().confirm({
                 title: 'Confirm calendar disconnection?',
@@ -319,6 +332,28 @@ export default {
 }   
 </script>
 <style>
+.calendar-pic{
+    position: relative;
+}
+.calendar-pic .status{
+    display: block;
+    width: .7em;
+    height: .7em;
+    border-radius: 50%;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+}
+.calendar-pic.active .status{
+    background-color:var(--primary);
+}
+.calendar-pic.inactive .status{
+    background-color:#ccc;
+}
+.calendar-pic.inactive img{
+    filter: grayscale(0);
+    opacity:.8;
+}
 .location {
     margin: .2rem;
     color: #717171;

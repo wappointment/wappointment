@@ -27,13 +27,7 @@ export default {
             this.$emit('confirmed')
         },
         async setRequest(params) {
-            console.log('free',{
-                start: this.startTime.format(), 
-                end: this.endTime.format(), 
-                timezone: this.timezone, 
-                type: 'free',
-                staff_id: this.activeStaff.id !== undefined? this.activeStaff.id:null
-            })
+
             return await this.serviceStatus.call('save', 
             {
                 start: this.startTime.format(), 

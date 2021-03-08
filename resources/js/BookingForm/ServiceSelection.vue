@@ -24,20 +24,6 @@ export default {
     created(){
         if(this.options !== undefined &&  this.options.demoData !== undefined){
             this.disabledButtons = true
-        }else{
-            if(this.services.length == 1){
-                this.selectService(this.services[0])
-            }else{
-                if(this.options !== undefined && 
-                this.options.attributesEl !== undefined && 
-                this.options.attributesEl.serviceSelection !== undefined){
-                    for (let i = 0; i < this.services.length; i++) {
-                        if(parseInt(this.options.attributesEl.serviceSelection) === parseInt(this.services[i].id)){
-                            return this.selectService(this.services[i])
-                        }
-                    }
-                }
-            }
         }
     },
 

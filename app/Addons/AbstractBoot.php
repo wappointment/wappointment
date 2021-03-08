@@ -52,9 +52,13 @@ abstract class AbstractBoot implements Boot
         return $addons_require_db_update;
     }
 
+    public static function isInstalledOrdoesntRequireInstallation()
+    {
+        return !static::$has_installation || static::isInstalled();
+    }
     public static function addonStatusWrapper($package)
     {
-        if (static::isInstalled()) {
+        if (static::isInstalledOrdoesntRequireInstallation()) {
             $package->initial_wizard = static::isSetup();
             if (is_array(static::$instructions) && count(static::$instructions) > 0) {
                 $package->instructions = static::$instructions;
@@ -127,7 +131,7 @@ abstract class AbstractBoot implements Boot
                 static::backSetup();
             }
 
-            if (static::isInstalled()) {
+            if (static::isInstalledOrdoesntRequireInstallation()) {
                 wp_enqueue_script(static::$addon_key . '_back', plugins_url(static::getAddonSlug() . '/dist/back.js'), [], static::$addon_version, true);
 
                 if (static::$has_front_script) {
@@ -149,9 +153,10 @@ abstract class AbstractBoot implements Boot
 
     public static function hooksAndFiltersWhenInstalled()
     {
+
         add_filter('wappointment_viewdata_' . static::$addon_settings, [static::$name_space . 'Boot', 'getMainSettings']);
         if (static::$has_front_script) {
-            add_action('wappointment_enqueue_front_' . static::$addon_key, ['\\WappointmentAddonWoocommerce\\Boot', 'frontEnqueue']);
+            add_action('wappointment_enqueue_front_' . static::$addon_key, [static::$name_space . 'Boot', 'frontEnqueue']);
         }
     }
 

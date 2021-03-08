@@ -1,11 +1,12 @@
 <template>
     <div class="wap-bf" :class="{show: canBeBooked, 'has-scroll':requiresScroll}">
         <template v-if="canBeBooked">
-            <BookingFormHeader v-if="showHeader" :staffs="getStaffs" 
+            <BookingFormHeader v-if="showHeader" 
             :isStepSlotSelection="isStepSlotSelection"
             :options="options"
             :service="service" 
             :services="services"
+            :staffs="getStaffs" 
             :duration="duration" 
             :location="location"
             :rescheduling="rescheduling"
@@ -23,6 +24,7 @@
                 :service="service" 
                 :duration="duration" 
                 :services="services"
+                :staffs="getStaffs"
                 :rescheduling="rescheduling"
                 :startsAt="appointmentStartsAt"
                 :location="location"
@@ -52,8 +54,7 @@
         </template>
         <div v-else>
             <div v-if="dataloaded" class="wappointment-errors">
-                <div v-if="service">No appointments available</div>
-                <div v-else>Service not ready</div>
+                <div>No appointments available</div>
             </div>
             <template v-else>
                 <div class="wappointment-errors" v-if="errorMessages.length > 0">
@@ -85,7 +86,6 @@ import BookingServiceSelection from './ServiceSelection'
 import BookingDurationSelection from './DurationSelection'
 import BookingLocationSelection from './LocationSelection'
 import MixinLegacy from './MixinLegacy'
-
 
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
@@ -215,7 +215,6 @@ export default {
     },
     methods: {
         changeStaff(newStaff){
-            console.log(newStaff)
             this.showHeader = false
             this.selectedStaff = newStaff
             this.refreshAvail()
@@ -369,6 +368,11 @@ export default {
             this.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
 
             this.startDay = this.viewData.week_starts_on
+            
+            if(this.viewData.staffs.length == 0){
+                this.dataloaded = true
+                return
+            }
             this.selectedStaff = this.getDefaultStaff()
             this.refreshAvail()
 
@@ -376,7 +380,7 @@ export default {
 
             this.dataloaded = true
 
-            this.setServiceDurationLocation()
+            this.initServiceStaffDurationLocation()
     
             this.setComponentLists()
 
@@ -390,6 +394,7 @@ export default {
 
             }else{
                 let stepdata = {service:this.service, duration:this.duration, location: this.location}
+
                 let stepfirst = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', stepdata)
                 this.currentStep = this.selectFirstStep(stepfirst, stepdata)
                 this.autoSelectLocation()
@@ -433,17 +438,46 @@ export default {
             
         },
 
-        setServiceDurationLocation(){
+        initServiceStaffDurationLocation(){
             this.services = this.viewData.services
 
+            this.testLockedStaff()
             if(this.isLegacy || this.services.length <2){
                 this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
+            }else{
+                if(this.services.length == 1){
+                    this.service = this.services[0]
+                }else{
+                    this.testLockedService()
+                }
             }
-            
+
             if(this.service !== false){
                 this.duration = this.getFirstDuration(this.service)
-                this.location = this.service.type !== undefined ? '' : window.wappointmentExtends.filter('locationDefault', this.service)
+                this.location = this.service.type !== undefined ? false : (this.service.locations.length === 1 ? this.service.locations[0]:false) 
             } 
+        },
+        testLockedStaff(){
+            if(this.options !== undefined && 
+            this.options.attributesEl !== undefined && 
+            this.options.attributesEl.staffSelection !== undefined){
+                for (let i = 0; i < this.viewData.staffs.length; i++) {
+                    if(parseInt(this.options.attributesEl.staffSelection) === parseInt(this.viewData.staffs[i].id)){
+                        return this.changeStaff(this.viewData.staffs[i])
+                    }
+                }
+            }
+        },
+        testLockedService(){
+            if(this.options !== undefined && 
+                this.options.attributesEl !== undefined && 
+                this.options.attributesEl.serviceSelection !== undefined){
+                    for (let i = 0; i < this.services.length; i++) {
+                        if(parseInt(this.options.attributesEl.serviceSelection) === parseInt(this.services[i].id)){
+                            return this.service = this.services[i]
+                        }
+                    }
+                }
         },
 
         getFirstDuration(service){
@@ -690,10 +724,12 @@ export default {
     overflow: hidden;
     margin-top: .3em;
 }
-.wap-front [data-tt] {
+.wap-front [data-tt]:not([data-tt=""]) {
+  cursor: pointer;
+}
+.wap-front [data-tt]:hover {
   position: relative;
   z-index: 2;
-  cursor: pointer;
 }
 
 .wap-front [data-tt]:before,

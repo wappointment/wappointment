@@ -8,10 +8,10 @@
                 <h1 class="h2 align-self-center" @click="refreshEvents"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
                 <div class="d-flex" v-if="viewData.staff !== undefined">
-                  <div v-for="staff in viewData.staff" class="cal-staff-img" 
+                  <div v-for="staff in viewData.staff" class="cal-staff-img tt-below" 
                   :class="{activeStaff:activeStaff.id==staff.id}" @click="changeActiveStaff(staff)" 
                   :data-tt="staff.name" >
-                    <img :src="staff.options.avatar" class="wstaff-img" />
+                    <img :src="staff.avatar" class="wstaff-img" />
                   </div>
                 </div>
                 <FreeSlotsSelector :intervals="getThisWeekIntervals" :viewingFreeSlot="viewingFreeSlot" 
@@ -465,7 +465,7 @@ export default {
       },
       convertInterval(){
         let hours = this.intervals.hours
-        let minutes = this.intervals.minutes + this.viewData.buffer_time
+        let minutes = this.intervals.minutes //+ this.viewData.buffer_time
         if(hours >= 1 ) hours = (hours < 10) ? '0' + hours : hours
         else hours = '00'
         minutes = (minutes < 10) ? '0' + minutes : minutes
@@ -603,7 +603,6 @@ export default {
             }
       },
       loadAgain(staffChange){
-        console.log('staffChange',staffChange)
         this.loaded({data:Object.assign({},this.viewData)}, true, staffChange)
       },
       reload(staffChange = false){

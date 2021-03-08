@@ -2,11 +2,11 @@
 export default {
     data: () => ({
         serviceLocked: false,
+        staffLocked:false
     }),
     created(){
-       if(this.options.attributesEl !== undefined && [undefined, ''].indexOf(this.options.attributesEl.serviceSelection) === -1) {
-           this.serviceLocked = true
-       }
+        this.checkServiceLocked()
+        this.checkStaffLocked()
     },
     computed: {
         canChangeAnything(){
@@ -19,10 +19,19 @@ export default {
             return this.canChangeAnything && this.services.length > 1 && !this.appointmentSaved && !this.serviceLocked
         },
         canChangeLocation(){
-            return this.canChangeAnything && this.service.locations.length > 1 && !this.appointmentSaved && !this.serviceLocked
-        }
+            return this.canChangeAnything && this.service.locations.length > 1 && !this.appointmentSaved
+        },
+        canChangeStaff(){
+            return this.canChangeAnything && this.staffs.length > 1 && !this.appointmentSaved && !this.staffLocked
+        },
     },
     methods:{
+        checkServiceLocked(){
+            return false
+        },
+        checkStaffLocked(){
+            return false
+        },
         refreshClicked(){
             if(this.disabledButtons || !this.isStepSlotSelection) {
               this.options.eventsBus.emits('stepChanged', 'service_selection')

@@ -15,9 +15,13 @@ class Calendars
         return Central::get('CalendarModel');
     }
 
-    public static function all()
+    public static function all($onlyAvailable = false)
     {
-        return static::getModel()::orderBy('sorting')->fetch();
+        $query = static::getModel()::active()->orderBy('sorting');
+        if ($onlyAvailable) {
+            $query->whereNotNull('availability');
+        }
+        return $query->fetch();
     }
 
     public static function save($calendarData)
@@ -76,7 +80,10 @@ class Calendars
         $calendarData = apply_filters('wappointment_calendar_before_saved', $calendarData, $calendarDB);
 
         $calendarData['options'] = static::dataToOptions($calendarData, $calendarDB);
-        $calendarData['availability'] = (new \Wappointment\Services\Availability($calendarDB))->regenerate(false);
+        if (!empty($calendarDB)) {
+            $calendarData['availability'] = (new \Wappointment\Services\Availability($calendarDB))->regenerate(false);
+        }
+
         if (!empty($calendarDB)) {
             $calendarDB->update($calendarData);
         } else {
@@ -151,5 +158,13 @@ class Calendars
         }
 
         return $serviceModel::where('id', $id)->update(['sorting' => $neworder]);
+    }
+
+    public static function toggle($id)
+    {
+        $serviceModel = static::getModel();
+        $old_service = $serviceModel::find($id);
+
+        return $serviceModel::where('id', $id)->update(['status' => $old_service->status == 1 ? 0 : 1]);
     }
 }

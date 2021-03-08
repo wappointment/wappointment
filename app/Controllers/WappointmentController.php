@@ -18,7 +18,9 @@ class WappointmentController extends RestController
     public function connect(Request $request)
     {
         $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
-        $result = (new DotCom)->connect($request->get('account_key'), $staff_id);
+        $dotcomapi = new DotCom;
+        $dotcomapi->setStaff($staff_id);
+        $result = $dotcomapi->connect($request->get('account_key'));
 
         if ($result) {
             return [

@@ -220,6 +220,11 @@ class Main extends AbstractRoutes
                     'controller' => 'CalendarsController',
                     'method' => 'reorder',
                 ],
+                '/calendars/toggle' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'toggle',
+                ],
+
 
                 '/services/booking/admin' => [
                     'controller' => 'BookingController',

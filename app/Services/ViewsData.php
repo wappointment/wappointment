@@ -80,6 +80,8 @@ class ViewsData
             'widget' => (new WidgetSettings)->get(),
             'widgetDefault' => (new WidgetSettings)->defaultSettings(),
             'config' => [
+                'services' => ManageService::all(),
+                'locations' => \Wappointment\Models\Location::get(),
                 'service' => Service::get(),
                 'approval_mode' => Settings::get('approval_mode'),
             ],
@@ -104,7 +106,7 @@ class ViewsData
     {
         $staff_timezone = Settings::getStaff('timezone');
         $services = ManageService::all();
-        
+
         $data = [
             'week_starts_on' => Settings::get('week_starts_on'),
             'wizard_step' => WPHelpers::getOption('wizard_step'),
@@ -136,7 +138,7 @@ class ViewsData
             $data['now'] = (new Carbon())->setTimezone($data['timezone'])->format('Y-m-d\TH:i:00');
             $data['regav'] = $data['staff'][0]->options['regav'];
             $data['availability'] = $data['staff'][0]->availability;
-        }else{
+        } else {
             $data['regav'] = Settings::getStaff('regav');
             $data['availability'] = WPHelpers::getStaffOption('availability');
             $data['timezone'] = $staff_timezone;

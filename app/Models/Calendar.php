@@ -11,12 +11,18 @@ class Calendar extends Model
     protected $dates = ['deleted_at'];
     protected $table = 'wappo_calendars';
     protected $with = ['services'];
-    protected $visible = ['id', 'wp_uid', 'name', 'options', 'services', 'sorting',  'availability'];
+    protected $visible = ['id', 'wp_uid', 'name', 'options', 'services', 'sorting', 'status',  'availability', 'avatar'];
     protected $fillable = ['name', 'wp_uid', 'options', 'sorting', 'availability', 'account_key'];
     protected $casts = [
         'options' => 'array',
         'availability' => 'array',
     ];
+    protected $appends = ['avatar'];
+
+    public function scopeActive($query)
+    {
+        return $query->where('status', '>', 0);
+    }
 
     public function services()
     {
@@ -26,6 +32,11 @@ class Calendar extends Model
     public function getCalUrls()
     {
         return !empty($this->options['cal_urls']) ? $this->options['cal_urls'] : [];
+    }
+
+    public function getAvatarAttribute()
+    {
+        return !empty($this->options['avatar_id']) ? wp_get_attachment_image_src($this->options['avatar_id'])[0] : $this->options['gravatar'];
     }
 
     public function getRegav()

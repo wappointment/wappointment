@@ -18,6 +18,10 @@ export default class CalendarsService extends ApiV1 {
                     method: 'post',
                     route: '/calendars/reorder'
                 },
+                toggle: {
+                    method: 'post',
+                    route: '/calendars/toggle'
+                },
                 getAvatar: {
                     method: 'post',
                     route: '/calendars/avatar'

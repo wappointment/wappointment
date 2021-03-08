@@ -34,7 +34,7 @@
 import ElementSelected from './ElementSelected'
 import MixinChange from './MixinChange'
 export default {
-    mixins:[MixinChange],
+    mixins:[window.wappointmentExtends.filter('MixinChange', MixinChange)],
     props: {
         service: {
             type: [Object, Boolean], 
@@ -51,6 +51,9 @@ export default {
             type: Object
         },
         services:{
+            type: Array
+        },
+        staffs:{
             type: Array
         },
         rescheduling:{},

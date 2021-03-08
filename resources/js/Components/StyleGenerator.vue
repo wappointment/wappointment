@@ -125,6 +125,9 @@
         .wap-front .wap-head {
             background-color: {{ hx_rgb(opts.colors.header.bg) }};
         }
+        .wap-front .wap-head.showall{
+            background-color: {{ hx_rgb(opts.colors.header.bg, .9) }};
+        }
 
         .wap-bf.show{
             border-radius: {{ calendarRound }}em;

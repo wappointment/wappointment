@@ -13,6 +13,7 @@ class Staff
     public $name = null; //staffname
     public $timezone = null; //staff timezone
     public $gravatar = '';
+    public $status = false;
     public $availability = '';
     public $staff_data = [];
 
@@ -25,6 +26,7 @@ class Staff
 
         $this->id = (int)$this->staff_data['id'];
         $this->wp_uid = (int)$this->staff_data['wp_uid'];
+        $this->status = (int)$this->staff_data['status'];
         $this->wp_user = get_userdata($this->wp_uid);
         unset($this->wp_user->data->user_pass);
         unset($this->wp_user->data->user_activation_key);
@@ -52,6 +54,7 @@ class Staff
             'timezone' => $this->timezone,
             'services' => [Service::get()],
             'connected' => $this->getDotcom(),
+            'status' => $this->status,
             'calendar_urls' => $this->getCalendarUrls(),
             'calendar_logs' => $this->getCalendarLogs(),
         ];

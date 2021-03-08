@@ -121,7 +121,7 @@ class Scheduler
 
     private static function regenerateAvailability()
     {
-        (new \Wappointment\Services\Availability())->regenerate();
+        //(new \Wappointment\Services\Availability())->regenerate();
     }
 
     private static function regenerateAvailabilityLegacy()

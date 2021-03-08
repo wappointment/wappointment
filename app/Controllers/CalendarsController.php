@@ -79,6 +79,14 @@ class CalendarsController extends RestController
         return ['message' => 'Calendar has been saved', 'result' => $result];
     }
 
+    public function toggle(Request $request)
+    {
+        $data = $request->only(['id']);
+
+        $result = Calendars::toggle($data['id']);
+        return ['message' => 'Calendar has been modified', 'result' => $result];
+    }
+
     public function delete(Request $request)
     {
         Calendars::delete($request->input('id'));

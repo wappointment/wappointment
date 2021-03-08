@@ -258,7 +258,6 @@ class AppointmentLegacy
             WPHelpers::cronTrigger();
         }
 
-
         return $appointment;
     }
 

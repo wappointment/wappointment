@@ -19,6 +19,7 @@ class CreateCalendarsTable extends Wappointment\Installation\Migrate
             $table->string('name');
             $table->string('account_key')->nullable();
             $table->unsignedBigInteger('wp_uid')->default(0);
+            $table->unsignedTinyInteger('status')->default(1);
             $table->unsignedTinyInteger('sorting')->default(0);
             $table->text('options')->nullable();
             $table->mediumText('availability')->nullable();

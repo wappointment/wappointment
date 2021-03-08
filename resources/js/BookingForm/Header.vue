@@ -1,14 +1,14 @@
 <template>
     <div class="wap-head" :class="{showall:staffSelection}">
         <div class="d-flex" v-if="!staffSelection" :class="[isCompactHeader ? 'align-items-start':'align-items-center']">
-            <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="showAllStaff" >
-                <div class="avatar-pills">
+            <div class="staff-av" role="button" :class="{norefresh: !isStepSlotSelection}" @click="showAllStaff" >
+                <div :class="{'avatar-pills': staffsFilterd.length > 0}" :data-tt="staffsFilterd.length > 0 ? 'Change Staff':''">
                     <div v-for="(staffI,i) in staffsFilterd" role="img" :style="getStyleBackground(staffI, i)" :title="staffI.n" class="wstaff-img"></div>
-                    <div role="img" :style="getStyleBackground(staff,staffs.length)" :title="staff.n" class="wstaff-img"></div>
+                    <div role="img" :style="getStyleBackground(staff,staffsFilterd.length)" :title="staff.n" class="wstaff-img"></div>
                 </div>
             </div>
             <div class="staff-desc">
-                <div><strong>{{ staff.n }}</strong></div>
+                <div role="button" @click="showAllStaff"><strong>{{ staff.n }}</strong></div>
                 <div class="header-service" v-if="service!== false && isCompactHeader">
                     <span class="compact-servicename">{{ service.name }}</span>
                     <span class="wduration">{{duration}}{{getMinText}}</span>
@@ -16,8 +16,8 @@
             </div>
         </div>
         <div v-else v-for="staffRow in staffs" > 
-            <div class="d-flex" :class="[isCompactHeader ? 'align-items-start':'align-items-center']">
-                <div class="staff-av" :class="{norefresh: !isStepSlotSelection}" @click="changeStaff(staffRow)">
+            <div class="d-flex selectable-staff" role="button" @click="changeStaff(staffRow)":class="[isCompactHeader ? 'align-items-start':'align-items-center']">
+                <div class="staff-av" :class="{norefresh: !isStepSlotSelection}">
                     <div role="img" :style="getStyleBackground(staffRow)" :title="staffRow.n" class="wstaff-img"></div>
                 </div>
                 <div class="staff-desc">
@@ -30,11 +30,15 @@
 
 <script>
 import minText from './minText'
+import MixinChange from './MixinChange'
 export default {
-    mixins: [minText],
+    mixins: [minText, window.wappointmentExtends.filter('MixinChange', MixinChange)],
     props: {
         staffs: {
-            type: Array, default: []
+            type: Array
+        },
+        services: {
+            type: Array
         },
         staff:{
             type:[Object]
@@ -72,7 +76,9 @@ export default {
     },
     methods:{
         showAllStaff(){
-            this.staffSelection = true
+            if(this.canChangeStaff){
+                this.staffSelection = true
+            }
         },
         changeStaff(staff){
             if(this.disabledButtons) {
@@ -87,8 +93,12 @@ export default {
         }
     },
     computed:{
+
         staffsFilterd(){
-            let staff = this.staffSelection
+            if(!this.canChangeStaff){
+                return []
+            }
+            let staff = this.staff
             return this.staffs.filter(e => e.id != staff.id)
         },
         isCompactHeader(){
@@ -101,7 +111,6 @@ export default {
 <style>
 .wap-front .staff-av {
     position:relative;
-    cursor: pointer;
 }
 .wap-front .staff-av .after{
   position: absolute;
@@ -181,8 +190,18 @@ export default {
     border-radius: 50%;
     background-size: cover;
     margin-right: 0;
-    box-shadow: -2px 0px 2px 0 rgba(0,0,0,.4);
-    border:1px solid #d5d5d5;
+    border:2px solid #eaeaea;
+    background-color:#fff;
+}
+.staff-av .avatar-pills .wstaff-img{
+    box-shadow: -2px 0px 1px 0 rgba(0,0,0,.2);
+}
+.staff-av .avatar-pills {
+    position:relative;
+    cursor: pointer;
+}
+.selectable-staff{
+    cursor: pointer;
 }
 .compact-servicename{
     max-width: 75%;

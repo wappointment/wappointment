@@ -127,7 +127,7 @@ class Booking extends LegacyBooking
 
     public function prepareInputs($inputs): array
     {
-        $this->staff = Calendar::findOrFail((int)$inputs['staff_id']);
+        $this->staff = Calendar::active()->findOrFail((int)$inputs['staff_id']);
         $this->validateService($inputs);
         $this->validateLocation($inputs);
 
