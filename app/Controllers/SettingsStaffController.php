@@ -81,7 +81,7 @@ class SettingsStaffController extends RestController
         $calurls[md5($calurl)] = $calurl;
 
         WPHelpers::setStaffOption('cal_urls', $calurls);
-
+        (new \Wappointment\Services\Availability())->regenerate();
         return ['message' => 'Calendar has been recorded'];
     }
 
