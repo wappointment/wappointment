@@ -15,7 +15,7 @@ class Appointment extends Model
 
     protected $fillable = [
         'start_at', 'end_at', 'edit_key', 'client_id',
-        'status', 'type', 'staff_id', 'service_id', 'options', 'location_id', 'created_at', 'updated_at'
+        'status', 'type', 'staff_id', 'service_id', 'options', 'location_id', 'created_at', 'updated_at',
     ];
     protected $casts = [
         'options' => 'array',

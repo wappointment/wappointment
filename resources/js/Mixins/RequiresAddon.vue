@@ -31,6 +31,9 @@ export default {
                 } 
             })
         },
+        runDbUpdate(){
+            this.$WapModal().notifyError('Run database updates first')
+        }
     }
 };
 </script>

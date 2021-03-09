@@ -38,7 +38,7 @@
                     <div v-if="loading">
                         <Loader />
                     </div>
-                    <div :class="{'hide-loading':loading}">
+                    <div v-if="currentStep!=''" :class="{'hide-loading':loading}">
                         <div v-if="currentStep == loadingStep && isCompVisible(currentStep)">
                             <component :is="getComp(currentStep)"
                             @hook:mounted="checkIfRequiresScrollDelay"
@@ -219,11 +219,17 @@ export default {
         changeStaff(newStaff){
             this.showHeader = false
             this.selectedStaff = newStaff
+            
             this.refreshAvail()
-            setTimeout(this.showHeaderLater, 100);
+            
+            let newStep = this.currentStep
+            this.currentStep = ''
+            setTimeout(this.showHeaderLater.bind(null,newStep), 100)
+            
         },
-        showHeaderLater(){
+        showHeaderLater(newStep){
             this.showHeader = true
+            this.childChangedStep(newStep)
         },
         windowResized(){
             this.checkIfRequiresScroll()

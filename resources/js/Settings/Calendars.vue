@@ -229,7 +229,8 @@ export default {
             })
         },
         toggleStatus(calendar, idx){
-            this.request(this.toggleRequest,{ id:calendar.id}, undefined, false, this.hasBeenToggled.bind(null,idx))
+           return this.elements.db_required ? 
+            this.runDbUpdate():this.request(this.toggleRequest,{ id:calendar.id}, undefined, false, this.hasBeenToggled.bind(null,idx))
         },
         hasBeenToggled(idx, response){
             let calendarsSaved = this.elements.calendars
@@ -289,7 +290,7 @@ export default {
         },
         showCalendar(){
             if(this.elements.db_required){
-                return this.$WapModal().notifyError('Run database updates first')
+                return this.runDbUpdate()
             }
             if(this.elements.limit_reached !== false){
                 return this.requiresAddon('staff', this.elements.limit_reached)

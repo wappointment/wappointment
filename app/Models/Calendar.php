@@ -29,7 +29,7 @@ class Calendar extends Model
         return $this->belongsToMany('Wappointment\Models\Service', 'wappo_calendar_service');
     }
 
-    public function getCalUrls()
+    public function getCalendarUrls()
     {
         return !empty($this->options['cal_urls']) ? $this->options['cal_urls'] : [];
     }

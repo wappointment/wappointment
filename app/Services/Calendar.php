@@ -113,6 +113,7 @@ class Calendar
 
     private function saveCalendarLogs()
     {
+
         if ($this->legacy) {
             return WPHelpers::setStaffOption('calendar_logs', $this->calendar_logs, $this->getStaffId());
         } else {

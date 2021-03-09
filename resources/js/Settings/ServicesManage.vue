@@ -181,7 +181,7 @@ export default {
         },
         showService(){
             if(this.requiresDBUpgrade){
-                return this.$WapModal().notifyError('Run database updates first')
+                return this.runDbUpdate()
             }
             if(this.elements.limit_reached !== false){
                 return this.requiresAddon('services', this.elements.limit_reached)

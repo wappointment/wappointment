@@ -68,8 +68,8 @@ class ExternalCalendar
 
     public function refreshCalendars($force = false)
     {
+
         (new Availability($this->staff))->syncAndRegen($force);
-        //\Wappointment\System\Scheduler::syncCalendar();
 
         return [
             'message' => 'Calendars refreshed',
@@ -111,7 +111,7 @@ class ExternalCalendar
 
     protected function getCurrentUrls()
     {
-        return $this->staff->getCalUrls();
+        return $this->staff->getCalendarUrls();
     }
 
     protected function getCurrentUrlsLegacy()
@@ -156,7 +156,7 @@ class ExternalCalendar
         $result = false;
         try {
             if ($this->isLegacy) {
-                $result = (new \Wappointment\Services\Calendar($value, Settings::get('activeStaffId')))->refetch();
+                $result = (new \Wappointment\Services\Calendar($value, Settings::get('activeStaffId'), true))->refetch();
             } else {
                 $result = (new \Wappointment\Services\Calendar($value, $this->staff, false))->refetch();
             }

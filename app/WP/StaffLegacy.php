@@ -39,6 +39,7 @@ class StaffLegacy
             'id' => $this->id,
             'name' => $this->name,
             'avatar' => $this->avatar,
+            'status' => 1,
             'gravatar' => $this->gravatar,
             'avb' => $this->getAvb(),
             'regav' => $this->getRegav(),

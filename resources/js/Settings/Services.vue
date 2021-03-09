@@ -63,7 +63,7 @@ export default {
         },
         showService(){
             if(this.elements.db_required){
-                return this.$WapModal().notifyError('Run database updates first')
+                return this.runDbUpdate()
             }
             if(this.elements.length > 2){
                 return this.requiresAddon('services', '3 services max allowed')

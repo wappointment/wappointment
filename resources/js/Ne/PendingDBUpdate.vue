@@ -1,17 +1,23 @@
 <template>
-    <WapModal v-if="showing" :show="showing" @hide="hide">
-        <h4 slot="title" class="modal-title">Update Required</h4>
-        <div class="wappo-db-update" v-if="!updated">
-            <p>Wappointment has improvements requiring a Database update.</p>
-            <div >
-                <button class="btn btn-primary btn-lg btn-block" @click="runMigrate">Run update</button>
+    <div>
+        <div class="wappo-db-update">
+            <WPNotice>
+                <p>Wappointment has improvements requiring a Database update: <button class="btn btn-primary btn-sm" @click="runMigrate">Run update</button></p>
+            </WPNotice>
+        </div>
+        <WapModal v-if="showing" :show="showing" @hide="hide">
+            <h4 slot="title" class="modal-title">Update Required</h4>
+            <div class="wappo-db-update" v-if="!updated">
+                <p>Wappointment has improvements requiring a Database update.</p>
+                <div >
+                    <button class="btn btn-primary btn-lg btn-block" @click="runMigrate">Run update</button>
+                </div>
             </div>
-        </div>
-        <div v-else>
-            <WLoader />
-        </div>
-    </WapModal>
-  
+            <div v-else>
+                <WLoader />
+            </div>
+        </WapModal>
+    </div>
 </template>
 <script>
 import abstractView from '../Views/Abstract'
@@ -29,8 +35,12 @@ export default {
     }),
     created(){
         this.serviceApp = this.$vueService(new AppService)
+        this.$router.afterEach(this.popAgain)
     },
     methods: {
+        popAgain(){
+            this.showing = true
+        },
         hide(){
             this.showing = false
         },
@@ -42,6 +52,7 @@ export default {
         },
         successUpdate(result){
             this.$WapModal().notifySuccess(result.data.message)
+            this.updated = true
             this.$WapModal()
             .request(this.sleep(4000))
           window.location = window.apiWappointment.base_admin + '?page=wappointment_calendar'

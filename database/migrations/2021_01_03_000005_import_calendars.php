@@ -1,6 +1,8 @@
 <?php
 
 use Wappointment\Models\Calendar;
+use Wappointment\Models\Appointment;
+use Wappointment\Models\Status;
 use Wappointment\Services\Settings;
 use Wappointment\WP\StaffLegacy;
 
@@ -14,19 +16,21 @@ class ImportCalendars extends Wappointment\Installation\Migrate
     public function up()
     {
 
-        $staff = new StaffLegacy();
+        $staff = new StaffLegacy;
         $dotcom = $staff->getDotcom();
+        Settings::save('email_logo', Settings::getStaff('email_logo'));
         $data = [
             'wp_uid' => $staff->id,
             'name' => $staff->name,
+            'status' => 1,
             'options' => [
                 'regav' => $staff->getRegav(),
                 'timezone' => $staff->timezone,
-                'email_logo' => Settings::getStaff('email_logo'),
                 'avb' => $staff->getAvb(),
                 'avatar_id' => Settings::getStaff('avatarId'),
                 'calurl' => $staff->getCalendarUrls(),
-                'dotcom' => $dotcom
+                'dotcom' => $dotcom,
+                'gravatar' => $staff->gravatar
             ],
             'availability' => $staff->getAvailability()
         ];
@@ -34,7 +38,9 @@ class ImportCalendars extends Wappointment\Installation\Migrate
         if (!empty($dotcom['account_key'])) {
             $data['account_key'] = $dotcom['account_key'];
         }
-        Calendar::create($data);
+        $calendar = Calendar::create($data);
+        Appointment::query()->update(['staff_id' => $calendar->id]);
+        Status::query()->update(['staff_id' => $calendar->id]);
     }
 
 

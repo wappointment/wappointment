@@ -7,6 +7,7 @@ use Wappointment\Models\Status as MStatus;
 use Wappointment\Models\Appointment;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Managers\Central;
+use Wappointment\WP\StaffLegacy;
 
 class Availability
 {
@@ -26,6 +27,7 @@ class Availability
         $this->isLegacy = !VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES);
 
         if ($this->isLegacy) {
+            $this->staff = new StaffLegacy;
             $this->staff_id = Settings::get('activeStaffId');
             $this->timezone = Settings::getStaff('timezone', $this->staff_id);
             $this->regav = Settings::getStaff('regav', $this->staff_id);
@@ -49,11 +51,11 @@ class Availability
 
     public function syncAndRegen($forceRegen = false)
     {
-        $calendar_urls = $this->staff->getCalUrls();
+        $calendar_urls = $this->staff->getCalendarUrls();
         $hasChanged = false;
         if (!empty($calendar_urls) && is_array($calendar_urls)) {
             foreach ($calendar_urls as $calurl) {
-                if ((new \Wappointment\Services\Calendar($calurl, $this->staff, false))->fetch()) {
+                if ((new \Wappointment\Services\Calendar($calurl, $this->isLegacy ? $this->staff->id : $this->staff, $this->isLegacy))->fetch()) {
                     $hasChanged = true;
                 }
             }

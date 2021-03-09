@@ -250,7 +250,7 @@ class EventsController extends RestController
 
         $recurringBusy = $recurringBusyQuery->get();
 
-        $maxts = (new \Wappointment\Services\Availability())->getMaxTs();
+        $maxts = (new \Wappointment\Services\Availability($staff_id))->getMaxTs();
         $punctualEvent = Status::expand($recurringBusy, $maxts < $ends_at_carbon->timestamp ? $maxts : $ends_at_carbon->timestamp);
 
         $statusEvents = $statusEvents->concat($punctualEvent);
