@@ -195,22 +195,28 @@ class Queue
             ->delete();
     }
 
-    public static function queueDailyJob()
+    public static function queueDailyJob($staff_id_only = false)
     {
         self::cancelDailyJob();
 
-        $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
-            Settings::get('daily_summary_time'),
-            0,
-            0,
-            Settings::getStaff('timezone')
-        );
+        $sumary_time = Settings::get('daily_summary_time');
+        foreach (Staff::get() as $staff) {
+            if ($staff_id_only !== false && $staff_id_only !== $staff['id']) {
+                continue;
+            }
+            $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
+                $sumary_time,
+                0,
+                0,
+                $staff['t']
+            );
 
-        if ($available_at->timestamp < time()) {
-            $available_at->addDay();
+            if ($available_at->timestamp < time()) {
+                $available_at->addDay();
+            }
+
+            self::push('Wappointment\Jobs\AdminEmailDailySummary', ['staff_id' => $staff['id']], 'daily', $available_at->timestamp);
         }
-
-        self::push('Wappointment\Jobs\AdminEmailDailySummary', [], 'daily', $available_at->timestamp);
     }
 
     public static function cancelWeeklyJob()
@@ -219,21 +225,28 @@ class Queue
             ->delete();
     }
 
-    public static function queueWeeklyJob()
+    public static function queueWeeklyJob($staff_id_only = false)
     {
         self::cancelWeeklyJob();
+        $summary_time = Settings::get('weekly_summary_time');
+        $summary_day = Settings::get('weekly_summary_day');
 
-        $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
-            Settings::get('weekly_summary_time'),
-            0,
-            0,
-            Settings::getStaff('timezone')
-        );
+        foreach (Staff::get() as $staff) {
+            if ($staff_id_only !== false && $staff_id_only !== $staff['id']) {
+                continue;
+            }
+            $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
+                $summary_time,
+                0,
+                0,
+                $staff['t']
+            );
 
-        while ($available_at->timestamp < time() || !$available_at->isDayOfWeek(Settings::get('weekly_summary_day'))) {
-            $available_at->addDay();
+            while ($available_at->timestamp < time() || !$available_at->isDayOfWeek($summary_day)) {
+                $available_at->addDay();
+            }
+
+            self::push('Wappointment\Jobs\AdminEmailWeeklySummary', ['staff_id' => $staff['id']], 'weekly', $available_at->timestamp);
         }
-
-        self::push('Wappointment\Jobs\AdminEmailWeeklySummary', [], 'weekly', $available_at->timestamp);
     }
 }

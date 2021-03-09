@@ -18,16 +18,21 @@ class CalendarsController extends RestController
 {
     public function get()
     {
+
         $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
+
         $calendars = $db_update_required ? $this->getStafflegacy() : $this->getCalendarsStaff();
-        return [
+        $data = [
             'db_required' => $db_update_required,
             'timezones_list' => DateTime::tz(),
             'calendars' => $calendars,
-            'limit_reached' => Central::get('CalendarModel')::canCreate() ? false : Central::get('CalendarModel')::MaxRows() . ' services max allowed',
             'staffs' => StaffServices::getWP(),
             'staffDefault' => Settings::staffDefaults()
         ];
+        if (!$db_update_required) {
+            $data['limit_reached'] = Central::get('CalendarModel')::canCreate() ? false : Central::get('CalendarModel')::MaxRows() . ' services max allowed';
+        }
+        return $data;
     }
 
     public function getAvatar(Request $request)

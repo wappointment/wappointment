@@ -6,13 +6,18 @@ use Wappointment\ClassConnect\Request;
 use Wappointment\Services\Reminder;
 use Wappointment\Models\Reminder as MReminder;
 use Wappointment\Services\Settings;
-use Wappointment\Services\Status;
+use Wappointment\Services\VersionDB;
 
 class ReminderController extends RestController
 {
     private $columns = [
         'id', 'subject', 'type', 'event', 'locked', 'published', 'options'
     ];
+
+    public function isLegacy()
+    {
+        return !VersionDB::canServices();
+    }
 
     public function save(Request $request)
     {
@@ -24,12 +29,18 @@ class ReminderController extends RestController
         }
         throw new \WappointmentException('Couldn\'t save preview', 1);
     }
+
     protected function saveImage(Request $request)
     {
         if ($request->has('email_logo')) {
-            Settings::saveStaff('email_logo', $request->input('email_logo'));
+            if ($this->isLegacy()) {
+                Settings::saveStaff('email_logo', $request->input('email_logo'));
+            } else {
+                Settings::save('email_logo', $request->input('email_logo'));
+            }
         }
     }
+
     public function patch(Request $request)
     {
         $this->saveImage($request);
@@ -68,27 +79,28 @@ class ReminderController extends RestController
             $queryReminders->whereNotIn('event', [MReminder::APPOINTMENT_CANCELLED]);
         }
         $queryReminders->whereIn('type', MReminder::getTypes('code'));
-        return apply_filters(
-            'wappointment_settings_reminders_get',
-            [
-                'mail_status' => (bool) Settings::get('mail_status'),
-                'allow_cancellation' => (bool) Settings::get('allow_cancellation'),
-                'allow_rescheduling' => (bool) Settings::get('allow_rescheduling'),
-                'reschedule_link' => Settings::get('reschedule_link'),
-                'cancellation_link' => Settings::get('cancellation_link'),
-                'save_appointment_text_link' => Settings::get('save_appointment_text_link'),
-                'recipient' => (new \Wappointment\WP\Staff())->emailAddress(),
-                'multiple_service_type' => \Wappointment\Helpers\Service::hasMultipleTypes(),
-                'reminders' => $queryReminders->get(),
-                'defaultReminders' => [
-                    'email' => Reminder::getSeedReminder()
-                ],
-                'email_logo' => Settings::getStaff('email_logo'),
-                'labels' => [
-                    'types' => MReminder::getTypes(),
-                    'events' => MReminder::getEvents()
-                ]
+
+        $data = [
+            'mail_status' => (bool) Settings::get('mail_status'),
+            'allow_cancellation' => (bool) Settings::get('allow_cancellation'),
+            'allow_rescheduling' => (bool) Settings::get('allow_rescheduling'),
+            'reschedule_link' => Settings::get('reschedule_link'),
+            'cancellation_link' => Settings::get('cancellation_link'),
+            'save_appointment_text_link' => Settings::get('save_appointment_text_link'),
+            'multiple_service_type' => \Wappointment\Helpers\Service::hasMultipleTypes($this->isLegacy()),
+            'reminders' => $queryReminders->get(),
+            'recipient' => wp_get_current_user()->user_email,
+            'defaultReminders' => [
+                'email' => Reminder::getSeedReminder()
+            ],
+            'labels' => [
+                'types' => MReminder::getTypes(),
+                'events' => MReminder::getEvents()
             ]
-        );
+        ];
+
+        $data['email_logo'] = $this->isLegacy() ? Settings::getStaff('email_logo') : Settings::get('email_logo');
+
+        return apply_filters('wappointment_settings_reminders_get', $data);
     }
 }

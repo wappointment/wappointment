@@ -13,7 +13,7 @@ class Staff
     public static function getById($staff_id)
     {
         $staff_id = empty($staff_id) ? Settings::get('activeStaffId') : $staff_id;
-        return (new \Wappointment\WP\Staff($staff_id));
+        return (new StaffLegacy($staff_id));
     }
 
     public static function get()
@@ -41,9 +41,9 @@ class Staff
     }
 
 
-    public static function getName()
+    public static function getNameLegacy()
     {
-        return (new \Wappointment\WP\Staff(Settings::get('activeStaffId')))->name;
+        return (new StaffLegacy(Settings::get('activeStaffId')))->name;
     }
 
     public static function getIds()

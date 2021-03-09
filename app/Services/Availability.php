@@ -24,11 +24,9 @@ class Availability
     {
         $this->segmentService = new Segment();
         $this->isLegacy = !VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES);
-        if ($staff_id === false) { //could be in legacy but fail safe for a default one in case
-            $staff_id = Settings::get('activeStaffId');
-        }
+
         if ($this->isLegacy) {
-            $this->staff_id = $staff_id;
+            $this->staff_id = Settings::get('activeStaffId');
             $this->timezone = Settings::getStaff('timezone', $this->staff_id);
             $this->regav = Settings::getStaff('regav', $this->staff_id);
             $this->days = (int) Settings::getStaff('availaible_booking_days', $this->staff_id);

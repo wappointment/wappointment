@@ -153,6 +153,10 @@ class AppointmentLegacy
 
     protected static function canBook($start_at, $end_at, $is_admin = false, $staff_id = null)
     {
+        if ($is_admin === true) {
+            return true;
+        }
+
         //test that this is not a double booking scenario
         $start_at_str = static::unixToDb($start_at);
         $end_at_str = static::unixToDb($end_at);
@@ -208,20 +212,9 @@ class AppointmentLegacy
         ) {
             throw new \WappointmentException('Slot already booked', 1);
         }
-        if ($is_admin === true) {
-            return true;
-        }
 
-        if (static::isLegacy()) {
-            //test that were in the booking LEGACY
-            if ((new AvailabilityGetter())->isAvailable($start_at, $end_at, Settings::get('activeStaffId'))) {
-                return true;
-            }
-        } else {
-            //test that were in the booking availability
-            if ((new AvailabilityGetter($staff_id))->isAvailable($start_at, $end_at, $staff_id->id)) {
-                return true;
-            }
+        if ((new AvailabilityGetter(static::isLegacy() ? null : $staff_id, $start_at, $end_at))->isAvailable()) {
+            return true;
         }
 
         throw new \WappointmentException('Slot not available', 1);

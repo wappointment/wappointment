@@ -4,7 +4,7 @@
             {{ label}}
         </label>
         <div class="picture-edit">
-            <div @click="changePicture" class="text-center preview-fimage" :class="{'preview-selected':hasImage}">
+            <div @click="changePicture" class="text-center clickable" role="button" :class="{'preview-selected':hasImage}">
                 <div class="fimage-edit">
                     <div v-if="hasImage" >
                         <div :style="getImageStyle" class="img-bg d-flex justify-content-center align-items-center"></div>

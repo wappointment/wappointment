@@ -16,7 +16,7 @@ abstract class AbstractAppointmentEmailJob extends AbstractEmailJob
                 ->send($emailObject);
 
             if (!$result) {
-                throw new \WappointmentException('Error while sending email', 1);
+                throw new \WappointmentException('Error while sending email 1', 1);
             }
         }
     }

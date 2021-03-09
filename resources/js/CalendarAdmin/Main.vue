@@ -7,7 +7,7 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
                 <h1 class="h2 align-self-center" @click="refreshEvents"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
-                <div class="d-flex" v-if="viewData.staff !== undefined">
+                <div class="d-flex" v-if="viewData.staff !== undefined && viewData.legacy !== true">
                   <div v-for="staff in viewData.staff" class="cal-staff-img tt-below" 
                   :class="{activeStaff:activeStaff.id==staff.id}" @click="changeActiveStaff(staff)" 
                   :data-tt="staff.name" >
@@ -270,10 +270,10 @@ export default {
  
  computed: {
    activeAvailability(){
-     return this.activeStaff.availability
+     return this.viewData.legacy !== true ? this.activeStaff.availability:this.activeStaff.availability
    },
    activeRegav(){
-     return this.activeStaff.options.regav
+     return this.viewData.legacy !== true ? this.activeStaff.options.regav:this.viewData.regav
    },
    getAllDurations(){
      return this.viewData.durations
@@ -472,22 +472,31 @@ export default {
         
         return hours + ':' + minutes
       },
+
+      getStaffTz(){
+        return this.viewData.legacy !== true ? this.activeStaff.options.timezone:this.activeStaff.t
+      },
       loaded(viewData, reloaded = false, staffChange=false){
           this.viewData = viewData.data
           
-          if(staffChange === false){
-            if(this.queryParameters !== undefined && this.queryParameters.staff !== undefined){
-              let staffid = this.queryParameters.staff
-              this.activeStaff = this.viewData.staff.find(e => e.id ==staffid)
-            }else{
-              this.activeStaff = this.viewData.staff[0]
+          if(this.viewData.legacy === true){
+            this.activeStaff = this.viewData.staff
+          }else{
+            if(staffChange === false ){
+              if(this.queryParameters !== undefined && this.queryParameters.staff !== undefined){
+                let staffid = this.queryParameters.staff
+                this.activeStaff = this.viewData.staff.find(e => e.id ==staffid)
+              }else{
+                this.activeStaff = this.viewData.staff[0]
+              }
+              
             }
-            
-          }
 
+          }
+          
           this.openedDays = this.activeRegav
           this.intervalsCollection = new Intervals(this.activeAvailability)
-          let initTimezone = (this.queryParameters !== undefined)? this.queryParameters.timezone:this.activeStaff.options.timezone
+          let initTimezone = (this.queryParameters !== undefined)? this.queryParameters.timezone:this.getStaffTz()
           this.timezone = initTimezone // staff timezone
           this.selectedTimezone = initTimezone // display timezone
 

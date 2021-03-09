@@ -153,7 +153,9 @@ export default {
     },
 
     computed: {
-
+        isLegacyOrNotServiceSuite(){
+            return this.isLegacy || this.services.length <2
+        },
         isCompactHeader(){
             return this.options.general === undefined || !this.__isEmpty(this.options.general.check_header_compact_mode)
         },
@@ -167,7 +169,7 @@ export default {
             return this.duration !== false
         },
         locationSelected(){
-            return this.location !== false
+            return this.isLegacyOrNotServiceSuite || this.location !== false
         },
         slotSelected(){
             return this.selectedSlot !== false && this.selectedSlot > 0
@@ -283,7 +285,6 @@ export default {
             return this.dataloaded && this.viewData.services[0] !== undefined ?this.viewData.services[0]:false
         },
         getCompProp(component_name){
-            
             let props = this.componentsList[component_name].props !== undefined ? this.componentsList[component_name].props:{}
             let nprops = {}
             for (const key in props) {
@@ -409,9 +410,11 @@ export default {
         },
 
         selectFirstStep(step_name, params) {
-            if(params.service === false) return 'BookingServiceSelection'
-            if(params.service !== false && params.duration === false) return 'BookingDurationSelection'
-            if(params.service !== false && params.duration !== false && params.location === false) return 'BookingLocationSelection'
+            if(!this.isLegacyOrNotServiceSuite){
+                if(params.service === false) return 'BookingServiceSelection'
+                if(params.service !== false && params.duration === false) return 'BookingDurationSelection'
+                if(params.service !== false && params.duration !== false && params.location === false) return 'BookingLocationSelection'
+            }
             return step_name
         },
 
@@ -442,7 +445,7 @@ export default {
             this.services = this.viewData.services
 
             this.testLockedStaff()
-            if(this.isLegacy || this.services.length <2){
+            if(this.isLegacyOrNotServiceSuite){
                 this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
             }else{
                 if(this.services.length == 1){
@@ -593,7 +596,7 @@ export default {
 
                 },
             }
-            if(!this.isLegacy){
+            if(!this.isLegacyOrNotServiceSuite){
                 componentsList = this.updateComponentList(componentsList)
             }
             this.componentsList = window.wappointmentExtends.filter('componentsList', componentsList,

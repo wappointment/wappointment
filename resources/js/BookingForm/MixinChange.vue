@@ -19,7 +19,7 @@ export default {
             return this.canChangeAnything && this.services.length > 1 && !this.appointmentSaved && !this.serviceLocked
         },
         canChangeLocation(){
-            return this.canChangeAnything && this.service.locations.length > 1 && !this.appointmentSaved
+            return this.canChangeAnything && this.service.locations !== undefined && this.service.locations.length > 1 && !this.appointmentSaved
         },
         canChangeStaff(){
             return this.canChangeAnything && this.staffs.length > 1 && !this.appointmentSaved && !this.staffLocked

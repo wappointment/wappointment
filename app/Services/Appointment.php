@@ -42,14 +42,16 @@ class Appointment extends AppointmentLegacy
         return static::book($appointmentData, $client, $forceConfirmed);
     }
 
-    public static function adminCalendarGetAppointments($params)
+    public static function adminCalendarGetAppointments($params, $legacy = false)
     {
-        $appointmentsQuery  = AppointmentModel::with('client', 'service')
+        $with =  $legacy ? ['client'] : ['client', 'service'];
+        //dd($with);
+        $appointmentsQuery  = AppointmentModel::with($with)
             ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
             ->where('start_at', '>=', $params['start_at'])
             ->where('end_at', '<=', $params['end_at']);
 
-        if (!empty($params['staff_id'])) {
+        if (!$legacy && !empty($params['staff_id'])) {
             $appointmentsQuery->where('staff_id', $params['staff_id']);
         }
 

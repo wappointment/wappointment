@@ -34,7 +34,7 @@ class ViewsData
             'activeStaffAvatar' => Settings::getStaff('avatarId') ?
                 wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
             'activeStaffGravatar' => $gravatar_img,
-            'activeStaffName' => Staff::getName(),
+            'activeStaffName' => Staff::getNameLegacy(),
             'activeStaffAvatarId' => Settings::getStaff('avatarId'),
             'timezone' => Settings::getStaff('timezone'),
             'timezones_list' => DateTime::tz(),
@@ -74,14 +74,11 @@ class ViewsData
 
     private function widget()
     {
-
-        return apply_filters('wappointment_back_widget_editor', [
+        $data = [
             'front_availability' => $this->front_availability(),
             'widget' => (new WidgetSettings)->get(),
             'widgetDefault' => (new WidgetSettings)->defaultSettings(),
             'config' => [
-                'services' => ManageService::all(),
-                'locations' => \Wappointment\Models\Location::get(),
                 'service' => Service::get(),
                 'approval_mode' => Settings::get('approval_mode'),
             ],
@@ -90,7 +87,12 @@ class ViewsData
             'widgetFields' => (new \Wappointment\Services\WidgetSettings)->adminFieldsInfo(),
             'booking_page_id' => (int) Settings::get('booking_page'),
             'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
-        ]);
+        ];
+        if (VersionDB::canServices()) {
+            $data['config']['services'] = ManageService::all();
+            $data['config']['locations'] = \Wappointment\Models\Location::get();
+        }
+        return apply_filters('wappointment_back_widget_editor', $data);
     }
 
     private function widgetcancel()
@@ -139,10 +141,12 @@ class ViewsData
             $data['regav'] = $data['staff'][0]->options['regav'];
             $data['availability'] = $data['staff'][0]->availability;
         } else {
+            $data['staff'] = (new \Wappointment\WP\StaffLegacy())->toArray();
             $data['regav'] = Settings::getStaff('regav');
             $data['availability'] = WPHelpers::getStaffOption('availability');
             $data['timezone'] = $staff_timezone;
             $data['now'] = (new Carbon())->setTimezone($staff_timezone)->format('Y-m-d\TH:i:00');
+            $data['legacy'] = true;
         }
 
         return  apply_filters('wappointment_back_calendar', $data);

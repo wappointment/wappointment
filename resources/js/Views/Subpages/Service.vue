@@ -1,6 +1,6 @@
 <template>
     <div class="container-fluid" v-if="dataLoaded">
-      <ServiceLegacy v-if="legacy" :dataPassed="model" :buttons="true"/>
+      <ServiceLegacy v-if="legacy" :dataPassed="model" @saved="$emit('saved')" :buttons="true"/>
       <ServiceModulable v-else :dataPassed="model" :buttons="true"/>
     </div>
 </template>

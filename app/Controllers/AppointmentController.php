@@ -7,6 +7,7 @@ use Wappointment\ClassConnect\Request;
 use Wappointment\Services\Settings;
 use Wappointment\Services\Appointment;
 use Wappointment\Services\Service;
+use Wappointment\Services\VersionDB;
 
 class AppointmentController extends RestController
 {
@@ -31,12 +32,13 @@ class AppointmentController extends RestController
         if (Settings::get('allow_cancellation')) {
             $appointmentData['canCancelUntil'] = $appointment->canCancelUntilTimestamp();
         }
+        $isLegacy = !VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES);
 
         return [
             'appointment' => $appointmentData,
             'client' => $appointment->client()->select(['name', 'email', 'options'])->first(),
             'service' => Service::get(),
-            'staff' => (new \Wappointment\WP\Staff($appointment->getStaffId()))->toArray(),
+            'staff' => $isLegacy ? (new \Wappointment\WP\StaffLegacy($appointment->getStaffId()))->toArray() : (new \Wappointment\WP\Staff($appointment->getStaffId()))->toArray(),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),

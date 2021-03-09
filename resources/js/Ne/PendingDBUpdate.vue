@@ -1,9 +1,17 @@
 <template>
-  <div class="wappo-db-update">
-      <WPNotice>
-          <p>Wappointment has improvements requiring a Database update: <button class="btn btn-primary btn-sm" @click="runMigrate">Run update</button></p>
-      </WPNotice>
-  </div>
+    <WapModal v-if="showing" :show="showing" @hide="hide">
+        <h4 slot="title" class="modal-title">Update Required</h4>
+        <div class="wappo-db-update" v-if="!updated">
+            <p>Wappointment has improvements requiring a Database update.</p>
+            <div >
+                <button class="btn btn-primary btn-lg btn-block" @click="runMigrate">Run update</button>
+            </div>
+        </div>
+        <div v-else>
+            <WLoader />
+        </div>
+    </WapModal>
+  
 </template>
 <script>
 import abstractView from '../Views/Abstract'
@@ -16,11 +24,16 @@ export default {
     mixins:[Helpers],
     data: () => ({
         serviceApp: null,
+        showing:true,
+        updated: false
     }),
     created(){
         this.serviceApp = this.$vueService(new AppService)
     },
     methods: {
+        hide(){
+            this.showing = false
+        },
         runMigrate(){
             this.request(this.runMigrateRequest, {}, undefined, false, this.successUpdate)
         },

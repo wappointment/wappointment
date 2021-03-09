@@ -54,6 +54,7 @@ class Settings
                     'countries' => []
                 ]
             ],
+            'email_logo' => false,
             'wappointment_allowed' => false,
             'buffer_time' => 0,
             'scheduler_mode' => 0,

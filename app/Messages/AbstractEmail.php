@@ -5,6 +5,7 @@ namespace Wappointment\Messages;
 use Wappointment\Messages\Templates\FoundationEmail;
 use Pelago\Emogrifier\CssInliner;
 use Wappointment\Services\Settings;
+use Wappointment\Services\VersionDB;
 use WappoSwift_Attachment;
 
 abstract class AbstractEmail extends AbstractMessage
@@ -22,10 +23,11 @@ abstract class AbstractEmail extends AbstractMessage
     {
         parent::__construct($params);
 
-        $this->renderer = new FoundationEmail();
+        $this->renderer = new FoundationEmail;
 
-        if ($this->admin === false && Settings::getStaff('email_logo')) {
-            $this->addLogo(Settings::getStaff('email_logo'), 'full');
+        if ($this->admin === false) {
+            $email_logo = VersionDB::canServices() ? Settings::get('email_logo') : Settings::getStaff('email_logo');
+            $this->addLogo($email_logo, 'full');
         }
     }
 

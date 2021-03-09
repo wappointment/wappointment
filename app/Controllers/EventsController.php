@@ -69,7 +69,10 @@ class EventsController extends RestController
                 $regavTimezone = Settings::getStaff('timezone');
             }
 
-            $data['events'] = array_merge($this->events($request, $staff_id), $this->regavToBgEvent($request, $regav, $regavTimezone));
+            $data['events'] = array_merge(
+                $this->events($request, $staff_id),
+                $this->regavToBgEvent($request, $regav, $regavTimezone)
+            );
 
             return $data;
         }
@@ -197,7 +200,7 @@ class EventsController extends RestController
             'start_at' => $start_at_string,
             'end_at' => $end_at_string,
             'staff_id' => $staff_id
-        ]);
+        ], $this->isLegacy);
         // $appointments = apply_filters(
         //     'wappointment_calendar_events_query',
         //     [],
@@ -222,8 +225,11 @@ class EventsController extends RestController
                 'rendering' => (bool) $event->status ? 'appointment-confirmed' : 'appointment-pending',
                 'className' => (bool) $event->status ? 'appointment-confirmed' : 'appointment-pending'
             ];
-            $events[] = Appointment::adminCalendarUpdateAppointmentArray($addedEvent, $event);
-            //$events[] =  apply_filters('wappointment_appointment_get_filter', $addedEvent, $event);
+            if ($this->isLegacy) {
+                $events[] =  apply_filters('wappointment_appointment_get_filter', $addedEvent, $event);
+            } else {
+                $events[] = Appointment::adminCalendarUpdateAppointmentArray($addedEvent, $event);
+            }
         }
 
         $statusEventsQuery = Mstatus::where('start_at', '<', $end_at_string)
@@ -233,7 +239,6 @@ class EventsController extends RestController
         if (!$this->isLegacy) {
             $statusEventsQuery->where('staff_id', $staff_id);
         }
-
 
         $statusEvents = $statusEventsQuery->get();
 

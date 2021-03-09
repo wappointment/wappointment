@@ -14,8 +14,8 @@
             <div class="wlabel" v-if="hasText(['general','location'])">{{options.general.location}}</div>
             <div class="wclosable wselected wmy-4 d-flex align-items-center d-flex-inline">
                 <WapImage :element="location" :desc="location.name" size="auto" />
-                <span class="welementname wml-2 lnh-1">{{ getLocationLabel }}</span>
-                <a v-if="isPhysical" class="map-link lnh-1" :href="getMapAdress" target="_blank" >{{ getAddress }}</a>
+                <a v-if="isPhysical" class="wml-2 map-link lnh-1" :href="getMapAdress" target="_blank" >{{ getAddress }}</a>
+                <span v-else class="welementname wml-2 lnh-1">{{ getLocationLabel }}</span>
                 <span v-if="canChangeLocation" class="wclose" @click="changeLocation" ></span>
             </div>
         </div>
@@ -123,6 +123,12 @@ export default {
     border-radius: 1em;
     padding: .2em .7em;
     display: inline-block;
+}
+.wselected .map-link{
+    color: var(--wappo-pri-tx) !important;
+}
+.wselected .map-link:after{
+    content: "\2192";
 }
 
 </style>
