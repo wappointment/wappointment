@@ -59,8 +59,6 @@ export default {
                     case '1':
                     case 'physical':
                         return 'map-marked-alt'
-                    default:
-                        return undefined
                 }
             }
             

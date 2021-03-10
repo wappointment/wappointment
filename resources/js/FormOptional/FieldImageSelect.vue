@@ -4,7 +4,7 @@
             {{ label}}
         </label>
         <div class="picture-edit">
-            <div @click="changePicture" class="text-center clickable" role="button" :class="{'preview-selected':hasImage}">
+            <div @click="changePicture" class="text-center clickable" role="button" :class="{'preview-selected':hasImage, 'preview-fimage':parseInt(preview.width)  < 80}">
                 <div class="fimage-edit">
                     <div v-if="hasImage" >
                         <div :style="getImageStyle" class="img-bg d-flex justify-content-center align-items-center"></div>
@@ -73,7 +73,7 @@ export default {
     },
     data() {
         return {
-            isHover:false,
+            isHover: false,
             edit: false,
             size: 'thumbnail',
             preview: {
@@ -84,11 +84,12 @@ export default {
             showing_images: 21,
             selected_image: null,
             selected_size: null,
-            wp_image: {}
+            wp_image: {},
+            rounded: false
         } 
     },
     created(){
-        if([undefined,''].indexOf(this.src) === -1)    this.wp_image.src = this.src
+        if([undefined,''].indexOf(this.src) === -1) this.wp_image.src = this.src
         if(Object.keys(this.wp_image).length == 0) this.wp_image = Object.assign({},this.value)
         this.size = this.definition.size !== undefined ? this.definition.size:this.size
         this.preview = this.definition.preview !== undefined ? this.definition.preview:this.preview

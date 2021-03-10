@@ -48,6 +48,11 @@ class Availability
         return time() + ($this->days * 24 * 3600);
     }
 
+    public function returnStaff()
+    {
+        return $this->staff;
+    }
+
 
     public function syncAndRegen($forceRegen = false)
     {
@@ -155,6 +160,26 @@ class Availability
         WPHelpers::setStaffOption('since_last_refresh', 0, $this->staff_id);
         //save it to the db
         return WPHelpers::setStaffOption('availability', $this->availabilities, $this->staff_id);
+    }
+
+    public function getLastRefresh()
+    {
+        return $this->isLegacy ?  (int)WPHelpers::getStaffOption('since_last_refresh', $this->staff_id, 0) : (int)$this->staff->options['since_last_refresh'];
+    }
+
+    public function incrementLastRefresh()
+    {
+        if ($this->isLegacy) {
+            WPHelpers::setStaffOption('since_last_refresh', $this->getLastRefresh() + 1, $this->staff_id);
+        } else {
+            $options = $this->staff->options;
+            $options['since_last_refresh'] = $options['since_last_refresh'] + 1;
+
+            //save it to the db
+            $this->staff->update([
+                'options' => $options,
+            ]);
+        }
     }
 
     private function save()

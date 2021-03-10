@@ -184,20 +184,33 @@ class Queue
 
     public static function cancelAppointmentJob($appointment_id)
     {
-        Job::where('queue', '!=', 'availability')
+        Job::where('queue', '=', 'client')
             ->where('appointment_id', (int)$appointment_id)
             ->delete();
     }
 
-    public static function cancelDailyJob()
+
+    public static function cancelJob($queue = 'daily', $staff_id_only = false)
     {
-        Job::where('queue', 'daily')
-            ->delete();
+        $query = Job::where('queue', $queue);
+        if ($staff_id_only) {
+            $query->where('appointment_id', $staff_id_only);
+        }
+        $query->delete();
+    }
+
+    public static function cancelDailyJob($staff_id_only = false)
+    {
+        static::cancelJob('daily', $staff_id_only);
+    }
+    public static function cancelWeeklyJob($staff_id_only = false)
+    {
+        static::cancelJob('weekly', $staff_id_only);
     }
 
     public static function queueDailyJob($staff_id_only = false)
     {
-        self::cancelDailyJob();
+        self::cancelDailyJob($staff_id_only);
 
         $sumary_time = Settings::get('daily_summary_time');
         foreach (Staff::get() as $staff) {
@@ -219,15 +232,11 @@ class Queue
         }
     }
 
-    public static function cancelWeeklyJob()
-    {
-        Job::where('queue', 'weekly')
-            ->delete();
-    }
+
 
     public static function queueWeeklyJob($staff_id_only = false)
     {
-        self::cancelWeeklyJob();
+        self::cancelWeeklyJob($staff_id_only);
         $summary_time = Settings::get('weekly_summary_time');
         $summary_day = Settings::get('weekly_summary_day');
 

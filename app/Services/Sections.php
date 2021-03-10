@@ -57,7 +57,7 @@ class Sections
             $this->legacy ? null : $this->staff,
             $this->start_at,
             $this->end_at
-        ))->getSection();
+        ))->getSections();
     }
 
     public function getFreeSlots($duration = 0)

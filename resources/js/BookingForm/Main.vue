@@ -154,7 +154,7 @@ export default {
 
     computed: {
         isLegacyOrNotServiceSuite(){
-            return this.isLegacy || this.services.length <2
+            return this.isLegacy || this.service.type !== undefined
         },
         isCompactHeader(){
             return this.options.general === undefined || !this.__isEmpty(this.options.general.check_header_compact_mode)
@@ -216,14 +216,17 @@ export default {
        }
     },
     methods: {
-        changeStaff(newStaff){
-            this.showHeader = false
+        setStaff(newStaff){
             this.selectedStaff = newStaff
-            
             this.refreshAvail()
+        },
+        changeStaff(newStaff){
+
+            this.setStaff(newStaff)
             
             let newStep = this.currentStep
             this.currentStep = ''
+            this.showHeader = false
             setTimeout(this.showHeaderLater.bind(null,newStep), 100)
             
         },
@@ -351,14 +354,6 @@ export default {
             return true
         },
 
-        refreshClick() {
-            if(!this.isStepSlotSelection) {
-                return false
-            }
-            this.currentStep = ''
-            this.loading = true
-            this.refreshInitValue()
-        },
 
         getDefaultStaff(){
             if(this.viewData.staffs!== undefined && this.viewData.staffs.length > 0){
@@ -412,11 +407,10 @@ export default {
             if(this.loadedInit !== undefined){
                 this.loadedInit(this.step)
             }
-            
         },
 
         selectFirstStep(step_name, params) {
-            if(!this.isLegacyOrNotServiceSuite){
+            if(this.isLegacyOrNotServiceSuite === false){
                 if(params.service === false) return 'BookingServiceSelection'
                 if(params.service !== false && params.duration === false) return 'BookingDurationSelection'
                 if(params.service !== false && params.duration !== false && params.location === false) return 'BookingLocationSelection'
@@ -472,7 +466,7 @@ export default {
             this.options.attributesEl.staffSelection !== undefined){
                 for (let i = 0; i < this.viewData.staffs.length; i++) {
                     if(parseInt(this.options.attributesEl.staffSelection) === parseInt(this.viewData.staffs[i].id)){
-                        return this.changeStaff(this.viewData.staffs[i])
+                        return this.setStaff(this.viewData.staffs[i])
                     }
                 }
             }

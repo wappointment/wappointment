@@ -38,7 +38,7 @@ class Appointment extends Model
         if (VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES)) {
             return \Wappointment\Services\Staff::getById($this->staff_id);
         } else {
-            return Calendar::first($this->staff_id);
+            return new \Wappointment\WP\Staff((int)$this->staff_id);
         }
     }
 

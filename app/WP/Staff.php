@@ -2,6 +2,7 @@
 
 namespace Wappointment\WP;
 
+use Wappointment\Models\Calendar;
 use Wappointment\Services\Service;
 
 class Staff
@@ -22,6 +23,16 @@ class Staff
         if (empty($staff_data)) {
             throw new \WappointmentException("Can't load staff information", 1);
         }
+
+        if (!is_array($staff_data)) {
+            $calendar = Calendar::findOrFail($staff_data);
+            $staff_data = $calendar->toArray();
+        }
+        $this->initWithArray($staff_data);
+    }
+
+    protected function initWithArray($staff_data)
+    {
         $this->staff_data = $staff_data;
 
         $this->id = (int)$this->staff_data['id'];
@@ -60,6 +71,16 @@ class Staff
         ];
     }
 
+    public function getUserDisplayName()
+    {
+        return empty($this->wp_user->display_name) ?
+            $this->wp_user->first_name . ' ' . $this->wp_user->last_name : $this->wp_user->display_name;
+    }
+
+    public function getFirstName()
+    {
+        return $this->wp_user->first_name;
+    }
 
     public function getAvailability()
     {

@@ -151,6 +151,7 @@ export default {
     }),
     created(){
         this.mainService = this.$vueService(new ServiceCalendar)
+        
     },
     computed: {
         calendarListing(){
@@ -170,6 +171,14 @@ export default {
             this.showListing()
             this.loadElements()
         },
+        afterLoaded(){
+            if(this.$route.params.id){
+                this.currentView = 'edit'
+                let cal_id = this.$route.params.id
+                this.editAvailability(this.elements.calendars.find(e => e.id == cal_id), false)
+                
+            }
+        },
         getExternals(calendar){
             if(calendar.calendar_urls!== undefined){
                 return calendar.calendar_urls!== false && Object.keys(calendar.calendar_urls).length > 0 ? calendar.calendar_urls:false
@@ -177,9 +186,12 @@ export default {
                 return calendar.options.calendar_urls!== false && Object.keys(calendar.options.calendar_urls).length > 0? calendar.options.calendar_urls:false
             }
         },
-        editAvailability(calendar){
+        editAvailability(calendar, manual = true){
             this.elementPassed = calendar
             this.currentView = this.elements.db_required ? 'regav':'edit'
+            if(!this.elements.db_required && manual){
+                this.$router.push({name:'calendars_edit', params:{id:calendar.id}})
+            }
         },
         hideModal(){
             this.showModal = false

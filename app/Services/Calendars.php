@@ -80,18 +80,32 @@ class Calendars
         $calendarData = apply_filters('wappointment_calendar_before_saved', $calendarData, $calendarDB);
 
         $calendarData['options'] = static::dataToOptions($calendarData, $calendarDB);
-        if (!empty($calendarDB)) {
-            $calendarData['availability'] = (new \Wappointment\Services\Availability($calendarDB))->regenerate(false);
-        }
 
+        //dd('saveCalendar');
         if (!empty($calendarDB)) {
             $calendarDB->update($calendarData);
         } else {
             $calendarDB = static::getModel()::create($calendarData);
         }
 
+        if (!empty($calendarDB)) {
+            (new \Wappointment\Services\Availability($calendarDB))->regenerate();
+        }
+
+        static::autoRecordNotification();
         do_action('wappointment_calendar_saved', $calendarData);
         return $calendarDB;
+    }
+
+    public static function autoRecordNotification()
+    {
+        if (Settings::get('weekly_summary')) {
+            Queue::queueDailyJob();
+        }
+
+        if (Settings::get('daily_summary')) {
+            Queue::queueWeeklyJob();
+        }
     }
 
     public static function dataToOptions($calendarData, $calendarDB)

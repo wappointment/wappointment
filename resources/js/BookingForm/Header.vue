@@ -82,7 +82,6 @@ export default {
         },
         changeStaff(staff){
             if(this.disabledButtons) {
-              this.options.eventsBus.emits('stepChanged', 'selection')
               return
             } 
             this.staffSelection = false

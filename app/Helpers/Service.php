@@ -23,8 +23,9 @@ class Service
         $services = ServiceServices::all();
         $types = [];
         foreach ($services as $key => $service) {
-            dd($service);
-            $types[] = $service;
+            foreach ($service->locations as $key => $location) {
+                $types[$location->id] = $location;
+            }
         }
         return count($types) > 1;
     }

@@ -236,11 +236,12 @@ class AppointmentLegacy
             //when web cron is disabled we need an immediate refresh of availability
             (new Availability($data['staff_id']))->regenerate();
         } else {
-            if ((int) WPHelpers::getStaffOption('since_last_refresh') > 2) {
-                (new Availability($data['staff_id']))->regenerate();
+            $availability = new Availability($data['staff_id']);
+            if ($availability->getLastRefresh() > 2) {
+                $availability->regenerate();
             } else {
-                $count_since_last_refresh = (int) WPHelpers::getStaffOption('since_last_refresh', false, 0) + 1;
-                WPHelpers::setStaffOption('since_last_refresh', $count_since_last_refresh);
+                $availability->incrementLastRefresh();
+
                 \Wappointment\Services\Queue::tryPush(
                     'Wappointment\Jobs\AvailabilityRegenerate',
                     ['staff_id' => $data['staff_id']],

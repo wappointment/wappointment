@@ -86,7 +86,17 @@ export default {
       },
 
       modifyRegav(event){
-        this.showRegularAv = true
+        if(this.viewData.legacy){
+           this.showRegularAv = true
+        }else{
+          this.$WapModal().confirm({
+                title: 'You are going to be redirected to a new screen, do you wish to continue?',
+            }).then((response) => {
+                if(response !== false){
+                  this.$router.push({name:'calendars_edit', params:{id:this.activeStaff.id}})
+                }
+            })
+        }
         event.stopPropagation()
       },
 

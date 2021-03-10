@@ -95,8 +95,10 @@
               </WapModal>
               <WapModal v-if="showRegularAv" :show="showRegularAv" @hide="hideRegavModal" large>
                 <h4 slot="title" class="modal-title">Modify your Weekly Availability</h4>
-                <Regav noback></Regav>
-                <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">Close</button>
+
+                  <WeeklyAvailability noback :calendar="activeStaff" :timezones_list="viewData.timezones_list" :staffs="viewData.staff"/>
+                    <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">Close</button>
+                
               </WapModal>
 
               <WelcomeModal v-if="showWelcomePopup" 
@@ -139,7 +141,8 @@
   </div>
 </template>
 <script>
-import Regav from '../RegularAvailability/View'
+import WeeklyAvailability from '../RegularAvailability/View'
+import CalendarsAddEdit from '../Settings/CalendarsAddEdit'
 import abstractView from '../Views/Abstract'
 import TimeZones from '../Components/TimeZones'
 import ControlBar from './ControlBar'
@@ -176,7 +179,8 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
       SubscribeNewsletter,
       TimeZones,
       ControlBar,
-      Regav,
+      WeeklyAvailability,
+      CalendarsAddEdit,
       FullCalendarWrapper,
       BehalfBooking,
       StatusFreeConfirm,
