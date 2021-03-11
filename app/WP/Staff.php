@@ -54,6 +54,7 @@ class Staff
 
     public function fullData()
     {
+
         return [
             'id' => $this->id,
             'wp_uid' => $this->wp_uid,
@@ -63,12 +64,21 @@ class Staff
             'avb' => $this->getAvb(),
             'regav' => $this->getRegav(),
             'timezone' => $this->timezone,
-            'services' => [Service::get()],
+            'services' => $this->getServicesId($this->staff_data['services']),
             'connected' => $this->getDotcom(),
             'status' => $this->status,
             'calendar_urls' => $this->getCalendarUrls(),
             'calendar_logs' => $this->getCalendarLogs(),
         ];
+    }
+
+    public function getServicesId($services)
+    {
+        $service_ids = [];
+        foreach ($services as $service) {
+            $service_ids[] = $service['id'];
+        }
+        return $service_ids;
     }
 
     public function getUserDisplayName()

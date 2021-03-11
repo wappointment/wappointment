@@ -224,7 +224,10 @@ class Main extends AbstractRoutes
                     'controller' => 'CalendarsController',
                     'method' => 'toggle',
                 ],
-
+                '/calendars/services' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'saveServices',
+                ],
 
                 '/services/booking/admin' => [
                     'controller' => 'BookingController',

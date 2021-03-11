@@ -27,7 +27,8 @@ class CalendarsController extends RestController
             'timezones_list' => DateTime::tz(),
             'calendars' => $calendars,
             'staffs' => StaffServices::getWP(),
-            'staffDefault' => Settings::staffDefaults()
+            'staffDefault' => Settings::staffDefaults(),
+            'services' =>  Central::get('ServiceModel')::orderBy('sorting')->fetch()
         ];
         if (!$db_update_required) {
             $data['limit_reached'] = Central::get('CalendarModel')::canCreate() ? false : Central::get('CalendarModel')::MaxRows() . ' services max allowed';
@@ -37,7 +38,7 @@ class CalendarsController extends RestController
 
     public function getCalendarsStaff()
     {
-        $calendars = Central::get('CalendarModel')::orderBy('sorting')->fetch();
+        $calendars = Central::get('CalendarModel')::orderBy('sorting')->with(['services'])->fetch();
         $staffs = [];
         foreach ($calendars->toArray() as $key => $calendar) {
             $staffs[] = (new Staff($calendar))->fullData();
@@ -50,6 +51,15 @@ class CalendarsController extends RestController
     {
         $avatar = wp_get_attachment_image_src($request->input('id'));
         return ['avatar' => $avatar[0]];
+    }
+
+
+    public function saveServices(Request $request)
+    {
+
+        $calendar = Central::get('CalendarModel')::findOrFail((int)$request->input('id'));
+        $calendar->services()->sync($request->input('services'));
+        return ['message' => 'Calendar saved'];
     }
 
     public function saveCal(Request $request)

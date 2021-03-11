@@ -18,6 +18,8 @@ class ImportService extends Wappointment\Installation\MigrateHasServices
         }
         $service_free = \Wappointment\Services\Service::getObject();
 
+        \Wappointment\Services\Service::updateLocations($service_free->type, $service_free->options, $service_free->address);
+
         if ($service_free->service['name'] !== '') { //doesnt run for new installation just upgrades
             $serviceObj = ServiceModel::create([
                 'name' => $service_free->service['name'],

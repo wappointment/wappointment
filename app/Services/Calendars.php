@@ -86,6 +86,10 @@ class Calendars
             $calendarDB->update($calendarData);
         } else {
             $calendarDB = static::getModel()::create($calendarData);
+            $services = Central::get('CalendarModel')::select('id')->fetch();
+            $calendarDB->services()->sync($services->map(function ($e) {
+                return $e->id;
+            })->toArray());
         }
 
         if (!empty($calendarDB)) {

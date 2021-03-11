@@ -9,7 +9,7 @@
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
                             <th scope="col">Weekly Availability</th>
-                            <th scope="col">Services</th>
+                            <th scope="col" v-if="!elements.db_required">Services</th>
                             <th scope="col">Integrations</th>
                             <th scope="col">Connected calendars</th>
                         </tr>
@@ -42,11 +42,9 @@
                             <td>
                                 <CalendarsRegav @edit="editAvailability" :calendar="calendar" />
                             </td>
-                            <td>
-                                <div class="d-flex">
-                                    <div v-for="service in calendar.services">
-                                        {{ service.name }}
-                                    </div>
+                            <td v-if="!elements.db_required">
+                                <div class="d-flex" role="button" @click="editServices(calendar)">
+                                    <ValueCard v-for="serviceid in calendar.services" :key="serviceid">{{ displayServiceName(serviceid,elements.services) }} </ValueCard>
                                 </div>
                             </td>
                             <td>
@@ -112,11 +110,20 @@
             </h4>
             <CalendarsIntegrations @reload="reloadListing" :calendar="dotcomOpen" />
         </WapModal>
+        <WapModal v-if="editingServices" :show="editingServices!==false" large @hide="editingServices = false">
+            <h4 slot="title" class="modal-title"> 
+                Edit services allowed
+            </h4>
+            <SearchDropdown v-model="editingServices.services" hasMulti ph="labelDefault" :elements="elements.services" 
+                idKey="id" labelSearchKey="name"></SearchDropdown>
+                <button class="btn btn-primary" @click="saveServices">Save</button>
+        </WapModal>
     </div>
 </template>
 
 <script>
 
+import ValueCard from '../Fields/ValueCard'
 import ServiceCalendar from '../Services/V1/Calendars'
 import CalendarsAddEdit from './CalendarsAddEdit'
 import WeeklyAvailability from '../RegularAvailability/Edit'
@@ -128,16 +135,19 @@ import CalendarsIntegrations from './CalendarsIntegrations'
 import CalendarsRegav from './CalendarsRegav'
 import DurationCell from '../BookingForm/DurationCell'
 import AbstractListing from '../Views/AbstractListing'
+import SearchDropdown from '../Fields/SearchDropdown'
 export default {
     extends: AbstractListing,
     components:{
+        ValueCard,
         DurationCell,
         CalendarsAddEdit,
         WeeklyAvailability,
         Connections,
         CalendarsExternal,
         CalendarsIntegrations,
-        CalendarsRegav
+        CalendarsRegav,
+        SearchDropdown
     },
     mixins:[CalUrl, SettingsSave],
     data: () => ({
@@ -147,7 +157,8 @@ export default {
         calendarsOrder: [],
         showModal: false,
         dotcomOpen: false,
-        calendar_main_id: false
+        calendar_main_id: false,
+        editingServices: false
     }),
     created(){
         this.mainService = this.$vueService(new ServiceCalendar)
@@ -165,7 +176,25 @@ export default {
         }
     },
     methods: {
-        
+        saveServices(){
+            this.request(this.saveServicesRequest,this.editingServices, undefined, false, this.closeRefresh)
+        },
+
+        closeRefresh(){
+            this.editingServices = false
+            this.hasBeenSavedDeleted()
+        },
+
+        async saveServicesRequest(params){
+           return await this.mainService.call('saveService',params)
+        },
+        editServices(calendar){
+            this.editingServices = calendar
+        },
+        displayServiceName(id,services) {
+            return services.find(e => e.id ==id).name
+        },
+
         reloadListing(){
             this.hideModal()
             this.showListing()

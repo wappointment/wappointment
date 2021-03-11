@@ -18,6 +18,10 @@ export default class CalendarsService extends ApiV1 {
                     method: 'post',
                     route: '/calendars/reorder'
                 },
+                saveService:{
+                    method: 'post',
+                    route: '/calendars/services'
+                },
                 toggle: {
                     method: 'post',
                     route: '/calendars/toggle'
