@@ -28,9 +28,9 @@ class CalendarsController extends RestController
             'calendars' => $calendars,
             'staffs' => StaffServices::getWP(),
             'staffDefault' => Settings::staffDefaults(),
-            'services' =>  Central::get('ServiceModel')::orderBy('sorting')->fetch()
         ];
         if (!$db_update_required) {
+            $data['services'] = Central::get('ServiceModel')::orderBy('sorting')->fetch();
             $data['limit_reached'] = Central::get('CalendarModel')::canCreate() ? false : Central::get('CalendarModel')::MaxRows() . ' services max allowed';
         }
         return $data;
