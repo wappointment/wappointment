@@ -106,7 +106,7 @@ let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Col
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
-     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid'],
+     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid', 'demoAs'],
      components: compDeclared, 
     data: () => ({
         viewName: 'availability',
@@ -459,6 +459,9 @@ export default {
                 this.duration = this.getFirstDuration(this.service)
                 this.location = this.service.type !== undefined ? false : (this.service.locations.length === 1 ? this.service.locations[0]:false) 
             } 
+            if(this.demoAs === true && !this.location){
+                this.location = this.service.locations[0]
+            }
         },
         testLockedStaff(){
             if(this.options !== undefined && 

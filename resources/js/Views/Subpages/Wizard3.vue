@@ -4,11 +4,12 @@
     <div class="container-fluid">
       <div class="reduced">
         <div class="col-12">
-          <div class="d-flex">
+          <div>
               <h1>Service Setup</h1>
+              <div class="mb-2">Set the first service you will provide to your clients</div>
           </div>
           <ServicePage v-if="viewData!==null" ref="servicepage" :buttons="false" :minimal="true" 
-           :dataPassed="viewData.service" @saved="finallyGoNext" @ready="ready"></ServicePage>
+           :dataPassed="viewData.service" @saved="finallyGoNext" @ready="ready" />
         </div>
         
       </div>
@@ -19,7 +20,7 @@
 
 <script>
 import wizardLayout from '../abstractWizardLayout'
-import ServicePage from '../Subpages/ServiceNew'
+import ServicePage from '../Subpages/ServiceLegacy'
 
 export default {
   extends: wizardLayout,

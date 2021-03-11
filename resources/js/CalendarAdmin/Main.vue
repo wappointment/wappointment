@@ -142,7 +142,6 @@
 </template>
 <script>
 import WeeklyAvailability from '../RegularAvailability/View'
-import CalendarsAddEdit from '../Settings/CalendarsAddEdit'
 import abstractView from '../Views/Abstract'
 import TimeZones from '../Components/TimeZones'
 import ControlBar from './ControlBar'
@@ -180,7 +179,6 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
       TimeZones,
       ControlBar,
       WeeklyAvailability,
-      CalendarsAddEdit,
       FullCalendarWrapper,
       BehalfBooking,
       StatusFreeConfirm,

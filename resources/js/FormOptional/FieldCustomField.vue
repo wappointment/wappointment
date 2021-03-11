@@ -19,7 +19,7 @@
             </template>
 
             <transition name="fade">
-                <div v-if="items.length == 0 || showControls" @click="addCF" class="btn btn-secondary btn-cell add-CF" >
+                <div v-if="!minimal && (items.length == 0 || showControls)" @click="addCF" class="btn btn-secondary btn-cell add-CF" >
                     <span class="wicon plus-alt text-primary" ></span>
                     <div>Add Custom Field</div>
                 </div>

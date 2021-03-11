@@ -9,7 +9,7 @@
         <div :class="{'wap-abs':hasCloseCross && isMobilePhone && autoPop}">
             <div class="wap-wid wclosable" :class="'step-'+stepName" v-if="isWidget">
               <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
-              <BookingForm v-if="bookForm" :step="currentStep" :options="opts" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
+              <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
               <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
           </div>
         </div>
@@ -45,7 +45,8 @@ export default {
         buttonTitle: '',
         brFixed: undefined,
         largeVersion: false,
-        autoPop: true
+        autoPop: true,
+        demoAs: false
     }),
     created(){
       this.elementId = 'wapfrontwrapper-' + Date.now()
@@ -132,6 +133,7 @@ export default {
           if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){
             if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
             if(this.attributesEl.brcFloats !== undefined) this.brFixed = true
+            if(this.attributesEl.demoAs !== undefined) this.demoAs = true
             if([undefined,false].indexOf(this.attributesEl.largeVersion) === -1) this.largeVersion = true
             if([undefined,false].indexOf(this.attributesEl.week) === -1) this.opts.selection.check_viewweek = true
             if([undefined,false].indexOf(this.attributesEl.popOff) === -1) this.autoPop = false

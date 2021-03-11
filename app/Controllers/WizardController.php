@@ -23,11 +23,6 @@ class WizardController extends RestController
             new \Wappointment\Installation\Process();
         }
 
-        if (WPHelpers::getOption('wizard_step') == 1 && $request->input('step') == 2) {
-            //regenerate the availability
-            (new \Wappointment\Services\Availability())->regenerate();
-        }
-
         WPHelpers::setOption('wizard_step', $request->input('step'));
 
         if ($this->last_step == $request->input('step')) {

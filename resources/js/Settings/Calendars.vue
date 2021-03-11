@@ -177,6 +177,8 @@ export default {
                 let cal_id = this.$route.params.id
                 this.editAvailability(this.elements.calendars.find(e => e.id == cal_id), false)
                 
+            }else if(this.$route.name == 'calendars_zoom_account'){
+                this.goToDotCom(this.elements.calendars[0])
             }
         },
         getExternals(calendar){

@@ -35,6 +35,17 @@ class CalendarsController extends RestController
         return $data;
     }
 
+    public function getCalendarsStaff()
+    {
+        $calendars = Central::get('CalendarModel')::orderBy('sorting')->fetch();
+        $staffs = [];
+        foreach ($calendars->toArray() as $key => $calendar) {
+            $staffs[] = (new Staff($calendar))->fullData();
+        }
+        return $staffs;
+    }
+
+
     public function getAvatar(Request $request)
     {
         $avatar = wp_get_attachment_image_src($request->input('id'));
@@ -48,15 +59,6 @@ class CalendarsController extends RestController
         return $externalCalendar->save($request->input('calurl'));
     }
 
-    public function getCalendarsStaff()
-    {
-        $calendars = Central::get('CalendarModel')::orderBy('sorting')->fetch();
-        $staffs = [];
-        foreach ($calendars->toArray() as $key => $calendar) {
-            $staffs[] = (new Staff($calendar))->fullData();
-        }
-        return $staffs;
-    }
 
     public function getStafflegacy()
     {

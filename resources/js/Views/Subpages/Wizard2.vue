@@ -1,6 +1,6 @@
 <template>
   <div class="hasTopPane">
-    <topPane @next="nextStep" @back="prevStep" :step="currentStep" :total="totalStep" :nextEnabled="true"></topPane>
+    <topPane @next="saveAndNextStep" @back="prevStep" :step="currentStep" :total="totalStep" :nextEnabled="true"></topPane>
       <div class="container-fluid">
         <div class="col-12">
           <div>
@@ -10,27 +10,36 @@
               <p class="h6 text-muted">This is you recurring availability, you can change it anytime</p>
               <hr>
           </div>
-          <Regav noback></Regav>
+          <CalendarsAddEdit v-if="dataLoaded" ref="caledit" :calendar="viewData.calendar" 
+          :timezones_list="viewData.timezones_list" 
+          :staffs="viewData.staffs" 
+            @saved="nextStep"/>
         </div>
       </div>
   </div>
 </template>
 
 <script>
-import Regav from '../../RegularAvailability/View'
+import CalendarsAddEdit from '../../Settings/CalendarsAddEdit'
 import wizardLayout from '../abstractWizardLayout'
 
 export default {
   extends: wizardLayout,
   components: {
-      Regav
+      CalendarsAddEdit,
   }, 
   data() {
       return {
+          viewName: 'regav',
           currentStep: 1,
           totalStep: 3,
       } 
   },
+  methods:{
+    saveAndNextStep(){
+      this.$refs.caledit.saveCalendar()
+    }
+  }
 
 }
 </script>

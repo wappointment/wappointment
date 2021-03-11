@@ -16,6 +16,7 @@ class Services implements ServiceInterface
     {
         return ServiceCentral::model();
     }
+
     public static function all()
     {
 
@@ -47,6 +48,9 @@ class Services implements ServiceInterface
         $validationRules = apply_filters('wappointment_service_validation_rules', $validationRules);
         $validation = $validator->make($serviceData, $validationRules);
 
+        if (empty($serviceData['options']['fields'])) {
+            $serviceData['options']['fields'] = ['email', 'name'];
+        }
         $serviceData = static::clearDeletedDurations($serviceData);
         $validation->validate();
 

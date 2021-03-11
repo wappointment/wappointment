@@ -78,7 +78,7 @@ class Status
                         'message' => 'Hey! You are using Video meetings, great for you! Generate meetings automatically with Zoom, Google meet etc ... by connecting these services',
                         'link' => [
                             'label' => 'Connect Account',
-                            'address' => '[goto_general_zoom_account]'
+                            'address' => '[goto_calendars_zoom_account]'
                         ]
                     ];
                     break;

@@ -9,6 +9,7 @@ use Wappointment\WP\WidgetAPI;
 use Wappointment\Services\Status;
 use Wappointment\Managers\Service as ManageService;
 use Wappointment\Managers\Central;
+use Wappointment\Models\Service as ModelService;
 
 class ViewsData
 {
@@ -22,24 +23,48 @@ class ViewsData
         return apply_filters('wappointment_viewdata_' . $key, $values);
     }
 
+
+    private function getCalendarsStaff()
+    {
+        $calendars = Central::get('CalendarModel')::orderBy('sorting')->fetch();
+        $staffs = [];
+        foreach ($calendars->toArray() as $key => $calendar) {
+            $staffs[] = (new \Wappointment\WP\Staff($calendar))->fullData();
+        }
+        return $staffs;
+    }
+
+
     private function regav()
     {
-        $gravatar_img = get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
+        if (VersionDB::canServices()) {
+            $calendars = $this->getCalendarsStaff();
+            $data = [
+                'calendar' => $calendars[0],
+                'timezones_list' => DateTime::tz(),
+                'calendars' => $calendars,
+                'staffs' => Staff::getWP(),
+                'staffDefault' => Settings::staffDefaults()
+            ];
+        } else {
+            $gravatar_img = get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
 
-        return apply_filters('wappointment_back_regav', [
-            'regav' => Settings::getStaff('regav'),
-            'avb' => Settings::getStaff('availaible_booking_days'),
-            'staffs' => Staff::getWP(),
-            'activeStaffId' => (int)Settings::get('activeStaffId'),
-            'activeStaffAvatar' => Settings::getStaff('avatarId') ?
-                wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
-            'activeStaffGravatar' => $gravatar_img,
-            'activeStaffName' => Staff::getNameLegacy(),
-            'activeStaffAvatarId' => Settings::getStaff('avatarId'),
-            'timezone' => Settings::getStaff('timezone'),
-            'timezones_list' => DateTime::tz(),
-            'savedTimezone' => Settings::hasStaff('timezone')
-        ]);
+            $data = [
+                'regav' => Settings::getStaff('regav'),
+                'avb' => Settings::getStaff('availaible_booking_days'),
+                'staffs' => Staff::getWP(),
+                'activeStaffId' => (int)Settings::get('activeStaffId'),
+                'activeStaffAvatar' => Settings::getStaff('avatarId') ?
+                    wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
+                'activeStaffGravatar' => $gravatar_img,
+                'activeStaffName' => Staff::getNameLegacy(),
+                'activeStaffAvatarId' => Settings::getStaff('avatarId'),
+                'timezone' => Settings::getStaff('timezone'),
+                'timezones_list' => DateTime::tz(),
+                'savedTimezone' => Settings::hasStaff('timezone')
+            ];
+        }
+        return apply_filters('wappointment_back_regav', $data);
     }
 
     private function serverinfo()
@@ -59,8 +84,46 @@ class ViewsData
     private function service()
     {
         return [
-            'service' => Service::get()
+            'service' => VersionDB::canServices() ? $this->getConvertedDataServiceNewToLegacy() : Service::get()
         ];
+    }
+
+    protected function getConvertedDataServiceNewToLegacy()
+    {
+        $service = ModelService::first();
+        $types = [];
+        $address = '';
+        $video = '';
+        $countries = [];
+        foreach ($service->locations as $location) {
+            $types[] = $location->options['type'];
+            if ($location->options['type'] == 'physical') {
+                $address = $location->options['address'];
+            }
+            if ($location->options['type'] == 'phone') {
+                $countries = $location->options['countries'];
+            }
+            if ($location->options['type'] == 'zoom') {
+                $video = $location->options['video'];
+            }
+        }
+
+        $data = [
+            'id' => $service->id,
+            'name' => $service->name,
+            'duration' => $service->options['durations'][0]['duration'],
+            'type' => $types,
+            'address' => $address,
+            'options' => [
+                'countries' => $countries,
+                'video' => $video,
+            ]
+        ];
+        if (!empty($service->options['countries'])) {
+            $data['options']['countries'] = $service->options['countries'];
+            $data['options']['phone_required'] = true;
+        }
+        return $data;
     }
 
     private function wizardwidget()

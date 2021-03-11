@@ -149,17 +149,19 @@ let WappoBackroutes = [
                 component: Calendars
             },
             {
+              path: 'zoom_account',
+              name: 'calendars_zoom_account',
+              component: Calendars
+          },
+            {
                 path: 'edit/:id',
                 name: 'calendars_edit',
                 component: Calendars
-            }
+            },
+           
           ]
         },
-        {
-            path: 'general_zoom_account',
-            name: 'general_zoom_account',
-            component: SettingsPage
-        },
+        
         {
             path: 'general_regav',
             name: 'general_regav',
@@ -275,7 +277,7 @@ let WappoBackroutes = [
   }
 
   //run  with delay when addons are present to load all the injectors
-  if(Object.keys(window.wappointmentAdmin.addons.length > 0 )){
+  if(window.wappointmentAdmin.addons !== undefined && Object.keys(window.wappointmentAdmin.addons.length > 0 )){
     //allow addons to add more routes
     window.addEventListener('load', runWappo)
   }else{

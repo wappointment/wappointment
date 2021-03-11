@@ -15,7 +15,10 @@ class ImportCalendars extends Wappointment\Installation\Migrate
      */
     public function up()
     {
-
+        $activeStaffId = Settings::get('activeStaffId');
+        if (empty($activeStaffId)) {
+            Settings::save('activeStaffId', wp_get_current_user()->ID);
+        }
         $staff = new StaffLegacy;
         $dotcom = $staff->getDotcom();
         Settings::save('email_logo', Settings::getStaff('email_logo'));

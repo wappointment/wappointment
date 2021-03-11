@@ -79,7 +79,8 @@ export default {
             params: {
                 autoOpen:false,
                 largeVersion:false,
-                week:false
+                week:false,
+                demoAs:true
             },
             editpagedetails:false,
             booking_page_id: 0,
