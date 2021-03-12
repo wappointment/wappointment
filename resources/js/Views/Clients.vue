@@ -8,7 +8,7 @@
                 <span class="dashicons dashicons-plus-alt text-primary mr-2" ></span> Add Client
               </button> -->
               <button type="button" class="btn btn-outline-primary d-flex align-items-center" @click.prevent.stop="addCustomField">
-                <span class="dashicons dashicons-id text-primary mr-2" ></span> Add Custom Field
+                <span class="dashicons dashicons-id text-primary mr-2" ></span> Add/Edit Custom Fields
               </button>
             </div>
             <div v-if="Object.keys(clientListing).length > 1" class="d-flex align-items-center">

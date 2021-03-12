@@ -311,12 +311,12 @@ export default {
                     if(customF.core !== undefined){
                         switch (customF.namekey) {
                             case 'name':
-                                customF.name = this.options.form['fullname']
+                                customF.name = customF.updated === true ?customF.name: this.options.form['fullname']
                                 return customF
                             case 'email':
                             case 'phone':
                             case 'skype':
-                                customF.name = this.options.form[customF.namekey]
+                                customF.name = customF.updated === true ?customF.name:this.options.form[customF.namekey]
                                 return customF
                         }
                         

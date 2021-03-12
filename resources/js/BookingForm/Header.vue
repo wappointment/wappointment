@@ -98,7 +98,7 @@ export default {
                 return []
             }
             let staff = this.staff
-            return this.staffs.filter(e => e.id != staff.id)
+            return this.staffs.filter(e => e.id != staff.id && e.services.length > 0 )
         },
         isCompactHeader(){
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1

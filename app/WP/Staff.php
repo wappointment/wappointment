@@ -3,7 +3,6 @@
 namespace Wappointment\WP;
 
 use Wappointment\Models\Calendar;
-use Wappointment\Services\Service;
 
 class Staff
 {
@@ -104,6 +103,7 @@ class Staff
             'a' => $this->avatar,
             'n' => $this->name,
             't' => $this->timezone,
+            'services' => $this->getServicesId($this->staff_data['services']),
             'availability' => $this->getAvailability(),
         ], $this);
     }

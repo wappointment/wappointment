@@ -36,16 +36,15 @@
                                         <span>(id: {{ locationObj.id }})</span> -->
                                     </div>
                                 </div>
-                                
-                                
                             </td>
                             <td>
                                 <CalendarsRegav @edit="editAvailability" :calendar="calendar" />
                             </td>
                             <td v-if="!elements.db_required">
-                                <div class="d-flex" role="button" @click="editServices(calendar)">
+                                <div class="d-flex" role="button" v-if="calendar.services.length>0" @click="editServices(calendar)">
                                     <ValueCard v-for="serviceid in calendar.services" :key="serviceid">{{ displayServiceName(serviceid,elements.services) }} </ValueCard>
                                 </div>
+                                <button class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Add services</button>
                             </td>
                             <td>
                                <Connections :connections="calendar.connected.services === undefined ? []:calendar.connected.services"/>
@@ -90,7 +89,8 @@
         </div>
         <div v-if="calendarAdd">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
-            <CalendarsAddEdit :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs" 
+            <CalendarsAddEdit :calendar="elementPassed" :timezones_list="elements.timezones_list" 
+            :staffs="elements.staffs" :services="elements.services"
             @saved="hasBeenSavedDeleted"/>
         </div>
         <div v-if="calendarRegav">
@@ -395,8 +395,8 @@ export default {
     background-color:#ccc;
 }
 .calendar-pic.inactive img{
-    filter: grayscale(0);
-    opacity:.8;
+    filter: grayscale(1);
+    opacity:.4;
 }
 .location {
     margin: .2rem;

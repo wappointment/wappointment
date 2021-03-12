@@ -21,7 +21,14 @@ class Calendars
         if ($onlyAvailable) {
             $query->whereNotNull('availability');
         }
-        return $query->fetch();
+        $results = $query->fetch();
+        if ($onlyAvailable) {
+            return $results->filter(function ($e) {
+                return count($e->services) > 0;
+            });
+        } else {
+            return $results;
+        }
     }
 
     public static function save($calendarData)

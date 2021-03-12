@@ -40,7 +40,7 @@ class CalendarsController extends RestController
     {
         $calendars = Central::get('CalendarModel')::orderBy('sorting')->with(['services'])->fetch();
         $staffs = [];
-        foreach ($calendars->toArray() as $key => $calendar) {
+        foreach ($calendars->toArray() as $calendar) {
             $staffs[] = (new Staff($calendar))->fullData();
         }
         return $staffs;

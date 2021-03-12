@@ -133,7 +133,8 @@ export default {
         converted:false,
         requiresScroll: false,
         selectedStaff: null,
-        showHeader:true
+        showHeader:true,
+        
     }),
 
     mounted () {
@@ -153,6 +154,7 @@ export default {
     },
 
     computed: {
+
         isLegacyOrNotServiceSuite(){
             return this.isLegacy || this.service.type !== undefined
         },
@@ -218,6 +220,8 @@ export default {
     methods: {
         setStaff(newStaff){
             this.selectedStaff = newStaff
+            this.setAvailableServices()
+            this.autoSelService()
             this.refreshAvail()
         },
         changeStaff(newStaff){
@@ -357,7 +361,11 @@ export default {
 
         getDefaultStaff(){
             if(this.viewData.staffs!== undefined && this.viewData.staffs.length > 0){
-                return this.viewData.staffs[0]
+                for (let i = 0; i < this.viewData.staffs.length; i++) {
+                    if(this.viewData.staffs[i].services.length > 0){
+                        return this.viewData.staffs[i]
+                    }
+                }
             }
         },
         
@@ -441,10 +449,11 @@ export default {
             
         },
 
-        initServiceStaffDurationLocation(){
-            this.services = this.viewData.services
-
-            this.testLockedStaff()
+        setAvailableServices(){
+            let services_id = this.selectedStaff.services
+            this.services =  this.viewData.services.filter(e => services_id.indexOf(e.id) !== -1)
+        },
+        autoSelService(){
             if(this.isLegacyOrNotServiceSuite){
                 this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
             }else{
@@ -454,6 +463,11 @@ export default {
                     this.testLockedService()
                 }
             }
+        },
+        initServiceStaffDurationLocation(){
+            this.setAvailableServices()
+            this.testLockedStaff()
+            this.autoSelService()
 
             if(this.service !== false){
                 this.duration = this.getFirstDuration(this.service)
@@ -623,7 +637,7 @@ export default {
                 props: {
                     services:"services",
                     options: 'options',
-                    viewData: 'viewData'
+                    viewData: 'viewData',
                 },
                 listeners: {
                     serviceSelected:'childChangedStep'

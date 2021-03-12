@@ -28,12 +28,6 @@
                     @updatedSlots="updatedSlots" @editBlock="editBlock"></dayColumn>
                 </template>
             </div>
-            <WapModal v-if="showCustomRegav" :show="showCustomRegav" @hide="hideCustomRegav" large>
-                <h4 slot="title" class="modal-title" >Set conditions for that time ({{dayEdit}}  [{{ convertPrToh(timeEdit[0]) + 'h - ' +convertPrToh(timeEdit[1]) }}h])</h4>
-                <WAPFormGenerator v-if="schemaRegavCondition" ref="fg-regavCondition" :schema="schemaRegavCondition" :data="modelHolder" 
-                @submit="saveRegavCond" @back="hideCustomRegav" :errors="errorsPassed" :key="'regavCondForm'" 
-                labelButton="Save" :backbutton="true" backbuttonLabel="Cancel" />
-            </WapModal>
         </div>
     </div>
 </template>
@@ -69,7 +63,6 @@ export default {
             widthWeekWrapper: 0,
             isMounted: false,
             isSmallScreen: window.document.documentElement.clientWidth < 1100,
-            showCustomRegav: false
         }
     },
     components: { dayColumn, hourColumn, ClickRevealSlider }, 

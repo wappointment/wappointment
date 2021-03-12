@@ -26,7 +26,6 @@ class Staff
     {
         $calendars = Calendars::all(true);
         $staffs = [];
-
         foreach ($calendars->toArray() as $key => $calendar) {
             $staffs[] = (new WPStaff($calendar))->toArray();
         }

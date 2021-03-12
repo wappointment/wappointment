@@ -197,6 +197,9 @@ class ViewsData
 
         if (VersionDB::canServices()) {
             $data['staff'] = Calendars::all();
+            if (!isset($data['staff'][0])) {
+                throw new \WappointmentException("There is no active calendar change that in Wappointment > Settings > Calendars", 1);
+            }
             $data['timezone'] = $data['staff'][0]->options['timezone'];
             $data['locations'] = \Wappointment\Models\Location::get();
             $data['custom_fields'] = Central::get('CustomFields')::get();

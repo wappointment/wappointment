@@ -30,7 +30,7 @@
                 <span class="bullet-title"> Set standard weekly schedule</span>
             </p>
 
-            <RegularAvailability :initValue="getRegav" :viewData="calendarSelected" 
+            <RegularAvailability :initValue="getRegav" :viewData="calendarSelected" :services="services"
             @updatedDays="updatedRA"
             @changedABD="changedABD" />
         </div>
@@ -61,6 +61,9 @@ export default {
             type: Object,
         },
         staffs:{
+            type: Array,
+        },
+        services:{
             type: Array,
         },
     },
