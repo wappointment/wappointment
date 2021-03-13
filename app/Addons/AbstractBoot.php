@@ -33,9 +33,6 @@ abstract class AbstractBoot implements Boot
             return;
         }
 
-        if ((is_admin() || strpos($_SERVER['REQUEST_URI'], 'wappointment/v1/app/migrate') !== false) && static::requiresDbUpdate()) {
-            add_filter('wappointment_addons_requires_update', [static::$name_space . 'Boot', 'addToListOfDbUpdates']);
-        }
         //only triggerred once the plugin is ready to be used
         static::installedFilters();
     }
@@ -149,6 +146,13 @@ abstract class AbstractBoot implements Boot
     public static function getMainSettings($data)
     {
         return $data;
+    }
+
+    public static function requiresUpdateCheck()
+    {
+        if ((is_admin() || strpos($_SERVER['REQUEST_URI'], 'wappointment/v1/app/migrate') !== false) && static::requiresDbUpdate()) {
+            add_filter('wappointment_addons_requires_update', [static::$name_space . 'Boot', 'addToListOfDbUpdates']);
+        }
     }
 
     public static function hooksAndFiltersWhenInstalled()

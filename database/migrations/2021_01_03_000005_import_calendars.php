@@ -5,6 +5,7 @@ use Wappointment\Models\Appointment;
 use Wappointment\Models\Status;
 use Wappointment\Services\Settings;
 use Wappointment\WP\StaffLegacy;
+use Wappointment\Models\Service;
 
 class ImportCalendars extends Wappointment\Installation\Migrate
 {
@@ -42,6 +43,7 @@ class ImportCalendars extends Wappointment\Installation\Migrate
             $data['account_key'] = $dotcom['account_key'];
         }
         $calendar = Calendar::create($data);
+
         Appointment::query()->update(['staff_id' => $calendar->id]);
         Status::query()->update(['staff_id' => $calendar->id]);
     }

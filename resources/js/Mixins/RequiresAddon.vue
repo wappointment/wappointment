@@ -25,9 +25,10 @@ export default {
             this.$WapModal().showPremium(
                 message !== '' ? message:'Unlock this feature',
                 '<h3>Unlock premium feature with our addon "'+this.addonsDetails[addon_key].label+'"</h3>' +
-                '<p class="text-muted"> <a href="https://wappointment.com/addons" target="_blank">Get a licence</a> now for our addons</p>',
+                '<p class="text-muted"> <a href="'+apiWappointment.apiSite+'/addons'+'" target="_blank">Get a licence</a> now for our addons</p>',
             ).then((result) => {
                 if(result === true){
+                    window.open( apiWappointment.apiSite+'/addons', "_blank");
                 } 
             })
         },

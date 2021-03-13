@@ -36,7 +36,6 @@ class AppController extends RestController
             } catch (\Throwable $th) {
                 throw new \WappointmentValidationException("Could not update addon db", 1, null, [$th->getMessage()]);
             }
-            call_user_func($addon_details['namespace'] . '::setAddonDbVersion');
         }
 
         return ['message' => 'Database for addons has been updated'];

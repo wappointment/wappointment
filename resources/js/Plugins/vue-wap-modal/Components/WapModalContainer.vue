@@ -122,7 +122,7 @@ export default {
         
         this.showModal(title, content, screenshot)
         this.options = {classes:['premium']}
-        this.options.premiumGetDiscount = 'Get Discount'
+        this.options.premiumGetDiscount = 'Get the Addon'
 
         return new Promise(this.promiseCallback)
     },

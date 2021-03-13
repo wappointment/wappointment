@@ -6,6 +6,7 @@ use Wappointment\Services\Service;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Services\VersionDB;
 use Wappointment\Services\Services;
+use Wappointment\Models\Calendar;
 
 class ServiceController extends RestController
 {
@@ -30,8 +31,10 @@ class ServiceController extends RestController
             if (!empty($request->input('id'))) {
                 $dataService['id'] = $request->input('id');
             }
-            Services::save($dataService);
+            $serviceDB = Services::save($dataService);
 
+            $calendar = Calendar::first(); // add first service to existing calendar
+            $calendar->services()->sync([$serviceDB->id]);
             return true;
         } else {
             return $this->isTrueOrFail(Service::save($request->only(['name', 'duration', 'type', 'address', 'options'])));

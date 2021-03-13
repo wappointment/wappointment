@@ -44,6 +44,7 @@ class AlterAppointmentsTable extends Wappointment\Installation\Migrate
     {
         $foreignName = $this->getForeignName(Database::$prefix_self . '_appointments' . '_' . 'client_id_foreign');
         Capsule::schema()->table(Database::$prefix_self . '_appointments', function ($table) use ($foreignName) {
+
             if ($foreignName === false) {
                 $table->dropForeign(['client_id']);
             } else {

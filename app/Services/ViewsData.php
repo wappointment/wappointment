@@ -91,22 +91,28 @@ class ViewsData
     protected function getConvertedDataServiceNewToLegacy()
     {
         $service = ModelService::first();
+        if (empty($service)) {
+            return [];
+        }
         $types = [];
         $address = '';
         $video = '';
         $countries = [];
-        foreach ($service->locations as $location) {
-            $types[] = $location->options['type'];
-            if ($location->options['type'] == 'physical') {
-                $address = $location->options['address'];
-            }
-            if ($location->options['type'] == 'phone') {
-                $countries = $location->options['countries'];
-            }
-            if ($location->options['type'] == 'zoom') {
-                $video = $location->options['video'];
+        if (!empty($service->locations)) {
+            foreach ($service->locations as $location) {
+                $types[] = $location->options['type'];
+                if ($location->options['type'] == 'physical') {
+                    $address = $location->options['address'];
+                }
+                if ($location->options['type'] == 'phone') {
+                    $countries = $location->options['countries'];
+                }
+                if ($location->options['type'] == 'zoom') {
+                    $video = $location->options['video'];
+                }
             }
         }
+
 
         $data = [
             'id' => $service->id,
@@ -220,6 +226,17 @@ class ViewsData
 
     private function settingsadvanced()
     {
+        if (!VersionDB::canServices()) {
+            $timezone = Settings::getStaff('timezone');
+        } else {
+            $staff = Calendars::all();
+            if (!isset($staff[0])) {
+                throw new \WappointmentException("There is no active calendar change that in Wappointment > Settings > Calendars", 1);
+            }
+            $timezone = $staff[0]->options['timezone'];
+        }
+
+
 
         return [
             'debug' => \WappointmentLv::isTest(),
@@ -230,7 +247,7 @@ class ViewsData
 
             // advanced
             'approval_mode' => Settings::get('approval_mode'),
-            'today_formatted' => DateTime::i18nDateTime(time(), Settings::getStaff('timezone')),
+            'today_formatted' => DateTime::i18nDateTime(time(), $timezone),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
@@ -240,7 +257,7 @@ class ViewsData
             'hours_before_booking_allowed' => Settings::get('hours_before_booking_allowed'),
             'hours_before_cancellation_allowed' => Settings::get('hours_before_cancellation_allowed'),
             'hours_before_rescheduling_allowed' => Settings::get('hours_before_rescheduling_allowed'),
-            'timezone' => Settings::getStaff('timezone'),
+            'timezone' => $timezone,
             'config' => [
                 'approval_mode' => Settings::get('approval_mode'),
             ],

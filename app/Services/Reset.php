@@ -15,12 +15,11 @@ class Reset
 
         do_action('wappointment_reset');
         sleep(2); //giving time for revert on addons
-        $this->dotComInforms();
+
+        //$this->dotComInforms();
 
         $this->removeStaffSettings();
-
         $this->dropTables();
-
         $this->removeCoreSettings();
 
         WPScheduler::clearScheduler();
@@ -55,7 +54,7 @@ class Reset
         try {
             $migrate->rollback();
         } catch (\Throwable $th) {
-            throw new \WappointmentException("Error while DROPPING DB tables", 1);
+            throw new \WappointmentException("Error while DROPPING DB tables " . $th, 1);
         }
 
         Capsule::schema()->dropIfExists(Database::$prefix_self . '_migrations');

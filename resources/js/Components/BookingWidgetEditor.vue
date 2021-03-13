@@ -79,6 +79,7 @@
                                                 {{cat_object.label}} <span v-if="showCategory !=  cat_object.label">[+]</span>
                                             </div>
                                             <div v-if="showCategory ==  cat_object.label" class="ml-3 mt-3">
+                                                <div class="small" v-if="cat_object.sub !== undefined"> {{ cat_object.sub }}</div>
                                                 <div v-for="(fieldDescription, field_key) in cat_object.fields" :data-tt="getFieldTip(stepObj.key, field_key, catid) ? getFieldTip(stepObj.key, field_key, catid) : false" v-if="canShowField(stepObj.key, field_key)" class="tt-below">
                                                     {{ changedInput(stepObj.key, field_key, options[stepObj.key][field_key]) }}
                                                     <component v-if="isComponentTypeActive(options[stepObj.key][field_key],stepObj.key, field_key, field_key)" :key="field_key"  
