@@ -14,3 +14,9 @@ export default {
 
 };
 </script>
+<style >
+#buttons-block .btn-secondary.btn-cell.btn-xs{
+  padding: .45rem !important;
+  font-size: 0.775rem !important;
+}
+</style>

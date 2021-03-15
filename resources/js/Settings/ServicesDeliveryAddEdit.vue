@@ -45,7 +45,7 @@ export default {
                 },
                 {
                     type: 'input',
-                    label: 'Name',
+                    label: 'Modality Name',
                     model: 'name',
                     cast: String,
                     class: 'input-360'

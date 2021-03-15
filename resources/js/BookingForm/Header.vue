@@ -81,10 +81,11 @@ export default {
             }
         },
         changeStaff(staff){
+            this.staffSelection = false
             if(this.disabledButtons) {
               return
             } 
-            this.staffSelection = false
+            
             this.$emit('changeStaff', staff)
         },
         getStyleBackground(staff, i = false){

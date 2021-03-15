@@ -6,16 +6,13 @@ export default {
         
         let event = renderInfo.event
         let eventExt = event.extendedProps
-
         
         let element = window.jQuery(renderInfo.el)
         this.isParentInThePast(element)
-         //'.fc-content-skeleton tr td'
 
         element.attr('data-id', eventExt.dbid)
         element.attr('id', 'event-'+eventExt.type+event.id)
         element.attr('data-rendering', event.rendering)
-
         
         if(eventExt.onlyDelete!==undefined){
           element.attr('data-only-delete', 1)
@@ -90,7 +87,7 @@ export default {
            this.showRegularAv = true
         }else{
           this.$WapModal().confirm({
-                title: 'You are going to be redirected to a new screen, do you wish to continue?',
+                title: 'You are going to be redirected to a new screen and will lose the current change, do you wish to continue?',
             }).then((response) => {
                 if(response !== false){
                   this.$router.push({name:'calendars_edit', params:{id:this.activeStaff.id}})

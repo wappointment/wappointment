@@ -31,7 +31,7 @@ class CalendarsController extends RestController
         ];
         if (!$db_update_required) {
             $data['services'] = Central::get('ServiceModel')::orderBy('sorting')->fetch();
-            $data['limit_reached'] = Central::get('CalendarModel')::canCreate() ? false : Central::get('CalendarModel')::MaxRows() . ' services max allowed';
+            $data['limit_reached'] = Central::get('CalendarModel')::canCreate() ? false : 'To add more calendars, get the "Calendars & Staff" addon';
         }
         return $data;
     }

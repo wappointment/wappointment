@@ -6,22 +6,28 @@
                     <span class="bullet-wap">1</span> 
                     <span class="bullet-title"> Select account </span>
                 </p>
-                <div  class="d-flex align-items-center mb-2">
+                <div  class="d-flex align-items-top mb-2">
                     <StaffPicture v-if="calendarSelected.name!=''" :src="calendarSelected.avatar" :gravatar="calendarSelected.gravatar" @changed="changedPicture" />
                     <div v-if="calendarSelected.name!=''" class="mr-2 changename">
                         <InputPh v-model="calendarSelected.name" ph="Name" @updatedValue="updateStaffName" />
                     </div>
-                    <StaffSelector :staffs="staffs" :activeStaffId="calendarSelected.wp_uid" @updateStaff="updateStaff" />
+                    <div class="account-selector">
+                        <StaffSelector :staffs="staffs" :activeStaffId="calendarSelected.wp_uid" @updateStaff="updateStaff"></StaffSelector>
+                        <div>
+                            <small class="text-muted" > You must select a WordPress account; you can <a href="users.php" target="_blank">add a new one here</a> (a contributor role is required at least)</small>
+                        </div>
+                    </div>
                 </div>
-                
-                <small class="text-muted" > In order to change the user(email) in charge <a href="users.php" target="_blank">add a WordPress user</a> or edit the current one </small>
-                
+               
                 <p class="h6 text-muted">
                     <span class="bullet-wap">2</span> 
                     <span class="bullet-title"> Set a timezone</span>
                 </p>
-                <TimeZones classW="d-flex" :timezones="timezones_list" 
+                <div class="cal-edit-margin">
+                    <TimeZones classW="d-flex" :timezones="timezones_list" 
                 :defaultTimezone="calendarSelected.timezone" @updateTimezone="updateTimezone" typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control" />
+                </div>
+                
                 <hr>
             </div>
             
@@ -30,9 +36,11 @@
                 <span class="bullet-title"> Set standard weekly schedule</span>
             </p>
 
-            <RegularAvailability :initValue="getRegav" :viewData="calendarSelected" :services="services"
-            @updatedDays="updatedRA"
-            @changedABD="changedABD" />
+            <div class="cal-edit-margin">
+                <RegularAvailability :initValue="getRegav" :viewData="calendarSelected" :services="services"
+                @updatedDays="updatedRA"
+                @changedABD="changedABD" />
+            </div>
         </div>
         <div v-if="requireSave" class="save-buttons">
             <button class="btn btn-primary" @click="saveCalendar">Save</button>
@@ -207,5 +215,11 @@ export default {
     min-width: 200px;
     background: #fff;
     border-radius: .5rem .5rem 0 0;
+}
+.account-selector{
+    max-width: 380px;
+}
+.cal-edit-margin{
+    margin-left: 48px;
 }
 </style>

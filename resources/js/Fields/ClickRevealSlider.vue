@@ -18,7 +18,7 @@ export default {
                     step:1,
                     int:true,
                     unit: 'days',
-                    classWrapper: 'min-w200'
+                    classWrapper: 'min-w250'
                 }
         }
     },
@@ -35,8 +35,8 @@ export default {
 }
 </script>
 <style>
-.min-w200{
-    min-width: 200px;
+.min-w250{
+    min-width: 250px;
 }
 </style>
 

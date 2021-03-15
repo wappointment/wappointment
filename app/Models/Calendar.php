@@ -34,6 +34,11 @@ class Calendar extends Model
         return !empty($this->options['cal_urls']) ? $this->options['cal_urls'] : [];
     }
 
+    public function hasDotCom()
+    {
+        return !empty($this->options['dotcom']);
+    }
+
     public function getAvatarAttribute()
     {
         return !empty($this->options['avatar_id']) ? wp_get_attachment_image_src($this->options['avatar_id'])[0] : $this->options['gravatar'];

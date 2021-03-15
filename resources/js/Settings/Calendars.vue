@@ -41,10 +41,10 @@
                                 <CalendarsRegav @edit="editAvailability" :calendar="calendar" />
                             </td>
                             <td v-if="!elements.db_required">
-                                <div class="d-flex" role="button" v-if="calendar.services.length>0" @click="editServices(calendar)">
-                                    <ValueCard v-for="serviceid in calendar.services" :key="serviceid">{{ displayServiceName(serviceid,elements.services) }} </ValueCard>
+                                <div class="d-flex" role="button" v-if="calendar.services.length>0">
+                                    <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid,elements.services) }} </ValueCard>
                                 </div>
-                                <button class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Add services</button>
+                                <button class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
                             </td>
                             <td>
                                <Connections :connections="calendar.connected.services === undefined ? []:calendar.connected.services"/>
@@ -260,7 +260,6 @@ export default {
             if(reload) {
                 this.reloadListing()
             }
-
         },
         deleteCalendar(calendar_id, calendar_main_id){
             this.$WapModal().confirm({
@@ -368,6 +367,7 @@ export default {
               }else{
                 this.currentView = 'listing'
                 this.elementPassed = null
+                this.$router.push({name:'calendars'})
             }
 
         },

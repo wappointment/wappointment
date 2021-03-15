@@ -6,6 +6,7 @@ use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Models\Appointment;
 use Wappointment\Services\VersionDB;
+use Wappointment\Services\Flag;
 use Wappointment\Managers\Central;
 
 class DotCom extends API
@@ -275,6 +276,7 @@ class DotCom extends API
             }
 
             $options = $this->staff->options;
+            Flag::save('dotcomSet', true);
             $options['dotcom'] = $data;
             $this->staff->update([
                 'account_key' => $account_key,

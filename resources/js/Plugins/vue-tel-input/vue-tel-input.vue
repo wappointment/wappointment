@@ -148,6 +148,8 @@ export default {
         this.baseCountryList.push(allCountries.find(e => e.iso2 == iso2))
       }
 
+    }else{
+      this.baseCountryList = allCountries
     }
   },
   data() {
@@ -276,7 +278,7 @@ export default {
       return this.onlyCountries.includes(iso2.toUpperCase())
     },
     searchFilter(element) {
-      return element.name.toLowerCase().startsWith(this.search.trim())
+      return element.name.toLowerCase().startsWith(this.search.trim().toLowerCase())
     },
     initializeCountry() {
       /**

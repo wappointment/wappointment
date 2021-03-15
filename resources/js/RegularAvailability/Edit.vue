@@ -5,15 +5,18 @@
                 <span class="bullet-title" v-if="staffs.length > 1"> Set who provides the appointments </span>
                 <span class="bullet-title" v-else> Modify your picture </span>
             </p>
-            <div  class="d-flex align-items-center mb-2">
+            <div  class="d-flex align-items-top mb-2">
                 <StaffPicture :src="calendar.avatar" :gravatar="calendar.gravatar" @changed="changed"></StaffPicture>
                 <div class="mr-2 changename">
                     <InputPh v-model="calendar.name" ph="Change name" @updatedValue="updateStaffName" />
                 </div>
-                <StaffSelector :staffs="staffs" :activeStaffId="calendar.id" @updateStaff="updateStaff"></StaffSelector>
+                <div class="account-selector">
+                    <StaffSelector :staffs="staffs" :activeStaffId="calendar.id" @updateStaff="updateStaff"></StaffSelector>
+                    <div>
+                        <small class="text-muted" > You must select a WordPress account; you can <a href="users.php" target="_blank">add a new one here</a> (a contributor role is required at least)</small>
+                    </div>
+                </div>
             </div>
-            
-            <small class="text-muted" > In order to change the user in charge <a href="users.php" target="_blank">add a WordPress user</a> or edit the current one </small>
             
             <p class="h6 text-muted"><span class="bullet-wap">2</span> <span class="bullet-title"> Set your timezone</span></p>
             <TimeZones v-if="calendar" classW="d-flex" :timezones="timezones_list" 
@@ -128,5 +131,8 @@ export default {
 }
 .changename .label-wrapper{
     margin-bottom: 0 !important;
+}
+.account-selector{
+    max-width: 380px;
 }
 </style>

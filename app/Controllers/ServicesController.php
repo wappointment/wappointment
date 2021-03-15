@@ -22,7 +22,7 @@ class ServicesController extends RestController
         ];
 
         if (!$db_update_required) {
-            $data['limit_reached'] = $serviceModel::canCreate() ? false : $serviceModel::MaxRows() . ' services max allowed';
+            $data['limit_reached'] = $serviceModel::canCreate() ? false : 'To add more services, get the "Services Suite" addon';
         }
         return $data;
     }

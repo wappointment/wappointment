@@ -4,6 +4,8 @@ namespace Wappointment\System;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Settings;
+use Wappointment\Services\VersionDB;
+use Wappointment\Services\Flag;
 
 class Status
 {
@@ -63,11 +65,20 @@ class Status
         return !empty($addons_updates) ? $addons_updates : false;
     }
 
+    public static function dotComNotSetYet()
+    {
+        if (VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES)) {
+            return empty(Settings::getStaff('dotcom')) && empty(Flag::get('dotcomSet'));
+        } else {
+            return empty(Settings::getStaff('dotcom'));
+        }
+    }
+
     public static function hasMessages()
     {
         //test if zoom is used and no account is connected
         $messages = [];
-        if (empty(Settings::getStaff('dotcom'))) {
+        if (static::dotComNotSetYet()) {
             $services = \Wappointment\Managers\Service::all();
 
             $services[] = $services[0];

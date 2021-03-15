@@ -134,7 +134,6 @@ export default {
         requiresScroll: false,
         selectedStaff: null,
         showHeader:true,
-        
     }),
 
     mounted () {
@@ -225,15 +224,23 @@ export default {
             this.refreshAvail()
         },
         changeStaff(newStaff){
-
+            this.service = false
+            this.location = false
             this.setStaff(newStaff)
             
-            let newStep = this.currentStep
-            this.currentStep = ''
             this.showHeader = false
-            setTimeout(this.showHeaderLater.bind(null,newStep), 100)
+
+            this.currentStep = ''
+            setTimeout(this.showHeaderLater.bind(null, this.selectFirstStep('BookingServiceSelection', 
+            {
+                service: this.service, 
+                location:this.location,
+                duration: this.duration
+            }
+            )), 100)
             
         },
+
         showHeaderLater(newStep){
             this.showHeader = true
             this.childChangedStep(newStep)
@@ -360,12 +367,20 @@ export default {
 
 
         getDefaultStaff(){
+            let ordered = []
             if(this.viewData.staffs!== undefined && this.viewData.staffs.length > 0){
                 for (let i = 0; i < this.viewData.staffs.length; i++) {
                     if(this.viewData.staffs[i].services.length > 0){
-                        return this.viewData.staffs[i]
+                        ordered.push({
+                            id: i,
+                            start:this.viewData.staffs[i].availability[0][0],
+                            end:this.viewData.staffs[i].availability[0][1]
+                        }) 
+                    
                     }
                 }
+                ordered.sort((a, b) => a.start > b.start)
+                return this.viewData.staffs[ordered[0].id]
             }
         },
         

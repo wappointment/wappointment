@@ -169,6 +169,7 @@ export default {
 .check-locations .btn.btn-secondary.btn-cell {
     position: relative;
     margin: 0 .5rem 2.5rem .5rem;
+    background-color: #fff;
 }
 .edit-button{
     cursor: pointer;

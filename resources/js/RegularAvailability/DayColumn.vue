@@ -241,7 +241,7 @@ export default {
     }
     .timeText{
         color:#fff;
-        font-size: 1rem;
+        font-size: .8rem;
     }
     .columnTitle{
         font-size: .9rem;

@@ -48,7 +48,7 @@ export default {
         service: null,
         tabs:{
             calendars:{
-                label: 'Calendars & Staffs'
+                label: 'Calendars & Staff'
             },
             services:{
                 label: 'Services'

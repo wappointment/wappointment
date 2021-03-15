@@ -515,6 +515,9 @@ export default {
 
             this.minHour = min_max.min < this.getPref('cal_minH')? min_max.min:this.getPref('cal_minH')
             this.maxHour = min_max.max > this.getPref('cal_maxH')? min_max.max:this.getPref('cal_maxH')
+            if(this.maxHour > 24) {
+              this.maxHour = 24
+            }
           }
           
           let defaultDate = false
