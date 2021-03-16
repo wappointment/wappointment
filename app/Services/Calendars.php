@@ -52,7 +52,7 @@ class Calendars
         if ($calendarData['wp_uid'] > 0) {
             $query = static::getModel()::where('wp_uid', $calendarData['wp_uid']);
             if ($calendarData['id'] > 0) {
-                $query->where('id', '!=', $calendarData['id']);
+                $query->where('id', '!=', (int) $calendarData['id']);
             }
             if ($query->first()) {
                 throw new \WappointmentException("Select another WordPress account this one is already used for another calendar", 1);

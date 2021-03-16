@@ -183,7 +183,7 @@ class EventsController extends RestController
             ->where('end_at', '<=', $end_at_string);
 
         if (!$this->isLegacy) {
-            $appointmentsQuery->where('staff_id', $staff_id);
+            $appointmentsQuery->where('staff_id', (int)$staff_id);
         }
 
         return  $appointmentsQuery->get();
@@ -237,7 +237,7 @@ class EventsController extends RestController
             ->where('muted', '<', 1);
 
         if (!$this->isLegacy) {
-            $statusEventsQuery->where('staff_id', $staff_id);
+            $statusEventsQuery->where('staff_id', (int)$staff_id);
         }
 
         $statusEvents = $statusEventsQuery->get();
@@ -245,7 +245,7 @@ class EventsController extends RestController
         $recurringBusyQuery = Mstatus::where('recur', '>', Mstatus::RECUR_NOT)
             ->where('muted', '<', 1);
         if (!$this->isLegacy) {
-            $recurringBusyQuery->where('staff_id', $staff_id);
+            $recurringBusyQuery->where('staff_id', (int)$staff_id);
         }
 
         $recurringBusy = $recurringBusyQuery->get();

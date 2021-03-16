@@ -368,7 +368,7 @@ export default {
 
         getDefaultStaff(){
             let ordered = []
-            if(this.viewData.staffs!== undefined && this.viewData.staffs.length > 0){
+            if(this.viewData.staffs!== undefined && this.viewData.staffs.length > 1){
                 for (let i = 0; i < this.viewData.staffs.length; i++) {
                     if(this.viewData.staffs[i].services.length > 0){
                         ordered.push({
@@ -381,6 +381,8 @@ export default {
                 }
                 ordered.sort((a, b) => a.start > b.start)
                 return this.viewData.staffs[ordered[0].id]
+            }else{
+                return this.viewData.staffs[0]
             }
         },
         
@@ -465,8 +467,13 @@ export default {
         },
 
         setAvailableServices(){
-            let services_id = this.selectedStaff.services
-            this.services =  this.viewData.services.filter(e => services_id.indexOf(e.id) !== -1)
+            if(this.viewData.services.length == 1 && this.viewData.services[0].type !== undefined){
+                this.services = this.viewData.services.filter(e => true)
+            }else{
+                let services_id = this.selectedStaff.services
+                this.services =  this.viewData.services.filter(e => services_id.indexOf(e.id) !== -1)
+            }
+            
         },
         autoSelService(){
             if(this.isLegacyOrNotServiceSuite){

@@ -52,7 +52,7 @@ class Appointment extends AppointmentLegacy
             ->where('end_at', '<=', $params['end_at']);
 
         if (!$legacy && !empty($params['staff_id'])) {
-            $appointmentsQuery->where('staff_id', $params['staff_id']);
+            $appointmentsQuery->where('staff_id', (int) $params['staff_id']);
         }
 
         return $appointmentsQuery->get();

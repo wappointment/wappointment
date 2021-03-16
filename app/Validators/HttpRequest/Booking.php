@@ -7,6 +7,7 @@ use Wappointment\Managers\Service as ServiceCentral;
 use Wappointment\Models\Location as LocationModel;
 use Wappointment\Managers\Central;
 use Wappointment\Models\Calendar;
+use Wappointment\Services\VersionDB;
 
 class Booking extends LegacyBooking
 {
@@ -127,7 +128,9 @@ class Booking extends LegacyBooking
 
     public function prepareInputs($inputs): array
     {
-        $this->staff = Calendar::active()->findOrFail((int)$inputs['staff_id']);
+        if (VersionDB::canServices()) {
+            $this->staff = Calendar::active()->findOrFail((int)$inputs['staff_id']);
+        }
         $this->validateService($inputs);
         $this->validateLocation($inputs);
 

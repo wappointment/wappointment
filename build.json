@@ -1,0 +1,59 @@
+{
+    "name": "wappointment",
+    "must_have": {
+        "folders":[
+            "app", 
+            "resources", 
+            "database", 
+            "included"
+        ],
+        "files":[
+            "index.php", 
+            "licence.txt", 
+            "readme.txt"
+        ]
+    },
+    "process_only": {
+        "folders":[
+            "resources"
+        ],
+        "files":[
+            ".babelrc", 
+            "composer.json", 
+            "composer.lock", 
+            "package.json", 
+            "package-lock.json", 
+            "phpcs.xml", 
+            "scoper.inc.php", 
+            "webpack.config.copy.js", 
+            "webpack.config.general.js", 
+            "webpack.config.copy.js", 
+            "webpack.config.scss.js"
+        ]
+    },
+    "must_remove": {
+        "folders":[
+            "build",
+            "node_modules", 
+            "vendor/bin", 
+            "vendor/kylekatarnls", 
+            "vendor/paragonie",
+            "vendor/phpcompatibility",
+            "vendor/squizlabs",
+            "vendor/giggsey/locale",
+            "vendor/giggsey/libphonenumber-for-php/src/geocoding",
+            "vendor/illuminate/pagination/resources",
+            "vendor/symfony/debug/Resources/ext",
+            "vendor/symfony/translation/Loader/schema",
+            "vendor/symfony/translation/Resources"
+        ],
+        "files":[
+            "included/swiftmailer/swiftmailer/LICENSE", 
+            "included/swiftmailer/swiftmailer/README",
+            "vendor/composer/LICENSE", 
+            "vendor/composer/installed.json",
+            "vendor/scoper-autoload.php" 
+        ]
+    }
+  }
+  

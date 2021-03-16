@@ -15,37 +15,9 @@ use Wappointment\Services\DateTime;
 
 class BookingController extends RestController
 {
-    // public function fetch($request)
-    // {
-    //     $appointment = AppointmentModel::with('service')
-    //         ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
-    //         ->where('edit_key', $request->input('appointmentkey'))
-    //         ->first();
 
-    //     if (empty($appointment)) {
-    //         throw new \WappointmentException("Can't find appointment", 1);
-    //     }
-    //     $appointmentData = $appointment->toArraySpecial();
-
-    //     if (Settings::get('allow_rescheduling')) {
-    //         $appointmentData['canRescheduleUntil'] = $appointment->canRescheduleUntilTimestamp();
-    //     }
-    //     if (Settings::get('allow_cancellation')) {
-    //         $appointmentData['canCancelUntil'] = $appointment->canCancelUntilTimestamp();
-    //     }
-    //     return [
-    //         'appointment' => $appointmentData,
-    //         'client' => $appointment->client()->select(['name', 'email', 'options'])->first(),
-    //         'service' => empty($appointmentData['service']) ? \Wappointment\Services\Service::get() : $appointmentData['service'],
-    //         'staff' => (new \Wappointment\WP\Staff($appointment->getStaffId()))->toArray(),
-    //         'date_format' => Settings::get('date_format'),
-    //         'time_format' => Settings::get('time_format'),
-    //         'date_time_union' => Settings::get('date_time_union', ' - '),
-    //     ];
-    // }
     public function save(Booking $booking)
     {
-
         if ($booking->hasErrors()) {
             return WPHelpers::restError('Review your fields', 500, $booking->getErrors());
         }

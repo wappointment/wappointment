@@ -5,6 +5,7 @@ namespace Wappointment\WP;
 use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Service;
+use Wappointment\Managers\Service as ManageService;
 
 class StaffLegacy
 {
@@ -76,8 +77,20 @@ class StaffLegacy
             'a' => $this->avatar,
             'n' => $this->name,
             't' => $this->timezone,
+            'services' => $this->getServicesId(),
             'availability' => $this->getAvailability(),
         ], $this);
+    }
+
+
+    public function getServicesId()
+    {
+        $services = ManageService::all();
+        $service_ids = [];
+        foreach ($services as $service) {
+            $service_ids[] = !empty($service['id']) ? $service['id'] : 1;
+        }
+        return $service_ids;
     }
 
     public function getRegav()
