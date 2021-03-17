@@ -27,7 +27,7 @@ import routerSetupRedirect from './Standalone/routerSetupRedirect'
 import routerQueryRedirect from './Standalone/routerQueryRedirect'
 import getRoutePush from './Standalone/getRoutePush'
 import ServicesDelivery from './Settings/ServicesDelivery'
-import ClientsPage from './Views/Clients'
+
 
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
@@ -60,7 +60,7 @@ const Wizard4Page = () => import(/* webpackChunkName: "group-wizard2" */ './View
 const ServicePage = () => import(/* webpackChunkName: "group-service" */ './Views/Subpages/Service')
 const ServicesManage = () => import(/* webpackChunkName: "group-service-manage" */ './Settings/ServicesManage')
 const Calendars = () => import(/* webpackChunkName: "group-calendars-manage" */ './Settings/Calendars')
-let ClientsPageExtended = () => new Promise((resolutionFunc) => resolutionFunc(window.wappointmentExtends.filter('ClientsPage', ClientsPage)))
+let ClientsPageExtended = () => import(/* webpackChunkName: "group-clients" */ './Views/ClientsWrapper')
 let ServicesDeliveryExtended = () => new Promise((resolutionFunc) => resolutionFunc(window.wappointmentExtends.filter('ServicesDelivery', ServicesDelivery)))
 const WappointmentErrorFileNotLoading = () => import(/* webpackChunkName: "wappo-error" */ './Views/WappointmentErrorFileNotLoading')
 

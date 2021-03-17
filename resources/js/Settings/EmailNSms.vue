@@ -25,7 +25,12 @@
                 
               </div>
               <div class="mt-2">
-                <button v-if="!addingReminder" class="btn btn-outline-primary my-2" @click="addingReminderStep2">Add reminder</button>
+                <div v-if="!addingReminder">
+                  <button class="btn btn-outline-primary my-2" @click="addingReminderStep2">
+                    <span v-if="!hasTwilio" class="mr-2 dashicons dashicons-email-alt"></span>{{ hasTwilio ? 'Add Reminder':'Add Email reminder' }}</button>
+                  <button v-if="!hasTwilio" class="btn btn-outline-primary my-2" @click="addingReminderSMS">
+                    <span class="mr-2 dashicons dashicons-smartphone"></span>Add SMS reminder</button>
+                </div>
                 <div v-else>
                   <button v-for="label in labels.types" class="btn btn-secondary m-2 align-items-center d-flex" @click="addReminder(label.name)" > 
                     <span :class="'mr-2 dashicons '+label.icon"></span>{{label.name}}</button>
@@ -82,6 +87,9 @@ export default {
     remindersAreLoaded(){
       return this.remindersLoaded && this.reminders.length > 0
     },
+    hasTwilio(){
+      return window.wappointmentAdmin.addons.wappointment_twilio !== undefined
+    }
 
   },
   methods: {
@@ -91,6 +99,9 @@ export default {
       }
       this.addingReminder = true
       
+    },
+    addingReminderSMS(){
+      this.requiresAddon('twilio')
     },
     goToMain() {
       this.currentView = false

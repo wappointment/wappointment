@@ -27,7 +27,9 @@ abstract class AbstractEmail extends AbstractMessage
 
         if ($this->admin === false) {
             $email_logo = VersionDB::canServices() ? Settings::get('email_logo') : Settings::getStaff('email_logo');
-            $this->addLogo($email_logo, 'full');
+            if (!empty($email_logo)) {
+                $this->addLogo($email_logo, 'full');
+            }
         }
     }
 
