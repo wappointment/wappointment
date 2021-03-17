@@ -37,7 +37,7 @@ class Appointment extends AppointmentLegacy
             'service_id' => $client->bookingRequest->get('service'),
             'location_id' => $location->id,
             'duration' => $client->bookingRequest->get('duration'),
-            'staff_id' => $staff_id->id
+            'staff_id' => empty($staff_id) ? 0 : $staff_id->id
         ];
         return static::book($appointmentData, $client, $forceConfirmed);
     }

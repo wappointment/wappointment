@@ -7,8 +7,6 @@ use Wappointment\Validators\HttpRequest\Booking;
 use Wappointment\Validators\HttpRequest\BookingAdmin;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Admin;
-use Wappointment\Services\Settings;
-use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Services\Appointment;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Services\DateTime;

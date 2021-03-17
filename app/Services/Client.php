@@ -10,6 +10,23 @@ class Client
     public static function book(Booking $booking)
     {
 
+        $client = static::clientLoadAdd($booking);
+
+        //book with that client
+        return $client->book($booking);
+    }
+
+    public static function bookLegacy(Booking $booking)
+    {
+
+        $client = static::clientLoadAdd($booking);
+
+        //book with that client
+        return $client->bookLegacy($booking);
+    }
+
+    protected static function clientLoadAdd(Booking $booking)
+    {
         //create or load client account
         $client = MClient::where('email', $booking->get('email'))->first();
         $dataClient = $booking->preparedData();
@@ -34,10 +51,7 @@ class Client
             $client->options = $options;
             $client->save();
         }
-
-
-        //book with that client
-        return $client->book($booking);
+        return $client;
     }
 
     public static function search($email, $size = 30)

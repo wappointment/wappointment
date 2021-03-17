@@ -226,7 +226,7 @@ class EventsController extends RestController
                 'className' => (bool) $event->status ? 'appointment-confirmed' : 'appointment-pending'
             ];
             if ($this->isLegacy) {
-                $events[] =  apply_filters('wappointment_appointment_get_filter', $addedEvent, $event);
+                $events[] = $addedEvent;
             } else {
                 $events[] = Appointment::adminCalendarUpdateAppointmentArray($addedEvent, $event);
             }
