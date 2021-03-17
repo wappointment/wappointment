@@ -23,6 +23,7 @@ trait CanBook
         } else {
             return $this->bookLegacy($bookingRequest, $forceConfirmed); //legacy trick for older version of wappo-woo
         }
+
         $duration = $service->hasDuration($bookingRequest->get('duration'));
         $end_at = $start_at + $this->getRealDuration(['duration' => $duration]);
 
