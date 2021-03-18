@@ -5,23 +5,16 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.0.3 a handful of improvements</span>     
+                <span>V2.1.0 more services more calendars</span>    
             </h3>
-
-            <h5>Changelog 2.0.3</h5>
+            <p>This version is a major version with lots of improvements for your experience in the backend.</p>
+            <p>Give us your feedback from the <strong>Wappointment > Help</strong> menu, we'd love to hear it.</p>
+            <h5>Changelog 2.1.0</h5>
             <ol>
-                <li class="my-2">Improved calendar synch </li>
-                <li class="my-2">Fixed issue with availability calculation on edge case</li>
-                <li class="my-2">Hide button on preload of booking form</li>
-                <li class="my-2">Improved Google - Zoom connection for better performances</li>
-                <li class="my-2">Added missing confirmation message for video meetings</li>
-                <li class="my-2">Fixed bug on Zoom, Google meet link in appointment confirmation</li>
-                <li class="my-2">Fixed edge case admin calendar not loading events</li>
+                <li class="my-2">Can create up to 3 services</li>
+                <li class="my-2">Can create up to 2 calendars</li>
+                <li class="my-2">Lot of interfaces improvements and bug fixes</li>
             </ol>
-            <h5>2 min - Introduction video about Zoom/Google Calendar integrations</h5>
-            <iframe width="540" height="301" src="https://www.youtube.com/embed/wEE8yRh6pP4" 
-            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
           </div>
     </WapModal>
 
