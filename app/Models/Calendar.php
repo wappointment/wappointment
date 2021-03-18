@@ -4,6 +4,7 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\SoftDeletes;
+use Wappointment\Managers\Central;
 
 class Calendar extends Model
 {
@@ -52,5 +53,13 @@ class Calendar extends Model
     public function getTimezone()
     {
         return !empty($this->options['timezone']) ? $this->options['timezone'] : 'UTC';
+    }
+
+    public function addAllServices()
+    {
+        $services = Central::get('ServiceModel')::select('id')->fetch();
+        $this->services()->sync($services->map(function ($e) {
+            return $e->id;
+        })->toArray());
     }
 }

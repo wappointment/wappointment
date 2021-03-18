@@ -42,7 +42,7 @@ class ImportCalendars extends Wappointment\Installation\Migrate
             $data['account_key'] = $dotcom['account_key'];
         }
         $calendar = Calendar::firstOrCreate(['wp_uid' => $staff->id], $data);
-
+        $calendar->addAllServices();
         Appointment::query()->update(['staff_id' => $calendar->id]);
         Status::query()->update(['staff_id' => $calendar->id]);
     }
