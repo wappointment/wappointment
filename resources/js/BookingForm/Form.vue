@@ -54,6 +54,8 @@ import WappoServiceBooking from '../Services/V1/BookingN'
 import FieldsGenerated from './FieldsGenerated'
 import FormMixinLegacy from './FormMixinLegacy'
 import MixinLegacy from './MixinLegacy'
+import BookingAddress from './Address'
+import PhoneInput from './PhoneInput'
 export default {
     extends: AbstractFront,
     mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy],
@@ -61,6 +63,8 @@ export default {
     'timeprops', 'relations', 'appointment_starts_at',
     'duration', 'location', 'custom_fields', 'staffs','selectedStaff'],
     components: {
+        BookingAddress,
+        PhoneInput,
         CountryStyle,
         FieldsGenerated,
         AppointmentTypeSelection
