@@ -10,7 +10,7 @@ use Wappointment\Services\DateTime;
 use Wappointment\Services\Status;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Models\Status as Mstatus;
-use Wappointment\Services\Appointment;
+use Wappointment\Services\AppointmentNew as Appointment;
 use Wappointment\Services\Preferences;
 use Wappointment\Services\Wappointment\DotCom;
 use Wappointment\Services\VersionDB;

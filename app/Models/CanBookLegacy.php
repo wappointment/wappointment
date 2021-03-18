@@ -2,7 +2,7 @@
 
 namespace Wappointment\Models;
 
-use Wappointment\Services\AppointmentLegacy as AppointmentServiceLegacy;
+use Wappointment\Services\Appointment as AppointmentServiceLegacy;
 use Wappointment\Services\Service;
 
 trait CanBookLegacy

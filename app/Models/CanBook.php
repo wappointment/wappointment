@@ -2,7 +2,7 @@
 
 namespace Wappointment\Models;
 
-use Wappointment\Services\Appointment as AppointmentService;
+use Wappointment\Services\AppointmentNew as AppointmentService;
 use Wappointment\Models\Service;
 
 trait CanBook
@@ -27,10 +27,11 @@ trait CanBook
         $duration = $service->hasDuration($bookingRequest->get('duration'));
         $end_at = $start_at + $this->getRealDuration(['duration' => $duration]);
 
+        $staff = !empty($bookingRequest->staff) ? $bookingRequest->staff : $bookingRequest->get('staff');
         if ($forceConfirmed) {
-            $hasBeenBooked = AppointmentService::adminBook($this, $start_at, $end_at, false, $service, $bookingRequest->staff);
+            $hasBeenBooked = AppointmentService::adminBook($this, $start_at, $end_at, false, $service, $staff);
         } else {
-            $hasBeenBooked = AppointmentService::tryBook($this, $start_at, $end_at, false, $service, $bookingRequest->staff);
+            $hasBeenBooked = AppointmentService::tryBook($this, $start_at, $end_at, false, $service, $staff);
         }
 
         //test that this is bookable

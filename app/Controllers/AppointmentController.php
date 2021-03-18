@@ -5,7 +5,7 @@ namespace Wappointment\Controllers;
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Services\Settings;
-use Wappointment\Services\Appointment;
+use Wappointment\Services\AppointmentNew as Appointment;
 use Wappointment\Services\Service;
 use Wappointment\Services\VersionDB;
 
@@ -16,7 +16,8 @@ class AppointmentController extends RestController
         if (is_array($request->input('appointmentkey'))) {
             throw new \WappointmentException("Malformed parameter", 1);
         }
-        $appointment = AppointmentModel::select(['start_at', 'status', 'end_at', 'type', 'client_id', 'options'])
+
+        $appointment = AppointmentModel::select(['start_at', 'status', 'end_at', 'type', 'client_id', 'options', 'staff_id'])
             ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
             ->where('edit_key', $request->input('appointmentkey'))
             ->first();
@@ -24,6 +25,7 @@ class AppointmentController extends RestController
         if (empty($appointment)) {
             throw new \WappointmentException("Can't find appointment", 1);
         }
+
         $appointmentData = $appointment->toArraySpecial();
         $appointmentData['edit_key'] = $request->input('appointmentkey');
         if (Settings::get('allow_rescheduling')) {

@@ -175,6 +175,15 @@ export default {
         slotSelected(){
             return this.selectedSlot !== false && this.selectedSlot > 0
         },
+        serviceIsNotFree(){
+            return this.serviceUNotFree || this.serviceMNotFree
+        },
+        serviceUNotFree(){
+            return this.service.options.woo_sellable === true && this.service.options.woo_price > 0
+        },
+        serviceMNotFree(){
+            return this.service.options.woo_sellable === true && this.service.options.durations !== undefined && this.service.options.durations[0].woo_price > 0
+        },
         isStepForm(){
             return !this.appointmentSaved && !this.reschedulingSelectedSlot && this.selectedSlot
         },
@@ -358,8 +367,25 @@ export default {
                 for (let i = 0; i < conditionKeys.length; i++) {
                     const keyCondition = conditionKeys[i]
                     if(this[keyCondition] !== conditions[keyCondition]) {
+                        if(this.componentsList[component_name].skip !== undefined){
+                            
+                            if(this.conditionSkipPass(component_name)){
+                                this.childChangedStep(this.componentsList[component_name].relations.next)
+                            }
+                            
+                        }
                         return false
                     }
+                }
+            }
+            return true
+        },
+        conditionSkipPass(component_name){
+            let skipConditions = Object.keys(this.componentsList[component_name].skip)
+            for (let j = 0; j < skipConditions.length; j++) {
+                const keyConditionSkip = skipConditions[j]
+                if(this[keyConditionSkip] !== this.componentsList[component_name].skip[keyConditionSkip]) {
+                    return false
                 }
             }
             return true

@@ -6,7 +6,7 @@ use Wappointment\ClassConnect\Model;
 use Wappointment\Services\Settings;
 use Wappointment\Services\DateTime;
 use Wappointment\ClassConnect\Carbon;
-use Wappointment\Services\Appointment as ServicesAppointment;
+use Wappointment\Services\AppointmentNew as ServicesAppointment;
 use Wappointment\Services\VersionDB;
 
 class Appointment extends Model
@@ -151,7 +151,7 @@ class Appointment extends Model
 
     public function getStaffId()
     {
-        return Settings::get('activeStaffId');
+        return VersionDB::canServices() ? $this->staff_id : Settings::get('activeStaffId');
     }
 
     public function isPhone()
