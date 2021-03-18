@@ -180,9 +180,20 @@ abstract class AbstractBoot implements Boot
         $addons[static::$addon_key] = [
             'name' => static::$addon_name,
             'icon' => static::$addon_settings_icon,
-            'settings' => (bool) static::$has_settings
+            'settings' => (bool) static::$has_settings,
         ];
+
+        if (is_admin() && version_compare(static::convertVersionToMajor(WAPPOINTMENT_VERSION), static::convertVersionToMajor(static::$addon_version)) === 1) {
+            $addons[static::$addon_key]['requires_update'] = static::convertVersionToMajor(WAPPOINTMENT_VERSION) . '.0';
+        }
         return $addons;
+    }
+
+    protected static function convertVersionToMajor($version)
+    {
+        $vexplode = explode('.', $version);
+        array_pop($vexplode);
+        return implode('.', $vexplode);
     }
 
     public static function jsVariables($var)

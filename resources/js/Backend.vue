@@ -1,12 +1,9 @@
 <template>
     <transition name="fade" mode="out-in">
       <div class="wappointment-wrap" >
-          <div v-if="!db_update">
-              <UpdateInformation />
-          </div>
-          <div v-if="db_update">
-              <PendingDBUpdate />
-          </div>
+          <UpdateInformation v-if="!db_update"/>
+          <PendingDBUpdate v-else/>
+          <AddonsRequireUpdate />
           <template v-if="has_messages">
               <transition name="fade" mode="out-in">
                 <WPNotice v-if="fully_loaded">
@@ -29,8 +26,9 @@ import WPNotice from './WP/Notice'
 import VersionsInfos from './Ne/VersionsInfos'
 import PendingDBUpdate from './Ne/PendingDBUpdate'
 import UpdateInformation from './Ne/UpdateInformation'
+import AddonsRequireUpdate from './Ne/AddonsRequireUpdate'
 export default {
-    components: {VersionsInfos, PendingDBUpdate, UpdateInformation, WPNotice},
+    components: {VersionsInfos, PendingDBUpdate, UpdateInformation, AddonsRequireUpdate, WPNotice},
     data: () => ({
         db_update: false,
         has_messages: false,

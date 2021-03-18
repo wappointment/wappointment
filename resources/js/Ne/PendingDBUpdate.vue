@@ -8,7 +8,7 @@
         <WapModal v-if="showing" :show="showing" @hide="hide">
             <h4 slot="title" class="modal-title">Update Required</h4>
             <div class="wappo-db-update" v-if="!updated">
-                <p>Wappointment has improvements requiring a Database update.</p>
+                <h4>Wappointment has improvements requiring a Database update.</h4>
                 <div >
                     <button class="btn btn-primary btn-lg btn-block" @click="runMigrate">Run update</button>
                 </div>

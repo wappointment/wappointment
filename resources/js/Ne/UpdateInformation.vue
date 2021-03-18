@@ -1,5 +1,5 @@
 <template>
-    <WapModal  :show="show" @hide="hideModal" v-if="show">
+    <WapModal :show="show" @hide="hideModal" v-if="show">
           <h4 slot="title" class="modal-title">Thanks for updating Wappointment
           </h4>
           <div class="update-section">
@@ -17,7 +17,6 @@
             </ol>
           </div>
     </WapModal>
-
 </template>
 <script>
 import abstractView from '../Views/Abstract'
@@ -32,7 +31,6 @@ export default {
         slideshow: false,
         showCode: false
     }),
-
 
     computed:{
         getUpdateImg(){
@@ -84,8 +82,6 @@ export default {
         if(this.show){
             this.settingStaffSave('viewed_updates', true, this.settingsSaved) 
         }
-
-        
     },
 }
 </script>
