@@ -179,10 +179,10 @@ export default {
             return this.serviceUNotFree || this.serviceMNotFree
         },
         serviceUNotFree(){
-            return this.service.options.woo_sellable === true && this.service.options.woo_price > 0
+            return this.service !== false && this.service.options.woo_sellable === true && this.service.options.woo_price > 0
         },
         serviceMNotFree(){
-            return this.service.options.woo_sellable === true && this.service.options.durations !== undefined && this.service.options.durations[0].woo_price > 0
+            return this.service !== false && this.service.options.woo_sellable === true && this.service.options.durations !== undefined && this.service.options.durations[0].woo_price > 0
         },
         isStepForm(){
             return !this.appointmentSaved && !this.reschedulingSelectedSlot && this.selectedSlot
@@ -516,12 +516,14 @@ export default {
             this.setAvailableServices()
             this.testLockedStaff()
             this.autoSelService()
-
+            if(this.demoAs === true && this.service === false ){
+                this.service = this.services[0]
+            }
             if(this.service !== false){
                 this.duration = this.getFirstDuration(this.service)
                 this.location = this.service.type !== undefined ? false : (this.service.locations.length === 1 ? this.service.locations[0]:false) 
             } 
-            if(this.demoAs === true && !this.location){
+            if(this.demoAs === true && this.service!== false && !this.location){
                 this.location = this.service.locations[0]
             }
         },

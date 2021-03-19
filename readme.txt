@@ -139,6 +139,11 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 2.1.0 - 2021-03-19 =
+* Can create up to 3 services
+* Can create up to 2 calendars
+* Lot of interfaces improvements and bug fixes
+
 = 2.0.3 - 2021-03-01 =
 * Improved calendar synch 
 * Fixed issue with availability calculation on edge case
