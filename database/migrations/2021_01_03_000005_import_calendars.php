@@ -31,7 +31,7 @@ class ImportCalendars extends Wappointment\Installation\Migrate
                 'timezone' => $staff->timezone,
                 'avb' => $staff->getAvb(),
                 'avatar_id' => Settings::getStaff('avatarId'),
-                'calurl' => $staff->getCalendarUrls(),
+                'cal_urls' => $staff->getCalendarUrls(),
                 'dotcom' => $dotcom,
                 'gravatar' => $staff->gravatar
             ],
