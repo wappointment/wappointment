@@ -65,6 +65,7 @@ class Reset
 
     private function removeCoreSettings()
     {
+        WPHelpers::deleteOption('flags');
         WPHelpers::deleteOption('wizard_step');
         WPHelpers::deleteOption('subscribed_status');
 
@@ -77,6 +78,7 @@ class Reset
         WPHelpers::deleteOption('installation_step');
 
         WPHelpers::deleteOption('db_version');
+
 
         Settings::delete();
     }

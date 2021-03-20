@@ -33,6 +33,7 @@ class ServiceController extends RestController
             }
             $serviceDB = Services::save($dataService);
 
+
             $calendar = Calendar::first(); // add first service to existing calendar
             $calendar->services()->sync([$serviceDB->id]);
             return true;
