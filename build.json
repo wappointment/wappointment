@@ -43,16 +43,19 @@
             "vendor/giggsey/locale",
             "vendor/giggsey/libphonenumber-for-php/src/geocoding",
             "vendor/illuminate/pagination/resources",
-            "vendor/symfony/debug/Resources/ext",
+            "vendor/symfony/debug/Resources",
             "vendor/symfony/translation/Loader/schema",
             "vendor/symfony/translation/Resources"
         ],
         "files":[
+            "dist/bootstrap.js",
             "included/swiftmailer/swiftmailer/LICENSE", 
             "included/swiftmailer/swiftmailer/README",
             "vendor/composer/LICENSE", 
             "vendor/composer/installed.json",
-            "vendor/scoper-autoload.php" 
+            "vendor/scoper-autoload.php",
+            "vendor/symfony/http-kernel/Resources/welcome.html.php",
+            "vendor/doctrine/cache/lib/Doctrine/Common/Cache/RiakCache.php"
         ]
     }
   }
