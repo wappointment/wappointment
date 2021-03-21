@@ -40,7 +40,7 @@ class Calendars
 
         $validationRules = [
             'name' => 'required',
-            'avatar' => '',
+            'avatar_id' => '',
             'gravatar' => '',
             'timezone' => 'required',
             'id' => '',
@@ -120,7 +120,7 @@ class Calendars
     {
         $optiondb = !empty($calendarDB->options) ? $calendarDB->options : [];
         return array_merge($optiondb, [
-            'avatar' => $calendarData['avatar'],
+            'avatar_id' => $calendarData['avatar_id'],
             'gravatar' => $calendarData['gravatar'],
             'timezone' => $calendarData['timezone'],
             'regav' => static::regavClean($calendarData['regav']),

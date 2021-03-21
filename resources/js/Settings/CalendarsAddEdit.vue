@@ -145,9 +145,11 @@ export default {
             this.request(this.getAvatarRequest,{id:value},undefined,false,this.avatarLoaded)
         }else{
             this.calendarSelected.avatar = ''
+            this.calendarSelected.avatar_id = ''
         }
     },
     avatarLoaded(response){
+        this.calendarSelected.avatar_id = response.data.id
         this.calendarSelected.avatar = response.data.avatar
     },
     async getAvatarRequest(params){

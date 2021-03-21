@@ -49,8 +49,8 @@ class CalendarsController extends RestController
 
     public function getAvatar(Request $request)
     {
-        $avatar = wp_get_attachment_image_src($request->input('id'));
-        return ['avatar' => $avatar[0]];
+        $avatar = wp_get_attachment_image_src((int)$request->input('id'));
+        return ['avatar' => $avatar[0], 'id' => (int)$request->input('id')];
     }
 
 
