@@ -2,6 +2,8 @@
 
 namespace Wappointment\Addons;
 
+use Wappointment\WP\Helpers as WPHelpers;
+
 abstract class AbstractBoot implements Boot
 {
     public static $addon_key;
@@ -17,6 +19,7 @@ abstract class AbstractBoot implements Boot
     public static $has_installation;
     public static $setting_key;
     public static $instructions;
+    public static $addon_db_version_required;
 
     public static function getAddonSlug()
     {
@@ -34,9 +37,25 @@ abstract class AbstractBoot implements Boot
         static::installedFilters();
     }
 
+    public static function addToListOfDbUpdates($addons_require_db_update)
+    {
+        if (method_exists(static::$name_space . 'Boot', 'runDbMigrate')) {
+            $addons_require_db_update[] = [
+                'key' => static::$addon_key,
+                'namespace' => static::$name_space . 'Boot',
+            ];
+        }
+
+        return $addons_require_db_update;
+    }
+
+    public static function isInstalledOrdoesntRequireInstallation()
+    {
+        return !static::$has_installation || static::isInstalled();
+    }
     public static function addonStatusWrapper($package)
     {
-        if (static::isInstalled()) {
+        if (static::isInstalledOrdoesntRequireInstallation()) {
             $package->initial_wizard = static::isSetup();
             if (is_array(static::$instructions) && count(static::$instructions) > 0) {
                 $package->instructions = static::$instructions;
@@ -50,6 +69,40 @@ abstract class AbstractBoot implements Boot
             }
         }
         return $package;
+    }
+
+    public static function requiresDbUpdate()
+    {
+        if (static::$addon_db_version_required) {
+            return static::addonDbVersion() === false ? true : version_compare(static::addonDbVersion(), static::$addon_db_version_required) < 0;
+        }
+        return false;
+    }
+
+    public static function getAddonsVersions($reset = false)
+    {
+        static $addons_versions = false;
+        if ($addons_versions === false) {
+            $addons_versions = WPHelpers::getOption('addons_db_version', []);
+        }
+        if ($reset !== false) {
+            $addons_versions = $reset;
+        }
+        return $addons_versions;
+    }
+
+    public static function addonDbVersion()
+    {
+        $addons_versions = static::getAddonsVersions();
+        return !empty($addons_versions[static::$addon_key]) ? $addons_versions[static::$addon_key] : false;
+    }
+
+    public static function setAddonDbVersion()
+    {
+        $addons_versions = static::getAddonsVersions();
+        $addons_versions[static::$addon_key] = static::$addon_db_version_required;
+        static::getAddonsVersions($addons_versions);
+        return WPHelpers::setOption('addons_db_version', $addons_versions);
     }
 
     public static function canRun()
@@ -75,7 +128,7 @@ abstract class AbstractBoot implements Boot
                 static::backSetup();
             }
 
-            if (static::isInstalled()) {
+            if (static::isInstalledOrdoesntRequireInstallation()) {
                 wp_enqueue_script(static::$addon_key . '_back', plugins_url(static::getAddonSlug() . '/dist/back.js'), [], static::$addon_version, true);
 
                 if (static::$has_front_script) {
@@ -95,11 +148,19 @@ abstract class AbstractBoot implements Boot
         return $data;
     }
 
+    public static function requiresUpdateCheck()
+    {
+        if ((is_admin() || strpos($_SERVER['REQUEST_URI'], 'wappointment/v1/app/migrate') !== false) && static::requiresDbUpdate()) {
+            add_filter('wappointment_addons_requires_update', [static::$name_space . 'Boot', 'addToListOfDbUpdates']);
+        }
+    }
+
     public static function hooksAndFiltersWhenInstalled()
     {
+
         add_filter('wappointment_viewdata_' . static::$addon_settings, [static::$name_space . 'Boot', 'getMainSettings']);
         if (static::$has_front_script) {
-            add_action('wappointment_enqueue_front_' . static::$addon_key, ['\\WappointmentAddonWoocommerce\\Boot', 'frontEnqueue']);
+            add_action('wappointment_enqueue_front_' . static::$addon_key, [static::$name_space . 'Boot', 'frontEnqueue']);
         }
     }
 
@@ -119,9 +180,20 @@ abstract class AbstractBoot implements Boot
         $addons[static::$addon_key] = [
             'name' => static::$addon_name,
             'icon' => static::$addon_settings_icon,
-            'settings' => (bool) static::$has_settings
+            'settings' => (bool) static::$has_settings,
         ];
+
+        if (is_admin() && version_compare(static::convertVersionToMajor(WAPPOINTMENT_VERSION), static::convertVersionToMajor(static::$addon_version)) === 1) {
+            $addons[static::$addon_key]['requires_update'] = static::convertVersionToMajor(WAPPOINTMENT_VERSION) . '.0';
+        }
         return $addons;
+    }
+
+    protected static function convertVersionToMajor($version)
+    {
+        $vexplode = explode('.', $version);
+        array_pop($vexplode);
+        return implode('.', $vexplode);
     }
 
     public static function jsVariables($var)

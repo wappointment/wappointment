@@ -25,8 +25,9 @@ class RequiredIfHas extends \Rakit\Validation\Rules\Required
 
         $validator = $this->validation->getValidator();
         $required_validator = $validator('required');
+        $anotherValues = !is_array($anotherValues) ? [$anotherValues] : $anotherValues;
 
-        if (is_array($anotherValues) && count($anotherValues) > 0) {
+        if (count($anotherValues) > 0) {
             foreach ($anotherValues as $anotherValue) {
                 if (in_array($anotherValue, $definedValues)) {
                     $this->setAttributeAsRequired();

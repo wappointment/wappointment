@@ -4,7 +4,7 @@
             {{ label}}
         </label>
         <div class="picture-edit">
-            <div @click="changePicture" class="text-center preview-fimage" :class="{'preview-selected':hasImage}">
+            <div @click="changePicture" class="text-center clickable" role="button" :class="{'preview-selected':hasImage, 'preview-fimage':parseInt(preview.width)  < 80}">
                 <div class="fimage-edit">
                     <div v-if="hasImage" >
                         <div :style="getImageStyle" class="img-bg d-flex justify-content-center align-items-center"></div>
@@ -17,8 +17,9 @@
                 <h4 slot="title" class="modal-title">Select an Image</h4>
                 <div>
                     <div v-if="selected_image !== null && selected_image.media_details.sizes !== undefined">
-                        <div class="btn btn-secondary" 
-                        v-for="(image_size, thumbkey) in getImagesThumb(selected_image.media_details.sizes)"  @click="changeSize(image_size)">
+                        <div v-for="(image_size, thumbkey) in getImagesThumb(selected_image.media_details.sizes)"
+                        class="btn btn-secondary mr-2 btn-cell" :class="{selected: isSelectedSize(image_size.key)}"
+                        @click="changeSize(image_size)">
                             <div class="text-center">
                                 <img :src="image_size.source_url" :width="setImageWidth(image_size)" />
                                 <div>
@@ -27,9 +28,9 @@
                             </div>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center" v-if="hasImage">
+                    <div class="d-flex align-items-center mt-2" v-if="hasImage">
                         <div class="mr-4">
-                            <img :src="wp_image.src" class="img-fluid rounded" :width="preview.width">
+                            <img :src="wp_image.src" class="img-fluid rounded" :width="preview.width" />
                         </div>
                         <div>
                             <a class="btn btn-secondary" href="javascript:;" @click.prevent.stop="clearImage">Clear</a>
@@ -72,7 +73,7 @@ export default {
     },
     data() {
         return {
-            isHover:false,
+            isHover: false,
             edit: false,
             size: 'thumbnail',
             preview: {
@@ -83,16 +84,18 @@ export default {
             showing_images: 21,
             selected_image: null,
             selected_size: null,
-            wp_image: {}
+            wp_image: {},
+            rounded: false
         } 
     },
     created(){
-        if([undefined,''].indexOf(this.src) === -1)    this.wp_image.src = this.src
+        if([undefined,''].indexOf(this.src) === -1) this.wp_image.src = this.src
         if(Object.keys(this.wp_image).length == 0) this.wp_image = Object.assign({},this.value)
         this.size = this.definition.size !== undefined ? this.definition.size:this.size
         this.preview = this.definition.preview !== undefined ? this.definition.preview:this.preview
     },
     computed:{
+        
         hasImage(){
             return this.wp_image !== undefined && this.wp_image.src !== undefined
         },
@@ -109,6 +112,9 @@ export default {
         }
     },
     methods:{
+        isSelectedSize(testedKey){          
+            return this.selected_size !== null && this.selected_size.key !== undefined && this.selected_size.key == testedKey
+        },
         confirmSelectedImage(){
             this.close()
             this.updatedValue = this.wp_image
@@ -190,8 +196,9 @@ export default {
     .fimage-edit i.dashicons{
         width: 50px;
         height: 50px;
-        font-size: 50px;
+        font-size: 40px;
         color: #b9b6b6;
+        padding-top: 5px;
     }
 
 
@@ -225,10 +232,9 @@ export default {
         cursor: pointer;
         border-radius: .2rem;
         overflow: hidden;
+        border-radius: 50%;
     }
-    .preview-fimage.preview-selected{
-        border-radius: 2rem;
-    }
+
     .preview-fimage:hover{
         border: 1px solid #6664cb;
     }

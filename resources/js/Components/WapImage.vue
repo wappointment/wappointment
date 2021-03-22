@@ -13,7 +13,7 @@ export default {
     components: { FontAwesomeIcon },
     props:{
         element:{
-            type: Object
+            type: [Object, String]
         },
         config:{
             type: Object,
@@ -36,9 +36,13 @@ export default {
     },
     computed:{
         getIcon(){
+            let type = this.element
+            if(this.element !== undefined && typeof this.element == 'object' && [undefined, ''].indexOf(this.element.options.icon) !== -1){
+                type = this.element.type
+            }   
 
-            if(this.element !== undefined && [undefined, ''].indexOf(this.element.options.icon) !== -1){
-                switch(this.element.type) {
+            if([false,undefined, ''].indexOf(type) === -1 ){
+                switch(type) {
                     case 5:
                     case '5':
                     case 'zoom':
@@ -55,10 +59,10 @@ export default {
                     case '1':
                     case 'physical':
                         return 'map-marked-alt'
-                    default:
-                        return undefined
                 }
             }
+            
+
             if(this.faIcon != ''){
                 return this.faIcon
             }
@@ -72,10 +76,7 @@ export default {
             if(this.size == 'md'){
                 return '2x'
             }
-  /*           if(['auto', 'md'].indexOf(this.size) !== -1){
-                return ''
-            } */
-            //console.log('this.size', Date.now(), this.size)
+
             return this.size
         },
         getClassIcon(){

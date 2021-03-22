@@ -1,14 +1,14 @@
 <template>
     <div>
         <template v-if="view.indexOf('addonView') === 0">
-          <component :is="view" @loading="changeLoading" :options="options" :momenttz="momenttz" :convertDateFormat="convertDateFormat"></component>
+          <component :is="view" @loading="changeLoading" :options="options" :momenttz="momenttz" :convertDateFormat="convertDateFormat" />
         </template>
         <template v-else>
             <div v-if="loadedAppointment">
                 <div class="summary-event" :class="view">
-                    <h2 v-if="!isSaveEventPage">{{getText('title')}}</h2>
+                    <h2 v-if="!isSaveEventPage">{{ getText('title') }}</h2>
                     <div>{{ client.name }} - {{ client.email }}</div>
-                    <div><strong>{{ service.name }}</strong> - <span class="wduration">{{service.duration}}{{getMinText}}</span></div>
+                    <div><strong>{{ service.name }}</strong> - <span class="wduration">{{getDuration}}{{getMinText}}</span></div>
                     <div :class="{'old-schedule': justRescheduled}">
                         <strong class="date-start">{{ startDatei18n }}</strong> 
                         <span v-if="!justRescheduled">{{timeLeft}}</span>
@@ -24,21 +24,23 @@
                     <div>
                         <p>{{options.confirmation.savetocal}}</p>
                         <SaveButtons :selectedSlot="selectedSlot" :service="service" :appointment="appointment"
-                        :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected"></SaveButtons>
+                        :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected" />
                     </div>
                 </div>
                 <div v-else>
-                    <RescheduleForm v-if="showReschedule" :appointmentkey="appointmentkey" :rescheduleData="rescheduleData" :options="options" @changedStep="changedRescheduleStep"></RescheduleForm>
+                    <RescheduleForm v-if="showReschedule" 
+                    :appointmentkey="appointmentkey" :rescheduleData="rescheduleData" :options="options" 
+                    @changedStep="changedRescheduleStep" />
                     <div v-if="showCancelConfirmation">
                         <div v-if="appointmentCanceled">
-                            <p class="h4">{{getText('confirmed')}}</p>
+                            <p class="h4">{{ getText('confirmed') }}</p>
                         </div>
                         <div v-else>
                             <div v-if="loading">
-                                <WLoader></WLoader>
+                                <WLoader />
                             </div>
                             <div v-else>
-                                <p class="h4">{{getText('confirmation')}}</p>
+                                <p class="h4">{{ getText('confirmation') }}</p>
                                 <button class="wbtn wbtn-primary" @click="cancelAppointmentConfirmed">{{getText('confirm')}}</button>
                             </div>
                         </div>
@@ -46,19 +48,19 @@
                     <div v-if="!buttonClicked">
                         <template v-if="isReschedulePage">
                             <button v-if="canStillReschedule" class="wbtn wbtn-primary" :class="'wbtn-'+view" @click="rescheduleEvent">{{getText('button')}}</button>
-                            <p class="h4" v-else>{{getText('toolate')}}</p>
+                            <p class="h4" v-else>{{ getText('toolate') }}</p>
                         </template>
                         
                         <template v-if="isCancelPage">
                             <button v-if="canStillCancel" class="wbtn wbtn-primary" :class="'wbtn-'+view" @click="cancelAppointment">{{getText('button')}}</button>
-                            <p class="h4" v-else>{{getText('toolate')}}</p>
+                            <p class="h4" v-else>{{ getText('toolate') }}</p>
                         </template>
                     </div>
                 </div>
             </div>
             <div v-else>
                 <div v-if="loading">
-                    <WLoader></WLoader>
+                    <WLoader />
                 </div>
                 <div v-else>{{errorLoading}}</div>
             </div>
@@ -224,7 +226,6 @@ export default {
             this.appointmentCanceled = true
         },
         appointmentCancelError(){
-            //console.log('couldnt cancel')
         },
         rescheduleEvent(){
             if(this.disabledButtons) return false
@@ -238,6 +239,9 @@ export default {
         
     },
     computed: {
+        getDuration(){
+            return this.appointment.duration_sec / 60
+        },
         justRescheduled(){
             return this.showReschedule && this.rescheduledConfirmed
         },

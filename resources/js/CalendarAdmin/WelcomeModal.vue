@@ -63,7 +63,7 @@
 </template>
 
 <script>
-import BookingPageButton from '../Components/Widget/BookingPageButton'
+import BookingPageButton from '../Settings/BookingPageButton'
 import WappointmentService from '../Services/V1/Wappointment'
 import abstractView from '../Views/Abstract'
 export default {

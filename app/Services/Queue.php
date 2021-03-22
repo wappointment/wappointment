@@ -184,56 +184,78 @@ class Queue
 
     public static function cancelAppointmentJob($appointment_id)
     {
-        Job::where('queue', '!=', 'availability')
+        Job::where('queue', '=', 'client')
             ->where('appointment_id', (int)$appointment_id)
             ->delete();
     }
 
-    public static function cancelDailyJob()
+
+    public static function cancelJob($queue = 'daily', $staff_id_only = false)
     {
-        Job::where('queue', 'daily')
-            ->delete();
-    }
-
-    public static function queueDailyJob()
-    {
-        self::cancelDailyJob();
-
-        $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
-            Settings::get('daily_summary_time'),
-            0,
-            0,
-            Settings::getStaff('timezone')
-        );
-
-        if ($available_at->timestamp < time()) {
-            $available_at->addDay();
+        $query = Job::where('queue', $queue);
+        if ($staff_id_only) {
+            $query->where('appointment_id', $staff_id_only);
         }
-
-        self::push('Wappointment\Jobs\AdminEmailDailySummary', [], 'daily', $available_at->timestamp);
+        $query->delete();
     }
 
-    public static function cancelWeeklyJob()
+    public static function cancelDailyJob($staff_id_only = false)
     {
-        Job::where('queue', 'weekly')
-            ->delete();
+        static::cancelJob('daily', $staff_id_only);
+    }
+    public static function cancelWeeklyJob($staff_id_only = false)
+    {
+        static::cancelJob('weekly', $staff_id_only);
     }
 
-    public static function queueWeeklyJob()
+    public static function queueDailyJob($staff_id_only = false)
     {
-        self::cancelWeeklyJob();
+        self::cancelDailyJob($staff_id_only);
 
-        $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
-            Settings::get('weekly_summary_time'),
-            0,
-            0,
-            Settings::getStaff('timezone')
-        );
+        $sumary_time = Settings::get('daily_summary_time');
+        foreach (Staff::get() as $staff) {
+            if ($staff_id_only !== false && $staff_id_only !== $staff['id']) {
+                continue;
+            }
+            $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
+                $sumary_time,
+                0,
+                0,
+                $staff['t']
+            );
 
-        while ($available_at->timestamp < time() || !$available_at->isDayOfWeek(Settings::get('weekly_summary_day'))) {
-            $available_at->addDay();
+            if ($available_at->timestamp < time()) {
+                $available_at->addDay();
+            }
+
+            self::push('Wappointment\Jobs\AdminEmailDailySummary', ['staff_id' => $staff['id']], 'daily', $available_at->timestamp);
         }
+    }
 
-        self::push('Wappointment\Jobs\AdminEmailWeeklySummary', [], 'weekly', $available_at->timestamp);
+
+
+    public static function queueWeeklyJob($staff_id_only = false)
+    {
+        self::cancelWeeklyJob($staff_id_only);
+        $summary_time = Settings::get('weekly_summary_time');
+        $summary_day = Settings::get('weekly_summary_day');
+
+        foreach (Staff::get() as $staff) {
+            if ($staff_id_only !== false && $staff_id_only !== $staff['id']) {
+                continue;
+            }
+            $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
+                $summary_time,
+                0,
+                0,
+                $staff['t']
+            );
+
+            while ($available_at->timestamp < time() || !$available_at->isDayOfWeek($summary_day)) {
+                $available_at->addDay();
+            }
+
+            self::push('Wappointment\Jobs\AdminEmailWeeklySummary', ['staff_id' => $staff['id']], 'weekly', $available_at->timestamp);
+        }
     }
 }

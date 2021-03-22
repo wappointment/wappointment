@@ -11,6 +11,8 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
 {
 
     protected $sections = null;
+    protected $date_start_string = '';
+    protected $date_end_string = '';
 
     public function startWeek()
     {
@@ -22,24 +24,30 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         return $this->tomorrowCarbon()->addDays(6);
     }
 
+    private function loadNextWeekData()
+    {
+        $this->staff = $this->getStaff();
+        $this->tz = $this->staff->timezone;
+        $this->date_start_string = $this->startWeek()->toDateString();
+        $this->date_end_string = $this->endWeek()->toDateString();
+        $this->subject = 'Weekly summary ' . $this->date_start_string . ' - ' . $this->date_end_string;
+
+        $this->sections = new Sections($this->startWeek()->timestamp, $this->endWeek()->timestamp, $this->staff, $this->isLegacy());
+    }
+
     public function loadContent()
     {
         $this->loadNextWeekData();
-        $startingDay = $this->startWeek();
-        $endDay = $this->endWeek();
-        $date_start_string = $startingDay->toDateString();
-        $date_end_string = $endDay->toDateString();
-        $this->subject = 'Weekly summary ' . $date_start_string . ' - ' . $date_end_string;
+
+
         $this->addLogo();
         $this->addBr();
-        $this->tz = Settings::getStaff('timezone');
         $serviceDurationInSeconds = Service::get()['duration'] * 60;
         $coverage = $this->sections->getCoverage($serviceDurationInSeconds);
 
-        $staff = new \Wappointment\WP\Staff;
         $lines = [
-            'Hi ' . $staff->getFirstName() . ', ',
-            'Here is a summary of your appointments for this week: ' . $date_start_string . ' - ' . $date_end_string
+            'Hi ' .  $this->staff->getFirstName() . ', ',
+            'Here is a summary of your appointments for this week: ' . $this->date_start_string . ' - ' . $this->date_end_string
         ];
 
         if (!empty($coverage)) {
@@ -65,7 +73,7 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
             );
         }
 
-        $this->getAppointmentsListWeek($startingDay, $endDay);
+        $this->getAppointmentsListWeek($this->startWeek(), $this->endWeek());
 
         $this->addLines([
             'Have a great week!',
@@ -96,10 +104,5 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         }
 
         $this->addRoundedSquare($appointmentSumarry);
-    }
-
-    private function loadNextWeekData()
-    {
-        $this->sections = new Sections($this->startWeek()->timestamp, $this->endWeek()->timestamp);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Wappointment\Services;
 
+use Wappointment\Models\Location;
 use Wappointment\Validators\HasValues;
 use Wappointment\Validators\RequiredIfHas;
 
@@ -80,7 +81,7 @@ class Service implements ServiceInterface
 
     public static function all()
     {
-        return apply_filters('wappointment_get_services', [static::get()]);
+        return [static::get()];
     }
 
     public static function hasZoom($service)
@@ -92,6 +93,61 @@ class Service implements ServiceInterface
     {
         foreach (Reminder::getSeeds($types) as $reminder) {
             Reminder::save($reminder);
+        }
+    }
+
+    public static function updateLocations($types, $options, $address)
+    {
+        $typeId = [];
+        foreach ($types as $type_name) {
+            $typeId[] = static::getLocationTypeId($type_name);
+        }
+        $locations = Location::whereIn('type', $typeId)->get();
+        $types = [];
+        foreach ($locations as $location) {
+            $optionsTemp = $location->options;
+            if ($location->type == Location::TYPE_ZOOM) {
+                $optionsTemp['video'] = $options['video'];
+                $types[] = 'zoom';
+            }
+            if ($location->type == Location::TYPE_AT_LOCATION) {
+                $optionsTemp['address'] = $address;
+                $types[] = 'physical';
+            }
+            if ($location->type == Location::TYPE_PHONE) {
+                $optionsTemp['countries'] = $options['countries'];
+                $types[] = 'phone';
+            }
+            $location->options = $optionsTemp;
+            $location->save();
+        }
+
+        if (!Flag::get('remindersSaved')) {
+            foreach (Reminder::getSeeds($types) as $reminder) {
+                Reminder::save($reminder);
+            }
+
+            Flag::save('remindersSaved', true);
+        }
+
+        return $locations->map(function ($locationObj) {
+            return $locationObj->id;
+        });
+    }
+
+    public static function getLocationTypeId($type_name)
+    {
+        if ($type_name == 'skype') {
+            return Location::TYPE_SKYPE;
+        }
+        if ($type_name == 'zoom') {
+            return Location::TYPE_ZOOM;
+        }
+        if ($type_name == 'physical') {
+            return Location::TYPE_AT_LOCATION;
+        }
+        if ($type_name == 'phone') {
+            return Location::TYPE_PHONE;
         }
     }
 }

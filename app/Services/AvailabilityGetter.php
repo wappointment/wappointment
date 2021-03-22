@@ -2,73 +2,108 @@
 
 namespace Wappointment\Services;
 
-use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\WP\StaffLegacy;
 
 class AvailabilityGetter
 {
-    private $staff = [];
     public $start_at = false;
     public $end_at = false;
+    private $isLegacy = true;
+    private $availabilityProcessed = [];
 
     /**
      * start_at & end_at utc timestamps
      */
-    public function __construct($start_at = false, $end_at = false)
+    public function __construct($staff = null, $start_at = false, $end_at = false)
     {
         $this->start_at = $start_at;
         $this->end_at = $end_at;
-
-        foreach (Staff::getIds() as $staff_id) {
-            $this->staff[$staff_id] = [
-                'availability' => $this->getSection($staff_id),
-                'timezone' => Settings::getStaff('timezone', $staff_id),
-                'ra' => Settings::getStaff('regav', $staff_id),
-            ];
+        if (!empty($staff)) {
+            $this->isLegacy = false;
+            $this->selectedStaff = $staff;
+        } else {
+            $this->selectedStaff = new StaffLegacy;
         }
     }
 
-
-    public function getStaff($staff_id)
+    public function isAvailable()
     {
-        return $this->staff[$staff_id]['availability'];
+
+        foreach ($this->getAvail() as $segment) {
+            if ($segment[0] <= $this->start_at && $segment[1] >= $this->end_at) {
+                return true;
+            }
+        }
+        return false;
     }
 
-    private function getSection($staff_id)
+    public function getSections()
     {
-        $availabilities = WPHelpers::getStaffOption('availability', $staff_id);
-        if (!$this->start_at || !$this->end_at) {
+        $availabilities = $this->getAvail();
+        if (!$this->start_at) { //no section specified, we take it all
             return $availabilities;
         }
 
         //Unused
         $new_availability = [];
         foreach ($availabilities as $availability) {
-            if (($availability[0] >= $this->start_at && $availability[0] < $this->end_at)
-                || ($availability[1] > $this->start_at && $availability[1] <= $this->end_at)
-            ) {
-                $new_availability[] = $availability;
-                if ($availability[0] >= $this->start_at && $availability[1] <= $this->end_at) {
+            if ($this->isIntersecting($availability)) {
+                if ($this->isIncluded($availability)) {
                     $new_availability[] = $availability;
-                } elseif ($availability[0] >= $this->start_at && $availability[1] >= $this->end_at) {
+                } elseif ($this->isEndingLater($availability)) {
                     $new_availability[] = [$availability[0], $this->end_at];
-                } elseif ($availability[0] <= $this->start_at && $availability[1] <= $this->end_at) {
+                } elseif ($this->isStartingEarlier($availabilities)) {
                     $new_availability[] = [$this->start_at, $availability[1]];
-                } elseif ($availability[0] <= $this->start_at && $availability[1] >= $this->end_at) {
+                } elseif ($this->isStartingEarlierAndEndingLater($availability)) {
                     $new_availability[] = [$this->start_at, $this->end_at];
                 }
             }
         }
-
+        // dd($new_availability, $this->start_at, $this->end_at, $availabilities);
         return $new_availability;
     }
 
-    public function isAvailable($start_at, $end_at, $staff_id)
+    protected function getAvail()
     {
-        foreach ($this->staff[$staff_id]['availability'] as $segment) {
-            if ($segment[0] <= $start_at && $segment[1] >= $end_at) {
-                return true;
-            }
-        }
-        return false;
+        return $this->isLegacy ? $this->selectedStaff->getAvailability() : $this->selectedStaff->availability;
+    }
+    /**
+     * Start section >= start limit && start section < end limit
+     * OR
+     * End section > start limit && end section <= end limit
+     */
+    protected function isIntersecting($availability)
+    {
+        // echo "\n" . '<br/>' .  $availability[0] . ' ' . $availability[1];
+        // echo "\n" . '<br/>' .  $this->start_at . ' ' . $this->end_at;
+        // echo "\n" . '<br/>' . '$availability[0] >= $this->start_at ' . ($availability[0] >= $this->start_at ? 'true' : 'false');
+        // echo "\n" . '<br/>' . '$availability[0] < $this->end_at ' .  ($availability[0] < $this->end_at ? 'true' : 'false');
+        // echo "\n" . '<br/>' . '$availability[1] > $this->start_at ' .  ($availability[1] > $this->start_at ? 'true' : 'false');
+        // echo "\n" . '<br/>' . '$availability[1] <= $this->end_at ' .  ($availability[1] <= $this->end_at ? 'true' : 'false');
+        return ($availability[0] >= $this->start_at && $availability[0] < $this->end_at)
+            || ($availability[1] > $this->start_at && $availability[1] <= $this->end_at);
+    }
+
+    protected function isStartingEarlierAndEndingLater($availability)
+    {
+        return $availability[0] <= $this->start_at && $availability[1] >= $this->end_at;
+    }
+
+    protected function isStartingEarlier($availability)
+    {
+        return $availability[0] <= $this->start_at && $availability[1] <= $this->end_at;
+    }
+
+    protected function isEndingLater($availability)
+    {
+        return $availability[0] >= $this->start_at && $availability[1] >= $this->end_at;
+    }
+
+    /**
+     * Start section >= start limit && end section <= end limit
+     */
+    protected function isIncluded($availability)
+    {
+        return $availability[0] >= $this->start_at && $availability[1] <= $this->end_at;
     }
 }

@@ -16,7 +16,7 @@ class CreateLogsTable extends Wappointment\Installation\Migrate
             $table->increments('id');
             $table->unsignedTinyInteger('type')->default(0);
             $table->timestamps();
-            $table->mediumText('options')->nullable();
+            $table->text('options')->nullable();
             $table->unsignedInteger('client_id')->default(0);
         });
     }

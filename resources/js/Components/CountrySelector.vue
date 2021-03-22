@@ -4,11 +4,11 @@
             <WLoader />
         </div>
         <label v-if="label" for="search-field">{{ label }}</label>
-        <div v-if="selectedCountries.length>0" class="d-flex flex-wrap" >
+        <div v-if="selectedCountries.length>0" class="flags-wrapped" >
             
-            <div @click="clearSelection" class="btn btn-secondary btn-xs" role="button" >
-                <span class="dashicons dashicons-trash"></span> Clear countries
-            </div>
+            <a @click="clearSelection" href="javascript:;" role="button" class="clear" data-tt="Clear selection" >
+                <span class="dashicons dashicons-trash"></span> 
+            </a>
 
             <draggable class="d-flex flex-wrap countryselected" v-model="selectedCountries" @change="$emit('selected',selectedCountries)" draggable=".flg" >
                 <div v-for="(iso2, idx) in selectedCountries" v-if="iso2 !== undefined" class="flg m-2" :key="idx+iso2" 
@@ -271,8 +271,8 @@ export default {
                 'southern-africa': ['BW','LS','NA','ZA','SZ'],
                 'west-asia': ['AF','AM', 'AZ','GE','IR','KZ','KG','PK','TJ','UZ'],
                 'east-asia': ['BD','BT','IO','BN','KH','CN','HK','IN','ID','JP','LA','MO','MY','MV','MN','MM','NP','KP','PH','SG','KR','LK','TW','TH','TL','TM','VN'],
-                'europe-eu': ['AT','BE','CY','HR','BG','CZ','DK','EE','ES','FR','FI','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SE','SK','SI','GB'],
-                'europe-non-eu': ['AL','AD', 'BY','BA','FO','GI','GG','IS','IM','JE','XK','LI','MK','MD','MC','ME','NO','RU','SM','RS','SJ','CH','TR','UA','VA','AX'],
+                'europe-eu': ['AT','BE','CY','HR','BG','CZ','DK','EE','ES','FR','FI','DE','GR','HU','IE','IT','LV','LT','LU','MT','NL','PL','PT','RO','SE','SK','SI'],
+                'europe-non-eu': ['AD', 'AL', 'AX', 'BY','BA', 'FO', 'GB', 'GI', 'GG','IS','IM','JE','XK','LI','MK','MD','MC','ME','NO','RU','SM','RS','SJ','CH','TR','UA','VA'],
                 'middle-east': ['BH','IQ','IL','JO','KW','LB','OM','PS','QA','SA','SY','AE','YE'],
                 'north-america': ['CA','GL','MX','PR','PM','US'],
                 'central-america': ['BZ','CR','SV','GT','HN','NI','PA'],
@@ -481,7 +481,7 @@ export default {
   align-content: center;
   justify-content: center;
   position: relative;
-  padding: 7px;
+  padding: 8px 0;
   cursor: pointer;
 }
 .country-selector .dropdown.open {
@@ -523,7 +523,15 @@ export default {
 .d-flex.flex-wrap.countryselected {
     background-color: #f4f4f4;
     border: 2px dashed #ccc;
-    padding: .4rem;
-    margin: .6rem 0;
+    padding: 1rem;
+}
+.flags-wrapped{
+    position: relative;
+}
+.flags-wrapped .clear{
+    position: absolute;
+    right: 2px;
+    color: var(--gray);
+    top: 4px;
 }
 </style>

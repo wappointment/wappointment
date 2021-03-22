@@ -1,20 +1,21 @@
 <template>
     <div class="wap-bf" :class="{show: canBeBooked, 'has-scroll':requiresScroll}">
         <template v-if="canBeBooked">
-            <BookingFormHeader :staffs="getStaffs" 
+            <BookingFormHeader v-if="showHeader" 
             :isStepSlotSelection="isStepSlotSelection"
             :options="options"
             :service="service" 
             :services="services"
+            :staffs="getStaffs" 
             :duration="duration" 
             :location="location"
             :rescheduling="rescheduling"
             :appointmentSaved="appointmentSaved"
-            @refreshed="refreshClick"
+            :staff="selectedStaff"
+            @changeStaff="changeStaff"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
             @changeLocation="childChangedStep"
-            @changeStaff="childChangedStep"
             />
             <div class="wap-form-body" :id="getWapBodyId" >
                 <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
@@ -23,22 +24,21 @@
                 :service="service" 
                 :duration="duration" 
                 :services="services"
+                :staffs="getStaffs"
                 :rescheduling="rescheduling"
                 :startsAt="appointmentStartsAt"
                 :location="location"
                 :appointmentSaved="appointmentSaved"
-                @refreshed="refreshClick"
                 @changeService="childChangedStep"
                 @changeDuration="childChangedStep"
                 @changeLocation="childChangedStep"
-                @changeStaff="childChangedStep"
                 />
 
                 <div class="wrap-calendar p-2" :class="'step-'+currentStep">
                     <div v-if="loading">
-                        <Loader></Loader>
+                        <Loader />
                     </div>
-                    <div :class="{'hide-loading':loading}">
+                    <div v-if="currentStep!=''" :class="{'hide-loading':loading}">
                         <div v-if="currentStep == loadingStep && isCompVisible(currentStep)">
                             <component :is="getComp(currentStep)"
                             @hook:mounted="checkIfRequiresScrollDelay"
@@ -54,14 +54,13 @@
         </template>
         <div v-else>
             <div v-if="dataloaded" class="wappointment-errors">
-                <div v-if="service">No appointments available</div>
-                <div v-else>Service not ready</div>
+                <div>No appointments available</div>
             </div>
             <template v-else>
                 <div class="wappointment-errors" v-if="errorMessages.length > 0">
                     <div v-for="errorM in errorMessages">{{errorM}}</div>
                 </div>
-                <div v-else><Loader></Loader></div>
+                <div v-else><Loader /></div>
             </template>
         </div>
     </div>
@@ -70,8 +69,8 @@
 <script>
 import AbstractFront from './AbstractFront'
 import Intervals from '../Standalone/intervals'
-import Colors from "../Modules/Colors"
-import Dates from "../Modules/Dates"
+import Colors from '../Modules/Colors'
+import Dates from '../Modules/Dates'
 import BookingFormConfirmation from './Confirmation'
 import RescheduleConfirm from './RescheduleConfirm'
 import BookingCalendar from './Calendar'
@@ -81,9 +80,12 @@ import BookingFormSummary from './AppointmentSummary'
 import DurationCell from './DurationCell'
 BookingFormHeader.components = {DurationCell}
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
-import convertDateFormatPHPtoJS from '../Standalone/convertDateFormatPHPtoJS'
 import browserLang from '../Standalone/browserLang'
 import AppointmentTypeSelection from './AppointmentTypeSelection'
+import BookingServiceSelection from './ServiceSelection'
+import BookingDurationSelection from './DurationSelection'
+import BookingLocationSelection from './LocationSelection'
+import MixinLegacy from './MixinLegacy'
 
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
@@ -91,17 +93,20 @@ let compDeclared = {
     'BookingCalendar': BookingCalendar,
     'BookingFormInputs':BookingFormInputs,
     'BookingFormHeader': BookingFormHeader,
+    'BookingServiceSelection': BookingServiceSelection,
+    'BookingDurationSelection': BookingDurationSelection,
+    'BookingLocationSelection': BookingLocationSelection,
     'DurationCell': DurationCell,
     'abstractFront':AbstractFront,
     'BookingFormSummary': BookingFormSummary,
     'AppointmentTypeSelection': AppointmentTypeSelection
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
-let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Colors, Dates] )
+let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Colors, Dates, MixinLegacy] )
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
-     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid'],
+     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid', 'demoAs'],
      components: compDeclared, 
     data: () => ({
         viewName: 'availability',
@@ -126,7 +131,9 @@ export default {
         currentStep: 'BookingCalendar',
         loadingStep: '',
         converted:false,
-        requiresScroll: false
+        requiresScroll: false,
+        selectedStaff: null,
+        showHeader:true,
     }),
 
     mounted () {
@@ -134,7 +141,6 @@ export default {
         this.refreshInitValue()
         this.currentTz = this.tzGuess()
         this.createdAt = this.getUnixNow()
-        
     
         if(this.step !== null) {
             this.requiresScroll = true //booking widget editor requires scroll always
@@ -147,14 +153,15 @@ export default {
     },
 
     computed: {
+
+        isLegacyOrNotServiceSuite(){
+            return this.isLegacy || this.service.type !== undefined
+        },
         isCompactHeader(){
-            return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
+            return this.options.general === undefined || !this.__isEmpty(this.options.general.check_header_compact_mode)
         },
         appointmentStartsAt(){
             return this.converted 
-        },
-        getStaffs(){
-            return this.viewData.staffs !== undefined ? this.viewData.staffs:[]
         },
         serviceSelected(){
             return this.service !== false
@@ -163,10 +170,19 @@ export default {
             return this.duration !== false
         },
         locationSelected(){
-            return this.location !== false
+            return this.isLegacyOrNotServiceSuite || this.location !== false
         },
         slotSelected(){
             return this.selectedSlot !== false && this.selectedSlot > 0
+        },
+        serviceIsNotFree(){
+            return this.serviceUNotFree || this.serviceMNotFree
+        },
+        serviceUNotFree(){
+            return this.service !== false && this.service.options.woo_sellable === true && this.service.options.woo_price > 0
+        },
+        serviceMNotFree(){
+            return this.service !== false && this.service.options.woo_sellable === true && this.service.options.durations !== undefined && this.service.options.durations[0].woo_price > 0
         },
         isStepForm(){
             return !this.appointmentSaved && !this.reschedulingSelectedSlot && this.selectedSlot
@@ -188,7 +204,7 @@ export default {
        },
        
        staff(){
-           return this.getDefaultStaff()
+           return this.selectedStaff
        },
        timeprops(){
            let timeprops = {
@@ -203,13 +219,41 @@ export default {
            return timeprops
        },
        getStaffs(){
-           return this.viewData !== undefined && this.viewData.staffs !== undefined ? this.viewData.staffs: []
+           return this.__get(this,'viewData.staffs', [])
        },
        getWapBodyId(){
            return 'wapbody'+this.wrapperid
        }
     },
     methods: {
+        setStaff(newStaff){
+            this.selectedStaff = newStaff
+            this.setAvailableServices()
+            this.autoSelService()
+            this.refreshAvail()
+        },
+        changeStaff(newStaff){
+            this.service = false
+            this.location = false
+            this.setStaff(newStaff)
+            
+            this.showHeader = false
+
+            this.currentStep = ''
+            setTimeout(this.showHeaderLater.bind(null, this.selectFirstStep('BookingServiceSelection', 
+            {
+                service: this.service, 
+                location:this.location,
+                duration: this.duration
+            }
+            )), 100)
+            
+        },
+
+        showHeaderLater(newStep){
+            this.showHeader = true
+            this.childChangedStep(newStep)
+        },
         windowResized(){
             this.checkIfRequiresScroll()
         },
@@ -224,14 +268,11 @@ export default {
         loadStep(step){
             this.loadingStep = step
             this.fetchFormattedDate()
-            
         },
         checkIfRequiresScrollDelay(){
-            //console.log('first')
             setTimeout(this.checkIfRequiresScroll, 200)
         },
         checkIfRequiresScroll(){
-            //console.log('second')
             if(this.step !== null) {
                 return true //booking widget editor requires scroll always
             }
@@ -245,17 +286,8 @@ export default {
 
             let parentWindowHeight = wrapperDiv.scrollHeight - headHeight
             let heightDiv = document.getElementById(this.getWapBodyId).scrollHeight
-/*             let heightWindow = window.innerHeight / 100 * 95
-            console.log(heightDiv, heightWindow, parentWindowHeight) */
-            if(heightDiv > parentWindowHeight){
-                //add scrollbar
-                //console.log(' TRUE 85vh', heightDiv ,heightWindow)
-                this.requiresScroll = true
-            }else{
-                //remove scrollbar
-                //console.log(' FALSE 85vh',  heightDiv ,heightWindow)
-                this.requiresScroll = false
-            }
+
+            this.requiresScroll = heightDiv > parentWindowHeight // add or remove scrollbar
         },
         childChangedStep(newStep, dataChanged){
             if(typeof dataChanged == 'object' && Object.keys(dataChanged).length > 0) {
@@ -282,7 +314,6 @@ export default {
             return this.dataloaded && this.viewData.services[0] !== undefined ?this.viewData.services[0]:false
         },
         getCompProp(component_name){
-            
             let props = this.componentsList[component_name].props !== undefined ? this.componentsList[component_name].props:{}
             let nprops = {}
             for (const key in props) {
@@ -336,28 +367,53 @@ export default {
                 for (let i = 0; i < conditionKeys.length; i++) {
                     const keyCondition = conditionKeys[i]
                     if(this[keyCondition] !== conditions[keyCondition]) {
+                        if(this.componentsList[component_name].skip !== undefined){
+                            
+                            if(this.conditionSkipPass(component_name)){
+                                this.childChangedStep(this.componentsList[component_name].relations.next)
+                            }
+                            
+                        }
                         return false
                     }
                 }
             }
             return true
         },
-
-
-
-        refreshClick() {
-            if(!this.isStepSlotSelection) {
-                return false
+        conditionSkipPass(component_name){
+            let skipConditions = Object.keys(this.componentsList[component_name].skip)
+            for (let j = 0; j < skipConditions.length; j++) {
+                const keyConditionSkip = skipConditions[j]
+                if(this[keyConditionSkip] !== this.componentsList[component_name].skip[keyConditionSkip]) {
+                    return false
+                }
             }
-            this.currentStep = ''
-            this.loading = true
-            this.refreshInitValue()
+            return true
         },
 
+
         getDefaultStaff(){
-            if(this.viewData.staffs!== undefined && this.viewData.staffs.length > 0){
+            let ordered = []
+            if(this.viewData.staffs!== undefined && this.viewData.staffs.length > 1){
+                for (let i = 0; i < this.viewData.staffs.length; i++) {
+                    if(this.viewData.staffs[i].services.length > 0){
+                        ordered.push({
+                            id: i,
+                            start:this.viewData.staffs[i].availability[0][0],
+                            end:this.viewData.staffs[i].availability[0][1]
+                        }) 
+                    
+                    }
+                }
+                ordered.sort((a, b) => a.start > b.start)
+                return this.viewData.staffs[ordered[0].id]
+            }else{
                 return this.viewData.staffs[0]
             }
+        },
+        
+        refreshAvail(){
+            this.intervalsCollection = new Intervals(this.selectedStaff.availability)
         },
 
         loadedAfter() {
@@ -365,15 +421,20 @@ export default {
             this.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
 
             this.startDay = this.viewData.week_starts_on
-            let firstStaff = this.getDefaultStaff()
-            this.intervalsCollection = new Intervals(this.viewData.availability[firstStaff.id])
+            
+            if(this.viewData.staffs.length == 0){
+                this.dataloaded = true
+                return
+            }
+            this.selectedStaff = this.getDefaultStaff()
+            this.refreshAvail()
 
             this.setMomentLocale()
 
             this.dataloaded = true
-            
-            this.setServiceDurationLocation()
 
+            this.initServiceStaffDurationLocation()
+    
             this.setComponentLists()
 
             if(this.rescheduling) {
@@ -385,7 +446,10 @@ export default {
                 this.location = this.rescheduleData.location
 
             }else{
-                this.currentStep = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', {service:this.service, duration:this.duration, location: this.location})
+                let stepdata = {service:this.service, duration:this.duration, location: this.location}
+
+                let stepfirst = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', stepdata)
+                this.currentStep = this.selectFirstStep(stepfirst, stepdata)
                 this.autoSelectLocation()
             }
             this.$emit('changedStep',this.currentStep)
@@ -394,7 +458,15 @@ export default {
             if(this.loadedInit !== undefined){
                 this.loadedInit(this.step)
             }
-            
+        },
+
+        selectFirstStep(step_name, params) {
+            if(this.isLegacyOrNotServiceSuite === false){
+                if(params.service === false) return 'BookingServiceSelection'
+                if(params.service !== false && params.duration === false) return 'BookingDurationSelection'
+                if(params.service !== false && params.duration !== false && params.location === false) return 'BookingLocationSelection'
+            }
+            return step_name
         },
 
         autoSelectLocation(){
@@ -420,15 +492,66 @@ export default {
             
         },
 
-        setServiceDurationLocation(){
-            this.services = this.viewData.services
-
-            this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
+        setAvailableServices(){
+            if(this.viewData.services.length == 1 && this.viewData.services[0].type !== undefined){
+                this.services = this.viewData.services.filter(e => true)
+            }else{
+                let services_id = this.selectedStaff.services
+                this.services =  this.viewData.services.filter(e => services_id.indexOf(e.id) !== -1)
+            }
             
+        },
+        autoSelService(){
+            if(this.isLegacyOrNotServiceSuite){
+                this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
+            }else{
+                if(this.services.length == 1){
+                    this.service = this.services[0]
+                }else{
+                    this.testLockedService()
+                }
+            }
+        },
+        initServiceStaffDurationLocation(){
+            this.setAvailableServices()
+            this.testLockedStaff()
+            this.autoSelService()
+            if(this.demoAs === true && this.service === false ){
+                this.service = this.services[0]
+            }
             if(this.service !== false){
-                this.duration = this.service.duration !== undefined ? this.service.duration : window.wappointmentExtends.filter('durationDefault', this.service)
-                this.location = this.service.type !== undefined ? '' : window.wappointmentExtends.filter('locationDefault', this.service)
+                this.duration = this.getFirstDuration(this.service)
+                this.location = this.service.type !== undefined ? false : (this.service.locations.length === 1 ? this.service.locations[0]:false) 
             } 
+            if(this.demoAs === true && this.service!== false && !this.location){
+                this.location = this.service.locations[0]
+            }
+        },
+        testLockedStaff(){
+            if(this.options !== undefined && 
+            this.options.attributesEl !== undefined && 
+            this.options.attributesEl.staffSelection !== undefined){
+                for (let i = 0; i < this.viewData.staffs.length; i++) {
+                    if(parseInt(this.options.attributesEl.staffSelection) === parseInt(this.viewData.staffs[i].id)){
+                        return this.setStaff(this.viewData.staffs[i])
+                    }
+                }
+            }
+        },
+        testLockedService(){
+            if(this.options !== undefined && 
+                this.options.attributesEl !== undefined && 
+                this.options.attributesEl.serviceSelection !== undefined){
+                    for (let i = 0; i < this.services.length; i++) {
+                        if(parseInt(this.options.attributesEl.serviceSelection) === parseInt(this.services[i].id)){
+                            return this.service = this.services[i]
+                        }
+                    }
+                }
+        },
+
+        getFirstDuration(service){
+            return this.__get(service, 'options.durations.0.duration') || service.duration
         },
 
         setComponentLists(){
@@ -492,6 +615,7 @@ export default {
                     },
                     props: {
                         selectedSlot:"selectedSlot",
+                        selectedStaff:"selectedStaff",
                         timeprops: 'timeprops', 
                         service:"service",
                         duration:"duration",
@@ -501,6 +625,8 @@ export default {
                         options:"options",
                         relatedComps: 'relatedComps', 
                         appointment_starts_at: 'appointmentStartsAt',
+                        custom_fields: 'viewData.custom_fields',
+                        staffs:  'viewData.staffs'
                     },
                     listeners: {
                         back:'childChangedStep',
@@ -528,7 +654,7 @@ export default {
                         result:"dataSent",
                         options:"options",
                         isApprovalManual:"isApprovalManual",
-                        staff:"staff", 
+                        staff:"selectedStaff", 
                         appointment_starts_at: 'appointmentStartsAt',
                     },
                     listeners: {
@@ -537,10 +663,86 @@ export default {
 
                 },
             }
-            
+            if(!this.isLegacyOrNotServiceSuite){
+                componentsList = this.updateComponentList(componentsList)
+            }
             this.componentsList = window.wappointmentExtends.filter('componentsList', componentsList,
              {service: this.service, rescheduling:this.rescheduling} )
         },
+
+        updateComponentList(componentsList){
+
+            componentsList['BookingFormInputs'].props.custom_fields = "viewData.custom_fields"
+
+            componentsList['BookingCalendar'].props.location = "location"
+            componentsList['BookingCalendar'].props.viewData = "viewData"
+
+            componentsList['BookingServiceSelection'] = {
+                name: 'BookingServiceSelection',
+                conditions: {
+                    'serviceSelected':false,
+                    'appointmentSaved':false,
+                    'rescheduling':false,
+                },
+                props: {
+                    services:"services",
+                    options: 'options',
+                    viewData: 'viewData',
+                },
+                listeners: {
+                    serviceSelected:'childChangedStep'
+                },
+                relations:{
+                    'next': 'BookingDurationSelection',
+                }
+            }
+
+            componentsList['BookingDurationSelection'] = {
+                name: 'BookingDurationSelection',
+                conditions: {
+                    'serviceSelected':true,
+                    'durationSelected':false,
+                    'appointmentSaved':false,
+                    'rescheduling':false,
+                },
+                props: {
+                    service:"service",
+                    options: 'options'
+                },
+                listeners: {
+                    durationSelected:'childChangedStep',
+                    backToService:'childChangedStep'
+                },
+                relations:{
+                    'next': 'BookingLocationSelection',
+                    'prev': 'BookingServiceSelection',
+                }
+            }
+
+            componentsList['BookingLocationSelection'] = {
+                name: 'BookingLocationSelection',
+                conditions: {
+                    'serviceSelected':true,
+                    'durationSelected':true,
+                    'locationSelected':false,
+                    'appointmentSaved':false,
+                    'rescheduling':false,
+                },
+                props: {
+                    service:"service",
+                    options: 'options'
+                },
+                listeners: {
+                    locationSelected:'childChangedStep',
+                    backToDuration:'childChangedStep'
+                },
+                relations:{
+                    'next': 'BookingCalendar',
+                    'prev': 'BookingDurationSelection',
+                }
+            }
+            return componentsList
+        }
         
         
     }
@@ -557,20 +759,28 @@ export default {
     min-width: 280px;
 }
 
-
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;
     margin: .4em 0;
 }
 
-.wap-front .mr-2{
-    margin-right: .3em !important;
+.wap-front .mr-2,
+.wap-front .mx-2{
+    margin-right: .4em !important;
 }
-.wap-front .ml-2{
-    margin-left: .3em !important;
+.wap-front .ml-2,
+.wap-front .mx-2{
+    margin-left: .4em !important;
 }
-.wap-front .mb-2{
-    margin-bottom: .3em !important;
+
+.wap-front .mb-2,
+.wap-front .my-2{
+    margin-bottom: .4em !important;
+}
+
+.wap-front .mt-2,
+.wap-front .my-2{
+    margin-top: .4em !important;
 }
 .wap-front .p-2 {
     padding: .5em !important;
@@ -584,10 +794,12 @@ export default {
     overflow: hidden;
     margin-top: .3em;
 }
-.wap-front [data-tt] {
+.wap-front [data-tt]:not([data-tt=""]) {
+  cursor: pointer;
+}
+.wap-front [data-tt]:hover {
   position: relative;
   z-index: 2;
-  cursor: pointer;
 }
 
 .wap-front [data-tt]:before,
@@ -782,9 +994,11 @@ export default {
     padding: .375em .75em;
 }
 
-.wap-front .phone-field input.tel, .wap-front input.form-control {
+.wap-front .phone-field input.tel, 
+.wap-front input.form-control {
     font-size: 16px;
     height: calc(2.25em + 2px);
+    margin: 0;
 }
 
 .wap-front .form-control::-ms-expand {

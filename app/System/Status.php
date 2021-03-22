@@ -4,12 +4,14 @@ namespace Wappointment\System;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Settings;
+use Wappointment\Services\VersionDB;
+use Wappointment\Services\Flag;
 
 class Status
 {
     public static $version = WAPPOINTMENT_VERSION;
     private static $last_step = 4;
-    private static $db_version_required = '2.0.3';
+    private static $db_version_required = '2.1.0';
 
     public static function isInstalled()
     {
@@ -47,20 +49,36 @@ class Status
         return substr(WAPPOINTMENT_VERSION, 0, 3 - strlen(WAPPOINTMENT_VERSION));
     }
 
-
     public static function hasPendingUpdates()
     {
-        $current_version = self::dbVersion();
-
-        return version_compare($current_version, self::$db_version_required) < 0;
+        return static::coreRequiresDBUpdate() || static::addonRequiresDBUpdate();
     }
 
+    public static function coreRequiresDBUpdate()
+    {
+        return version_compare(self::dbVersion(), self::$db_version_required) < 0;
+    }
+
+    public static function addonRequiresDBUpdate()
+    {
+        $addons_updates = apply_filters('wappointment_addons_requires_update', []);
+        return !empty($addons_updates) ? $addons_updates : false;
+    }
+
+    public static function dotComNotSetYet()
+    {
+        if (VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES)) {
+            return empty(Settings::getStaff('dotcom')) && empty(Flag::get('dotcomSet'));
+        } else {
+            return empty(Settings::getStaff('dotcom'));
+        }
+    }
 
     public static function hasMessages()
     {
         //test if zoom is used and no account is connected
         $messages = [];
-        if (empty(Settings::getStaff('dotcom'))) {
+        if (static::dotComNotSetYet()) {
             $services = \Wappointment\Managers\Service::all();
 
             $services[] = $services[0];
@@ -71,7 +89,7 @@ class Status
                         'message' => 'Hey! You are using Video meetings, great for you! Generate meetings automatically with Zoom, Google meet etc ... by connecting these services',
                         'link' => [
                             'label' => 'Connect Account',
-                            'address' => '[goto_general_zoom_account]'
+                            'address' => '[goto_calendars_zoom_account]'
                         ]
                     ];
                     break;

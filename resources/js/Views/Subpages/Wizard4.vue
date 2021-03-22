@@ -17,7 +17,7 @@
 
 <script>
 import wizardLayout from '../abstractWizardLayout'
-import CreateBookingPage from '../../Components/Widget/CreateBookingPage' 
+import CreateBookingPage from '../../Settings/CreateBookingPage' 
 export default {
     extends: wizardLayout,
     data() {

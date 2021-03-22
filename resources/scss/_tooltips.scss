@@ -51,6 +51,15 @@
   opacity: 1;
 }
 
+.tt-lg[data-tt]::before{
+  min-width: 300px;
+}
+.tt-lg[data-tt]::before,
+.tt-lg[data-tt]::after{
+  bottom: 140%;
+  left: 10px;
+}
+
 .tt-below[data-tt]:before {
   top: 102%;
   bottom: auto;

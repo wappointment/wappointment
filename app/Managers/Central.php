@@ -2,6 +2,8 @@
 
 namespace Wappointment\Managers;
 
+use Wappointment\Services\VersionDB;
+
 /**
  * Singleton to replace specific core classes with addons classes
  */
@@ -15,11 +17,33 @@ class Central
         'Client' => [
             'class' => \Wappointment\Models\Client::class,
         ],
+        'ServiceModel' => [
+            'class' => \Wappointment\Models\Service::class,
+        ],
         'AppointmentModel' => [
             'class' => \Wappointment\Models\Appointment::class,
-        ]
+        ],
+        'CustomFields' => [
+            'class' => \Wappointment\Services\CustomFields::class,
+        ],
+        'CalendarModel' => [
+            'class' => \Wappointment\Models\Calendar::class,
+        ],
     ];
 
+    public function __construct()
+    {
+        $this->setOverride();
+        if (VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES)) {
+            $this->services['Service']['class'] = \Wappointment\Services\Services::class;
+        }
+    }
+
+    /**
+     * Class is statically generated when instance or get is called satically
+     *
+     * @return void
+     */
     public static function instance()
     {
         static $manager_instance = null;
@@ -65,5 +89,12 @@ class Central
             throw new \WappointmentException("Central: " . $serviceName . ' class ' . $class . ' not implementing ' . $service['implements'], 1);
         }
         $this->services[$serviceName]['class'] = $class;
+    }
+
+    private function setOverride()
+    {
+        foreach ($this->services as $serviceKey => $serviceDefinition) {
+            $this->services[$serviceKey] = apply_filters('wappointment_central_service_' . strtolower($serviceKey), $serviceDefinition);
+        }
     }
 }

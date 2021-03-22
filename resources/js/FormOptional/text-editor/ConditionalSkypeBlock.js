@@ -11,6 +11,6 @@ export default class ConditionalSkypeBlockNode extends ConditionalBlockNode {
 	}
 
 	get tooltip() {
-		return 'Show only for Skype appointment'
+		return 'Shows when Skype appointment'
 	}
 }

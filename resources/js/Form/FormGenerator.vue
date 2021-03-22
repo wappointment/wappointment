@@ -1,7 +1,7 @@
 <template>
     <form @submit.prevent.stop="submitTrigger" class="form-wrapppo" :class="classWrapper" :autocomplete="autocomplete?'on':'off'">
         <div v-if="!formIsReady" class="loading-overlay d-flex align-items-center">
-            <WLoader></WLoader>
+            <WLoader />
         </div>
         <div v-if="reload" class="fields-wrap" >
             <template v-for="(element, keydi) in schema">
@@ -10,7 +10,7 @@
                     :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
                         <div :class="{'d-none': inVisibles(subelement)}">
                             <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" 
-                            :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true"
+                            :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true" :minimal="minimal"
                             @loaded="loadedField(keydi, skeydi)"
                             v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement)" 
                             :definition="subelement"  :errors="getErrors(subelement)" />
@@ -21,13 +21,13 @@
                     <div :class="{'d-none': inVisibles(element)}">
                         <component :is="getFormComponent(element)" :value="getModelValue(element)" 
                         :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true"
-                    @loaded="loadedField(keydi)" :errors="getErrors(element)"
+                    @loaded="loadedField(keydi)" :errors="getErrors(element)" :minimal="minimal"
                     v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :definition="element"/>
                     </div>
                     
                 </div>
             </template>
-            <slot></slot>
+            <slot />
             <div v-if="buttons">
                 <button v-if="backbutton" class="btn btn-secondary" type="button" @click.prevent="$emit('back')">{{ backbuttonLabel }}</button>
                 <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent.stop="submitTrigger">{{ buttonLabel }}</button>
@@ -37,8 +37,6 @@
 </template>
 
 <script>
-import AbstractField from './AbstractField'
-import RequestMaker from '../Modules/RequestMaker'
 import eventsBus from '../eventsBus'
 import CoreFieldss from './CoreFields'
 import DotKey from '../Modules/DotKey'
@@ -101,7 +99,11 @@ export default {
         validStart: {
             type: Boolean,
             default:false
-        }
+        },
+        minimal: {
+            type: Boolean,
+            default:false
+        },
     },
     components: CoreFields.components,
     data: () => ({
@@ -129,9 +131,6 @@ export default {
     },
 
     computed: {
-        submittedErrors(){
-            return Object.keys(this.errors).length > 0
-        },
         hasErrors(){
             return Object.keys(this.errorsData).length > 0
         },
@@ -141,7 +140,7 @@ export default {
     },
     methods: {
         refresh(){
-            if(this.submittedErrors){
+            if(Object.keys(this.errors).length > 0){
                 this.errorsData = Object.assign({}, this.errors)
                 this.submitted = true
             }
@@ -157,6 +156,10 @@ export default {
             this.replaceRefresh = replaceRefresh
             setTimeout(this.reRenderDelay, 100)
         },
+        setErrors(errorsObject){
+            this.errorsData = errorsObject
+            this.reRender()
+        },
         reRenderDelay(){
             this.formIsReady = true
             this.reload = true
@@ -171,7 +174,6 @@ export default {
             let fieldsType = CoreFields.inputTypes
             let elementType = element.type.indexOf('-') === -1 ? 'core-'+element.type:element.type
 
-            
             return fieldsType[elementType]!== undefined ? fieldsType[elementType]:'FormFieldInput'
         },
         inVisibles(element){
@@ -318,7 +320,6 @@ export default {
             for (let j = 0; j < values.length; j++) {
                 const value = values[j]
                 
-                //console.log('value match',condition.values, value, condition.values.indexOf(value))
                 if(condition.values.indexOf(value) !== -1){
                     at_least_one = true
                 }
@@ -443,8 +444,6 @@ export default {
          },
          runValidation(){
 
-             //this.errorsData = {}
-             //console.log('runvaldiation mholder', this.modelHolder)
              const modelKeys = Object.keys(this.modelHolder)
              this.isValid = true
              for (let i = 0; i < modelKeys.length; i++) {

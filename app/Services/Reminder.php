@@ -178,6 +178,9 @@ class Reminder
                 ['h3' => 'Click [ label="here" link="linkView"] to begin the meeting']
             ]
         ];
+        if (!is_array($types)) {
+            $types = ['physical', 'phone', 'skype', 'zoom'];
+        }
         if (count($types) > 1) {
             foreach ($types as $type) {
                 $email_confirmed[] = [$type => $messageService[$type]];

@@ -6,6 +6,8 @@ use Wappointment\ClassConnect\Carbon;
 use Wappointment\Models\Status as MStatus;
 use Wappointment\Models\Appointment;
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Managers\Central;
+use Wappointment\WP\StaffLegacy;
 
 class Availability
 {
@@ -16,23 +18,58 @@ class Availability
     private $timezone = '';
     private $regav = [];
     private $segmentService = null;
+    private $staff = null;
+    private $isLegacy = true;
 
     public function __construct($staff_id = false)
     {
         $this->segmentService = new Segment();
+        $this->isLegacy = !VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES);
 
-        if ($staff_id === false) {
-            $staff_id = Settings::get('activeStaffId');
+        if ($this->isLegacy) {
+            $this->staff = new StaffLegacy;
+            $this->staff_id = Settings::get('activeStaffId');
+            $this->timezone = Settings::getStaff('timezone', $this->staff_id);
+            $this->regav = Settings::getStaff('regav', $this->staff_id);
+            $this->days = (int) Settings::getStaff('availaible_booking_days', $this->staff_id);
+        } else {
+            if (empty($staff_id)) {
+                throw new \WappointmentException("Cant regenerate", 1);
+            }
+            $this->staff = is_numeric($staff_id) ? Central::get('CalendarModel')::findOrFail($staff_id) : $staff_id;
+            $this->timezone = $this->staff->options['timezone'];
+            $this->regav = $this->staff->options['regav'];
+            $this->days = (int)$this->staff->options['avb'];
         }
-        $this->staff_id = $staff_id;
-        $this->timezone = Settings::getStaff('timezone', $this->staff_id);
-        $this->regav = Settings::getStaff('regav', $this->staff_id);
-        $this->days = (int) Settings::getStaff('availaible_booking_days', $this->staff_id);
     }
 
     public function getMaxTs()
     {
         return time() + ($this->days * 24 * 3600);
+    }
+
+    public function returnStaff()
+    {
+        return $this->staff;
+    }
+
+
+    public function syncAndRegen($forceRegen = false)
+    {
+        $calendar_urls = $this->staff->getCalendarUrls();
+        $hasChanged = false;
+        if (!empty($calendar_urls) && is_array($calendar_urls)) {
+            foreach ($calendar_urls as $calurl) {
+                if ((new \Wappointment\Services\Calendar($calurl, $this->isLegacy ? $this->staff->id : $this->staff, $this->isLegacy))->fetch()) {
+                    $hasChanged = true;
+                }
+            }
+        }
+
+        //regenerate availability only when we get new events
+        if ($hasChanged || $forceRegen) {
+            $this->regenerate();
+        }
     }
 
     /**
@@ -41,7 +78,7 @@ class Availability
      * @param boolean $staff_id
      * @return void
      */
-    public function regenerate()
+    public function regenerate($save = true)
     {
 
         // get regular avail and apply for x time from now
@@ -54,7 +91,7 @@ class Availability
         $start_at_string = $today->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $end->format(WAPPOINTMENT_DB_FORMAT);
 
-        $statusEvents = MStatus::where('muted', '<', 1)
+        $statusEventQuery = MStatus::where('muted', '<', 1)
             ->where(function ($query) use ($end_at_string, $start_at_string) {
                 $query->where(function ($qry) use ($end_at_string, $start_at_string) {
                     $qry->where('start_at', '<', $end_at_string)
@@ -62,9 +99,13 @@ class Availability
                 })
                     ->orWhere('recur', '>', MStatus::RECUR_NOT);
             })
-            ->orderBy('start_at')
-            ->get();
+            ->orderBy('start_at');
 
+        if (!$this->isLegacy) {
+            $statusEventQuery->where('staff_id', $this->staff->id);
+        }
+
+        $statusEvents = $statusEventQuery->get();
         $statusBusy = $statusEvents->where('type', MStatus::TYPE_BUSY);
 
         $notrecurringBusy = $statusBusy->where('recur', MStatus::RECUR_NOT);
@@ -87,10 +128,15 @@ class Availability
         $this->availabilities = $this->segmentService->flatten($collection);
 
         // get appointments
-        $appointments = Appointment::where('start_at', '>=', $start_at_string)
+        $appointmentQuery = Appointment::where('start_at', '>=', $start_at_string)
             ->where('status', '>=', Appointment::STATUS_AWAITING_CONFIRMATION)
-            ->where('end_at', '<=', $end_at_string)
-            ->get();
+            ->where('end_at', '<=', $end_at_string);
+
+        if (!$this->isLegacy) {
+            $appointmentQuery->where('staff_id', $this->staff->id);
+        }
+
+        $appointments = $appointmentQuery->get();
 
         $appointments = $this->segmentService->convertModel($appointments);
         $appointments = $this->segmentService->flatten($appointments);
@@ -106,9 +152,46 @@ class Availability
 
         $this->reOrder();
 
+        return $save ? ($this->isLegacy ? $this->saveLegacy() : $this->save()) : $this->availabilities;
+    }
+
+    private function saveLegacy()
+    {
         WPHelpers::setStaffOption('since_last_refresh', 0, $this->staff_id);
         //save it to the db
         return WPHelpers::setStaffOption('availability', $this->availabilities, $this->staff_id);
+    }
+
+    public function getLastRefresh()
+    {
+        return $this->isLegacy ?  (int)WPHelpers::getStaffOption('since_last_refresh', $this->staff_id, 0) : (int)$this->staff->options['since_last_refresh'];
+    }
+
+    public function incrementLastRefresh()
+    {
+        if ($this->isLegacy) {
+            WPHelpers::setStaffOption('since_last_refresh', $this->getLastRefresh() + 1, $this->staff_id);
+        } else {
+            $options = $this->staff->options;
+            $options['since_last_refresh'] = $options['since_last_refresh'] + 1;
+
+            //save it to the db
+            $this->staff->update([
+                'options' => $options,
+            ]);
+        }
+    }
+
+    private function save()
+    {
+        $options = $this->staff->options;
+        $options['since_last_refresh'] = 0;
+
+        //save it to the db
+        return $this->staff->update([
+            'availability' => $this->availabilities,
+            'options' => $options,
+        ]);
     }
 
     private function generateAvailabilityWithRA()

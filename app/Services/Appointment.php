@@ -12,7 +12,9 @@ class Appointment
 {
     public static function delete($id)
     {
-        $status = static::getAppointmentModel()::destroy($id);
+        $appointment = static::getAppointmentModel()::find($id);
+
+        $status = $appointment->destroy($id);
         if ($status) {
             (new Availability())->regenerate();
         }
@@ -138,20 +140,24 @@ class Appointment
             'type' => $type,
             'client_id' => $client->id,
             'edit_key' => md5($client->id . $start_at),
-            'status' => $forceConfirmed ? static::getAppointmentModel()::STATUS_CONFIRMED : static::getDefaultStatus($service)
+            'status' => $forceConfirmed ? static::getAppointmentModel()::STATUS_CONFIRMED : static::getDefaultStatus($service),
         ];
-
         return static::book($appointmentData, $client, $forceConfirmed);
     }
 
     protected static function canBook($start_at, $end_at, $is_admin = false)
     {
+        if ($is_admin === true) {
+            return true;
+        }
+
         //test that this is not a double booking scenario
         $start_at_str = static::unixToDb($start_at);
         $end_at_str = static::unixToDb($end_at);
 
+        $queryAppointment = static::getAppointmentModel()::where('status', '>=', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION);
 
-        if (static::getAppointmentModel()::where('status', '>=', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)
+        if ($queryAppointment
             ->where(function ($query) use ($start_at_str, $end_at_str) {
                 $query->where(function ($query) use ($start_at_str, $end_at_str) {
                     $query->where('start_at', $start_at_str);
@@ -198,14 +204,11 @@ class Appointment
         ) {
             throw new \WappointmentException('Slot already booked', 1);
         }
-        if ($is_admin === true) {
+
+        if ((new AvailabilityGetter(null, $start_at, $end_at))->isAvailable()) {
             return true;
         }
 
-        //test that were in the booking availability
-        if ((new AvailabilityGetter())->isAvailable($start_at, $end_at, Settings::get('activeStaffId'))) {
-            return true;
-        }
         throw new \WappointmentException('Slot not available', 1);
     }
 
@@ -225,11 +228,12 @@ class Appointment
             //when web cron is disabled we need an immediate refresh of availability
             (new Availability())->regenerate();
         } else {
-            if ((int) WPHelpers::getStaffOption('since_last_refresh') > 2) {
-                (new Availability())->regenerate();
+            $availability = new Availability();
+            if ($availability->getLastRefresh() > 2) {
+                $availability->regenerate();
             } else {
-                $count_since_last_refresh = (int) WPHelpers::getStaffOption('since_last_refresh', false, 0) + 1;
-                WPHelpers::setStaffOption('since_last_refresh', $count_since_last_refresh);
+                $availability->incrementLastRefresh();
+
                 \Wappointment\Services\Queue::tryPush(
                     'Wappointment\Jobs\AvailabilityRegenerate',
                     ['staff_id' => Settings::get('activeStaffId')],
@@ -239,7 +243,6 @@ class Appointment
             //we immediately spawn a process to trigger availability regenerate in the back
             WPHelpers::cronTrigger();
         }
-
 
         return $appointment;
     }

@@ -8,7 +8,7 @@ class Licences extends API
 {
     private function hasLicenceInstalled()
     {
-        return $this->getSiteKey(); //&& WPHelpers::getOption('site_details');
+        return !empty($this->getSiteKey()) && !empty(WPHelpers::getOption('site_details'));
     }
 
     public function register($product_key)
@@ -80,7 +80,7 @@ class Licences extends API
         if (!empty($response->getHeader('reason-reject')[0]) && !empty($response->getHeader('licence-clear')[0])) {
             $this->clear();
 
-            throw new \WappointmentException('You have no valid licence for your site');
+            throw new \WappointmentException('You have no valid licence for your site' . $response->getHeader('reason-reject')[0]);
         }
         throw new \WappointmentException(
             !empty($response->getHeader('reason-reject')[0]) ? $response->getHeader('reason-reject')[0] : 'Cannot connect to Wappointment.com'

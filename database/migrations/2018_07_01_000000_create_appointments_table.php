@@ -20,7 +20,7 @@ class CreateAppointmentsTable extends Wappointment\Installation\Migrate
             $table->tinyInteger('status')->default(0);
             $table->string('edit_key', 32)->nullable();
             $table->timestamps();
-            $table->mediumText('options')->nullable();
+            $table->text('options')->nullable();
             $table->integer('client_id')->nullable()->default(null);
             //$table->unsignedInteger('client_id')->foreign()->references('id')->on(Database::$prefix_self . '_clients');
             $table->unsignedTinyInteger('staff_id')->default(0);

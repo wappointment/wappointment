@@ -6,6 +6,8 @@ use Wappointment\ClassConnect\Model;
 use Wappointment\Services\Settings;
 use Wappointment\Services\DateTime;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Services\AppointmentNew as ServicesAppointment;
+use Wappointment\Services\VersionDB;
 
 class Appointment extends Model
 {
@@ -13,7 +15,7 @@ class Appointment extends Model
 
     protected $fillable = [
         'start_at', 'end_at', 'edit_key', 'client_id',
-        'status', 'type', 'staff_id', 'service_id', 'options', 'location_id', 'created_at', 'updated_at'
+        'status', 'type', 'staff_id', 'service_id', 'options', 'location_id', 'created_at', 'updated_at',
     ];
     protected $casts = [
         'options' => 'array',
@@ -33,8 +35,13 @@ class Appointment extends Model
 
     public function getStaff()
     {
-        return \Wappointment\Services\Staff::getById($this->staff_id);
+        if (VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES)) {
+            return \Wappointment\Services\Staff::getById($this->staff_id);
+        } else {
+            return new \Wappointment\WP\Staff((int)$this->staff_id);
+        }
     }
+
     public function getLocationSlug()
     {
         switch ($this->type) {
@@ -94,13 +101,44 @@ class Appointment extends Model
                 $location = 'Video meeting';
                 break;
         }
-        return apply_filters('wappointment_service_location', $location, $this);
+        return ServicesAppointment::getLocation($location, $this);
+        //return apply_filters('wappointment_service_location', $location, $this);
     }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
+    }
+
+    public function toArraySpecial()
+    {
+        $array = parent::toArray();
+
+        $array['start_at'] = $this->start_at->timestamp;
+        $array['end_at'] = $this->end_at->timestamp;
+        $array['type'] = $this->getLocationSlug();
+
+        unset($array['id']);
+        return $array;
+    }
+
 
     public function getLocationVideo()
     {
+        if ($this->location_id > 0) {
+            $location = Location::find($this->location_id);
+
+            return !empty($location) && !empty($location->options['video']) ? $location->options['video'] : false;
+        } else {
+            return $this->getLocationVideoLegacy();
+        }
+    }
+
+    public function getLocationVideoLegacy()
+    {
         return $this->type == self::TYPE_ZOOM ? $this->getServiceVideo() : false;
     }
+
     public function getServiceVideo()
     {
         return $this->getService()->getVideo();
@@ -113,7 +151,7 @@ class Appointment extends Model
 
     public function getStaffId()
     {
-        return Settings::get('activeStaffId');
+        return VersionDB::canServices() ? $this->staff_id : Settings::get('activeStaffId');
     }
 
     public function isPhone()
@@ -156,17 +194,6 @@ class Appointment extends Model
         return self::TYPE_ZOOM;
     }
 
-    public function toArraySpecial()
-    {
-        $appointment = parent::toArray();
-
-        $appointment['start_at'] = $this->start_at->timestamp;
-        $appointment['end_at'] = $this->end_at->timestamp;
-        $appointment['type'] = $this->getLocationSlug();
-        $appointment['converted'] = DateTime::i18nDateTime((int) $appointment['start_at'], $this->client->getTimezone());
-
-        return $appointment;
-    }
 
     public function getFullDurationInSec()
     {
@@ -202,11 +229,7 @@ class Appointment extends Model
     public function getStartsDayAndTime($timezone)
     {
         return !empty($this->start_at) ? DateTime::i18nDateTime($this->start_at->timestamp, $timezone) : '';
-        /*         return $this->start_at
-            ->timezone($timezone)
-            ->format(Settings::get('date_format') . Settings::get('date_time_union') . Settings::get('time_format')); */
     }
-
 
     private function getPageLink($view = 'reschedule-event')
     {
@@ -231,18 +254,15 @@ class Appointment extends Model
             return \Wappointment\Services\Service::getObject();
         }
         if (empty($services[$this->service_id])) {
-            $services[$this->service_id] = apply_filters(
-                'wappointment_get_appointment_service',
-                \Wappointment\Services\Service::getObject(),
-                $this->service_id
-            );
+            $services[$this->service_id] = \Wappointment\Services\Services::getObject($this->service_id);
         }
         return $services[$this->service_id];
     }
 
     public function getServiceAddress()
     {
-        return apply_filters('wappointment_get_service_address', $this->getService()->address, $this);
+        return ServicesAppointment::getAddress($this->getService()->address, $this);
+        //return apply_filters('wappointment_get_service_address', $this->getService()->address, $this);
     }
 
     public function getLinkAddEventToCalendar()

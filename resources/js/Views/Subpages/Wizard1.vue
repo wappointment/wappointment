@@ -66,7 +66,6 @@ export default {
           // pretty permalinks configure in WP but are not well configured on the server
           // suggest switching to ugly ones
           this.suggest_ugly_links = true
-          //console.log('e',e.response)
         }
         if(e.response !== undefined){
           for (const key in e.response.data.data.errors.validations) {

@@ -7,17 +7,29 @@ use Wappointment\WP\Helpers as WPHelpers;
 class Calendar
 {
     public $url = '';
-    public $staff_id = false;
+    public $staff = false;
     public $response = null;
     public $calendar_id = null;
     public $calendar_logs = [];
+    private $legacy = false;
 
-    public function __construct($calendar_url, $staff_id)
+    public function __construct($calendar_url, $staff, $legacy = true)
     {
         $this->url = $calendar_url;
+        $this->staff = $staff;
         $this->calendar_id = md5($this->url);
-        $this->staff_id = $staff_id;
-        $this->calendar_logs = WPHelpers::getStaffOption('calendar_logs');
+        $this->legacy = $legacy;
+        $this->calendar_logs = $this->loadCalendarLogs();
+    }
+
+    protected function getStaffId()
+    {
+        return $this->legacy ? $this->staff : $this->staff->id;
+    }
+
+    protected function loadCalendarLogs()
+    {
+        return $this->legacy ? WPHelpers::getStaffOption('calendar_logs') : (!empty($this->staff->options['calendar_logs']) ? $this->staff->options['calendar_logs'] : []);
     }
 
     public function refetch()
@@ -32,7 +44,7 @@ class Calendar
         $start = microtime(true);
 
         $client = new \GuzzleHttp\Client();
-        $response = $client->request('GET', $this->url, [
+        $responseQuery = $client->request('GET', $this->url, [
             'curl' => [
                 CURLOPT_URL => $this->url,
                 CURLOPT_CUSTOMREQUEST => 'GET',
@@ -43,13 +55,13 @@ class Calendar
 
         // Only headers are downloaded here.
 
-        if ($response->getStatusCode() != 200) {
+        if ($responseQuery->getStatusCode() != 200) {
             throw new \WappointmentException('Cannot connect to the calendar');
         }
 
-        $body = $response->getBody();
+        $body = $responseQuery->getBody();
 
-        if (strpos($response->getHeaderLine('content-type'), 'text/calendar') === false) {
+        if (strpos($responseQuery->getHeaderLine('content-type'), 'text/calendar') === false) {
             throw new \WappointmentException('Cannot recognise a calendar file ');
         }
         $original_content = $body->getContents();
@@ -59,7 +71,7 @@ class Calendar
         $this->log('last-checked', time());
 
         if ($this->hasChanged($body_string)) {
-            $parser = new CalendarParser($this->url, $original_content, $this->staff_id);
+            $parser = new CalendarParser($this->url, $original_content, $this->getStaffId());
 
             $this->log('last-parser', $parser->handle());
             $this->log('last-hash', md5($body_string), false);
@@ -95,17 +107,29 @@ class Calendar
         $this->calendar_logs[$this->calendar_id][$property] = $value;
 
         if ($save) {
-            WPHelpers::setStaffOption('calendar_logs', $this->calendar_logs, $this->staff_id);
+            $this->saveCalendarLogs();
+        }
+    }
+
+    private function saveCalendarLogs()
+    {
+
+        if ($this->legacy) {
+            return WPHelpers::setStaffOption('calendar_logs', $this->calendar_logs, $this->getStaffId());
+        } else {
+            $options = $this->staff->options;
+            $options['calendar_logs'] = $this->calendar_logs;
+            $this->staff->update([
+                'options' => $options
+            ]);
         }
     }
 
     private function cleanContent($content)
     {
         preg_match('/^PRODID:.*\\n/m', $content, $matches);
-        if (count($matches) > 0) {
-            if (strpos(strtolower($matches[0]), 'google') !== false) {
-                return $this->googleClean($content);
-            }
+        if (!empty($matches) && strpos(strtolower($matches[0]), 'google') !== false) {
+            return $this->googleClean($content);
         }
         return $content;
     }

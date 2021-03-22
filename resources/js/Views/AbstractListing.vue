@@ -2,7 +2,7 @@
     <div class="wpage">
         <WPListingHelp @perPage="perPage" :viewData="per_page"/>
         <h1>Elements</h1>
-        <div class="table-responsive">
+        <div class="table-hover">
             <table class="table">
                 <caption>List of elements</caption>
                     <thead>
@@ -30,11 +30,11 @@ import draggable from 'vuedraggable'
 import Pagination from '../Views/Pagination'
 import WPListingHelp from '../WP/ScreenListing'
 import Ordering from './Ordering'
+import RequiresAddon from '../Mixins/RequiresAddon'
 
 export default {
-    mixins: [RequestMaker, Ordering],
+    mixins: [RequestMaker, Ordering, RequiresAddon],
     data: () => ({
-        mainService: null,
         elements: [],
         pagination: null,
         loadedData: false,
@@ -80,7 +80,8 @@ export default {
             
         },
         failedLoadingElements(fail){
-            this.$WapModal().notifyError('Error Loading elements')
+            let message = fail.response !== undefined && fail.response.data !== undefined && fail.response.data.message !== undefined ? fail.response.data.message:''
+            this.$WapModal().notifyError('Error Loading elements('+message+')')
         },
         loadElements(params) {
             if(params === undefined) params = {}
@@ -104,16 +105,16 @@ export default {
 .wpage h1 {
     cursor: pointer;
 }
-.table-responsive.table-hover {
+.table-hover {
     color: #626060;
 }
-.table-responsive .actions {
+.table-hover .actions {
     visibility: hidden;
 }
-.table-responsive .actions .dashicons-move{
+.table-hover .actions .dashicons-move{
     cursor: pointer;
 }
-.table-responsive tr:hover .actions{
+.table-hover tr:hover .actions{
     visibility: visible;
 }
 </style>

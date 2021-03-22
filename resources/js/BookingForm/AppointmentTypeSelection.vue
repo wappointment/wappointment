@@ -1,21 +1,10 @@
 
 <template>
     <div class="text-center">
-        <div v-if="allowedType('physical')" @click="selectType('physical')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: physicalSelected}">
-            <WapImage faIcon="map-marked-alt" size="md" />
-            <div>{{options.form.inperson}}</div>
-        </div>
-        <div v-if="allowedType('zoom')" @click="selectType('zoom')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: zoomSelected}">
-            <WapImage :faIcon="['fas', 'video']" size="md" />
-            <div>{{options.form.byzoom}}</div>
-        </div>
-        <div v-if="allowedType('phone')" @click="selectType('phone')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: phoneSelected}">
-            <WapImage faIcon="phone" size="md" />
-            <div>{{options.form.byphone}}</div>
-        </div>
-        <div v-if="allowedType('skype')" @click="selectType('skype')" role="button" class="wbtn wbtn-secondary wbtn-cell" :class="{selected: skypeSelected}">
-            <WapImage :faIcon="['fab', 'skype']" size="md" />
-            <div>{{options.form.byskype}}</div>
+        <div v-for="typeInput in typesAllowed" @click="selectType(typeInput)" role="button" 
+        class="wbtn wbtn-secondary wbtn-cell mr-2" :class="{selected: isSelected(typeInput)}">
+            <WapImage :faIcon="getTypeObject(typeInput).icon" size="md" />
+            <div>{{ getTypeObject(typeInput).label }}</div>
         </div>
     </div>
 </template>
@@ -30,6 +19,9 @@ export default {
     },
 
     methods:{
+        isSelected(type){
+            return this[type+'Selected']
+        },
         selectType(type){
             this.selection = type
             this.$emit('selectType',type)
@@ -37,6 +29,30 @@ export default {
         allowedType(type){
             return this.typesAllowed.indexOf(type) !== -1
         },
+        getTypeObject(type){
+            switch (type) {
+                case 'zoom':
+                    return {
+                        label: this.options.form.byzoom,
+                        icon: ['fas', 'video']
+                    }
+                case 'physical':
+                    return {
+                        label: this.options.form.inperson,
+                        icon: 'map-marked-alt'
+                    }
+                case 'phone':
+                    return {
+                        label: this.options.form.byphone,
+                        icon: 'phone'
+                    }
+                case 'skype':
+                    return {
+                        label: this.options.form.byskype,
+                        icon: ['fab', 'skype']
+                    }
+            }
+        }
     }
 }
 </script>

@@ -1,4 +1,3 @@
-
 <script>
 export default {
 
@@ -7,16 +6,13 @@ export default {
         
         let event = renderInfo.event
         let eventExt = event.extendedProps
-
         
         let element = window.jQuery(renderInfo.el)
         this.isParentInThePast(element)
-         //'.fc-content-skeleton tr td'
 
         element.attr('data-id', eventExt.dbid)
         element.attr('id', 'event-'+eventExt.type+event.id)
         element.attr('data-rendering', event.rendering)
-
         
         if(eventExt.onlyDelete!==undefined){
           element.attr('data-only-delete', 1)
@@ -87,8 +83,17 @@ export default {
       },
 
       modifyRegav(event){
-        //this.$router.push({ name: 'regav'})
-        this.showRegularAv = true
+        if(this.viewData.legacy){
+           this.showRegularAv = true
+        }else{
+          this.$WapModal().confirm({
+                title: 'You are going to be redirected to a new screen and will lose the current change, do you wish to continue?',
+            }).then((response) => {
+                if(response !== false){
+                  this.$router.push({name:'calendars_edit', params:{id:this.activeStaff.id}})
+                }
+            })
+        }
         event.stopPropagation()
       },
 
@@ -186,12 +191,12 @@ export default {
         if(el.hasClass('past-event')){
           return ''
         }
-        
         if(isAppointmentEvent) {
           return '<button class="btn btn-xs btn-light cancelAppointment" data-tt="Cancel appointment" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-dismiss"></span></button>'
         }else{
+          let labelDelete = el.hasClass('calendar') ? 'Mute Event': 'Delete event'
           let spanIcon = el.hasClass('calendar') ? '<span class="dashicons dashicons-controls-volumeoff"></span> ': '<span class="dashicons dashicons-trash"></span>'
-          return '<button data-tt="Mute Event" class="btn btn-xs btn-light deleteElement" data-id="'+el.attr('data-id')+'">'+spanIcon+'</button>'
+          return '<button data-tt="'+labelDelete+'" class="btn btn-xs btn-light deleteElement" data-id="'+el.attr('data-id')+'">'+spanIcon+'</button>'
         }
       },
       getActionButtons(el, isAppointmentEvent){

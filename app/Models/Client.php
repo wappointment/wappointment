@@ -4,13 +4,11 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\Services\Settings;
-use Wappointment\Services\Appointment as AppointmentService;
-use Wappointment\Services\Service;
 use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
 
 class Client extends Model
 {
-    use SoftDeletes;
+    use SoftDeletes, CanBook, CanBookLegacy;
 
     protected $table = 'wappo_clients';
 
@@ -63,43 +61,6 @@ class Client extends Model
         return empty($this->options['tz']) ? Settings::getStaff('timezone') : $this->options['tz'];
     }
 
-    public function book($bookingRequest, $forceConfirmed = false)
-    {
-        $startTime = $bookingRequest->get('time');
-        $type = $bookingRequest->get('type');
-        $service = Service::get();
-
-        //test type is allowed
-        if (!in_array($type, $service['type'])) {
-            throw new \WappointmentException('Error booking type not allowed2', 1);
-        }
-
-        $type = (int) call_user_func('Wappointment\Models\Appointment::getType' . ucfirst($type));
-
-        //test that this is bookable
-        if ($forceConfirmed) {
-            $hasBeenBooked = AppointmentService::adminBook(
-                $this,
-                $startTime,
-                $startTime + $this->getRealDuration($service),
-                $type,
-                $service
-            );
-        } else {
-            $hasBeenBooked = AppointmentService::tryBook(
-                $this,
-                $startTime,
-                $startTime + $this->getRealDuration($service),
-                $type,
-                $service
-            );
-        }
-
-        if (!$hasBeenBooked) {
-            throw new \WappointmentException('Error cannot book at this time', 1);
-        }
-        return $hasBeenBooked;
-    }
 
     protected function getRealDuration($service)
     {

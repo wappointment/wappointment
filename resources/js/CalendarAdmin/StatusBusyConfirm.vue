@@ -13,7 +13,13 @@ export default {
     methods:{
         async setRequest(params) {
           return await this.serviceStatus.call('save', 
-          {start: this.startTime.format(), end: this.endTime.format(), timezone: this.timezone, type: 'busy'})
+          {
+              start: this.startTime.format(), 
+              end: this.endTime.format(), 
+              timezone: this.timezone, 
+              type: 'busy',
+              staff_id: this.activeStaff.id !== undefined?this.activeStaff.id:null
+            })
         },
     }
 }

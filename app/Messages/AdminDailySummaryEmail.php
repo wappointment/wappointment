@@ -6,6 +6,7 @@ use Wappointment\Services\Settings;
 use Wappointment\Services\Sections;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Service;
+use Wappointment\Services\VersionDB;
 
 class AdminDailySummaryEmail extends AbstractAdminEmail
 {
@@ -14,23 +15,43 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
     protected $sections = null;
     protected $date_string = '';
     protected $tz = '';
+    protected $staff = null;
+
+    protected function isLegacy()
+    {
+        return VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
+    }
+
+    protected function getStaff()
+    {
+        return $this->isLegacy() ?  new \Wappointment\WP\StaffLegacy : new \Wappointment\WP\Staff($this->params['staff_id']);
+    }
+
+    private function loadTomorrowData()
+    {
+        $this->staff = $this->getStaff();
+        $this->tz = $this->staff->timezone;
+        $this->date_string = $this->tomorrowCarbon()->format(Settings::get('date_format'));
+
+
+        $this->subject = 'Daily summary for ' . $this->date_string;
+        $this->sections = new Sections($this->tomorrowCarbon()->timestamp, $this->tomorrowCarbon()->timestamp + 86400, $this->staff, $this->isLegacy());
+    }
 
     public function loadContent()
     {
-        $this->loadTomorrowData();
-        $this->date_string = $this->tomorrowCarbon()->format(Settings::get('date_format'));
-        $this->tz = Settings::getStaff('timezone');
 
-        $this->subject = 'Daily summary for ' . $this->date_string;
+        $this->loadTomorrowData();
+
         $this->addLogo();
         $this->addBr();
 
         $serviceDurationInSeconds = Service::get()['duration'] * 60;
         $coverage = $this->sections->getCoverage($serviceDurationInSeconds);
 
-        $staff = new \Wappointment\WP\Staff;
+
         $lines = [
-            'Hi ' . $staff->getFirstName() . ', ',
+            'Hi ' .  $this->staff->getFirstName() . ', ',
             'Here is a summary of your appointments for ' . $this->date_string
         ];
 
@@ -91,11 +112,6 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
 
     protected function tomorrowCarbon()
     {
-        return \Wappointment\ClassConnect\Carbon::tomorrow(Settings::getStaff('timezone'));
-    }
-
-    private function loadTomorrowData()
-    {
-        $this->sections = new Sections($this->tomorrowCarbon()->timestamp, $this->tomorrowCarbon()->timestamp + 86400);
+        return \Wappointment\ClassConnect\Carbon::tomorrow($this->tz);
     }
 }

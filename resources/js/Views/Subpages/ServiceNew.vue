@@ -1,11 +1,9 @@
 <template>
     <div>
-        <WAPFormGenerator ref="formgenerator" :buttons="buttons" :schema="schemaParsed" :data="modelHolder" 
+        <WAPFormGenerator ref="fgaddservice" :buttons="buttons" :schema="schemaParsed" :data="modelHolder" 
         @submit="save" @back="$emit('back')" @ready="isReady" :errors="errorsPassed" :key="formKey" 
-        labelButton="Save" v-bind="extraOptions">
-        </WAPFormGenerator>
+        labelButton="Save" v-bind="extraOptions" :minimal="minimal" />
     </div>
-
 </template>
 
 <script>
@@ -13,10 +11,9 @@ import ServiceService from '../../Services/V1/Service'
 import abstractView from '../Abstract'
 export default {
   extends: abstractView,
-  props:['dataPassed', 'servicesService', 'extraOptions', 'buttons'],
+  props:['dataPassed', 'servicesService', 'extraOptions', 'buttons', 'minimal'],
   data() {
       return {
-          
           serviceService: null,
           modelHolder: {             
             name: '',
@@ -34,95 +31,73 @@ export default {
           schema: [
             {
               type: 'row',
-              class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
+              class: 'd-flex flex-wrap flex-sm-nowrap align-items-top fieldthumb',
               classEach: 'mr-2',
               fields: [
                 {
-                    type: 'input',
-                    label: 'Service Name',
-                    model: 'name',
-                    cast: String,
-                    styles: {'max-width':'200px'},
-                    validation: ['required']
+                  type: 'opt-imageselect',
+                  model: 'options.icon',
+                  cast: String,
                 },
                 {
-                    type: 'duration',
-                    label: 'Duration',
-                    model: 'duration',
+                    type: 'input',
+                    label: 'Service',
+                    model: 'name',
                     cast: String,
-                    class: 'w-100',
-                    default: 60,
-                    min: 5,
-                    max: 240,
-                    step: 5,
-                    int: true,
-                    unit: 'min',
-                    validation: ['required']
+                    class: 'input-360'
                 },
               ]
             },
             {
-                type: 'checkimages',
-                label: 'Service Delivery',
-                model: 'type',
-                cast: Array,
-                images: [
-                  { value:'zoom', name:'Video meeting', subname:'(Zoom, Google meet, ...)', icon: ['fas', 'video']},
-                  { value:'physical', name:'At an address', icon: 'map-marked-alt'},
-                  { value:'phone', name:'By Phone', icon: 'phone'},
-                  { value:'skype', name:'By Skype', icon: ['fab', 'skype']}
-                ],
-                validation: ['required']
-            },
-
-            {
-                type: 'checkimages',
-                label: 'Select your video meeting app',
-                radioMode: true,
-                model: 'options.video',
-                cast: Array,
-                images: [
-                  { value:'zoom', name:'Zoom', icon: 'zoom.png', icontype: 'img', realsize: true},
-                  { value:'googlemeet', name:'Google Meet', icon: 'google-meet.png', icontype: 'img', realsize: true},
-                ],
-                conditions: [
-                  { model:'type', values: ['zoom'] }
-                ],
-                validation: ['required']
+              type: 'address',
+              label: 'Short Description',
+              model: 'options.description',
+              address: false,
+              cast: String,
             },
             {
-                type: 'address',
-                label: 'Address',
-                model: 'address',
+                type: 'opt-multidurations',
+                label: 'Service duration(s)',
+                model: 'options.durations',
                 cast: String,
-                conditions: [
-                  { model:'type', values: ['physical'] }
-                ],
-                validation: ['required']
-            },
-             {
-                type: 'checkbox',
-                label: "Clients must provide a phone number when booking",
-                model: 'options.phone_required',
-                cast: Boolean,
+                class: 'w-100',
+                default: [{ duration:60}],
+                min: 5,
+                max: 240,
+                step: 5,
+                int: true,
+                unit: 'min',
+                required_options_props:{
+                  'woo_sellable':'woo_sellable'
+                }
             },
             {
-                type: 'countryselector',
-                label: 'Accepted countries for phone field',
-                model: 'options.countries',
+                type: 'opt-modality',
+                label: 'Delivery modality',
+                model: 'locations_id',
                 cast: Array,
-                conditions: [
-                  {
-                    type: 'or',
-                    conda: { model:'type', values: ['phone'] },
-                    condb: { model:'options.phone_required', values: [true] }
-                  }
-                ],
-                validation: ['required']
+                checklistOptions: { value:'id'}
             },
-            
-
-        ]
+            {
+              type: 'opt-customfields',
+              label: 'When client select this service, display following fields',
+              model: 'options.fields',
+              bus: true,
+              listenBus: true,
+              cast: Array,
+              checklistOptions: { value:'namekey'}
+            },
+            {
+              type: 'countryselector',
+              label: 'Phone field accepted countries',
+              model: 'options.countries',
+              cast: Array,
+              conditions: [
+                { model:'options.fields', values: ['phone'] },
+              ],
+              validation: ['required']
+          },
+          ]
 
       } 
   },
@@ -135,6 +110,7 @@ export default {
   computed: {
 
     schemaParsed(){
+      console.log('schemaParsed',this.schema, this.modelHolder)
       return  window.wappointmentExtends.filter('serviceFormSchema', this.schema, this.modelHolder )
     },
 
@@ -165,6 +141,7 @@ export default {
         this.errors = e.response.data.data.errors.validations
         this.formKey = 'form' + ((new Date()).getTime())
       }
+      this.$refs.fgaddservice.reRender()
       this.serviceError(e)
     },
     async saveServiceRequest() {

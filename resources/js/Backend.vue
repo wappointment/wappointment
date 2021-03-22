@@ -1,12 +1,9 @@
 <template>
     <transition name="fade" mode="out-in">
-      <div class="wappointment-wrap" :data-tt="changing">
-          <div v-if="!db_update">
-              <UpdateInformation />
-          </div>
-          <div v-if="db_update">
-              <PendingDBUpdate />
-          </div>
+      <div class="wappointment-wrap" >
+          <UpdateInformation v-if="!db_update"/>
+          <PendingDBUpdate v-else/>
+          <AddonsRequireUpdate />
           <template v-if="has_messages">
               <transition name="fade" mode="out-in">
                 <WPNotice v-if="fully_loaded">
@@ -29,8 +26,9 @@ import WPNotice from './WP/Notice'
 import VersionsInfos from './Ne/VersionsInfos'
 import PendingDBUpdate from './Ne/PendingDBUpdate'
 import UpdateInformation from './Ne/UpdateInformation'
+import AddonsRequireUpdate from './Ne/AddonsRequireUpdate'
 export default {
-    components: {VersionsInfos, PendingDBUpdate, UpdateInformation, WPNotice},
+    components: {VersionsInfos, PendingDBUpdate, UpdateInformation, AddonsRequireUpdate, WPNotice},
     data: () => ({
         db_update: false,
         has_messages: false,
@@ -38,7 +36,7 @@ export default {
     }),
     created(){
         if(window.wappointmentAdmin.hasPendingUpdates!== undefined ){
-            this.db_update = true
+            this.db_update = window.wappointmentAdmin.hasPendingUpdates
         }
         if(window.wappointmentAdmin.hasMessages!== undefined ){
             this.has_messages = window.wappointmentAdmin.hasMessages

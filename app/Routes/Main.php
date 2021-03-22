@@ -21,15 +21,20 @@ class Main extends AbstractRoutes
                 ],
             ],
             'POST' => [
-                '/booking' => [
+                '/convertdate' => [
+                    'controller' => 'BookingController',
+                    'method' => 'convertDate',
+                ],
+                '/services/booking' => [
                     'controller' => 'BookingController',
                     'method' => 'save',
                     'hint' => 'Booking'
                 ],
-                '/convertdate' => [
-                    'controller' => 'BookingController',
-                    'method' => 'convertDate',
-                ]
+                '/booking' => [
+                    'controller' => 'LegacyBookingController',
+                    'method' => 'save',
+                    'hint' => 'LegacyBooking'
+                ],
             ],
             'PATCH' => [
                 '/booking' => [
@@ -65,6 +70,18 @@ class Main extends AbstractRoutes
                     'methods' => ['post', 'delete'],
                     'controller' => 'StatusController'
                 ],
+                '/services' => [
+                    'methods' => ['get', 'post', 'delete'],
+                    'controller' => 'ServicesController'
+                ],
+                '/calendars' => [
+                    'methods' => ['get', 'post', 'delete',],
+                    'controller' => 'CalendarsController'
+                ],
+                '/services/location' => [
+                    'methods' => ['get', 'post', 'delete'],
+                    'controller' => 'LocationsController'
+                ],
             ],
             'GET' => [
                 '/addons/check' => [
@@ -86,6 +103,11 @@ class Main extends AbstractRoutes
                 '/client' => [
                     'controller' => 'ClientController',
                     'method' => 'index',
+                ],
+
+                '/services/custom_fields' => [
+                    'method' => 'get',
+                    'controller' => 'CustomFieldsController'
                 ],
             ],
             'POST' => [
@@ -164,18 +186,6 @@ class Main extends AbstractRoutes
                     'controller' => 'SettingsStaffController',
                     'method' => 'save',
                 ],
-                '/settingsstaff/savecal' => [
-                    'controller' => 'SettingsStaffController',
-                    'method' => 'saveCal',
-                ],
-                '/settingsstaff/disconnect' => [
-                    'controller' => 'SettingsStaffController',
-                    'method' => 'disconnectCal',
-                ],
-                '/settingsstaff/refreshcalendars' => [
-                    'controller' => 'SettingsStaffController',
-                    'method' => 'refreshCalendars',
-                ],
 
                 '/reminderpreview' => [
                     'controller' => 'ReminderController',
@@ -201,6 +211,44 @@ class Main extends AbstractRoutes
                 '/client/delete' => [
                     'method' => 'delete',
                     'controller' => 'ClientController'
+                ],
+                '/services/reorder' => [
+                    'controller' => 'ServicesController',
+                    'method' => 'reorder',
+                ],
+                '/calendars/reorder' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'reorder',
+                ],
+                '/calendars/toggle' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'toggle',
+                ],
+                '/calendars/services' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'saveServices',
+                ],
+
+                '/services/booking/admin' => [
+                    'controller' => 'BookingController',
+                    'method' => 'adminBook',
+                    'hint' => 'BookingAdmin'
+                ],
+                '/calendars/avatar' => [
+                    'method' => 'getAvatar',
+                    'controller' => 'CalendarsController'
+                ],
+                '/calendars/savecal' => [
+                    'method' => 'saveCal',
+                    'controller' => 'CalendarsController'
+                ],
+                '/calendars/refreshcalendars' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'refreshCalendars',
+                ],
+                '/calendars/disconnect' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'disconnectCal',
                 ],
             ],
         ]

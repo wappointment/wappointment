@@ -1,7 +1,11 @@
 import Vue from 'vue'
 import axios from 'axios'
 import wappoExtend from './Standalone/extends.js'
-if(apiWappointment.nonce !== undefined) axios.defaults.headers.common['X-WP-Nonce'] = apiWappointment.nonce
+import __get from 'lodash/get'
+
+if(apiWappointment.nonce !== undefined) {
+    axios.defaults.headers.common['X-WP-Nonce'] = apiWappointment.nonce
+}
 
 window.wappointmentExtends = wappoExtend
 window.wappoGet = function(name, from = 'commons'){
@@ -14,5 +18,14 @@ window.wappoGet = function(name, from = 'commons'){
     }
     return components_list[name]
 }
+
+Vue.mixin({
+    methods: {
+        __get,
+        __isEmpty(value){
+            return [undefined, false].indexOf(value) !== -1
+        }
+    }
+});
 
 export default Vue

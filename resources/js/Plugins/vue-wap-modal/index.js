@@ -12,7 +12,7 @@ VueWapModal.install = function (Vue, options) {
 
   Vue.prototype.$WapModalContainerInstance = null
   //modalOn
-  Vue.prototype.$WapModalBoot = function (methodOptions) {
+  Vue.prototype.$WapModalBoot = function () {
 
     var ComponentClass = Vue.extend(WapModalContainer)
     Vue.prototype.$WapModalContainerInstance = new ComponentClass()
@@ -41,7 +41,7 @@ VueWapModal.install = function (Vue, options) {
 
   }
 
-  Vue.prototype.$WapModal = function (methodOptions) {
+  Vue.prototype.$WapModal = function () {
 
     if(Vue.prototype.$WapModalContainerInstance === null) {
       Vue.prototype.$WapModalBoot()

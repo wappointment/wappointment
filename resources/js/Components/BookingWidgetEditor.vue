@@ -26,11 +26,11 @@
                 <div class="widget-fields-wrapper" >
                     <div >
                         <div>
-                            <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2 btn-switch-edit" :class="{'selected' : !colorEdit}"  @click="toggleColor">
+                            <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2 btn-switch-edit" :class="{'selected' : !colorEdit}" @click="toggleColor">
                                 <span><FontAwesomeIcon :icon="['fas', 'edit']" size="lg" /> Edit Text</span>
                             </button>
                             <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2 btn-switch-edit" :class="{'selected' : colorEdit}" @click="toggleColor">
-                                <span><FontAwesomeIcon :icon="['fas', 'palette']" size="lg"/> Edit Color</span>
+                                <span><FontAwesomeIcon :icon="['fas', 'palette']" size="lg" /> Edit Color</span>
                             </button>
                         </div>
                         <div class="d-flex align-items-center my-2">
@@ -79,7 +79,9 @@
                                                 {{cat_object.label}} <span v-if="showCategory !=  cat_object.label">[+]</span>
                                             </div>
                                             <div v-if="showCategory ==  cat_object.label" class="ml-3 mt-3">
-                                                <div v-for="(fieldDescription, field_key) in cat_object.fields" :data-tt="getFieldTip(stepObj.key, field_key, catid) ? getFieldTip(stepObj.key, field_key, catid) : false" v-if="canShowField(stepObj.key, field_key)" class="tt-below">
+                                                <div class="small" v-if="cat_object.sub !== undefined"> {{ cat_object.sub }}</div>
+                                                <div v-for="(fieldDescription, field_key) in cat_object.fields" :data-tt="getFieldTip(stepObj.key, field_key, catid) ? getFieldTip(stepObj.key, field_key, catid) : false" 
+                                                v-if="canShowField(stepObj.key, field_key, catid)" class="tt-below">
                                                     {{ changedInput(stepObj.key, field_key, options[stepObj.key][field_key]) }}
                                                     <component v-if="isComponentTypeActive(options[stepObj.key][field_key],stepObj.key, field_key, field_key)" :key="field_key"  
                                                     :is="getComponentType(options[stepObj.key][field_key],field_key)" 
@@ -188,10 +190,40 @@ export default {
         labelActiveStep: '',
         tagRemoved: {},
         showCategory: '',
+        editionsStepsLegacy: [
+            {
+                key: 'button',
+                label: 'Booking button'
+            },
+            {
+                key: 'selection',
+                label: 'Slot selection'
+            },
+            {
+                key: 'form',
+                label: 'Form'
+            },
+            {
+                key: 'confirmation',
+                label: 'Confirmation'
+            }
+        ],
         editionsSteps: [
             {
                 key: 'button',
                 label: 'Booking button'
+            },
+            {
+                key: 'service_selection',
+                label: 'Service selection'
+            },
+            {
+                key: 'service_duration',
+                label: 'Duration selection'
+            },
+            {
+                key: 'service_location',
+                label: 'Location selection'
             },
             {
                 key: 'selection',
@@ -211,7 +243,7 @@ export default {
     }),
 
     created(){
-        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.editionsSteps,  this.config )
+        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.isLegacy? this.editionsStepsLegacy:this.editionsSteps,  this.config )
         this.reverseEditionsSteps = this.editionsSteps.slice(0).reverse()
         this.options = Object.assign ({}, this.preoptions)
         this.options.editionsSteps = this.editionsSteps
@@ -237,6 +269,9 @@ export default {
     },
 
     computed: {
+        isLegacy(){
+            return this.frontAvailability.services.length < 2 && this.frontAvailability.services[0].type !== undefined
+        },
         pendingByDefault(){
             return this.config.approval_mode > 1
         },
@@ -341,11 +376,11 @@ export default {
         },
 
         getFieldAdminInfos(section, key, catid = false){
-            // console.log('getFieldsAdminsINfos', section, key, this.widgetFields[section])
             if(section == 'colors'){
                 let data = (this.widgetFields !== null && this.widgetFields[section]!== undefined && this.widgetFields[section]!== undefined && this.widgetFields[section][key] !== undefined) ? this.widgetFields[section][key]:false
                 return data !== false  && data.fields !== undefined && data.fields[catid] !== undefined? data.fields[catid]:data
             }
+
             if(catid !== false){
                 return (this.widgetFields !== null && this.widgetFields[section].categories[catid]!== undefined && this.widgetFields[section].categories[catid].fields!== undefined && this.widgetFields[section].categories[catid].fields[key] !== undefined) ? this.widgetFields[section].categories[catid].fields[key]:false
             }
@@ -354,15 +389,13 @@ export default {
 
         getFieldTip(section, key, catid = false){
             let fieldInfos = this.getFieldAdminInfos(section, key, catid)
-            // if(section == 'colors') {
-            //     console.log('getFieldTip',section, key,fieldInfos)
-            // }
              
             return fieldInfos.tip !== undefined ? fieldInfos.tip : ''
         },
 
         canShowField(section, key, field_key = false){
-            let fieldConditions = this.getConditions(section, key)
+            let fieldConditions = this.getConditions(section, key,field_key)
+
             if(field_key!== false){
                 let fieldInfos = this.getFieldAdminInfos(section, key, field_key)
 
@@ -396,8 +429,8 @@ export default {
             let newDeepOrValue = deepObject[key1] !== undefined ? deepObject[key1]:false
             return keys.length > 0 ? this.getDeepValue(newDeepOrValue, keys): newDeepOrValue
         },
-        getConditions(section, key){
-            let fieldInfos = this.getFieldAdminInfos(section, key)
+        getConditions(section, key, field_key= false){
+            let fieldInfos = this.getFieldAdminInfos(section, key, field_key)
             return fieldInfos.conditions !== undefined ? fieldInfos.conditions : false
         },
         getLabel(section, key, subkey=false){
@@ -421,6 +454,7 @@ export default {
         },
         getVisibility(section, key, subkey=false){
             let fieldInfos = this.getFieldAdminInfos(section, key)
+            
             if(subkey!== false && this.hasFieldKey(fieldInfos, subkey)){
                 return fieldInfos.fields[subkey].hidden !== undefined  ? false:true
             }
@@ -434,22 +468,22 @@ export default {
             return ['button', 'selection', 'form', 'confirmation'].indexOf(key) === -1
         },
         isComponentTypeActive(value, section, group_key, key, onlycolors=false){
+            if(value === undefined) {
+                return false
+            }
             if(value[0] == '#'){
                 return onlycolors===true && this.colorEdit && this.getVisibility(section, group_key, key)
             }else{
-                if(onlycolors===true) return false
-                return this.getVisibility(section, key)
+                return onlycolors===true? false:this.getVisibility(section, key)
             }
         },
 
         getComponentType(value, type){
-
             if(['check_','slide_'].indexOf(type.substr(0,6)) !== -1){
                 return type.substr(0,6) == 'check_' ? 'FormFieldCheckbox':'FormFieldSlider'
             }else{
                 return value[0] == '#' ? 'ColorPicker':'InputPh'
             }
-            
         },
         allowedType(type){
             return this.config.service.type.indexOf(type) !== -1
@@ -541,6 +575,7 @@ export default {
 .widget-wraper{
     box-shadow: inset 0 0 5px #959090;
     width: 430px;
+    border-radius: 2rem;
 }
 
 @media (min-width: 1410px) { 

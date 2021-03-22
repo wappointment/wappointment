@@ -2,7 +2,11 @@
 
 namespace Wappointment\System;
 
+use Wappointment\Services\Settings;
+use Wappointment\Services\VersionDB;
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Services\Calendars;
+use Wappointment\Services\Availability;
 
 /**
  * TODO Most of this class is static but it has a constructor, review
@@ -21,21 +25,32 @@ class Scheduler
      */
     public static function syncCalendar()
     {
-        foreach (\Wappointment\Services\Staff::getIds() as $staff_id) {
-            $calendar_urls = WPHelpers::getStaffOption('cal_urls', $staff_id);
-            $hasChanged = false;
-            if (!empty($calendar_urls) && is_array($calendar_urls)) {
-                foreach ($calendar_urls as $calurl) {
-                    if ((new \Wappointment\Services\Calendar($calurl, $staff_id))->fetch()) {
-                        $hasChanged = true;
-                    }
+        if (!VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES)) {
+            static::syncCalendarLegacy();
+        } else {
+            foreach (Calendars::all() as $calendar) {
+                // dd('zero', $calendar->toArray());
+                (new Availability($calendar))->syncAndRegen();
+            }
+        }
+    }
+
+    public static function syncCalendarLegacy()
+    {
+        $staff_id = Settings::get('activeStaffId');
+        $calendar_urls = WPHelpers::getStaffOption('cal_urls', $staff_id);
+        $hasChanged = false;
+        if (!empty($calendar_urls) && is_array($calendar_urls)) {
+            foreach ($calendar_urls as $calurl) {
+                if ((new \Wappointment\Services\Calendar($calurl, $staff_id))->fetch()) {
+                    $hasChanged = true;
                 }
             }
+        }
 
-            //regenerate availability only when we get new events
-            if ($hasChanged) {
-                self::regenerateAvailability();
-            }
+        //regenerate availability only when we get new events
+        if ($hasChanged) {
+            self::regenerateAvailabilityLegacy();
         }
     }
 
@@ -56,7 +71,6 @@ class Scheduler
             if (!$lock->alreadySet()) {
                 $lock->set();
                 \Wappointment\Services\Queue::process();
-
                 $lock->release();
             }
         }
@@ -90,7 +104,13 @@ class Scheduler
     public static function dailyProcess()
     {
         try {
-            self::regenerateAvailability();
+            if (!VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES)) {
+                self::regenerateAvailability();
+            } else {
+                foreach (Calendars::all() as $calendar) {
+                    (new Availability($calendar))->regenerate();
+                }
+            }
             // we at least regenerate once a day to avoid empty calendar after aa while without a booking
             self::checkLicence();
         } catch (\Exception $e) {
@@ -100,6 +120,11 @@ class Scheduler
 
 
     private static function regenerateAvailability()
+    {
+        //(new \Wappointment\Services\Availability())->regenerate();
+    }
+
+    private static function regenerateAvailabilityLegacy()
     {
         (new \Wappointment\Services\Availability())->regenerate();
     }

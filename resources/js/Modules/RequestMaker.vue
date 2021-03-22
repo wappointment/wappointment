@@ -4,6 +4,10 @@ if(window.wapRequests === undefined) {
   window.wapRunning = false
 }
 export default {
+  data: () => ({
+    errorMessages:[],
+    mainService: null
+  }),
   methods: {
       queueExecuteOne(){
         if(window.wapRunning === false){
@@ -22,11 +26,9 @@ export default {
           }
         }else{
           //waiting turn
-          //console.log('waiting turn')
         }  
       },
       finalCallbackWrapper(data){
-        //console.log('final callback left',window.wapRequests.length)
          if(window.wapRunning.finalCallback !== undefined && typeof(window.wapRunning.finalCallback) === 'function') window.wapRunning.finalCallback(data)
          window.wapRunning = false
          if(window.wapRequests.length > 0) this.queueExecuteOne()

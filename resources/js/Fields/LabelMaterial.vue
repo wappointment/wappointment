@@ -27,6 +27,9 @@ export default {
       type:Boolean,
       default:false
     }, 
+    valuePassed:{
+      type:String
+    }
   },
   data () {
     return {
@@ -40,7 +43,7 @@ export default {
     this.input.addEventListener('input', this.valueChange)
     this.input.addEventListener('blur', this.unfocused)
     this.input.addEventListener('focus', this.focused)
-    this.value = this.input.value
+    this.value = this.valuePassed
   },
   beforeDestroy () {
     this.input.removeEventListener('input', this.valueChange)

@@ -22,32 +22,12 @@ export default class Intervals {
         for (let index = 0; index < this.intervals.length; index++) {
              const element = this.intervals[index]
 
-
-             //if there is an intersection we create a new interval
-             /* if(today === true) {
-                if(momenttz.unix(element.start).isBefore(from) && momenttz.unix(element.end).isSameOrBefore(until)) {
-                    element.start = from.unix() // add time before booking is allowed
-                    element.duration = element.end - element.start
-                    newCollection.push(element)
-                 }
-             }
-             // if is contained in the segment
-             if(momenttz.unix(element.start).isSameOrAfter(from) && momenttz.unix(element.end).isSameOrBefore(until)) {
-                element.duration = element.end - element.start
-                newCollection.push(element)
-             } */
-
              //if there is an intersection before or after in between two days
              let DummyInterval = {start: from.unix(), end: until.unix()}
-             //console.log('get intervals DummyInterval',DummyInterval)
              if(this.intersecting(DummyInterval, element)) {
-                //console.log('INTERSECTING', DummyInterval, element)
                 if(this.aContainsB(DummyInterval,element)){
-                    //console.log('a contains b', DummyInterval, element, {start:element.start, end:element.end, duration:(element.end - element.start),llave:'a'})
-
                     newCollection.push({start:element.start, end:element.end, duration:(element.end - element.start),llave:'a'})
                 }else{
-                    //console.log('aContainsB', false)
                     let newt = {}
                     if(DummyInterval.start > element.start){
                         if(DummyInterval.end < element.end){
@@ -55,23 +35,16 @@ export default class Intervals {
                         }else{
                             newt = {start:DummyInterval.start, end:element.end, duration:(element.end - DummyInterval.start),llave:'b2'}
                         }
-                        
                     }else{
-                        
-                        
                         if(DummyInterval.end <= element.end){
-
                             newt = {start:element.start, end:DummyInterval.end, duration:(DummyInterval.end - element.start),llave:'c'}
                         }else{
                             newt = {start:element.start, end:element.end, duration:(element.end - element.start),llave:'c'}
                         }
                     }
-                    
-
                     newCollection.push(newt)
                 }
              }else{
-                //console.log('intersecting', false)
              }
 
         }
@@ -84,27 +57,21 @@ export default class Intervals {
         for (let i = 0; i < this.intervals.length; i++) {
              const interval = this.intervals[i]
              if(Array.isArray(interval)){
-                //console.log('interval is array', interval)
              }else{
 
                 for (let j = 0; j < removeIntervals.intervals.length; j++) {
                     
                     const removeMe = removeIntervals.intervals[j]
-                    //console.log('try to remove', removeMe,'from interval', interval)
                     if(this.intersecting(interval,removeMe)){
-                        //console.log('a and b are intersecting', interval,removeMe)
                        if(this.aContainsB(interval,removeMe)){
                            //we get 2 intervals out
-                           //console.log('a contains b', interval,removeMe)
                            this.intervals[i] = this.aMinusBWhenContaining(interval,removeMe)
                        }else{
                          
                            //we get just one interval so we can simply replace it for the next part
                            this.intervals[i] = this.aMinusBWhenIntersect(interval,removeMe)
-                           //console.log('a shares a common part with b',this.intervals[i], interval,removeMe)
                        }
                     }else{
-                        //console.log('a and b are NOT intersecting', interval,removeMe)
                     }
                 }
              }

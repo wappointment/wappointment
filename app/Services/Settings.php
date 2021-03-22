@@ -54,6 +54,7 @@ class Settings
                     'countries' => []
                 ]
             ],
+            'email_logo' => false,
             'wappointment_allowed' => false,
             'buffer_time' => 0,
             'scheduler_mode' => 0,
@@ -119,6 +120,7 @@ class Settings
 
     public static function staffDefaults()
     {
+        //dd(WPHelpers::getWPOption('timezone_string'));
         $timezone = WPHelpers::getWPOption('timezone_string');
         //if (empty($timezone)) $timezone = 'UTC';
         return [

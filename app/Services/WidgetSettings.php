@@ -77,7 +77,6 @@ class WidgetSettings
             'email' => 'E-mail:',
             'phone' => 'Phone:',
             'skype' => 'Skype username:',
-            'address' => 'Address:',
             'back' => 'Back',
             'confirm' => 'Confirm',
             'check_terms' => false,
@@ -116,6 +115,15 @@ class WidgetSettings
             'toolate' => "Cannot reschedule. This is too close to appointment's start",
             'button' => 'Reschedule',
             'confirm' => 'Confirm',
+        ],
+        'service_selection' => [
+            'select_service' => 'Select a service',
+        ],
+        'service_duration' => [
+            'select_duration' => 'Select a duration',
+        ],
+        'service_location' => [
+            'select_location' => 'Select a location',
         ],
     ];
 
@@ -223,45 +231,42 @@ class WidgetSettings
                     'options' => ['min' => .6, 'max' => 2.6, 'step' => .1, 'unit' => 'em'],
                 ],
             ]
-            // 'backgroundColor' => ['label' => 'Primary Button Background'],
-            // 'color' => ['label' => 'Primary Button Text'],
 
         ],
         'selection' => [
-            // 'header_co' => ['label' => 'Header text'],
-            // 'header_bg' => ['label' => 'Header background'],
-            // 'calendar_bg' => ['label' => 'Body background'],
-            // 'calendar_cotext' => ['label' => 'Body text'],
-            // 'calendar_codisabled' => ['label' => 'Disabled day'],
+
             'fields' => [
                 'check_viewweek' => ['label' => 'Week View'],
             ]
 
         ],
         'form' => [
-            // 'back_bg' => ['label' => 'Secondary Button background'],
-            // 'back_color' => ['label' => 'Secondary Button text'],
-            // 'back_sel_bg' => ['label' => 'Secondary Button background(selected)'],
-            // 'back_sel_co' => ['label' => 'Secondary Button text(selected)'],
-            // 'success_co' => ['label' => 'Success color'],
-            // 'error_co' => ['label' => 'Error color'],
-
-            'fields' => [
-                'check_terms' => [
-                    'label' => 'Add data proccessing notice',
-
+            'categories' => [
+                [
+                    'label' => 'Appointment Modalities',
+                    'fields' => [
+                        'byzoom' => false,
+                        'inperson' => false,
+                        'byskype' => false,
+                    ]
                 ],
-                'terms' => [
-                    'conditions' => [
-                        ['key' => 'form.check_terms', 'val' => true]
-                    ],
-                ],
-                'terms_link' => [
-                    'conditions' => [
-                        ['key' => 'form.check_terms', 'val' => true]
-                    ],
+                [
+                    'label' => 'Booking Form',
+                    'fields' => [
+                        'fullname' => false,
+                        'email' => false,
+                        'phone' => false,
+                        'skype' => false,
+                        'address' => false,
+                        'back' => false,
+                        'confirm' => false,
+                        'check_terms' => ['label' => 'Add data proccessing notice'],
+                        'terms' => ['conditions' => [['key' => 'form.check_terms', 'val' => true]]],
+                        'terms_link' => ['conditions' => [['key' => 'form.check_terms', 'val' => true]]],
+                    ]
                 ],
             ]
+
         ],
         'confirmation' => [
             'categories' => [
@@ -281,13 +286,14 @@ class WidgetSettings
                         'pending' => ['tip' => 'When admin confirmation is required'],
                         'skype' => ['tip' => 'Skype appointments only'],
                         'phone' => ['tip' => 'Phone appointments only'],
-                        'physical' => ['tip' => 'On site appointments only'],
+                        'physical' => ['tip' => 'Appointments at a location only'],
                         'zoom' => ['tip' => 'Video appointments only'],
                     ]
                 ],
             ]
 
-        ]
+        ],
+
     ];
 
     private $db_settings = [];
@@ -302,15 +308,26 @@ class WidgetSettings
         $this->db_settings = WPHelpers::getOption($this->key_option, []);
         $this->merged_settings = empty($this->db_settings) ?
             $this->defaultSettings() : $this->merge($this->defaultSettings(), $this->db_settings);
-        //$this->merged_settings = $this->merge($this->settings, $this->db_settings);
     }
+
     public function defaultSettings()
     {
         return apply_filters('wappointment_widget_settings_default', $this->settings);
     }
+
     public function defaultFields()
     {
-        return apply_filters('wappointment_widget_fields_default', $this->fields);
+        return apply_filters('wappointment_widget_fields_default', $this->getFields());
+    }
+
+    protected function getFields()
+    {
+        if (VersionDB::canServices()) {
+            unset($this->fields['form']['categories'][0]);
+            $this->fields['form']['categories'] = array_values($this->fields['form']['categories']);
+        }
+
+        return $this->fields;
     }
 
     public function get()

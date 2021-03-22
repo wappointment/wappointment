@@ -5,23 +5,30 @@ namespace Wappointment\Services;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\Models\Appointment;
 
+/**
+ * USed for summary emails
+ */
 class Sections
 {
     private $start_at = false;
     private $end_at = false;
     public $availabilities = [];
     public $appointments = [];
+    private $staff = null;
+    private $legacy = false;
 
-    public function __construct($start_at = false, $end_at = false)
+    public function __construct($start_at = false, $end_at = false, $staff = null, $legacy = false)
     {
         $this->start_at = $start_at;
         $this->end_at = $end_at;
+        $this->staff = $staff;
+        $this->legacy = $legacy;
 
         $this->setAppointments();
         $this->setAvailabilities();
     }
 
-    public static function tsToDBString(Int $timestamp)
+    public static function tsToDBString($timestamp)
     {
         return Carbon::createFromTimestamp($timestamp)->format(WAPPOINTMENT_DB_FORMAT);
     }
@@ -36,6 +43,9 @@ class Sections
                 ->where('start_at', '>=', self::tsToDBString((int) $this->start_at))
                 ->where('end_at', '<=', self::tsToDBString((int) $this->end_at));
         }
+        if (!$this->legacy) {
+            $queryAppointments->where('staff_id', $this->staff->id);
+        }
         $this->appointments = $queryAppointments->orderBy('start_at')
             ->orderBy('end_at')
             ->get();
@@ -44,17 +54,18 @@ class Sections
     public function setAvailabilities()
     {
         $this->availabilities = (new AvailabilityGetter(
+            $this->legacy ? null : $this->staff,
             $this->start_at,
             $this->end_at
-        ))->getStaff(Settings::get('activeStaffId'));
+        ))->getSections();
     }
 
-    public function getFreeSlots(Int $duration = 0)
+    public function getFreeSlots($duration = 0)
     {
         return $this->getSlots($duration, $this->availabilities);
     }
 
-    public function getBookedSlots(Int $duration = 0)
+    public function getBookedSlots($duration = 0)
     {
         $appointmentsArray = [];
 
@@ -64,20 +75,20 @@ class Sections
         return $this->getSlots($duration, $appointmentsArray);
     }
 
-    private function getSlots(Int $duration, $timestampsArray)
+    private function getSlots($duration, $timestampsArray)
     {
         if ($duration < 1) {
             throw new \WappointmentException('Missing duration argument', 1);
         }
         $slots = 0;
         foreach ($timestampsArray as $availableSection) {
-            $slots += ($availableSection[1] - $availableSection[0]) / $duration;
+            $slots += floor(($availableSection[1] - $availableSection[0]) / $duration);
         }
 
         return $slots;
     }
 
-    public function getCoverage(Int $duration)
+    public function getCoverage($duration)
     {
         $bookedTime = 0;
         foreach ($this->appointments as $appointment) {

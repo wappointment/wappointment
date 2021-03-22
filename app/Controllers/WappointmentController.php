@@ -17,8 +17,10 @@ class WappointmentController extends RestController
 {
     public function connect(Request $request)
     {
-
-        $result = (new DotCom)->connect($request->get('account_key'));
+        $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
+        $dotcomapi = new DotCom;
+        $dotcomapi->setStaff($staff_id);
+        $result = $dotcomapi->connect($request->get('account_key'));
 
         if ($result) {
             return [
@@ -31,10 +33,10 @@ class WappointmentController extends RestController
 
     public function disconnect(Request $request)
     {
-        $staff_id = Settings::get('activeStaffId');
+        $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
         $dotcom = new DotCom;
         $dotcom->setStaff($staff_id);
-        $result = $dotcom->disconnect();
+        $result = $dotcom->disconnect($staff_id);
 
         if ($result) {
             return [
@@ -45,9 +47,9 @@ class WappointmentController extends RestController
         throw new \WappointmentException("Couldn't disconnect account.", 1);
     }
 
-    public function refresh()
+    public function refresh(Request $request)
     {
-        $staff_id = Settings::get('activeStaffId');
+        $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
         $dotcom = new DotCom;
         $dotcom->setStaff($staff_id);
         $result = $dotcom->refresh();

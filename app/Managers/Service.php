@@ -4,6 +4,12 @@ namespace Wappointment\Managers;
 
 class Service
 {
+
+    public static function model()
+    {
+        return Central::get('ServiceModel');
+    }
+
     public static function all()
     {
         return Central::get('Service')::all();
@@ -25,5 +31,28 @@ class Service
             return false;
         }
         return Central::get('Service')::hasZoom($service);
+    }
+
+    public static function extractDurations($services)
+    {
+        if (is_array($services)) {
+            $services = \WappointmentLv::collect($services);
+        }
+        //'durations' => [Service::get()['duration']],
+        if (count($services) == 1 && !empty($services[0]['duration'])) {
+            return [$services[0]['duration']];
+        }
+
+        $durations = $services->map(function ($item, $key) {
+            $innerdur = [];
+            foreach ($item['options']['durations'] as $key => $array) {
+                $innerdur[] = $array['duration'];
+            }
+            return $innerdur;
+        });
+
+        $durations_filtered = array_filter($durations->flatten()->unique()->toArray());
+        sort($durations_filtered);
+        return $durations_filtered;
     }
 }

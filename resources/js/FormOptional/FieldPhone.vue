@@ -6,7 +6,7 @@
             :phone="updatedValue"
             @onInput="onInput"
             :forceFloat="updatedValue!=''"
-            ></PhoneInput>
+            />
     </div>
 </template>
 

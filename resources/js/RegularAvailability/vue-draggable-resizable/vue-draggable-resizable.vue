@@ -520,7 +520,6 @@ export default {
       this.handle = null
       if (this.resizing) {
         this.resizing = false
-        //console.log('resize stop values',this.top, this.height)
         this.$emit('resizestop', this.top, this.height )
       }
       if (this.dragging) {
@@ -535,7 +534,6 @@ export default {
 
   computed: {
     style: function () {
-      //console.log('style', this.top, this.height)
       return {
         top: this.top + 'px',
 /*         left: this.left + 'px', */

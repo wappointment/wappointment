@@ -7,8 +7,15 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
                 <h1 class="h2 align-self-center" @click="refreshEvents"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
+                <div class="d-flex" v-if="viewData.staff !== undefined && viewData.legacy !== true">
+                  <div v-for="staff in viewData.staff" class="cal-staff-img tt-below" 
+                  :class="{activeStaff:activeStaff.id==staff.id}" @click="changeActiveStaff(staff)" 
+                  :data-tt="staff.name" >
+                    <img :src="staff.avatar" class="wstaff-img" />
+                  </div>
+                </div>
                 <FreeSlotsSelector :intervals="getThisWeekIntervals" :viewingFreeSlot="viewingFreeSlot" 
-                :durations="getAllDurations" :duration="selectedDuration" :buffer="viewData.buffer_time"
+                :durations="getAllDurations" :buffer="viewData.buffer_time"
                  @getFreeSlots="getFreeSlots" @getEdition="getEdition" />
               </div>
               <div class="d-flex">
@@ -20,7 +27,7 @@
         </div>
       </StickyBar>
 
-      <div class="full-width center-content calendar-wrap full-width-layout">
+      <div class="full-width center-content calendar-wrap full-width-layout" >
         <div class="wrap">
             
             <div  v-if="fullCalOption!==undefined">
@@ -71,23 +78,27 @@
 
                   </div>
                   <div v-else>
-                    <BehalfBooking v-if="shownAppointmentForm" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"
-                      :timezone="displayTimezone" @cancelled="hideModal" @confirmed="confirmedStatus" @updateEndTime="updateEndTime"/>
+                    <BehalfBooking v-if="shownAppointmentForm" 
+                    :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :activeStaff="activeStaff"
+                    :viewData="viewData" :timezone="displayTimezone" 
+                    @cancelled="hideModal" @confirmed="confirmedStatus" @updateEndTime="updateEndTime"/>
 
                     <StatusBusyConfirm v-if="shownBusyConfirm" 
-                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :viewData="viewData"  
+                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :activeStaff="activeStaff" :viewData="viewData"  
                     @confirmed="confirmedStatus" @cancelled="hideModal"/>
 
                     <StatusFreeConfirm v-if="shownFreeConfirm" 
-                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :viewData="viewData"
+                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :activeStaff="activeStaff" :viewData="viewData"
                     @confirmed="confirmedStatus" @cancelled="hideModal"/>
                   </div>
 
               </WapModal>
               <WapModal v-if="showRegularAv" :show="showRegularAv" @hide="hideRegavModal" large>
                 <h4 slot="title" class="modal-title">Modify your Weekly Availability</h4>
-                <Regav noback></Regav>
-                <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">Close</button>
+
+                  <WeeklyAvailability noback :calendar="activeStaff" :timezones_list="viewData.timezones_list" :staffs="viewData.staff"/>
+                    <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">Close</button>
+                
               </WapModal>
 
               <WelcomeModal v-if="showWelcomePopup" 
@@ -130,7 +141,7 @@
   </div>
 </template>
 <script>
-import Regav from '../RegularAvailability/View'
+import WeeklyAvailability from '../RegularAvailability/View'
 import abstractView from '../Views/Abstract'
 import TimeZones from '../Components/TimeZones'
 import ControlBar from './ControlBar'
@@ -167,7 +178,7 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
       SubscribeNewsletter,
       TimeZones,
       ControlBar,
-      Regav,
+      WeeklyAvailability,
       FullCalendarWrapper,
       BehalfBooking,
       StatusFreeConfirm,
@@ -235,7 +246,8 @@ export default {
     hasBeenSetCalProps: false,
     queryParameters: undefined,
     showCalSettings: false,
-    lockCalSettings: false
+    lockCalSettings: false,
+    activeStaff: null,
   }),
 
   created(){
@@ -243,7 +255,7 @@ export default {
     this.serviceStatus = this.$vueService(new StatusService)
     
     this.checkQueryParams()
-
+    
   },
 
  watch: {
@@ -259,6 +271,12 @@ export default {
   },
  
  computed: {
+   activeAvailability(){
+     return this.viewData.legacy !== true ? this.activeStaff.availability:this.activeStaff.availability
+   },
+   activeRegav(){
+     return this.viewData.legacy !== true ? this.activeStaff.options.regav:this.viewData.regav
+   },
    getAllDurations(){
      return this.viewData.durations
    },
@@ -324,6 +342,14 @@ export default {
     
  },
   methods: {
+    changeActiveStaff(staff){
+      this.activeStaff = staff
+      if(this.queryParameters !== undefined){
+        this.queryParameters.timezone = this.activeStaff.options.timezone
+      }
+      
+      this.reload(true)
+    },
     getPref(pref = 'cal_duration', defaultVal= ''){
       return [undefined,false, null,''].indexOf(this.viewData.preferences[pref]) === -1 ? this.viewData.preferences[pref]: defaultVal
     },
@@ -343,7 +369,7 @@ export default {
     },
     reloadAfterChange(){
       this.fullCalOption = undefined
-      setTimeout(this.setFullCalOptions.bind(null, this.firstDay.format()), 100);
+      setTimeout(this.setFullCalOptions.bind(null, this.firstDay.format()), 100)
     },
     savePreferences(preferences){
       this.minHour = preferences.minH
@@ -358,6 +384,9 @@ export default {
           end: params.end.format(), 
           timezone:params.timezone, 
           view: this.currentView, 
+        }
+        if(this.activeStaff.id!==undefined){
+          p.staff_id = this.activeStaff.id
         }
         if(this.viewingFreeSlot){
           p.viewingFreeSlot = true
@@ -438,28 +467,47 @@ export default {
       },
       convertInterval(){
         let hours = this.intervals.hours
-        let minutes = this.intervals.minutes + this.viewData.buffer_time
+        let minutes = this.intervals.minutes //+ this.viewData.buffer_time
         if(hours >= 1 ) hours = (hours < 10) ? '0' + hours : hours
         else hours = '00'
         minutes = (minutes < 10) ? '0' + minutes : minutes
         
         return hours + ':' + minutes
       },
-      loaded(viewData, reloaded = false){
+
+      getStaffTz(){
+        return this.viewData.legacy !== true ? this.activeStaff.options.timezone:this.activeStaff.t
+      },
+      loaded(viewData, reloaded = false, staffChange=false){
           this.viewData = viewData.data
+          
+          if(this.viewData.legacy === true){
+            this.activeStaff = this.viewData.staff
+          }else{
+            if(staffChange === false ){
+              if(this.queryParameters !== undefined && this.queryParameters.staff !== undefined){
+                let staffid = this.queryParameters.staff
+                this.activeStaff = this.viewData.staff.find(e => e.id ==staffid)
+              }else{
+                this.activeStaff = this.viewData.staff[0]
+              }
+              
+            }
+
+          }
+          
+          this.openedDays = this.activeRegav
+          this.intervalsCollection = new Intervals(this.activeAvailability)
+          let initTimezone = (this.queryParameters !== undefined)? this.queryParameters.timezone:this.getStaffTz()
+          this.timezone = initTimezone // staff timezone
+          this.selectedTimezone = initTimezone // display timezone
+
           if(reloaded === false){
             
-            this.openedDays = this.viewData.regav
-
-            this.intervalsCollection = new Intervals(this.viewData.availability)
             this.viewData.time_format = convertDateFormatPHPtoMoment(this.viewData.time_format)
             this.viewData.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
             this.setMinAndMax()
             
-            
-            let initTimezone = (this.queryParameters !== undefined)? this.queryParameters.timezone:this.viewData.timezone
-            this.timezone = initTimezone // staff timezone
-            this.selectedTimezone = initTimezone // display timezone
             this.showWelcomePopup = this.viewData.showWelcome
             
             this.setInterval(this.getPref('cal_duration', this.viewData.durations[0]))
@@ -467,6 +515,9 @@ export default {
 
             this.minHour = min_max.min < this.getPref('cal_minH')? min_max.min:this.getPref('cal_minH')
             this.maxHour = min_max.max > this.getPref('cal_maxH')? min_max.max:this.getPref('cal_maxH')
+            if(this.maxHour > 24) {
+              this.maxHour = 24
+            }
           }
           
           let defaultDate = false
@@ -474,7 +525,9 @@ export default {
             defaultDate = this.toMoment(this.queryParameters.start.replace(' ','+')).format()
           }
           this.setFullCalOptions(defaultDate)
+
       },
+
 
       getMinMaxHourFromRegav(){
         let min = 7
@@ -563,13 +616,13 @@ export default {
               this.fullCalOption.props.defaultDate = defaultDate
             }
       },
-      loadAgain(){
-        this.loaded({data:Object.assign({},this.viewData)}, true)
+      loadAgain(staffChange){
+        this.loaded({data:Object.assign({},this.viewData)}, true, staffChange)
       },
-      reload(){
+      reload(staffChange = false){
         this.fullCalOption = undefined
         this.fcIsReady = false
-        setTimeout(this.loadAgain, 100)
+        setTimeout(this.loadAgain.bind(null,staffChange), 100)
       },
 
       toMoment(FullCaldateString, timezone = false, debug=false){
@@ -730,17 +783,19 @@ export default {
       },
       writeHistory(){
         if(this.firstDay !== undefined){
-          window.history.pushState(
-          {
-            query: {
+          this.queryParameters = {
               page: 'wappointment_calendar',
               start: this.firstDay.format(),
               end: this.lastDay.format(),
               timezone: this.displayTimezone,
+              staff: this.activeStaff.id,
             }
+          window.history.pushState(
+          {
+            query: Object.assign({},this.queryParameters)
           },
           'Calendar week ' + this.firstDay.format() + ' - ' + this.lastDay.format(),
-          'admin.php?page=wappointment_calendar&start=' + this.firstDay.format() + '&end=' + this.lastDay.format() + '&timezone=' + this.displayTimezone
+          'admin.php?page=wappointment_calendar&start=' + this.firstDay.format() + '&end=' + this.lastDay.format() + '&timezone=' + this.displayTimezone + '&staff='+this.activeStaff.id
         )
         }
         
@@ -1332,5 +1387,37 @@ export default {
 .calendar-wrap .welcome-list li{
   margin-bottom:0;
 }
-  
+
+.calendar-wrap .wbtn.wbtn-secondary.wbtn-cell{
+    margin: .5rem;
+}
+
+.cal-staff-img{
+  border-radius: 50%;
+}
+
+
+.cal-staff-img .wstaff-img{
+  transition: all .3s ease-in-out;
+  background-color:#fff;
+  box-shadow: 0px 8px 10px 0 rgba(0,0,0,.02);
+  margin: 0 .4rem !important;
+}
+
+.cal-staff-img .wstaff-img{
+  filter:grayscale(.9);
+}
+
+.cal-staff-img.activeStaff .wstaff-img{
+  border: 2px solid var(--primary);
+  filter:grayscale(0);
+  transform: scale(1);
+}
+.cal-staff-img .wstaff-img:hover{
+  filter:grayscale(0);
+  border: 1px dashed var(--primary);
+  box-shadow: 0px 8px 10px 0 rgba(0,0,0,.08);
+  transform: scale(1.05);
+}
+
 </style>

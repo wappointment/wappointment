@@ -4,7 +4,7 @@
             
             <div class="columnTitle" data-tt="Open your calendar for bookings for X days in the future">Available Booking Days</div> 
             <ClickRevealSlider :alwaysShow="true" 
-            :value="viewData.availaible_booking_days" @change="changedCRS" />
+            :value="viewData.avb" @change="changedCRS" />
         </div>
 
         <div class="commands-frame d-flex" @mouseover="showControls=true" @mouseout="showControls=false">
@@ -28,12 +28,6 @@
                     @updatedSlots="updatedSlots" @editBlock="editBlock"></dayColumn>
                 </template>
             </div>
-            <WapModal v-if="showCustomRegav" :show="showCustomRegav" @hide="hideCustomRegav" large>
-                <h4 slot="title" class="modal-title" >Set conditions for that time ({{dayEdit}}  [{{ convertPrToh(timeEdit[0]) + 'h - ' +convertPrToh(timeEdit[1]) }}h])</h4>
-                <WAPFormGenerator v-if="schemaRegavCondition" ref="fg-regavCondition" :schema="schemaRegavCondition" :data="modelHolder" 
-                @submit="saveRegavCond" @back="hideCustomRegav" :errors="errorsPassed" :key="'regavCondForm'" 
-                labelButton="Save" :backbutton="true" backbuttonLabel="Cancel" />
-            </WapModal>
         </div>
     </div>
 </template>
@@ -69,7 +63,6 @@ export default {
             widthWeekWrapper: 0,
             isMounted: false,
             isSmallScreen: window.document.documentElement.clientWidth < 1100,
-            showCustomRegav: false
         }
     },
     components: { dayColumn, hourColumn, ClickRevealSlider }, 

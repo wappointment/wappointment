@@ -5,16 +5,30 @@ namespace Wappointment\Services\Wappointment;
 use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Models\Appointment;
+use Wappointment\Services\VersionDB;
+use Wappointment\Services\Flag;
+use Wappointment\Managers\Central;
 
 class DotCom extends API
 {
     public $account_key = '';
     public $staff_id = false;
+    private $isLegacy = true;
+    private $staff = null;
+
+    public function __construct()
+    {
+        $this->isLegacy = !VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES);
+        parent::__construct();
+    }
 
     public function setStaff($staff_id = false)
     {
         if ($staff_id !== false) {
             $this->staff_id = !empty($staff_id) ? (int)$staff_id : false;
+            if (!$this->isLegacy) {
+                $this->staff = Central::get('CalendarModel')::findOrFail($this->staff_id);
+            }
             $this->setAccountKey();
         }
     }
@@ -139,12 +153,21 @@ class DotCom extends API
         $result = $this->processResponse($response);
         if ($result) {
             //disconnect
-            Settings::saveStaff('dotcom', false);
+            if ($this->isLegacy) {
+                Settings::saveStaff('dotcom', false);
+            } else {
+                $options = $this->staff->options;
+                $options['dotcom'] = false;
+                $this->staff->update([
+                    'account_key' => null,
+                    'options' => $options
+                ]);
+            }
         } else {
             throw new \WappointmentException("Failed disconnecting", 1);
         }
 
-        return ['dotcom' => $this->getDotcom(), 'message' => 'Account connected!'];
+        return ['message' => 'Account connected!'];
     }
 
     public function refresh()
@@ -211,27 +234,27 @@ class DotCom extends API
 
     protected function getAppointmentDetails($appointment)
     {
-        $tz = Settings::getStaff('timezone', $this->staff_id);
+
+        $tz = $this->isLegacy ? Settings::getStaff('timezone', $this->staff_id) : $this->staff->getTimezone();
         return [
             'appointment' => $appointment->toDotcom($tz),
             'account_key' => $this->account_key
         ];
     }
 
-    private function getDotcom()
+    private function getAccountKeyLegacy()
     {
-        return Settings::getStaff('dotcom', $this->staff_id);
-    }
-
-    private function getAccountKey()
-    {
-        $dotcom = $this->getDotcom();
+        $dotcom = Settings::getStaff('dotcom', $this->staff_id);
         return empty($dotcom) || empty($dotcom['account_key']) ? '' : $dotcom['account_key'];
     }
 
     private function setAccountKey()
     {
-        $this->account_key = $this->getAccountKey();
+        if ($this->isLegacy) {
+            $this->account_key = $this->getAccountKeyLegacy();
+        } else {
+            $this->account_key = $this->staff->account_key;
+        }
     }
 
     protected function confirmAccountKey($result, $account_key)
@@ -243,7 +266,29 @@ class DotCom extends API
             'services' => $result->social,
             'account_key' => $account_key
         ];
-        Settings::saveStaff('dotcom', $data);
+
+        if ($this->isLegacy) {
+            Settings::saveStaff('dotcom', $data);
+        } else {
+            $account = $this->isAccountKeyUsed($account_key);
+            if ($account) {
+                throw new \WappointmentException("Account key already used on another calendar : " . $account->name, 1);
+            }
+
+            $options = $this->staff->options;
+            Flag::save('dotcomSet', true);
+            $options['dotcom'] = $data;
+            $this->staff->update([
+                'account_key' => $account_key,
+                'options' => $options
+            ]);
+        }
+
         return $data;
+    }
+
+    public function isAccountKeyUsed($account_key)
+    {
+        return Central::get('CalendarModel')::where('account_key', $account_key)->where('id', '!=', $this->staff_id)->first();
     }
 }

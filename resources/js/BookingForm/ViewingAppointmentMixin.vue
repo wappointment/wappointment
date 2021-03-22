@@ -17,7 +17,6 @@ export default {
         appointmentLoadingError(e){
             this.loading = false
             this.errorLoading = e.response.data.message
-            //console.log('appointmentBookingError',e)
         },
         appointmentLoaded(d){
             this.rescheduleData = d.data

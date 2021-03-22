@@ -3,6 +3,7 @@
 namespace Wappointment\Jobs;
 
 use Wappointment\Services\Settings;
+use Wappointment\Services\VersionDB;
 
 trait IsAdminAppointmentJob
 {
@@ -10,7 +11,7 @@ trait IsAdminAppointmentJob
     {
         $email_send = $this->prepareEmailSend();
         if ($email_send === false || !$this->transport->send($email_send)) {
-            throw new \WappointmentException('Error while sending email', 1);
+            throw new \WappointmentException('Error while sending email 2', 1);
         }
 
         if (method_exists($this, 'afterHandled')) {
@@ -27,11 +28,22 @@ trait IsAdminAppointmentJob
         if (empty($this->appointment)) {
             return false;
         }
-        $email_staff = (new \Wappointment\WP\Staff($this->appointment->getStaffId()))->emailAddress();
+
+        if ($this->isLegacy()) {
+            $email_staff = (new \Wappointment\WP\StaffLegacy($this->appointment->getStaffId()))->emailAddress();
+        } else {
+            $email_staff = (new \Wappointment\WP\Staff($this->appointment->getStaffId()))->emailAddress();
+        }
+
         if (!in_array($email_staff, $notifications_emails)) {
             $this->transport->to($email_staff);
         }
 
         return $this->generateContent();
+    }
+
+    protected function isLegacy()
+    {
+        return VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
     }
 }

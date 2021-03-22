@@ -214,7 +214,6 @@ export default {
       },
 
       eventDragStart(event){
-        //console.log('event drag', event)
         if(event.editable !== true) return false
         this.disableBgEvent = true
       },
@@ -229,9 +228,6 @@ export default {
         let delta =info.delta
         let revertFunc = info.revert
         
-
-        //console.log('patch to ', event, this.toMoment(event.start))
-
         this.$WapModal().confirm({
           title: 'Do you really want to modify this appointment?',
           content: this.getAppointmentInfoHTML(event,delta)

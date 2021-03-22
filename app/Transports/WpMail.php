@@ -3,13 +3,11 @@
 namespace Wappointment\Transports;
 
 use WappoSwift_Mime_SimpleMessage;
-use WappoSwift_MimePart;
-use WappoSwift_Attachment;
 use Wappointment\Services\Status;
 
 class WpMail extends Transport
 {
-    use WpMailPatched;
+    use WpMailPatched, CanSendPlainText, CanSendMultipart, CanSendPlugin;
     private $configSave = [];
 
     public function __construct($config)
@@ -33,12 +31,6 @@ class WpMail extends Transport
         add_filter('wpMailFrom', [$this, 'wpMailFrom']);
     }
 
-    public function unsetWpSettings()
-    {
-        remove_filter('wpMailFromName', [$this, 'wpMailFromName']);
-        remove_filter('wpMailFrom', [$this, 'wpMailFrom']);
-    }
-
     public function send(WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
         $this->beforeSendPerformed($message);
@@ -48,57 +40,32 @@ class WpMail extends Transport
         $message->setBcc([]);
         $this->setWpSettings();
 
-        //if wpforms or other smtp plugins is installed
-        if (Status::hasSmtpPlugin()) {
-            add_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
-            wp_mail($to, $message->getSubject(), $message->getBody());
-            remove_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
-        } else {
-            if (!empty($this->configSave['wpmail_html'])) {
-                add_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
-                $this->wpMail($to, $message->getSubject(), $this->multipartBody($message), $message->getHeaders(), $this->getAttachments($message));
-                remove_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);
-            } else {
-                wp_mail($to, $message->getSubject(), $message->getBody(), $message->getHeaders());
-            }
-        }
-
+        $this->sendTheRightWay($to, $message);
 
         $this->unsetWpSettings();
         return true;
     }
 
-    public function getAttachments($message)
+    public function sendTheRightWay($to, $message)
     {
-        $attachments = [];
-        foreach ($message->getChildren() as $child) {
-            if ($child instanceof WappoSwift_Attachment) {
-                $attachments[] = [
-                    'body' => $child->getBody(),
-                    'type' => 'text/calendar',
-                    'name' => 'appointments.ics',
-                ];
-            }
+        //if wpforms or other smtp plugins is installed
+        if (Status::hasSmtpPlugin()) {
+            return $this->sendPluginVersion($to, $message);
+        } else {
+            return empty($this->configSave['wpmail_html']) ?
+                $this->sendTextVersion($to, $message) : $this->sendMultiPartVersion($to, $message);
         }
-
-        return $attachments;
     }
 
-    public function multipartBody($message)
+    public function unsetWpSettings()
     {
-        $content = ['text/html' => $message->getBody()];
-        foreach ($message->getChildren() as $child) {
-            if ($child instanceof WappoSwift_MimePart && $child->getContentType() === 'text/plain') {
-                $content['text/plain'] = $child->getBody();
-            }
-        }
-
-        return $content;
+        remove_filter('wpMailFromName', [$this, 'wpMailFromName']);
+        remove_filter('wpMailFrom', [$this, 'wpMailFrom']);
     }
 
     public function setHtmlContentType()
     {
-        return \Wappointment\Services\Status::hasSmtpPlugin() ? 'text/html' : 'multipart/alternative';
+        return Status::hasSmtpPlugin() ? 'text/html' : 'multipart/alternative';
     }
 
     /**

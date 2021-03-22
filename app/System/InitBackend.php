@@ -79,7 +79,7 @@ class InitBackend
         );
 
         wp_register_script(
-            WAPPOINTMENT_SLUG . '_backend',
+            WAPPOINTMENT_SLUG . '_backend.back.js',
             Helpers::assetUrl('main.js'),
             ['jquery'],
             null,
@@ -114,10 +114,11 @@ class InitBackend
 
             $varJs['canSeeUpdate'] = Status::canSeeUpdatePage();
         }
+
         wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', WAPPOINTMENT_SLUG . 'Admin', $varJs);
 
         wp_enqueue_script(WAPPOINTMENT_SLUG . '_backend_menu');
-        wp_enqueue_script(WAPPOINTMENT_SLUG . '_backend');
+        wp_enqueue_script(WAPPOINTMENT_SLUG . '_backend.back.js');
     }
 
     public function enqueueBackendAlways()

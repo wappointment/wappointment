@@ -9,7 +9,7 @@
 import StatusService from '../Services/V1/Status'
 import RequestMaker from '../Modules/RequestMaker'
 export default {
-    props: ['startTime','endTime','timezone','viewData'],
+    props: ['startTime','endTime','timezone','viewData','activeStaff'],
     mixins:[RequestMaker],
     data: () => ({
         serviceStatus: null,
@@ -27,8 +27,15 @@ export default {
             this.$emit('confirmed')
         },
         async setRequest(params) {
+
             return await this.serviceStatus.call('save', 
-            {start: this.startTime.format(), end: this.endTime.format(), timezone: this.timezone, type: 'free'})
+            {
+                start: this.startTime.format(), 
+                end: this.endTime.format(), 
+                timezone: this.timezone, 
+                type: 'free',
+                staff_id: this.activeStaff.id !== undefined? this.activeStaff.id:null
+            })
         },
     }
 }

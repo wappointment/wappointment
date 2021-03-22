@@ -15,6 +15,6 @@ class AvailabilityRegenerate implements JobInterface
 
     public function handle()
     {
-        return (new Availability())->regenerate($this->staff_id);
+        return (new Availability($this->staff_id))->regenerate();
     }
 }

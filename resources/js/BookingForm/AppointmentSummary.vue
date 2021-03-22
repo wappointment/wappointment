@@ -2,8 +2,21 @@
     <div class="appointment-summary">
         <div class="wsummary-section wsec-service" v-if="service!== false">
             <div class="wlabel" v-if="hasText(['general','service'])">{{options.general.service}}</div>
-            <div class="wselected wmy-4">
-                <ElementSelected :service="service" :duration="duration" :options="options" :cancellable="false"/>
+            <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline" v-if="service" >
+                <WapImage v-if="serviceHasIcon" :element="service" :desc="service.name" size="auto" />
+                <span class="wml-2">
+                    <ElementSelected :service="service" :duration="duration" :options="options" :cancellable="false"/>
+                </span>
+                <span v-if="canChangeService" class="wclose" @click="changeService"></span>
+            </div>
+        </div>
+        <div class="wsummary-section wsec-location" v-if="location">
+            <div class="wlabel" v-if="hasText(['general','location'])">{{options.general.location}}</div>
+            <div class="wclosable wselected wmy-4 d-flex align-items-center d-flex-inline">
+                <WapImage :element="location" :desc="location.name" size="auto" />
+                <a v-if="isPhysical" class="wml-2 map-link lnh-1" :href="getMapAdress" target="_blank" >{{ getAddress }}</a>
+                <span v-else class="welementname wml-2 lnh-1">{{ getLocationLabel }}</span>
+                <span v-if="canChangeLocation" class="wclose" @click="changeLocation" ></span>
             </div>
         </div>
         <div class="wsummary-section wsec-starts" v-if="startsAt">
@@ -11,7 +24,7 @@
             <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline">
                 <WapImage :faIcon="['far','clock']" size="auto" />
                 <span class="welementname wml-2">{{ startsAt }}</span>
-                <span class="wclose" @click="changeTime" ></span>
+                <span  class="wclose" @click="changeTime" ></span>
             </div>
         </div>
     </div>
@@ -19,8 +32,9 @@
 
 <script>
 import ElementSelected from './ElementSelected'
-
+import MixinChange from './MixinChange'
 export default {
+    mixins:[window.wappointmentExtends.filter('MixinChange', MixinChange)],
     props: {
         service: {
             type: [Object, Boolean], 
@@ -39,6 +53,9 @@ export default {
         services:{
             type: Array
         },
+        staffs:{
+            type: Array
+        },
         rescheduling:{},
         appointmentSaved: {}
     },
@@ -47,20 +64,16 @@ export default {
      },
     computed:{
         getLocationLabel(){
-            if(this.location == 'physical') return this.getAddress
-            if(this.location == 'phone') return this.options.form.byphone
-            if(this.location == 'skype') return this.options.form.byskype
-            if(this.location == 'zoom') return this.options.form.byzoom
+            if([undefined,''].indexOf(this.location.name) === -1) return this.location.name
+            if(this.isPhysical) return this.getAddress
+            if(['phone',2].indexOf(this.location) !==-1) return this.options.form.byphone
+            if(['skype',3].indexOf(this.location) !==-1) return this.options.form.byskype
+            if(['zoom',5].indexOf(this.location) !==-1) return this.options.form.byzoom
         },
         isPhysical(){
-            return this.location == 'physical'
+            return ['physical',1].indexOf(this.location) !==-1
         },
-        getLocationIcon(){
-            if(this.isPhysical) return 'map-marked-alt'
-            if(this.location == 'phone') return 'phone'
-            if(this.location == 'skype') return ['fab','skype']
-            if(this.location == 'zoom') return ['fas','video']
-        },
+
         getAddress(){
             if(this.service.options.address !== undefined) return this.service.options.address
             if(this.service.address !== undefined) return this.service.address
@@ -72,9 +85,12 @@ export default {
         getEncodedAdress(){
             return encodeURIComponent(this.getAddress);
         },
+        serviceHasIcon(){
+            return this.service.options.icon != ''
+        }
     },
     methods:{
-
+        
         hasText(searchOptions){
             let element = this.options
             for (let i = 0; i < searchOptions.length; i++) {
@@ -107,6 +123,12 @@ export default {
     border-radius: 1em;
     padding: .2em .7em;
     display: inline-block;
+}
+.wselected .map-link{
+    color: var(--wappo-pri-tx) !important;
+}
+.wselected .map-link:after{
+    content: "\2192";
 }
 
 </style>

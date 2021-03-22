@@ -16,7 +16,7 @@ class CreateClientsTable extends Wappointment\Installation\Migrate
             $table->increments('id');
             $table->string('email', 191)->unique();
             $table->string('name');
-            $table->mediumText('options')->nullable();
+            $table->text('options')->nullable();
             $table->timestamps();
         });
     }

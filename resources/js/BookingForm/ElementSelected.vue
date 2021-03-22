@@ -31,10 +31,7 @@ export default {
         },
 
         getPrice(){
-            if(this.getWooPrice !== undefined && typeof this.getWooPrice == 'function'){
-                return this.getWooPrice()
-            }
-            return false
+            return this.getWooPrice !== undefined && typeof this.getWooPrice == 'function' ? this.getWooPrice():false
         }
     },
 }
@@ -60,7 +57,6 @@ export default {
 .success .wap-img svg{
     color: var(--wappo-success-tx);
 }
-
 
 .wap-front .wsep{
     display:inline-flex;

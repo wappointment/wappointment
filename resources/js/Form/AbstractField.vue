@@ -1,6 +1,8 @@
 <script>
+import RequiresAddon from '../Mixins/RequiresAddon'
 export default {
-    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr'],
+    mixins: [RequiresAddon],
+    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr', 'minimal'],
     watch: {
         updatedValue(newVal, oldVal){
             if(this.formGen !== false && this.model === undefined ) return

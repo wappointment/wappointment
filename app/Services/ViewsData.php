@@ -7,6 +7,9 @@ use Wappointment\ClassConnect\Carbon;
 use Wappointment\Services\Staff;
 use Wappointment\WP\WidgetAPI;
 use Wappointment\Services\Status;
+use Wappointment\Managers\Service as ManageService;
+use Wappointment\Managers\Central;
+use Wappointment\Models\Service as ModelService;
 
 class ViewsData
 {
@@ -20,24 +23,48 @@ class ViewsData
         return apply_filters('wappointment_viewdata_' . $key, $values);
     }
 
+
+    private function getCalendarsStaff()
+    {
+        $calendars = Central::get('CalendarModel')::orderBy('sorting')->fetch();
+        $staffs = [];
+        foreach ($calendars->toArray() as $key => $calendar) {
+            $staffs[] = (new \Wappointment\WP\Staff($calendar))->fullData();
+        }
+        return $staffs;
+    }
+
+
     private function regav()
     {
-        $gravatar_img = get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
-        $staff_name = Settings::getStaff('display_name');
-        return apply_filters('wappointment_back_regav', [
-            'regav' => Settings::getStaff('regav'),
-            'availaible_booking_days' => Settings::getStaff('availaible_booking_days'),
-            'staffs' => Staff::getWP(),
-            'activeStaffId' => (int)Settings::get('activeStaffId'),
-            'activeStaffAvatar' => Settings::getStaff('avatarId') ?
-                wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
-            'activeStaffGravatar' => $gravatar_img,
-            'activeStaffName' => empty($staff_name) ? (new \Wappointment\WP\Staff(Settings::get('activeStaffId')))->name : $staff_name,
-            'activeStaffAvatarId' => Settings::getStaff('avatarId'),
-            'timezone' => Settings::getStaff('timezone'),
-            'timezones_list' => DateTime::tz(),
-            'savedTimezone' => Settings::hasStaff('timezone')
-        ]);
+        if (VersionDB::canServices()) {
+            $calendars = $this->getCalendarsStaff();
+            $data = [
+                'calendar' => $calendars[0],
+                'timezones_list' => DateTime::tz(),
+                'calendars' => $calendars,
+                'staffs' => Staff::getWP(),
+                'staffDefault' => Settings::staffDefaults()
+            ];
+        } else {
+            $gravatar_img = get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
+
+            $data = [
+                'regav' => Settings::getStaff('regav'),
+                'avb' => Settings::getStaff('availaible_booking_days'),
+                'staffs' => Staff::getWP(),
+                'activeStaffId' => (int)Settings::get('activeStaffId'),
+                'activeStaffAvatar' => Settings::getStaff('avatarId') ?
+                    wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
+                'activeStaffGravatar' => $gravatar_img,
+                'activeStaffName' => Staff::getNameLegacy(),
+                'activeStaffAvatarId' => Settings::getStaff('avatarId'),
+                'timezone' => Settings::getStaff('timezone'),
+                'timezones_list' => DateTime::tz(),
+                'savedTimezone' => Settings::hasStaff('timezone')
+            ];
+        }
+        return apply_filters('wappointment_back_regav', $data);
     }
 
     private function serverinfo()
@@ -57,8 +84,52 @@ class ViewsData
     private function service()
     {
         return [
-            'service' => Service::get()
+            'service' => VersionDB::canServices() ? $this->getConvertedDataServiceNewToLegacy() : Service::get()
         ];
+    }
+
+    protected function getConvertedDataServiceNewToLegacy()
+    {
+        $service = ModelService::first();
+        if (empty($service)) {
+            return [];
+        }
+        $types = [];
+        $address = '';
+        $video = '';
+        $countries = [];
+        if (!empty($service->locations)) {
+            foreach ($service->locations as $location) {
+                $types[] = $location->options['type'];
+                if ($location->options['type'] == 'physical') {
+                    $address = $location->options['address'];
+                }
+                if ($location->options['type'] == 'phone') {
+                    $countries = $location->options['countries'];
+                }
+                if ($location->options['type'] == 'zoom') {
+                    $video = $location->options['video'];
+                }
+            }
+        }
+
+
+        $data = [
+            'id' => $service->id,
+            'name' => $service->name,
+            'duration' => $service->options['durations'][0]['duration'],
+            'type' => $types,
+            'address' => $address,
+            'options' => [
+                'countries' => $countries,
+                'video' => $video,
+            ]
+        ];
+        if (!empty($service->options['countries'])) {
+            $data['options']['countries'] = $service->options['countries'];
+            $data['options']['phone_required'] = true;
+        }
+        return $data;
     }
 
     private function wizardwidget()
@@ -72,7 +143,7 @@ class ViewsData
 
     private function widget()
     {
-        return apply_filters('wappointment_back_widget_editor', [
+        $data = [
             'front_availability' => $this->front_availability(),
             'widget' => (new WidgetSettings)->get(),
             'widgetDefault' => (new WidgetSettings)->defaultSettings(),
@@ -82,8 +153,15 @@ class ViewsData
             ],
             'bgcolor' => WPHelpers::getThemeBgColor(),
             'more' => get_theme_mods(),
-            'widgetFields' => (new \Wappointment\Services\WidgetSettings)->adminFieldsInfo()
-        ]);
+            'widgetFields' => (new \Wappointment\Services\WidgetSettings)->adminFieldsInfo(),
+            'booking_page_id' => (int) Settings::get('booking_page'),
+            'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
+        ];
+        if (VersionDB::canServices()) {
+            $data['config']['services'] = ManageService::all();
+            $data['config']['locations'] = \Wappointment\Models\Location::get();
+        }
+        return apply_filters('wappointment_back_widget_editor', $data);
     }
 
     private function widgetcancel()
@@ -98,43 +176,78 @@ class ViewsData
     private function calendar()
     {
         $staff_timezone = Settings::getStaff('timezone');
-        return  apply_filters('wappointment_back_calendar', [
-            'regav' => Settings::getStaff('regav'),
-            'availability' => WPHelpers::getStaffOption('availability'),
-            'timezone' => $staff_timezone,
+        $services = ManageService::all();
+
+        $data = [
             'week_starts_on' => Settings::get('week_starts_on'),
             'wizard_step' => WPHelpers::getOption('wizard_step'),
             'timezones_list' => DateTime::tz(),
-            'now' => (new Carbon())->setTimezone($staff_timezone)->format('Y-m-d\TH:i:00'),
             'service' => Service::get(),
-            'durations' => [Service::get()['duration']],
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'preferredCountries' => Service::getObject()->getCountries(),
             'buffer_time' => Settings::get('buffer_time'),
-            'widget' => (new \Wappointment\Services\WidgetSettings)->get(),
+            'widget' => (new WidgetSettings)->get(),
             'booking_page_id' => (int) Settings::get('booking_page'),
             'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
             'showWelcome' => Settings::get('show_welcome'),
             'subscribe_email' => Settings::get('email_notifications'),
             'welcome_site' => get_site_url(),
-            'cal_duration' => Service::get()['duration'],
             'preferences' => (new Preferences)->preferences,
-            'is_dotcom_connected' => Settings::getStaff('dotcom'),
-        ]);
+            //'is_dotcom_connected' => Settings::getStaff('dotcom'),
+            'services' => $services,
+            'durations' => ManageService::extractDurations($services),
+            'cal_duration' => (new Preferences)->get('cal_duration'),
+        ];
+
+        if (VersionDB::canServices()) {
+            $data['staff'] = Calendars::all();
+            if (!isset($data['staff'][0])) {
+                throw new \WappointmentException("There is no active calendar change that in Wappointment > Settings > Calendars", 1);
+            }
+            $data['timezone'] = $data['staff'][0]->options['timezone'];
+            $data['locations'] = \Wappointment\Models\Location::get();
+            $data['custom_fields'] = Central::get('CustomFields')::get();
+            $data['now'] = (new Carbon())->setTimezone($data['timezone'])->format('Y-m-d\TH:i:00');
+            $data['regav'] = $data['staff'][0]->options['regav'];
+            $data['availability'] = $data['staff'][0]->availability;
+        } else {
+            $data['staff'] = (new \Wappointment\WP\StaffLegacy())->toArray();
+            $data['regav'] = Settings::getStaff('regav');
+            $data['availability'] = WPHelpers::getStaffOption('availability');
+            $data['timezone'] = $staff_timezone;
+            $data['now'] = (new Carbon())->setTimezone($staff_timezone)->format('Y-m-d\TH:i:00');
+            $data['legacy'] = true;
+        }
+
+        return  apply_filters('wappointment_back_calendar', $data);
     }
 
-    private function settingsgeneral()
+    private function settingsadvanced()
     {
-        $service = Service::get();
-        $widget = (new WidgetSettings)->get();
-        $staff_name = Settings::getStaff('display_name');
+        if (!VersionDB::canServices()) {
+            $timezone = Settings::getStaff('timezone');
+        } else {
+            $staff = Calendars::all();
+            if (!isset($staff[0])) {
+                throw new \WappointmentException("There is no active calendar change that in Wappointment > Settings > Calendars", 1);
+            }
+            $timezone = $staff[0]->options['timezone'];
+        }
+
+
 
         return [
-            // general
+            'debug' => \WappointmentLv::isTest(),
+            'buffer_time' => Settings::get('buffer_time'),
+            'front_page_id' => (int) Settings::get('front_page'),
+            'front_page' => get_permalink((int) Settings::get('front_page')),
+            'front_page_type' => get_post_type((int) Settings::get('front_page')),
+
+            // advanced
             'approval_mode' => Settings::get('approval_mode'),
-            'today_formatted' => DateTime::i18nDateTime(time(), Settings::getStaff('timezone')),
+            'today_formatted' => DateTime::i18nDateTime(time(), $timezone),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
@@ -142,29 +255,13 @@ class ViewsData
             'allow_rescheduling' => Settings::get('allow_rescheduling'),
             'week_starts_on' => Settings::get('week_starts_on'),
             'hours_before_booking_allowed' => Settings::get('hours_before_booking_allowed'),
-            'is_availability_set' => empty(WPHelpers::getStaffOption('availability')) ? false : true,
-            'is_service_set' => empty($service['type']) && empty($service['name']) ? false : true,
-            'is_widget_set' => empty($widget['form']) ? false : true,
             'hours_before_cancellation_allowed' => Settings::get('hours_before_cancellation_allowed'),
             'hours_before_rescheduling_allowed' => Settings::get('hours_before_rescheduling_allowed'),
-            'timezone' => Settings::getStaff('timezone'),
-            'widget' => (new WidgetSettings)->get(),
-            'booking_page_id' => (int) Settings::get('booking_page'),
-            'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
+            'timezone' => $timezone,
             'config' => [
-                'service' => Service::get(),
                 'approval_mode' => Settings::get('approval_mode'),
             ],
-            'bgcolor' => WPHelpers::getThemeBgColor(),
-            'is_dotcom_connected' => Settings::getStaff('dotcom'),
-            'gravatar' => get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]),
-            'activeStaffName' => empty($staff_name) ? (new \Wappointment\WP\Staff(Settings::get('activeStaffId')))->name : $staff_name,
-        ];
-    }
-
-    private function settingsnotifications()
-    {
-        return [
+            //notifications
             'weekly_summary' => Settings::get('weekly_summary'),
             'weekly_summary_day' => Settings::get('weekly_summary_day'),
             'weekly_summary_time' => Settings::get('weekly_summary_time'),
@@ -175,34 +272,7 @@ class ViewsData
             'notify_rescheduled_appointments' => Settings::get('notify_rescheduled_appointments'),
             'email_notifications' => Settings::get('email_notifications'),
             'mail_status' => (bool) Settings::get('mail_status'),
-            'timezone' => Settings::getStaff('timezone'),
-            'time_format' => Settings::get('time_format'),
-        ];
-    }
 
-    private function settingssync()
-    {
-        $calurl = WPHelpers::getStaffOption('cal_urls');
-        return [
-            'is_calendar_sync_set' => empty($calurl) ? false : true,
-            'timezone' => Settings::getStaff('timezone'),
-            'date_format' => Settings::get('date_format'),
-            'time_format' => Settings::get('time_format'),
-            'date_time_union' => Settings::get('date_time_union', ' - '),
-            'calendar_logs' => WPHelpers::getStaffOption('calendar_logs'),
-            'calendar_url' => $calurl,
-            'oldcal' => empty(Settings::getStaff('calurl')) ? false : true
-        ];
-    }
-
-    private function settingsadvanced()
-    {
-        return [
-            'debug' => \WappointmentLv::isTest(),
-            'buffer_time' => Settings::get('buffer_time'),
-            'front_page_id' => (int) Settings::get('front_page'),
-            'front_page' => get_permalink((int) Settings::get('front_page')),
-            'front_page_type' => get_post_type((int) Settings::get('front_page')),
         ];
     }
 
@@ -241,23 +311,16 @@ class ViewsData
         }
         return $avails;
     }
+
     private function all_versions_changes()
     {
         return ['versions' => \Wappointment\System\Status::allUpdates()];
     }
+
     private function front_availability()
     {
-        $staff_availability = [];
-        $staffs = [];
-        foreach (Staff::getIds() as $staff_id) {
-            $staff = new \Wappointment\WP\Staff($staff_id);
-            $staff_availability[$staff_id] = $staff->getAvailability();
-            $staffs[] = $staff->toArray();
-        }
-
         return apply_filters('wappointment_front_availability', [
-            'staffs' => $staffs,
-            'availability' => $staff_availability,
+            'staffs' => Staff::get(),
             'week_starts_on' => Settings::get('week_starts_on'),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
@@ -265,8 +328,9 @@ class ViewsData
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'now' => (new Carbon())->format('Y-m-d\TH:i:00'),
             'buffer_time' => Settings::get('buffer_time'),
-            'services' => Service::all(),
-            'site_lang' => substr(get_locale(), 0, 2)
+            'services' => ManageService::all(),
+            'site_lang' => substr(get_locale(), 0, 2),
+            'custom_fields' => Central::get('CustomFields')::get()
         ]);
     }
 }

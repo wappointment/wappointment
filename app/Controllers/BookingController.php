@@ -3,38 +3,42 @@
 namespace Wappointment\Controllers;
 
 use Wappointment\Services\Client;
-use Wappointment\Services\Appointment;
-use Wappointment\Services\Settings;
 use Wappointment\Validators\HttpRequest\Booking;
+use Wappointment\Validators\HttpRequest\BookingAdmin;
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Services\Admin;
+use Wappointment\Services\AppointmentNew as Appointment;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Services\DateTime;
 
 class BookingController extends RestController
 {
+
     public function save(Booking $booking)
     {
         if ($booking->hasErrors()) {
             return WPHelpers::restError('Review your fields', 500, $booking->getErrors());
         }
 
-        $appointment = Client::book($booking);
-        if (isset($appointment['errors'])) {
-            return WPHelpers::restError('Impossible to proceed with the booking', 500, $appointment['errors']);
+        $result = Client::book($booking);
+        if (isset($result['errors'])) {
+            return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['errors']);
+        }
+        return ['result' => true, 'appointment' => (new \Wappointment\ClassConnect\Collection($result->toArraySpecial()))->except(['id', 'client_id'])];
+    }
+
+    public function adminBook(BookingAdmin $booking)
+    {
+        if ($booking->hasErrors()) {
+            return WPHelpers::restError('Review your fields', 500, $booking->getErrors());
         }
 
-        $appointmentArray = $appointment->toArraySpecial();
-
-        if (Settings::get('allow_rescheduling')) {
-            $appointmentArray['canRescheduleUntil'] = $appointment->canRescheduleUntilTimestamp();
+        $result = Admin::book($booking);
+        if (isset($result['errors'])) {
+            return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['errors']);
         }
-        if (Settings::get('allow_cancellation')) {
-            $appointmentArray['canCancelUntil'] = $appointment->canCancelUntilTimestamp();
-        }
-        return [
-            'appointment' => (new \Wappointment\ClassConnect\Collection($appointmentArray))->except(['rest_route', 'id', 'client_id'])
 
-        ];
+        return ['message' => 'Appointment recorded'];
     }
 
     public function reschedule(Request $request)

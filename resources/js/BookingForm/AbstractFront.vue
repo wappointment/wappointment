@@ -52,7 +52,6 @@ export default {
       },       
 
       serviceError(error) {
-        console.log('serviceError', error)
         this.loading = false
         if(error.response !== undefined){
           if(error.response.data.message !== undefined){

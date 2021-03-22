@@ -4,9 +4,10 @@ import SettingsSave from '../Modules/SettingsSave'
 import Helpers from '../Modules/Helpers'
 import AppService from '../Services/V1/App'
 import ViewsDataService from '../Services/V1/ViewsData'
+import RequiresAddon from '../Mixins/RequiresAddon'
 
 export default {
-  mixins: [SettingsSave, Helpers],
+  mixins: [SettingsSave, Helpers, RequiresAddon],
   data: () => ({
     service: null,
     serviceViewData: null,
