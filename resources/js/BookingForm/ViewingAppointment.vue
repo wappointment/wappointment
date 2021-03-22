@@ -8,7 +8,7 @@
                 <div class="summary-event" :class="view">
                     <h2 v-if="!isSaveEventPage">{{ getText('title') }}</h2>
                     <div>{{ client.name }} - {{ client.email }}</div>
-                    <div><strong>{{ service.name }}</strong> - <span class="wduration">{{service.duration}}{{getMinText}}</span></div>
+                    <div><strong>{{ service.name }}</strong> - <span class="wduration">{{getDuration}}{{getMinText}}</span></div>
                     <div :class="{'old-schedule': justRescheduled}">
                         <strong class="date-start">{{ startDatei18n }}</strong> 
                         <span v-if="!justRescheduled">{{timeLeft}}</span>
@@ -239,6 +239,9 @@ export default {
         
     },
     computed: {
+        getDuration(){
+            return this.appointment.duration_sec / 60
+        },
         justRescheduled(){
             return this.showReschedule && this.rescheduledConfirmed
         },

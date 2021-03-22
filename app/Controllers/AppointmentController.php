@@ -8,6 +8,7 @@ use Wappointment\Services\Settings;
 use Wappointment\Services\AppointmentNew as Appointment;
 use Wappointment\Services\Service;
 use Wappointment\Services\VersionDB;
+use Wappointment\Managers\Central;
 
 class AppointmentController extends RestController
 {
@@ -39,7 +40,7 @@ class AppointmentController extends RestController
         return [
             'appointment' => $appointmentData,
             'client' => $appointment->client()->select(['name', 'email', 'options'])->first(),
-            'service' => Service::get(),
+            'service' => $isLegacy ? Service::get() : Central::get('ServiceModel')::first($appointment->service_id),
             'staff' => $isLegacy ? (new \Wappointment\WP\StaffLegacy($appointment->getStaffId()))->toArray() : (new \Wappointment\WP\Staff($appointment->getStaffId()))->toArray(),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
