@@ -395,11 +395,10 @@ export default {
 
         canShowField(section, key, field_key = false){
             let fieldConditions = this.getConditions(section, key,field_key)
-
             if(field_key!== false){
                 let fieldInfos = this.getFieldAdminInfos(section, key, field_key)
-
-                if(fieldInfos === false || (fieldInfos.fields !== undefined && fieldInfos.fields[field_key] === undefined)) {
+                //fieldInfos === false || 
+                if(fieldInfos.fields !== undefined && fieldInfos.fields[field_key] === undefined) {
                     return false
                 }
             }

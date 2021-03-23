@@ -340,51 +340,9 @@ class WidgetSettings
         return $this->setHiddenFields($this->defaultFields());
     }
 
-    private function hidePhone($fields)
-    {
-        $fields['form']['byphone']['hidden'] = true;
-        $fields['form']['phone']['hidden'] = true;
-        $fields['confirmation']['phone']['hidden'] = true;
-        return $fields;
-    }
-    private function hideSkype($fields)
-    {
-        $fields['form']['byskype']['hidden'] = true;
-        $fields['form']['skype']['hidden'] = true;
-        $fields['confirmation']['skype']['hidden'] = true;
-        return $fields;
-    }
-    private function hideInPerson($fields)
-    {
-        $fields['form']['inperson']['hidden'] = true;
-        $fields['form']['address']['hidden'] = true;
-        $fields['confirmation']['physical']['hidden'] = true;
-        return $fields;
-    }
-    private function hideButtonService($fields)
-    {
-        $fields['form']['byphone']['hidden'] = true;
-        $fields['form']['byskype']['hidden'] = true;
-        $fields['form']['inperson']['hidden'] = true;
-        $fields['colors']['secondary']['fields']['text_selected']['hidden'] = true;
-        $fields['colors']['secondary']['fields']['bg_selected']['hidden'] = true;
-        return $fields;
-    }
     private function setHiddenFields($fields)
     {
-        $service = Service::getObject();
-        if (!$service->hasManyTypes()) {
-            $fields = $this->hideButtonService($fields);
-        }
-        if (!$service->hasPhone()) {
-            //$fields = $this->hidePhone($fields);
-        }
-        if (!$service->hasSkype()) {
-            $fields = $this->hideSkype($fields);
-        }
-        if (!$service->hasPhysical()) {
-            $fields = $this->hideInPerson($fields);
-        }
+
         if ((int) Settings::get('approval_mode') === 1) {
             $fields['confirmation']['pending']['hidden'] = true;
         }
