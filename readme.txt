@@ -139,6 +139,11 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 2.1.1 - 2021-03-26 =
+* Fixed problem to replace calendar/staff image
+* Fixed improper service duration appearing in reschedule process
+* Fixed missing translatable strings in widget editor
+
 = 2.1.0 - 2021-03-19 =
 * Can create up to 3 services
 * Can create up to 2 calendars
