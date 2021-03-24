@@ -512,10 +512,7 @@ export default {
                 }
             }
         },
-        initServiceStaffDurationLocation(){
-            this.setAvailableServices()
-            this.testLockedStaff()
-            this.autoSelService()
+        demoAutoSelect(){
             if(this.demoAs === true){
                 if( this.service === false ){
                     this.service = this.services[0]
@@ -527,9 +524,25 @@ export default {
                 if(this.service!== false && !this.location){
                     this.location = this.service.locations[0]
                 }
-            }   
-
-            
+            }
+        },
+        autoSelectDuration(){
+            if(this.service !== false && !this.duration && this.service.type === undefined && this.service.options.durations.length == 1){
+                this.duration = this.service.options.durations[0].duration
+            }
+        },
+        autoSelectModality(){
+            if(this.service !== false && !this.location && this.service.type === undefined && this.service.locations.length == 1){
+                this.location = this.service.locations[0]
+            }
+        },
+        initServiceStaffDurationLocation(){
+            this.setAvailableServices()
+            this.testLockedStaff()
+            this.autoSelService()
+            this.demoAutoSelect() 
+            this.autoSelectDuration() 
+            this.autoSelectModality() 
         },
         testLockedStaff(){
             if(this.options !== undefined && 
@@ -546,11 +559,8 @@ export default {
             if(this.options !== undefined && 
                 this.options.attributesEl !== undefined && 
                 this.options.attributesEl.serviceSelection !== undefined){
-                    for (let i = 0; i < this.services.length; i++) {
-                        if(parseInt(this.options.attributesEl.serviceSelection) === parseInt(this.services[i].id)){
-                            return this.service = this.services[i]
-                        }
-                    }
+                    let lockToServiceID = this.options.attributesEl.serviceSelection
+                    this.service = this.services.find(e => e.id == lockToServiceID)
                 }
         },
 

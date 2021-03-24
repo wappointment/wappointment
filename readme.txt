@@ -143,6 +143,8 @@ It requires work on your end but keeps your site safe and optimized.
 * Fixed problem to replace calendar/staff image
 * Fixed improper service duration appearing in reschedule process
 * Fixed missing translatable strings in widget editor
+* Fixed multiduration when locked service not being editable
+* Fixed false duration in header compact mode
 
 = 2.1.0 - 2021-03-19 =
 * Can create up to 3 services

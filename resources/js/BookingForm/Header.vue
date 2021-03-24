@@ -11,7 +11,7 @@
                 <div role="button" @click="showAllStaff"><strong>{{ staff.n }}</strong></div>
                 <div class="header-service" v-if="service!== false && isCompactHeader">
                     <span class="compact-servicename">{{ service.name }}</span>
-                    <span class="wduration">{{duration}}{{getMinText}}</span>
+                    <span v-if="duration" class="wduration">{{duration}}{{getMinText}}</span>
                 </div>
             </div>
         </div>
