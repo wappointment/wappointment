@@ -516,16 +516,20 @@ export default {
             this.setAvailableServices()
             this.testLockedStaff()
             this.autoSelService()
-            if(this.demoAs === true && this.service === false ){
-                this.service = this.services[0]
-            }
-            if(this.service !== false){
-                this.duration = this.getFirstDuration(this.service)
-                this.location = this.service.type !== undefined ? false : (this.service.locations.length === 1 ? this.service.locations[0]:false) 
-            } 
-            if(this.demoAs === true && this.service!== false && !this.location){
-                this.location = this.service.locations[0]
-            }
+            if(this.demoAs === true){
+                if( this.service === false ){
+                    this.service = this.services[0]
+                }
+                if(this.service !== false){
+                    this.duration = this.getFirstDuration(this.service)
+                    this.location = this.service.type !== undefined ? false : (this.service.locations.length === 1 ? this.service.locations[0]:false) 
+                } 
+                if(this.service!== false && !this.location){
+                    this.location = this.service.locations[0]
+                }
+            }   
+
+            
         },
         testLockedStaff(){
             if(this.options !== undefined && 
