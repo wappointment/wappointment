@@ -5,6 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\Models\Status;
 use Wappointment\System\Status as SystemStatus;
+use Wappointment\ClassConnect\VtzUtil;
 
 class CalendarParser
 {
@@ -145,27 +146,26 @@ class CalendarParser
         return $this->getFormatedDate($this->vcalDateToCarbon($vcalDateTimeString), $format);
     }
 
-    protected function findTimezone($timezone_string)
-    {
-        return empty($timezone_string) ? '' : DateTime::isKnownTimezone($timezone_string);
-    }
-
     private function vcalDateToCarbon($vcalDateTimeString, $vevent = null)
     {
-        $timezone = '';
-        if (empty($this->timezone)) {
-            if ($vevent !== false) {
-                $this->timezone = $timezone = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
+        $timezoneTemp = '';
+
+        if (empty($timezoneTemp)) {
+            if (empty($this->timezone)) {
+                if ($vevent !== false && !empty($vevent->DTSTART['TZID'])) {
+                    $timezoneTemp = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
+                    $this->timezone = $timezoneTemp; //we assign the first value found to the global tz
+                }
+            } else {
+                $timezoneTemp = $this->timezone;
             }
-        } else {
-            $timezone = $this->timezone;
+
+            if (!empty($vevent->DTSTART) && !empty($vevent->DTSTART['TZID']) && $timezoneTemp != $vevent->DTSTART['TZID']->getValue()) {
+                $timezoneTemp = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
+            }
         }
 
-        if (empty($timezone) && !empty($vevent->DTSTART)) {
-            $timezone = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
-        }
-
-        return Carbon::parse($vcalDateTimeString, $timezone);
+        return Carbon::parse($vcalDateTimeString, $timezoneTemp);
     }
 
     private function getFormatedDate($carbonTime, $format = WAPPOINTMENT_DB_FORMAT)
@@ -175,9 +175,36 @@ class CalendarParser
 
     private function setTimezone($vcalObject)
     {
+        $this->timezone = $this->tryGetTz($vcalObject);
+        if (empty($this->timezone)) {
+            $timezonekey = 'X-WR-TIMEZONE';
+            $this->timezone = $this->findTimezone((string) $vcalObject->$timezonekey);
+        }
+    }
 
-        $timezonekey = 'X-WR-TIMEZONE';
-        $this->timezone = $this->findTimezone((string) $vcalObject->$timezonekey);
+    protected function tryGetTz($vobject)
+    {
+
+        if (!empty($vobject->VTIMEZONE)) {
+            $tzobject = $vobject->VTIMEZONE->getTimeZone();
+
+            if (!empty($tzobject->timezone)) {
+                return $tzobject->timezone;
+            }
+        }
+        return '';
+    }
+
+    protected function findTimezone($timezone_string)
+    {
+        if (!empty($timezone_string)) {
+            $tzobject = VtzUtil::getTimeZone((string) $timezone_string);
+            if (!empty($tzobject) && !empty($tzobject->getName())) {
+                return $tzobject->getName();
+            }
+        }
+
+        return '';
     }
 
     private function getFrequency($frequency)
