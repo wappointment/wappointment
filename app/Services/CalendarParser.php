@@ -160,6 +160,7 @@ class CalendarParser
                 $timezoneTemp = $this->timezone;
             }
 
+
             if (!empty($vevent->DTSTART) && !empty($vevent->DTSTART['TZID']) && $timezoneTemp != $vevent->DTSTART['TZID']->getValue()) {
                 $timezoneTemp = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
             }
@@ -184,12 +185,10 @@ class CalendarParser
 
     protected function tryGetTz($vobject)
     {
-
         if (!empty($vobject->VTIMEZONE)) {
             $tzobject = $vobject->VTIMEZONE->getTimeZone();
-
-            if (!empty($tzobject->timezone)) {
-                return $tzobject->timezone;
+            if (!empty($tzobject->getName())) {
+                return $tzobject->getName();
             }
         }
         return '';

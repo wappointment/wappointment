@@ -120,7 +120,7 @@ class Calendars
     {
         $optiondb = !empty($calendarDB->options) ? $calendarDB->options : [];
         return array_merge($optiondb, [
-            'avatar_id' => $calendarData['avatar_id'],
+            'avatar_id' => empty($calendarData['avatar_id']) ? '' : $calendarData['avatar_id'],
             'gravatar' => $calendarData['gravatar'],
             'timezone' => $calendarData['timezone'],
             'regav' => static::regavClean($calendarData['regav']),
