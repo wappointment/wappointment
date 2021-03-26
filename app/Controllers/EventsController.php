@@ -174,7 +174,6 @@ class EventsController extends RestController
 
     private function getAppointments($start_at_string, $end_at_string, $staff_id = null)
     {
-        //dd($staff_id);
         $appointmentsQuery = $this->getAppointmentModel()::with(['client' => function ($q) {
             $q->withTrashed();
         }])

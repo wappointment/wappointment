@@ -99,7 +99,6 @@ abstract class RestController
                 return WPHelpers::restError($this->hasOneErrorOnly(), 500);
             }
             $errors = $this->getErrors();
-            //dd($errors);
             return WPHelpers::restError($errors['default'][0], 500, $errors);
         }
 
