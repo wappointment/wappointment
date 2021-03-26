@@ -49,7 +49,7 @@ class WpMail extends Transport
     public function sendTheRightWay($to, $message)
     {
         //if wpforms or other smtp plugins is installed
-        if (Status::hasSmtpPlugin()) {
+        if (Status::hasSmtpPlugin() || Status::hasEmailConflict()) {
             return $this->sendPluginVersion($to, $message);
         } else {
             return empty($this->configSave['wpmail_html']) ?
@@ -65,7 +65,7 @@ class WpMail extends Transport
 
     public function setHtmlContentType()
     {
-        return Status::hasSmtpPlugin() ? 'text/html' : 'multipart/alternative';
+        return Status::hasSmtpPlugin() || Status::hasEmailConflict() ? 'text/html' : 'multipart/alternative';
     }
 
     /**

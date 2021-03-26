@@ -43,6 +43,19 @@ class Status
         return false;
     }
 
+    public static function hasEmailConflict()
+    {
+        if (defined('WP_PGP_ENCRYPTED_EMAILS_MIN_PHP_VERSION')) {
+            return [
+                'name' => 'WP PGP Encrypted Emails',
+            ];
+        }
+
+        return false;
+    }
+
+
+
     public static function free($start, $end, $timezone, $request, $staff_id = null)
     {
         return self::create($start, $end, $timezone, MStatus::TYPE_FREE, $request, $staff_id);

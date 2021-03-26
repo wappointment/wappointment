@@ -135,7 +135,7 @@ export default {
             {
                 type: 'label',
                 model: 'txt1',
-                label: 'Your site\'s email default method can be unreliable, delivery can be slow and emails may go straight to SPAM.',
+                label: 'Your site\'s email default method can be unreliable: delivery can be slow, emails may go straight to SPAM and other WP plugins might break the emails.',
                 classWrapper: 'text-danger',
                 conditions: [
                   { model:'method', values: ['wpmail'] },
