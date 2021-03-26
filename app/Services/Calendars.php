@@ -88,7 +88,6 @@ class Calendars
 
         $calendarData['options'] = static::dataToOptions($calendarData, $calendarDB);
 
-        //dd('saveCalendar');
         if (!empty($calendarDB)) {
             $calendarDB->update($calendarData);
         } else {

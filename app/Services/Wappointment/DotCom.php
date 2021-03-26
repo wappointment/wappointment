@@ -250,11 +250,7 @@ class DotCom extends API
 
     private function setAccountKey()
     {
-        if ($this->isLegacy) {
-            $this->account_key = $this->getAccountKeyLegacy();
-        } else {
-            $this->account_key = $this->staff->account_key;
-        }
+        $this->account_key = $this->isLegacy ? $this->getAccountKeyLegacy() : $this->staff->account_key;
     }
 
     protected function confirmAccountKey($result, $account_key)

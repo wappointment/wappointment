@@ -59,7 +59,6 @@ class AvailabilityGetter
                 }
             }
         }
-        // dd($new_availability, $this->start_at, $this->end_at, $availabilities);
         return $new_availability;
     }
 

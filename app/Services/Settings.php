@@ -120,9 +120,7 @@ class Settings
 
     public static function staffDefaults()
     {
-        //dd(WPHelpers::getWPOption('timezone_string'));
         $timezone = WPHelpers::getWPOption('timezone_string');
-        //if (empty($timezone)) $timezone = 'UTC';
         return [
             'regav' => [
                 'monday' => [[480, 720], [840, 1140]],

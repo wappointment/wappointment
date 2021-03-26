@@ -55,7 +55,6 @@ class AppointmentNew
     public static function adminCalendarGetAppointments($params, $legacy = false)
     {
         $with =  $legacy ? ['client'] : ['client', 'service'];
-        //dd($with);
         $appointmentsQuery  = AppointmentModel::with($with)
             ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
             ->where('start_at', '>=', $params['start_at'])
