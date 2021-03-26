@@ -29,7 +29,6 @@ class Scheduler
             static::syncCalendarLegacy();
         } else {
             foreach (Calendars::all() as $calendar) {
-                // dd('zero', $calendar->toArray());
                 (new Availability($calendar))->syncAndRegen();
             }
         }

@@ -98,7 +98,6 @@ class InitBackend
         $varJs = ['wizardStep' => Status::wizardStep()];
         if (Status::wizardComplete()) {
             $varJs = array_merge($varJs, [
-                'updatePages' => Status::newUpdates(),
                 'defaultEmail' => wp_get_current_user()->user_email,
                 'days' => Status::installedForXDays(),
                 'addons' =>  \Wappointment\Services\Addons::getActive()
