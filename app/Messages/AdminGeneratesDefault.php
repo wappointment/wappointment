@@ -8,7 +8,8 @@ trait AdminGeneratesDefault
 {
     public function getEmailContent($client, $appointment)
     {
-        $tz = Settings::getStaff('timezone');
+        $tz = $this->getStaffTz($appointment);
+
         $dataEmail = [
             '<u>' . $this->subject . '</u>',
             'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
@@ -31,5 +32,17 @@ trait AdminGeneratesDefault
         }
 
         return apply_filters('wappointment_admin_email_fields', $dataEmail, $client, $appointment);
+    }
+
+    public function getStaffTz($appointment)
+    {
+        $staff = $appointment->getStaff();
+        if (!empty($staff)) {
+            $tz = $staff->timezone;
+        }
+        if (empty($tz)) {
+            $tz = 'UTC';
+        }
+        return $tz;
     }
 }
