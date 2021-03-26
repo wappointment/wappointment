@@ -23,12 +23,11 @@
 
 <script>
 import WPNotice from './WP/Notice'
-import VersionsInfos from './Ne/VersionsInfos'
 import PendingDBUpdate from './Ne/PendingDBUpdate'
 import UpdateInformation from './Ne/UpdateInformation'
 import AddonsRequireUpdate from './Ne/AddonsRequireUpdate'
 export default {
-    components: {VersionsInfos, PendingDBUpdate, UpdateInformation, AddonsRequireUpdate, WPNotice},
+    components: {PendingDBUpdate, UpdateInformation, AddonsRequireUpdate, WPNotice},
     data: () => ({
         db_update: false,
         has_messages: false,

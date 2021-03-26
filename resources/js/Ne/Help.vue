@@ -14,17 +14,15 @@
         <Contact :autofill="autofillMessage" @sent="sent"/>
       </div>
     </div>
-    <VersionsInfos v-if="show_changes" :manual_show="true" @closed="closedChanges" />
   </div>
 </template>
 
 <script>
 import Contact from '../Wappointment/Contact'
 import abstractview from '../Views/Abstract'
-import VersionsInfos from './VersionsInfos'
 export default {
   extends: abstractview,
-    components: {Contact, VersionsInfos},
+    components: {Contact},
     data: () => ({
         messageSent:false,
         viewName: 'serverinfo',
