@@ -104,6 +104,16 @@ class Status
         return WPHelpers::setOption('db_version', self::$db_version_required);
     }
 
+    public static function dbVersionOnCreation()
+    {
+        return WPHelpers::setOption('db_version_created', self::$db_version_required);
+    }
+
+    public static function dbVersionAlterRequired()
+    {
+        return version_compare(WPHelpers::getOption('db_version_created', '1.0.0'), self::$db_version_required) < 0;
+    }
+
     public static function setViewedUpdated()
     {
         return WPHelpers::setStaffOption(
@@ -129,75 +139,5 @@ class Status
     {
         return (int) WPHelpers::getOption('wizard_step') < 0
             || (int) WPHelpers::getOption('wizard_step') == self::$last_step;
-    }
-
-    public static function newUpdates()
-    {
-        $viewed_updates_until = self::viewedUpdates();
-        $toView = [];
-        foreach (self::allVersionsWithUpdates() as $version) {
-            if (empty($viewed_updates_until) || version_compare($version, $viewed_updates_until) > 0) {
-                $toView[] = self::getVersionUpdates($version);
-            } else {
-                return $toView;
-            }
-        }
-
-        return $toView;
-    }
-
-    public static function allUpdates()
-    {
-        $toView = [];
-        foreach (self::allVersionsWithUpdates() as $version) {
-            $toView[] = self::getVersionUpdates($version);
-        }
-        return $toView;
-    }
-
-    public static function getVersionUpdates($version)
-    {
-        return [
-            'version' => $version,
-            'changes' => call_user_func(
-                get_called_class() . '::' . 'version' . str_replace('.', '_', $version)
-            )
-        ];
-    }
-
-    public static function allVersionsWithUpdates()
-    {
-        return ['1.2.0', '1.1.0'];
-    }
-
-    public static function version1_2_0()
-    {
-        return [
-            [
-                'title' => 'Booking Button widget can float',
-                'images' => [
-                    ['src' => 'set_floating_button.gif', 'alt' => 'Tick option in Appearance > Widgets'],
-                    ['src' => 'front_floating_button.gif', 'alt' => 'Button floats in the frontend'],
-                ]
-            ],
-        ];
-    }
-
-    public static function version1_1_0()
-    {
-        return [
-            [
-                'title' => 'Change staff providing services',
-                'images' => [
-                    ['src' => 'change_staff.gif']
-                ]
-            ],
-            [
-                'title' => 'Change staff picture',
-                'images' => [
-                    ['src' => 'change_staff_picture.gif']
-                ]
-            ],
-        ];
     }
 }

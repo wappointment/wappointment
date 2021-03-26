@@ -3,6 +3,7 @@
 use Wappointment\ClassConnect\Capsule;
 use Wappointment\Config\Database;
 use Wappointment\Models\Appointment;
+use Wappointment\System\Status;
 
 class AlterAppointmentsTable extends Wappointment\Installation\Migrate
 {

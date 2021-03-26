@@ -22,7 +22,9 @@ class CreateStatusesTable extends Wappointment\Installation\Migrate
             $table->string('source', 32)->nullable();
             $table->string('eventkey', 32)->nullable();
             $table->text('options')->nullable();
-            $table->unsignedTinyInteger('staff_id')->default(0);
+            //$table->unsignedTinyInteger('staff_id')->default(0); OLD
+            $table->unsignedInteger('staff_id')->nullable()->default(null);
+            $table->unique(['source', 'eventkey'], 'unique_source_eventkey');
             $table->unique(['staff_id', 'type', 'start_at', 'end_at', 'source', 'eventkey'], 'unique_staff_id_type_start_end_source_eventkey');
         });
     }

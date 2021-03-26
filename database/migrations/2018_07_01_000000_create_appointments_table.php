@@ -2,6 +2,7 @@
 
 use Wappointment\ClassConnect\Capsule;
 use Wappointment\Config\Database;
+use Wappointment\System\Status;
 
 class CreateAppointmentsTable extends Wappointment\Installation\Migrate
 {
@@ -21,12 +22,15 @@ class CreateAppointmentsTable extends Wappointment\Installation\Migrate
             $table->string('edit_key', 32)->nullable();
             $table->timestamps();
             $table->text('options')->nullable();
-            $table->integer('client_id')->nullable()->default(null);
-            //$table->unsignedInteger('client_id')->foreign()->references('id')->on(Database::$prefix_self . '_clients');
-            $table->unsignedTinyInteger('staff_id')->default(0);
-            $table->unsignedTinyInteger('service_id')->default(0);
+            //$table->integer('client_id')->nullable()->default(null); OLD
+            //$table->unsignedTinyInteger('staff_id')->default(0); OLD
+            //$table->unsignedTinyInteger('service_id')->default(0); OLD
+            $table->unsignedInteger('staff_id')->nullable()->default(null);
+            $table->unsignedInteger('service_id')->nullable()->default(null);
+            $table->unsignedInteger('client_id')->nullable()->default(null);
             $table->unique(['staff_id', 'status', 'start_at', 'end_at'], 'unique_staff_id_status_start_end');
         });
+        Status::dbVersionOnCreation();
     }
 
     /**

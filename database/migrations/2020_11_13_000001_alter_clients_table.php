@@ -2,7 +2,7 @@
 
 use Wappointment\ClassConnect\Capsule;
 use Wappointment\Config\Database;
-
+use Wappointment\System\Status;
 
 class AlterClientsTable extends Wappointment\Installation\Migrate
 {
@@ -13,7 +13,9 @@ class AlterClientsTable extends Wappointment\Installation\Migrate
      */
     public function up()
     {
-
+        if (!Status::dbVersionAlterRequired()) {
+            return;
+        }
         Capsule::schema()->table(Database::$prefix_self . '_clients', function ($table) {
             $table->softDeletes();
         });

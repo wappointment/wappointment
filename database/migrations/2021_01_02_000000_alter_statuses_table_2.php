@@ -3,6 +3,7 @@
 use Wappointment\ClassConnect\Capsule;
 use Wappointment\Config\Database;
 use Wappointment\Models\Status;
+use Wappointment\System\Status as SystemStatus;
 use Wappointment\WP\Helpers as WPHelpers;
 
 
@@ -15,6 +16,9 @@ class AlterStatusesTable2 extends Wappointment\Installation\Migrate
      */
     public function up()
     {
+        if (!SystemStatus::dbVersionAlterRequired()) {
+            return;
+        }
         $this->clearCalendarStatus();
 
         try {
