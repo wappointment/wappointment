@@ -32,8 +32,11 @@ class WPUserMeta extends Model
 
         $result_user_ids = self::select('user_id')
             ->where('meta_key', $site_prefix . 'capabilities')
-            ->whereIn('meta_value', $wp_capabilities)
-            ->get();
+            ->where(function ($query) use ($roles) {
+                for ($i = 0; $i < count($roles); $i++) {
+                    $query->orwhere('meta_value', 'like', '%' . $roles[$i] . '%');
+                }
+            })->get();
 
         $user_ids = [];
         foreach ($result_user_ids->toArray() as $array) {
