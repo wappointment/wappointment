@@ -5,15 +5,23 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.1.0 more services more calendars</span>    
+                <span>V2.1.1 bug fixes</span>    
             </h3>
-            <p>This version is a major version with lots of improvements for your experience in the backend.</p>
+            <p>Version 2.1.0 was a major version allowing you to create more services and calendars.</p>
+            <p>Being such a big release, there are a few bugs that came with it so here comes 2.1.1</p>
+            <p>Like or Dislike something about the new version? </p>
             <p>Give us your feedback from the <strong>Wappointment > Help</strong> menu, we'd love to hear it.</p>
-            <h5>Changelog 2.1.0</h5>
+            <h5>Changelog 2.1.1</h5>
             <ol>
-                <li class="my-2">Can create up to 3 services</li>
-                <li class="my-2">Can create up to 2 calendars</li>
-                <li class="my-2">Lot of interfaces improvements and bug fixes</li>
+                <li class="my-2">Fixed problem to replace calendar/staff image</li>
+                <li class="my-2">Fixed improper service duration appearing in reschedule process of appointment</li>
+                <li class="my-2">Fixed missing translatable strings in booking widget editor</li>
+                <li class="my-2">Fixed multiduration when locked bookable service not being editable</li>
+                <li class="my-2">Fixed false duration in header compact mode</li>
+                <li class="my-2">Fixed issue calendar synch and non standard timezones</li>
+                <li class="my-2">Fixed issue emails not sending when "WP PGP Encrypted Emails" installed</li>
+                <li class="my-2">Fixed issue backend calendar page not showing with out orf range value of regav</li>
+                <li class="my-2">Fixed issue with booking confirmation message initial import</li>
             </ol>
           </div>
     </WapModal>
