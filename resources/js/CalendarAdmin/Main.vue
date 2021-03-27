@@ -534,8 +534,8 @@ export default {
         let max = 19
         let min_max = this.getMinMaxRegav()
         if(this.openedDays.precise !== undefined){
-          min_max.min = min_max.min/60
-          min_max.max = min_max.max/60
+          min_max.min = Math.floor(min_max.min/60)
+          min_max.max = Math.ceil(min_max.max/60)
         }
         return {
           min:  min_max.min < min ? min_max.min:min, 
