@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.7
 Requires PHP: 7.0
-Stable tag: 2.1.0
+Stable tag: 2.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -139,14 +139,16 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.1.1 - 2021-03-26 =
+= 2.1.1 - 2021-03-27 =
 * Fixed problem to replace calendar/staff image
-* Fixed improper service duration appearing in reschedule process
-* Fixed missing translatable strings in widget editor
-* Fixed multiduration when locked service not being editable
+* Fixed improper service duration appearing in reschedule process of appointment
+* Fixed missing translatable strings in booking widget editor
+* Fixed multiduration when locked bookable service not being editable
 * Fixed false duration in header compact mode
 * Fixed issue calendar synch and non standard timezones
 * Fixed issue emails not sending when "WP PGP Encrypted Emails" installed
+* Fixed issue backend calendar page not showing with out orf range value of regav
+* Fixed issue with booking confirmation message initial import
 
 = 2.1.0 - 2021-03-19 =
 * Can create up to 3 services
