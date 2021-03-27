@@ -3,6 +3,7 @@
 use Wappointment\Models\Appointment;
 use Wappointment\Models\Location;
 use Wappointment\Models\Service as ServiceModel;
+use Wappointment\System\Status;
 
 class ImportService extends Wappointment\Installation\MigrateHasServices
 {
@@ -14,6 +15,9 @@ class ImportService extends Wappointment\Installation\MigrateHasServices
     public function up()
     {
         if ($this->hasMultiService()) {
+            return;
+        }
+        if (!Status::dbVersionAlterRequired()) {
             return;
         }
         $service_free = \Wappointment\Services\Service::getObject();

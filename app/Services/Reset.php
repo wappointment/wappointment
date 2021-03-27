@@ -21,6 +21,8 @@ class Reset
         'installation_step',
         'db_version_created',
         'db_version',
+        'appointments_must_refresh',
+        'appointments_update'
     ];
 
     private $user_options = [

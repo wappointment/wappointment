@@ -181,17 +181,11 @@ class Reminder
         if (!is_array($types)) {
             $types = ['physical', 'phone', 'skype', 'zoom'];
         }
-        if (count($types) > 1) {
-            foreach ($types as $type) {
-                $email_confirmed[] = [$type => $messageService[$type]];
-                $email_reminder[] = [$type => $messageService[$type]];
-            }
-        } else {
-            foreach ($types as $type) {
-                $email_confirmed[] = ['p' => $messageService[$type]];
-                $email_reminder[] = ['p' => $messageService[$type]];
-            }
+        foreach ($types as $type) {
+            $email_confirmed[] = [$type => $messageService[$type]];
+            $email_reminder[] = [$type => $messageService[$type]];
         }
+
 
         foreach ($footer as $footerRow) {
             $email_confirmed[] = $footerRow;
