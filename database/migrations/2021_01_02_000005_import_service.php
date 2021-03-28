@@ -4,6 +4,7 @@ use Wappointment\Models\Appointment;
 use Wappointment\Models\Location;
 use Wappointment\Models\Service as ServiceModel;
 use Wappointment\System\Status;
+use Wappointment\Services\Service;
 
 class ImportService extends Wappointment\Installation\MigrateHasServices
 {
@@ -30,11 +31,21 @@ class ImportService extends Wappointment\Installation\MigrateHasServices
                 'options' => $this->getOptions($service_free->service),
             ]);
 
-            $locations = Location::get();
+            $locations = Location::whereIn('type', $this->convertLoctoId($service_free->type))->get();
             $serviceObj->locations()->attach($locations);
 
             Appointment::where('id', '>', 0)->update(['service_id' => $serviceObj->id]);
         }
+    }
+
+    public function convertLoctoId($typeNames)
+    {
+        $types = [];
+        foreach ($typeNames as $tname) {
+            $types[] = Service::getLocationTypeId($tname);
+        }
+
+        return $types;
     }
     /**
      * Restructuring the service's options

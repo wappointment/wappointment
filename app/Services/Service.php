@@ -123,9 +123,12 @@ class Service implements ServiceInterface
         }
 
         if (!Flag::get('remindersSaved')) {
-            foreach (Reminder::getSeeds($types) as $reminder) {
-                Reminder::save($reminder);
+            if (\Wappointment\Models\Reminder::count() < 1) {
+                foreach (Reminder::getSeeds($types) as $reminder) {
+                    Reminder::save($reminder);
+                }
             }
+
 
             Flag::save('remindersSaved', true);
         }
