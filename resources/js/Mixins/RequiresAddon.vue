@@ -17,6 +17,9 @@ export default {
                 staff:{
                     label: 'Calendars & Staff',
                 },
+                packages:{
+                    label: 'Packages and credits',
+                },
             },
         };
     },

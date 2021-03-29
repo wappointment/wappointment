@@ -58,7 +58,7 @@ const Wizard3Page = () => import(/* webpackChunkName: "group-wizard2" */ './View
 const Wizard4Page = () => import(/* webpackChunkName: "group-wizard2" */ './Views/Subpages/Wizard4')
 
 const ServicePage = () => import(/* webpackChunkName: "group-service" */ './Views/Subpages/Service')
-const ServicesManage = () => import(/* webpackChunkName: "group-service-manage" */ './Settings/ServicesManage')
+const ServicesManage = () => import(/* webpackChunkName: "group-service-package" */ './Settings/ServicesAndPackage')
 const Calendars = () => import(/* webpackChunkName: "group-calendars-manage" */ './Settings/Calendars')
 let ClientsPageExtended = () => import(/* webpackChunkName: "group-clients" */ './Views/ClientsWrapper')
 let ServicesDeliveryExtended = () => new Promise((resolutionFunc) => resolutionFunc(window.wappointmentExtends.filter('ServicesDelivery', ServicesDelivery)))
