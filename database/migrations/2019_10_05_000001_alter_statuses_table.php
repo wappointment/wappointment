@@ -16,9 +16,15 @@ class AlterStatusesTable extends Wappointment\Installation\Migrate
     {
 
         Status::where('staff_id', 0)->update(['staff_id' => null]);
-        Capsule::schema()->table(Database::$prefix_self . '_statuses', function ($table) {
+        $foreignName = $this->getForeignName(Database::$prefix_self . '_statuses_staff_id_foreign');
+
+        Capsule::schema()->table(Database::$prefix_self . '_statuses', function ($table) use ($foreignName) {
             $table->unsignedInteger('staff_id')->nullable()->default(null)->change();
-            $table->foreign('staff_id')->references('id')->on(Database::$prefix_self . '_clients');
+            if ($foreignName === false) {
+                $table->foreign('staff_id')->references('id')->on(Database::$prefix_self . '_clients');
+            } else {
+                $table->foreign('staff_id', $foreignName)->references('id')->on(Database::$prefix_self . '_clients');
+            }
         });
     }
 

@@ -17,10 +17,21 @@ class AlterAppointmentsTableForService extends Wappointment\Installation\Migrate
         if ($this->hasMultiService()) {
             return;
         }
-        Capsule::schema()->table(Database::$prefix_self . '_appointments', function ($table) {
-            $table->foreign('service_id')->references('id')->on(Database::$prefix_self . '_services');
+        $foreignName = $this->getForeignName(Database::$prefix_self . '_appointments_service_id_foreign');
+        $foreignNameLoc = $this->getForeignName(Database::$prefix_self . '_appointments_location_id_foreign');
+
+        Capsule::schema()->table(Database::$prefix_self . '_appointments', function ($table) use ($foreignName, $foreignNameLoc) {
             $table->unsignedInteger('location_id')->nullable()->default(null);
-            $table->foreign('location_id')->references('id')->on(Database::$prefix_self . '_locations');
+            if ($foreignName === false) {
+                $table->foreign('service_id')->references('id')->on(Database::$prefix_self . '_services');
+            } else {
+                $table->foreign('service_id', $foreignName)->references('id')->on(Database::$prefix_self . '_services');
+            }
+            if ($foreignNameLoc === false) {
+                $table->foreign('location_id')->references('id')->on(Database::$prefix_self . '_locations');
+            } else {
+                $table->foreign('location_id', $foreignNameLoc)->references('id')->on(Database::$prefix_self . '_locations');
+            }
         });
     }
 
