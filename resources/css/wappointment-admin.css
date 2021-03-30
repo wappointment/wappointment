@@ -3,7 +3,8 @@
 #wpbody-content > .notice-success,
 #wpbody-content > .updated, 
 #wpbody-content > .notice,
-#wpbody-content > .announcements-notices {
+#wpbody-content > .announcements-notices,
+#wpbody-content > .wpstg_fivestar {
     display:none !important;
 }
 .wappointment-wrap .form-control::placeholder {
