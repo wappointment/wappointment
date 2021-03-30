@@ -130,15 +130,13 @@ class Queue
                 1
             );
         }
-        (new $jobClassName($job->payload['params']))->handle();
-        // // process the job
-        // try {
-
-        //     // once the job has been processed and there is no error we delete it
-        //     $job->delete();
-        // } catch (\Exception $e) {
-        //     self::whenJobFails($job, $e);
-        // }
+        // process the job
+        try {
+            // once the job has been processed and there is no error we delete it
+            $job->delete();
+        } catch (\Exception $e) {
+            self::whenJobFails($job, $e);
+        }
     }
 
     private static function whenJobFails(Job $job, \Exception $e)
