@@ -21,9 +21,9 @@ class AlterStatusesTable extends Wappointment\Installation\Migrate
         Capsule::schema()->table(Database::$prefix_self . '_statuses', function ($table) use ($foreignName) {
             $table->unsignedInteger('staff_id')->nullable()->default(null)->change();
             if ($foreignName === false) {
-                $table->foreign('staff_id')->references('id')->on(Database::$prefix_self . '_clients');
+                $table->foreign('staff_id')->references('id')->on(Database::$prefix_self . '_calendars');
             } else {
-                $table->foreign('staff_id', $foreignName)->references('id')->on(Database::$prefix_self . '_clients');
+                $table->foreign('staff_id', $foreignName)->references('id')->on(Database::$prefix_self . '_calendars');
             }
         });
     }
