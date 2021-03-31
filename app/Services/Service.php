@@ -118,6 +118,9 @@ class Service implements ServiceInterface
                 $optionsTemp['countries'] = $options['countries'];
                 $types[] = 'phone';
             }
+            if ($location->type == Location::TYPE_SKYPE) {
+                $types[] = 'skype';
+            }
             $location->options = $optionsTemp;
             $location->save();
         }
