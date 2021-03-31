@@ -12,8 +12,8 @@ class CreateCalendarServiceTable extends Wappointment\Installation\Migrate
      */
     public function up()
     {
-        $foreignName = $this->getForeignName(Database::$prefix_self . '_calendar_service_service_id_foreign');
-        $foreignNameLoc = $this->getForeignName(Database::$prefix_self . '_calendar_service_calendar_id_foreign');
+        $foreignName = $this->getFKServices();
+        $foreignNameLoc = $this->getFKCalendars();
 
         Capsule::schema()->create(Database::$prefix_self . '_calendar_service', function ($table) use ($foreignName, $foreignNameLoc) {
             $table->increments('id');
@@ -32,6 +32,15 @@ class CreateCalendarServiceTable extends Wappointment\Installation\Migrate
         });
     }
 
+    protected function getFKServices()
+    {
+        return $this->getForeignName(Database::$prefix_self . '_calendar_service_service_id_foreign');
+    }
+    protected function getFKCalendars()
+    {
+        return $this->getForeignName(Database::$prefix_self . '_calendar_service_calendar_id_foreign');
+    }
+
     /**
      * Reverse the migrations.
      *
@@ -39,9 +48,19 @@ class CreateCalendarServiceTable extends Wappointment\Installation\Migrate
      */
     public function down()
     {
-        Capsule::schema()->table(Database::$prefix_self . '_calendar_service', function ($table) {
-            $table->dropForeign(['service_id']);
-            $table->dropForeign(['calendar_id']);
+        $foreignName = $this->getFKServices();
+        $foreignNameLoc = $this->getFKCalendars();
+        Capsule::schema()->table(Database::$prefix_self . '_calendar_service', function ($table) use ($foreignName, $foreignNameLoc) {
+            if ($foreignName === false) {
+                $table->dropForeign(['service_id']);
+            } else {
+                $table->dropForeign($foreignName);
+            }
+            if ($foreignNameLoc === false) {
+                $table->dropForeign(['calendar_id']);
+            } else {
+                $table->dropForeign($foreignNameLoc);
+            }
         });
         Capsule::schema()->dropIfExists(Database::$prefix_self . '_calendar_service');
     }

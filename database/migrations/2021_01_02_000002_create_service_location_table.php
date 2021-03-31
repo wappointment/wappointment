@@ -15,8 +15,8 @@ class CreateServiceLocationTable extends Wappointment\Installation\MigrateHasSer
         if ($this->hasMultiService()) {
             return;
         }
-        $foreignName = $this->getForeignName(Database::$prefix_self . '_service_location_service_id_foreign');
-        $foreignNameLoc = $this->getForeignName(Database::$prefix_self . '_service_location_location_id_foreign');
+        $foreignName = $this->getFKServices();
+        $foreignNameLoc = $this->getFKLocations();
 
         Capsule::schema()->create(Database::$prefix_self . '_service_location', function ($table) use ($foreignName, $foreignNameLoc) {
             $table->increments('id');
@@ -35,6 +35,14 @@ class CreateServiceLocationTable extends Wappointment\Installation\MigrateHasSer
             }
         });
     }
+    protected function getFKServices()
+    {
+        return $this->getForeignName(Database::$prefix_self . '_service_location_service_id_foreign');
+    }
+    protected function getFKLocations()
+    {
+        return $this->getForeignName(Database::$prefix_self . '_service_location_location_id_foreign');
+    }
 
     /**
      * Reverse the migrations.
@@ -43,9 +51,19 @@ class CreateServiceLocationTable extends Wappointment\Installation\MigrateHasSer
      */
     public function down()
     {
-        Capsule::schema()->table(Database::$prefix_self . '_service_location', function ($table) {
-            $table->dropForeign(['service_id']);
-            $table->dropForeign(['location_id']);
+        $foreignName = $this->getFKServices();
+        $foreignNameLoc = $this->getFKLocations();
+        Capsule::schema()->table(Database::$prefix_self . '_service_location', function ($table) use ($foreignName, $foreignNameLoc) {
+            if ($foreignName === false) {
+                $table->dropForeign(['service_id']);
+            } else {
+                $table->dropForeign($foreignName);
+            }
+            if ($foreignNameLoc === false) {
+                $table->dropForeign(['location_id']);
+            } else {
+                $table->dropForeign($foreignNameLoc);
+            }
         });
         Capsule::schema()->dropIfExists(Database::$prefix_self . '_service_location');
     }
