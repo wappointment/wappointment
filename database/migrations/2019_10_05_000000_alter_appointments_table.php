@@ -15,7 +15,7 @@ class AlterAppointmentsTable extends Wappointment\Installation\Migrate
     public function up()
     {
 
-        $foreignName = $this->getForeignName(Database::$prefix_self . '_appointments' . '_' . 'client_id_foreign');
+        $foreignName = $this->getFKAppointments();
 
         Capsule::schema()->table(Database::$prefix_self . '_appointments', function ($table) use ($foreignName) {
             $table->unsignedInteger('staff_id')->nullable()->default(null)->change();
@@ -34,7 +34,10 @@ class AlterAppointmentsTable extends Wappointment\Installation\Migrate
         ]);
     }
 
-
+    protected function getFKAppointments()
+    {
+        return $this->getForeignName(Database::$prefix_self . '_appointments' . '_' . 'client_id_foreign');
+    }
 
     /**
      * Reverse the migrations.
@@ -43,7 +46,7 @@ class AlterAppointmentsTable extends Wappointment\Installation\Migrate
      */
     public function down()
     {
-        $foreignName = $this->getForeignName(Database::$prefix_self . '_appointments' . '_' . 'client_id_foreign');
+        $foreignName = $this->getFKAppointments();
         Capsule::schema()->table(Database::$prefix_self . '_appointments', function ($table) use ($foreignName) {
 
             if ($foreignName === false) {

@@ -15,13 +15,33 @@ class CreateServiceLocationTable extends Wappointment\Installation\MigrateHasSer
         if ($this->hasMultiService()) {
             return;
         }
-        Capsule::schema()->create(Database::$prefix_self . '_service_location', function ($table) {
+        $foreignName = $this->getFKServices();
+        $foreignNameLoc = $this->getFKLocations();
+
+        Capsule::schema()->create(Database::$prefix_self . '_service_location', function ($table) use ($foreignName, $foreignNameLoc) {
             $table->increments('id');
             $table->unsignedInteger('service_id');
-            $table->foreign('service_id')->references('id')->on(Database::$prefix_self . '_services');
+
             $table->unsignedInteger('location_id');
-            $table->foreign('location_id')->references('id')->on(Database::$prefix_self . '_locations');
+            if ($foreignName === false) {
+                $table->foreign('service_id')->references('id')->on(Database::$prefix_self . '_services');
+            } else {
+                $table->foreign('service_id', $foreignName)->references('id')->on(Database::$prefix_self . '_services');
+            }
+            if ($foreignNameLoc === false) {
+                $table->foreign('location_id')->references('id')->on(Database::$prefix_self . '_locations');
+            } else {
+                $table->foreign('location_id', $foreignNameLoc)->references('id')->on(Database::$prefix_self . '_locations');
+            }
         });
+    }
+    protected function getFKServices()
+    {
+        return $this->getForeignName(Database::$prefix_self . '_service_location_service_id_foreign');
+    }
+    protected function getFKLocations()
+    {
+        return $this->getForeignName(Database::$prefix_self . '_service_location_location_id_foreign');
     }
 
     /**
@@ -31,9 +51,19 @@ class CreateServiceLocationTable extends Wappointment\Installation\MigrateHasSer
      */
     public function down()
     {
-        Capsule::schema()->table(Database::$prefix_self . '_service_location', function ($table) {
-            $table->dropForeign(['service_id']);
-            $table->dropForeign(['location_id']);
+        $foreignName = $this->getFKServices();
+        $foreignNameLoc = $this->getFKLocations();
+        Capsule::schema()->table(Database::$prefix_self . '_service_location', function ($table) use ($foreignName, $foreignNameLoc) {
+            if ($foreignName === false) {
+                $table->dropForeign(['service_id']);
+            } else {
+                $table->dropForeign($foreignName);
+            }
+            if ($foreignNameLoc === false) {
+                $table->dropForeign(['location_id']);
+            } else {
+                $table->dropForeign($foreignNameLoc);
+            }
         });
         Capsule::schema()->dropIfExists(Database::$prefix_self . '_service_location');
     }
