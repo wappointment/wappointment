@@ -171,7 +171,7 @@
             
           </div>
           
-      <div class="mt-3">
+      <div class="mt-3" v-if="viewData.debug !== false">
           <button class="btn btn-danger btn-sm" @click="startResetConfirm">
             <span class="dashicons dashicons-image-rotate"></span> Uninstall
           </button>

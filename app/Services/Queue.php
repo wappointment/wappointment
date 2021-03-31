@@ -132,6 +132,7 @@ class Queue
         }
         // process the job
         try {
+            (new $jobClassName($job->payload['params']))->handle();
             // once the job has been processed and there is no error we delete it
             $job->delete();
         } catch (\Exception $e) {

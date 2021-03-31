@@ -24,7 +24,7 @@
                 </button>
               </div>
 
-              <div v-if="viewData.debug">
+              <div v-if="viewData.debug !== false">
                 <hr/>
                 <div class="mt-3" >
                   <button class="btn btn-danger btn-sm" @click="startResetConfirm">
