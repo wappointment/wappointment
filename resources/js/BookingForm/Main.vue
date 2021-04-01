@@ -176,7 +176,8 @@ export default {
             return this.selectedSlot !== false && this.selectedSlot > 0
         },
         serviceIsNotFree(){
-            return this.serviceUNotFree || this.serviceMNotFree
+            return this.service !== false && this.service.options.woo_sellable === true
+            //return this.serviceUNotFree || this.serviceMNotFree
         },
         serviceUNotFree(){
             return this.service !== false && this.service.options.woo_sellable === true && this.service.options.woo_price > 0

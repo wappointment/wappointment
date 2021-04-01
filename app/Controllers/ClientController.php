@@ -58,7 +58,7 @@ class ClientController extends RestController
 
     public function delete(Request $request)
     {
-        Client::delete($request->input('id'));
+        ClientModel::where('id', (int)$request->input('id'))->delete();
 
         return [
             'elementDeleted' => $request->input('id'),
