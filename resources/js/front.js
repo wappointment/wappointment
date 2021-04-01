@@ -36,13 +36,14 @@ const vues = document.querySelectorAll(".wappointment_page, .wappointment_widget
 
 for (let index = 0; index < vues.length; index++) {
     const el = vues[index]
+    console.log('el.dataset',Object.assign({},el.dataset))
     vuesInstances[index] = new Vue({
         el, 
         components: { Front },
         render: h => h(Front, {
             props: {
                 'classEl' : el.getAttribute('class'),
-                'attributesEl':  el.dataset,
+                'attributesEl':  Object.assign({},el.dataset),
                 'buttonTitle' : el.getAttribute('data-button-title') ? el.getAttribute('data-button-title'):'Book an appointment',
                 'brFixed' : [undefined,null].indexOf(el.getAttribute('data-brfixed')) === -1 ? true:false
             }

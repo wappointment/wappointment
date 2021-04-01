@@ -117,13 +117,13 @@ class WidgetSettings
             'confirm' => 'Confirm',
         ],
         'service_selection' => [
-            'select_service' => 'Select a service',
+            'select_service' => 'What can I help you with?',
         ],
         'service_duration' => [
-            'select_duration' => 'Select a duration',
+            'select_duration' => 'How long will it last?',
         ],
         'service_location' => [
-            'select_location' => 'Select a location',
+            'select_location' => 'How should we talk?',
         ],
     ];
 

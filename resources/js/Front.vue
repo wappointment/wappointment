@@ -55,6 +55,7 @@ export default {
       if(this.opts.demoData !== undefined){
           this.disabledButtons = true
       }
+      console.log('process shortcode')
       this.processShortcode()
     },
 
@@ -141,8 +142,23 @@ export default {
               this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 ? true : false //no auto pop on 
               this.toggleBookForm() // this one goes last
             }
-            this.opts.attributesEl = this.attributesEl
+            this.opts.attributesEl = Object.assign({},this.attributesEl)
+            console.log('this.opts.attributesEl',this.opts.attributesEl)
+
           }
+        },
+        translateAttributesEl(){
+          let attributes = {}
+          for (const key in this.attributesEl) {
+            if (this.attributesEl.hasOwnProperty(key) && 
+            ['buttonTitle','brFixed','demoAs','largeVersion',
+            'week','popOff','autoOpen','autoPop','staffSelection','serviceSelection'].indexOf(key) !== -1) {
+
+              attributes[key] = this.attributesEl[key]
+              
+            }
+          }
+          return attributes
         },
         backToButton(){
           if(this.canPop){
