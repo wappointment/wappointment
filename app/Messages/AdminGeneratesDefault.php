@@ -41,7 +41,7 @@ trait AdminGeneratesDefault
             $tz = $staff->timezone;
         }
         if (empty($tz)) {
-            $tz = 'UTC';
+            $tz = Settings::getStaff('timezone', 'UTC');
         }
         return $tz;
     }

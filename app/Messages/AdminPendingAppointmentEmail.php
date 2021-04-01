@@ -41,7 +41,7 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
         );
 
         if ($buttonConfirm === true) {
-            $tz = Settings::getStaff('timezone');
+            $tz = $this->getStaffTz($this->params['appointment']);
             $this->addButton(
                 'Confirm appointment',
                 WPHelpers::adminUrl('wappointment_calendar&start=' .

@@ -13,7 +13,7 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
         $this->subject = 'Rescheduled appointment';
         $this->addLogo();
         $this->addBr();
-        $tz = Settings::getStaff('timezone');
+        $tz = $this->getStaffTz($this->params['appointment']);
 
         $this->addLines([
             'Hi ' . $this->params['appointment']->getStaff()->getFirstName() . ', ',
