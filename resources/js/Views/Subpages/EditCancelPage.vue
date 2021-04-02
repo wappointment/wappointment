@@ -135,6 +135,7 @@ export default {
             "type":"phone",
             "canRescheduleUntil":start_at-(3600*3),
             "canCancelUntil":start_at-(3600*3),
+            'duration_sec': 3600,
             'options': {
               'provider':{
                 'zoom':{

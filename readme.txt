@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.7
 Requires PHP: 7.0
-Stable tag: 2.1.2
+Stable tag: 2.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,11 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.1.3 - 2021-04-02 =
+* Fixed confirm button in pending appointment email 
+* Fixed Edit Cancel / Reschedule page in Settings > Advanced
+* Fixed client delete issue
 
 = 2.1.2 - 2021-03-31 =
 * Fixed triple email notifications sent

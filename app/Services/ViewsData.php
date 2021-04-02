@@ -169,7 +169,7 @@ class ViewsData
         return [
             'widget' => (new WidgetSettings)->get(),
             'widgetDefault' => (new WidgetSettings)->defaultSettings(),
-            'staff' => (new \Wappointment\WP\Staff())->toArray()
+            'staff' => Staff::getWP(), //(new \Wappointment\WP\Staff())->toArray()
         ];
     }
 
