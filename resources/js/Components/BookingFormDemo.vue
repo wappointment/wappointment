@@ -30,6 +30,7 @@ export default {
         demoConfigure(step_name){
             let comp_data_step = this.isLegacy ? this.getChildComponentDataForStepLegacy(step_name, this.options.editionsSteps): this.getChildComponentDataForStep(step_name, this.options.editionsSteps)
             let component_name = window.wappointmentExtends.filter('BFDemoGetChildComponentForStep', this.getChildComponentForStep(step_name), {step_name: step_name} ) 
+            
             let component_data = window.wappointmentExtends.filter('BFDemoGetChildComponentDataForStep', comp_data_step, 
             {step_name: step_name, bookingFormObject: this, editionsSteps: this.options.editionsSteps}) 
 

@@ -367,7 +367,7 @@ export default {
                 let conditionKeys = Object.keys(conditions)
                 for (let i = 0; i < conditionKeys.length; i++) {
                     const keyCondition = conditionKeys[i]
-                    if(this[keyCondition] !== conditions[keyCondition]) {
+                    if(this.bfdemo !== true && this[keyCondition] !== conditions[keyCondition]) {
                         if(this.componentsList[component_name].skip !== undefined){
                             
                             if(this.conditionSkipPass(component_name)){
