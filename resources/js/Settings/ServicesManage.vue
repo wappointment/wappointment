@@ -8,7 +8,7 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Service</th>
-                            <th scope="col">Durations</th>
+                            <th scope="col">Durations & Price</th>
                             <th scope="col">Delivery Modalities <a href="javascript:;" v-if="!requiresDBUpgrade" @click="goToDelivery">Manage</a></th>
                         </tr>
                     </thead>
