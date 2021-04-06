@@ -10,6 +10,7 @@ import __get from 'lodash/get'
 const WapImage = () => import(/* webpackChunkName: "WapImage" */ './Components/WapImage')
 
 Vue.use(VueWapModal)
+
 Vue.use(VueService, {base:apiWappointment.root})
 
 Vue.component('WapImage', WapImage)

@@ -110,7 +110,6 @@ export default {
   computed: {
 
     schemaParsed(){
-      console.log('schemaParsed',this.schema, this.modelHolder)
       return  window.wappointmentExtends.filter('serviceFormSchema', this.schema, this.modelHolder )
     },
 

@@ -40,8 +40,8 @@ class Staff
         $this->wp_user = get_userdata($this->wp_uid);
         unset($this->wp_user->data->user_pass);
         unset($this->wp_user->data->user_activation_key);
-        if (empty($this->wp_user)) {
-            throw new \WappointmentException("Can't load staff information", 1);
+        if (empty($this->wp_user) && $this->status > 0) {
+            Calendar::where('id', $this->id)->update(['status' => 0]);
         }
 
         $this->gravatar = get_avatar_url($this->wp_uid, ['size' => 46]);

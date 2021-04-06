@@ -1,7 +1,7 @@
 <template>
     <div @click.self="hideModal" class="wapmodal" :class="{'wapmodal-show': show }">
         <div class="loader-wrap d-flex align-items-center" v-if="loader">
-            <WLoader></WLoader>
+            <WLoader />
         </div>
         <div v-else class="wapmodal-content" :class="generateClasses">
             <div class="wapmodal-header d-flex justify-content-between align-items-center">
