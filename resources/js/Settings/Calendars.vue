@@ -414,6 +414,7 @@ export default {
     right: 0px;
     z-index: 9;
     top: 16px;
+    word-break:break-all;
 }
 .cal-icon:hover > .dashicons {
     color: var(--primary);

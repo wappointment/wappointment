@@ -304,11 +304,6 @@ export default {
     margin-left: .6em;
 }
 
-.wap-booking-fields {
-    text-align: left;
-    margin: .5em 0;
-}
-
 .wap-booking-fields label{
     margin-bottom: 0;
     font-size: .9em;

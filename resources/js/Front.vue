@@ -336,6 +336,12 @@ export default {
     min-width: 320px;
 }
 
+
+.wap-booking-fields {
+    text-align: left;
+    margin: .5em 0;
+}
+
 @media only screen and (max-width: 500px) {
   .wap-abs{
     position: absolute;

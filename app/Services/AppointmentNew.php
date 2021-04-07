@@ -345,13 +345,13 @@ class AppointmentNew
             throw new \WappointmentException("Can't cancel appointment anymore", 1);
         }
 
-        apply_filters('wappointment_cancelled_appointment', $appointment);
-
         return static::cancel($appointment);
     }
 
     public static function cancel(AppointmentModel $appointment)
     {
+        apply_filters('wappointment_cancelled_appointment', $appointment);
+
         \Wappointment\Models\Log::canceledAppointment($appointment);
 
         $client = $appointment->client()->first();
