@@ -1,11 +1,8 @@
-#wpbody-content > .error, 
-#wpbody-content > .notice-warning, 
-#wpbody-content > .notice-success,
-#wpbody-content > .updated, 
-#wpbody-content > .notice,
-#wpbody-content > .announcements-notices,
-#wpbody-content > .wpstg_fivestar {
+#wpbody-content > div{
     display:none !important;
+}
+#wpbody-content > div.wappointment-wrap{
+    display:block !important;
 }
 .wappointment-wrap .form-control::placeholder {
     color: #dadada;
