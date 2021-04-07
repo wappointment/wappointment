@@ -84,7 +84,9 @@
                                                 v-if="canShowField(stepObj.key, field_key, catid)" class="tt-below">
                                                     {{ changedInput(stepObj.key, field_key, options[stepObj.key][field_key]) }}
                                                     <component v-if="isComponentTypeActive(options[stepObj.key][field_key],stepObj.key, field_key, field_key)" :key="field_key"  
+                                                    v-bind="getCompProp(fieldDescription)"
                                                     :is="getComponentType(options[stepObj.key][field_key],field_key)" 
+                                                    
                                                     v-model="options[stepObj.key][field_key]" 
                                                     @input="(e) => changedInput(stepObj.key, field_key, e)"
                                                     eventChange="input"
@@ -103,7 +105,9 @@
                                         <div v-for="(inputvalue, field_key) in options[stepObj.key]" :data-tt="getFieldTip(stepObj.key, field_key) ? getFieldTip(stepObj.key, field_key) : false" v-if="canShowField(stepObj.key, field_key)" class="tt-below">
                                             {{ changedInput(stepObj.key, field_key, inputvalue) }}
                                             <component  v-if="isComponentTypeActive(inputvalue,stepObj.key, field_key, field_key)" :key="field_key"  
+                                            v-bind="getCompProp(inputvalue)"
                                             :is="getComponentType(inputvalue,field_key)" 
+                                            
                                             v-model="options[stepObj.key][field_key]" 
                                             @input="(e) => changedInput(stepObj.key, field_key, e)"
                                             eventChange="input"
@@ -161,6 +165,7 @@ import FrontDemo from '../FrontDemo'
 import ColorPicker from './ColorPicker'
 import FormFieldCheckbox from '../Form/FormFieldCheckbox'
 import FormFieldSlider from '../Form/FormFieldSlider'
+import FormFieldSelect from '../Form/FormFieldSelect'
 import Colors from '../Modules/Colors'
 import SettingsSave from '../Modules/SettingsSave'
 import CountrySelector from './CountrySelector'
@@ -174,6 +179,7 @@ export default {
         CountrySelector,
         InputPh: window.wappoGet('InputPh'),
         FormFieldCheckbox,
+        FormFieldSelect,
         FormFieldSlider,
         FontAwesomeIcon,
     },
@@ -478,12 +484,17 @@ export default {
         },
 
         getComponentType(value, type){
-            if(['check_','slide_'].indexOf(type.substr(0,6)) !== -1){
-                return type.substr(0,6) == 'check_' ? 'FormFieldCheckbox':'FormFieldSlider'
+            if(['check_','slide_','select'].indexOf(type.substr(0,6)) !== -1){
+                return type.substr(0,6) == 'check_' ? 'FormFieldCheckbox':(type.substr(0,7) == 'select_' ? 'FormFieldSelect':'FormFieldSlider')
             }else{
                 return value[0] == '#' ? 'ColorPicker':'InputPh'
             }
         },
+
+        getCompProp(options){
+            return options
+        },
+
         allowedType(type){
             return this.config.service.type.indexOf(type) !== -1
         },
