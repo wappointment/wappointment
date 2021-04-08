@@ -44,8 +44,7 @@ for (let index = 0; index < vues.length; index++) {
             props: {
                 'classEl' : el.getAttribute('class'),
                 'attributesEl':  el.dataset,
-                'buttonTitle' : el.getAttribute('data-button-title') ? el.getAttribute('data-button-title'):'Book an appointment',
-                'brFixed' : [undefined,null].indexOf(el.getAttribute('data-brfixed')) === -1 ? true:false
+                'buttonTitle' : el.textContent,
             }
         }),
     }) 

@@ -27,7 +27,7 @@ import ckl from './Standalone/chunkloader.js'
 
 export default {
     mixins: [Colors, UrlParam],
-    props: ['classEl', 'options', 'step', 'attributesEl'],
+    props: ['classEl', 'options', 'step', 'attributesEl', 'buttonTitle'],
     components: { 
         BookingButton,
         StyleGenerator,
@@ -42,7 +42,6 @@ export default {
         elementId: '',
         stepName: '',
         disabledButtons: false,
-        buttonTitle: '',
         brFixed: undefined,
         largeVersion: false,
         autoPop: true,
@@ -105,7 +104,7 @@ export default {
         },
 
         realButtonTitle(){
-          return this.options!== undefined && this.options.button.title !== undefined ? this.options.button.title : this.buttonTitle
+          return this.buttonTitle == '' && this.options!== undefined && this.options.button.title !== undefined ? this.options.button.title : this.buttonTitle
         },
         isPage(){
             return this.classEl === 'wappointment_page'
@@ -131,7 +130,6 @@ export default {
         },
         processShortcode(){
           if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){
-            if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
             if(this.attributesEl.brcFloats !== undefined) this.brFixed = true
             if(this.attributesEl.demoAs !== undefined) this.demoAs = true
             if([undefined,false].indexOf(this.attributesEl.largeVersion) === -1) this.largeVersion = true

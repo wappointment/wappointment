@@ -310,6 +310,25 @@ class WidgetSettings
             $this->defaultSettings() : $this->merge($this->defaultSettings(), $this->db_settings);
     }
 
+
+    public function weglotWordsTranslate($words)
+    {
+
+        foreach ($this->merged_settings as $section => $values) {
+            if ($section == 'colors') {
+                continue;
+            }
+            foreach ($values as $key => $tr_value) {
+                if (strpos($key, 'check_') !== false || strpos($key, 'slide_') !== false) {
+                    continue;
+                }
+                $words[] = $tr_value;
+            }
+        }
+
+        return $words;
+    }
+
     public function defaultSettings()
     {
         return apply_filters('wappointment_widget_settings_default', $this->settings);

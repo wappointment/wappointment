@@ -46,6 +46,7 @@ class Init
 
     public function baseInit()
     {
+        add_filter('weglot_words_translate', [$this, 'weglotWordsTranslate'], 10, 2);
         add_action('wp_print_scripts', [$this, 'jsVariables']);
         new \Wappointment\Routes\Main();
         (new \Wappointment\WP\CustomPage())->boot();
@@ -156,7 +157,7 @@ class Init
         $return .= '/* <![CDATA[ */ ' . "\n";
         $return .= 'var apiWappointment = ' . json_encode($variables) . ";\n";
         $return .= 'var widgetWappointment = '
-            . json_encode((new \Wappointment\Services\WidgetSettings)->get()) . ";\n";
+            . json_encode($this->getWidgetSettings()->get()) . ";\n";
 
         if (is_admin()) {
             $return .= 'var wappoEmailTags =' .  $this->getWappoEmailTags() . ";\n";
@@ -167,6 +168,20 @@ class Init
 
         $return .= '</script>' . "\n";
         echo $return;
+    }
+
+    public function getWidgetSettings()
+    {
+        static $widgetSettings = false;
+        if ($widgetSettings === false) {
+            $widgetSettings = new \Wappointment\Services\WidgetSettings;
+        }
+        return $widgetSettings;
+    }
+
+    public function weglotWordsTranslate($words)
+    {
+        return $this->getWidgetSettings()->weglotWordsTranslate($words);
     }
 
     public function getWappoEmailLinks()
