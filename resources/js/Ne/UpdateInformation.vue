@@ -5,14 +5,14 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.1.3 bug fixes</span>    
+                <span>V2.1.4 more bug fixes</span>    
             </h3>
 
-            <h5>Changelog 2.1.3</h5>
+            <h5>Changelog 2.1.4</h5>
             <ol>
-                <li>Fixed Edit Cancel / Reschedule page in Settings > Advanced</li>
-                <li>Fixed confirm button in pending appointment email</li>
-                <li>Fixed client delete issue</li>
+                <li>Fixed issue when modifying calendar, on save the custom avatar selection was lost</li>
+                <li>Fixed booking cancel sequence from the backend when dealing with packs(addon)</li>
+                <li>Improved booking widget editor for payment selection in WooCommerce(addon)</li>
             </ol>
           </div>
     </WapModal>
