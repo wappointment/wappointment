@@ -10,6 +10,7 @@ class Staff
     public $id = null;
     public $wp_uid = null;
     public $avatar = null; //avatar
+    public $avatar_id = null; //avatar_id
     public $name = null; //staffname
     public $timezone = null; //staff timezone
     public $gravatar = '';
@@ -45,7 +46,8 @@ class Staff
         }
 
         $this->gravatar = get_avatar_url($this->wp_uid, ['size' => 46]);
-        $this->avatar = !empty($this->staff_data['options']['avatar_id']) ? wp_get_attachment_image_src($this->staff_data['options']['avatar_id'])[0] : $this->gravatar;
+        $this->avatar_id = !empty($this->staff_data['options']['avatar_id']) ? $this->staff_data['options']['avatar_id'] : '';
+        $this->avatar = !empty($this->avatar_id) ? wp_get_attachment_image_src($this->avatar_id)[0] : $this->gravatar;
         $this->name = $staff_data['name'];
         $this->timezone = $this->staff_data['options']['timezone'];
         $this->availability = $this->staff_data['availability'];
@@ -59,6 +61,7 @@ class Staff
             'wp_uid' => $this->wp_uid,
             'avatar' => $this->avatar,
             'gravatar' => $this->gravatar,
+            'avatar_id' => $this->avatar_id,
             'name' => $this->name,
             'avb' => $this->getAvb(),
             'regav' => $this->getRegav(),
