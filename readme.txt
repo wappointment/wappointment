@@ -145,6 +145,7 @@ It requires work on your end but keeps your site safe and optimized.
 * Fixed booking cancel sequence from the backend
 * Improved css hiding external nag 99% efficient
 * Improved foreign key handling on installation
+* Allow calendar delete
 
 = 2.1.3 - 2021-04-02 =
 * Fixed confirm button in pending appointment email 

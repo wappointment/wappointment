@@ -11,6 +11,7 @@
             <h5>Changelog 2.1.4</h5>
             <ol>
                 <li>Fixed issue when modifying calendar, on save the custom avatar selection was lost</li>
+                <li>Allow calendar delete</li>
                 <li>Fixed booking cancel sequence from the backend when dealing with packs(addon)</li>
                 <li>Improved booking widget editor for payment selection in WooCommerce(addon)</li>
             </ol>
