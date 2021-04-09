@@ -4,9 +4,6 @@ namespace Wappointment\Services;
 
 use Wappointment\Managers\Central;
 use Wappointment\ClassConnect\RakitValidator;
-use Wappointment\Validators\HasValues;
-use Wappointment\Validators\RequiredIfHas;
-use Wappointment\Validators\RequiredIfFields;
 
 class Calendars
 {
@@ -34,9 +31,6 @@ class Calendars
     public static function save($calendarData)
     {
         $validator = new RakitValidator;
-        // $validator->addValidator('hasvalues', new HasValues());
-        // $validator->addValidator('required_if_has', new RequiredIfHas());
-        // $validator->addValidator('required_if_fields', new RequiredIfFields());
 
         $validationRules = [
             'name' => 'required',
@@ -150,12 +144,14 @@ class Calendars
         return $regav;
     }
 
-    public static function delete($service_id = false)
+    public static function delete($calendar_id = false)
     {
-        $serviceModel = static::getModel();
-        $old_service = $serviceModel::find($service_id);
-        $serviceModel::where('sorting', '>', $old_service->sorting)->decrement('sorting');
-        return $serviceModel::where('id', $service_id)->delete();
+        $calendarModel = static::getModel();
+        $old_calendar = $calendarModel::find($calendar_id);
+        $calendarModel::where('sorting', '>', $old_calendar->sorting)->decrement('sorting');
+        $old_calendar->account_key = null;
+        $old_calendar->save();
+        return $calendarModel::where('id', $calendar_id)->delete();
     }
 
     public static function get($service_id = false)

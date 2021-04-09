@@ -64,7 +64,7 @@ class CalendarsController extends RestController
 
     public function saveCal(Request $request)
     {
-        $calendar_id = empty($request->input('calendar_id')) ? false : $request->input('calendar_id');
+        $calendar_id = empty($request->input('calendar_id')) ? false : (int)$request->input('calendar_id');
         $externalCalendar = new ExternalCalendar($calendar_id);
         return $externalCalendar->save($request->input('calurl'));
     }
@@ -100,20 +100,20 @@ class CalendarsController extends RestController
     {
         $data = $request->only(['id']);
 
-        $result = Calendars::toggle($data['id']);
+        $result = Calendars::toggle((int)$data['id']);
         return ['message' => 'Calendar has been modified', 'result' => $result];
     }
 
     public function delete(Request $request)
     {
-        Calendars::delete($request->input('id'));
+        Calendars::delete((int)$request->input('id'));
         // clean order
         return ['message' => 'Calendar deleted', 'result' => true];
     }
 
     public function refreshCalendars(Request $request)
     {
-        $externalCalendar = new ExternalCalendar($request->input('staff_id'));
+        $externalCalendar = new ExternalCalendar((int)$request->input('staff_id'));
         return $externalCalendar->refreshCalendars(true);
     }
 
@@ -123,7 +123,7 @@ class CalendarsController extends RestController
             throw new \WappointmentException("Malformed parameter", 1);
         }
 
-        $externalCalendar = new ExternalCalendar($request->input('staff_id'));
-        return $externalCalendar->disconnect($request->input('calendar_id'));
+        $externalCalendar = new ExternalCalendar((int)$request->input('staff_id'));
+        return $externalCalendar->disconnect((int)$request->input('calendar_id'));
     }
 }

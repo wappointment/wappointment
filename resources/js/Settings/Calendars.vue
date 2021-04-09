@@ -32,8 +32,8 @@
                                     </div>
                                     <div class="actions ml-4 text-muted">
                                         <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
-                                        <!-- <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(locationObj.id)"></span></span>
-                                        <span>(id: {{ locationObj.id }})</span> -->
+                                        <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
+                                        <span>(id: {{ calendar.id }})</span>
                                     </div>
                                 </div>
                             </td>
@@ -261,12 +261,12 @@ export default {
                 this.reloadListing()
             }
         },
-        deleteCalendar(calendar_id, calendar_main_id){
+        deleteCalendar(calendar_id){
             this.$WapModal().confirm({
                 title: 'Do you really want to delete this calendar?',
             }).then((response) => {
                 if(response !== false){
-                    this.request(this.deleteRequest,{id:calendar_id, staff_id: calendar_main_id},undefined,false,this.hasBeenSavedDeleted)
+                    this.request(this.deleteRequest,{id:calendar_id},undefined,false,this.hasBeenSavedDeleted)
                 }
             })
         },
