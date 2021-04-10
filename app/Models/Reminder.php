@@ -75,7 +75,7 @@ class Reminder extends Model
     public function getLabelAttribute()
     {
         $labels = [
-            self::APPOINTMENT_STARTS => 'Sent before appointment takes place.(sent 1 day(s) before)',
+            self::APPOINTMENT_STARTS => $this->getReminderLabel(),
             self::APPOINTMENT_CONFIRMED => 'Sent after appointment has been confirmed.',
             self::APPOINTMENT_RESCHEDULED => 'Sent after appointment has been rescheduled.',
             self::APPOINTMENT_CANCELLED => 'Sent after appointment has been cancelled.  ',
@@ -85,6 +85,14 @@ class Reminder extends Model
         return empty($labels[$this->event]) ? 'undefined' : $labels[$this->event];
     }
 
+    public function getReminderLabel()
+    {
+        return empty($this->options['when_number']) ? '' : sprintf(__('Sent before appointment takes place.(sent %1$s %2$s before)', 'wappointment'), $this->options['when_number'], $this->convertUnit($this->options['when_unit']));
+    }
+    public function convertUnit($unit)
+    {
+        return $unit == 1 ? 'minute(s)' : ($unit == 2 ? 'hours' : 'days');
+    }
 
     public static function getEvents()
     {

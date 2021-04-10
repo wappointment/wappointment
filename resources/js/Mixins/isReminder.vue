@@ -38,7 +38,6 @@ export default {
             return reminder.label
             
             let labelString = '' 
-            
             if(this.isAppointmentStartEvent(reminder)){
             labelString += 'Sent before appointment takes place.(' + this.getDelay(reminder) + ')'
             }else if(this.isAppointmentBookedEvent(reminder)){
@@ -72,6 +71,7 @@ export default {
         },
 
         getDelay(reminder) {
+            console.log('reminder.options',reminder.options)
             if(reminder.options['when_number']!== undefined && reminder.options['when_number'] > 0){
                 return 'sent ' + reminder.options['when_number'] + ' ' + this.convertUnit(reminder.options['when_unit']) + ' before'
             }

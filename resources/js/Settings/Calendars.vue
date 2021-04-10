@@ -114,9 +114,9 @@
             <h4 slot="title" class="modal-title"> 
                 Edit services allowed
             </h4>
-            <SearchDropdown v-model="editingServices.services" hasMulti ph="labelDefault" :elements="elements.services" 
+            <SearchDropdown v-model="editingServices.services" hasMulti ph="Pick services provided by staff" :elements="elements.services" 
                 idKey="id" labelSearchKey="name"></SearchDropdown>
-                <button class="btn btn-primary" @click="saveServices">Save</button>
+                <button class="btn btn-primary mt-2" @click="saveServices">Save</button>
         </WapModal>
     </div>
 </template>
