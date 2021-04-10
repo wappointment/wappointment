@@ -239,6 +239,7 @@ export default {
     },
     activeBgOverId: false,
     shortDayFormat: 'Do MMM YY',
+    headerDayFormat: 'Do MMM',
     daysProperties: false,
     serviceEvent: null,
     serviceStatus: null,
@@ -599,6 +600,7 @@ export default {
                 selectMinDistance: 10,
                 selectAllow: this.selectAllow,
                 defaultView: 'timeGridWeek',
+                columnHeaderFormat: this.headerDayFormat,
                 firstDay: this.viewData.week_starts_on,
                 minTime: this.minHour + ':00',
                 maxTime: this.maxHour + ':00',  
@@ -806,7 +808,7 @@ export default {
          this.$refs.calendar.fireMethod('changeView', 'timeGridWeek')
          this.$refs.calendar.fireMethod('today')
          this.currentView = 'timeGridWeek'
-         //this.resetFirstDay()
+         this.resetFirstDay()
          this.refreshEvents()
          
       },

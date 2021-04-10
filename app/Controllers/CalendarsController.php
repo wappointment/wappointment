@@ -124,6 +124,6 @@ class CalendarsController extends RestController
         }
 
         $externalCalendar = new ExternalCalendar((int)$request->input('staff_id'));
-        return $externalCalendar->disconnect((int)$request->input('calendar_id'));
+        return $externalCalendar->disconnect($request->input('calendar_id'));
     }
 }
