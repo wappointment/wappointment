@@ -85,7 +85,7 @@ class IcsGenerator
             'LOCATION' => $this->getLocation($appointment),
             'SUMMARY' => $title,
             'DTSTART' => $this->getFormattedDate($appointment->start_at),
-            'DTEND' =>  $this->getFormattedDate($appointment->end_at),
+            'DTEND' =>  $this->getFormattedDate($this->getDateEndMinusBuffer($appointment)),
             'DESCRIPTION' => $this->getDescription($appointment),
             'STATUS' => $appointment->isConfirmed() ? 'CONFIRMED' : 'TENTATIVE',
             'DTSTAMP' => $this->getFormattedDate($appointment->created_at),
@@ -106,6 +106,11 @@ class IcsGenerator
         ]);
     }
 
+    protected function getDateEndMinusBuffer($appointment)
+    {
+        return $appointment->end_at->subSeconds($appointment->getBufferInSec());
+        //return Carbon::createFromTimestamp($appointment->end_at->timestamp - $appointment->getBufferInSec());
+    }
     protected function getFormattedDate($date)
     {
         return $this->getCarbonDate($date)->format($this->ics_date);

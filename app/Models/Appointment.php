@@ -61,9 +61,9 @@ class Appointment extends Model
         return empty($this->options['sequence']) ? 0 : $this->options['sequence'];
     }
 
-    public function getTitle()
+    public function getTitle($includes_buffer = true)
     {
-        return $this->getStatusTag() . $this->getServiceName() . ' ' . $this->getDuration() . $this->getBuffer() . ' - ' . $this->client->name;
+        return $this->getStatusTag() . $this->getServiceName() . ' ' . $this->getDuration() . ($includes_buffer ? $this->getBuffer() : '') . ' - ' . $this->client->name;
     }
 
     public function getStatusTag()
@@ -348,7 +348,7 @@ class Appointment extends Model
     public function toDotcom($timezone)
     {
         $toDotcom = [
-            'title' => $this->getTitle(),
+            'title' => $this->getTitle(false),
             'type' => $this->type,
             'video' => $this->getLocationVideo(),
             'starts_at' => $this->start_at->timestamp,
