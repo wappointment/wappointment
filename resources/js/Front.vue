@@ -6,8 +6,8 @@
             <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
         </div>
         
-        <div :class="{'wap-abs':hasCloseCross && isMobilePhone && autoPop}">
-            <div class="wap-wid wclosable" :class="'step-'+stepName" v-if="isWidget">
+        <div :class="getWidClass">
+            <div class="wap-wid wclosable" :class="'step-' + stepName" v-if="isWidget">
               <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
               <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
               <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
@@ -75,6 +75,12 @@ export default {
         }
     },
     computed:{
+        getWidClass(){
+          return {
+            'wap-abs':this.hasCloseCross && this.isMobilePhone && this.autoPop,
+            'd-flex justify-content-center':this.attributesEl.center == 1
+          }
+        },
         bgEnabled(){
           return this.bookForm && (this.isBottomRight || this.isMobilePhone)
         },
@@ -126,6 +132,7 @@ export default {
 
     },
     methods: {
+      
         stepChanged(stepName){
           this.stepName = stepName
         },
@@ -168,6 +175,7 @@ export default {
 }
 .large-version .wap-wid.step-BookingCalendar{
     max-width: 100%;
+    min-width: 100%;
 }
 .wap-wid{
     max-width: 360px;

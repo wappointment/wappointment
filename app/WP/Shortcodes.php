@@ -28,6 +28,7 @@ class Shortcodes
     public static function handleFilters($atts)
     {
         return [
+            'center' => in_array('center', $atts),
             'auto_open' => in_array('open', $atts),
             'large_version' => in_array('large', $atts),
             'pop_off' => in_array('pop_off', $atts),
