@@ -47,7 +47,7 @@ export default {
 .wap-l > div {
   margin-right: 0;
 }
-.top-bar{
+.lwrap .top-bar{
   width: 100%;
   background-color: #dedede;
   height: 10px;
@@ -60,7 +60,7 @@ export default {
   margin: 1rem 1rem 1rem 0;
 }
 
-.binding {
+.lwrap .d-flex .binding {
   animation-delay: 0.05s;
   width: 24px;
   height: 34px;

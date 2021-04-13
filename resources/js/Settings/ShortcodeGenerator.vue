@@ -2,8 +2,7 @@
 <template>
     <div class="d-flex align-items-center justify-content-between">
         <div>
-            <div data-tt="Booking button's title"><label>
-                <InputPh v-model="titleGiven" ph="Button title"/></label></div>
+            <div data-tt="Booking button's title"><label><InputPh v-model="titleGiven" ph="Button title"/></label></div>
             <div data-tt="Center the widget within the container"><label><input type="checkbox" v-model="center"> Center</label></div>
             <div data-tt="Opens the calendar's step automatically"><label><input type="checkbox" v-model="open"> Auto-open Calendar</label></div>
             <div data-tt="Calendar will expand to the container's width"><label><input type="checkbox" v-model="large"> Full width Calendar</label></div>

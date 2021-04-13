@@ -19,23 +19,7 @@
             </div>
         </div>
         <div v-if="showPost">
-            <h3>Use the shortcode in your page(s) or post(s) </h3>
-            <div  class="d-flex align-items-center">
-                
-                <div class="shortcode-gen">
-                    <ShortcodeGenerator @change="updateShortCode" :title="title"/>
-                </div>
-                
-                <div class="h3 m-4 text-primary"> >> </div>
-                <div :data-tt="shortcode">
-                    <p class="m-0">Your shortcode: </p>
-                    <ClickCopy :value="shortcode"></ClickCopy>
-                </div>
-            </div>
-            <div class="mt-4">
-                <h4>How can I use this shortcode?</h4>
-                <VideoIframe src="https://www.youtube.com/embed/VMi2Ry-JrGA" />
-            </div>
+            <ShortcodeDesigner :title="title" />
         </div>
         <div v-if="showWidget">
             <div class="mt-4">
@@ -47,18 +31,16 @@
 </template>
 
 <script>
-import ClickCopy from '../Fields/ClickCopy'
-import ShortcodeGenerator from '../Settings/ShortcodeGenerator'
 import Helpers from '../Modules/Helpers'
 import VideoIframe from '../Ne/VideoIframe'
 import CreateBookingPage from '../Settings/CreateBookingPage' 
+import ShortcodeDesigner from '../Settings/ShortcodeDesigner' 
 export default {
     mixins: [Helpers], 
     props:['title','page_id', 'page_link'],  
-    components: {ClickCopy, VideoIframe, ShortcodeGenerator, CreateBookingPage}, 
+    components: {VideoIframe, CreateBookingPage, ShortcodeDesigner}, 
     data: () => ({
         area: 'page',
-        shortcode: 'post',
         booking_page_id: 0,
         widgetDefault:{
             button:{
@@ -80,13 +62,9 @@ export default {
         showPage(){
             return this.area == 'page'
         },
-        
     },
     
     methods: {
-        updateShortCode(shortcode){
-            this.shortcode = shortcode
-        },
         showArea(area){
             this.area = area
         },
@@ -103,11 +81,6 @@ export default {
 }
 .form-max{
     max-width: 350px;
-}
-.shortcode-gen{
-    background-color: #f5f5f5;
-    padding: .5em;
-    border-radius: .4em;
 }
 #buttons-block .btn-secondary.btn-cell .dashicons{
     position: initial;
