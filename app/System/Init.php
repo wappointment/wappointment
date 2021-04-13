@@ -44,9 +44,10 @@ class Init
         add_action('wp_print_scripts', [$this, 'jsVariables']);
     }
 
+
     public function baseInit()
     {
-        add_filter('weglot_words_translate', [$this, 'weglotWordsTranslate'], 10, 2);
+        add_filter('weglot_get_regex_checkers', [$this, 'weglotWordsTranslate']);
         add_action('wp_print_scripts', [$this, 'jsVariables']);
         new \Wappointment\Routes\Main();
         (new \Wappointment\WP\CustomPage())->boot();
@@ -179,9 +180,9 @@ class Init
         return $widgetSettings;
     }
 
-    public function weglotWordsTranslate($words)
+    public function weglotWordsTranslate($regex_checkers)
     {
-        return $this->getWidgetSettings()->weglotWordsTranslate($words);
+        return $this->getWidgetSettings()->weglotWordsTranslate($regex_checkers);
     }
 
     public function getWappoEmailLinks()

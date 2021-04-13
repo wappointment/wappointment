@@ -311,9 +311,12 @@ class WidgetSettings
     }
 
 
-    public function weglotWordsTranslate($words)
+    public function weglotWordsTranslate($regex_checkers)
     {
-
+        if (!class_exists('\Weglot\Parser\Check\Regex\RegexChecker')) {
+            return $regex_checkers;
+        }
+        $trnslatable = [];
         foreach ($this->merged_settings as $section => $values) {
             if ($section == 'colors') {
                 continue;
@@ -322,11 +325,12 @@ class WidgetSettings
                 if (strpos($key, 'check_') !== false || strpos($key, 'slide_') !== false) {
                     continue;
                 }
-                $words[] = $tr_value;
+                $trnslatable[] = $key;
             }
         }
+        $regex_checkers[] = new \Weglot\Parser\Check\Regex\RegexChecker('#var widgetWappointment = (.*);#', 'JSON', 1, $trnslatable);
 
-        return $words;
+        return $regex_checkers;
     }
 
     public function defaultSettings()
