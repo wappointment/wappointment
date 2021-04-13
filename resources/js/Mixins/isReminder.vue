@@ -34,23 +34,7 @@ export default {
         mailConfigured(){
             this.mail_status = true
         },
-        getReminderLabel(reminder){
-            return reminder.label
-            
-            let labelString = '' 
-            if(this.isAppointmentStartEvent(reminder)){
-            labelString += 'Sent before appointment takes place.(' + this.getDelay(reminder) + ')'
-            }else if(this.isAppointmentBookedEvent(reminder)){
-            labelString += 'Sent after appointment has been confirmed.'
-            }else if(this.isAppointmentRescheduleEvent(reminder)){
-            labelString += 'Sent after appointment has been rescheduled.'
-            }else if(this.isAppointmentCancelEvent(reminder)){
-            labelString += 'Sent after appointment has been cancelled.'
-            }else if(this.isAppointmentPendingEvent(reminder)){
-            labelString += 'Sent after appointment has been booked when admin approval is required.'
-            }
-            return labelString
-        },
+
         isEmail(reminder) {
             return reminder.type==1
         },
@@ -68,20 +52,6 @@ export default {
         },
         isAppointmentPendingEvent(reminder) {
             return reminder.event !== undefined && reminder.event==5
-        },
-
-        getDelay(reminder) {
-            console.log('reminder.options',reminder.options)
-            if(reminder.options['when_number']!== undefined && reminder.options['when_number'] > 0){
-                return 'sent ' + reminder.options['when_number'] + ' ' + this.convertUnit(reminder.options['when_unit']) + ' before'
-            }
-            return 'sent immediately'
-        },
-
-        convertUnit(unit){
-            if(unit ==1)  return 'minute(s)'
-            else if(unit == 2) return 'hour(s)'
-            else if(unit == 3) return 'day(s)'
         },
 
     }

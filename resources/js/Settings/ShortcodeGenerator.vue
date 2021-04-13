@@ -50,6 +50,7 @@ export default {
                 largeVersion: this.large,
                 autoOpen: this.open,
                 week: this.week,
+                center: this.center,
                 buttonTitle: this.titleGiven
             })
             return shortcode

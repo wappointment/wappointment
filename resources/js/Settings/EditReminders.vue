@@ -108,7 +108,7 @@ export default {
       this.recipient = this.passedViewData.recipient
       this.model = Object.assign({},this.reminder)
       this.viewData = Object.assign({},this.passedViewData)
-      this.schema[0].label = this.getReminderLabel(this.model)
+      this.schema[0].label = this.model.label
       if(this.model.type == 1){
         this.schema.push({
             type: "opt-tiptap",
@@ -169,7 +169,7 @@ export default {
           let needsaving = this.model.email_logo != newReminder.email_logo
 
             this.model = Object.assign({},newReminder)
-            this.schema[0].label = this.getReminderLabel(this.model)
+            this.schema[0].label = this.model.label
             if(needsaving){
               this.save()
             }

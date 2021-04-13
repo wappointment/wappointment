@@ -13,7 +13,7 @@
                     <Checkbox :element="reminder" :labels="labels" @changed="toggledPublish"></Checkbox>
                     <div>
                       <div>{{ reminder.subject }}</div>
-                      <div class="text-muted small">{{ getReminderLabel(reminder) }}</div>
+                      <div class="text-muted small">{{ reminder.label }}</div>
                     </div>
                   </div>
                   <div class="d-flex align-items-center">

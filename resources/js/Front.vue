@@ -138,14 +138,14 @@ export default {
         },
         processShortcode(){
           if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){
-            if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
-            if(this.attributesEl.brcFloats !== undefined) this.brFixed = true
-            if(this.attributesEl.demoAs !== undefined) this.demoAs = true
-            if([undefined,false].indexOf(this.attributesEl.largeVersion) === -1) this.largeVersion = true
-            if([undefined,false].indexOf(this.attributesEl.week) === -1) this.opts.selection.check_viewweek = true
-            if([undefined,false].indexOf(this.attributesEl.popOff) === -1) this.autoPop = false
+            this.buttonTitle = this.attributesEl.buttonTitle !== undefined ? this.attributesEl.buttonTitle:this.buttonTitle
+            this.brFixed = this.attributesEl.brcFloats !== undefined
+            this.demoAs = this.attributesEl.demoAs !== undefined
+            this.largeVersion = [undefined,false].indexOf(this.attributesEl.largeVersion) === -1
+            this.opts.selection.check_viewweek = [undefined,false].indexOf(this.attributesEl.week) === -1
+            this.autoPop = [undefined,false].indexOf(this.attributesEl.popOff) !== -1
             if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) {
-              this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 ? true : false //no auto pop on 
+              this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 //no auto pop on 
               this.toggleBookForm() // this one goes last
             }
             this.opts.attributesEl = this.attributesEl

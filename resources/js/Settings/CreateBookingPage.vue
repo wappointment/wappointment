@@ -80,7 +80,8 @@ export default {
                 autoOpen:false,
                 largeVersion:false,
                 week:false,
-                demoAs:true
+                demoAs:true,
+                center:false
             },
             editpagedetails:false,
             booking_page_id: 0,
