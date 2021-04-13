@@ -168,7 +168,7 @@ export default {
         changedValue(newReminder){
           let needsaving = this.model.email_logo != newReminder.email_logo
 
-            this.model = newReminder
+            this.model = Object.assign({},newReminder)
             this.schema[0].label = this.getReminderLabel(this.model)
             if(needsaving){
               this.save()

@@ -16,7 +16,8 @@
                       <div class="text-muted small">{{ getReminderLabel(reminder) }}</div>
                     </div>
                   </div>
-                  <div>
+                  <div class="d-flex align-items-center">
+                    <button v-if="isUnlocked(reminder)" data-tt="Duplicate" class="btn btn-xs" @click="duplicateReminder(reminder)"><span class="dashicons dashicons-plus"></span></button>
                     <button class="btn btn-xs" @click="editReminder(reminder)"><span class="dashicons dashicons-edit"></span></button>
                     <button v-if="isUnlocked(reminder)" class="btn btn-xs" @click="deleteReminder(reminder.id)"><span class="dashicons dashicons-trash"></span></button>
                     <button v-else class="btn btn-xs disabled" disabled aria-disabled="true" title="You can unpublish it this message, but not delete it"><span class="dashicons dashicons-trash"></span></button>
@@ -57,7 +58,7 @@
 import hasBreadcrumbs from '../Mixins/hasBreadcrumbs'
 import isReminder from '../Mixins/isReminder'
 import NotificationEmail from '../Notification/Email'
-import EditReminders from '../Components/EditReminders' 
+import EditReminders from './EditReminders' 
 import MailConfig from '../Components/MailConfig'
 import Scroll from '../Modules/Scroll'
 import Checkbox from '../Fields/Checkbox'
@@ -67,7 +68,7 @@ import reminderTypeLabel from '../Mixins/reminderTypeLabel'
 export default {
   extends: abstractView,
   mixins: [Scroll, hasBreadcrumbs, isReminder, reminderTypeLabel], 
-  components: { MailConfig, NotificationEmail, EditReminders,Checkbox},
+  components: { MailConfig, NotificationEmail, EditReminders, Checkbox},
   data() {
       return {
         multiple_service_type: false,
@@ -178,7 +179,10 @@ export default {
     deleted() {
       this.refreshInitValue()
     },
-    
+    duplicateReminder(reminder){
+      reminder.id = undefined
+      this.goToEditReminder({reminder: Object.assign({email_logo:this.viewData.email_logo},reminder)})
+    },
     deleteReminder(reminder_id) {
       this.$WapModal().confirm({
         title: 'Do you really want to delete this reminder? ',
