@@ -11,7 +11,7 @@
                         :value="val" @discard="discardElement">{{ displayElementFunc(getElement(val)) }}</ValueCard>
             </span>
             <span v-else>
-                <span v-if="value===false"></span>
+                <span v-if="[undefined,false].indexOf(value) !== -1"></span>
                 <ValueCard v-else :key="value" :canDiscard="false"
                         :value="value">{{ displayElementFunc(getElement(value)) }}</ValueCard>
             </span>
@@ -183,7 +183,7 @@ export default {
             this.$emit('input', newValues)
             //this.makeInactive()
         }else{
-            this.selectedElement = element[this.idKey]
+            this.selectedElement = this.selectedElement == element[this.idKey]? undefined: element[this.idKey]
             this.$emit('input', this.selectedElement, element)
             this.makeInactive()
         }

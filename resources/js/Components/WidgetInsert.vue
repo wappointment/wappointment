@@ -19,7 +19,7 @@
             </div>
         </div>
         <div v-if="showPost">
-            <ShortcodeDesigner :title="title" />
+            <ShortcodeDesigner :title="title" :simple="true" />
         </div>
         <div v-if="showWidget">
             <div class="mt-4">

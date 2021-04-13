@@ -33,6 +33,7 @@
                                     <div class="actions ml-4 text-muted">
                                         <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
                                         <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
+                                        <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
                                         <span>(id: {{ calendar.id }})</span>
                                     </div>
                                 </div>
@@ -97,12 +98,17 @@
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
             <WeeklyAvailability :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs"/>
         </div>
+        <WapModal v-if="showShortcode" :show="showShortcode ? true:false" @hide="hideShortcode" noscroll>
+            <h4 slot="title" class="modal-title"> 
+                <span>Get Booking Widget Shortcode</span>
+            </h4>
+            <ShortcodeDesigner :calendar_id="showShortcode" :calendars="elements.calendars" :services="elements.services" :showTip="false" />
+        </WapModal>
         <WapModal v-if="showModal" :show="showModal" @hide="hideModal" large noscroll>
             <h4 slot="title" class="modal-title"> 
                 <span>Connect Personal calendar</span>
             </h4>
             <CalendarsExternal :calendar_id="calendar_main_id" @savedSync="savedSync" @errorSaving="errorSavingCalendar" noback />
-            
         </WapModal>
         <WapModal v-if="dotcomOpen" :show="dotcomOpen!==false" large @hide="dotcomOpen = false">
             <h4 slot="title" class="modal-title"> 
@@ -136,6 +142,7 @@ import CalendarsRegav from './CalendarsRegav'
 import DurationCell from '../BookingForm/DurationCell'
 import AbstractListing from '../Views/AbstractListing'
 import SearchDropdown from '../Fields/SearchDropdown'
+import ShortcodeDesigner from './ShortcodeDesigner'
 export default {
     extends: AbstractListing,
     components:{
@@ -147,7 +154,8 @@ export default {
         CalendarsExternal,
         CalendarsIntegrations,
         CalendarsRegav,
-        SearchDropdown
+        SearchDropdown,
+        ShortcodeDesigner
     },
     mixins:[CalUrl, SettingsSave],
     data: () => ({
@@ -156,6 +164,7 @@ export default {
         elementPassed: null,
         calendarsOrder: [],
         showModal: false,
+        showShortcode: false,
         dotcomOpen: false,
         calendar_main_id: false,
         editingServices: false
@@ -176,6 +185,12 @@ export default {
         }
     },
     methods: {
+        getShortCode(calendar_id){
+            this.showShortcode = calendar_id
+        },
+        hideShortcode(){
+            this.showShortcode = false
+        },
         saveServices(){
             this.request(this.saveServicesRequest,this.editingServices, undefined, false, this.closeRefresh)
         },
@@ -224,6 +239,9 @@ export default {
                 this.$router.push({name:'calendars_edit', params:{id:calendar.id}})
             }
         },
+        goToDotCom(calendar){
+            this.dotcomOpen = calendar
+        },
         hideModal(){
             this.showModal = false
             this.dotcomOpen = false
@@ -235,9 +253,7 @@ export default {
             this.calendar_main_id = calendar.id
             this.showModal = true
         },
-        goToDotCom(calendar){
-            this.dotcomOpen = calendar
-        },
+        
         calendarLimitReached(calendar){
             return calendar.calendar_urls!== false && Object.keys(calendar.calendar_urls).length > 3
         },

@@ -24,6 +24,7 @@
                                     <div class="ml-2">{{ service.name }}</div>
                                     <div class="actions ml-4 text-muted">
                                         <span data-tt="Sort" v-if="elements.services.length > 1" ><span class="dashicons dashicons-move"></span></span>
+                                        <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(service.id)"></span></span>
                                         <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(service)"></span></span>
                                         <span data-tt="Delete" v-if="elements.services.length > 1" ><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(service.id)"></span></span>
                                         <span v-if="elements.services.length > 1" >(id: {{ service.id }})</span>
@@ -53,7 +54,12 @@
                      </tbody>
                 </table>
             </div>
-
+            <WapModal v-if="showShortcode" :show="showShortcode" @hide="hideShortcode" noscroll>
+                <h4 slot="title" class="modal-title"> 
+                    <span>Get Booking Widget Shortcode</span>
+                </h4>
+                <ShortcodeDesigner :service_id="showShortcode" :showTip="false" />
+            </WapModal>
         </div>
         <div v-if="serviceAdd">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
@@ -70,18 +76,21 @@ import ServicesAddEdit from './ServicesAddEdit'
 import ServicesEditLegacy from '../Views/Subpages/Service'
 import AbstractListing from '../Views/AbstractListing'
 import DurationCell from '../BookingForm/DurationCell'
+import ShortcodeDesigner from './ShortcodeDesigner'
 export default {
     extends: AbstractListing,
     components:{
         DurationCell,
         ServicesAddEdit,
-        ServicesEditLegacy
+        ServicesEditLegacy,
+        ShortcodeDesigner
     },
     data: () => ({
         currentView: 'listing',
         viewName:'empty',
         elementPassed: null,
-        servicesOrder: []
+        servicesOrder: [],
+        showShortcode: false,
     }),
     created(){
         this.mainService = this.$vueService(new WappoServiceService)
@@ -104,6 +113,12 @@ export default {
         }
     },
     methods: {
+        getShortCode(service_id){
+            this.showShortcode = service_id
+        },
+        hideShortcode(){
+            this.showShortcode = false
+        },
         goToDelivery(){
             this.$router.push({name:'modalities'})
         },

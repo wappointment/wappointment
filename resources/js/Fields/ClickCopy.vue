@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <transition name="fade" mode="out-in">
-            <div v-if="show" class="text-success">Copied to clipboard</div>
+    <div class="wrapper-click">
+        <transition name="raise" >
+            <div v-if="show" class="border rounded border-success text-success p-1">Copied to clipboard</div>
         </transition>
         <div class="input-group-sm d-flex">
             <input ref="inputctcp" type="text" class="form-control disabled" :value="value" @click="copyToClipboard(this)" readonly>
@@ -24,8 +24,9 @@ export default {
           this.$refs.inputctcp.select()
           if(copy(this.value)) {
               this.show = true
-              setTimeout(this.hide,200)
+              setTimeout(this.hide,1000)
           }
+          this.$emit('clicked')
       } ,
       hide(){
           this.show = false
@@ -33,4 +34,29 @@ export default {
     }
 }
 </script>
+
+<style>
+.wrapper-click{
+    position:relative;
+}
+.wrapper-click .text-success{
+    position:absolute;
+    right:0;
+    top: -42px;
+}
+
+
+.raise-enter-active{
+  transition: all .3s ease;
+}
+
+.raise-leave-active{
+  transition: all .1s cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+
+.raise-enter, .raise-leave-to {
+  opacity: 0;
+  transform: translateY(10px);
+}
+</style>
 
