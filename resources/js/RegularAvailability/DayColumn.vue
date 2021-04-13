@@ -31,6 +31,7 @@
                 @active="activeDay"
                 @deactive="deactiveDay"
                 @editBlock="editBlock"
+                :newCalendar="newCalendar"
                 ></timeBlock>
             
             </div>
@@ -43,7 +44,7 @@ import timeBlock from './TimeBlock'
 
 let timeBlockComps = window.wappointmentExtends.filter('RegavTimeBlockComponent', {'timeBlock': timeBlock} )
 export default {
-    props: ['daykey', 'openedTimes', 'minHour', 'maxHour', 'classColumn', 'heightUnit', 'precision'],
+    props: ['daykey', 'openedTimes', 'minHour', 'maxHour', 'classColumn', 'heightUnit', 'precision', 'newCalendar'],
     data() {
         return {
             notchSize: 1,

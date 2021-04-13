@@ -11,7 +11,8 @@
                         :value="val" @discard="discardElement">{{ displayElementFunc(getElement(val)) }}</ValueCard>
             </span>
             <span v-else>
-                <ValueCard :key="value" :canDiscard="false"
+                <span v-if="value===false"></span>
+                <ValueCard v-else :key="value" :canDiscard="false"
                         :value="value">{{ displayElementFunc(getElement(value)) }}</ValueCard>
             </span>
         
@@ -55,7 +56,6 @@ export default {
             type: [Object, Array],
         }, 
         value: {
-            type: [String, Number, Array],
         }, 
         icon: {
             type: String,

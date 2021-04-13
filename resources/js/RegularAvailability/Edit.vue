@@ -72,6 +72,9 @@ export default {
       }
   },
   methods: {
+      /**
+       * Todo remove at some point, no need for that most people must have upgraded already
+       */
     convertRegavToPrecise(regav){
         for (const key in this.calendar.regav) {
             if (this.calendar.regav.hasOwnProperty(key)) {

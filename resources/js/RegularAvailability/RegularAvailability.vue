@@ -1,7 +1,6 @@
 <template>
     <div>
         <div v-if="minimal === false" class="d-flex w100">
-            
             <div class="columnTitle" data-tt="Open your calendar for bookings for X days in the future">Available Booking Days</div> 
             <ClickRevealSlider :alwaysShow="true" 
             :value="viewData.avb" @change="changedCRS" />

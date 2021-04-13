@@ -14,6 +14,7 @@ export default {
             type: String,
             default: 'Select WordPress account'
         },
+        autoselect: true
     },
     data() {
         return {
@@ -24,7 +25,7 @@ export default {
         if([false,undefined,''].indexOf(this.activeStaffId) === -1){
             this.staffId = this.activeStaffId
         }else{
-            this.staffId = this.staffs[0].ID
+            this.staffId = this.autoselect ? this.staffs[0].ID:false
         }
     },
     methods:{
