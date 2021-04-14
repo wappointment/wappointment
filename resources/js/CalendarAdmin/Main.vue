@@ -273,8 +273,18 @@ export default {
  
  computed: {
    activeAvailability(){
-     return this.viewData.legacy !== true ? this.activeStaff.availability:this.activeStaff.availability
+     return this.activeStaff.availability
    },
+   activeDotcom(){
+     return this.viewData.legacy !== true ? this.activeStaff.options.dotcom:this.viewData.is_dotcom_connected
+   },
+   isDotComConnected(){
+     return [undefined, false].indexOf(this.activeDotcom) === -1
+   },
+   dotComServices(){
+     return this.isDotComConnected ? this.activeDotcom.services:[]
+   },
+    
    activeRegav(){
      return this.viewData.legacy !== true ? this.activeStaff.options.regav:this.viewData.regav
    },
@@ -343,6 +353,9 @@ export default {
     
  },
   methods: {
+    hasDotcom(){
+      return this.isDotComConnected
+    },
     changeActiveStaff(staff){
       this.activeStaff = staff
       if(this.queryParameters !== undefined){

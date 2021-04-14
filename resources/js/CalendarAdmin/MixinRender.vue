@@ -114,13 +114,12 @@ export default {
         return [undefined, null].indexOf(appointment.extendedProps.options) === -1  && appointment.extendedProps.options.providers === undefined && this.hasDotcom()
       },
 
-      hasDotcom(){
-        return [undefined,false].indexOf(this.viewData.is_dotcom_connected) === -1
-      },
       
       appointmentIsZoom(eventId){
         let appointment = this.findAppointmentById(eventId)
-        return appointment.extendedProps.location == 'zoom'
+        return (this.viewData.legacy && appointment.extendedProps.location == 'zoom')
+        ||
+        (!this.viewData.legacy && parseInt(appointment.extendedProps.location.type) === 5)
       },
 
       appointmentHasZoomUrl(eventId){
@@ -204,7 +203,7 @@ export default {
           return ''
         }
         let innerhtml = '<div class="d-flex justify-content-center align-items-center mx-4 ctrlbar">'
-        let services = [undefined, false].indexOf(this.viewData.is_dotcom_connected) !== -1 ? []:this.viewData.is_dotcom_connected.services
+        let services = this.dotComServices
         if(!el.hasClass('past-event') && this.hasDotcomButnoProvider(el.attr('data-id')) && isAppointmentEvent) {
           innerhtml += '<button class="btn btn-xs btn-light recordDotcom" data-tt="Send details for '+services.join(', ')+'" data-id="'+el.attr('data-id')+'">'+
                         '<span class="dashicons dashicons-cloud-upload"></span>'+

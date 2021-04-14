@@ -35,7 +35,6 @@ export default {
           let newvalues = values
             for (let i = 0; i < this.viewData.custom_fields.length; i++) {
                 const element = this.viewData.custom_fields[i]
-                //console.log('element',element)
                 if(element['namekey'] == namekey && element.values !== undefined){
                   if(Array.isArray(values)){
                     for (let k = 0; k < values.length; k++) {
@@ -55,7 +54,6 @@ export default {
         getValueLabelFrom(valuesDescriptions, keyValue){
           for (let j = 0; j < valuesDescriptions.length; j++) {
               const subelement = valuesDescriptions[j]
-              //console.log('subelement',subelement,values)
 
               if(subelement.value == keyValue){
                 return subelement.label
@@ -215,5 +213,14 @@ export default {
 	background: #f9f9f9;
 	padding: .6em;
 	border-radius: .3em;
+}
+.fc-event .img-bw{
+  filter: grayscale(1);
+  border-radius: 50%;
+  width: 15px;
+  height: 15px;
+}
+.fc-event.hover .img-bw{
+  filter: none;
 }
 </style>

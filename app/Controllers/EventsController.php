@@ -112,8 +112,7 @@ class EventsController extends RestController
     public function recordDotcom(Request $request)
     {
         $appointment = $this->getAppointmentModel()::with('client')->where('id', (int)$request->input('id'))->first();
-        $acs_id = Settings::get('activeStaffId');
-        $staff_id = empty($appointment->staff_id) ? $acs_id : (int)$appointment->staff_id;
+        $staff_id = empty($appointment->staff_id) ? Settings::get('activeStaffId') : (int)$appointment->staff_id;
         $dotcomapi = new DotCom;
         $dotcomapi->setStaff($staff_id);
         if (!empty($appointment->client) && empty($appointment->options['providers']) && $dotcomapi->isConnected()) {

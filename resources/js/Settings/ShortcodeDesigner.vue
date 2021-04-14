@@ -48,9 +48,7 @@ export default {
         service_id: {
             default: false
         },
-        showTip:{
-            default:true
-        },
+
         services:{
             default:null
         },
@@ -69,16 +67,12 @@ export default {
         showingTip:false
     }),
     components: {ClickCopy, VideoIframe, ShortcodeGenerator}, 
-    created(){
-        this.showingTip = this.showTip
-    },
     methods: {
         updateShortCode(shortcode){
             this.shortcode = shortcode
         },
     },
     computed:{
-        
         shortCodeHasService(){
             return this.shortcode.indexOf('service="') !== -1
         },
