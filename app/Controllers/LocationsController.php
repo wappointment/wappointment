@@ -33,7 +33,7 @@ class LocationsController extends RestController
     public function save(Request $request)
     {
         $result = LocationService::save($request->only(['id', 'name', 'type', 'options']));
-        return ['message' => 'Modality has been saved', 'result' => $result, 'locations' => $this->get()];
+        return ['message' => 'Modality has been saved', 'result' => $result, 'locations' => $this->get($request)];
     }
 
     public function delete(Request $request)
