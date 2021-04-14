@@ -20,11 +20,12 @@
                 
             </div>
         </div>
-        <div class="mt-4" v-if="showTip">
+        <div class="mt-4" v-if="showingTip">
             <h4>How can I use this shortcode?</h4>
             <p>Use the shortcode in your page(s) or post(s) </p>
             <VideoIframe src="https://www.youtube.com/embed/VMi2Ry-JrGA" />
         </div>
+        <a v-else href="javascript:;" @click="showingTip=true">How can I use this shortcode?</a>
     </div>
 </template>
 
@@ -65,8 +66,12 @@ export default {
         clicked: false,
         canLockStaff: false,
         canLockService: false,
+        showingTip:false
     }),
     components: {ClickCopy, VideoIframe, ShortcodeGenerator}, 
+    created(){
+        this.showingTip = this.showTip
+    },
     methods: {
         updateShortCode(shortcode){
             this.shortcode = shortcode

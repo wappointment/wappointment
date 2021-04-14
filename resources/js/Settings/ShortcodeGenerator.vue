@@ -8,11 +8,11 @@
             <div data-tt="Calendar will expand to the container's width"><label><input type="checkbox" v-model="large"> Full width Calendar</label></div>
             <div v-if="!preview" data-tt="Show a week view instead of the full month"><label><input type="checkbox" v-model="week"> Week view</label></div>
             <template v-if="!simple">
-                <div v-if="calendars_data" >
-                    <SearchDropdown v-model="active_staff_id" ph="Lock Calendar/Staff" :elements="calendars_data" labelSearchKey="name"/>
+                <div v-if="filteredCalendars" >
+                    <SearchDropdown v-model="active_staff_id" ph="Lock Calendar/Staff" :elements="filteredCalendars" labelSearchKey="name"/>
                 </div>
-                <div v-if="services_data" class="mt-2" >
-                    <SearchDropdown v-model="active_service_id" ph="Lock Service" :elements="services_data" labelSearchKey="name"/>
+                <div v-if="filteredServices" class="mt-2" >
+                    <SearchDropdown v-model="active_service_id" ph="Lock Service" :elements="filteredServices" labelSearchKey="name"/>
                 </div>
             </template>
         </div>
@@ -108,6 +108,21 @@ export default {
 
     },
     computed:{
+        filteredCalendars(){
+            if(this.active_service_id && this.calendars_data){
+                let service_id = this.active_service_id
+                return this.calendars_data.filter((e) => e.services.indexOf(service_id) !== -1)
+            }
+            return this.calendars_data
+        },
+        filteredServices(){
+            if(this.active_staff_id && this.services_data){
+                let staff_id = this.active_staff_id
+                let services_allowed = this.calendars_data.find((e) => e.id == staff_id).services
+                return this.services_data.filter((e) => services_allowed.indexOf(e.id) !== -1)
+            }
+            return this.services_data
+        },
         getShortCode(){
             let shortcode = 'wap_widget title="'+this.titleGiven+'"'
             shortcode += this.large? ' large ':'' 
