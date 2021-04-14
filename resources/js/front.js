@@ -43,7 +43,7 @@ for (let index = 0; index < vues.length; index++) {
         render: h => h(Front, {
             props: {
                 'classEl' : el.getAttribute('class'),
-                'attributesEl':  el.dataset,
+                'attributesEl':  Object.assign({},el.dataset),
                 'buttonTitle' : el.getAttribute('data-button-title') ? el.getAttribute('data-button-title'):'Book an appointment',
                 'brFixed' : [undefined,null].indexOf(el.getAttribute('data-brfixed')) === -1 ? true:false
             }

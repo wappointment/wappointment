@@ -50,6 +50,9 @@ export default {
         options:{
             type: Object
         },
+        attributesEl: {
+            type:[Object]
+        },
         services:{
             type: Array
         },

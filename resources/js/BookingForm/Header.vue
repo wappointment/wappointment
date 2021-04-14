@@ -52,6 +52,9 @@ export default {
         options: {
             type:[Object]
         },
+        attributesEl: {
+            type:[Object]
+        },
         service: {
             type:[Object, Boolean]
         },

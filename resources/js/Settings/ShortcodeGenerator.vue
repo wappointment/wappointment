@@ -129,7 +129,7 @@ export default {
             shortcode += this.open? ' open ':''
             shortcode += this.center? ' center ':''
             shortcode += this.week? ' week ':''
-            shortcode += this.active_staff_id? ' calendar="'+this.active_staff_id+'" ':''
+            shortcode += this.active_staff_id? ' staff="'+this.active_staff_id+'" ':''
             shortcode += this.active_service_id? ' service="'+this.active_service_id+'" ':''
             shortcode = '['+shortcode+']'
             

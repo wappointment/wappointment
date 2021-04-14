@@ -4,6 +4,7 @@
             <BookingFormHeader v-if="showHeader" 
             :isStepSlotSelection="isStepSlotSelection"
             :options="options"
+            :attributesEl="attributesEl"
             :service="service" 
             :services="services"
             :staffs="getStaffs" 
@@ -21,6 +22,7 @@
                 <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
                 :isStepSlotSelection="isStepSlotSelection"
                 :options="options"
+                :attributesEl="attributesEl"
                 :service="service" 
                 :duration="duration" 
                 :services="services"
@@ -106,7 +108,7 @@ let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Col
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
-     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid', 'demoAs'],
+     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid', 'demoAs', 'attributesEl'],
      components: compDeclared, 
     data: () => ({
         viewName: 'availability',
@@ -227,6 +229,27 @@ export default {
        }
     },
     methods: {
+        checkForCache(){
+            return window.wappoAvailability !== undefined? window.wappoAvailability:false
+        },
+        cacheValue(){
+            window.wappoAvailability = this.viewData
+            setTimeout(this.clearCache, 120000)
+        },
+        clearCache(){
+            window.wappoAvailability = undefined
+        },
+        refreshInitValue(){
+            let cacheFound = this.checkForCache()
+            if(cacheFound){
+                return this.loaded({data:cacheFound})
+            }
+            this.loading = true
+            this.initValueRequest()
+            .then(this.loaded)
+            .catch(this.serviceError)
+        },
+
         setStaff(newStaff){
             this.selectedStaff = newStaff
             this.setAvailableServices()
@@ -397,7 +420,7 @@ export default {
             let ordered = []
             if(this.viewData.staffs!== undefined && this.viewData.staffs.length > 1){
                 for (let i = 0; i < this.viewData.staffs.length; i++) {
-                    if(this.viewData.staffs[i].services.length > 0){
+                    if(this.viewData.staffs[i].services.length > 0 && this.viewData.staffs[i].availability.length > 0){
                         ordered.push({
                             id: i,
                             start:this.viewData.staffs[i].availability[0][0],
@@ -418,6 +441,7 @@ export default {
         },
 
         loadedAfter() {
+            this.cacheValue()
             this.time_format = convertDateFormatPHPtoMoment(this.viewData.time_format)
             this.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
 
@@ -546,21 +570,19 @@ export default {
             this.autoSelectModality() 
         },
         testLockedStaff(){
-            if(this.options !== undefined && 
-            this.options.attributesEl !== undefined && 
-            this.options.attributesEl.staffSelection !== undefined){
+            if(this.attributesEl !== undefined && 
+            this.attributesEl.staffSelection !== undefined){
                 for (let i = 0; i < this.viewData.staffs.length; i++) {
-                    if(parseInt(this.options.attributesEl.staffSelection) === parseInt(this.viewData.staffs[i].id)){
+                    if(parseInt(this.attributesEl.staffSelection) === parseInt(this.viewData.staffs[i].id)){
                         return this.setStaff(this.viewData.staffs[i])
                     }
                 }
             }
         },
         testLockedService(){
-            if(this.options !== undefined && 
-                this.options.attributesEl !== undefined && 
-                this.options.attributesEl.serviceSelection !== undefined){
-                    let lockToServiceID = this.options.attributesEl.serviceSelection
+            if(this.attributesEl !== undefined && 
+                this.attributesEl.serviceSelection !== undefined){
+                    let lockToServiceID = this.attributesEl.serviceSelection
                     this.service = this.services.find(e => e.id == lockToServiceID)
                 }
         },

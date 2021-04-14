@@ -36,7 +36,7 @@ class DotCom extends API
     public function checkForUpdates()
     {
         // 0 - only check if site connected
-        if (!empty($this->site_key) && (bool)WPHelpers::getOption('appointments_must_refresh') === false) {
+        if (!empty($this->site_key) && (bool)WPHelpers::getOption('appointments_must_refresh') === true) {
             // 1 - retrieve appointments data
             $appointments = $this->getAppointments();
 

@@ -2,14 +2,14 @@
     <div class="wap-front" :class="getDynaClasses" :id="elementId">
         <StyleGenerator :options="opts" :wrapper="elementId" :largeVersion="largeVersion"></StyleGenerator>
         <div v-if="isPage" :class="'step-'+stepName">
-            <BookingForm v-if="isBookingPage" :options="opts" :wrapperid="elementId" @changedStep="stepChanged"></BookingForm>
+            <BookingForm v-if="isBookingPage" :options="opts" :wrapperid="elementId" @changedStep="stepChanged" />
             <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
         </div>
         
         <div :class="getWidClass">
             <div class="wap-wid wclosable" :class="'step-' + stepName" v-if="isWidget">
               <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
-              <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
+              <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :attributesEl="attributesEl" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
               <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
           </div>
         </div>
@@ -148,7 +148,6 @@ export default {
               this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 //no auto pop on 
               this.toggleBookForm() // this one goes last
             }
-            this.opts.attributesEl = this.attributesEl
           }
         },
         backToButton(){
