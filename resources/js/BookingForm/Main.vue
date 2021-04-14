@@ -136,6 +136,7 @@ export default {
         requiresScroll: false,
         selectedStaff: null,
         showHeader:true,
+        checkCacheIntervalid: false
     }),
 
     mounted () {
@@ -235,15 +236,29 @@ export default {
         cacheValue(){
             window.wappoAvailability = this.viewData
             setTimeout(this.clearCache, 120000)
+            window.wappoAvailabilityRunning = undefined
         },
         clearCache(){
             window.wappoAvailability = undefined
         },
+        isCacheReady(){
+            if(window.wappoAvailabilityRunning !== true){
+                clearInterval(this.checkCacheIntervalid)
+                this.refreshInitValue()
+            }
+        },
         refreshInitValue(){
+            if(window.wappoAvailabilityRunning === true){
+                return this.checkCacheIntervalid = setInterval(this.isCacheReady, 400);
+            }
             let cacheFound = this.checkForCache()
             if(cacheFound){
                 return this.loaded({data:cacheFound})
             }
+            this.runRequestAvail()
+        },
+        runRequestAvail(){
+            window.wappoAvailabilityRunning = true
             this.loading = true
             this.initValueRequest()
             .then(this.loaded)
