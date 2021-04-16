@@ -117,13 +117,13 @@ class WidgetSettings
             'confirm' => 'Confirm',
         ],
         'service_selection' => [
-            'select_service' => 'Select a service',
+            'select_service' => 'Pick a service',
         ],
         'service_duration' => [
-            'select_duration' => 'Select a duration',
+            'select_duration' => 'How long will be the session?',
         ],
         'service_location' => [
-            'select_location' => 'Select a location',
+            'select_location' => 'How should we meet?',
         ],
     ];
 
@@ -239,6 +239,12 @@ class WidgetSettings
                 'check_viewweek' => ['label' => 'Week View'],
             ]
 
+        ],
+        'service_location' => [
+            'fields' => [
+                'select_location' => false,
+            ],
+            'sub' => 'You can edit modalities names in [url wurl="wappointment_settings#/modalities"]Wappointment > Settings > Services > Modalities[/url]',
         ],
         'form' => [
             'categories' => [
