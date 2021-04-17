@@ -85,7 +85,7 @@ class CalendarParser
                 'recur' => $recur,
                 'source' => $this->source,
                 'type' => STATUS::TYPE_BUSY,
-                'eventkey' => md5($this->source . (string) $vevent->UID . (string) $vevent->CREATED),
+                'eventkey' => md5($this->source . (string) $vevent->UID . (string) $vevent->DTSTART),
                 'options' => $this->getOptions($vevent, $until, $recur),
                 'staff_id' => $this->staff_id
             ];
