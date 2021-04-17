@@ -284,11 +284,7 @@ export default {
             this.showHeader = false
 
             this.currentStep = ''
-            console.log('params',{
-                service: this.service, 
-                location:this.location,
-                duration: this.duration
-            })
+
             setTimeout(this.showHeaderLater.bind(null, this.selectFirstStep('BookingServiceSelection', 
             {
                 service: this.service, 
