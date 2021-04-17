@@ -268,8 +268,13 @@ export default {
         setStaff(newStaff){
             this.selectedStaff = newStaff
             this.setAvailableServices()
-            this.autoSelService()
             this.refreshAvail()
+            this.autoSelectingOptions()
+        },
+        autoSelectingOptions(){
+            this.autoSelService()
+            this.autoSelectDuration() 
+            this.autoSelectModality()
         },
         changeStaff(newStaff){
             this.service = false
@@ -279,6 +284,11 @@ export default {
             this.showHeader = false
 
             this.currentStep = ''
+            console.log('params',{
+                service: this.service, 
+                location:this.location,
+                duration: this.duration
+            })
             setTimeout(this.showHeaderLater.bind(null, this.selectFirstStep('BookingServiceSelection', 
             {
                 service: this.service, 
@@ -502,11 +512,15 @@ export default {
 
         selectFirstStep(step_name, params) {
             if(this.isLegacyOrNotServiceSuite === false){
-                if(params.service === false) return 'BookingServiceSelection'
-                if(params.service !== false && params.duration === false) return 'BookingDurationSelection'
-                if(params.service !== false && params.duration !== false && params.location === false) return 'BookingLocationSelection'
+                return params.service === false? 'BookingServiceSelection': this.getStepAfterService(params)
             }
             return step_name
+        },
+        getStepAfterService(params){
+            return params.duration === false ? 'BookingDurationSelection': this.getStepAfterDuration(params)
+        },
+        getStepAfterDuration(params){
+            return params.location === false ? 'BookingLocationSelection': 'BookingCalendar'
         },
 
         autoSelectLocation(){
@@ -579,10 +593,8 @@ export default {
         initServiceStaffDurationLocation(){
             this.setAvailableServices()
             this.testLockedStaff()
-            this.autoSelService()
+            this.autoSelectingOptions()
             this.demoAutoSelect() 
-            this.autoSelectDuration() 
-            this.autoSelectModality() 
         },
         testLockedStaff(){
             if(this.attributesEl !== undefined && 
