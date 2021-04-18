@@ -77,7 +77,7 @@ export default {
             return this.shortcode.indexOf('service="') !== -1
         },
         shortCodeHasCalendar(){
-            return this.shortcode.indexOf('calendar="') !== -1
+            return this.shortcode.indexOf('staff="') !== -1
         },
         addonLink(){
             return apiWappointment.apiSite+'/addons'
