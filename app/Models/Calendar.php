@@ -35,6 +35,11 @@ class Calendar extends Model
         return !empty($this->options['cal_urls']) ? $this->options['cal_urls'] : [];
     }
 
+    public function isStaff()
+    {
+        return (int)$this->wp_uid > 0;
+    }
+
     public function hasDotCom()
     {
         return !empty($this->options['dotcom']);

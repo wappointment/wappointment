@@ -13,6 +13,7 @@ use Wappointment\Services\DateTime;
 use Wappointment\Services\Calendars;
 use Wappointment\Managers\Central;
 use Wappointment\Services\ExternalCalendar;
+use Wappointment\Services\Permissions;
 
 class CalendarsController extends RestController
 {
@@ -28,6 +29,7 @@ class CalendarsController extends RestController
             'calendars' => $calendars,
             'staffs' => StaffServices::getWP(),
             'staffDefault' => Settings::staffDefaults(),
+            'permissions' => (new Permissions)->getCaps(),
         ];
         if (!$db_update_required) {
             $data['services'] = Central::get('ServiceModel')::orderBy('sorting')->fetch();
@@ -56,10 +58,17 @@ class CalendarsController extends RestController
 
     public function saveServices(Request $request)
     {
-
         $calendar = Central::get('CalendarModel')::findOrFail((int)$request->input('id'));
         $calendar->services()->sync($request->input('services'));
         return ['message' => 'Calendar saved'];
+    }
+
+    public function savePermissions(Request $request)
+    {
+        $calendar = Central::get('CalendarModel')::findOrFail((int)$request->input('id'));
+        $permissions = new Permissions;
+        $permissions->assign($calendar, $request->input('permissions'));
+        return ['message' => 'Permissions saved', $request->all()];
     }
 
     public function saveCal(Request $request)

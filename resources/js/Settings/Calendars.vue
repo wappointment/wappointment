@@ -34,6 +34,7 @@
                                         <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
                                         <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
                                         <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
+                                        <span data-tt="Set Permissions" v-if="isUserCalendar(calendar)"><span class="dashicons dashicons-shield" @click.prevent.stop="editPermission(calendar)"></span></span>
                                         <span>(id: {{ calendar.id }})</span>
                                     </div>
                                 </div>
@@ -98,32 +99,22 @@
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
             <WeeklyAvailability :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs"/>
         </div>
-        <WapModal v-if="showShortcode" :show="showShortcode ? true:false" @hide="hideShortcode" noscroll>
-            <h4 slot="title" class="modal-title"> 
-                <span>Get Booking Widget Shortcode</span>
-            </h4>
-            <ShortcodeDesigner :calendar_id="showShortcode" :calendars="elements.calendars" :services="elements.services" :showTip="false" />
-        </WapModal>
-        <WapModal v-if="showModal" :show="showModal" @hide="hideModal" large noscroll>
-            <h4 slot="title" class="modal-title"> 
-                <span>Connect Personal calendar</span>
-            </h4>
-            <CalendarsExternal :calendar_id="calendar_main_id" @savedSync="savedSync" @errorSaving="errorSavingCalendar" noback />
-        </WapModal>
-        <WapModal v-if="dotcomOpen" :show="dotcomOpen!==false" large @hide="dotcomOpen = false">
-            <h4 slot="title" class="modal-title"> 
-                Connect to Zoom, Google Calendar etc...
-            </h4>
-            <CalendarsIntegrations @reload="reloadListing" :calendar="dotcomOpen" />
-        </WapModal>
-        <WapModal v-if="editingServices" :show="editingServices!==false" large @hide="editingServices = false">
-            <h4 slot="title" class="modal-title"> 
-                Edit services allowed
-            </h4>
-            <SearchDropdown v-model="editingServices.services" hasMulti ph="Pick services provided by staff" :elements="elements.services" 
+
+        <WapModal v-if="showModal" :show="showModal" @hide="hidePopup">
+            <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
+            <CalendarsExternal v-if="calendar_main_id" :calendar_id="calendar_main_id" @savedSync="savedSync" @errorSaving="errorSavingCalendar" noback />
+            <ShortcodeDesigner v-if="showShortcode" :calendar_id="showShortcode" :calendars="elements.calendars" :services="elements.services" :showTip="false" />
+            <CalendarsIntegrations v-if="dotcomOpen" @reload="reloadListing" :calendar="dotcomOpen" />
+            
+            <div v-if="editingServices">
+                <SearchDropdown v-model="editingServices.services" hasMulti ph="Pick services provided by staff" :elements="elements.services" 
                 idKey="id" labelSearchKey="name"></SearchDropdown>
                 <button class="btn btn-primary mt-2" @click="saveServices">Save</button>
+            </div>
+            <PermissionsManager v-if="showPermissions" :permissions="elements.permissions" :user="showPermissions" @save="savePermissions" />
+
         </WapModal>
+
     </div>
 </template>
 
@@ -138,6 +129,7 @@ import CalUrl from '../Modules/CalUrl'
 import SettingsSave from '../Modules/SettingsSave'
 import CalendarsExternal from './CalendarsExternal'
 import CalendarsIntegrations from './CalendarsIntegrations'
+import PermissionsManager from './PermissionsManager'
 import CalendarsRegav from './CalendarsRegav'
 import DurationCell from '../BookingForm/DurationCell'
 import AbstractListing from '../Views/AbstractListing'
@@ -155,7 +147,8 @@ export default {
         CalendarsIntegrations,
         CalendarsRegav,
         SearchDropdown,
-        ShortcodeDesigner
+        ShortcodeDesigner,
+        PermissionsManager
     },
     mixins:[CalUrl, SettingsSave],
     data: () => ({
@@ -164,10 +157,12 @@ export default {
         elementPassed: null,
         calendarsOrder: [],
         showModal: false,
+        modalTitle: '',
         showShortcode: false,
         dotcomOpen: false,
         calendar_main_id: false,
-        editingServices: false
+        editingServices: false,
+        showPermissions: false
     }),
     created(){
         this.mainService = this.$vueService(new ServiceCalendar)
@@ -185,33 +180,73 @@ export default {
         }
     },
     methods: {
+        
+        isUserCalendar(calendar){
+            return parseInt(calendar.wp_uid) > 0
+        },
         getShortCode(calendar_id){
             this.showShortcode = calendar_id
+            this.openPopup('Get Booking Widget Shortcode')
         },
-        hideShortcode(){
-            this.showShortcode = false
+        goToSync(calendar) {
+            if(this.calendarLimitReached(calendar)){
+                return
+            }
+            this.calendar_main_id = calendar.id
+            this.openPopup('Connect Personal calendar')
         },
-        saveServices(){
-            this.request(this.saveServicesRequest,this.editingServices, undefined, false, this.closeRefresh)
-        },
-
-        closeRefresh(){
-            this.editingServices = false
-            this.hasBeenSavedDeleted()
-        },
-
-        async saveServicesRequest(params){
-           return await this.mainService.call('saveService',params)
+        goToDotCom(calendar){
+            this.dotcomOpen = calendar
+            this.openPopup('Connect to Zoom, Google Calendar etc...')
         },
         editServices(calendar){
             this.editingServices = calendar
+            this.openPopup('Edit services allowed')
         },
+        editPermission(calendar){
+            this.showPermissions = calendar
+            this.openPopup('Edit user permissions')
+        },
+        openPopup(modalTitle){
+            this.modalTitle = modalTitle
+            this.showModal = true
+        },
+        hidePopup(modalTitle){
+            this.modalTitle = 'popTitle'
+            this.showModal = false
+            this.showShortcode = false
+            this.calendar_main_id = false
+            this.dotcomOpen = false
+            this.editingServices = false
+            this.showPermissions = false
+        },
+
+        saveServices(){
+            this.request(this.saveServicesRequest, this.editingServices, undefined, false, this.closeRefresh)
+        },
+        async saveServicesRequest(params){
+           return await this.mainService.call('saveService',params)
+        },
+        savePermissions(new_permissions){
+            this.request(this.savePermissionsRequest, {id:this.showPermissions.id, permissions: new_permissions}, undefined, false, this.closeRefresh)
+        },
+        async savePermissionsRequest(params){
+           return await this.mainService.call('savePermission',params)
+        },
+
+        closeRefresh(){
+            this.hidePopup()
+            this.hasBeenSavedDeleted()
+        },
+
+        
+        
         displayServiceName(id,services) {
             return services.find(e => e.id ==id).name
         },
 
         reloadListing(){
-            this.hideModal()
+            this.hidePopup()
             this.showListing()
             this.loadElements()
         },
@@ -239,20 +274,8 @@ export default {
                 this.$router.push({name:'calendars_edit', params:{id:calendar.id}})
             }
         },
-        goToDotCom(calendar){
-            this.dotcomOpen = calendar
-        },
-        hideModal(){
-            this.showModal = false
-            this.dotcomOpen = false
-        },
-        goToSync(calendar) {
-            if(this.calendarLimitReached(calendar)){
-                return
-            }
-            this.calendar_main_id = calendar.id
-            this.showModal = true
-        },
+        
+        
         
         calendarLimitReached(calendar){
             return calendar.calendar_urls!== false && Object.keys(calendar.calendar_urls).length > 3

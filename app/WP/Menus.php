@@ -1,6 +1,8 @@
 <?php
 
-namespace Wappointment\System;
+namespace Wappointment\WP;
+
+use Wappointment\System\Status;
 
 class Menus
 {
@@ -14,9 +16,13 @@ class Menus
         $this->sub_menus = [
             'calendar' => ['label' => 'Calendar', 'cap' => $this->getCalendarCap()],
         ];
+
+        /**
+         * TODO probably can drop that condition
+         */
         if (Status::wizardComplete()) {
             $this->sub_menus['clients'] = ['label' => 'Clients', 'cap' => $this->getClientCap()];
-            $this->sub_menus['settings'] = ['label' => 'Settings', 'cap' => 'administrator'];
+            $this->sub_menus['settings'] = ['label' => 'Settings', 'cap' => $this->getSettingsCap()];
             $this->sub_menus['addons'] = ['label' => 'Addons', 'cap' => 'administrator'];
             $this->sub_menus['help'] = ['label' => 'Help', 'cap' => 'administrator'];
         }
@@ -32,24 +38,29 @@ class Menus
         );
     }
 
-    public function roleUpdated()
+    public function isAdministrator()
     {
-        return false;
+        return current_user_can('administrator');
     }
 
     protected function getCalendarCap()
     {
-        return $this->roleUpdated() ? 'manage_wappo_calendars' : 'administrator';
+        return $this->isAdministrator() ? 'administrator' : 'wappo_self_man';
     }
 
     protected function getClientCap()
     {
-        return true ?  'manage_wappo_clients' : 'administrator';
+        return $this->isAdministrator() ?  'administrator' : 'wappo_self_man';
+    }
+
+    protected function getSettingsCap()
+    {
+        return $this->isAdministrator() ?  'administrator' : 'wappo_self_man';
     }
 
     public function mainCap()
     {
-        return true ?  'manage_wappo' : 'administrator';
+        return $this->isAdministrator() ?  'administrator' : 'wappo_self_man';
     }
 
     public function addSubmenus()

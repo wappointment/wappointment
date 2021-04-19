@@ -17,6 +17,7 @@ class Staff
     public $status = false;
     public $availability = '';
     public $staff_data = [];
+    public $permissions = [];
 
     public function __construct($staff_data = [])
     {
@@ -51,6 +52,14 @@ class Staff
         $this->name = $staff_data['name'];
         $this->timezone = $this->staff_data['options']['timezone'];
         $this->availability = $this->staff_data['availability'];
+        $this->setWappoPermissions();
+    }
+
+    protected function setWappoPermissions()
+    {
+        $permissions = new \Wappointment\Services\Permissions;
+
+        $this->permissions = $permissions->getUserCaps($this->wp_user->get_role_caps());
     }
 
     public function fullData()
@@ -71,6 +80,8 @@ class Staff
             'status' => $this->status,
             'calendar_urls' => $this->getCalendarUrls(),
             'calendar_logs' => $this->getCalendarLogs(),
+            'permissions' => $this->permissions,
+            'role' => $this->wp_user->get_role()
         ];
     }
 
