@@ -234,7 +234,7 @@ export default {
             },
             {
                 key: 'service_location',
-                label: 'Location selection'
+                label: 'Modality selection'
             },
             {
                 key: 'selection',
