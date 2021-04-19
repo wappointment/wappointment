@@ -6,7 +6,7 @@
             <div data-tt="Center the widget within the container"><label><input type="checkbox" v-model="center"> Center</label></div>
             <div data-tt="Opens the calendar's step automatically"><label><input type="checkbox" v-model="open"> Auto-open Calendar</label></div>
             <div data-tt="Calendar will expand to the container's width"><label><input type="checkbox" v-model="large"> Full width Calendar</label></div>
-            <div v-if="!preview" data-tt="Show a week view instead of the full month"><label><input type="checkbox" v-model="week"> Week view</label></div>
+            <div data-tt="Show a week view instead of the full month"><label><input type="checkbox" v-model="week"> Week view</label></div>
             <template v-if="!simple">
                 <div v-if="filteredCalendars" >
                     <SearchDropdown v-model="active_staff_id" ph="Lock Calendar/Staff" :elements="filteredCalendars" labelSearchKey="name"/>

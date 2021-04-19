@@ -5,15 +5,21 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.1.4 more bug fixes</span>    
+                <span>V2.1.5 added centered mode + bug fixes</span>    
             </h3>
 
-            <h5>Changelog 2.1.4</h5>
+            <h5>Changelog 2.1.5</h5>
             <ol>
-                <li>Fixed issue when modifying calendar, on save the custom avatar selection was lost</li>
-                <li>Allow calendar delete</li>
-                <li>Fixed booking cancel sequence from the backend when dealing with packs(addon)</li>
-                <li>Improved booking widget editor for payment selection in WooCommerce(addon)</li>
+                <li> Added centered option for the booking widget in shortcode mode</li>
+                <li> Added email reminder duplicate option</li>
+                <li> Improved shortcode generator</li>
+                <li> Improved staff/Calendar creation</li>
+                <li> Improved service creation</li>
+                <li> Improved booking widget appearance</li>
+                <li> Correction on calendar sync timezone handling issue</li>
+                <li> Remove buffer from total duration in attached ics and in appointment's title</li>
+                <li> Fixed missing service information in Wappointment > Calendar for each appointment</li>
+                <li> Fixed missing translation on booking widget</li>
             </ol>
           </div>
     </WapModal>

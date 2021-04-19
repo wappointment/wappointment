@@ -79,7 +79,7 @@
                                                 {{cat_object.label}} <span v-if="showCategory !=  cat_object.label">[+]</span>
                                             </div>
                                             <div v-if="showCategory ==  cat_object.label" class="ml-3 mt-3">
-                                                <div class="small" v-if="cat_object.sub !== undefined"> {{ cat_object.sub }}</div>
+                                                <div class="small" v-if="cat_object.sub !== undefined" v-html="parseLabel(cat_object.sub)"></div>
                                                 <div v-for="(fieldDescription, field_key) in cat_object.fields" :data-tt="getFieldTip(stepObj.key, field_key, catid) ? getFieldTip(stepObj.key, field_key, catid) : false" 
                                                 v-if="canShowField(stepObj.key, field_key, catid)" class="tt-below">
                                                     {{ changedInput(stepObj.key, field_key, options[stepObj.key][field_key]) }}
@@ -102,6 +102,10 @@
                                         </div>
                                     </div>
                                     <div v-else>
+                                        <template v-if="widgetFields[stepObj.key] !== undefined && widgetFields[stepObj.key].sub !== undefined">
+                                            <div class="small" v-html="parseLabel(widgetFields[stepObj.key].sub)"></div>
+                                        </template>
+                                        
                                         <div v-for="(inputvalue, field_key) in options[stepObj.key]" :data-tt="getFieldTip(stepObj.key, field_key) ? getFieldTip(stepObj.key, field_key) : false" v-if="canShowField(stepObj.key, field_key)" class="tt-below">
                                             {{ changedInput(stepObj.key, field_key, inputvalue) }}
                                             <component  v-if="isComponentTypeActive(inputvalue,stepObj.key, field_key, field_key)" :key="field_key"  
@@ -155,6 +159,7 @@
 </template>
 
 <script>
+const BBCode = require('../Plugins/bbcode')
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPalette, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -229,7 +234,7 @@ export default {
             },
             {
                 key: 'service_location',
-                label: 'Location selection'
+                label: 'Modality selection'
             },
             {
                 key: 'selection',
@@ -317,7 +322,9 @@ export default {
 
 
     methods: {
-        
+        parseLabel(label){
+            return BBCode.render(label,{classPrefix: 'bbcode', newLine: false, allowData: true, allowClasses:true})
+        },
         tagHasBeenRemoved(defaultVal, currentValue){
             if(typeof defaultVal == "string"){
                 let tags = this.getTags(defaultVal)
