@@ -26,11 +26,11 @@ class Menus
             $this->sub_menus['addons'] = ['label' => 'Addons', 'cap' => 'administrator'];
             $this->sub_menus['help'] = ['label' => 'Help', 'cap' => 'administrator'];
         }
-
+        //dd(wp_get_current_user());
         add_menu_page(
             WAPPOINTMENT_NAME,
             WAPPOINTMENT_NAME,
-            $this->mainCap(),
+            $this->getCalendarCap(),
             $this->parent_slug,
             $this->load_view,
             'dashicons-wappointment',
@@ -45,12 +45,12 @@ class Menus
 
     protected function getCalendarCap()
     {
-        return $this->isAdministrator() ? 'administrator' : 'wappo_self_man';
+        return $this->isAdministrator() ? 'administrator' : 'wappo_calendar_man';
     }
 
     protected function getClientCap()
     {
-        return $this->isAdministrator() ?  'administrator' : 'wappo_self_man';
+        return $this->isAdministrator() ?  'administrator' : 'wappo_clients_man';
     }
 
     protected function getSettingsCap()
@@ -60,7 +60,7 @@ class Menus
 
     public function mainCap()
     {
-        return $this->isAdministrator() ?  'administrator' : 'wappo_self_man';
+        return $this->isAdministrator() ?  'administrator' : 'wappo_can_use';
     }
 
     public function addSubmenus()

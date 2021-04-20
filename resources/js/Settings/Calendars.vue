@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="calendarListing">
-            <button @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
+            <button v-if="isCurrentUserAdmin" @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
             <div class="table-hover" v-if="loadedData">
                 <table class="table">
                     <thead>
@@ -33,7 +33,7 @@
                                 </div>
                                 <div class="wlist-actions text-muted">
                                     <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
-                                    <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editServices(calendar)"></span></span>
+                                    <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
                                     <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
                                     <span data-tt="Set Permissions" v-if="isUserCalendar(calendar)"><span class="dashicons dashicons-shield" @click.prevent.stop="editPermission(calendar)"></span></span>
@@ -103,7 +103,7 @@
 
         <WapModal v-if="showModal" :show="showModal" @hide="hidePopup">
             <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
-            <CalendarsExternal v-if="calendar_main_id" :calendar_id="calendar_main_id" @savedSync="savedSync" @errorSaving="errorSavingCalendar" noback />
+            <CalendarsExternal v-if="calendar_main_id" :calendar_id="calendar_main_id" @savedSync="reloadListing" @errorSaving="errorSavingCalendar" noback />
             <ShortcodeDesigner v-if="showShortcode" :calendar_id="showShortcode" :calendars="elements.calendars" :services="elements.services" :showTip="false" />
             <CalendarsIntegrations v-if="dotcomOpen" @reload="reloadListing" :calendar="dotcomOpen" />
             
@@ -178,7 +178,10 @@ export default {
         },
         calendarRegav(){
             return this.currentView == 'regav'
-        }
+        },
+        isCurrentUserAdmin(){
+            return window.apiWappointment.wp_user.roles.indexOf('administrator') !==-1
+        },
     },
     methods: {
         
@@ -247,6 +250,7 @@ export default {
         },
 
         reloadListing(){
+            console.log('reloadListing')
             this.hidePopup()
             this.showListing()
             this.loadElements()

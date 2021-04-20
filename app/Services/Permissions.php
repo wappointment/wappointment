@@ -7,21 +7,36 @@ use Wappointment\Models\Calendar;
 class Permissions
 {
     private $capabilities = [
+        'wappo_calendar_man' => [
+            'name' => 'Can manage own calendar',
+            'sub_caps' => [
+                'wappo_calendar_add_busy' => 'Can add Busy blocks',
+                'wappo_calendar_del_busy' => 'Can delete Busy blocks',
+                'wappo_calendar_add_free' => 'Can add Free blocks',
+                'wappo_calendar_del_free' => 'Can delete Free blocks',
+                'wappo_calendar_reschedule' => 'Can reschedule appointment',
+                'wappo_calendar_cancel' => 'Can cancel appointment',
+                'wappo_calendar_book' => 'Can book on behalf of a client',
+                'wappo_calendar_confirm' => 'Can confirm pending appointment',
+            ]
+        ],
         'wappo_self_man' => [
             'name' => 'Can manage own settings',
             'sub_caps' => [
-                'wappo_self_weekly' => 'Can set own weekly availability',
-                'wappo_self_services' => 'Can select services provided',
+                'wappo_self_weekly' => 'Can modify weekly availability',
+                'wappo_self_services' => 'Can modify services provided',
+                'wappo_self_connect_account' => 'Can connect Wappointment.com account',
+                'wappo_self_add_ics' => 'Can add ICS calendar',
+                'wappo_self_del_ics' => 'Can delete ICS calendar',
             ]
         ],
         'wappo_clients_man' => [
-            'name' => 'Can manage clients',
+            'name' => 'Can manage own clients',
             'sub_caps' => [
                 'wappo_clients_del' => 'Can delete clients',
                 'wappo_clients_edit' => 'Can edit clients',
             ]
-        ]
-
+        ],
     ];
 
     public function getCaps($flat = false)
@@ -72,7 +87,6 @@ class Permissions
 
     private function toggleCap($wp_user, $cap_key, $permissionsSaving, $cap_object = false)
     {
-
         if (in_array($cap_key, $permissionsSaving)) {
             $wp_user->add_cap($cap_key);
             if ($cap_object && !empty($cap_object['sub_caps'])) {

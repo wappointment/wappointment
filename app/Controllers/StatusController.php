@@ -9,6 +9,7 @@ class StatusController extends RestController
 {
     public function save(Request $request)
     {
+
         if ($request->input('type') == 'free') {
             if (Status::free($request->input('start'), $request->input('end'), $request->input('timezone'), $request, $request->input('staff_id'))) {
                 return ['message' => 'Extra free time added'];
@@ -18,6 +19,7 @@ class StatusController extends RestController
                 return ['message' => 'Busy time added'];
             }
         }
+        throw new \WappointmentException("Cannot create block", 1);
     }
 
     public function delete(Request $request)
@@ -27,6 +29,6 @@ class StatusController extends RestController
         if ($event) {
             return ['message' => !empty($event->source) ? 'Event muted' : 'Event deleted'];
         }
-        throw new WappointmentException('Error while deleting element', 1);
+        throw new \WappointmentException('Error while deleting element', 1);
     }
 }

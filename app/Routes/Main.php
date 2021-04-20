@@ -53,10 +53,6 @@ class Main extends AbstractRoutes
                     'methods' => ['get', 'post'],
                     'controller' => 'AddonsController'
                 ],
-                '/events' => [
-                    'methods' => ['post', 'delete', 'patch', 'put'],
-                    'controller' => 'EventsController'
-                ],
                 '/reminder' => [
                     'methods' => ['get', 'post', 'delete', 'patch'],
                     'controller' => 'ReminderController'
@@ -66,16 +62,12 @@ class Main extends AbstractRoutes
                     'methods' => ['post'],
                     'controller' => 'ServiceController'
                 ],
-                '/status' => [
-                    'methods' => ['post', 'delete'],
-                    'controller' => 'StatusController'
-                ],
                 '/services' => [
                     'methods' => ['get', 'post', 'delete'],
                     'controller' => 'ServicesController'
                 ],
                 '/calendars' => [
-                    'methods' => ['get', 'post', 'delete',],
+                    'methods' => ['delete'],
                     'controller' => 'CalendarsController'
                 ],
                 '/services/location' => [
@@ -123,14 +115,6 @@ class Main extends AbstractRoutes
                     'method' => 'migrate',
                     'controller' => 'AppController',
                 ],
-                '/wappointment/connect' => [
-                    'method' => 'connect',
-                    'controller' => 'WappointmentController',
-                ],
-                '/wappointment/disconnect' => [
-                    'method' => 'disconnect',
-                    'controller' => 'WappointmentController',
-                ],
                 '/wappointment/refresh' => [
                     'method' => 'refresh',
                     'controller' => 'WappointmentController',
@@ -165,10 +149,6 @@ class Main extends AbstractRoutes
                     'method' => 'save',
                     'controller' => 'EventsController',
                     'hint' => 'BookingAdmin'
-                ],
-                '/events/list' => [
-                    'method' => 'get',
-                    'controller' => 'EventsController',
                 ],
                 '/freshinstall' => [
                     'controller' => 'DebugController',
@@ -224,38 +204,107 @@ class Main extends AbstractRoutes
                     'controller' => 'CalendarsController',
                     'method' => 'toggle',
                 ],
-                '/calendars/services' => [
-                    'controller' => 'CalendarsController',
-                    'method' => 'saveServices',
-                ],
+
                 '/calendars/permissions' => [
                     'controller' => 'CalendarsController',
                     'method' => 'savePermissions',
                 ],
 
+            ],
+        ],
+        'mixed' => [
+            'GET' => [
+                '/calendars' => [
+                    'method' => 'get',
+                    'controller' => 'CalendarsController',
+                    'cap' => 'wappo_self_man'
+                ],
+                '/config/calendar' => [
+                    'controller' => 'ViewsDataController',
+                    'method' => 'getCalendar',
+                    'cap' => 'wappo_calendar_man'
+                ],
+            ],
+            'POST' => [
+                '/events/delete' => [
+                    'method' => 'delete',
+                    'controller' => 'EventsController',
+                    'cap' => 'wappo_calendar_cancel'
+                ],
+                '/events/patch' => [
+                    'method' => 'patch',
+                    'controller' => 'EventsController',
+                    'cap' => 'wappo_calendar_reschedule'
+                ],
+                '/events/put' => [
+                    'method' => 'put',
+                    'controller' => 'EventsController',
+                    'cap' => 'wappo_calendar_confirm'
+                ],
+                '/events/list' => [
+                    'method' => 'get',
+                    'controller' => 'EventsController',
+                    'cap' => 'wappo_calendar_man'
+                ],
                 '/services/booking/admin' => [
                     'controller' => 'BookingController',
                     'method' => 'adminBook',
-                    'hint' => 'BookingAdmin'
+                    'hint' => 'BookingAdmin',
+                    'cap' => 'wappo_calendar_book'
+                ],
+                '/status' => [
+                    'method' => 'save',
+                    'controller' => 'StatusController',
+                    'cap' => 'wappo_calendar_man'
+                ],
+                '/status/delete' => [
+                    'method' => 'delete',
+                    'controller' => 'StatusController',
+                    'cap' => 'wappo_calendar_man'
+                ],
+                '/calendars' => [
+                    'method' => 'save',
+                    'controller' => 'CalendarsController',
+                    'cap' => 'wappo_self_weekly'
                 ],
                 '/calendars/avatar' => [
                     'method' => 'getAvatar',
-                    'controller' => 'CalendarsController'
+                    'controller' => 'CalendarsController',
+                    'cap' => 'wappo_self_weekly'
                 ],
+                '/calendars/services' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'saveServices',
+                    'cap' => 'wappo_self_services'
+                ],
+                '/wappointment/connect' => [
+                    'method' => 'connect',
+                    'controller' => 'WappointmentController',
+                    'cap' => 'wappo_self_connect_account'
+                ],
+                '/wappointment/disconnect' => [
+                    'method' => 'disconnect',
+                    'controller' => 'WappointmentController',
+                    'cap' => 'wappo_self_connect_account'
+                ],
+
                 '/calendars/savecal' => [
                     'method' => 'saveCal',
-                    'controller' => 'CalendarsController'
+                    'controller' => 'CalendarsController',
+                    'cap' => 'wappo_self_add_ics'
                 ],
                 '/calendars/refreshcalendars' => [
                     'controller' => 'CalendarsController',
                     'method' => 'refreshCalendars',
+                    'cap' => 'wappo_self_add_ics'
                 ],
                 '/calendars/disconnect' => [
                     'controller' => 'CalendarsController',
                     'method' => 'disconnectCal',
+                    'cap' => 'wappo_self_del_ics'
                 ],
-            ],
-        ]
+            ]
+        ],
     ];
 
     public function __construct()

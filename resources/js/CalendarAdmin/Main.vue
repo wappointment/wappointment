@@ -260,15 +260,14 @@ export default {
   },
 
  watch: {
-      events: {
-        handler: function(newValue) {
-              if(this.openconfirm && newValue.length > 1){
-                this.confirmRequest(this.openconfirm)
-                this.openconfirm = false
-              }
-
-          },
+    events: {
+      handler: function(newValue) {
+        if(this.openconfirm && newValue.length > 1){
+          this.confirmRequest(this.openconfirm)
+          this.openconfirm = false
+        }
       },
+    },
   },
  
  computed: {
@@ -353,6 +352,9 @@ export default {
     
  },
   methods: {
+    async initValueRequest() {
+        return await this.serviceViewData.call('calendar')
+    },
     hasDotcom(){
       return this.isDotComConnected
     },

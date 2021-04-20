@@ -54,16 +54,25 @@ class Status
         return false;
     }
 
-
+    private static function getAllowedStaffId($staff_id = null)
+    {
+        return $staff_id = CurrentUser::isAdmin() ? $staff_id : CurrentUser::calendarId();
+    }
 
     public static function free($start, $end, $timezone, $request, $staff_id = null)
     {
-        return self::create($start, $end, $timezone, MStatus::TYPE_FREE, $request, $staff_id);
+        if (CurrentUser::canCreateFreeBlock()) {
+            return self::create($start, $end, $timezone, MStatus::TYPE_FREE, $request, static::getAllowedStaffId($staff_id));
+        }
+        throw new \WappointmentException("Cannot create free block", 1);
     }
 
     public static function busy($start, $end, $timezone, $staff_id = null)
     {
-        return self::create($start, $end, $timezone, MStatus::TYPE_BUSY, null, $staff_id);
+        if (CurrentUser::canCreateBusyBlock()) {
+            return self::create($start, $end, $timezone, MStatus::TYPE_BUSY, null, static::getAllowedStaffId($staff_id));
+        }
+        throw new \WappointmentException("Cannot create busy block", 1);
     }
 
     protected static function create($start, $end, $timezone, $type, $request = null, $staff_id = null)

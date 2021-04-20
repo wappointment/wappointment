@@ -17,6 +17,11 @@ class Calendars
         $query = static::getModel()::active()->orderBy('sorting');
         if ($onlyAvailable) {
             $query->whereNotNull('availability');
+        } else {
+            //this is admin we add permissions
+            if (!CurrentUser::isAdmin()) {
+                $query->where('wp_uid', CurrentUser::id());
+            }
         }
         $results = $query->fetch();
         if ($onlyAvailable) {

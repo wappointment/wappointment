@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <h1 class="px-2">Settings</h1>
     
-    <ul class="nav nav-tabs row px-4" id="myTab" role="tablist">
+    <ul class="nav nav-tabs row px-4" id="myTab" role="tablist"  v-if="isCurrentUserAdmin">
         <li v-for="(tab, key) in tabs" class="nav-item">
             <span class="nav-link" :class="{'active' : isActive(key)}" @click="changeTab(key)">{{ tab.label }}</span>
         </li>
@@ -82,6 +82,9 @@ export default {
         
     },
     computed: {
+        isCurrentUserAdmin(){
+            return window.apiWappointment.wp_user.roles.indexOf('administrator') !==-1
+        },
         convertedName(){
             return ['modalities', 'modalities_add', 'modalities_edit'].indexOf(this.$route.name) !== -1  ? 'services':this.$route.name
         },

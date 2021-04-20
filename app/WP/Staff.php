@@ -81,7 +81,7 @@ class Staff
             'calendar_urls' => $this->getCalendarUrls(),
             'calendar_logs' => $this->getCalendarLogs(),
             'permissions' => $this->permissions,
-            'role' => $this->wp_user->get_role()
+            'roles' => $this->wp_user->roles
         ];
     }
 

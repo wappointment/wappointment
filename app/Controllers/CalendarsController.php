@@ -12,6 +12,7 @@ use Wappointment\Services\Settings;
 use Wappointment\Services\DateTime;
 use Wappointment\Services\Calendars;
 use Wappointment\Managers\Central;
+use Wappointment\Services\CurrentUser;
 use Wappointment\Services\ExternalCalendar;
 use Wappointment\Services\Permissions;
 
@@ -27,7 +28,7 @@ class CalendarsController extends RestController
             'db_required' => $db_update_required,
             'timezones_list' => DateTime::tz(),
             'calendars' => $calendars,
-            'staffs' => StaffServices::getWP(),
+            'staffs' => StaffServices::getWP(CurrentUser::isAdmin() ? false : CurrentUser::id()),
             'staffDefault' => Settings::staffDefaults(),
             'permissions' => (new Permissions)->getCaps(),
         ];
@@ -40,7 +41,12 @@ class CalendarsController extends RestController
 
     public function getCalendarsStaff()
     {
-        $calendars = Central::get('CalendarModel')::orderBy('sorting')->with(['services'])->fetch();
+        $calendarsQry = Central::get('CalendarModel')::orderBy('sorting')->with(['services']);
+        if (!CurrentUser::isAdmin()) {
+            $calendarsQry->where('id', CurrentUser::calendarId());
+        }
+
+        $calendars = $calendarsQry->fetch();
         $staffs = [];
         foreach ($calendars->toArray() as $calendar) {
             $staffs[] = (new Staff($calendar))->fullData();
@@ -58,7 +64,9 @@ class CalendarsController extends RestController
 
     public function saveServices(Request $request)
     {
-        $calendar = Central::get('CalendarModel')::findOrFail((int)$request->input('id'));
+        $calendar_id = !CurrentUser::isAdmin() ? (int)$request->input('id') : CurrentUser::calendarId();
+
+        $calendar = Central::get('CalendarModel')::findOrFail($calendar_id);
         $calendar->services()->sync($request->input('services'));
         return ['message' => 'Calendar saved'];
     }
@@ -73,7 +81,8 @@ class CalendarsController extends RestController
 
     public function saveCal(Request $request)
     {
-        $calendar_id = empty($request->input('calendar_id')) ? false : (int)$request->input('calendar_id');
+        $calendar_id = !CurrentUser::isAdmin() ? (int)$request->input('calendar_id') : CurrentUser::calendarId();
+        //$calendar_id = empty($request->input('calendar_id')) ? false : (int)$request->input('calendar_id');
         $externalCalendar = new ExternalCalendar($calendar_id);
         return $externalCalendar->save($request->input('calurl'));
     }
@@ -88,11 +97,16 @@ class CalendarsController extends RestController
 
     public function save(Request $request)
     {
+        if (!CurrentUser::isAdmin() && (int)CurrentUser::calendarId() !== (int)$request->input('id')) {
+            throw new \WappointmentException("Cannot save anyone else but you", 1);
+        }
 
         $data = $request->all();
+
         if (empty($data['id'])) {
             $data['sorting'] = Calendars::total();
         }
+
         $result = Calendars::save($data);
         return ['message' => 'Calendar has been saved', 'result' => $result];
     }
@@ -122,7 +136,8 @@ class CalendarsController extends RestController
 
     public function refreshCalendars(Request $request)
     {
-        $externalCalendar = new ExternalCalendar((int)$request->input('staff_id'));
+        $staff_id = !CurrentUser::isAdmin() ? (int)$request->input('staff_id') : CurrentUser::calendarId();
+        $externalCalendar = new ExternalCalendar($staff_id);
         return $externalCalendar->refreshCalendars(true);
     }
 
@@ -131,8 +146,9 @@ class CalendarsController extends RestController
         if (is_array($request->input('calendar_id'))) {
             throw new \WappointmentException("Malformed parameter", 1);
         }
+        $staff_id = !CurrentUser::isAdmin() ? (int)$request->input('staff_id') : CurrentUser::calendarId();
 
-        $externalCalendar = new ExternalCalendar((int)$request->input('staff_id'));
+        $externalCalendar = new ExternalCalendar($staff_id);
         return $externalCalendar->disconnect($request->input('calendar_id'));
     }
 }

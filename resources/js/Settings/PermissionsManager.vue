@@ -4,31 +4,36 @@
             <h3>Set Permissions</h3>
             
         </div>
-        <div class="d-flex align-items-start">
-            <div class="d-flex align-items-center mr-4">
-                <img :src="user.avatar || user.gravatar" class="img-fluid wrounded" width="40" alt="avatar" />
-                <div class="ml-2">{{ user.name }}</div>
-            </div>
-            <div class="p-2 rounded bg-secondary">
-                <div v-for="(permission, permissionkey) in permissions">
-                    <div class="d-flex">
-                        <label>
-                            <input type="checkbox" v-model="new_permissions" :value="permissionkey">
-                            {{ permission.name }}
-                        </label>
-                    </div>
-                    <div v-if="new_permissions.indexOf(permissionkey) !== -1" class="ml-4" >
-                        <div class="d-flex" v-for="(sub_permission, subpermissionkey) in permission.sub_caps">
+        <div v-if="user.roles.indexOf('administrator') === -1">
+            <div class="d-flex align-items-start" >
+                <div class="d-flex align-items-center mr-4">
+                    <img :src="user.avatar || user.gravatar" class="img-fluid wrounded" width="40" alt="avatar" />
+                    <div class="ml-2">{{ user.name }}</div>
+                </div>
+                <div class="p-2 rounded bg-secondary">
+                    <div v-for="(permission, permissionkey) in permissions">
+                        <div class="d-flex">
                             <label>
-                                <input type="checkbox" v-model="new_permissions" :value="subpermissionkey">
-                                {{ sub_permission }}
+                                <input type="checkbox" v-model="new_permissions" :value="permissionkey">
+                                {{ permission.name }}
                             </label>
+                        </div>
+                        <div v-if="new_permissions.indexOf(permissionkey) !== -1" class="ml-4" >
+                            <div class="d-flex" v-for="(sub_permission, subpermissionkey) in permission.sub_caps">
+                                <label>
+                                    <input type="checkbox" v-model="new_permissions" :value="subpermissionkey">
+                                    {{ sub_permission }}
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+            <button class="btn btn-primary" @click="save">Save</button>
         </div>
-        <button class="btn btn-primary" @click="save">Save</button>
+        <div v-else>
+            User is an administrator
+        </div>
     </div>
 </template>
 
