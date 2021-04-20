@@ -22,15 +22,14 @@
                                 <div class="d-flex align-items-center">
                                     <WapImage v-if="serviceHasIcon(service)" :element="service" :config="{mauto:false}" :desc="service.name" size="lg" /> 
                                     <div class="ml-2">{{ service.name }}</div>
-                                    <div class="actions ml-4 text-muted">
-                                        <span data-tt="Sort" v-if="elements.services.length > 1" ><span class="dashicons dashicons-move"></span></span>
-                                        <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(service.id)"></span></span>
-                                        <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(service)"></span></span>
-                                        <span data-tt="Delete" v-if="elements.services.length > 1" ><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(service.id)"></span></span>
-                                        <span v-if="elements.services.length > 1" >(id: {{ service.id }})</span>
-                                    </div>
                                 </div>
-                                
+                                <div class="wlist-actions text-muted">
+                                    <span data-tt="Sort" v-if="elements.services.length > 1" ><span class="dashicons dashicons-move"></span></span>
+                                    <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(service.id)"></span></span>
+                                    <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(service)"></span></span>
+                                    <span data-tt="Delete" v-if="elements.services.length > 1" ><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(service.id)"></span></span>
+                                    <span v-if="elements.services.length > 1" >(id: {{ service.id }})</span>
+                                </div>
                             </td>
                             <td>
                                 <div class="d-flex">

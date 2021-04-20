@@ -8,7 +8,7 @@ use Wappointment\ClassConnect\Carbon;
 class Status
 {
     private static $diff = 0;
-    private static $debug = 0;
+
     public static function delete($id)
     {
         $statusObject = Mstatus::find($id);

@@ -23,20 +23,21 @@
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="calendar-pic" :class="[calendar.status == 1 ? 'active':'inactive']">
-                                        <img :src="calendar.avatar" class="img-fluid wrounded" width="40" :alt="calendar.name" />
+                                        <img :src="calendar.avatar" class="wrounded" width="40" :alt="calendar.name" />
                                         <span role="button" class="status" :data-tt="[calendar.status == 1 ? 'Active':'Inactive']" @click="toggleStatus(calendar,idx)"></span>
                                     </div>
                                     <div class="ml-2">
                                         <div>{{ calendar.name }}</div>
                                         <small>{{ calendar.timezone }}</small>
                                     </div>
-                                    <div class="actions ml-4 text-muted">
-                                        <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
-                                        <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
-                                        <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
-                                        <span data-tt="Set Permissions" v-if="isUserCalendar(calendar)"><span class="dashicons dashicons-shield" @click.prevent.stop="editPermission(calendar)"></span></span>
-                                        <span>(id: {{ calendar.id }})</span>
-                                    </div>
+                                </div>
+                                <div class="wlist-actions text-muted">
+                                    <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
+                                    <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editServices(calendar)"></span></span>
+                                    <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
+                                    <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
+                                    <span data-tt="Set Permissions" v-if="isUserCalendar(calendar)"><span class="dashicons dashicons-shield" @click.prevent.stop="editPermission(calendar)"></span></span>
+                                    <span>(id: {{ calendar.id }})</span>
                                 </div>
                             </td>
                             <td>

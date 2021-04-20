@@ -24,14 +24,14 @@
                                     <div>{{ client.name }} </div>
                                     <div>{{ client.email }} </div>
                                 </div>
-                                <div class="actions ml-4 text-muted">
-                                    <span data-tt="Edit">
-                                        <span class="dashicons dashicons-edit" @click.prevent.stop="$emit('editClient', client)"></span>
-                                    </span>
-                                    <span data-tt="Delete">
-                                        <span class="dashicons dashicons-trash" @click.prevent.stop="$emit('deleteClient', client.id)"></span>
-                                    </span>
-                                </div>
+                            </div>
+                            <div class="wlist-actions text-muted">
+                                <span data-tt="Edit">
+                                    <span class="dashicons dashicons-edit" @click.prevent.stop="$emit('editClient', client)"></span>
+                                </span>
+                                <span data-tt="Delete">
+                                    <span class="dashicons dashicons-trash" @click.prevent.stop="$emit('deleteClient', client.id)"></span>
+                                </span>
                             </div>
                             
                         </td>

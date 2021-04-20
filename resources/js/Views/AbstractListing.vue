@@ -108,13 +108,20 @@ export default {
 .table-hover {
     color: #626060;
 }
-.table-hover .actions {
+.table-hover .wlist-actions {
     visibility: hidden;
 }
-.table-hover .actions .dashicons-move{
+.table-hover .wlist-actions .dashicons-move{
     cursor: pointer;
 }
-.table-hover tr:hover .actions{
+.table-hover tr:hover .wlist-actions{
     visibility: visible;
+}
+.wlist-actions{
+    background: #f2f2f2;
+    display: inline-block;
+    box-shadow: 0px 2px 3px 0 rgba(0,0,0,.04);
+    padding: .2em .4em;
+    border-radius: 0.6em;
 }
 </style>
