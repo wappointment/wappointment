@@ -200,16 +200,10 @@ class Main extends AbstractRoutes
                     'controller' => 'CalendarsController',
                     'method' => 'reorder',
                 ],
-                '/calendars/toggle' => [
-                    'controller' => 'CalendarsController',
-                    'method' => 'toggle',
-                ],
-
                 '/calendars/permissions' => [
                     'controller' => 'CalendarsController',
                     'method' => 'savePermissions',
                 ],
-
             ],
         ],
         'mixed' => [
@@ -303,13 +297,18 @@ class Main extends AbstractRoutes
                     'method' => 'disconnectCal',
                     'cap' => 'wappo_self_del_ics'
                 ],
+                '/calendars/toggle' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'toggle',
+                    'cap' => 'wappo_self_unpublish'
+                ],
             ]
         ],
     ];
 
     public function __construct()
     {
-        new Init();
+        new Init;
         parent::__construct();
     }
 }

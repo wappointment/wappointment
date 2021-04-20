@@ -24,14 +24,14 @@
                                 <div class="d-flex align-items-center">
                                     <div class="calendar-pic" :class="[calendar.status == 1 ? 'active':'inactive']">
                                         <img :src="calendar.avatar" class="wrounded" width="40" :alt="calendar.name" />
-                                        <span role="button" class="status" :data-tt="[calendar.status == 1 ? 'Active':'Inactive']" @click="toggleStatus(calendar,idx)"></span>
+                                        <span v-if="canUnpublish" role="button" class="status" :data-tt="[calendar.status == 1 ? 'Active':'Inactive']" @click="toggleStatus(calendar,idx)"></span>
                                     </div>
                                     <div class="ml-2">
                                         <div>{{ calendar.name }}</div>
                                         <small>{{ calendar.timezone }}</small>
                                     </div>
                                 </div>
-                                <div class="wlist-actions text-muted">
+                                <div class="wlist-actions text-muted" v-if="isCurrentUserAdmin">
                                     <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
                                     <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
@@ -41,18 +41,21 @@
                                 </div>
                             </td>
                             <td>
-                                <CalendarsRegav @edit="editAvailability" :calendar="calendar" />
+                                <CalendarsRegav :canEdit="canEditWeekly" @edit="editAvailability" :calendar="calendar" />
                             </td>
                             <td v-if="!elements.db_required">
                                 <div class="d-flex" role="button" v-if="calendar.services.length>0">
                                     <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid,elements.services) }} </ValueCard>
                                 </div>
-                                <button class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
+                                <button v-if="canEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
                             </td>
                             <td>
                                <Connections :connections="calendar.connected.services === undefined ? []:calendar.connected.services"/>
-                               <a v-if="calendar.connected" href="javascript:;" class="small" @click="goToDotCom(calendar)">edit</a>
-                               <button v-else class="btn btn-xs btn-outline-primary tt-lg mt-2" @click="goToDotCom(calendar)">Connect Account</button>
+                               <div v-if="canConnectAccount">
+                                   <a v-if="calendar.connected" href="javascript:;" class="small" @click="goToDotCom(calendar)">edit</a>
+                                    <button v-else class="btn btn-xs btn-outline-primary tt-lg mt-2" @click="goToDotCom(calendar)">Connect Account</button>
+                               </div>
+                               
                             </td>
                             <td>
                                <div class="d-flex" v-if="getExternals(calendar)">
@@ -67,14 +70,14 @@
                                                     Last changed: <span class="data-item">{{ lastChanged(calendar_id, calendar) }}</span> | 
                                                     Process duration: <span class="data-item">{{ calDuration(calendar_id, calendar) }}</span></p>
                                                 </div>
-                                                <button class="align-self-start btn btn-xs btn-link hidden" data-tt="Disconnect Calendar" @click="disconnectCalendar(calendar_id, calendar.id)"><span class="dashicons dashicons-dismiss"></span></button>
+                                                <button v-if="canDelIcs" class="align-self-start btn btn-xs btn-link hidden" data-tt="Disconnect Calendar" @click="disconnectCalendar(calendar_id, calendar.id)"><span class="dashicons dashicons-dismiss"></span></button>
                                             </div>  
                                         </div>
                                     </div>
-                                    <a class="small d-flex align-items-center" href="javascript:;" @click="refreshManually(calendar.id)"><span class="dashicons dashicons-update"></span> Refresh all</a>
+                                    <a class="small d-flex align-items-center" href="javascript:;" v-if="canAddIcs" @click="refreshManually(calendar.id)"><span class="dashicons dashicons-update"></span> Refresh all</a>
                                 </div>
                                 <div>
-                                    <button class="btn btn-xs btn-outline-primary tt-lg" v-if="!calendarLimitReached(calendar)"
+                                    <button class="btn btn-xs btn-outline-primary tt-lg" v-if="canAddIcs && !calendarLimitReached(calendar)"
                                     @click="goToSync(calendar)" data-tt="Make sure clients can't book you when you're busy">Connect external calendar</button>
                                 </div>
                             </td>
@@ -182,9 +185,36 @@ export default {
         isCurrentUserAdmin(){
             return window.apiWappointment.wp_user.roles.indexOf('administrator') !==-1
         },
+
+        hasOnlyMyOwnCalendar(){
+            return !this.isCurrentUserAdmin && this.elements.calendars.length ===1
+        },
+        canEditServices(){
+            return this.canDoSomething('wappo_self_services')
+        },
+        canConnectAccount(){
+            return this.canDoSomething('wappo_self_connect_account')
+        },
+        canAddIcs(){
+            return this.canDoSomething('wappo_self_add_ics')
+        },
+        canDelIcs(){
+            return this.canDoSomething('wappo_self_del_ics')
+        },
+        canEditWeekly(){
+            return this.canDoSomething('wappo_self_weekly')
+        },
+        canUnpublish(){
+            return this.canDoSomething('wappo_self_unpublish')
+        }
     },
     methods: {
-        
+        canDoSomething(something){
+            return this.isCurrentUserAdmin || (this.hasOnlyMyOwnCalendar && this.hasPermission(something))
+        },
+        hasPermission(permission){
+            return this.elements.calendars[0].permissions.indexOf(permission) !== -1
+        },
         isUserCalendar(calendar){
             return parseInt(calendar.wp_uid) > 0
         },
@@ -250,7 +280,6 @@ export default {
         },
 
         reloadListing(){
-            console.log('reloadListing')
             this.hidePopup()
             this.showListing()
             this.loadElements()

@@ -28,6 +28,7 @@ class Permissions
                 'wappo_self_connect_account' => 'Can connect Wappointment.com account',
                 'wappo_self_add_ics' => 'Can add ICS calendar',
                 'wappo_self_del_ics' => 'Can delete ICS calendar',
+                'wappo_self_unpublish' => 'Can publish/unpublish self',
             ]
         ],
         'wappo_clients_man' => [

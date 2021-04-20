@@ -121,9 +121,9 @@ class CalendarsController extends RestController
 
     public function toggle(Request $request)
     {
-        $data = $request->only(['id']);
+        $staff_id = !CurrentUser::isAdmin() ? (int)$request->input('id') : CurrentUser::calendarId();
 
-        $result = Calendars::toggle((int)$data['id']);
+        $result = Calendars::toggle($staff_id);
         return ['message' => 'Calendar has been modified', 'result' => $result];
     }
 
