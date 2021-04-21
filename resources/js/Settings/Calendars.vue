@@ -216,7 +216,7 @@ export default {
             return this.elements.calendars[0].permissions.indexOf(permission) !== -1
         },
         isUserCalendar(calendar){
-            return parseInt(calendar.wp_uid) > 0
+            return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1
         },
         getShortCode(calendar_id){
             this.showShortcode = calendar_id

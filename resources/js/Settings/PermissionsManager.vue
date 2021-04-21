@@ -1,10 +1,6 @@
 <template>
     <div class="container-fluid">
         <div>
-            <h3>Set Permissions</h3>
-            
-        </div>
-        <div v-if="user.roles.indexOf('administrator') === -1">
             <div class="d-flex align-items-start" >
                 <div class="d-flex align-items-center mr-4">
                     <img :src="user.avatar || user.gravatar" class="img-fluid wrounded" width="40" alt="avatar" />
@@ -30,9 +26,6 @@
                 </div>
             </div>
             <button class="btn btn-primary" @click="save">Save</button>
-        </div>
-        <div v-else>
-            User is an administrator
         </div>
     </div>
 </template>
