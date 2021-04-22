@@ -36,7 +36,7 @@
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
                                     <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
-                                    <span data-tt="Set Permissions" v-if="isUserCalendar(calendar)"><span class="dashicons dashicons-shield" @click.prevent.stop="editPermission(calendar)"></span></span>
+                                    <span data-tt="Set Permissions" v-if="isUserCalendar(calendar)"><span class="dashicons dashicons-unlock" @click.prevent.stop="editPermission(calendar)"></span></span>
                                     <span>(id: {{ calendar.id }})</span>
                                 </div>
                             </td>
@@ -45,7 +45,7 @@
                             </td>
                             <td v-if="!elements.db_required">
                                 <div class="d-flex" role="button" v-if="calendar.services.length>0">
-                                    <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid,elements.services) }} </ValueCard>
+                                    <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid, elements.services) }} </ValueCard>
                                 </div>
                                 <button v-if="canEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
                             </td>
@@ -104,7 +104,7 @@
             <WeeklyAvailability :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs"/>
         </div>
 
-        <WapModal v-if="showModal" :show="showModal" @hide="hidePopup">
+        <WapModal v-if="showModal" :show="showModal" @hide="hidePopup" noscroll>
             <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
             <CalendarsExternal v-if="calendar_main_id" :calendar_id="calendar_main_id" @savedSync="reloadListing" @errorSaving="errorSavingCalendar" noback />
             <ShortcodeDesigner v-if="showShortcode" :calendar_id="showShortcode" :calendars="elements.calendars" :services="elements.services" :showTip="false" />
@@ -276,7 +276,8 @@ export default {
         
         
         displayServiceName(id,services) {
-            return services.find(e => e.id ==id).name
+            let service_found = services.find(e => e.id ==id)
+            return service_found!== undefined ? service_found.name:'Undefined service'
         },
 
         reloadListing(){
