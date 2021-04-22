@@ -65,7 +65,8 @@ class Database
 
     public function getHost()
     {
-        return $this->host;
+        //came up with a db_host value ending with a "/" creating problem with pdo e.g. :define( 'DB_HOST', 'sub.hostname.com/' )
+        return substr($this->host, -1) == '/' ? substr($this->host, 0, -1) : $this->host;
     }
 
     public function getPort()
