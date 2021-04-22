@@ -2,6 +2,12 @@
 
 namespace Wappointment\ClassConnect;
 
-class Model extends \Illuminate\Database\Eloquent\Model
-{
+if (defined('WP_ELOQUENT')) {
+    class Model extends \Wappointment\WPEloquent\Model
+    {
+    }
+} else {
+    class Model extends \Illuminate\Database\Eloquent\Model
+    {
+    }
 }
