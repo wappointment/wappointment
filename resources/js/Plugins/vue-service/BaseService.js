@@ -35,9 +35,13 @@ class BaseService {
             method: method,
             baseURL: this.base ,
             timeout: timeout,
-            responseType: 'json', 
+            //responseType: 'json', 
             url: route,
             headers: Object.assign(this.headers, headers),
+            transformResponse: axios.defaults.transformResponse.concat((datatest) => {
+                console.log('datatest',datatest) // this should now be JSON
+                return datatest
+            })
         }
 
         params = this.replaceModernVerbs(params)
@@ -46,8 +50,19 @@ class BaseService {
         if(method.toUpperCase() == 'GET' || this.headers['Content-Type'] == 'application/x-www-form-urlencoded')  params['params'] = data
         else  params['data'] = data
         eventsBus.emits('beforeRequest')
-        return axios(params)
-          .then(result => this.success(result))
+        return new Promise((resolve, reject) => {
+            axios(params)
+              .then(response => {
+                  console.log('hello issue', response)
+                if (response.headers && response.headers['content-type'] && response.headers['content-type'].indexOf('application/json') >= 0 && typeof response.data == 'string') {
+                  reject(response);
+                } else {
+                  resolve(response);
+                }
+            });
+          }).catch(err => this.errorShow(err)).then(result => this.success(result))
+        // return axios(params)
+        //   .then(result => this.success(result))
     }
 
     replaceModernVerbs(params){
@@ -57,10 +72,15 @@ class BaseService {
         }
         return params
     }
-
+    errorShow(err){
+        window.wappoLastMalformed = err
+        throw 'Response is malformed'
+    }
+    
     success(result) {
 
         if(result.data === null){
+            window.wappoLastMalformed = result
             throw 'Response is malformed'
         }
         result.data = typeof result.data != 'object' ? {} : result.data

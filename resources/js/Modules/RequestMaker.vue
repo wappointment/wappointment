@@ -92,7 +92,8 @@ export default {
         if(error.message!== undefined) {
           this.$WapModal().notifyError( error.message)
         }else{
-          this.$WapModal().notifyError( 'Unidentified service error')
+          console.log('error',window.wappoLastMalformed)
+          this.$WapModal().showModal( 'An error occured, the response is malformed', window.wappoLastMalformed.data)
         }
          
       },

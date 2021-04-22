@@ -121,6 +121,7 @@ class CalendarsController extends RestController
 
     public function toggle(Request $request)
     {
+        return require_once('dirty_json.json');
         $staff_id = !CurrentUser::isAdmin() ? (int)$request->input('id') : CurrentUser::calendarId();
 
         $result = Calendars::toggle($staff_id);
