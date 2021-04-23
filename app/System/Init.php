@@ -101,7 +101,6 @@ class Init
 
         $path = '/' . ltrim($path, '/');
 
-
         $url = trailingslashit(get_home_url($blog_id, '', $scheme));
         // nginx only allows HTTP/1.0 methods when redirecting from / to /index.php.
         // To work around this, we manually add index.php to the URL, avoiding the redirect.
