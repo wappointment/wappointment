@@ -927,7 +927,7 @@ export default {
 
 .wclosable .wclose:hover::before, 
 .wclosable .wclose:hover::after {
-    background-color: var(--wappo-pri-tx-lt);
+    background-color: #fff;
 }
 
 .wap-bf button {

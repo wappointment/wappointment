@@ -1,7 +1,7 @@
 <template>
-    <span class="value-card wclosable d-flex align-items-center justify-content-between" >
+    <span class="value-card wclosable d-flex align-items-center justify-content-between" @click="$emit('click')" >
         <span class="label"><slot></slot></span>
-        <span v-if="canDiscard" class="wclose" @click.prevent.stop="discard"></span>
+        <span v-if="canDiscard" class="wclose" @click.prevent.stop.self="discard"></span>
     </span>
 </template>
 <script>
@@ -44,7 +44,7 @@ export default {
 }
 .value-card.wclosable .wclose::before, 
 .value-card.wclosable .wclose::after {
-    background-color: #b5b1b1;
+    background-color: #f4f4f4;
 }
 </style>
 

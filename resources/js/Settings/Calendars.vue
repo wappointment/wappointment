@@ -233,18 +233,22 @@ export default {
             this.dotcomOpen = calendar
             this.openPopup('Connect to Zoom, Google Calendar etc...')
         },
+        
         editServices(calendar){
             this.editingServices = calendar
             this.openPopup('Edit services allowed')
         },
+
         editPermission(calendar){
             this.showPermissions = calendar
             this.openPopup('Edit user permissions')
         },
+
         openPopup(modalTitle){
             this.modalTitle = modalTitle
             this.showModal = true
         },
+
         hidePopup(modalTitle){
             this.modalTitle = 'popTitle'
             this.showModal = false
@@ -258,12 +262,15 @@ export default {
         saveServices(){
             this.request(this.saveServicesRequest, this.editingServices, undefined, false, this.closeRefresh)
         },
+
         async saveServicesRequest(params){
            return await this.mainService.call('saveService',params)
         },
+
         savePermissions(new_permissions){
             this.request(this.savePermissionsRequest, {id:this.showPermissions.id, permissions: new_permissions}, undefined, false, this.closeRefresh)
         },
+
         async savePermissionsRequest(params){
            return await this.mainService.call('savePermission',params)
         },
@@ -272,8 +279,6 @@ export default {
             this.hidePopup()
             this.hasBeenSavedDeleted()
         },
-
-        
         
         displayServiceName(id,services) {
             let service_found = services.find(e => e.id ==id)
@@ -321,15 +326,19 @@ export default {
                 this.request(this.requestElements, {}, undefined, false, this.loadedElements, this.failedLoadingElements)
             }
         },
+
         orderChanged(val){
             this.request(this.reorderRequest,{ id:val.moved.element.id, 'new_sorting':val.moved.newIndex }, undefined, false, this.hasBeenSavedNoReload)
         },
+
         async reorderRequest(params){
            return await this.mainService.call('reorder',params)
         },
+
         hasBeenSavedNoReload(result){
             return this.hasBeenSavedDeleted(result, false)
         },
+
         hasBeenSavedDeleted(result, reload = true){
             if(reload) {
                 this.reloadListing()
@@ -344,22 +353,27 @@ export default {
                 }
             })
         },
+
         toggleStatus(calendar, idx){
            return this.elements.db_required ? 
             this.runDbUpdate():this.request(this.toggleRequest,{ id:calendar.id}, undefined, false, this.hasBeenToggled.bind(null,idx))
         },
+
         hasBeenToggled(idx, response){
             let calendarsSaved = this.elements.calendars
             calendarsSaved[idx].status = calendarsSaved[idx].status == 1 ? 0:1
             this.elements.calendars = []
             setTimeout(this.reFeedCalendars.bind(null,calendarsSaved), 100);
         },
+
         reFeedCalendars(calendarsSaved){
             this.elements.calendars = calendarsSaved
         },
+
         async toggleRequest(params){
            return await this.mainService.call('toggle',params)
         },
+
         disconnectCalendar(calendar_id, calendar_main_id){
             this.$WapModal().confirm({
                 title: 'Confirm calendar disconnection?',
@@ -371,12 +385,12 @@ export default {
 
                 this.request(this.disconnectCalendarRequest, {calendar_id: calendar_id,  staff_id: calendar_main_id}, undefined,false, this.disconnectCalendarSuccess)
             }) 
-            
-            
         },
+
         async disconnectCalendarRequest(params) {
             return await this.mainService.call('disconnectCal', params) 
         },
+
         disconnectCalendarSuccess(response){
             this.$WapModal().notifySuccess(response.data.message)
             this.reloadListing()

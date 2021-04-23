@@ -27,11 +27,9 @@
                 </LabelMaterial>
                 <span :class="arrowUpClass" @click="makeInactive"></span>
             </div>
-            <div class="dropElements "  :class="[ horizontal ? 'd-flex flex-wrap':'']">
-                <div v-if="filteredElements.length > 0" v-for="elementLoop in filteredElements" @click="selectElement(elementLoop)" 
-                class="btn btn-sm clickable" :class="[ isSelected(elementLoop)? 'btn-outline-primary':'btn-light', horizontal ? 'm-2':'m-0 btn-block']">
-                    <small>{{ displayElementFunc(elementLoop) }}</small>
-                </div>
+            <div class="dropElements d-flex flex-wrap">
+                <ValueCard v-if="filteredElements.length > 0" v-for="elementLoop in filteredElements" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
+                            :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>
                 <div v-else>
                     <div v-if="search">No results for that search</div>
                 </div>
@@ -82,10 +80,6 @@ export default {
             default:''
         },
         hasMulti: {
-            type: Boolean,
-            default: false
-        },
-        horizontal: {
             type: Boolean,
             default: false
         },
@@ -241,7 +235,12 @@ export default {
     padding-top: 18px;
 }
 .elementsContainer .value-card {
-    margin-bottom: 0;
+    margin: .4rem .2rem;
+}
+.elementsContainer .value-card.unselected {
+    background: #f9f9f9;
+    color: #a69b9b;
+    border-color: #f4f3f3;
 }
 
 </style>
