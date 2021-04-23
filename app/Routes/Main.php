@@ -92,10 +92,6 @@ class Main extends AbstractRoutes
                     'controller' => 'SettingsStaffController',
                     'method' => 'get',
                 ],
-                '/client' => [
-                    'controller' => 'ClientController',
-                    'method' => 'index',
-                ],
 
                 '/services/custom_fields' => [
                     'method' => 'get',
@@ -184,14 +180,7 @@ class Main extends AbstractRoutes
                     'controller' => 'ClientController',
                     'hint' => 'BookingAdmin'
                 ],
-                '/client' => [
-                    'method' => 'save',
-                    'controller' => 'ClientController'
-                ],
-                '/client/delete' => [
-                    'method' => 'delete',
-                    'controller' => 'ClientController'
-                ],
+
                 '/services/reorder' => [
                     'controller' => 'ServicesController',
                     'method' => 'reorder',
@@ -217,6 +206,11 @@ class Main extends AbstractRoutes
                     'controller' => 'ViewsDataController',
                     'method' => 'getCalendar',
                     'cap' => 'wappo_calendar_man'
+                ],
+                '/client' => [
+                    'controller' => 'ClientController',
+                    'method' => 'index',
+                    'cap' => 'wappo_clients_man'
                 ],
             ],
             'POST' => [
@@ -301,6 +295,17 @@ class Main extends AbstractRoutes
                     'controller' => 'CalendarsController',
                     'method' => 'toggle',
                     'cap' => 'wappo_self_unpublish'
+                ],
+
+                '/client' => [
+                    'method' => 'save',
+                    'controller' => 'ClientController',
+                    'cap' => 'wappo_clients_edit'
+                ],
+                '/client/delete' => [
+                    'method' => 'delete',
+                    'controller' => 'ClientController',
+                    'cap' => 'wappo_clients_del'
                 ],
             ]
         ],

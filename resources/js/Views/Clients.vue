@@ -4,10 +4,8 @@
             <WPListingHelp @perPage="perPage" v-if="per_page" :per_page="per_page"/>
             <div class="d-flex align-items-center">
               <h1 class="my-3 mr-3" @click="reloadListing">Clients</h1>
-              <!-- <button type="button" class="btn btn-outline-primary d-flex align-items-center mr-2" @click.prevent.stop="addClient">
-                <span class="dashicons dashicons-plus-alt text-primary mr-2" ></span> Add Client
-              </button> -->
-              <button type="button" class="btn btn-outline-primary d-flex align-items-center" @click.prevent.stop="addCustomField">
+
+              <button v-if="isCurrentUserAdmin" type="button" class="btn btn-outline-primary d-flex align-items-center" @click.prevent.stop="addCustomField">
                 <span class="dashicons dashicons-id text-primary mr-2" ></span> Add/Edit Custom Fields
               </button>
             </div>
@@ -88,6 +86,9 @@ export default {
       clientListing(){
         return client_listing
       },
+      isCurrentUserAdmin(){
+            return window.apiWappointment.wp_user.roles.indexOf('administrator') !==-1
+        },
     },
     methods: {
         perPage(per_page){
@@ -151,7 +152,14 @@ export default {
         },
 
         deleteClient(clientId){
-          this.request(this.deleteClientRequest, {id: clientId}, null, null, this.deletedClient)
+          this.$WapModal().confirm({
+            title: 'Do you really want to delete this client?',
+          }).then((result) => {
+            if(result === true){
+                this.request(this.deleteClientRequest, {id: clientId}, null, null, this.deletedClient)
+            } 
+          })
+          
         },
 
         deletedClient(response){
