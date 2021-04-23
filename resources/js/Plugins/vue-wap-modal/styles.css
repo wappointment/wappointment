@@ -15,6 +15,7 @@
   .wapmodal .wapmodal-body-wrapper{
     width: 90%;
     margin: 1rem auto;
+    min-height: 200px;
   }
 
   .wapmodal.wapmodal-show{

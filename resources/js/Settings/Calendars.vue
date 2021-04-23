@@ -43,8 +43,8 @@
                             <td>
                                 <CalendarsRegav :canEdit="canEditWeekly" @edit="editAvailability" :calendar="calendar" />
                             </td>
-                            <td v-if="!elements.db_required">
-                                <div class="d-flex" role="button" v-if="calendar.services.length>0">
+                            <td v-if="!elements.db_required" class="cell-services">
+                                <div class="d-flex flex-wrap" role="button" v-if="calendar.services.length>0">
                                     <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid, elements.services) }} </ValueCard>
                                 </div>
                                 <button v-if="canEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
@@ -492,5 +492,17 @@ export default {
 }
 .cal-icon:hover > .dashicons {
     color: var(--primary);
+}
+
+.cell-services{
+    max-width: 200px;
+}
+.cell-services .d-flex{
+    max-height: 44px;
+    overflow: hidden;
+    margin-bottom: .4em;
+}
+.cell-services .d-flex:hover{
+    max-height: none !important;
 }
 </style>
