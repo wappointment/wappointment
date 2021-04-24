@@ -40,7 +40,8 @@ export default {
         loadedData: false,
         viewData: null,
         page: 1,
-        keyDataSource: false
+        keyDataSource: false,
+        dataResponse: null
     }),
     components: {
         draggable, Pagination, WPListingHelp
@@ -55,7 +56,8 @@ export default {
     },
     methods: {
         getDataSource(response){
-            return this.keyDataSource === false ? response.data:response.data[this.keyDataSource]
+            this.dataResponse = response.data
+            return this.keyDataSource === false ? this.dataResponse:this.dataResponse[this.keyDataSource]
         },
         loadedElements(response){
             let dataSource = this.getDataSource(response)
@@ -94,11 +96,6 @@ export default {
         loadElements(params) {
             this.request(this.requestElements, this.setLoadingParams(params), undefined, false, this.loadedElements, this.failedLoadingElements)
         },
-        // loadElements() { // overriding
-        //     if(this.currentView == 'listing') {
-        //         this.request(this.requestElements, {}, undefined, false, this.loadedElements, this.failedLoadingElements)
-        //     }
-        // },
         changePage(page){
             this.page = page
             this.loadElements()

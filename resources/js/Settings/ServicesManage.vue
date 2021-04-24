@@ -107,10 +107,10 @@ export default {
             return ['add','edit','editLegacy'].indexOf(this.currentView) !== -1
         },
         requiresDBUpgrade(){
-            return this.elements.db_required 
+            return this.dataResponse.db_required 
         },
         limitReached(){
-            return this.elements.limit_reached
+            return this.dataResponse.limit_reached
         }
     },
     methods: {
@@ -199,7 +199,7 @@ export default {
             if(this.requiresDBUpgrade){
                 return this.runDbUpdate()
             }
-            if(this.elements.limit_reached !== false){
+            if(this.dataResponse.limit_reached !== false){
                 return this.requiresAddon('services', this.elements.limit_reached)
             }
 
