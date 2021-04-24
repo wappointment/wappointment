@@ -2,6 +2,9 @@
 
 namespace Wappointment\Messages;
 
+/**
+ * Todo Redo improve ...
+ */
 class TagsReplacement
 {
     public $params = [];
@@ -78,6 +81,13 @@ class TagsReplacement
                 'label' => 'Appointment\'s date and time',
                 'getMethod' => 'getStartsDayAndTime'
             ],
+            [
+                'model' => 'staff',
+                'key' => 'name',
+                'label' => 'Staff Name',
+                'getMethod' => 'getStaffName',
+                'modelCall' => 'appointment'
+            ],
 
 
         ];
@@ -141,18 +151,12 @@ class TagsReplacement
             }
             $this->addFindReplace($tag_find, $replace);
         }
-
-        // foreach ($this->hiddenEmailTags() as $tag => $replace) {
-        //     if (!empty($tag['sanitize'])) {
-        //         $replace = sanitize_text_field($replace);
-        //     }
-        //     $this->addFindReplace($tag, $replace);
-        // }
     }
 
     private function getValue($tag)
     {
         $model_key = empty($tag['modelCall']) ? $tag['model'] : $tag['modelCall'];
+
         if (empty($this->params[$model_key])) {
             return '';
         }

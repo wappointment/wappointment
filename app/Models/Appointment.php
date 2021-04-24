@@ -41,6 +41,10 @@ class Appointment extends Model
             return new \Wappointment\WP\Staff((int)$this->staff_id);
         }
     }
+    public function getStaffName()
+    {
+        return $this->getStaff()->staff_data['name'];
+    }
 
     public function getLocationSlug()
     {
