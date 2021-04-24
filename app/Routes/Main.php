@@ -63,7 +63,7 @@ class Main extends AbstractRoutes
                     'controller' => 'ServiceController'
                 ],
                 '/services' => [
-                    'methods' => ['get', 'post', 'delete'],
+                    'methods' => ['post', 'delete'],
                     'controller' => 'ServicesController'
                 ],
                 '/calendars' => [
@@ -97,6 +97,12 @@ class Main extends AbstractRoutes
                     'method' => 'get',
                     'controller' => 'CustomFieldsController'
                 ],
+                '/services' => [
+                    'method' => 'get',
+                    'controller' => 'ServicesController',
+                    'paginated' => true
+                ],
+
             ],
             'POST' => [
                 '/events/record' => [
@@ -263,7 +269,7 @@ class Main extends AbstractRoutes
                 '/calendars/services' => [
                     'controller' => 'CalendarsController',
                     'method' => 'saveServices',
-                    'cap' => 'wappo_self_services'
+                    'cap' => 'wappo_self_services',
                 ],
                 '/wappointment/connect' => [
                     'method' => 'connect',

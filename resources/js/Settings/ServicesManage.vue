@@ -2,7 +2,7 @@
     <div >
         <div v-if="serviceListing">
             <button @click="showService" class="btn btn-outline-primary btn my-2">Add service</button>
-            <div class="table-hover" v-if="elements.services !== undefined">
+            <div class="table-hover" v-if="elements">
                 <table class="table">
                     <thead>
                         <tr>
@@ -12,9 +12,9 @@
                             <th scope="col">Delivery Modalities <a href="javascript:;" v-if="!requiresDBUpgrade" @click="goToDelivery">Manage</a></th>
                         </tr>
                     </thead>
-                    <draggable @change="orderChanged" v-model="elements.services" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.services.length > 0">
+                    <draggable @change="orderChanged" v-model="elements" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.length > 0">
 
-                        <tr  class="row-click" v-for="(service, idx) in elements.services">
+                        <tr  class="row-click" v-for="(service, idx) in elements">
                             <td>
                                 <div @mouseover="">{{ idx + 1 }} </div> 
                             </td>
@@ -24,11 +24,11 @@
                                     <div class="ml-2">{{ service.name }}</div>
                                 </div>
                                 <div class="wlist-actions text-muted">
-                                    <span data-tt="Sort" v-if="elements.services.length > 1" ><span class="dashicons dashicons-move"></span></span>
+                                    <span data-tt="Sort" v-if="elements.length > 1" ><span class="dashicons dashicons-move"></span></span>
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(service.id)"></span></span>
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(service)"></span></span>
-                                    <span data-tt="Delete" v-if="elements.services.length > 1" ><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(service.id)"></span></span>
-                                    <span v-if="elements.services.length > 1" >(id: {{ service.id }})</span>
+                                    <span data-tt="Delete"  ><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(service.id)"></span></span>
+                                    <span >(id: {{ service.id }})</span>
                                 </div>
                             </td>
                             <td>
@@ -53,6 +53,7 @@
                      </tbody>
                 </table>
             </div>
+            <Pagination v-if="isPaginated"  :pagination="pagination" @changePage="changePage"/>
             <WapModal v-if="showShortcode" :show="showShortcode" @hide="hideShortcode" noscroll>
                 <h4 slot="title" class="modal-title"> 
                     <span>Get Booking Widget Shortcode</span>
@@ -90,6 +91,7 @@ export default {
         elementPassed: null,
         servicesOrder: [],
         showShortcode: false,
+        keyDataSource:'services'
     }),
     created(){
         this.mainService = this.$vueService(new WappoServiceService)
@@ -144,11 +146,11 @@ export default {
             }
             return newTypes
         },
-        loadElements() { // overriding
-            if(this.currentView == 'listing') {
-                this.request(this.requestElements, {}, undefined, false, this.loadedElements, this.failedLoadingElements)
-            }
-        },
+        // loadElements() { // overriding
+        //     if(this.currentView == 'listing') {
+        //         this.request(this.requestElements, {}, undefined, false, this.loadedElements, this.failedLoadingElements)
+        //     }
+        // },
         orderChanged(val){
             this.request(this.reorderRequest,{id:val.moved.element.id, 'new_sorting':val.moved.newIndex},undefined,false,this.hasBeenSavedNoReload)
         },

@@ -11,6 +11,11 @@ trait CanLimit
         return $qry->take($this->limited)->get();
     }
 
+    public function scopeFetchPagination($qry)
+    {
+        return $qry->paginate(10);
+    }
+
     public function scopeCanCreate($qry)
     {
         return $qry->count() < $this->limited;

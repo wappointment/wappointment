@@ -39,7 +39,8 @@ export default {
         pagination: null,
         loadedData: false,
         viewData: null,
-        page: 1
+        page: 1,
+        keyDataSource: false
     }),
     components: {
         draggable, Pagination, WPListingHelp
@@ -53,12 +54,16 @@ export default {
         }
     },
     methods: {
+        getDataSource(response){
+            return this.keyDataSource === false ? response.data:response.data[this.keyDataSource]
+        },
         loadedElements(response){
-            if(response.data.paginated !== undefined){ //paginated
+            let dataSource = this.getDataSource(response)
+            if(dataSource.current_page !== undefined){ //paginated
                 this.pagination = {}
-                for (const key in response.data.paginated) {
-                    if (response.data.paginated.hasOwnProperty(key)) {
-                        const element = response.data.paginated[key]
+                for (const key in dataSource) {
+                    if (dataSource.hasOwnProperty(key)) {
+                        const element = dataSource[key]
                         if(key == 'data'){
                             this.elements = element
                         }else{
@@ -68,8 +73,6 @@ export default {
                 }
 
                 this.viewData = response.data.viewData
-
-                this.elements = response.data.paginated.data
             }else{
                 this.elements = response.data // not paginated
             }
@@ -83,11 +86,19 @@ export default {
             let message = fail.response !== undefined && fail.response.data !== undefined && fail.response.data.message !== undefined ? fail.response.data.message:''
             this.$WapModal().notifyError('Error Loading elements('+message+')')
         },
-        loadElements(params) {
-            if(params === undefined) params = {}
+        setLoadingParams(params){
+            params = params === undefined ? {}:params
             params.page = this.page
-            this.request(this.requestElements, params, undefined, false, this.loadedElements, this.failedLoadingElements)
+            return params
         },
+        loadElements(params) {
+            this.request(this.requestElements, this.setLoadingParams(params), undefined, false, this.loadedElements, this.failedLoadingElements)
+        },
+        // loadElements() { // overriding
+        //     if(this.currentView == 'listing') {
+        //         this.request(this.requestElements, {}, undefined, false, this.loadedElements, this.failedLoadingElements)
+        //     }
+        // },
         changePage(page){
             this.page = page
             this.loadElements()

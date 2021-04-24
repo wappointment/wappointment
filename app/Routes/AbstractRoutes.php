@@ -49,7 +49,8 @@ abstract class AbstractRoutes
                                     'wparams' => [
                                         'method' => $controller_method_args['method'],
                                         'hint' => !empty($controller_method_args['hint']) ? $controller_method_args['hint'] : false,
-                                        'cap' => !empty($controller_method_args['cap']) ? $controller_method_args['cap'] : 'administrator'
+                                        'cap' => !empty($controller_method_args['cap']) ? $controller_method_args['cap'] : 'administrator',
+                                        'paginated' => !empty($controller_method_args['paginated']) ? $controller_method_args['paginated'] : false,
                                     ]
                                 ] : $controller_method_args['args'],
                         ]

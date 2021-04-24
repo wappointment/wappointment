@@ -46,7 +46,7 @@ class ClientController extends RestController
                 'per_page' => Settings::getStaff('per_page'),
                 'timezones_list' => DateTime::tz()
             ],
-            'paginated' => $this->getClients()
+            'clients' => $this->getClients()
         ];
     }
 
@@ -54,7 +54,14 @@ class ClientController extends RestController
     {
         $query = ClientModel::orderBy('id', 'DESC');
         if (!CurrentUser::isAdmin()) {
-            $raw = str_replace('?', CurrentUser::calendarId(), Appointment::select('client_id')->where('staff_id', CurrentUser::calendarId())->distinct()->toSql());
+            $raw = str_replace(
+                '?',
+                CurrentUser::calendarId(),
+                Appointment::select('client_id')
+                    ->where('staff_id', CurrentUser::calendarId())
+                    ->distinct()
+                    ->toSql()
+            );
             $query->whereRaw('id IN (' . $raw . ')');
         }
 

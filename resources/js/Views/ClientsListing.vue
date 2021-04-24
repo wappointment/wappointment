@@ -63,6 +63,9 @@ export default {
     created(){
         this.mainService = this.$vueService(new ClientsService)
     },
+    data: () => ({
+        keyDataSource:'clients'
+    }),
     methods: {
 
         getPhone(client){

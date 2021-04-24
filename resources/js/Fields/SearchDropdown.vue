@@ -205,7 +205,7 @@ export default {
     position: absolute;
     background-color: #fff;
     padding: 10px;
-    width: 100%;
+    width: 97%;
     max-height: 150px;
     overflow: auto;
     box-shadow: 0 .01rem .6rem 0 rgba(0,0,0,.1);
