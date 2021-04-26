@@ -271,6 +271,11 @@ class Main extends AbstractRoutes
                     'method' => 'saveServices',
                     'cap' => 'wappo_self_services',
                 ],
+                '/calendars/customfields' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'saveCustomFields',
+                    'cap' => 'wappo_self_weekly',
+                ],
                 '/wappointment/connect' => [
                     'method' => 'connect',
                     'controller' => 'WappointmentController',

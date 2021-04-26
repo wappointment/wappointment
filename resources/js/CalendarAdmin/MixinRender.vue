@@ -117,7 +117,6 @@ export default {
       
       appointmentIsZoom(eventId){
         let appointment = this.findAppointmentById(eventId)
-        console.log('appointment.extendedProps',appointment.extendedProps)
         return (this.viewData.legacy && appointment.extendedProps.location == 'zoom')
         ||
         (!this.viewData.legacy && parseInt(appointment.extendedProps.location.type) === 5)

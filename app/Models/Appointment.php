@@ -41,6 +41,12 @@ class Appointment extends Model
             return new \Wappointment\WP\Staff((int)$this->staff_id);
         }
     }
+
+    public function getStaffCustomField($tagInfo = false)
+    {
+        return !empty($this->getStaff()->staff_data['options']['custom_fields'][$tagInfo['key']]) ? $this->getStaff()->staff_data['options']['custom_fields'][$tagInfo['key']] : '';
+    }
+
     public function getStaffName()
     {
         return $this->getStaff()->staff_data['name'];

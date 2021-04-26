@@ -111,6 +111,16 @@
                   </label>
 
               </div>
+            <div class="mb-2">
+              
+              <label class="form-check-label" for="allow-staffcf">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.allow_staff_cf" id="allow-staffcf" @change="changedVD('allow_staff_cf')">
+                    Allow staff's custom fields
+                  </div>
+              </label>
+
+            </div>
               <div class="mt-3">
                 <a v-if="viewData.front_page_type == 'page'" :href="'post.php?post='+viewData.front_page_id+'&action=edit'" target="_blank">
                   Edit Reschedule/Cancel page

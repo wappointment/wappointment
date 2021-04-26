@@ -44,7 +44,7 @@ class ViewsData
                 'timezones_list' => DateTime::tz(),
                 'calendars' => $calendars,
                 'staffs' => Staff::getWP(),
-                'staffDefault' => Settings::staffDefaults()
+                'staffDefault' => Settings::staffDefaults(),
             ];
         } else {
             $gravatar_img = get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
@@ -54,8 +54,7 @@ class ViewsData
                 'avb' => Settings::getStaff('availaible_booking_days'),
                 'staffs' => Staff::getWP(),
                 'activeStaffId' => (int)Settings::get('activeStaffId'),
-                'activeStaffAvatar' => Settings::getStaff('avatarId') ?
-                    wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
+                'activeStaffAvatar' => Settings::getStaff('avatarId') ? wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
                 'activeStaffGravatar' => $gravatar_img,
                 'activeStaffName' => Staff::getNameLegacy(),
                 'activeStaffAvatarId' => Settings::getStaff('avatarId'),
@@ -65,6 +64,13 @@ class ViewsData
             ];
         }
         return apply_filters('wappointment_back_regav', $data);
+    }
+
+    private function staffCustomField()
+    {
+        return [
+            'custom_fields' => WPHelpers::getOption('staff_custom_fields', [])
+        ];
     }
 
     private function serverinfo()

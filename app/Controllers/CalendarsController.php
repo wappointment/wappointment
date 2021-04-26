@@ -15,6 +15,7 @@ use Wappointment\Managers\Central;
 use Wappointment\Services\CurrentUser;
 use Wappointment\Services\ExternalCalendar;
 use Wappointment\Services\Permissions;
+use Wappointment\WP\Helpers as WPHelpers;
 
 class CalendarsController extends RestController
 {
@@ -31,6 +32,7 @@ class CalendarsController extends RestController
             'staffs' => StaffServices::getWP(CurrentUser::isAdmin() ? false : CurrentUser::id()),
             'staffDefault' => Settings::staffDefaults(),
             'permissions' => (new Permissions)->getCaps(),
+            'allowStaffCf' => Settings::get('allow_staff_cf'),
         ];
         if (!$db_update_required) {
             $data['services'] = Central::get('ServiceModel')::orderBy('sorting')->fetch();
@@ -61,19 +63,69 @@ class CalendarsController extends RestController
         return ['avatar' => $avatar[0], 'id' => (int)$request->input('id')];
     }
 
+    protected function getIdAllowedToSave($idName, Request $request)
+    {
+        return CurrentUser::isAdmin() ? (int)$request->input($idName) : CurrentUser::calendarId();
+    }
+
+    public function testIsAllowedToRunQuery($idName, Request $request)
+    {
+        if (!CurrentUser::isAdmin() && (int)CurrentUser::calendarId() !== (int)$request->input($idName)) {
+            throw new \WappointmentException("You are not allowed to run that request", 1);
+        }
+    }
+
+    public function saveCustomFields(Request $request)
+    {
+        $this->testIsAllowedToRunQuery('id', $request);
+        $calendar = Central::get('CalendarModel')::findOrFail($this->getIdAllowedToSave('id', $request));
+
+        $staff_custom_fields = \WappointmentLv::collect(WPHelpers::getOption('staff_custom_fields', []));
+        if (!empty($request->input('custom_fields'))) {
+            $array_key = $staff_custom_fields->map(function ($e) {
+                return $e['key'];
+            })->toArray();
+
+            foreach ($request->input('custom_fields') as $custom_field) {
+                if (!in_array($custom_field['key'], $array_key)) {
+                    $staff_custom_fields->push($custom_field);
+                }
+            }
+
+            WPHelpers::setOption('staff_custom_fields', $staff_custom_fields->toArray());
+        }
+        $options = $calendar->options;
+        if (empty($options['custom_fields'])) {
+            $options['custom_fields'] = [];
+        }
+        if (!empty($request->input('values'))) {
+            $cf_can_save = $staff_custom_fields->map(function ($e) {
+                return $e['key'];
+            })->toArray();
+            foreach ($request->input('values') as $key => $value) {
+                if (in_array($key, $cf_can_save)) {
+                    $options['custom_fields'][$key] = $value;
+                }
+            }
+        }
+        $calendar->options = $options;
+        $calendar->save();
+
+        return ['message' => 'CustomFields saved'];
+    }
 
     public function saveServices(Request $request)
     {
-        $calendar_id = !CurrentUser::isAdmin() ? (int)$request->input('id') : CurrentUser::calendarId();
-
-        $calendar = Central::get('CalendarModel')::findOrFail($calendar_id);
+        $this->testIsAllowedToRunQuery('id', $request);
+        $calendar = Central::get('CalendarModel')::findOrFail($this->getIdAllowedToSave('id', $request));
         $calendar->services()->sync($request->input('services'));
-        return ['message' => 'Calendar saved'];
+        return ['message' => 'Services assigned'];
     }
 
     public function savePermissions(Request $request)
     {
-        $calendar = Central::get('CalendarModel')::findOrFail((int)$request->input('id'));
+        $this->testIsAllowedToRunQuery('id', $request);
+        $calendar = Central::get('CalendarModel')::findOrFail($this->getIdAllowedToSave('id', $request));
         $permissions = new Permissions;
         $permissions->assign($calendar, $request->input('permissions'));
         return ['message' => 'Permissions saved', $request->all()];
@@ -81,25 +133,20 @@ class CalendarsController extends RestController
 
     public function saveCal(Request $request)
     {
-        $calendar_id = !CurrentUser::isAdmin() ? (int)$request->input('calendar_id') : CurrentUser::calendarId();
-        //$calendar_id = empty($request->input('calendar_id')) ? false : (int)$request->input('calendar_id');
-        $externalCalendar = new ExternalCalendar($calendar_id);
+        $this->testIsAllowedToRunQuery('calendar_id', $request);
+        $externalCalendar = new ExternalCalendar($this->getIdAllowedToSave('calendar_id', $request));
         return $externalCalendar->save($request->input('calurl'));
     }
 
 
     public function getStafflegacy()
     {
-        return [
-            (new StaffLegacy)->fullData()
-        ];
+        return [(new StaffLegacy)->fullData()];
     }
 
     public function save(Request $request)
     {
-        if (!CurrentUser::isAdmin() && (int)CurrentUser::calendarId() !== (int)$request->input('id')) {
-            throw new \WappointmentException("Cannot save anyone else but you", 1);
-        }
+        $this->testIsAllowedToRunQuery('id', $request);
 
         $data = $request->all();
 
@@ -121,23 +168,23 @@ class CalendarsController extends RestController
 
     public function toggle(Request $request)
     {
-        $staff_id = !CurrentUser::isAdmin() ? (int)$request->input('id') : CurrentUser::calendarId();
-
-        $result = Calendars::toggle($staff_id);
+        $this->testIsAllowedToRunQuery('id', $request);
+        $result = Calendars::toggle($this->getIdAllowedToSave('id', $request));
         return ['message' => 'Calendar has been modified', 'result' => $result];
     }
 
     public function delete(Request $request)
     {
-        Calendars::delete((int)$request->input('id'));
+        $this->testIsAllowedToRunQuery('id', $request);
+        Calendars::delete($this->getIdAllowedToSave('id', $request));
         // clean order
         return ['message' => 'Calendar deleted', 'result' => true];
     }
 
     public function refreshCalendars(Request $request)
     {
-        $staff_id = !CurrentUser::isAdmin() ? (int)$request->input('staff_id') : CurrentUser::calendarId();
-        $externalCalendar = new ExternalCalendar($staff_id);
+        $this->testIsAllowedToRunQuery('staff_id', $request);
+        $externalCalendar = new ExternalCalendar($this->getIdAllowedToSave('staff_id', $request));
         return $externalCalendar->refreshCalendars(true);
     }
 
@@ -146,9 +193,9 @@ class CalendarsController extends RestController
         if (is_array($request->input('calendar_id'))) {
             throw new \WappointmentException("Malformed parameter", 1);
         }
-        $staff_id = !CurrentUser::isAdmin() ? (int)$request->input('staff_id') : CurrentUser::calendarId();
+        $this->testIsAllowedToRunQuery('staff_id', $request);
 
-        $externalCalendar = new ExternalCalendar($staff_id);
+        $externalCalendar = new ExternalCalendar($this->getIdAllowedToSave('staff_id', $request));
         return $externalCalendar->disconnect($request->input('calendar_id'));
     }
 }

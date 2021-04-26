@@ -37,6 +37,7 @@
                                     <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
                                     <span data-tt="Set Permissions" v-if="isUserCalendar(calendar)"><span class="dashicons dashicons-unlock" @click.prevent.stop="editPermission(calendar)"></span></span>
+                                    <span data-tt="Set Custom Field" v-if="elements.allowStaffCf" ><span class="dashicons dashicons-editor-code" @click.prevent.stop="setCustomFields(calendar)"></span></span>
                                     <span>(id: {{ calendar.id }})</span>
                                 </div>
                             </td>
@@ -82,7 +83,6 @@
                                 </div>
                             </td>
                         </tr>
-
                     </draggable>
                      <tbody v-else>
                          <tr>
@@ -106,17 +106,12 @@
 
         <WapModal v-if="showModal" :show="showModal" @hide="hidePopup" noscroll>
             <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
-            <CalendarsExternal v-if="calendar_main_id" :calendar_id="calendar_main_id" @savedSync="reloadListing" @errorSaving="errorSavingCalendar" noback />
             <ShortcodeDesigner v-if="showShortcode" :calendar_id="showShortcode" :calendars="elements.calendars" :services="elements.services" :showTip="false" />
-            <CalendarsIntegrations v-if="dotcomOpen" @reload="reloadListing" :calendar="dotcomOpen" />
-            
-            <div v-if="editingServices">
-                <SearchDropdown v-model="editingServices.services" hasMulti ph="Pick services provided by staff" :elements="elements.services" 
-                idKey="id" labelSearchKey="name"></SearchDropdown>
-                <button class="btn btn-primary mt-2" @click="saveServices">Save</button>
-            </div>
-            <PermissionsManager v-if="showPermissions" :permissions="elements.permissions" :user="showPermissions" @save="savePermissions" />
-
+            <StaffPermissionsManager v-if="showPermissions" :permissions="elements.permissions" :user="showPermissions" @save="savePermissions" />
+            <StaffCustomFieldEditor v-if="editCustomField" :staff="editCustomField" @save="saveCustomFields" />
+            <StaffAssignServices v-if="editingServices" @save="saveServices" :user="editingServices" :current="editingServices.services" :services="elements.services" />
+            <StaffCalendarsIntegrations v-if="dotcomOpen" @reload="reloadListing" :calendar="dotcomOpen" />
+            <StaffCalendarsExternal v-if="editingExternal" :user="editingExternal" :calendar_id="editingExternal.id" @savedSync="reloadListing" @errorSaving="errorSavingCalendar" noback />
         </WapModal>
 
     </div>
@@ -124,6 +119,7 @@
 
 <script>
 
+import AbstractListing from '../Views/AbstractListing'
 import ValueCard from '../Fields/ValueCard'
 import ServiceCalendar from '../Services/V1/Calendars'
 import CalendarsAddEdit from './CalendarsAddEdit'
@@ -131,14 +127,16 @@ import WeeklyAvailability from '../RegularAvailability/Edit'
 import Connections from '../RegularAvailability/Connections'
 import CalUrl from '../Modules/CalUrl'
 import SettingsSave from '../Modules/SettingsSave'
-import CalendarsExternal from './CalendarsExternal'
-import CalendarsIntegrations from './CalendarsIntegrations'
-import PermissionsManager from './PermissionsManager'
 import CalendarsRegav from './CalendarsRegav'
 import DurationCell from '../BookingForm/DurationCell'
-import AbstractListing from '../Views/AbstractListing'
-import SearchDropdown from '../Fields/SearchDropdown'
 import ShortcodeDesigner from './ShortcodeDesigner'
+
+import StaffAssignServices from './StaffAssignServices'
+import StaffPermissionsManager from './StaffPermissionsManager'
+import StaffCalendarsIntegrations from './StaffCalendarsIntegrations'
+import StaffCalendarsExternal from './StaffCalendarsExternal'
+import StaffCustomFieldEditor from './StaffCustomFieldEditor'
+
 export default {
     extends: AbstractListing,
     components:{
@@ -147,12 +145,14 @@ export default {
         CalendarsAddEdit,
         WeeklyAvailability,
         Connections,
-        CalendarsExternal,
-        CalendarsIntegrations,
+        
         CalendarsRegav,
-        SearchDropdown,
         ShortcodeDesigner,
-        PermissionsManager
+        StaffCalendarsExternal,
+        StaffCalendarsIntegrations,
+        StaffPermissionsManager,
+        StaffAssignServices,
+        StaffCustomFieldEditor
     },
     mixins:[CalUrl, SettingsSave],
     data: () => ({
@@ -164,9 +164,10 @@ export default {
         modalTitle: '',
         showShortcode: false,
         dotcomOpen: false,
-        calendar_main_id: false,
+        editingExternal: false,
         editingServices: false,
-        showPermissions: false
+        showPermissions: false,
+        editCustomField: false
     }),
     created(){
         this.mainService = this.$vueService(new ServiceCalendar)
@@ -226,12 +227,16 @@ export default {
             if(this.calendarLimitReached(calendar)){
                 return
             }
-            this.calendar_main_id = calendar.id
+            this.editingExternal = calendar
             this.openPopup('Connect Personal calendar')
         },
         goToDotCom(calendar){
             this.dotcomOpen = calendar
             this.openPopup('Connect to Zoom, Google Calendar etc...')
+        },
+        setCustomFields(calendar){
+            this.editCustomField = calendar
+            this.openPopup('Set custom Fields')
         },
         
         editServices(calendar){
@@ -253,14 +258,21 @@ export default {
             this.modalTitle = 'popTitle'
             this.showModal = false
             this.showShortcode = false
-            this.calendar_main_id = false
+            this.editingExternal = false
             this.dotcomOpen = false
             this.editingServices = false
             this.showPermissions = false
+            this.editCustomField = false
+        },
+        saveCustomFields(customFields, fieldsValues){
+            this.request(this.saveCustomFieldsRequest, {id: this.editCustomField.id, custom_fields:customFields, values:fieldsValues}, undefined, false, this.closeRefresh)
+        },
+         async saveCustomFieldsRequest(params){
+           return await this.mainService.call('saveCustomFields',params)
         },
 
-        saveServices(){
-            this.request(this.saveServicesRequest, this.editingServices, undefined, false, this.closeRefresh)
+        saveServices(changedServices){
+            this.request(this.saveServicesRequest, {id: this.editingServices.id, services:changedServices}, undefined, false, this.closeRefresh)
         },
 
         async saveServicesRequest(params){

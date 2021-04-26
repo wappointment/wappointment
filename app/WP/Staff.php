@@ -81,8 +81,14 @@ class Staff
             'calendar_urls' => $this->getCalendarUrls(),
             'calendar_logs' => $this->getCalendarLogs(),
             'permissions' => $this->permissions,
+            'custom_fields' => $this->getCustomFields(),
             'roles' => $this->getRoles()
         ];
+    }
+
+    protected function getCustomFields()
+    {
+        return empty($this->staff_data['options']['custom_fields']) ? [] : $this->staff_data['options']['custom_fields'];
     }
 
     protected function getRoles()
