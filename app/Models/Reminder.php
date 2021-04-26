@@ -76,10 +76,10 @@ class Reminder extends Model
     {
         $labels = [
             self::APPOINTMENT_STARTS => $this->getReminderLabel(),
-            self::APPOINTMENT_CONFIRMED => 'Sent after appointment has been confirmed.',
-            self::APPOINTMENT_RESCHEDULED => 'Sent after appointment has been rescheduled.',
-            self::APPOINTMENT_CANCELLED => 'Sent after appointment has been cancelled.  ',
-            self::APPOINTMENT_PENDING => 'Sent after appointment has been booked when admin approval is required.',
+            self::APPOINTMENT_CONFIRMED => __('Sent after appointment has been confirmed.', 'wappointment'),
+            self::APPOINTMENT_RESCHEDULED => __('Sent after appointment has been rescheduled.', 'wappointment'),
+            self::APPOINTMENT_CANCELLED => __('Sent after appointment has been cancelled.', 'wappointment'),
+            self::APPOINTMENT_PENDING => __('Sent after appointment has been booked when admin approval is required.', 'wappointment'),
         ];
         $labels = apply_filters('wappointment_reminders_labels', $labels);
         return empty($labels[$this->event]) ? 'undefined' : $labels[$this->event];
@@ -87,11 +87,18 @@ class Reminder extends Model
 
     public function getReminderLabel()
     {
+        /* translators: %1$s is replaced with a number of %2$s which are either, minutes, hours or days */
         return empty($this->options['when_number']) ? '' : sprintf(__('Sent before appointment takes place.(sent %1$s %2$s before)', 'wappointment'), $this->options['when_number'], $this->convertUnit($this->options['when_unit']));
     }
+
     public function convertUnit($unit)
     {
-        return $unit == 1 ? 'minute(s)' : ($unit == 2 ? 'hours' : 'days');
+        return $unit == 1 ? 'minute(s)' : $this->isHoursOrDays($unit);
+    }
+
+    public function isHoursOrDays($unit)
+    {
+        return $unit == 2 ? 'hours' : 'days';
     }
 
     public static function getEvents()

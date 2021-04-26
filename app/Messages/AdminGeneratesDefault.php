@@ -9,26 +9,36 @@ trait AdminGeneratesDefault
     public function getEmailContent($client, $appointment)
     {
         $tz = $this->getStaffTz($appointment);
-
+        $date_start = $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format'));
+        $time_start = $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'));
+        $time_end = $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format'));
         $dataEmail = [
             '<u>' . $this->subject . '</u>',
-            'Date: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format')),
-            'Time: ' . $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'))
-                . ' - ' . $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format')),
-            'Service: ' . $appointment->getServiceName(),
-            'Location: ' . $appointment->getLocation(),
-            "Client's name: " . sanitize_text_field($client->name),
-            "Client's email: " . sanitize_text_field($client->email),
+            /* translators: %s is replaced with the date the appointment startt at */
+            sprintf(__('Date: %s', 'wappointment'), $date_start),
+            /* translators: %1$s is replaced with the start time, %2$s is replaced with the end time  */
+            sprintf(__('Time: %1$s - %2$s', 'wappointment'), $time_start, $time_end),
+            /* translators: %s is replaced with the service name */
+            sprintf(__('Service: %s', 'wappointment'), $appointment->getServiceName()),
+            /* translators: %s is replaced with the location name */
+            sprintf(__('Location: %s', 'wappointment'), $appointment->getLocation()),
+            /* translators: %s is replaced with the client's name */
+            sprintf(__("Client's name: %s", 'wappointment'), sanitize_text_field($client->name)),
+            /* translators: %s is replaced with the client's email */
+            sprintf(__("Client's email: %s", 'wappointment'), sanitize_text_field($client->email)),
         ];
         if (!empty($client->getPhone())) {
-            $dataEmail[] = "Client's phone: " . sanitize_text_field($client->getPhone());
+            /* translators: %s is replaced with the client's phone */
+            $dataEmail[] =  sprintf(__("Client's phone: %s", 'wappointment'), sanitize_text_field($client->getPhone()));
         }
         if (!empty($client->getSkype())) {
-            $dataEmail[] = "Client's skype: " . sanitize_text_field($client->getSkype());
+            /* translators: %s is replaced with the client's skype username */
+            $dataEmail[] =  sprintf(__("Client's skype: %s", 'wappointment'), sanitize_text_field($client->getSkype()));
         }
 
         if ($appointment->isZoom()) {
-            $dataEmail[] = 'Video meeting: <a href="' . $appointment->getLinkViewEvent() . '" >Begin the meeting</a>';
+            /* translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page */
+            $dataEmail[] =  sprintf(__("Video meeting: %s", 'wappointment'), '<a href="' . $appointment->getLinkViewEvent() . '" >' . __('Begin the meeting', 'wappointment') . '</a>');
         }
 
         return apply_filters('wappointment_admin_email_fields', $dataEmail, $client, $appointment);

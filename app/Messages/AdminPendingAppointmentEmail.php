@@ -13,15 +13,14 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
 
     public function loadContent()
     {
-        $this->subject = 'Pending appointment';
+        $this->subject = __('Pending appointment', 'wappointment');
         $this->addLogo();
         $this->addBr();
 
-
         $this->addLines([
             'Hi ' . $this->params['appointment']->getStaff()->getFirstName() . ', ',
-            'Great news! You just got booked! ',
-            'Please confirm the appointment.'
+            __('Great news! You just got booked!', 'wappointment'),
+            __('Please confirm the appointment.', 'wappointment')
         ]);
 
         $this->addRoundedSquare($this->getEmailContent($this->params['client'], $this->params['appointment']));
@@ -51,7 +50,7 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
             $this->addLines(sanitize_text_field($buttonConfirm));
         }
         $this->addLines([
-            'Have a great day!',
+            __('Have a great day!', 'wappointment')
         ]);
     }
 }

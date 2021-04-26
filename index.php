@@ -16,7 +16,7 @@ if (!defined('ABSPATH')) {
  * Tested up to: 5.7
  *
  * Text Domain: wappointment
- *
+ * Domain Path: /languages
  * @package Wappointment
  * @author Wappointment
  * @since 1.0.0
