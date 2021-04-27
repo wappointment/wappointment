@@ -1,0 +1,193 @@
+# Copyright (C) 2021 Wappointment
+# This file is distributed under the same license as the Wappointment plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Wappointment 2.1.5\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wappointment\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-04-27T12:48:17+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.4.0\n"
+"X-Domain: wappointment\n"
+
+#. Plugin Name of the plugin
+#. Author of the plugin
+msgid "Wappointment"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+msgid "https://wappointment.com"
+msgstr ""
+
+#. Description of the plugin
+msgid "Clients quickly book a meeting with you on Zoom , GoogleMeet , the phone or at your office"
+msgstr ""
+
+#. translators: %s is replaced with the date the appointment startt at
+#: app/Messages/AdminGeneratesDefault.php:18
+#: bin/wappointment/app/Messages/AdminGeneratesDefault.php:17
+msgid "Date: %s"
+msgstr ""
+
+#. translators: %1$s is replaced with the start time, %2$s is replaced with the end time
+#: app/Messages/AdminGeneratesDefault.php:20
+#: bin/wappointment/app/Messages/AdminGeneratesDefault.php:19
+msgid "Time: %1$s - %2$s"
+msgstr ""
+
+#. translators: %s is replaced with the service name
+#: app/Messages/AdminGeneratesDefault.php:22
+#: bin/wappointment/app/Messages/AdminGeneratesDefault.php:21
+msgid "Service: %s"
+msgstr ""
+
+#. translators: %s is replaced with the location name
+#: app/Messages/AdminGeneratesDefault.php:24
+#: bin/wappointment/app/Messages/AdminGeneratesDefault.php:23
+msgid "Location: %s"
+msgstr ""
+
+#. translators: %s is replaced with the client's name
+#: app/Messages/AdminGeneratesDefault.php:26
+#: bin/wappointment/app/Messages/AdminGeneratesDefault.php:25
+msgid "Client's name: %s"
+msgstr ""
+
+#. translators: %s is replaced with the client's email
+#: app/Messages/AdminGeneratesDefault.php:28
+#: bin/wappointment/app/Messages/AdminGeneratesDefault.php:27
+msgid "Client's email: %s"
+msgstr ""
+
+#. translators: %s is replaced with the client's phone
+#: app/Messages/AdminGeneratesDefault.php:32
+#: bin/wappointment/app/Messages/AdminGeneratesDefault.php:31
+msgid "Client's phone: %s"
+msgstr ""
+
+#. translators: %s is replaced with the client's skype username
+#: app/Messages/AdminGeneratesDefault.php:36
+#: bin/wappointment/app/Messages/AdminGeneratesDefault.php:35
+msgid "Client's skype: %s"
+msgstr ""
+
+#. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
+#: app/Messages/AdminGeneratesDefault.php:41
+#: bin/wappointment/app/Messages/AdminGeneratesDefault.php:39
+msgid "Video meeting: %s"
+msgstr ""
+
+#. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
+#: app/Messages/AdminGeneratesDefault.php:41
+#: bin/wappointment/app/Messages/AdminGeneratesDefault.php:39
+msgid "Begin the meeting"
+msgstr ""
+
+#: app/Messages/AdminNewAppointmentEmail.php:11
+#: bin/wappointment/app/Messages/AdminNewAppointmentEmail.php:10
+msgid "New appointment"
+msgstr ""
+
+#. translators: %s is replaced with the first name of the staff being booked
+#: app/Messages/AdminNewAppointmentEmail.php:17
+#: bin/wappointment/app/Messages/AdminNewAppointmentEmail.php:15
+msgid "Hi %s"
+msgstr ""
+
+#: app/Messages/AdminNewAppointmentEmail.php:18
+#: app/Messages/AdminPendingAppointmentEmail.php:22
+#: bin/wappointment/app/Messages/AdminNewAppointmentEmail.php:16
+#: bin/wappointment/app/Messages/AdminPendingAppointmentEmail.php:17
+msgid "Great news! You just got booked!"
+msgstr ""
+
+#: app/Messages/AdminNewAppointmentEmail.php:25
+#: app/Messages/AdminPendingAppointmentEmail.php:53
+#: bin/wappointment/app/Messages/AdminNewAppointmentEmail.php:19
+#: bin/wappointment/app/Messages/AdminPendingAppointmentEmail.php:31
+msgid "Have a great day!"
+msgstr ""
+
+#: app/Messages/AdminNewAppointmentEmail.php:27
+#: bin/wappointment/app/Messages/AdminNewAppointmentEmail.php:19
+msgid "Ps: An .ics file with the appointment's details is attached"
+msgstr ""
+
+#: app/Messages/AdminPendingAppointmentEmail.php:16
+#: bin/wappointment/app/Messages/AdminPendingAppointmentEmail.php:14
+msgid "Pending appointment"
+msgstr ""
+
+#: app/Messages/AdminPendingAppointmentEmail.php:23
+#: bin/wappointment/app/Messages/AdminPendingAppointmentEmail.php:17
+msgid "Please confirm the appointment."
+msgstr ""
+
+#: app/Models/Appointment.php:224
+#: app/Models/Appointment.php:235
+#: bin/wappointment/app/Models/Appointment.php:180
+#: bin/wappointment/app/Models/Appointment.php:189
+msgid "min"
+msgstr ""
+
+#: app/Models/Reminder.php:79
+#: bin/wappointment/app/Models/Reminder.php:55
+msgid "Sent after appointment has been confirmed."
+msgstr ""
+
+#: app/Models/Reminder.php:80
+#: bin/wappointment/app/Models/Reminder.php:55
+msgid "Sent after appointment has been rescheduled."
+msgstr ""
+
+#: app/Models/Reminder.php:81
+#: bin/wappointment/app/Models/Reminder.php:55
+msgid "Sent after appointment has been cancelled."
+msgstr ""
+
+#: app/Models/Reminder.php:82
+#: bin/wappointment/app/Models/Reminder.php:55
+msgid "Sent after appointment has been booked when admin approval is required."
+msgstr ""
+
+#. translators: %1$s is replaced with a number of %2$s which are either, minutes, hours or days
+#: app/Models/Reminder.php:91
+#: bin/wappointment/app/Models/Reminder.php:62
+msgid "Sent before appointment takes place.(sent %1$s %2$s before)"
+msgstr ""
+
+#. translators: %s - PHP Version number.
+#: app/required.php:233
+#: bin/wappointment/app/required.php:233
+msgid "Minimum PHP version required %s"
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:13
+#: bin/wappointment/app/WP/AppointmentHistory.php:12
+msgid "No past appointments found ..."
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:21
+#: bin/wappointment/app/WP/AppointmentHistory.php:19
+msgid "Date and time"
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:26
+#: bin/wappointment/app/WP/AppointmentHistory.php:23
+msgid "Service"
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:31
+#: bin/wappointment/app/WP/AppointmentHistory.php:27
+msgid "Duration"
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:36
+#: bin/wappointment/app/WP/AppointmentHistory.php:31
+msgid "Staff"
+msgstr ""

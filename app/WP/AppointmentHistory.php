@@ -8,9 +8,14 @@ class AppointmentHistory
 {
     public static function render($atts)
     {
-        $client = Client::where('email', wp_get_current_user()->user_email)->first();
+        $email =  wp_get_current_user()->user_email;
+        $empty = __('No past appointments found ...', 'wappointment');
+        if (empty($email)) {
+            return $empty;
+        }
+        $client = Client::where('email', $email)->first();
         if (empty($client)) {
-            return __('No past appointments found ...', 'wappointment');
+            return $empty;
         } else {
             return static::renderAppointmentListing($client, $atts);
         }

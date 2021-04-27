@@ -491,7 +491,7 @@ export default {
         },
 
         getComponentType(value, type){
-            if(['select_service','select_location','select_duration'].indexOf(type) === -1 &&
+            if(['select_service','select_location','select_duration', 'select_package'].indexOf(type) === -1 &&
                 ['check_','slide_','select'].indexOf(type.substr(0,6)) !== -1 
             ){
                 return type.substr(0,6) == 'check_' ? 'FormFieldCheckbox':(type.substr(0,7) == 'select_' ? 'FormFieldSelect':'FormFieldSlider')
