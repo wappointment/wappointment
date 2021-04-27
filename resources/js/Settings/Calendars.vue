@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="calendarListing">
-            <button v-if="isCurrentUserAdmin" @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
+            <button v-if="isUserAdministrator" @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
             <div class="table-hover" v-if="loadedData">
                 <table class="table">
                     <thead>
@@ -24,35 +24,35 @@
                                 <div class="d-flex align-items-center">
                                     <div class="calendar-pic" :class="[calendar.status == 1 ? 'active':'inactive']">
                                         <img :src="calendar.avatar" class="wrounded" width="40" :alt="calendar.name" />
-                                        <span v-if="canUnpublish" role="button" class="status" :data-tt="[calendar.status == 1 ? 'Active':'Inactive']" @click="toggleStatus(calendar,idx)"></span>
+                                        <span v-if="canCalUnpublish" role="button" class="status" :data-tt="[calendar.status == 1 ? 'Active':'Inactive']" @click="toggleStatus(calendar,idx)"></span>
                                     </div>
                                     <div class="ml-2">
                                         <div>{{ calendar.name }}</div>
                                         <small>{{ calendar.timezone }}</small>
                                     </div>
                                 </div>
-                                <div class="wlist-actions text-muted" v-if="isCurrentUserAdmin">
+                                <div class="wlist-actions text-muted" v-if="isUserAdministrator">
                                     <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
                                     <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
-                                    <span data-tt="Set Permissions" v-if="isUserCalendar(calendar)"><span class="dashicons dashicons-unlock" @click.prevent.stop="editPermission(calendar)"></span></span>
+                                    <span data-tt="Set Permissions" v-if="isStaffCalendar(calendar)"><span class="dashicons dashicons-unlock" @click.prevent.stop="editPermission(calendar)"></span></span>
                                     <span data-tt="Set Custom Field" v-if="elements.allowStaffCf" ><span class="dashicons dashicons-editor-code" @click.prevent.stop="setCustomFields(calendar)"></span></span>
                                     <span>(id: {{ calendar.id }})</span>
                                 </div>
                             </td>
                             <td>
-                                <CalendarsRegav :canEdit="canEditWeekly" @edit="editAvailability" :calendar="calendar" />
+                                <CalendarsRegav :canEdit="canCalEditWeekly" @edit="editAvailability" :calendar="calendar" />
                             </td>
                             <td v-if="!elements.db_required" class="cell-services">
                                 <div class="d-flex flex-wrap" role="button" v-if="calendar.services.length>0">
                                     <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid, elements.services) }} </ValueCard>
                                 </div>
-                                <button v-if="canEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
+                                <button v-if="canCalEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
                             </td>
                             <td>
                                <Connections :connections="calendar.connected.services === undefined ? []:calendar.connected.services"/>
-                               <div v-if="canConnectAccount">
+                               <div v-if="canCalConnectAccount">
                                    <a v-if="calendar.connected" href="javascript:;" class="small" @click="goToDotCom(calendar)">edit</a>
                                     <button v-else class="btn btn-xs btn-outline-primary tt-lg mt-2" @click="goToDotCom(calendar)">Connect Account</button>
                                </div>
@@ -71,14 +71,14 @@
                                                     Last changed: <span class="data-item">{{ lastChanged(calendar_id, calendar) }}</span> | 
                                                     Process duration: <span class="data-item">{{ calDuration(calendar_id, calendar) }}</span></p>
                                                 </div>
-                                                <button v-if="canDelIcs" class="align-self-start btn btn-xs btn-link hidden" data-tt="Disconnect Calendar" @click="disconnectCalendar(calendar_id, calendar.id)"><span class="dashicons dashicons-dismiss"></span></button>
+                                                <button v-if="canCalDelIcs" class="align-self-start btn btn-xs btn-link hidden" data-tt="Disconnect Calendar" @click="disconnectCalendar(calendar_id, calendar.id)"><span class="dashicons dashicons-dismiss"></span></button>
                                             </div>  
                                         </div>
                                     </div>
-                                    <a class="small d-flex align-items-center" href="javascript:;" v-if="canAddIcs" @click="refreshManually(calendar.id)"><span class="dashicons dashicons-update"></span> Refresh all</a>
+                                    <a class="small d-flex align-items-center" href="javascript:;" v-if="canCalAddIcs" @click="refreshManually(calendar.id)"><span class="dashicons dashicons-update"></span> Refresh all</a>
                                 </div>
                                 <div>
-                                    <button class="btn btn-xs btn-outline-primary tt-lg" v-if="canAddIcs && !calendarLimitReached(calendar)"
+                                    <button class="btn btn-xs btn-outline-primary tt-lg" v-if="canCalAddIcs && !calendarLimitReached(calendar)"
                                     @click="goToSync(calendar)" data-tt="Make sure clients can't book you when you're busy">Connect external calendar</button>
                                 </div>
                             </td>
@@ -137,6 +137,8 @@ import StaffCalendarsIntegrations from './StaffCalendarsIntegrations'
 import StaffCalendarsExternal from './StaffCalendarsExternal'
 import StaffCustomFieldEditor from './StaffCustomFieldEditor'
 
+import hasPermissions from '../Mixins/hasPermissions'
+
 export default {
     extends: AbstractListing,
     components:{
@@ -154,7 +156,7 @@ export default {
         StaffAssignServices,
         StaffCustomFieldEditor
     },
-    mixins:[CalUrl, SettingsSave],
+    mixins:[CalUrl, SettingsSave, hasPermissions],
     data: () => ({
         currentView: 'listing',
         viewName:'empty',
@@ -171,7 +173,6 @@ export default {
     }),
     created(){
         this.mainService = this.$vueService(new ServiceCalendar)
-        
     },
     computed: {
         calendarListing(){
@@ -183,40 +184,33 @@ export default {
         calendarRegav(){
             return this.currentView == 'regav'
         },
-        isCurrentUserAdmin(){
-            return window.apiWappointment.wp_user.roles.indexOf('administrator') !==-1
+        onlyOneCalendarEditable(){
+            return this.elements.calendars.length === 1
         },
-
-        hasOnlyMyOwnCalendar(){
-            return !this.isCurrentUserAdmin && this.elements.calendars.length ===1
+        canCalEditServices(){
+            return this.canCalendarEdit('wappo_self_services')
         },
-        canEditServices(){
-            return this.canDoSomething('wappo_self_services')
+        canCalConnectAccount(){
+            return this.canCalendarEdit('wappo_self_connect_account')
         },
-        canConnectAccount(){
-            return this.canDoSomething('wappo_self_connect_account')
+        canCalAddIcs(){
+            return this.canCalendarEdit('wappo_self_add_ics')
         },
-        canAddIcs(){
-            return this.canDoSomething('wappo_self_add_ics')
+        canCalDelIcs(){
+            return this.canCalendarEdit('wappo_self_del_ics')
         },
-        canDelIcs(){
-            return this.canDoSomething('wappo_self_del_ics')
+        canCalEditWeekly(){
+            return this.canCalendarEdit('wappo_self_weekly')
         },
-        canEditWeekly(){
-            return this.canDoSomething('wappo_self_weekly')
-        },
-        canUnpublish(){
-            return this.canDoSomething('wappo_self_unpublish')
+        canCalUnpublish(){
+            return this.canCalendarEdit('wappo_self_unpublish')
         }
     },
     methods: {
-        canDoSomething(something){
-            return this.isCurrentUserAdmin || (this.hasOnlyMyOwnCalendar && this.hasPermission(something))
+        canCalendarEdit(something){
+            return this.isUserAdministrator || (this.onlyOneCalendarEditable && this.hasPermission(something))
         },
-        hasPermission(permission){
-            return this.elements.calendars[0].permissions.indexOf(permission) !== -1
-        },
-        isUserCalendar(calendar){
+        isStaffCalendar(calendar){
             return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1
         },
         getShortCode(calendar_id){
@@ -264,8 +258,8 @@ export default {
             this.showPermissions = false
             this.editCustomField = false
         },
-        saveCustomFields(customFields, fieldsValues){
-            this.request(this.saveCustomFieldsRequest, {id: this.editCustomField.id, custom_fields:customFields, values:fieldsValues}, undefined, false, this.closeRefresh)
+        saveCustomFields(customFields, fieldsValues, deletedFields){
+            this.request(this.saveCustomFieldsRequest, {id: this.editCustomField.id, custom_fields:customFields, values:fieldsValues, deleted:deletedFields}, undefined, false, this.closeRefresh)
         },
          async saveCustomFieldsRequest(params){
            return await this.mainService.call('saveCustomFields',params)

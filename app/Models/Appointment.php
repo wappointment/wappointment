@@ -204,7 +204,6 @@ class Appointment extends Model
         return self::TYPE_ZOOM;
     }
 
-
     public function getFullDurationInSec()
     {
         return !empty($this->end_at) ? $this->end_at->timestamp - $this->start_at->timestamp : 0;
@@ -222,7 +221,7 @@ class Appointment extends Model
 
     public function getDuration()
     {
-        return ($this->getDurationInSec() / 60) . 'min';
+        return ($this->getDurationInSec() / 60) . __('min', 'wappointment');
     }
 
     public function getBufferInSec()
@@ -233,7 +232,7 @@ class Appointment extends Model
     public function getBuffer()
     {
         $buffer = $this->getBufferInSec();
-        return $buffer > 0 ? '(+' . ($buffer / 60) . 'min)' : '';
+        return $buffer > 0 ? '(+' . ($buffer / 60) .  __('min', 'wappointment') . ')' : '';
     }
 
     public function getStartsDayAndTime($timezone)

@@ -26,10 +26,10 @@
                                 </div>
                             </div>
                             <div class="wlist-actions text-muted">
-                                <span data-tt="Edit">
+                                <span data-tt="Edit" v-if="canEditClient">
                                     <span class="dashicons dashicons-edit" @click.prevent.stop="$emit('editClient', client)"></span>
                                 </span>
-                                <span data-tt="Delete">
+                                <span data-tt="Delete" v-if="canDeleteClient">
                                     <span class="dashicons dashicons-trash" @click.prevent.stop="$emit('deleteClient', client.id)"></span>
                                 </span>
                             </div>
@@ -56,10 +56,11 @@
 
 import ClientsService from '../Services/V1/Client'
 import AbstractListing from './AbstractListing'
-
+import hasPermissions from '../Mixins/hasPermissions'
 export default {
     name: 'All',
     extends: AbstractListing,
+    mixins:[hasPermissions],
     created(){
         this.mainService = this.$vueService(new ClientsService)
     },
@@ -67,7 +68,7 @@ export default {
         keyDataSource:'clients'
     }),
     methods: {
-
+        
         getPhone(client){
           return client.options.phone !== undefined ? client.options.phone:'---'
         },

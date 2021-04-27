@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <h1 class="px-2">Settings</h1>
     
-    <ul class="nav nav-tabs row px-4" id="myTab" role="tablist"  v-if="isCurrentUserAdmin">
+    <ul class="nav nav-tabs row px-4" id="myTab" role="tablist" v-if="isUserAdministrator">
         <li v-for="(tab, key) in tabs" class="nav-item">
             <span class="nav-link" :class="{'active' : isActive(key)}" @click="changeTab(key)">{{ tab.label }}</span>
         </li>
@@ -41,9 +41,11 @@ import settingsEmailNSms from './EmailNSms'
 import SettingsAppearance from './Appearance'
 import settingsAdvanced from './Advanced'
 import settingsAddons from './Addons'
+import hasPermissions from '../Mixins/hasPermissions'
 
 export default {
   extends: abstractView,
+  mixins: [hasPermissions],
     data: () => ({
         service: null,
         tabs:{
@@ -74,17 +76,12 @@ export default {
       settingsAddons
     },
 
-
     created() {
          if(window.wappointmentAdmin.addons !== undefined && this.addonsWithSettings().length > 0) {
             this.tabs['addonstab'] = { label: 'Addons'}
         }
-        
     },
     computed: {
-        isCurrentUserAdmin(){
-            return window.apiWappointment.wp_user.roles.indexOf('administrator') !==-1
-        },
         convertedName(){
             return ['modalities', 'modalities_add', 'modalities_edit'].indexOf(this.$route.name) !== -1  ? 'services':this.$route.name
         },

@@ -113,10 +113,10 @@
               </div>
             <div class="mb-2">
               
-              <label class="form-check-label" for="allow-staffcf">
+              <label class="form-check-label" for="allow-staffcf" data-tt="Create fields describing your staff to be used in emails and SMS">
                   <div class="d-flex align-items-center">
                     <input type="checkbox" v-model="viewData.allow_staff_cf" id="allow-staffcf" @change="changedVD('allow_staff_cf')">
-                    Allow staff's custom fields
+                    Allow staff's advanced description
                   </div>
               </label>
 

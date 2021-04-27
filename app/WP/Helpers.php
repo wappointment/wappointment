@@ -74,10 +74,11 @@ class Helpers
     public static function wpUserData()
     {
         $wp_user = self::currentUser();
+
         return [
             'email' => $wp_user->user_email,
             'name' => $wp_user->display_name,
-            'roles' => $wp_user->roles
+            'permissions' => array_keys($wp_user->allcaps)
         ];
     }
 

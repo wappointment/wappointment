@@ -80,20 +80,8 @@ class CalendarsController extends RestController
         $this->testIsAllowedToRunQuery('id', $request);
         $calendar = Central::get('CalendarModel')::findOrFail($this->getIdAllowedToSave('id', $request));
 
-        $staff_custom_fields = \WappointmentLv::collect(WPHelpers::getOption('staff_custom_fields', []));
-        if (!empty($request->input('custom_fields'))) {
-            $array_key = $staff_custom_fields->map(function ($e) {
-                return $e['key'];
-            })->toArray();
+        $staff_custom_fields = $this->refreshCustomFields($request);
 
-            foreach ($request->input('custom_fields') as $custom_field) {
-                if (!in_array($custom_field['key'], $array_key)) {
-                    $staff_custom_fields->push($custom_field);
-                }
-            }
-
-            WPHelpers::setOption('staff_custom_fields', $staff_custom_fields->toArray());
-        }
         $options = $calendar->options;
         if (empty($options['custom_fields'])) {
             $options['custom_fields'] = [];
@@ -112,6 +100,43 @@ class CalendarsController extends RestController
         $calendar->save();
 
         return ['message' => 'CustomFields saved'];
+    }
+
+    /**
+     * Update the custom fields list
+     *
+     * @param Request $request
+     * @return object
+     */
+    protected function refreshCustomFields(Request $request)
+    {
+        $staff_custom_fields = \WappointmentLv::collect(WPHelpers::getOption('staff_custom_fields', []));
+        if (!empty($request->input('custom_fields'))) {
+            $current_cf_keys = $staff_custom_fields->map(function ($e) {
+                return $e['key'];
+            })->toArray();
+
+            foreach ($request->input('custom_fields') as $custom_field) {
+                if (!in_array($custom_field['key'], $current_cf_keys)) {
+                    $staff_custom_fields->push($custom_field);
+                } else {
+                    $keyFound = $staff_custom_fields->search(function ($itm, $key) use ($custom_field) {
+                        return $itm['key'] == $custom_field['key'];
+                    });
+                    $staff_custom_fields->transform(function ($item, $key) use ($keyFound, $custom_field) {
+                        return $key == $keyFound ? $custom_field : $item;
+                    });
+                }
+            }
+
+            $deletedFields = $request->input('deleted');
+            $new_staff_custom_fields = $staff_custom_fields->reject(function ($value) use ($deletedFields) {
+                return in_array($value['key'], $deletedFields);
+            });
+
+            WPHelpers::setOption('staff_custom_fields', array_values($new_staff_custom_fields->toArray()));
+        }
+        return $new_staff_custom_fields;
     }
 
     public function saveServices(Request $request)

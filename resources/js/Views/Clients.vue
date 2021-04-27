@@ -5,7 +5,7 @@
             <div class="d-flex align-items-center">
               <h1 class="my-3 mr-3" @click="reloadListing">Clients</h1>
 
-              <button v-if="isCurrentUserAdmin" type="button" class="btn btn-outline-primary d-flex align-items-center" @click.prevent.stop="addCustomField">
+              <button v-if="isUserAdministrator" type="button" class="btn btn-outline-primary d-flex align-items-center" @click.prevent.stop="addCustomField">
                 <span class="dashicons dashicons-id text-primary mr-2" ></span> Add/Edit Custom Fields
               </button>
             </div>
@@ -29,12 +29,12 @@ import WPListingHelp from '../WP/ScreenListing'
 import ClientsService from '../Services/V1/Client'
 import Request from '../Modules/RequestMaker'
 import RequiresAddon from '../Mixins/RequiresAddon'
-
+import hasPermissions from '../Mixins/hasPermissions'
 let client_listing = window.wappointmentExtends.filter('clientListing', {MainClients})
 
 export default {
     components: Object.assign({WPListingHelp}, client_listing),
-    mixins: [Request, RequiresAddon],
+    mixins: [Request, RequiresAddon, hasPermissions],
     data: () => ({
         clientDataToSave: null,
         per_page: false,
@@ -86,9 +86,6 @@ export default {
       clientListing(){
         return client_listing
       },
-      isCurrentUserAdmin(){
-            return window.apiWappointment.wp_user.roles.indexOf('administrator') !==-1
-        },
     },
     methods: {
         perPage(per_page){

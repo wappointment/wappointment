@@ -8,6 +8,12 @@ class Shortcodes
     public function __construct()
     {
         add_shortcode('wap_widget', ['\Wappointment\WP\Shortcodes', 'wapWidgetHandler']);
+        add_shortcode('wap_history', ['\Wappointment\WP\Shortcodes', 'wapAppointmentHistory']);
+    }
+
+    public static function wapAppointmentHistory($atts)
+    {
+        return AppointmentHistory::render($atts);
     }
 
     public static function wapWidgetHandler($atts)
@@ -20,7 +26,6 @@ class Shortcodes
                 $atts
             );
         }
-
 
         return Widget::baseHtml($fetched_attributes);
     }
