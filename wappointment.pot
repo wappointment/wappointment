@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-04-27T12:48:17+00:00\n"
+"POT-Creation-Date: 2021-04-28T12:24:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wappointment\n"
@@ -167,27 +167,103 @@ msgstr ""
 msgid "Minimum PHP version required %s"
 msgstr ""
 
-#: app/WP/AppointmentHistory.php:13
+#: app/Services/Permissions.php:11
+msgid "Can manage own calendar"
+msgstr ""
+
+#: app/Services/Permissions.php:13
+msgid "Can add Busy blocks"
+msgstr ""
+
+#: app/Services/Permissions.php:14
+msgid "Can delete Busy blocks"
+msgstr ""
+
+#: app/Services/Permissions.php:15
+msgid "Can add Free blocks"
+msgstr ""
+
+#: app/Services/Permissions.php:16
+msgid "Can delete Free blocks"
+msgstr ""
+
+#: app/Services/Permissions.php:17
+msgid "Can reschedule appointment"
+msgstr ""
+
+#: app/Services/Permissions.php:18
+msgid "Can cancel appointment"
+msgstr ""
+
+#: app/Services/Permissions.php:19
+msgid "Can book on behalf of a client"
+msgstr ""
+
+#: app/Services/Permissions.php:20
+msgid "Can confirm pending appointment"
+msgstr ""
+
+#: app/Services/Permissions.php:24
+msgid "Can manage own settings"
+msgstr ""
+
+#: app/Services/Permissions.php:26
+msgid "Can modify weekly availability"
+msgstr ""
+
+#: app/Services/Permissions.php:27
+msgid "Can modify services provided"
+msgstr ""
+
+#: app/Services/Permissions.php:28
+msgid "Can connect Wappointment.com account"
+msgstr ""
+
+#: app/Services/Permissions.php:29
+msgid "Can add ICS calendar"
+msgstr ""
+
+#: app/Services/Permissions.php:30
+msgid "Can delete ICS calendar"
+msgstr ""
+
+#: app/Services/Permissions.php:31
+msgid "Can publish/unpublish self"
+msgstr ""
+
+#: app/Services/Permissions.php:35
+msgid "Can manage own clients"
+msgstr ""
+
+#: app/Services/Permissions.php:37
+msgid "Can delete clients"
+msgstr ""
+
+#: app/Services/Permissions.php:38
+msgid "Can edit clients"
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:12
 #: bin/wappointment/app/WP/AppointmentHistory.php:12
 msgid "No past appointments found ..."
 msgstr ""
 
-#: app/WP/AppointmentHistory.php:21
+#: app/WP/AppointmentHistory.php:26
 #: bin/wappointment/app/WP/AppointmentHistory.php:19
 msgid "Date and time"
 msgstr ""
 
-#: app/WP/AppointmentHistory.php:26
+#: app/WP/AppointmentHistory.php:31
 #: bin/wappointment/app/WP/AppointmentHistory.php:23
 msgid "Service"
 msgstr ""
 
-#: app/WP/AppointmentHistory.php:31
+#: app/WP/AppointmentHistory.php:36
 #: bin/wappointment/app/WP/AppointmentHistory.php:27
 msgid "Duration"
 msgstr ""
 
-#: app/WP/AppointmentHistory.php:36
+#: app/WP/AppointmentHistory.php:41
 #: bin/wappointment/app/WP/AppointmentHistory.php:31
 msgid "Staff"
 msgstr ""

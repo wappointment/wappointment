@@ -6,39 +6,49 @@ use Wappointment\Models\Calendar;
 
 class Permissions
 {
-    private $capabilities = [
-        'wappo_calendar_man' => [
-            'name' => 'Can manage own calendar',
-            'sub_caps' => [
-                'wappo_calendar_add_busy' => 'Can add Busy blocks',
-                'wappo_calendar_del_busy' => 'Can delete Busy blocks',
-                'wappo_calendar_add_free' => 'Can add Free blocks',
-                'wappo_calendar_del_free' => 'Can delete Free blocks',
-                'wappo_calendar_reschedule' => 'Can reschedule appointment',
-                'wappo_calendar_cancel' => 'Can cancel appointment',
-                'wappo_calendar_book' => 'Can book on behalf of a client',
-                'wappo_calendar_confirm' => 'Can confirm pending appointment',
-            ]
-        ],
-        'wappo_self_man' => [
-            'name' => 'Can manage own settings',
-            'sub_caps' => [
-                'wappo_self_weekly' => 'Can modify weekly availability',
-                'wappo_self_services' => 'Can modify services provided',
-                'wappo_self_connect_account' => 'Can connect Wappointment.com account',
-                'wappo_self_add_ics' => 'Can add ICS calendar',
-                'wappo_self_del_ics' => 'Can delete ICS calendar',
-                'wappo_self_unpublish' => 'Can publish/unpublish self',
-            ]
-        ],
-        'wappo_clients_man' => [
-            'name' => 'Can manage own clients',
-            'sub_caps' => [
-                'wappo_clients_del' => 'Can delete clients',
-                'wappo_clients_edit' => 'Can edit clients',
-            ]
-        ],
-    ];
+    private $capabilities = [];
+
+    public function __construct()
+    {
+        $this->setCapabilities();
+    }
+
+    protected function setCapabilities()
+    {
+        $this->capabilities = [
+            'wappo_calendar_man' => [
+                'name' => __('Can manage own calendar', 'wappointment'),
+                'sub_caps' => [
+                    'wappo_calendar_add_busy' => __('Can add Busy blocks', 'wappointment'),
+                    'wappo_calendar_del_busy' => __('Can delete Busy blocks', 'wappointment'),
+                    'wappo_calendar_add_free' => __('Can add Free blocks', 'wappointment'),
+                    'wappo_calendar_del_free' => __('Can delete Free blocks', 'wappointment'),
+                    'wappo_calendar_reschedule' => __('Can reschedule appointment', 'wappointment'),
+                    'wappo_calendar_cancel' => __('Can cancel appointment', 'wappointment'),
+                    'wappo_calendar_book' => __('Can book on behalf of a client', 'wappointment'),
+                    'wappo_calendar_confirm' => __('Can confirm pending appointment', 'wappointment'),
+                ]
+            ],
+            'wappo_self_man' => [
+                'name' => __('Can manage own settings', 'wappointment'),
+                'sub_caps' => [
+                    'wappo_self_weekly' => __('Can modify weekly availability', 'wappointment'),
+                    'wappo_self_services' => __('Can modify services provided', 'wappointment'),
+                    'wappo_self_connect_account' => __('Can connect Wappointment.com account', 'wappointment'),
+                    'wappo_self_add_ics' => __('Can add ICS calendar', 'wappointment'),
+                    'wappo_self_del_ics' => __('Can delete ICS calendar', 'wappointment'),
+                    'wappo_self_unpublish' => __('Can publish/unpublish self', 'wappointment'),
+                ]
+            ],
+            'wappo_clients_man' => [
+                'name' => __('Can manage own clients', 'wappointment'),
+                'sub_caps' => [
+                    'wappo_clients_del' => __('Can delete clients', 'wappointment'),
+                    'wappo_clients_edit' => __('Can edit clients', 'wappointment'),
+                ]
+            ],
+        ];
+    }
 
     public function getCaps($flat = false)
     {
