@@ -59,7 +59,7 @@ class Staff
     {
         $permissions = new \Wappointment\Services\Permissions;
 
-        $this->permissions = $permissions->getUserCaps($this->wp_user->get_role_caps());
+        $this->permissions = !empty($this->wp_user) ? $permissions->getUserCaps($this->wp_user->get_role_caps()) : [];
     }
 
     public function fullData()
@@ -93,7 +93,7 @@ class Staff
 
     protected function getRoles()
     {
-        return array_values($this->wp_user->roles);
+        return !empty($this->wp_user) ? array_values($this->wp_user->roles) : [];
     }
 
     public function getServicesId($services)
