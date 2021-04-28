@@ -272,7 +272,8 @@ class EventsController extends RestController
                 'recur' => $event->recur,
                 'source' => empty($event->source) ? '' : $event->source,
                 'onlyDelete' => true,
-                'rendering' => 'background'
+                'rendering' => 'background',
+                'options' =>  $event->options
             ];
 
             if ($event->type == Mstatus::TYPE_FREE) {
@@ -289,11 +290,9 @@ class EventsController extends RestController
                     if ($event->recur > 0) {
                         $addedEvent['className'] = 'calendar recurrent';
                         $addedEvent['type'] = 'calendar';
-                        $addedEvent['options'] = $event->options;
                     } else {
                         $addedEvent['className'] = 'calendar';
                         $addedEvent['type'] = 'calendar';
-                        $addedEvent['options'] = $event->options;
                     }
                 }
             }
