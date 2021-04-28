@@ -413,11 +413,9 @@ export default {
         },
         getDayIntervals(daynumber){
             let start = null
-            let today = false
             let until = null
             let min_start = this.getTodayStart()
             if(this.isCurrentMonth && daynumber === this.todayDay) {
-                today = true
                 
                 start = this.getTodayStart()
     
@@ -442,7 +440,6 @@ export default {
                     start = min_start.clone()
                 }
             }
-            
             
             let dayIntervals = this.currentIntervals.get(start, until)
             return this.prepareDayInterval(dayIntervals, start,until)

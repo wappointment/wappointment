@@ -17,6 +17,7 @@ class FoundationEmail
   {
     $this->colors = $colors;
   }
+
   public function wrapFooter($content)
   {
     return $this->wrapRow('<small>' . $content . '</small>', 'row collapsed footer', 'footer');
@@ -31,9 +32,9 @@ class FoundationEmail
         esc_url($logo['src'])
         . '" ></a> </center>', 'row collapsed', 'row', '', '', false, '');
     } else {
-      return $this->wrapRow('<center><a class="text-center" href="' . Helpers::wappointmentLink('email', 'daily_email') . '">' .
+      return $this->wrapRow('<center><a class="text-center" href="' . apply_filters('wappointment_admin_email_head_link', Helpers::wappointmentLink('email', 'daily_email')) . '">' .
         '<img class="float-center" alt="wappointment.com" src="' .
-        Helpers::pluginUrl('/dist/images/wappointment_80.png')
+        apply_filters('wappointment_admin_email_head_image', Helpers::pluginUrl('/dist/images/wappointment_80.png'))
         . '" ></a> </center>', 'row collapsed wappointment', 'row body-border radius', '', '', false);
     }
   }
@@ -139,7 +140,8 @@ class FoundationEmail
 
   public function getColor($colorName)
   {
-    return empty($this->colors[$colorName]) ? $this->colors['primary'] : $this->colors[$colorName];
+    $colorValue = empty($this->colors[$colorName]) ? $this->colors['primary'] : $this->colors[$colorName];
+    return apply_filters('wappointment_admin_email_color', $colorValue, $colorName);
   }
 
   public function separator($color)
