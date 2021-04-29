@@ -44,20 +44,32 @@ abstract class AbstractRoutes
                             'methods' => $http_method,
                             'callback' => [new $controller_name(), 'tryExecute'],
                             'permission_callback' => [$this, 'canExecute' . ucfirst($access)],
-                            'args' => (empty($controller_method_args['args'])) ?
-                                [
-                                    'wparams' => [
-                                        'method' => $controller_method_args['method'],
-                                        'hint' => !empty($controller_method_args['hint']) ? $controller_method_args['hint'] : false,
-                                        'cap' => !empty($controller_method_args['cap']) ? $controller_method_args['cap'] : 'administrator',
-                                        'paginated' => !empty($controller_method_args['paginated']) ? $controller_method_args['paginated'] : false,
-                                    ]
-                                ] : $controller_method_args['args'],
+                            'args' => $this->getArgs($controller_method_args),
                         ]
                     );
                 }
             }
         }
+    }
+
+    public function getArgs($controller_method_args)
+    {
+        $args = (empty($controller_method_args['args'])) ?
+            [
+                'wparams' => [
+                    'method' => $controller_method_args['method'],
+                ]
+            ] : $controller_method_args['args'];
+
+        if (!empty($args['wparams'])) {
+            foreach (['hint', 'cap', 'paginated'] as $param_key) {
+                if (!empty($controller_method_args[$param_key])) {
+                    $args['wparams'][$param_key] = $controller_method_args[$param_key];
+                }
+            }
+        }
+
+        return $args;
     }
 
     private function prepareRoutes()
