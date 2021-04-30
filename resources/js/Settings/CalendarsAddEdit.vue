@@ -4,8 +4,9 @@
             <div>
                 <p class="h6 text-muted">
                     <span class="bullet-wap">1</span> 
-                    <span class="bullet-title"> Select account </span>
+                    <span class="bullet-title">Account Selection</span>
                 </p>
+                <small class="text-muted mr-6" >Select an account or enter an email to create a new one</small>
                 <div  class="d-flex align-items-top mb-2">
                     <StaffPicture v-if="calendarSelected.name!=''" :src="calendarSelected.avatar" :gravatar="calendarSelected.gravatar" @changed="changedPicture" />
                     <div v-if="calendarSelected.name!=''" class="mr-2 changename">
@@ -13,12 +14,12 @@
                     </div>
                     <div class="account-selector">
                         <StaffSelector :staffs="staffs" :activeStaffId="calendarSelected.wp_uid" @updateStaff="updateStaff"></StaffSelector>
-                        <div>
-                            <small class="text-muted" > You must select a WordPress account; you can <a href="users.php" target="_blank">add a new one here</a> (a contributor role is required at least)</small>
-                        </div>
                     </div>
                 </div>
                
+                
+            </div>
+            <div v-if="staffSelected">
                 <p class="h6 text-muted">
                     <span class="bullet-wap">2</span> 
                     <span class="bullet-title"> Set a timezone</span>
@@ -31,16 +32,19 @@
                 <hr>
             </div>
             
-            <p  class="h6 text-muted">
-                <span class="bullet-wap">3</span> 
-                <span class="bullet-title"> Set standard weekly schedule</span>
-            </p>
+            <div v-if="staffSelected">
+                <p  class="h6 text-muted">
+                    <span class="bullet-wap">3</span> 
+                    <span class="bullet-title"> Set standard weekly schedule</span>
+                </p>
 
-            <div class="cal-edit-margin">
-                <RegularAvailability :initValue="getRegav" :viewData="calendarSelected" :services="services"
-                @updatedDays="updatedRA"
-                @changedABD="changedABD" />
+                <div class="cal-edit-margin">
+                    <RegularAvailability :initValue="getRegav" :viewData="calendarSelected" :services="services"
+                    @updatedDays="updatedRA"
+                    @changedABD="changedABD" />
+                </div>
             </div>
+            
         </div>
         <div v-if="requireSave" class="save-buttons">
             <button class="btn btn-primary" @click="saveCalendar">Save</button>
@@ -80,10 +84,15 @@ export default {
         return {
             calendarSelected: false,
             requireSave: false,
+            hasWpuid:false
         } 
     },
     created(){
         this.calendarSelected = Object.assign({}, this.calendar)
+        if(this.calendarSelected.wp_uid!== undefined && this.calendarSelected.wp_uid > 0){
+            this.hasWpuid = this.calendarSelected.wp_uid
+        }
+        
         this.mainService = this.$vueService(new ServiceCalendar)
         if(this.calendarSelected.timezone == ''){
             this.calendarSelected.timezone = momenttz.tz.guess()
@@ -94,6 +103,7 @@ export default {
           handler: function(newValue, old){
             if(old !== false){
                 this.requireSave = true
+                this.hasWpuid = newValue.wp_uid
             }
           },
           deep: true
@@ -108,6 +118,10 @@ export default {
           }
           return regav
       },
+
+      staffSelected(){
+          return this.calendarSelected !== false && this.hasWpuid > 0
+      }
       
   },
   methods: {
@@ -163,25 +177,13 @@ export default {
         this.calendarSelected.name = value
     },
     updateStaff(selectedStaff){
-        if(this.calendarSelected.wp_uid ==selectedStaff){
+        if(this.calendarSelected.wp_uid ==selectedStaff.ID){
             return
         }
-        this.calendarSelected.wp_uid = selectedStaff
-        this.calendarSelected.gravatar = this.selectGravatar(selectedStaff)
-        this.calendarSelected.name = this.selectDefaultName(selectedStaff)
+        this.calendarSelected.wp_uid = selectedStaff.ID
+        this.calendarSelected.gravatar = selectedStaff.gravatar
+        this.calendarSelected.name = selectedStaff.display_name !== '' ? selectedStaff.display_name:'Jane Doe'
     },
-
-    findUserById(staffId){
-        return this.staffs.find(e => e.ID == staffId)
-    },
-    selectGravatar(staffId){
-        let found = this.findUserById(staffId)
-        return found !== undefined ? found.gravatar:''
-    },
-    selectDefaultName(staffId){
-        let found = this.findUserById(staffId)
-        return found !== undefined ? found.display_name:''
-    }
 
   }  
 }
@@ -219,9 +221,12 @@ export default {
     border-radius: .5rem .5rem 0 0;
 }
 .account-selector{
-    max-width: 380px;
+    width: 380px;
 }
 .cal-edit-margin{
     margin-left: 48px;
+}
+.mr-6{
+    margin-right: 3rem !important;
 }
 </style>

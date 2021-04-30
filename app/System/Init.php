@@ -49,6 +49,7 @@ class Init
         add_action('wp_print_scripts', [$this, 'jsVariables']);
         new \Wappointment\Routes\Main();
         (new \Wappointment\WP\CustomPage())->boot();
+        //dd(\wp_get_current_user()->get_role_caps());
     }
 
     public function initInstalled()

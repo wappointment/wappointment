@@ -18,6 +18,8 @@ trait AdminGeneratesDefault
             sprintf(__('Date: %s', 'wappointment'), $date_start),
             /* translators: %1$s is replaced with the start time, %2$s is replaced with the end time  */
             sprintf(__('Time: %1$s - %2$s', 'wappointment'), $time_start, $time_end),
+            /* translators: %s is replaced with the staff name */
+            sprintf(__('Staff: %s', 'wappointment'), $appointment->getStaffName()),
             /* translators: %s is replaced with the service name */
             sprintf(__('Service: %s', 'wappointment'), $appointment->getServiceName()),
             /* translators: %s is replaced with the location name */

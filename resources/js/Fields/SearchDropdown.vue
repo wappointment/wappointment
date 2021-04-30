@@ -112,7 +112,14 @@ export default {
             this.focusSearchField()
         }
     },
-
+    watch: {
+        search: function (newsearch) {
+            if(newsearch != ''){
+                this.$emit('searching', newsearch, this.filteredElements.length)
+            }
+        }
+            
+    },
   computed: {
     isActive(){
         return this.active

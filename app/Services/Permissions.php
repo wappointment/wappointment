@@ -7,12 +7,86 @@ use Wappointment\Models\Calendar;
 class Permissions
 {
     private $capabilities = [];
+    private $roles = [];
 
     public function __construct()
     {
         $this->setCapabilities();
+        $this->setRoles();
     }
 
+    public function registerRole($roleKey)
+    {
+        if (!empty($this->roles[$roleKey])) {
+            $wp_roles = $this->loadWPRoles();
+            add_role($roleKey, $this->roles[$roleKey]['name'], $this->roles[$roleKey]['caps']);
+
+            foreach ($this->getCaps(true) as $cap) {
+                $wp_roles->add_cap($roleKey, $cap);
+            }
+        }
+    }
+
+    public function getCaps($flat = false)
+    {
+        return $flat ? $this->flattenCaps() : $this->capabilities;
+    }
+
+    public function getUserCaps(array $arrayUserCaps)
+    {
+        $caps = [];
+        foreach ($arrayUserCaps as $key => $value) {
+            if ($this->isWappoPerm($key)) {
+                $caps[] = $key;
+            }
+        }
+        return $caps;
+    }
+
+    public function assign(Calendar $calendar, array $permissionsSaving)
+    {
+        if (!$calendar->isStaff()) {
+            throw new \WappointmentException("Cannot assign permission to calendar", 1);
+        }
+        $wp_user = get_userdata($calendar->wp_uid);
+        foreach ($this->getCaps() as $cap_key => $cap_object) {
+            $this->toggleCap($wp_user, $cap_key, $permissionsSaving, $cap_object);
+        }
+    }
+
+    protected function loadWPRoles()
+    {
+        global $wp_roles;
+
+        if (!class_exists('WP_Roles')) {
+            throw new \WappointmentException("Cannot initialize WP roles", 1);
+        }
+
+        if (!isset($wp_roles)) {
+            $wp_roles = new \WP_Roles;
+        }
+        return $wp_roles;
+    }
+
+    protected function setRoles()
+    {
+        $this->roles = [
+            'wappointment_staff' => [
+                'name' => __('Wappointment Staff', 'wappointment'),
+                'caps' => [
+                    'read' => true, // allows access to admin screens
+                    'edit_posts' => true // allows access to admin screens when woocommerce is active
+                ]
+            ],
+            'wappointment_manager' => [
+                'name' => __('Wappointment manager', 'wappointment'),
+                'caps' => [
+                    'read' => true, // allows access to admin screens
+                    'edit_posts' => true // allows access to admin screens when woocommerce is active
+                ]
+            ]
+        ];
+    }
     protected function setCapabilities()
     {
         $this->capabilities = [
@@ -50,22 +124,6 @@ class Permissions
         ];
     }
 
-    public function getCaps($flat = false)
-    {
-        return $flat ? $this->flattenCaps() : $this->capabilities;
-    }
-
-    public function getUserCaps(array $arrayUserCaps)
-    {
-        $caps = [];
-        foreach ($arrayUserCaps as $key => $value) {
-            if ($this->isWappoPerm($key)) {
-                $caps[] = $key;
-            }
-        }
-        return $caps;
-    }
-
     protected function flattenCaps()
     {
         $flat_caps = [];
@@ -83,17 +141,6 @@ class Permissions
     protected function isWappoPerm($perm)
     {
         return strpos($perm, 'wappo_') !== false;
-    }
-
-    public function assign(Calendar $calendar, array $permissionsSaving)
-    {
-        if (!$calendar->isStaff()) {
-            throw new \WappointmentException("Cannot assign permission to calendar", 1);
-        }
-        $wp_user = get_userdata($calendar->wp_uid);
-        foreach ($this->getCaps() as $cap_key => $cap_object) {
-            $this->toggleCap($wp_user, $cap_key, $permissionsSaving, $cap_object);
-        }
     }
 
     private function toggleCap($wp_user, $cap_key, $permissionsSaving, $cap_object = false)
