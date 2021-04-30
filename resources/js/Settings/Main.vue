@@ -109,8 +109,11 @@ export default {
         },
         
         changeTab(selectedTab){
-            //this.activeTab = selectedTab
-            this.$router.push({name: selectedTab})
+            if(this.$route.name == selectedTab){
+                //refresh content
+            }else{
+                this.$router.push({name: selectedTab})
+            }
         },       
     }  
 }

@@ -60,6 +60,7 @@ export default {
             return this.keyDataSource === false ? this.dataResponse:this.dataResponse[this.keyDataSource]
         },
         loadedElements(response){
+            
             let dataSource = this.getDataSource(response)
             if(dataSource.current_page !== undefined){ //paginated
                 this.pagination = {}
@@ -74,9 +75,12 @@ export default {
                     }
                 }
 
-                this.viewData = response.data.viewData
+                if(response.data.viewData !== undefined){
+                    this.viewData = response.data.viewData
+                }
+                
             }else{
-                this.elements = response.data // not paginated
+                this.elements = dataSource // not paginated
             }
             this.loadedData = true
             if(this.afterLoaded !== undefined && typeof this.afterLoaded == 'function'){

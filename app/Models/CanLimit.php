@@ -13,7 +13,7 @@ trait CanLimit
 
     public function scopeFetchPagination($qry)
     {
-        return $qry->paginate(10);
+        return $this->limited > time() - 10 ?  $qry->paginate(10) : $this->scopeFetch($qry);
     }
 
     public function scopeCanCreate($qry)

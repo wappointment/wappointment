@@ -107,10 +107,10 @@ export default {
             return ['add','edit','editLegacy'].indexOf(this.currentView) !== -1
         },
         requiresDBUpgrade(){
-            return this.dataResponse.db_required 
+            return this.dataResponse!== null && this.dataResponse.db_required 
         },
         limitReached(){
-            return this.dataResponse.limit_reached
+            return this.dataResponse!== null && this.dataResponse.limit_reached
         }
     },
     methods: {
@@ -146,11 +146,7 @@ export default {
             }
             return newTypes
         },
-        // loadElements() { // overriding
-        //     if(this.currentView == 'listing') {
-        //         this.request(this.requestElements, {}, undefined, false, this.loadedElements, this.failedLoadingElements)
-        //     }
-        // },
+
         orderChanged(val){
             this.request(this.reorderRequest,{id:val.moved.element.id, 'new_sorting':val.moved.newIndex},undefined,false,this.hasBeenSavedNoReload)
         },
