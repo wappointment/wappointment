@@ -209,7 +209,7 @@ export default {
                         '<span class="dashicons dashicons-cloud-upload"></span>'+
                         '</button>'
         }
-        innerhtml += this.getZoomGoogleMeetButton(el)
+        innerhtml += isAppointmentEvent ? this.getZoomGoogleMeetButton(el):''
         
         innerhtml += this.getConfirmOrViewButton(el, el.attr('data-rendering'))
         
