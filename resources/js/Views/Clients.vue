@@ -10,7 +10,7 @@
               </button>
             </div>
             <div v-if="Object.keys(clientListing).length > 1" class="d-flex align-items-center">
-              <span v-for="(listingComp,key) in clientListing" :class="{'btn btn-link':view!=key}" @click="view=key">{{ listingComp.name }}</span>
+              <span v-for="(listingComp,key) in clientListing" :class="{'btn btn-link':view!=key}" @click="view=key">{{ listingComp.label }}</span>
             </div>
             
             <component ref="listing" :is="view" @editClient="editClient" @deleteClient="deleteClient" @loaded="loadedResult"/>

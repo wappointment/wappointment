@@ -58,7 +58,7 @@ import ClientsService from '../Services/V1/Client'
 import AbstractListing from './AbstractListing'
 import hasPermissions from '../Mixins/hasPermissions'
 export default {
-    name: 'All',
+    label: 'All',
     extends: AbstractListing,
     mixins:[hasPermissions],
     created(){

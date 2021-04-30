@@ -6,7 +6,6 @@ class Translations
 {
     public function parse()
     {
-        __('With appointment', 'wappointment');
-        __('Starts at', 'wappointment');
+        __('Booking starts at', 'wappointment');
     }
 }
