@@ -6,12 +6,13 @@ use Wappointment\ClassConnect\Request;
 use Wappointment\Controllers\RestController;
 use Wappointment\Services\VersionDB;
 use Wappointment\WP\StaffLegacy;
-use Wappointment\WP\Staff;
 use Wappointment\Services\Staff as StaffServices;
 use Wappointment\Services\Settings;
 use Wappointment\Services\DateTime;
 use Wappointment\Services\Calendars;
 use Wappointment\Managers\Central;
+use Wappointment\Repositories\CalendarsBack;
+use Wappointment\Repositories\Services;
 use Wappointment\Services\CurrentUser;
 use Wappointment\Services\ExternalCalendar;
 use Wappointment\Services\Permissions;
@@ -34,8 +35,9 @@ class CalendarsController extends RestController
             'permissions' => (new Permissions)->getCaps(),
             'allowStaffCf' => Settings::get('allow_staff_cf'),
         ];
+
         if (!$db_update_required) {
-            $data['services'] = Central::get('ServiceModel')::orderBy('sorting')->fetch();
+            $data['services'] = (new Services)->get();
             $data['limit_reached'] = Central::get('CalendarModel')::canCreate() ? false : 'To add more calendars, get the "Calendars & Staff" addon';
         }
         return $data;
@@ -43,19 +45,8 @@ class CalendarsController extends RestController
 
     public function getCalendarsStaff()
     {
-        $calendarsQry = Central::get('CalendarModel')::orderBy('sorting')->with(['services']);
-        if (!CurrentUser::isAdmin()) {
-            $calendarsQry->where('id', CurrentUser::calendarId());
-        }
-
-        $calendars = $calendarsQry->fetch();
-        $staffs = [];
-        foreach ($calendars->toArray() as $calendar) {
-            $staffs[] = (new Staff($calendar))->fullData();
-        }
-        return $staffs;
+        return (new CalendarsBack)->get();
     }
-
 
     public function getAvatar(Request $request)
     {
@@ -99,7 +90,14 @@ class CalendarsController extends RestController
         $calendar->options = $options;
         $calendar->save();
 
+        $this->refreshRepository();
+
         return ['message' => 'CustomFields saved'];
+    }
+
+    protected function refreshRepository()
+    {
+        (new CalendarsBack)->refresh();
     }
 
     /**
@@ -144,6 +142,7 @@ class CalendarsController extends RestController
         $this->testIsAllowedToRunQuery('id', $request);
         $calendar = Central::get('CalendarModel')::findOrFail($this->getIdAllowedToSave('id', $request));
         $calendar->services()->sync($request->input('services'));
+        $this->refreshRepository();
         return ['message' => 'Services assigned'];
     }
 
@@ -153,6 +152,7 @@ class CalendarsController extends RestController
         $calendar = Central::get('CalendarModel')::findOrFail($this->getIdAllowedToSave('id', $request));
         $permissions = new Permissions;
         $permissions->assign($calendar, $request->input('permissions'));
+        $this->refreshRepository();
         return ['message' => 'Permissions saved', $request->all()];
     }
 
@@ -160,7 +160,9 @@ class CalendarsController extends RestController
     {
         $this->testIsAllowedToRunQuery('calendar_id', $request);
         $externalCalendar = new ExternalCalendar($this->getIdAllowedToSave('calendar_id', $request));
-        return $externalCalendar->save($request->input('calurl'));
+        $result = $externalCalendar->save($request->input('calurl'));
+        $this->refreshRepository();
+        return $result;
     }
 
 
@@ -180,6 +182,7 @@ class CalendarsController extends RestController
         }
 
         $result = Calendars::save($data);
+        $this->refreshRepository();
         return ['message' => 'Calendar has been saved', 'result' => $result];
     }
 
@@ -188,6 +191,7 @@ class CalendarsController extends RestController
         $data = $request->only(['id', 'new_sorting']);
 
         $result = Calendars::reorder($data['id'], $data['new_sorting']);
+        $this->refreshRepository();
         return ['message' => 'Calendar has been saved', 'result' => $result];
     }
 
@@ -195,6 +199,7 @@ class CalendarsController extends RestController
     {
         $this->testIsAllowedToRunQuery('id', $request);
         $result = Calendars::toggle($this->getIdAllowedToSave('id', $request));
+        $this->refreshRepository();
         return ['message' => 'Calendar has been modified', 'result' => $result];
     }
 
@@ -202,6 +207,7 @@ class CalendarsController extends RestController
     {
         $this->testIsAllowedToRunQuery('id', $request);
         Calendars::delete($this->getIdAllowedToSave('id', $request));
+        $this->refreshRepository();
         // clean order
         return ['message' => 'Calendar deleted', 'result' => true];
     }
@@ -210,7 +216,9 @@ class CalendarsController extends RestController
     {
         $this->testIsAllowedToRunQuery('staff_id', $request);
         $externalCalendar = new ExternalCalendar($this->getIdAllowedToSave('staff_id', $request));
-        return $externalCalendar->refreshCalendars(true);
+        $result = $externalCalendar->refreshCalendars(true);
+        $this->refreshRepository();
+        return $result;
     }
 
     public function disconnectCal(Request $request)
@@ -221,6 +229,8 @@ class CalendarsController extends RestController
         $this->testIsAllowedToRunQuery('staff_id', $request);
 
         $externalCalendar = new ExternalCalendar($this->getIdAllowedToSave('staff_id', $request));
-        return $externalCalendar->disconnect($request->input('calendar_id'));
+        $result = $externalCalendar->disconnect($request->input('calendar_id'));
+        $this->refreshRepository();
+        return $result;
     }
 }

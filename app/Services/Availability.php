@@ -7,10 +7,13 @@ use Wappointment\Models\Status as MStatus;
 use Wappointment\Models\Appointment;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Managers\Central;
+use Wappointment\Repositories\MustRefreshAvailability;
 use Wappointment\WP\StaffLegacy;
 
 class Availability
 {
+    use MustRefreshAvailability;
+
     public $daysOfTheWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
     public $availabilities = [];
     private $staff_id = false;
@@ -152,7 +155,9 @@ class Availability
 
         $this->reOrder();
 
-        return $save ? ($this->isLegacy ? $this->saveLegacy() : $this->save()) : $this->availabilities;
+        $result = $save ? ($this->isLegacy ? $this->saveLegacy() : $this->save()) : $this->availabilities;
+        $this->refreshAvailability();
+        return $result;
     }
 
     private function saveLegacy()

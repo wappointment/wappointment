@@ -16,9 +16,8 @@
                         <StaffSelector :staffs="staffs" :activeStaffId="calendarSelected.wp_uid" @updateStaff="updateStaff"></StaffSelector>
                     </div>
                 </div>
-               
-                
             </div>
+            
             <div v-if="staffSelected">
                 <p class="h6 text-muted">
                     <span class="bullet-wap">2</span> 

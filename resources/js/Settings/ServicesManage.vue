@@ -163,7 +163,7 @@ export default {
             }
             
             if(result.data.message!==undefined) {
-                this.$WapModal().notifySuccess(result.data.message)
+                this.$WapModal().notifySuccess(result.data.message, 15)
             }
         },
         deleteService(service_id){
