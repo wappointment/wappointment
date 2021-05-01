@@ -176,12 +176,19 @@ class CalendarsController extends RestController
         $this->testIsAllowedToRunQuery('id', $request);
 
         $data = $request->all();
-
+        $new = false;
         if (empty($data['id'])) {
             $data['sorting'] = Calendars::total();
+            $new = true;
         }
 
         $result = Calendars::save($data);
+
+        if ($new) {
+            Calendars::reorder($result->id, 0);
+        }
+
+
         $this->refreshRepository();
         return ['message' => 'Calendar has been saved', 'result' => $result];
     }

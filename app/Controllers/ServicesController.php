@@ -38,10 +38,16 @@ class ServicesController extends RestController
     public function save(Request $request)
     {
         $data = $request->only(['id', 'name', 'options', 'locations_id']);
+        $new = false;
         if (empty($data['id'])) {
             $data['sorting'] = Services::total();
+            $new = true;
         }
         $result = Services::save($data);
+        if ($new) {
+            Services::reorder($result->id, 0);
+        }
+
         $this->refreshRepository();
         return ['message' => 'Service saved! Now to use it, assign it to your staff', 'result' => $result];
     }
