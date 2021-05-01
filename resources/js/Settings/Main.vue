@@ -118,3 +118,8 @@ export default {
     }  
 }
 </script>
+<style>
+.max-200{
+    max-width:200px
+}
+</style>

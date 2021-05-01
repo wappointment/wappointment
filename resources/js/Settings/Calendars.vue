@@ -1,7 +1,10 @@
 <template>
     <div>
         <div v-if="calendarListing">
-            <button v-if="isUserAdministrator" @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
+            <div class="d-flex align-items-center">
+                <button v-if="isUserAdministrator" @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
+                <InputPh class="max-200 ml-2 mb-0" v-if="loadedData && elements.calendars.length > 10" type="text" v-model="searchterm" ph="Search name" />
+            </div>
             <div class="table-hover" v-if="loadedData">
                 <table class="table">
                     <thead>
@@ -16,7 +19,7 @@
                     </thead>
                     <draggable @change="orderChanged" v-model="elements.calendars" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.calendars.length > 0">
 
-                        <tr class="row-click" v-for="(calendar, idx) in elements.calendars">
+                        <tr class="row-click" v-for="(calendar, idx) in filteredSearchable">
                             <td>
                                 {{ idx + 1 }}
                             </td>
@@ -32,7 +35,7 @@
                                     </div>
                                 </div>
                                 <div class="wlist-actions text-muted" v-if="isUserAdministrator">
-                                    <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
+                                    <span data-tt="Sort" v-if="searchterm==''"><span class="dashicons dashicons-move"></span></span>
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
                                     <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
@@ -138,7 +141,7 @@ import StaffCalendarsExternal from './StaffCalendarsExternal'
 import StaffCustomFieldEditor from './StaffCustomFieldEditor'
 
 import hasPermissions from '../Mixins/hasPermissions'
-
+import isSearchable from '../Mixins/isSearchable'
 export default {
     extends: AbstractListing,
     components:{
@@ -156,7 +159,7 @@ export default {
         StaffAssignServices,
         StaffCustomFieldEditor
     },
-    mixins:[CalUrl, SettingsSave, hasPermissions],
+    mixins:[CalUrl, SettingsSave, hasPermissions, isSearchable],
     data: () => ({
         currentView: 'listing',
         viewName:'empty',
@@ -169,12 +172,15 @@ export default {
         editingExternal: false,
         editingServices: false,
         showPermissions: false,
-        editCustomField: false
+        editCustomField: false,
     }),
     created(){
         this.mainService = this.$vueService(new ServiceCalendar)
     },
     computed: {
+        searchable(){
+            return this.elements.calendars
+        },
         calendarListing(){
             return this.currentView == 'listing'
         },

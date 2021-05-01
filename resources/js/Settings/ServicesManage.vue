@@ -1,7 +1,10 @@
 <template>
     <div >
         <div v-if="serviceListing">
-            <button @click="showService" class="btn btn-outline-primary btn my-2">Add service</button>
+            <div class="d-flex align-items-center">
+                <button @click="showService" class="btn btn-outline-primary btn my-2">Add service</button>
+                <InputPh v-if="elements && elements.length > 10" class="max-200 ml-2 mb-0" type="text" v-model="searchterm" ph="Search name" />
+            </div>
             <div class="table-hover" v-if="elements">
                 <table class="table">
                     <thead>
@@ -14,7 +17,7 @@
                     </thead>
                     <draggable @change="orderChanged" v-model="elements" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.length > 0">
 
-                        <tr  class="row-click" v-for="(service, idx) in elements">
+                        <tr  class="row-click" v-for="(service, idx) in filteredSearchable">
                             <td>
                                 <div @mouseover="">{{ idx + 1 }} </div> 
                             </td>
@@ -24,7 +27,7 @@
                                     <div class="ml-2">{{ service.name }}</div>
                                 </div>
                                 <div class="wlist-actions text-muted">
-                                    <span data-tt="Sort" v-if="elements.length > 1" ><span class="dashicons dashicons-move"></span></span>
+                                    <span data-tt="Sort" v-if="searchterm != '' && filteredSearchable.length > 1" ><span class="dashicons dashicons-move"></span></span>
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(service.id)"></span></span>
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(service)"></span></span>
                                     <span data-tt="Delete"  ><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(service.id)"></span></span>
@@ -77,8 +80,10 @@ import ServicesEditLegacy from '../Views/Subpages/Service'
 import AbstractListing from '../Views/AbstractListing'
 import DurationCell from '../BookingForm/DurationCell'
 import ShortcodeDesigner from './ShortcodeDesigner'
+import isSearchable from '../Mixins/isSearchable'
 export default {
     extends: AbstractListing,
+    mixins: [isSearchable],
     components:{
         DurationCell,
         ServicesAddEdit,
@@ -100,6 +105,9 @@ export default {
         }
     },
     computed: {
+        searchable(){
+            return this.elements
+        },
         serviceListing(){
             return this.currentView == 'listing'
         },
