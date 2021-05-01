@@ -11,7 +11,7 @@ import monthLocale from '../Standalone/monthLocale'
  * TODO Review moment usage
  */
 export default {
-    props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration', 'viewData'],
+    props: ['options','initIntervalsCollection', 'timeprops', 'duration', 'viewData', 'staffs', 'location','service'],
     mixins: [Dates],
     components: {
         DaySlots, DaysOfWeek, WeekHeader
@@ -104,7 +104,10 @@ export default {
             
             return true
         },
-        
+        getMonthYear() {
+            return monthLocale(this.monthNumber) +' '+ this.yearNumber
+        },
+
         
         todayYear() {
             return parseInt(this.now.format('YYYY'))
@@ -121,7 +124,6 @@ export default {
         reorganiseDays() {
             let newCalendar = []
             for (let weekIndex = 0; weekIndex < this.currentMonth.calendar.length; weekIndex++) {
-                let newWeek = []
                 let week = this.currentMonth.calendar[weekIndex]
                 let nextWeek = this.currentMonth.calendar[weekIndex+1]
                 let endWeekDays = week.slice(0,this.startDay)
@@ -142,7 +144,6 @@ export default {
                         }
                     }
                     let nendWeekDays = nextWeek.slice(0,this.startDay)
-                    let nstartWeekDays  = nextWeek.slice(this.startDay)
                     week = startWeekDays.concat(nendWeekDays)
                 }else{
                     week = startWeekDays
@@ -187,10 +188,7 @@ export default {
         setWeekHeader() {
             let endWeekDays = this.currentMonth.weekdays.slice(0,this.startDay)
             let startWeekDays  = this.currentMonth.weekdays.slice(this.startDay)
-            let orderedDays = []
-            let startingDay = this.startDay
             let weekDays = startWeekDays.concat(endWeekDays)
-            
             let localeweekdays = []
             for (let i = 0; i < weekDays.length; i++) {
                 localeweekdays[i] = this.getLocaleDay(weekDays[i])
@@ -199,10 +197,7 @@ export default {
             this.weekHeader = localeweekdays
         },
 
-        getMonthYear() {
-            return monthLocale(this.monthNumber) +' '+ this.yearNumber
-        },
-
+        
         getLocaleDay(dayname){
             for (const key in this.object_days) {
                 if (this.object_days.hasOwnProperty(key)) {

@@ -5,6 +5,7 @@
             <div class="service-name" >{{ service.name }}</div>
             <div class="description" v-if="hasDesc(service)">{{ service.options.description }}</div>
             <div v-if="sellable(service) && !priceAlignRight" class="service-price" >{{ getPriceRange(service) }}<span class="price-currency">{{ currency}}</span></div>
+            <slot />
         </div>
         <div v-if="sellable(service) && priceAlignRight" class="service-price price-right" :class="{'als':hasDesc(service)}" >{{ getPriceRange(service) }}<span class="price-currency">{{ currency}}</span></div>
     </div>
@@ -13,7 +14,7 @@
 
 <script>
 export default {
-    props:['service','options', 'selected', 'viewData'],
+    props:['service','options', 'selected', 'viewData', 'extraClass'],
     name: 'ServiceButton',
     computed: {
         priceAlignRight(){
@@ -21,7 +22,10 @@ export default {
         },
         getClasses(){
             let classses = 'wbtn wbtn-cell wbtn-secondary wbtn-service d-flex align-items-center'
- 
+
+            if(this.extraClass!= ''){
+                classses += ' ' + this.extraClass
+            }
             if(this.selected === true){
                 classses += ' selected'
             }

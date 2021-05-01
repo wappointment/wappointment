@@ -48,6 +48,9 @@ export default {
             type: Boolean,
             default: false
         },
+        mustSelectStaff:{
+            type: Boolean,
+        },
 
         options: {
             type:[Object]
@@ -79,6 +82,9 @@ export default {
     },
     methods:{
         showAllStaff(){
+            if(this.mustSelectStaff){
+                return this.$emit('showStaffScreen', 'StaffSelectionScreen',{selectedStaff:null,selectedSlot:false,service: false,location: false,duration: false,})
+            }
             if(this.canChangeStaff){
                 this.staffSelection = true
             }
