@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-04-30T15:04:43+00:00\n"
+"POT-Creation-Date: 2021-05-02T08:48:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wappointment\n"
@@ -51,43 +51,48 @@ msgstr ""
 msgid "Time: %1$s - %2$s"
 msgstr ""
 
-#. translators: %s is replaced with the service name
+#. translators: %s is replaced with the staff name
 #: app/Messages/AdminGeneratesDefault.php:22
+msgid "Staff: %s"
+msgstr ""
+
+#. translators: %s is replaced with the service name
+#: app/Messages/AdminGeneratesDefault.php:24
 msgid "Service: %s"
 msgstr ""
 
 #. translators: %s is replaced with the location name
-#: app/Messages/AdminGeneratesDefault.php:24
+#: app/Messages/AdminGeneratesDefault.php:26
 msgid "Location: %s"
 msgstr ""
 
 #. translators: %s is replaced with the client's name
-#: app/Messages/AdminGeneratesDefault.php:26
+#: app/Messages/AdminGeneratesDefault.php:28
 msgid "Client's name: %s"
 msgstr ""
 
 #. translators: %s is replaced with the client's email
-#: app/Messages/AdminGeneratesDefault.php:28
+#: app/Messages/AdminGeneratesDefault.php:30
 msgid "Client's email: %s"
 msgstr ""
 
 #. translators: %s is replaced with the client's phone
-#: app/Messages/AdminGeneratesDefault.php:32
+#: app/Messages/AdminGeneratesDefault.php:34
 msgid "Client's phone: %s"
 msgstr ""
 
 #. translators: %s is replaced with the client's skype username
-#: app/Messages/AdminGeneratesDefault.php:36
+#: app/Messages/AdminGeneratesDefault.php:38
 msgid "Client's skype: %s"
 msgstr ""
 
 #. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
-#: app/Messages/AdminGeneratesDefault.php:41
+#: app/Messages/AdminGeneratesDefault.php:43
 msgid "Video meeting: %s"
 msgstr ""
 
 #. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
-#: app/Messages/AdminGeneratesDefault.php:41
+#: app/Messages/AdminGeneratesDefault.php:43
 msgid "Begin the meeting"
 msgstr ""
 
@@ -156,79 +161,87 @@ msgstr ""
 msgid "Minimum PHP version required %s"
 msgstr ""
 
-#: app/Services/Permissions.php:20
+#: app/Services/Permissions.php:75
+msgid "Wappointment Staff"
+msgstr ""
+
+#: app/Services/Permissions.php:82
+msgid "Wappointment manager"
+msgstr ""
+
+#: app/Services/Permissions.php:94
 msgid "Can manage own calendar"
 msgstr ""
 
-#: app/Services/Permissions.php:22
+#: app/Services/Permissions.php:96
 msgid "Can add Busy blocks"
 msgstr ""
 
-#: app/Services/Permissions.php:23
+#: app/Services/Permissions.php:97
 msgid "Can delete Busy blocks"
 msgstr ""
 
-#: app/Services/Permissions.php:24
+#: app/Services/Permissions.php:98
 msgid "Can add Free blocks"
 msgstr ""
 
-#: app/Services/Permissions.php:25
+#: app/Services/Permissions.php:99
 msgid "Can delete Free blocks"
 msgstr ""
 
-#: app/Services/Permissions.php:26
+#: app/Services/Permissions.php:100
 msgid "Can reschedule appointment"
 msgstr ""
 
-#: app/Services/Permissions.php:27
+#: app/Services/Permissions.php:101
 msgid "Can cancel appointment"
 msgstr ""
 
-#: app/Services/Permissions.php:28
+#: app/Services/Permissions.php:102
 msgid "Can book on behalf of a client"
 msgstr ""
 
-#: app/Services/Permissions.php:29
+#: app/Services/Permissions.php:103
 msgid "Can confirm pending appointment"
 msgstr ""
 
-#: app/Services/Permissions.php:33
+#: app/Services/Permissions.php:107
 msgid "Can manage own settings"
 msgstr ""
 
-#: app/Services/Permissions.php:35
+#: app/Services/Permissions.php:109
 msgid "Can modify weekly availability"
 msgstr ""
 
-#: app/Services/Permissions.php:36
+#: app/Services/Permissions.php:110
 msgid "Can modify services provided"
 msgstr ""
 
-#: app/Services/Permissions.php:37
+#: app/Services/Permissions.php:111
 msgid "Can connect Wappointment.com account"
 msgstr ""
 
-#: app/Services/Permissions.php:38
+#: app/Services/Permissions.php:112
 msgid "Can add ICS calendar"
 msgstr ""
 
-#: app/Services/Permissions.php:39
+#: app/Services/Permissions.php:113
 msgid "Can delete ICS calendar"
 msgstr ""
 
-#: app/Services/Permissions.php:40
+#: app/Services/Permissions.php:114
 msgid "Can publish/unpublish self"
 msgstr ""
 
-#: app/Services/Permissions.php:44
+#: app/Services/Permissions.php:118
 msgid "Can manage own clients"
 msgstr ""
 
-#: app/Services/Permissions.php:46
+#: app/Services/Permissions.php:120
 msgid "Can delete clients"
 msgstr ""
 
-#: app/Services/Permissions.php:47
+#: app/Services/Permissions.php:121
 msgid "Can edit clients"
 msgstr ""
 

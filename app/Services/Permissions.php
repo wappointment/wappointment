@@ -58,7 +58,7 @@ class Permissions
     {
         global $wp_roles;
 
-        if (!class_exists('WP_Roles')) {
+        if (!class_exists('\WP_Roles')) {
             throw new \WappointmentException("Cannot initialize WP roles", 1);
         }
 
