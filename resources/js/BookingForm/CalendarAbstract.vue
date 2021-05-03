@@ -162,10 +162,7 @@ export default {
         },
         
         lastAvailableSlot(){
-           if(this.intervalsCollection !== null){
-                return this.intervalsCollection.intervals.slice(-1)[0].end
-           }
-           return undefined
+            return this.intervalsCollection !== null && this.intervalsCollection.intervals.length > 0 ?this.intervalsCollection.intervals.slice(-1)[0].end:undefined
         },
         getTzString(){
             return (this.options!== undefined && this.options.selection.timezone!== undefined) ? this.options.selection.timezone: ''

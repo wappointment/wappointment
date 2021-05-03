@@ -1,7 +1,7 @@
 <template>
     <div v-if="services.length>0">
       <div class="title wtitle" v-if="options!==undefined">{{options.service_selection.select_service}}</div>
-      <input v-if="filteredServices.length > 10" class="form-control" type="text" v-model="search">
+      <input v-if="services.length > 10" class="form-control" type="text" v-model="search">
       <div class="d-flex flex-wrap justify-content-around" >
               <ServiceButton v-for="(service,idx) in filteredServices" :key="'service-sel-'+idx"  
         :service="service" 

@@ -1,8 +1,7 @@
 <template>
     <div v-if="calendars.length>0">
-        <div class="title wtitle" v-if="options!==undefined ">Select staff</div>
-        <input v-if="filteredStaff.length > 10" class="form-control" type="text" v-model="search">
-      <!-- <div class="title wtitle" v-if="options!==undefined">{{ options.staff_Selection.select_staff }}</div> -->
+        <div class="title wtitle" v-if="options!==undefined ">{{ options.staff_selection.pickstaff }}</div>
+        <input v-if="calendars.length > 10" class="form-control" type="text" v-model="search">
       <div class="d-flex flex-wrap justify-content-around" >
         <ServiceButton v-for="(staff,idx) in filteredStaff" :key="'staff-sel-'+idx" 
             extraClass="wbtn-staff" 
@@ -54,11 +53,11 @@ export default {
 }   
 </script>
 <style>
-.wap-front .step-StaffSelectionScreen .wap-form-body{
+.wap-front .step-BookingStaffSelection .wap-form-body{
     margin-top: 0;
 }
 
-.wap-front.large-version .wap-wid.step-StaffSelectionScreen {
+.wap-front.large-version .wap-wid.step-BookingStaffSelection {
     max-width:100%;
 }
 

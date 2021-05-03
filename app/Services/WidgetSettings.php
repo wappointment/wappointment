@@ -52,13 +52,17 @@ class WidgetSettings
             'when' => 'When',
             'service' => 'Service',
             'location' => 'Where',
-            'min' => 'min'
+            'min' => 'min',
+            'noappointments' => 'No appointments available'
         ],
         'button' => [
             'title' => 'Book now!',
             'check_full' => false,
             'check_bold' => false,
             'slide_size' => 1.3
+        ],
+        'staff_selection' => [
+            'pickstaff' => 'Select staff',
         ],
         'selection' => [
             'check_viewweek' => false,
@@ -219,6 +223,9 @@ class WidgetSettings
                 'min' => [
                     'tip' => 'minutes'
                 ],
+                'noappointments' => [
+                    'tip' => 'Show when no appointments are available for that staff'
+                ]
             ]
         ],
 

@@ -36,7 +36,6 @@
                 @changeDuration="childChangedStep"
                 @changeLocation="childChangedStep"
                 />
-
                 <div class="wrap-calendar p-2" :class="'step-'+currentStep">
                     <div v-if="loading">
                         <Loader />
@@ -57,7 +56,7 @@
         </template>
         <div v-else>
             <div v-if="dataloaded" class="wappointment-errors">
-                <div>No appointments available</div>
+                <div>{{options.general.noappointments}}</div>
             </div>
             <template v-else>
                 <div class="wappointment-errors" v-if="errorMessages.length > 0">
@@ -88,7 +87,7 @@ import AppointmentTypeSelection from './AppointmentTypeSelection'
 import BookingServiceSelection from './ServiceSelection'
 import BookingDurationSelection from './DurationSelection'
 import BookingLocationSelection from './LocationSelection'
-import StaffSelectionScreen from './StaffSelectionScreen'
+import BookingStaffSelection from './StaffSelection'
 import MixinLegacy from './MixinLegacy'
 
 let compDeclared = {
@@ -100,7 +99,7 @@ let compDeclared = {
     'BookingServiceSelection': BookingServiceSelection,
     'BookingDurationSelection': BookingDurationSelection,
     'BookingLocationSelection': BookingLocationSelection,
-    'StaffSelectionScreen': StaffSelectionScreen,
+    'BookingStaffSelection': BookingStaffSelection,
     'DurationCell': DurationCell,
     'abstractFront':AbstractFront,
     'BookingFormSummary': BookingFormSummary,
@@ -159,6 +158,10 @@ export default {
     },
 
     computed: {
+        showStaffSelection(){
+            return this.mustSelectStaff || this.loadingStep == "BookingStaffSelection"
+        },
+        
         mustSelectStaff(){
             return this.attributesEl !== undefined && this.attributesEl.staffPage !== undefined
         },
@@ -167,7 +170,7 @@ export default {
         },
 
         noStaffSelectionNeeded(){
-            return !this.mustSelectStaff || (this.mustSelectStaff && this.staffIsSelected)
+            return !this.showStaffSelection || (this.showStaffSelection && this.staffIsSelected)
         },
         isLegacyOrNotServiceSuite(){
             return this.isLegacy || this.service.type !== undefined
@@ -328,7 +331,6 @@ export default {
         },
 
         loadStep(step){
-            console.log('step',step)
             this.loadingStep = step
             this.fetchFormattedDate()
         },
@@ -431,11 +433,9 @@ export default {
                     const keyCondition = conditionKeys[i]
                     if(this.bfdemo !== true && this[keyCondition] !== conditions[keyCondition]) {
                         if(this.componentsList[component_name].skip !== undefined){
-                            
                             if(this.conditionSkipPass(component_name)){
                                 this.childChangedStep(this.componentsList[component_name].relations.next)
                             }
-                            
                         }
                         return false
                     }
@@ -490,9 +490,6 @@ export default {
                 this.dataloaded = true
                 return
             }
-            
-
-            
 
             this.dataloaded = true
             if(!this.mustSelectStaff){
@@ -501,7 +498,6 @@ export default {
                 this.setMomentLocale()
                 this.initServiceStaffDurationLocation()
             }
-            
     
             this.setComponentLists()
 
@@ -535,7 +531,7 @@ export default {
             return step_name
         },
         getStepFirst(){
-            return this.noStaffSelectionNeeded ? 'BookingServiceSelection': 'StaffSelectionScreen'
+            return this.noStaffSelectionNeeded ? 'BookingServiceSelection': 'BookingStaffSelection'
         },
         getStepAfterService(params){
             return params.duration === false ? 'BookingDurationSelection': this.getStepAfterDuration(params)
@@ -631,7 +627,9 @@ export default {
             if(this.attributesEl !== undefined && 
                 this.attributesEl.serviceSelection !== undefined){
                     let lockToServiceID = this.attributesEl.serviceSelection
-                    this.service = this.services.find(e => e.id == lockToServiceID)
+                    if([undefined,false,''].indexOf(lockToServiceID) === -1){
+                        this.service = this.services.find(e => e.id == lockToServiceID)
+                    }
                 }
         },
 
@@ -762,13 +760,13 @@ export default {
             componentsList['BookingCalendar'].props.location = "location"
             componentsList['BookingCalendar'].props.viewData = "viewData"
 
-            componentsList['StaffSelectionScreen'] = {
-                name: 'StaffSelectionScreen',
+            componentsList['BookingStaffSelection'] = {
+                name: 'BookingStaffSelection',
                 conditions: {
                     'serviceSelected': false,
                     'appointmentSaved': false,
                     'rescheduling': false,
-                    'mustSelectStaff': true
+                    'showStaffSelection': true
                 },
                 props: {
                     calendars: 'viewData.staffs',

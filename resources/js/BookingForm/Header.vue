@@ -1,6 +1,6 @@
 <template>
     <div class="wap-head">
-        <div class="d-flex" :class="[isCompactHeader ? 'align-items-start':'align-items-center']">
+        <div v-if="staffSelected" class="d-flex" :class="[isCompactHeader ? 'align-items-start':'align-items-center']">
             <div class="staff-av" role="button" @click="showAllStaff" >
                 <div :data-tt="canChangeStaff ? 'Change Staff':''">
                     <div role="img" :style="getStyleBackground(staff)" :title="staff.n" class="wstaff-img"></div>
@@ -63,7 +63,7 @@ export default {
               return
             } 
             if(this.canChangeStaff){
-                return this.$emit('showStaffScreen', 'StaffSelectionScreen',{selectedStaff:null,selectedSlot:false,service: false,location: false,duration: false,})
+                return this.$emit('showStaffScreen', 'BookingStaffSelection',{selectedStaff:null,selectedSlot:false,service: false,location: false,duration: false,})
             }
         },
         getStyleBackground(staff){
@@ -71,8 +71,11 @@ export default {
         }
     },
     computed:{
+        staffSelected(){
+            return this.staff !== null
+        },
         staffsFilterd(){
-            return this.canChangeStaff ? [this.staff]:[]
+            return this.canChangeStaff && this.staffSelected ? [this.staff]:[]
         },
         isCompactHeader(){
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1

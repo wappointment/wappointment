@@ -1,6 +1,6 @@
 <template>
     <div class="first-avail">
-        <div class="d-flex">
+        <div class="d-flex" v-if="hasIntervals">
             <div>
                 <div class="tt-here" :data-tt="getMonthYear" :title="getMonthYear">
                     <weekHeader :weekHeader="weekHeader"/>
@@ -10,6 +10,9 @@
             </div>
             <a href="javascript:;" @click.stop.self="changeWeek" class="ml-2 wbtn wbtn-secondary">></a>
         </div>
+        <div v-else>
+            {{ options.general.noappointments }}
+        </div>
     </div>
 </template>
 <script>
@@ -17,6 +20,11 @@
 import CalendarAbstract from './CalendarAbstract'
 export default {
     extends: CalendarAbstract,
+    computed:{
+        hasIntervals(){
+            return this.currentIntervals !== null && this.currentIntervals.intervals.length>0
+        }
+    },
     methods:{
         autoRunOnMount(){
             this.findFirstMonthwithAvail()
@@ -61,11 +69,12 @@ export default {
 </script>
 <style >
 .first-avail {
-    font-size: .9em;
+    font-size: 12px;
 }
-/* .first-avail .ddays div {
-    padding: 0 !important;
-} */
+ .first-avail .ddays  {
+    min-width: 170px;
+    font-size: 12px;
+} 
 .wap-front .first-avail .tt-here[data-tt]::before{
     bottom:30px;
 }

@@ -225,6 +225,10 @@ export default {
                 label: 'Booking button'
             },
             {
+                key: 'staff_selection',
+                label: 'Staff selection'
+            },
+            {
                 key: 'service_selection',
                 label: 'Service selection'
             },
@@ -347,10 +351,9 @@ export default {
             this.options.demoData.form = newValue
         },
         getOrderClass(stepObj,stepIdx){
-            let orderItem = 0;
+            let orderItem = 0
             if((stepIdx >= this.currentIndexStep)){
                 orderItem = stepIdx - this.currentIndexStep
-                
             }else{
                 orderItem = (this.editionsSteps.length - (this.currentIndexStep-stepIdx))
             }
