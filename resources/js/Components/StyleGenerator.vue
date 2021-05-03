@@ -36,6 +36,10 @@
             border-color: {{ hx_rgb(opts.colors.primary.bg, .8) }};
             color: var(--wappo-pri-tx);
             box-shadow: 0 .1em 0 {{ hx_rgb(opts.colors.primary.bg, .6) }};
+            margin: .2em 0;
+        }
+        .wap-front .d-section.ds-1 .wbtn.wbtn-primary{
+            margin: .2em;
         }
         .wap-front .wbtn.wbtn-primary:hover {
             background-color: {{ hx_rgb(opts.colors.primary.bg,.9) }};

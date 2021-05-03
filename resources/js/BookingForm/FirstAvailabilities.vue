@@ -86,7 +86,7 @@ export default {
     font-size: 12px;
 } 
 .wap-front .first-avail .tt-here[data-tt]::before{
-    bottom:30px;
+    bottom: 20px;
 }
 .wap-front .first-avail .tt-here[data-tt]::after{
     display:none;
