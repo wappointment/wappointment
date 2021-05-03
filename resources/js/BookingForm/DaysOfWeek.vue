@@ -1,18 +1,16 @@
 <template>
-    <div class="d-flex justify-content-between ddays" >
-        <div v-for="(day, idday) in week" 
-        :class="getClassAvailability(day,idweek, idday)" role="button"  
-        @click="$emit('selectDay',day,idweek)" :data-tt="hasTooltip(day)">
-            <template v-if="day > 0">
-                <span v-if="noAvailability(day)"
-                    class="no-avail">
-                    {{ day }}
-                </span>
-                <span v-else>
-                    {{ day }}
-                </span>
-            </template>
-            <span v-else></span>
+    <div class="d-flex ddays" >
+        <div v-for="(day, idday) in week">
+            <div  
+            :class="getClassAvailability(day,idweek, idday)" role="button"  
+            @click="$emit('selectDay',day,idweek)" >
+                <template v-if="day > 0">
+                    <span :data-tt="hasTooltip(day)">
+                        {{ day }}
+                    </span>
+                </template>
+                <span v-else></span>
+            </div>
         </div>
     </div>
 </template>
@@ -36,14 +34,13 @@ export default {
                 'few-avail': this.fewAvailability(day),
                 'enough-avail': this.enoughAvailability(day),
                 'plenty-avail': this.plentyAvailability(day),
-                'hover':(this.isDemo && this.isSelected(day))
+                'hover':(this.isDemo && this.isSelected(day)),
+                'sq d-flex align-items-center justify-content-center':true
             }
             return classes
         },
         hasAvailability(daynumber){
-            if(this.cachedSlots[daynumber] !== undefined) return this.cachedSlots[daynumber]
-    
-            return 0
+            return this.cachedSlots[daynumber] !== undefined ? this.cachedSlots[daynumber]:0
         },
         hasTooltip(daynumber){
             let avail = this.hasAvailability(daynumber)
@@ -84,10 +81,23 @@ export default {
 .wbtn.avail span, 
 .wbtn-secondary.wbtn-round span {
     display: block;
-    line-height: 1.5em;
-    height: 1.5em;
-    width: 1.5em;
+    line-height: 2.2em;
+    font-size: 1.2em;
     padding:0;
     margin:0;
+}
+.sq {
+  position: relative;
+}
+.sq:after {
+  content: "";
+  display: block;
+  padding-bottom: 100%;
+}
+.sq span {
+  display:block;
+  position: absolute !important;
+  width: 100%;
+  height: 100%;
 }
 </style>

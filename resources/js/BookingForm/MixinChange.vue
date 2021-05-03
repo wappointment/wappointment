@@ -32,17 +32,6 @@ export default {
         checkStaffLocked(){
             return false
         },
-        refreshClicked(){
-            if(this.disabledButtons || !this.isStepSlotSelection) {
-              this.options.eventsBus.emits('stepChanged', 'service_selection')
-              return
-            } 
-            this.changeService()
-            this.$emit('refreshed')
-        },
-        changeStaff(){
-            //this.$emit('changeDuration', 'BookingDurationSelection', {location:false,duration:false})
-        },
         changeService(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'service_selection')

@@ -90,7 +90,7 @@ export default {
     border: none;
     overflow: hidden;
     padding: .4em;
-    max-width: 430px;
+    max-width: 340px;
     font-size: 1em;
 }
 

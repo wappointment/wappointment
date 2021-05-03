@@ -1,8 +1,9 @@
 <template>
     <div v-if="services.length>0">
       <div class="title wtitle" v-if="options!==undefined">{{options.service_selection.select_service}}</div>
-      <div class="d-flex flex-wrap" >
-              <ServiceButton v-for="(service,idx) in services" :key="'service-sel-'+idx"  
+      <input v-if="filteredServices.length > 10" class="form-control" type="text" v-model="search">
+      <div class="d-flex flex-wrap justify-content-around" >
+              <ServiceButton v-for="(service,idx) in filteredServices" :key="'service-sel-'+idx"  
         :service="service" 
         :options="options" 
         :viewData="viewData"
@@ -19,11 +20,18 @@ export default {
           
     data: () => ({
         disabledButtons: false,
+        search: ''
     }),
     components:{ServiceButton},
     created(){
         if(this.options !== undefined &&  this.options.demoData !== undefined){
             this.disabledButtons = true
+        }
+    },
+    computed:{
+        filteredServices(){
+            let searchterm = this.search.toLowerCase()
+            return this.services.filter(e => e.name.toLowerCase().indexOf(searchterm) !== -1)
         }
     },
 
@@ -52,3 +60,8 @@ export default {
     }
 }   
 </script>
+<style >
+.wap-front.large-version .wap-wid.step-BookingServiceSelection {
+    max-width:100%;
+}
+</style>

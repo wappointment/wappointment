@@ -1,9 +1,10 @@
 <template>
     <div class="first-avail">
-        <div v-if="mounted && currentMonth!== null">{{getMonthYear}}</div>
         <div class="d-flex">
             <div>
-                <weekHeader :weekHeader="weekHeader"/>
+                <div class="tt-here" :data-tt="getMonthYear" :title="getMonthYear">
+                    <weekHeader :weekHeader="weekHeader"/>
+                </div>
                 <DaysOfWeek :idweek="selectedWeek" :week="reorganiseDays[selectedWeek]" :tooltip="getSlotTooltip" :selectedDay="selectedDay"
                     :demoSelected="demoSelected" :cachedSlots="cachedSlots" :isDemo="isDemo"/>  
             </div>
@@ -34,9 +35,7 @@ export default {
                 }
                  i++
             }
-            
-            
-            
+
         },
 
         changeWeek(increment = true){
@@ -58,19 +57,19 @@ export default {
         },
 
     },
-    computed:{
-        weekHasAvailability(){
-
-            
-        }
-    }
 }
 </script>
 <style >
 .first-avail {
     font-size: .9em;
 }
-.first-avail .ddays div {
+/* .first-avail .ddays div {
     padding: 0 !important;
+} */
+.wap-front .first-avail .tt-here[data-tt]::before{
+    bottom:30px;
+}
+.wap-front .first-avail .tt-here[data-tt]::after{
+    display:none;
 }
 </style>

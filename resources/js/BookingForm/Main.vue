@@ -14,7 +14,6 @@
             :appointmentSaved="appointmentSaved"
             :staff="selectedStaff"
             :mustSelectStaff="mustSelectStaff"
-            @changeStaff="changeStaff"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
             @changeLocation="childChangedStep"
@@ -868,6 +867,10 @@ export default {
     min-width: 280px;
 }
 
+.d-flex.ddays > div{
+    width: 14.3%;
+    text-align: center;
+}
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;
     margin: .4em 0;

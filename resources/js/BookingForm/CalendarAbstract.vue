@@ -453,26 +453,26 @@ export default {
 <style >
 
 .wap-front .wbtn-round,
-.wap-front .calendarMonth .ddays div {
-    min-width: 1.5em;
-    min-height: 1.5em;
+.wap-front .calendarMonth .ddays div.wbtn {
     border-radius: 50%;
     text-align: center;
     font-size: .75em;
-    padding: .5em;
+    padding: 0;
     transition: all .3s ease-in-out;
-    margin: 0 !important;
+    margin: 0 auto !important;
+    max-width: 3em;
 }
 
 .wap-front .wbtn-top.wbtn-round {
-    min-width: 1em;
-    min-height: 1em;
+    min-width: 40px;
+    min-height: 40px;
+    margin: 0 !important;
 }
-.wap-front .wbtn-top.wbtn-round span {
+/* .wap-front .wbtn-top.wbtn-round span {
     width: 1em;
     height: 1em;
     line-height: 1em;
-}
+} */
 
 .wap-front .wbtn.wbtn-secondary.wbtn-round.wbtn-disabled, 
 .wap-front .wbtn-round.wbtn-disabled:hover {
