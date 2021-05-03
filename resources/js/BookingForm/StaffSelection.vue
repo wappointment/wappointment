@@ -53,7 +53,8 @@ export default {
 }   
 </script>
 <style>
-.wap-front .step-BookingStaffSelection .wap-form-body{
+.wap-front .step-BookingStaffSelection .wap-form-body,
+.overflowhidden.step-staff_selection .wap-form-body{
     margin-top: 0;
 }
 

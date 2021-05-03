@@ -20,11 +20,21 @@
 import CalendarAbstract from './CalendarAbstract'
 export default {
     extends: CalendarAbstract,
+
     computed:{
         hasIntervals(){
             return this.currentIntervals !== null && this.currentIntervals.intervals.length>0
         }
     },
+    updated: function () {
+        if(this.isDemo && this.demoSelected.init == false && this.demoSelected.day !== false){
+            this.$nextTick(function () {
+                this.selectedDay = false
+                this.demoSelected.init = true
+            })
+        }
+    },
+
     methods:{
         autoRunOnMount(){
             this.findFirstMonthwithAvail()

@@ -170,7 +170,7 @@ export default {
         },
 
         noStaffSelectionNeeded(){
-            return !this.showStaffSelection || (this.showStaffSelection && this.staffIsSelected)
+            return !this.showStaffSelection || (this.showStaffSelection && (this.staffIsSelected && this.bfdemo !== true))
         },
         isLegacyOrNotServiceSuite(){
             return this.isLegacy || this.service.type !== undefined
