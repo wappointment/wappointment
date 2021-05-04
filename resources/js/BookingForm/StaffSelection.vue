@@ -3,7 +3,7 @@
         <div class="title wtitle" v-if="options!==undefined ">{{ options.staff_selection.pickstaff }}</div>
         <input v-if="calendars.length > 10" class="form-control" type="text" v-model="search">
       <div class="d-flex flex-wrap justify-content-around" >
-        <ServiceButton v-for="(staff,idx) in filteredStaff" :key="'staff-sel-'+idx" 
+        <ServiceButton v-for="(staff,idx) in filteredStaff" :key="'staff-sel-'+staff.id" 
             extraClass="wbtn-staff" 
             :service="staff" 
             :options="options" 

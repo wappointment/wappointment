@@ -1,11 +1,11 @@
 <template>
     <div class="first-avail">
-        <div class="d-flex" v-if="hasIntervals">
+        <div v-if="hasIntervals" class="d-flex" >
             <div>
                 <div class="tt-here" :data-tt="getMonthYear" :title="getMonthYear">
                     <weekHeader :weekHeader="weekHeader"/>
                 </div>
-                <DaysOfWeek :idweek="selectedWeek" :week="reorganiseDays[selectedWeek]" :tooltip="getSlotTooltip" :selectedDay="selectedDay"
+                <DaysOfWeek :idweek="selectedWeek" :week="reorganiseDays[selectedWeek]" :tooltip="tooltipText" :selectedDay="selectedDay"
                     :demoSelected="demoSelected" :cachedSlots="cachedSlots" :isDemo="isDemo"/>  
             </div>
             <a href="javascript:;" @click.stop.self="changeWeek" class="ml-2 wbtn wbtn-secondary">></a>
@@ -20,10 +20,12 @@
 import CalendarAbstract from './CalendarAbstract'
 export default {
     extends: CalendarAbstract,
-
     computed:{
         hasIntervals(){
             return this.currentIntervals !== null && this.currentIntervals.intervals.length>0
+        },
+        tooltipText(){
+            return this.getSlotTooltip.replace('[total_slots]','')
         }
     },
     updated: function () {
@@ -85,6 +87,9 @@ export default {
     min-width: 170px;
     font-size: 12px;
 } 
+.first-avail .ddays .wbtn{
+    font-size: .7em;
+}
 .wap-front .first-avail .tt-here[data-tt]::before{
     bottom: 20px;
 }

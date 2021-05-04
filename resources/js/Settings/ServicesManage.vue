@@ -27,7 +27,7 @@
                                     <div class="ml-2">{{ service.name }}</div>
                                 </div>
                                 <div class="wlist-actions text-muted">
-                                    <span data-tt="Sort" v-if="searchterm != '' && filteredSearchable.length > 1" ><span class="dashicons dashicons-move"></span></span>
+                                    <span data-tt="Sort" v-if="searchterm == '' && elements.length > 1" ><span class="dashicons dashicons-move"></span></span>
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(service.id)"></span></span>
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(service)"></span></span>
                                     <span data-tt="Delete"  ><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(service.id)"></span></span>

@@ -6,8 +6,8 @@
         </div>
         <div class="p-2 rounded bg-secondary">
             <div v-if="adding">
-                <InputPh v-model="field_name" ph="Field name" />
-                <button class="btn btn-primary" @click="saveField">Save field</button>
+                <InputPh :value="field_name" @input="updateFieldName" ph="Field name" />
+                <button class="btn btn-primary" :class="{'disabled':!isValidField}" @click="saveField">Save field</button>
             </div>
             <div v-else>
                 <button class="btn btn-secondary btn-sm mb-2" @click="newField"><span class="dashicons dashicons-insert"></span> Add Custom Field</button>
@@ -51,13 +51,20 @@ export default {
             this.field_values = Object.assign({},this.staff.custom_fields)
         }
     },
+
     computed:{
         filteredCF(){
             let deleted = this.deleted_fields
             return this.custom_fields.filter((e)=> deleted.indexOf(e.key) === -1 )
+        },
+        isValidField(){
+            return this.field_name.trim()!=''
         }
     },
-    methods:{   
+    methods:{ 
+        updateFieldName(){
+            this.field_name = this.field_name.trim()
+        },
         deleteField(fieldKey){
             this.$WapModal().confirm({
                 title: 'Do you really want to delete this field?',
@@ -80,6 +87,9 @@ export default {
         },
 
         saveField(){
+            if(!this.isValidField){
+                return false
+            }
             if(this.editingField){
                 this.updateLabel()
             }else{

@@ -442,6 +442,10 @@ export default {
             return dayIntervals
         },
 
+        getMomentObj() {
+            return momenttz.tz(this.currentTz)
+        },
+
     }
 
 }
@@ -462,14 +466,8 @@ export default {
 
 .wap-front .wbtn-top.wbtn-round {
     min-width: 40px;
-    min-height: 40px;
     margin: 0 !important;
 }
-/* .wap-front .wbtn-top.wbtn-round span {
-    width: 1em;
-    height: 1em;
-    line-height: 1em;
-} */
 
 .wap-front .wbtn.wbtn-secondary.wbtn-round.wbtn-disabled, 
 .wap-front .wbtn-round.wbtn-disabled:hover {

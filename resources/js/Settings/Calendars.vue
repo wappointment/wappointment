@@ -35,7 +35,7 @@
                                     </div>
                                 </div>
                                 <div class="wlist-actions text-muted" v-if="isUserAdministrator">
-                                    <span data-tt="Sort" v-if="searchterm==''"><span class="dashicons dashicons-move"></span></span>
+                                    <span data-tt="Sort" v-if="searchterm=='' && elements.calendars.length > 1"><span class="dashicons dashicons-move"></span></span>
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
                                     <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
