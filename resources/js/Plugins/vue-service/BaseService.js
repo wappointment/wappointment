@@ -29,7 +29,7 @@ class BaseService {
         return this.request(endpointRoute, params, headers, endpointConfig.method,  endpointConfig.timeout)
     }
 
-    request(route, data, headers, method, timeout = 10000) {
+    request(route, data, headers, method, timeout = 20000) {
 
         let params = {
             method: method,
