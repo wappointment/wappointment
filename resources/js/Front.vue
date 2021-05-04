@@ -352,6 +352,31 @@ export default {
     margin: .5em 0;
 }
 
+
+.wap-booking-fields .isInvalid input[type="text"], 
+.wap-booking-fields .isInvalid input[type="email"], 
+.wap-booking-fields .isInvalid input[type="url"], 
+.wap-booking-fields .isInvalid input[type="tel"],
+.wap-booking-fields .isInvalid textarea{
+    border-right: 4px solid var(--wappo-error-tx) !important;
+}
+.wap-booking-fields .field-required label::after {
+    content:" *";
+    color:var(--wappo-error-tx);
+}
+
+.wap-front .wappointment-errors{
+    background-color:var(--wappo-error-tx);
+}
+.wap-front .wappointment-errors div{
+    color: #fff;
+    font-size: .9em;
+}
+.phone-field-wrap .dpselect .selection::after,
+.phone-field-wrap strong{
+    color: #645a5a;
+}
+
 @media only screen and (max-width: 500px) {
   .wap-abs{
     position: absolute;

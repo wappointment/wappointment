@@ -492,7 +492,7 @@ export default {
             }
 
             this.dataloaded = true
-            if(!this.mustSelectStaff){
+            if(!this.mustSelectStaff || this.mustSelectStaff && this.getStaffs.length == 1){
                 this.selectedStaff = this.getDefaultStaff()
                 this.refreshAvail()
                 this.setMomentLocale()
@@ -531,9 +531,6 @@ export default {
             return step_name
         },
         getStepFirst(){
-            if(this.getStaffs.length == 1){ // auto select staff if there is just one
-                this.changeStaff(this.getStaffs[0])
-            }
             return this.noStaffSelectionNeeded ? 'BookingServiceSelection': 'BookingStaffSelection'
         },
         getStepAfterService(params){

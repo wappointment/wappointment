@@ -10,7 +10,7 @@
             </div>
             <a href="javascript:;" @click.stop.self="changeWeek" class="ml-2 wbtn wbtn-secondary">></a>
         </div>
-        <div v-else>
+        <div v-else class="werror">
             {{ options.general.noappointments }}
         </div>
     </div>
@@ -95,5 +95,8 @@ export default {
 }
 .wap-front .first-avail .tt-here[data-tt]::after{
     display:none;
+}
+.wap-front .werror{
+    color:var(--wappo-error-tx) !important;
 }
 </style>

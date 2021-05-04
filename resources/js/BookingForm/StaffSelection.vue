@@ -41,8 +41,13 @@ export default {
         getIntervalsCollection(staff){
             return new Intervals(staff.availability)
         },
+        hasIntervals(staff){
+            let intervalsStaff = this.getIntervalsCollection(staff)
+            return [null,undefined].indexOf(intervalsStaff.intervals) === -1 && intervalsStaff.intervals.length>0
+        },
         selectStaff(staff){
-            if(this.disabledButtons && this.options !== undefined ) {
+
+            if(this.disabledButtons && this.options !== undefined || !this.hasIntervals(staff)) {
               //this.options.eventsBus.emits('stepChanged', 'service_duration')
               return
             } 

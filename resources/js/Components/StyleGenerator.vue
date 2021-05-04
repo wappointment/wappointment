@@ -11,6 +11,7 @@
             --wappo-header-tx: {{ hx_rgb(opts.colors.header.text) }};
             --wappo-body-tx: {{ hx_rgb(opts.colors.body.text) }};
             --wappo-success-tx: {{ hx_rgb(opts.colors.confirmation.text) }};
+            --wappo-error-tx: {{ hx_rgb(opts.colors.form.error) }};
         }
         .wap-front .wbtn.wbtn-primary-light,
         .wap-front .wbtn.wbtn-primary-light:not(:disabled):not(.disabled):active, 
@@ -197,14 +198,6 @@
             background-color: {{ hx_rgb(opts.colors.confirmation.bg) }};
         }
         
-
-        .wap-booking-fields .isInvalid input[type="text"], 
-        .wap-booking-fields .isInvalid input[type="email"], 
-        .wap-booking-fields .isInvalid input[type="url"], 
-        .wap-booking-fields .isInvalid input[type="tel"],
-        .wap-booking-fields .isInvalid textarea{
-            border-right: 4px solid {{ hx_rgb(opts.colors.form.error) }} !important;
-        }
         .wap-booking-fields .isValid input[type="text"], 
         .wap-booking-fields .isValid input[type="email"], 
         .wap-booking-fields .isValid input[type="url"], 
@@ -212,29 +205,13 @@
         .wap-booking-fields .isValid textarea{
             border-right: 4px solid {{ hx_rgb(opts.colors.form.success) }} !important;
         }
-        .wap-booking-fields .field-required label::after {
-            content:" *";
-            color:{{ hx_rgb(opts.colors.form.error) }};
-        }
 
-        .wap-front .wappointment-errors{
-            background-color:{{ hx_rgb(opts.colors.form.error) }};
-        }
-        .wap-front .wappointment-errors div{
-            color: #fff;
-            font-size: .9em;
-        }
 
         .wap-wid.wclosable > .wclose::before, 
         .wap-wid.wclosable > .wclose::after {
             background-color: {{ hx_rgb(opts.colors.header.text, .7) }};
         }
 
-        .phone-field-wrap .dpselect .selection::after,
-        .phone-field-wrap strong{
-            color: #645a5a;
-        }
-        
 
         /** wrapper tag **/
         {{ '#'+wrapper }}.wap-front {
