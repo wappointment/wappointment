@@ -14,6 +14,6 @@ class Services extends AbstractRepository
     {
         $result = Central::get('ServiceModel')::orderBy('sorting')->fetch();
         $this->refreshAvailability();
-        return $result;
+        return $result->toArray();
     }
 }
