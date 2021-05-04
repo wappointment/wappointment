@@ -45,7 +45,7 @@ class CalendarsController extends RestController
 
     public function getCalendarsStaff()
     {
-        return (new CalendarsBack)->get();
+        return (new CalendarsBack)->query();
     }
 
     public function getAvatar(Request $request)
