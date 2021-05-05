@@ -823,12 +823,22 @@ export default {
       },
 
 
+
       today(){
-         this.$refs.calendar.fireMethod('changeView', 'timeGridWeek')
-         this.$refs.calendar.fireMethod('today')
-         this.currentView = 'timeGridWeek'
-         this.resetFirstDay()
-         this.refreshEvents()
+        this.queryParameters = undefined
+        this.daysProperties = false
+        
+        this.firstDay = undefined
+        this.hasBeenSetCalProps = false
+        this.$refs.calendar.fireMethod('today')
+        //this.resetFirstDay()
+        this.refreshEvents()
+        this.writeHistory()
+        //  this.$refs.calendar.fireMethod('changeView', 'timeGridWeek')
+        //  this.$refs.calendar.fireMethod('today')
+        //  this.currentView = 'timeGridWeek'
+        //  this.resetFirstDay()
+        //  this.refreshEvents()
          
       },
       monthView(){

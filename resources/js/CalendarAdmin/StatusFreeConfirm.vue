@@ -13,13 +13,30 @@ export default {
     mixins:[RequestMaker],
     data: () => ({
         serviceStatus: null,
+        services:[],
+        locations:[]
     }),
     created(){
         this.serviceStatus = this.$vueService(new StatusService)
+        this.services = this.activeStaff.services
+        this.locations = this.getLocations()
     },
 
     
     methods:{
+        getLocations(){
+            let locations = []
+            for (let i = 0; i < this.services.length; i++) {
+                let tempLocations = this.services[i].locations
+                for (let j = 0; j < tempLocations.length; j++) {
+                    const testLocation = tempLocations[j];
+                    if(!locations.find(e => e.id == testLocation.id)){
+                        locations.push(testLocation)
+                    }
+                }
+            }
+            return locations
+        },
         confirmRequest(){
             this.request(this.setRequest,{}, undefined,false, this.statusSaved)
         },

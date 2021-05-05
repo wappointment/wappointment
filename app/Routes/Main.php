@@ -156,6 +156,10 @@ class Main extends AbstractRoutes
                     'controller' => 'DebugController',
                     'method' => 'freshInstall',
                 ],
+                'refreshcache' => [
+                    'controller' => 'DebugController',
+                    'method' => 'refreshCache',
+                ],
                 '/updatepage' => [
                     'controller' => 'DebugController',
                     'method' => 'updatePage',

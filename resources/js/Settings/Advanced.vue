@@ -181,8 +181,11 @@
             
           </div>
           
-      <div class="mt-3" v-if="viewData.debug !== false">
-          <button class="btn btn-danger btn-sm" @click="startResetConfirm">
+        <div class="mt-3" >
+          <button class="btn btn-secondary btn-sm" @click="refreshCache">
+            Refresh cache
+          </button>
+          <button v-if="viewData.debug !== false" class="btn btn-danger btn-sm" @click="startResetConfirm">
             <span class="dashicons dashicons-image-rotate"></span> Uninstall
           </button>
         </div>
@@ -279,9 +282,7 @@ export default {
     toggle(element){
       this.isToggled[element] = !this.isToggled[element]
     },
-    async resetInstallation() {
-        return await this.service.call('freshinstall')
-    },
+   
     updatePage(){
       this.$WapModal().confirm({
           title: 'Are you sure you need this?',
@@ -299,7 +300,12 @@ export default {
     async updatePageRequest() {
         return await this.service.call('updatepage')
     },
-
+    refreshCache(){
+      this.request(this.refreshCacheRequest)
+    },
+    async refreshCacheRequest() {
+        return await this.service.call('refreshcache') 
+    },
     startResetConfirm() {
         this.$WapModal().confirm({
           title: 'Do you really want to uninstall Wappointment?',
@@ -310,24 +316,10 @@ export default {
           } 
         })
     },
-
-    disconnectCalendar(calendar_id){
-      this.request(this.disconnectCalendarRequest, {calendar_id: calendar_id}, null ,this.disconnectCalendarSuccess, this.disconnectCalendarSuccess,this.disconnectCalendarSuccess)
-    },
-    async disconnectCalendarRequest(params) {
-        return await this.serviceSettingStaff.call('disconnectCal', params) 
+     async resetInstallation() {
+        return await this.service.call('freshinstall')
     },
 
-    disconnectCalendarSuccess(response){
-        this.viewData.calendar_url = response.data.calendar_url
-        this.viewData.calendar_logs = response.data.calendar_logs
-        this.savedSync()
-    },
-
-    savedSync(){
-      this.hideModal()
-      this.refreshInitValue()
-    },
     changedVD(key){
       this.changed(this.viewData[key], key)
     },

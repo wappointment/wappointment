@@ -11,6 +11,10 @@ export default class AppService extends ApiV1{
                 method: 'post',
                 route: 'freshinstall',
             },
+            refreshcache: {
+                method: 'post',
+                route: 'refreshcache',
+            },
             wizardlater: {
                 method: 'post',
                 route: 'wizardlater',

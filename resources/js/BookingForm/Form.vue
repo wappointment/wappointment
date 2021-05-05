@@ -317,7 +317,7 @@ export default {
 }
 
 .wap-front .wrounded{
-  border-radius : 3rem;
+  border-radius : 50%;
 }
 .wap-front .wshadow{
   box-shadow: inset 0px 8px 10px 0 rgba(0,0,0,.08);
