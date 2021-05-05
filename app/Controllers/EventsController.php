@@ -90,7 +90,7 @@ class EventsController extends RestController
 
         $times = $this->TESTprocessAvail($availability);
         $bg_events = [];
-        foreach ($times as $key => $timeslot) {
+        foreach ($times as $timeslot) {
             $bg_events[] = $this->setBgEvent($timeslot[0], $timeslot[1], 'debugging');
         }
 
@@ -128,6 +128,7 @@ class EventsController extends RestController
         }
         throw new \WappointmentException('Appointment cannot be sent', 1);
     }
+
     protected function canEditAppointment($id)
     {
         $appointment = $this->getAppointmentModel()::find((int)$id);
@@ -136,6 +137,7 @@ class EventsController extends RestController
         }
         return $appointment;
     }
+
     public function put(Request $request)
     {
         $this->canEditAppointment($request->input('id'));
