@@ -53,10 +53,6 @@ class Main extends AbstractRoutes
                     'methods' => ['get', 'post'],
                     'controller' => 'AddonsController'
                 ],
-                '/events' => [
-                    'methods' => ['post', 'delete', 'patch', 'put'],
-                    'controller' => 'EventsController'
-                ],
                 '/reminder' => [
                     'methods' => ['get', 'post', 'delete', 'patch'],
                     'controller' => 'ReminderController'
@@ -66,16 +62,12 @@ class Main extends AbstractRoutes
                     'methods' => ['post'],
                     'controller' => 'ServiceController'
                 ],
-                '/status' => [
-                    'methods' => ['post', 'delete'],
-                    'controller' => 'StatusController'
-                ],
                 '/services' => [
-                    'methods' => ['get', 'post', 'delete'],
+                    'methods' => ['post', 'delete'],
                     'controller' => 'ServicesController'
                 ],
                 '/calendars' => [
-                    'methods' => ['get', 'post', 'delete',],
+                    'methods' => ['delete'],
                     'controller' => 'CalendarsController'
                 ],
                 '/services/location' => [
@@ -100,15 +92,17 @@ class Main extends AbstractRoutes
                     'controller' => 'SettingsStaffController',
                     'method' => 'get',
                 ],
-                '/client' => [
-                    'controller' => 'ClientController',
-                    'method' => 'index',
-                ],
 
                 '/services/custom_fields' => [
                     'method' => 'get',
                     'controller' => 'CustomFieldsController'
                 ],
+                '/services' => [
+                    'method' => 'get',
+                    'controller' => 'ServicesController',
+                    'paginated' => true
+                ],
+
             ],
             'POST' => [
                 '/events/record' => [
@@ -122,14 +116,6 @@ class Main extends AbstractRoutes
                 '/app/migrate' => [
                     'method' => 'migrate',
                     'controller' => 'AppController',
-                ],
-                '/wappointment/connect' => [
-                    'method' => 'connect',
-                    'controller' => 'WappointmentController',
-                ],
-                '/wappointment/disconnect' => [
-                    'method' => 'disconnect',
-                    'controller' => 'WappointmentController',
                 ],
                 '/wappointment/refresh' => [
                     'method' => 'refresh',
@@ -166,13 +152,13 @@ class Main extends AbstractRoutes
                     'controller' => 'EventsController',
                     'hint' => 'BookingAdmin'
                 ],
-                '/events/list' => [
-                    'method' => 'get',
-                    'controller' => 'EventsController',
-                ],
                 '/freshinstall' => [
                     'controller' => 'DebugController',
                     'method' => 'freshInstall',
+                ],
+                'refreshcache' => [
+                    'controller' => 'DebugController',
+                    'method' => 'refreshCache',
                 ],
                 '/updatepage' => [
                     'controller' => 'DebugController',
@@ -204,14 +190,7 @@ class Main extends AbstractRoutes
                     'controller' => 'ClientController',
                     'hint' => 'BookingAdmin'
                 ],
-                '/client' => [
-                    'method' => 'save',
-                    'controller' => 'ClientController'
-                ],
-                '/client/delete' => [
-                    'method' => 'delete',
-                    'controller' => 'ClientController'
-                ],
+
                 '/services/reorder' => [
                     'controller' => 'ServicesController',
                     'method' => 'reorder',
@@ -220,43 +199,136 @@ class Main extends AbstractRoutes
                     'controller' => 'CalendarsController',
                     'method' => 'reorder',
                 ],
-                '/calendars/toggle' => [
+                '/calendars/permissions' => [
                     'controller' => 'CalendarsController',
-                    'method' => 'toggle',
+                    'method' => 'savePermissions',
+                ],
+            ],
+        ],
+        'mixed' => [
+            'GET' => [
+                '/calendars' => [
+                    'method' => 'get',
+                    'controller' => 'CalendarsController',
+                    'cap' => 'wappo_self_man'
+                ],
+                '/config/calendar' => [
+                    'controller' => 'ViewsDataController',
+                    'method' => 'getCalendar',
+                    'cap' => 'wappo_calendar_man'
+                ],
+                '/client' => [
+                    'controller' => 'ClientController',
+                    'method' => 'index',
+                    'cap' => 'wappo_clients_man'
+                ],
+            ],
+            'POST' => [
+                '/events/delete' => [
+                    'method' => 'delete',
+                    'controller' => 'EventsController',
+                    'cap' => 'wappo_calendar_cancel'
+                ],
+                '/events/patch' => [
+                    'method' => 'patch',
+                    'controller' => 'EventsController',
+                    'cap' => 'wappo_calendar_reschedule'
+                ],
+                '/events/put' => [
+                    'method' => 'put',
+                    'controller' => 'EventsController',
+                    'cap' => 'wappo_calendar_confirm'
+                ],
+                '/events/list' => [
+                    'method' => 'get',
+                    'controller' => 'EventsController',
+                    'cap' => 'wappo_calendar_man'
+                ],
+                '/services/booking/admin' => [
+                    'controller' => 'BookingController',
+                    'method' => 'adminBook',
+                    'hint' => 'BookingAdmin',
+                    'cap' => 'wappo_calendar_book'
+                ],
+                '/status' => [
+                    'method' => 'save',
+                    'controller' => 'StatusController',
+                    'cap' => 'wappo_calendar_man'
+                ],
+                '/status/delete' => [
+                    'method' => 'delete',
+                    'controller' => 'StatusController',
+                    'cap' => 'wappo_calendar_man'
+                ],
+                '/calendars' => [
+                    'method' => 'save',
+                    'controller' => 'CalendarsController',
+                    'cap' => 'wappo_self_weekly'
+                ],
+                '/calendars/avatar' => [
+                    'method' => 'getAvatar',
+                    'controller' => 'CalendarsController',
+                    'cap' => 'wappo_self_weekly'
                 ],
                 '/calendars/services' => [
                     'controller' => 'CalendarsController',
                     'method' => 'saveServices',
+                    'cap' => 'wappo_self_services',
+                ],
+                '/calendars/customfields' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'saveCustomFields',
+                    'cap' => 'wappo_self_weekly',
+                ],
+                '/wappointment/connect' => [
+                    'method' => 'connect',
+                    'controller' => 'WappointmentController',
+                    'cap' => 'wappo_self_connect_account'
+                ],
+                '/wappointment/disconnect' => [
+                    'method' => 'disconnect',
+                    'controller' => 'WappointmentController',
+                    'cap' => 'wappo_self_connect_account'
                 ],
 
-                '/services/booking/admin' => [
-                    'controller' => 'BookingController',
-                    'method' => 'adminBook',
-                    'hint' => 'BookingAdmin'
-                ],
-                '/calendars/avatar' => [
-                    'method' => 'getAvatar',
-                    'controller' => 'CalendarsController'
-                ],
                 '/calendars/savecal' => [
                     'method' => 'saveCal',
-                    'controller' => 'CalendarsController'
+                    'controller' => 'CalendarsController',
+                    'cap' => 'wappo_self_add_ics'
                 ],
                 '/calendars/refreshcalendars' => [
                     'controller' => 'CalendarsController',
                     'method' => 'refreshCalendars',
+                    'cap' => 'wappo_self_add_ics'
                 ],
                 '/calendars/disconnect' => [
                     'controller' => 'CalendarsController',
                     'method' => 'disconnectCal',
+                    'cap' => 'wappo_self_del_ics'
                 ],
-            ],
-        ]
+                '/calendars/toggle' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'toggle',
+                    'cap' => 'wappo_self_unpublish'
+                ],
+
+                '/client' => [
+                    'method' => 'save',
+                    'controller' => 'ClientController',
+                    'cap' => 'wappo_clients_edit'
+                ],
+                '/client/delete' => [
+                    'method' => 'delete',
+                    'controller' => 'ClientController',
+                    'cap' => 'wappo_clients_del'
+                ],
+            ]
+        ],
     ];
 
     public function __construct()
     {
-        new Init();
+        new Init;
         parent::__construct();
     }
 }

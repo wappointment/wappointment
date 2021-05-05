@@ -22,16 +22,8 @@ class AlterAppointmentsTableForService extends Wappointment\Installation\Migrate
 
         Capsule::schema()->table(Database::$prefix_self . '_appointments', function ($table) use ($foreignName, $foreignNameLoc) {
             $table->unsignedInteger('location_id')->nullable()->default(null);
-            if ($foreignName === false) {
-                $table->foreign('service_id')->references('id')->on(Database::$prefix_self . '_services');
-            } else {
-                $table->foreign('service_id', $foreignName)->references('id')->on(Database::$prefix_self . '_services');
-            }
-            if ($foreignNameLoc === false) {
-                $table->foreign('location_id')->references('id')->on(Database::$prefix_self . '_locations');
-            } else {
-                $table->foreign('location_id', $foreignNameLoc)->references('id')->on(Database::$prefix_self . '_locations');
-            }
+            $table->foreign('service_id', $foreignName)->references('id')->on(Database::$prefix_self . '_services');
+            $table->foreign('location_id', $foreignNameLoc)->references('id')->on(Database::$prefix_self . '_locations');
         });
     }
 
@@ -56,18 +48,8 @@ class AlterAppointmentsTableForService extends Wappointment\Installation\Migrate
         Capsule::schema()->table(Database::$prefix_self . '_appointments', function ($table) use ($foreignName, $foreignNameLoc) {
             Appointment::whereNotNull('service_id')->update(['service_id' => null]);
 
-            if ($foreignName === false) {
-                $table->dropForeign(['service_id']);
-            } else {
-                $table->dropForeign($foreignName);
-            }
-            if ($foreignNameLoc === false) {
-                $table->dropForeign(['location_id']);
-            } else {
-                $table->dropForeign($foreignNameLoc);
-            }
-
-            $table->dropColumn(['location_id']);
+            $table->dropForeign($foreignName);
+            $table->dropForeign($foreignNameLoc);
         });
     }
 }

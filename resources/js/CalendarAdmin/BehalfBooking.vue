@@ -20,7 +20,7 @@
                 </span>
             </div>
             <div v-if="!service && hasMoreThanOneService">
-                <ServiceSelection @serviceSelected="serviceSelected" :options="viewData.widget" :services="viewData.services" :admin="true"/>
+                <ServiceSelection @serviceSelected="serviceSelected" :options="viewData.widget" :services="services" :admin="true"/>
             </div>
             <div v-if="service && !duration" class="p-2">
                 <DurationSelection @durationSelected="durationSelected" :service="service" :options="viewData.widget" />
@@ -148,7 +148,7 @@ export default {
         
         this.serviceBooking = this.$vueService(new WappoServiceBooking)
 
-        this.services = this.viewData.services
+        this.services = this.activeStaff.services
         if(!this.hasMoreThanOneService) {
             this.serviceSelected('ignore',{service: this.services[0]})
         }

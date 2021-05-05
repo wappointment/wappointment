@@ -23,16 +23,8 @@ class CreateServiceLocationTable extends Wappointment\Installation\MigrateHasSer
             $table->unsignedInteger('service_id');
 
             $table->unsignedInteger('location_id');
-            if ($foreignName === false) {
-                $table->foreign('service_id')->references('id')->on(Database::$prefix_self . '_services');
-            } else {
-                $table->foreign('service_id', $foreignName)->references('id')->on(Database::$prefix_self . '_services');
-            }
-            if ($foreignNameLoc === false) {
-                $table->foreign('location_id')->references('id')->on(Database::$prefix_self . '_locations');
-            } else {
-                $table->foreign('location_id', $foreignNameLoc)->references('id')->on(Database::$prefix_self . '_locations');
-            }
+            $table->foreign('service_id', $foreignName)->references('id')->on(Database::$prefix_self . '_services');
+            $table->foreign('location_id', $foreignNameLoc)->references('id')->on(Database::$prefix_self . '_locations');
         });
     }
     protected function getFKServices()
@@ -54,16 +46,8 @@ class CreateServiceLocationTable extends Wappointment\Installation\MigrateHasSer
         $foreignName = $this->getFKServices();
         $foreignNameLoc = $this->getFKLocations();
         Capsule::schema()->table(Database::$prefix_self . '_service_location', function ($table) use ($foreignName, $foreignNameLoc) {
-            if ($foreignName === false) {
-                $table->dropForeign(['service_id']);
-            } else {
-                $table->dropForeign($foreignName);
-            }
-            if ($foreignNameLoc === false) {
-                $table->dropForeign(['location_id']);
-            } else {
-                $table->dropForeign($foreignNameLoc);
-            }
+            $table->dropForeign($foreignName);
+            $table->dropForeign($foreignNameLoc);
         });
         Capsule::schema()->dropIfExists(Database::$prefix_self . '_service_location');
     }

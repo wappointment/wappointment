@@ -8,7 +8,7 @@
                 </div>
             </div>
         </div>
-        <a class="small" href="javascript:;" @click="$emit('edit', calendar)">edit</a>
+        <a v-if="canEdit" class="small" href="javascript:;" @click="$emit('edit', calendar)">edit</a>
     </div>
 </template>
 
@@ -25,6 +25,10 @@ export default {
         calendar:{
             type: Object,
         },
+        canEdit:{
+            type:Boolean,
+            default:true
+        }
     },
     methods: {
         convertHours(hours){

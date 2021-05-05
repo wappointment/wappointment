@@ -36,9 +36,10 @@ class DotCom extends API
     public function checkForUpdates()
     {
         // 0 - only check if site connected
-        if (!empty($this->site_key) && WPHelpers::getOption('appointments_must_refresh')) {
+        if (!empty($this->site_key) && (bool)WPHelpers::getOption('appointments_must_refresh') === true) {
             // 1 - retrieve appointments data
             $appointments = $this->getAppointments();
+
             if (empty($appointments)) {
                 $this->clearMustRefresh();
                 return false;
@@ -111,7 +112,16 @@ class DotCom extends API
 
     public function getAppointments()
     {
-        $response = $this->client->request('GET', $this->call('/api/appointment/list/' . $this->site_key), ['connect_timeout' => 5]);
+
+        try {
+            $response = $this->client->request('GET', $this->call('/api/appointment/list/' . $this->site_key), ['connect_timeout' => 5]);
+        } catch (\Throwable $th) {
+            \Wappointment\Models\Log::data([
+                'info' => "Cannot connect to wappointment.com ",
+            ]);
+            return [];
+        }
+
         return $this->processResponse($response);
     }
 

@@ -2,6 +2,12 @@
 
 namespace Wappointment\Messages;
 
+use Wappointment\Services\Settings;
+use Wappointment\WP\Helpers as WPHelpers;
+
+/**
+ * Todo Redo improve ...
+ */
 class TagsReplacement
 {
     public $params = [];
@@ -78,11 +84,34 @@ class TagsReplacement
                 'label' => 'Appointment\'s date and time',
                 'getMethod' => 'getStartsDayAndTime'
             ],
-
+            [
+                'model' => 'staff',
+                'key' => 'name',
+                'label' => 'Staff Name',
+                'getMethod' => 'getStaffName',
+                'modelCall' => 'appointment'
+            ],
 
         ];
 
-        return apply_filters('wappointment_emails_tags', $email_tags_core);
+        return apply_filters('wappointment_emails_tags', static::appendStaffCF($email_tags_core));
+    }
+
+    public static function appendStaffCF($email_tags_core)
+    {
+        if (Settings::get('allow_staff_cf')) {
+            $custom_fields = WPHelpers::getOption('staff_custom_fields', []);
+            foreach ($custom_fields as $custom_field) {
+                $email_tags_core[] =  [
+                    'model' => 'staff',
+                    'key' => $custom_field['key'],
+                    'label' => 'Staff Custom Field - ' . $custom_field['name'],
+                    'getMethod' => 'getStaffCustomField',
+                    'modelCall' => 'appointment'
+                ];
+            }
+        }
+        return $email_tags_core;
     }
 
     public static function emailsLinks()
@@ -141,18 +170,12 @@ class TagsReplacement
             }
             $this->addFindReplace($tag_find, $replace);
         }
-
-        // foreach ($this->hiddenEmailTags() as $tag => $replace) {
-        //     if (!empty($tag['sanitize'])) {
-        //         $replace = sanitize_text_field($replace);
-        //     }
-        //     $this->addFindReplace($tag, $replace);
-        // }
     }
 
     private function getValue($tag)
     {
         $model_key = empty($tag['modelCall']) ? $tag['model'] : $tag['modelCall'];
+
         if (empty($this->params[$model_key])) {
             return '';
         }
@@ -168,7 +191,7 @@ class TagsReplacement
                         return call_user_func([
                             $this->params[$model_key],
                             $tag['getMethod']
-                        ]);
+                        ], $tag);
                     }
                 }
             } else {

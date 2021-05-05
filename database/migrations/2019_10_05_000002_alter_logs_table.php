@@ -17,11 +17,7 @@ class AlterLogsTable extends Wappointment\Installation\Migrate
         $foreignName = $this->getFKClients();
         Capsule::schema()->table(Database::$prefix_self . '_logs', function ($table) use ($foreignName) {
             $table->unsignedInteger('client_id')->nullable()->default(null)->change();
-            if ($foreignName === false) {
-                $table->foreign('client_id')->references('id')->on(Database::$prefix_self . '_clients');
-            } else {
-                $table->foreign('client_id', $foreignName)->references('id')->on(Database::$prefix_self . '_clients');
-            }
+            $table->foreign('client_id', $foreignName)->references('id')->on(Database::$prefix_self . '_clients');
         });
     }
 
@@ -38,11 +34,7 @@ class AlterLogsTable extends Wappointment\Installation\Migrate
     {
         $foreignName = $this->getFKClients();
         Capsule::schema()->table(Database::$prefix_self . '_logs', function ($table) use ($foreignName) {
-            if ($foreignName === false) {
-                $table->dropForeign(['client_id']);
-            } else {
-                $table->dropForeign($foreignName);
-            }
+            $table->dropForeign($foreignName);
         });
     }
 }

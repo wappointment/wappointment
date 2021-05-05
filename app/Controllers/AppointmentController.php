@@ -18,7 +18,7 @@ class AppointmentController extends RestController
             throw new \WappointmentException("Malformed parameter", 1);
         }
 
-        $appointment = AppointmentModel::select(['start_at', 'status', 'end_at', 'type', 'client_id', 'options', 'staff_id'])
+        $appointment = AppointmentModel::select(['start_at', 'status', 'end_at', 'type', 'client_id', 'options', 'staff_id', 'service_id'])
             ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
             ->where('edit_key', $request->input('appointmentkey'))
             ->first();
@@ -40,7 +40,7 @@ class AppointmentController extends RestController
         return [
             'appointment' => $appointmentData,
             'client' => $appointment->client()->select(['name', 'email', 'options'])->first(),
-            'service' => $isLegacy ? Service::get() : Central::get('ServiceModel')::first($appointment->service_id),
+            'service' => $isLegacy ? Service::get() : Central::get('ServiceModel')::find((int)$appointment->service_id),
             'staff' => $isLegacy ? (new \Wappointment\WP\StaffLegacy($appointment->getStaffId()))->toArray() : (new \Wappointment\WP\Staff($appointment->getStaffId()))->toArray(),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),

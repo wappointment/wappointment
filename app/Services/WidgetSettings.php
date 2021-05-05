@@ -52,13 +52,17 @@ class WidgetSettings
             'when' => 'When',
             'service' => 'Service',
             'location' => 'Where',
-            'min' => 'min'
+            'min' => 'min',
+            'noappointments' => 'No appointments available'
         ],
         'button' => [
             'title' => 'Book now!',
             'check_full' => false,
             'check_bold' => false,
             'slide_size' => 1.3
+        ],
+        'staff_selection' => [
+            'pickstaff' => 'Select staff',
         ],
         'selection' => [
             'check_viewweek' => false,
@@ -117,13 +121,13 @@ class WidgetSettings
             'confirm' => 'Confirm',
         ],
         'service_selection' => [
-            'select_service' => 'What can I help you with?',
+            'select_service' => 'Pick a service',
         ],
         'service_duration' => [
-            'select_duration' => 'How long will it last?',
+            'select_duration' => 'How long will be the session?',
         ],
         'service_location' => [
-            'select_location' => 'How should we talk?',
+            'select_location' => 'How should we meet?',
         ],
     ];
 
@@ -219,6 +223,9 @@ class WidgetSettings
                 'min' => [
                     'tip' => 'minutes'
                 ],
+                'noappointments' => [
+                    'tip' => 'Show when no appointments are available for that staff'
+                ]
             ]
         ],
 
@@ -239,6 +246,12 @@ class WidgetSettings
                 'check_viewweek' => ['label' => 'Week View'],
             ]
 
+        ],
+        'service_location' => [
+            'fields' => [
+                'select_location' => false,
+            ],
+            'sub' => 'You can edit modalities names in [url wurl="wappointment_settings#/modalities"]Wappointment > Settings > Services > Modalities[/url]',
         ],
         'form' => [
             'categories' => [

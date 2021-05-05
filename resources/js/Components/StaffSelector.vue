@@ -1,45 +1,114 @@
 <template>
-    <SearchStaff v-if="staffLoaded" v-model="staffId" :ph="labelDefault" :elements="staffs" 
-            idKey="ID" labelSearchKey="display_name" :displayElement="displayElementFunc" />
+    <div>
+        <SearchStaff v-if="staffLoaded" v-model="staffId" :ph="labelDefault" :elements="staffsPassed" 
+            idKey="ID" labelSearchKey="display_name" @searching="searching" :displayElement="displayElementFunc" />
+        <div v-if="isEmailWithNoValue && isUserAdministrator" class="bg-secondary p-2 rounded mt-2 border border-primary">
+            <h4 v-if="accountCreated === false">Create a new account? </h4>
+            <h4 v-else class="text-success"><span class="dashicons dashicons-yes-alt"></span> Account Created </h4>
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div>Email: <strong>{{ this.search_term }}</strong></div>
+                    <div>Password: <strong>{{ this.generatedPassword }}</strong> <a v-if="accountCreated === false" @click="generatePass" href="javascript:;" data-tt="Regenerate"><span class="dashicons dashicons-image-rotate"></span></a></div>
+                </div>
+                <button v-if="accountCreated === false" class="btn btn-primary" @click="createAccount">Create</button>
+            </div>
+            
+        </div>
+    </div>
 </template>
 
 <script>
+import {isEmail} from 'validator'
 import SearchStaff from '../Fields/SearchDropdown'
+import WPUsersService from '../Services/WP/Users' 
+import RequestMaker from '../Modules/RequestMaker' 
+import hasPermissions from '../Mixins/hasPermissions' 
 export default {
+    mixins:[RequestMaker, hasPermissions],
     components:{SearchStaff},
     props: {
         staffs: null,
         activeStaffId: false,
         labelDefault: {
             type: String,
-            default: 'Select WordPress account'
+            default: 'Select account or Enter email'
         },
+        autoselect: true,
     },
     data() {
         return {
             staffId: false,
+            generatedPassword:'',
+            search_term:'',
+            accountCreated: false,
+            staffsPassed: [],
+            serviceWPUser: null
         }
     },
     created(){
         if([false,undefined,''].indexOf(this.activeStaffId) === -1){
             this.staffId = this.activeStaffId
         }else{
-            this.staffId = this.staffs[0].ID
+            this.staffId = this.autoselect ? this.staffs[0].ID:false
         }
+        this.serviceWPUser = this.$vueService(new WPUsersService)
+        this.staffsPassed = [].concat(this.staffs)
     },
     methods:{
+        createAccount() {
+            this.request(this.createAccountRequest,  undefined,undefined,false,  this.successCreatedAccount)
+        },
+
+        async createAccountRequest() {
+            let params = {username:this.search_term, email:this.search_term, password:this.generatedPassword, roles:['wappointment_staff']}
+            return await this.serviceWPUser.call('create', params )
+        },
+
+        successCreatedAccount(r){
+            if(r.data!==undefined && r.data.id !== undefined && r.data.id > 0){
+                this.accountCreated = r.data
+                this.staffsPassed.push({
+                    ID:r.data.id,
+                    display_name: '',
+                    user_email: r.data.email,
+                    gravatar: r.data.avatar_urls[48]
+                })
+                this.staffId = r.data.id
+            }   
+        },
+
+        searching(search_term, matches){
+            if(parseInt(matches) > 0){
+                this.search_term = ''
+                return;
+            }
+            this.search_term = search_term
+            this.generatePass()
+        },
+        generatePass(){
+            this.generatedPassword = Math.random().toString(36).slice(-12)
+        },
         displayElementFunc(element){
             return element !== undefined ? element.user_email: 'Unknown'
         },
+
+        findUserById(staffId){
+            return this.staffsPassed.find(e => e.ID == staffId)
+        },
+
     },
     computed: {
+        
+        isEmailWithNoValue(){
+            return this.search_term !== '' && isEmail(this.search_term)
+        },
         staffLoaded(){
-            return (this.staffs !== undefined) ? true:false
+            return this.staffs !== undefined
         },
     },
     watch: {
         staffId: function (newId, oldId) {
-            this.$emit('updateStaff', newId)
+            this.$emit('updateStaff', this.findUserById(newId))
         }
     },
 }

@@ -44,18 +44,32 @@ abstract class AbstractRoutes
                             'methods' => $http_method,
                             'callback' => [new $controller_name(), 'tryExecute'],
                             'permission_callback' => [$this, 'canExecute' . ucfirst($access)],
-                            'args' => (empty($controller_method_args['args'])) ?
-                                [
-                                    'wparams' => [
-                                        'method' => $controller_method_args['method'],
-                                        'hint' => !empty($controller_method_args['hint']) ? $controller_method_args['hint'] : false
-                                    ]
-                                ] : $controller_method_args['args'],
+                            'args' => $this->getArgs($controller_method_args),
                         ]
                     );
                 }
             }
         }
+    }
+
+    public function getArgs($controller_method_args)
+    {
+        $args = (empty($controller_method_args['args'])) ?
+            [
+                'wparams' => [
+                    'method' => $controller_method_args['method'],
+                ]
+            ] : $controller_method_args['args'];
+
+        if (!empty($args['wparams'])) {
+            foreach (['hint', 'cap', 'paginated'] as $param_key) {
+                if (!empty($controller_method_args[$param_key])) {
+                    $args['wparams'][$param_key] = $controller_method_args[$param_key];
+                }
+            }
+        }
+
+        return $args;
     }
 
     private function prepareRoutes()
@@ -116,18 +130,31 @@ abstract class AbstractRoutes
         return true;
     }
 
-    public function canExecuteAuthor($args)
-    {
-        return current_user_can('author');
-    }
-
-    public function canExecuteEditor($args)
-    {
-        return current_user_can('editor');
-    }
-
     public function canExecuteAdministrator($args)
     {
         return current_user_can('administrator');
+    }
+
+    public function canExecuteMixed($request)
+    {
+        $cap = $this->getRequestCap($request);
+        return current_user_can('administrator') || current_user_can(empty($cap) ? 'administrator' : $cap);
+    }
+    protected function getRequestCap($request)
+    {
+        $args = $request->get_attributes()['args'];
+        return $this->capIsValid($args) ? $args['wparams']['cap'] : 'administrator';
+    }
+
+    protected function capIsValid($args)
+    {
+        return !empty($args['wparams'])
+            && !empty($args['wparams']['cap']
+                && in_array($args['wparams']['cap'], $this->getAllowedCaps()));
+    }
+
+    protected function getAllowedCaps()
+    {
+        return (new \Wappointment\Services\Permissions)->getCaps(true);
     }
 }

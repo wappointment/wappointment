@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.7
 Requires PHP: 7.0
-Stable tag: 2.1.2
+Stable tag: 2.1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,31 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.1.5 - 2021-04-17 =
+* Added centered option for the booking widget in shortcode mode
+* Added email reminder duplicate option
+* Improved shortcode generator
+* Improved staff/Calendar creation
+* Improved service creation
+* Improved booking widget appearance
+* Correction on calendar sync timezone handling issue
+* Remove buffer from total duration in attached ics and in appointment's title
+* Fixed missing service information in Wappointment > Calendar for each appointment
+* Fixed missing translation on booking widget
+
+= 2.1.4 - 2021-04-09 =
+* Fixed issue when modifying calendar on save, the custom avatar selection was lost
+* Improved booking widget editor for payment selection in addons
+* Fixed booking cancel sequence from the backend
+* Improved css hiding external nag 99% efficient
+* Improved foreign key handling on installation
+* Allow calendar delete
+
+= 2.1.3 - 2021-04-02 =
+* Fixed confirm button in pending appointment email 
+* Fixed Edit Cancel / Reschedule page in Settings > Advanced
+* Fixed client delete issue
 
 = 2.1.2 - 2021-03-31 =
 * Fixed triple email notifications sent

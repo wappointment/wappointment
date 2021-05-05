@@ -1,13 +1,12 @@
 <template>
     <div class="container-fluid">
       <ServiceModulable :dataPassed="model" 
-      :servicesService="servicesService" @saved="$emit('saved')"/>
+      :servicesService="servicesService" @saved="savedTransmit"/>
     </div>
 </template>
 
 <script>
 import WappoServiceService from '../Services/V1/Services'
-//import abstractView from '../Views/Abstract'
 import ServiceModulable from '../Views/Subpages/ServiceNew'
 import Service from '../Views/Subpages/Service'
 export default {
@@ -50,6 +49,9 @@ export default {
         },
         loaded(viewData){
         },
+        savedTransmit(e){
+            this.$emit('saved',e)
+        }
     }  
 }
 </script>

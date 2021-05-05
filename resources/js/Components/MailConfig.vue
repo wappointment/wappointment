@@ -21,7 +21,7 @@
         <div v-if="hasMethod">
             <hr>
             <!-- From address setup -->
-            <div class="form-group valid required col-md-12 field-input" v-if="!mailFromOtherPlugin">
+            <div class="form-group valid required col-md-12 field-input" v-if="!(mailFromOtherPlugin && isWpMail)">
                 <div>
                     <div v-if="showFrom" class="d-flex">
                         <InputPh v-model="sendconfig.from_name" ph="From name" />

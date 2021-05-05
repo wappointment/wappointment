@@ -10,12 +10,14 @@ class Staff
     public $id = null;
     public $wp_uid = null;
     public $avatar = null; //avatar
+    public $avatar_id = null; //avatar_id
     public $name = null; //staffname
     public $timezone = null; //staff timezone
     public $gravatar = '';
     public $status = false;
     public $availability = '';
     public $staff_data = [];
+    public $permissions = [];
 
     public function __construct($staff_data = [])
     {
@@ -40,15 +42,24 @@ class Staff
         $this->wp_user = get_userdata($this->wp_uid);
         unset($this->wp_user->data->user_pass);
         unset($this->wp_user->data->user_activation_key);
-        if (empty($this->wp_user)) {
-            throw new \WappointmentException("Can't load staff information", 1);
+        if (empty($this->wp_user) && $this->status > 0) {
+            Calendar::where('id', $this->id)->update(['status' => 0]);
         }
 
         $this->gravatar = get_avatar_url($this->wp_uid, ['size' => 46]);
-        $this->avatar = !empty($this->staff_data['options']['avatar_id']) ? wp_get_attachment_image_src($this->staff_data['options']['avatar_id'])[0] : $this->gravatar;
+        $this->avatar_id = !empty($this->staff_data['options']['avatar_id']) ? $this->staff_data['options']['avatar_id'] : '';
+        $this->avatar = !empty($this->avatar_id) ? wp_get_attachment_image_src($this->avatar_id)[0] : $this->gravatar;
         $this->name = $staff_data['name'];
         $this->timezone = $this->staff_data['options']['timezone'];
         $this->availability = $this->staff_data['availability'];
+        $this->setWappoPermissions();
+    }
+
+    protected function setWappoPermissions()
+    {
+        $permissions = new \Wappointment\Services\Permissions;
+
+        $this->permissions = !empty($this->wp_user) ? $permissions->getUserCaps($this->wp_user->get_role_caps()) : [];
     }
 
     public function fullData()
@@ -59,6 +70,7 @@ class Staff
             'wp_uid' => $this->wp_uid,
             'avatar' => $this->avatar,
             'gravatar' => $this->gravatar,
+            'avatar_id' => $this->avatar_id,
             'name' => $this->name,
             'avb' => $this->getAvb(),
             'regav' => $this->getRegav(),
@@ -68,7 +80,20 @@ class Staff
             'status' => $this->status,
             'calendar_urls' => $this->getCalendarUrls(),
             'calendar_logs' => $this->getCalendarLogs(),
+            'permissions' => $this->permissions,
+            'custom_fields' => $this->getCustomFields(),
+            'roles' => $this->getRoles()
         ];
+    }
+
+    protected function getCustomFields()
+    {
+        return empty($this->staff_data['options']['custom_fields']) ? [] : $this->staff_data['options']['custom_fields'];
+    }
+
+    protected function getRoles()
+    {
+        return !empty($this->wp_user) ? array_values($this->wp_user->roles) : [];
     }
 
     public function getServicesId($services)

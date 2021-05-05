@@ -9,15 +9,31 @@ use Wappointment\Services\Location as LocationService;
 
 class LocationsController extends RestController
 {
-    public function get()
+    public function get(Request $request)
     {
-        return Location::get();
+        $locations = Location::get();
+        if ($request->input('usable')) {
+            $locations = $locations->filter(function ($value) {
+                if ($value->type == Location::TYPE_AT_LOCATION && empty($value->options['address'])) {
+                    return false;
+                }
+                if ($value->type == Location::TYPE_PHONE && empty($value->options['countries'])) {
+                    return false;
+                }
+                if ($value->type == Location::TYPE_ZOOM && empty($value->options['video'])) {
+                    return false;
+                }
+
+                return true;
+            });
+        }
+        return array_values($locations->toArray());
     }
 
     public function save(Request $request)
     {
         $result = LocationService::save($request->only(['id', 'name', 'type', 'options']));
-        return ['message' => 'Modality has been saved', 'result' => $result, 'locations' => $this->get()];
+        return ['message' => 'Modality has been saved', 'result' => $result, 'locations' => $this->get($request)];
     }
 
     public function delete(Request $request)

@@ -1,9 +1,10 @@
 <template>
     <div class="wap-bf" :class="{show: canBeBooked, 'has-scroll':requiresScroll}">
         <template v-if="canBeBooked">
-            <BookingFormHeader v-if="showHeader" 
+            <BookingFormHeader v-if="showHeader && noStaffSelectionNeeded" 
             :isStepSlotSelection="isStepSlotSelection"
             :options="options"
+            :attributesEl="attributesEl"
             :service="service" 
             :services="services"
             :staffs="getStaffs" 
@@ -12,15 +13,17 @@
             :rescheduling="rescheduling"
             :appointmentSaved="appointmentSaved"
             :staff="selectedStaff"
-            @changeStaff="changeStaff"
+            :mustSelectStaff="mustSelectStaff"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
             @changeLocation="childChangedStep"
+            @showStaffScreen="childChangedStep"
             />
             <div class="wap-form-body" :id="getWapBodyId" >
                 <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
                 :isStepSlotSelection="isStepSlotSelection"
                 :options="options"
+                :attributesEl="attributesEl"
                 :service="service" 
                 :duration="duration" 
                 :services="services"
@@ -33,7 +36,6 @@
                 @changeDuration="childChangedStep"
                 @changeLocation="childChangedStep"
                 />
-
                 <div class="wrap-calendar p-2" :class="'step-'+currentStep">
                     <div v-if="loading">
                         <Loader />
@@ -54,7 +56,7 @@
         </template>
         <div v-else>
             <div v-if="dataloaded" class="wappointment-errors">
-                <div>No appointments available</div>
+                <div>{{options.general.noappointments}}</div>
             </div>
             <template v-else>
                 <div class="wappointment-errors" v-if="errorMessages.length > 0">
@@ -85,6 +87,7 @@ import AppointmentTypeSelection from './AppointmentTypeSelection'
 import BookingServiceSelection from './ServiceSelection'
 import BookingDurationSelection from './DurationSelection'
 import BookingLocationSelection from './LocationSelection'
+import BookingStaffSelection from './StaffSelection'
 import MixinLegacy from './MixinLegacy'
 
 let compDeclared = {
@@ -96,6 +99,7 @@ let compDeclared = {
     'BookingServiceSelection': BookingServiceSelection,
     'BookingDurationSelection': BookingDurationSelection,
     'BookingLocationSelection': BookingLocationSelection,
+    'BookingStaffSelection': BookingStaffSelection,
     'DurationCell': DurationCell,
     'abstractFront':AbstractFront,
     'BookingFormSummary': BookingFormSummary,
@@ -106,7 +110,7 @@ let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Col
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
-     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid', 'demoAs'],
+     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid', 'demoAs', 'attributesEl'],
      components: compDeclared, 
     data: () => ({
         viewName: 'availability',
@@ -134,6 +138,7 @@ export default {
         requiresScroll: false,
         selectedStaff: null,
         showHeader:true,
+        checkCacheIntervalid: false,
     }),
 
     mounted () {
@@ -153,7 +158,20 @@ export default {
     },
 
     computed: {
+        showStaffSelection(){
+            return this.mustSelectStaff || this.loadingStep == "BookingStaffSelection"
+        },
+        
+        mustSelectStaff(){
+            return this.attributesEl !== undefined && this.attributesEl.staffPage !== undefined
+        },
+        staffIsSelected(){
+            return [null, undefined, false].indexOf(this.selectedStaff) === -1
+        },
 
+        noStaffSelectionNeeded(){
+            return !this.showStaffSelection || (this.showStaffSelection && (this.staffIsSelected && this.bfdemo !== true))
+        },
         isLegacyOrNotServiceSuite(){
             return this.isLegacy || this.service.type !== undefined
         },
@@ -201,7 +219,12 @@ export default {
            return this.date_format + '[' + this.viewData.date_time_union + ']' + this.time_format
        },
        canBeBooked(){
-           return this.dataloaded && this.intervalsCollection!== null && this.intervalsCollection.intervals.length > 0
+           return this.dataloaded && 
+           (
+               (this.intervalsCollection!== null && this.intervalsCollection.intervals.length > 0) 
+           || 
+                (this.mustSelectStaff && !this.staffIsSelected)
+           )
        },
        
        staff(){
@@ -227,11 +250,51 @@ export default {
        }
     },
     methods: {
+        checkForCache(){
+            return window.wappoAvailability !== undefined? window.wappoAvailability:false
+        },
+        cacheValue(){
+            window.wappoAvailability = this.viewData
+            setTimeout(this.clearCache, 120000)
+            window.wappoAvailabilityRunning = undefined
+        },
+        clearCache(){
+            window.wappoAvailability = undefined
+        },
+        isCacheReady(){
+            if(window.wappoAvailabilityRunning !== true){
+                clearInterval(this.checkCacheIntervalid)
+                this.refreshInitValue()
+            }
+        },
+        refreshInitValue(){
+            if(window.wappoAvailabilityRunning === true){
+                return this.checkCacheIntervalid = setInterval(this.isCacheReady, 400);
+            }
+            let cacheFound = this.checkForCache()
+            if(cacheFound){
+                return this.loaded({data:cacheFound})
+            }
+            this.runRequestAvail()
+        },
+        runRequestAvail(){
+            window.wappoAvailabilityRunning = true
+            this.loading = true
+            this.initValueRequest()
+            .then(this.loaded)
+            .catch(this.serviceError)
+        },
+
         setStaff(newStaff){
             this.selectedStaff = newStaff
             this.setAvailableServices()
-            this.autoSelService()
             this.refreshAvail()
+            this.autoSelectingOptions()
+        },
+        autoSelectingOptions(){
+            this.autoSelService()
+            this.autoSelectDuration() 
+            this.autoSelectModality()
         },
         changeStaff(newStaff){
             this.service = false
@@ -241,6 +304,7 @@ export default {
             this.showHeader = false
 
             this.currentStep = ''
+
             setTimeout(this.showHeaderLater.bind(null, this.selectFirstStep('BookingServiceSelection', 
             {
                 service: this.service, 
@@ -367,13 +431,11 @@ export default {
                 let conditionKeys = Object.keys(conditions)
                 for (let i = 0; i < conditionKeys.length; i++) {
                     const keyCondition = conditionKeys[i]
-                    if(this[keyCondition] !== conditions[keyCondition]) {
+                    if(this.bfdemo !== true && this[keyCondition] !== conditions[keyCondition]) {
                         if(this.componentsList[component_name].skip !== undefined){
-                            
                             if(this.conditionSkipPass(component_name)){
                                 this.childChangedStep(this.componentsList[component_name].relations.next)
                             }
-                            
                         }
                         return false
                     }
@@ -397,7 +459,7 @@ export default {
             let ordered = []
             if(this.viewData.staffs!== undefined && this.viewData.staffs.length > 1){
                 for (let i = 0; i < this.viewData.staffs.length; i++) {
-                    if(this.viewData.staffs[i].services.length > 0){
+                    if(this.viewData.staffs[i].services.length > 0 && this.viewData.staffs[i].availability.length > 0){
                         ordered.push({
                             id: i,
                             start:this.viewData.staffs[i].availability[0][0],
@@ -418,6 +480,7 @@ export default {
         },
 
         loadedAfter() {
+            this.cacheValue()
             this.time_format = convertDateFormatPHPtoMoment(this.viewData.time_format)
             this.date_format = convertDateFormatPHPtoMoment(this.viewData.date_format)
 
@@ -427,14 +490,14 @@ export default {
                 this.dataloaded = true
                 return
             }
-            this.selectedStaff = this.getDefaultStaff()
-            this.refreshAvail()
-
-            this.setMomentLocale()
 
             this.dataloaded = true
-
-            this.initServiceStaffDurationLocation()
+            if(!this.mustSelectStaff || this.mustSelectStaff && this.getStaffs.length == 1){
+                this.selectedStaff = this.getDefaultStaff()
+                this.refreshAvail()
+                this.setMomentLocale()
+                this.initServiceStaffDurationLocation()
+            }
     
             this.setComponentLists()
 
@@ -463,11 +526,18 @@ export default {
 
         selectFirstStep(step_name, params) {
             if(this.isLegacyOrNotServiceSuite === false){
-                if(params.service === false) return 'BookingServiceSelection'
-                if(params.service !== false && params.duration === false) return 'BookingDurationSelection'
-                if(params.service !== false && params.duration !== false && params.location === false) return 'BookingLocationSelection'
+                return params.service === false? this.getStepFirst():this.getStepAfterService(params)
             }
             return step_name
+        },
+        getStepFirst(){
+            return this.noStaffSelectionNeeded ? 'BookingServiceSelection': 'BookingStaffSelection'
+        },
+        getStepAfterService(params){
+            return params.duration === false ? 'BookingDurationSelection': this.getStepAfterDuration(params)
+        },
+        getStepAfterDuration(params){
+            return params.location === false ? 'BookingLocationSelection': 'BookingCalendar'
         },
 
         autoSelectLocation(){
@@ -540,28 +610,26 @@ export default {
         initServiceStaffDurationLocation(){
             this.setAvailableServices()
             this.testLockedStaff()
-            this.autoSelService()
+            this.autoSelectingOptions()
             this.demoAutoSelect() 
-            this.autoSelectDuration() 
-            this.autoSelectModality() 
         },
         testLockedStaff(){
-            if(this.options !== undefined && 
-            this.options.attributesEl !== undefined && 
-            this.options.attributesEl.staffSelection !== undefined){
+            if(this.attributesEl !== undefined && 
+            this.attributesEl.staffSelection !== undefined){
                 for (let i = 0; i < this.viewData.staffs.length; i++) {
-                    if(parseInt(this.options.attributesEl.staffSelection) === parseInt(this.viewData.staffs[i].id)){
+                    if(parseInt(this.attributesEl.staffSelection) === parseInt(this.viewData.staffs[i].id)){
                         return this.setStaff(this.viewData.staffs[i])
                     }
                 }
             }
         },
         testLockedService(){
-            if(this.options !== undefined && 
-                this.options.attributesEl !== undefined && 
-                this.options.attributesEl.serviceSelection !== undefined){
-                    let lockToServiceID = this.options.attributesEl.serviceSelection
-                    this.service = this.services.find(e => e.id == lockToServiceID)
+            if(this.attributesEl !== undefined && 
+                this.attributesEl.serviceSelection !== undefined){
+                    let lockToServiceID = this.attributesEl.serviceSelection
+                    if([undefined,false,''].indexOf(lockToServiceID) === -1){
+                        this.service = this.services.find(e => e.id == lockToServiceID)
+                    }
                 }
         },
 
@@ -692,12 +760,35 @@ export default {
             componentsList['BookingCalendar'].props.location = "location"
             componentsList['BookingCalendar'].props.viewData = "viewData"
 
+            componentsList['BookingStaffSelection'] = {
+                name: 'BookingStaffSelection',
+                conditions: {
+                    'serviceSelected': false,
+                    'appointmentSaved': false,
+                    'rescheduling': false,
+                    'showStaffSelection': true
+                },
+                props: {
+                    calendars: 'viewData.staffs',
+                    options: 'options',
+                    timeprops: 'timeprops',
+                    viewData: 'viewData',
+                },
+                listeners: {
+                    staffSelected:'changeStaff'
+                },
+                relations:{
+                    'next': 'BookingServiceSelection',
+                }
+            }
+            
             componentsList['BookingServiceSelection'] = {
                 name: 'BookingServiceSelection',
                 conditions: {
                     'serviceSelected':false,
                     'appointmentSaved':false,
                     'rescheduling':false,
+                    'noStaffSelectionNeeded': true
                 },
                 props: {
                     services:"services",
@@ -774,6 +865,10 @@ export default {
     min-width: 280px;
 }
 
+.d-flex.ddays > div{
+    width: 14.3%;
+    text-align: center;
+}
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;
     margin: .4em 0;
@@ -882,7 +977,7 @@ export default {
 
 .wclosable .wclose:hover::before, 
 .wclosable .wclose:hover::after {
-    background-color: var(--wappo-pri-tx-lt);
+    background-color: #fff;
 }
 
 .wap-bf button {

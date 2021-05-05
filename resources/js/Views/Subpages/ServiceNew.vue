@@ -110,7 +110,6 @@ export default {
   computed: {
 
     schemaParsed(){
-      console.log('schemaParsed',this.schema, this.modelHolder)
       return  window.wappointmentExtends.filter('serviceFormSchema', this.schema, this.modelHolder )
     },
 
@@ -148,8 +147,7 @@ export default {
         return await this.serviceService.call('save', this.modelHolder)
     },
     saved(e){
-        this.$emit('saved')
-        this.serviceSuccess(e)
+        this.$emit('saved', e)
     }
   }  
 }

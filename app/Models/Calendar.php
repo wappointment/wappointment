@@ -5,6 +5,7 @@ namespace Wappointment\Models;
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\SoftDeletes;
 use Wappointment\Managers\Central;
+use Wappointment\Repositories\Services;
 
 class Calendar extends Model
 {
@@ -35,6 +36,11 @@ class Calendar extends Model
         return !empty($this->options['cal_urls']) ? $this->options['cal_urls'] : [];
     }
 
+    public function isStaff()
+    {
+        return (int)$this->wp_uid > 0;
+    }
+
     public function hasDotCom()
     {
         return !empty($this->options['dotcom']);
@@ -57,7 +63,8 @@ class Calendar extends Model
 
     public function addAllServices()
     {
-        $services = Central::get('ServiceModel')::select('id')->fetch();
+        $services = \WappointmentLv::collect((new Services)->get());
+        //$services = Central::get('ServiceModel')::select('id')->fetch();
         $this->services()->sync($services->map(function ($e) {
             return $e->id;
         })->toArray());

@@ -19,7 +19,9 @@ class BookingAdmin extends Booking
             'service' => 'required|min:1',
             'duration' => 'required|min:5',
             'clientid' => '',
-            'staff_id' => ''
+            'staff_id' => '',
+            'phone' => '',
+            'skype' => ''
         ];
     }
 }

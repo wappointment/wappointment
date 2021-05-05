@@ -39,7 +39,9 @@ export default {
         pagination: null,
         loadedData: false,
         viewData: null,
-        page: 1
+        page: 1,
+        keyDataSource: false,
+        dataResponse: null
     }),
     components: {
         draggable, Pagination, WPListingHelp
@@ -53,12 +55,18 @@ export default {
         }
     },
     methods: {
+        getDataSource(response){
+            this.dataResponse = response.data
+            return this.keyDataSource === false ? this.dataResponse:this.dataResponse[this.keyDataSource]
+        },
         loadedElements(response){
-            if(response.data.paginated !== undefined){ //paginated
+            
+            let dataSource = this.getDataSource(response)
+            if(dataSource.current_page !== undefined){ //paginated
                 this.pagination = {}
-                for (const key in response.data.paginated) {
-                    if (response.data.paginated.hasOwnProperty(key)) {
-                        const element = response.data.paginated[key]
+                for (const key in dataSource) {
+                    if (dataSource.hasOwnProperty(key)) {
+                        const element = dataSource[key]
                         if(key == 'data'){
                             this.elements = element
                         }else{
@@ -67,11 +75,12 @@ export default {
                     }
                 }
 
-                this.viewData = response.data.viewData
-
-                this.elements = response.data.paginated.data
+                if(response.data.viewData !== undefined){
+                    this.viewData = response.data.viewData
+                }
+                
             }else{
-                this.elements = response.data // not paginated
+                this.elements = dataSource // not paginated
             }
             this.loadedData = true
             if(this.afterLoaded !== undefined && typeof this.afterLoaded == 'function'){
@@ -83,10 +92,13 @@ export default {
             let message = fail.response !== undefined && fail.response.data !== undefined && fail.response.data.message !== undefined ? fail.response.data.message:''
             this.$WapModal().notifyError('Error Loading elements('+message+')')
         },
-        loadElements(params) {
-            if(params === undefined) params = {}
+        setLoadingParams(params){
+            params = params === undefined ? {}:params
             params.page = this.page
-            this.request(this.requestElements, params, undefined, false, this.loadedElements, this.failedLoadingElements)
+            return params
+        },
+        loadElements(params) {
+            this.request(this.requestElements, this.setLoadingParams(params), undefined, false, this.loadedElements, this.failedLoadingElements)
         },
         changePage(page){
             this.page = page
@@ -108,13 +120,24 @@ export default {
 .table-hover {
     color: #626060;
 }
-.table-hover .actions {
-    visibility: hidden;
+.table-hover .wlist-actions {
+    /* visibility: hidden; */
+    display: none;
 }
-.table-hover .actions .dashicons-move{
+.table-hover .wlist-actions .dashicons-move{
     cursor: pointer;
 }
-.table-hover tr:hover .actions{
-    visibility: visible;
+.table-hover tr:hover .wlist-actions{
+    /*visibility: visible;*/
+    display:inline-block;
+}
+.wlist-actions{
+    background: #f2f2f2;
+    display: inline-block;
+    box-shadow: 0px 2px 3px 0 rgba(0,0,0,.04);
+    padding: .2em .4em;
+    border-radius: 0.6em;
+    margin-top: .2em;
+    position: absolute;
 }
 </style>

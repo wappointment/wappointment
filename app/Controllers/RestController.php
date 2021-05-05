@@ -57,7 +57,6 @@ abstract class RestController
         try {
             $args = $param->get_attributes()['args'];
 
-
             if (empty($args['wparams']) || empty($args['wparams']['method'])) {
                 throw new \WappointmentException('There is no method defined', 1);
             }
@@ -65,7 +64,8 @@ abstract class RestController
             $methodName = $args['wparams']['method'];
             $request = WPHelpers::requestGet($param->get_params());
 
-            if ($methodName == 'index') {
+            // dd('$args[', $args);
+            if ($methodName == 'index' || !empty($args['wparams']['paginated'])) {
                 $this->registerPagination($request);
             }
 
@@ -120,6 +120,7 @@ abstract class RestController
         }
         return $this->errors[$this->arrayKeyFirst($this->errors)][0];
     }
+
     public function getErrors()
     {
         return $this->errors;

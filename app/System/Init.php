@@ -49,6 +49,7 @@ class Init
         add_action('wp_print_scripts', [$this, 'jsVariables']);
         new \Wappointment\Routes\Main();
         (new \Wappointment\WP\CustomPage())->boot();
+        //dd(\wp_get_current_user()->get_role_caps());
     }
 
     public function initInstalled()
@@ -100,7 +101,6 @@ class Init
         }
 
         $path = '/' . ltrim($path, '/');
-
 
         $url = trailingslashit(get_home_url($blog_id, '', $scheme));
         // nginx only allows HTTP/1.0 methods when redirecting from / to /index.php.

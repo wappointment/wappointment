@@ -56,12 +56,10 @@ class CalendarParser
             }
             $until = null;
             $recur = STATUS::RECUR_NOT;
+            $carbon_start = $this->vcalDateToCarbon((string) $vevent->DTSTART, $vevent);
             $carbon_end = $this->vcalDateToCarbon((string) $vevent->DTEND, $vevent);
 
-            /*             echo 'Original: ' . (string)$vevent->DTEND . ' ' .
-            $carbon_end->toRfc822String() . ' tz' . $this->timezone . "\n";
-                        echo 'Converted: ' . $carbon_end->copy()->tz('UTC')->toDateTimeString()
-                        . ' tz' . $this->timezone . "\n"; */
+
             if ($vevent->RRULE) { // recurrent events
                 $until = $this->getUntil($vevent);
                 // skip recurring events that don't recurre anymore
@@ -76,19 +74,10 @@ class CalendarParser
                 }
             }
 
-            $start_at_record = $this->vcalDateToDbFormat((string) $vevent->DTSTART);
+            //$start_at_record = $this->vcalDateToDbFormat((string) $vevent->DTSTART);
+            $start_at_record = $this->getFormatedDate($carbon_start);
             $end_at_record = $this->getFormatedDate($carbon_end);
 
-            /* when we have a recurring event that occurs the whole day and is of
-            the type recurs every first monday
-                we need to record it from midnight til midnight otherwise we have
-                issues recurring it properly
-            $remainder = ($carbon_end->timestamp -
-            $this->vcalDateToCarbon((string)$vevent->DTSTART)->timestamp) % 86400;
-             if ($recur > STATUS::RECUR_NOT && $remainder === 0) {
-                $start_at_record = $this->vcalDateToDbFormat((string)$vevent->DTSTART, 'Y-m-d 00:00');
-                $end_at_record = $this->getFormatedDate($carbon_end, 'Y-m-d 00:00');
-            } */
 
             $dataInsert = [
                 'start_at' => $start_at_record,
@@ -96,7 +85,7 @@ class CalendarParser
                 'recur' => $recur,
                 'source' => $this->source,
                 'type' => STATUS::TYPE_BUSY,
-                'eventkey' => md5($this->source . (string) $vevent->UID . (string) $vevent->CREATED),
+                'eventkey' => md5($this->source . (string) $vevent->UID . (string) $vevent->DTSTART),
                 'options' => $this->getOptions($vevent, $until, $recur),
                 'staff_id' => $this->staff_id
             ];
@@ -150,20 +139,18 @@ class CalendarParser
     {
         $timezoneTemp = '';
 
-        if (empty($timezoneTemp)) {
-            if (empty($this->timezone)) {
-                if ($vevent !== false && !empty($vevent->DTSTART['TZID'])) {
-                    $timezoneTemp = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
-                    $this->timezone = $timezoneTemp; //we assign the first value found to the global tz
-                }
-            } else {
-                $timezoneTemp = $this->timezone;
-            }
-
-
-            if (!empty($vevent->DTSTART) && !empty($vevent->DTSTART['TZID']) && $timezoneTemp != $vevent->DTSTART['TZID']->getValue()) {
+        if (empty($this->timezone)) {
+            if (!empty($vevent) && !empty($vevent->DTSTART['TZID'])) {
                 $timezoneTemp = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
+                $this->timezone = $timezoneTemp; //we assign the first value found to the global tz
             }
+        } else {
+            $timezoneTemp = $this->timezone;
+        }
+
+
+        if (!empty($vevent) && !empty($vevent->DTSTART) && !empty($vevent->DTSTART['TZID']) && $timezoneTemp != $vevent->DTSTART['TZID']->getValue()) {
+            $timezoneTemp = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
         }
 
         return Carbon::parse($vcalDateTimeString, $timezoneTemp);
@@ -249,15 +236,6 @@ class CalendarParser
                 $options['origin_start'] = $this->vcalDateToCarbon((string) $vevent->DTSTART, $vevent)
                     ->format(WAPPOINTMENT_DB_FORMAT);
             }
-
-            /*$remainder = ($carbon_end->timestamp -
-            $this->vcalDateToCarbon((string)$vevent->DTSTART)->timestamp) % 86400;
-             if ($recur > STATUS::RECUR_NOT && $remainder === 0) {
-                $start_at_record = $this->vcalDateToDbFormat((string)$vevent->DTSTART, 'Y-m-d 00:00');
-                $end_at_record = $this->getFormatedDate($carbon_end, 'Y-m-d 00:00');
-            }
-            $options['fullday']
-            */
         }
 
         return empty($options) ? '' : json_encode($options);

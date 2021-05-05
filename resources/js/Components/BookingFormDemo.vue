@@ -21,7 +21,6 @@ export default {
         },
 
         loadedInit(step){
-
             if([undefined, null].indexOf(step) === -1) {
                 this.demoConfigure(step)
             }
@@ -117,8 +116,18 @@ export default {
             return data
         },
 
-        getChildComponentForStepLegacy(step_name){
+
+        getChildComponentForStep(step_name) {
+
             switch (step_name) {
+                case 'staff_selection':
+                    return 'BookingStaffSelection'
+                case 'service_selection':
+                    return 'BookingServiceSelection'
+                case 'service_duration':
+                    return 'BookingDurationSelection'
+                case 'service_location':
+                    return 'BookingLocationSelection'
                 case 'selection':
                     return 'BookingCalendar'
                 case 'form':
@@ -126,19 +135,6 @@ export default {
                 case 'confirmation':
                     return 'BookingFormConfirmation'
             }
-        },
-
-        getChildComponentForStep(step_name) {
-
-            switch (step_name) {
-                case 'service_selection':
-                    return 'BookingServiceSelection'
-                case 'service_duration':
-                    return 'BookingDurationSelection'
-                case 'service_location':
-                    return 'BookingLocationSelection'
-            }
-            return this.getChildComponentForStepLegacy(step_name)
         },
 
         getSlotAvailableForDemo(){

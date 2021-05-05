@@ -99,7 +99,6 @@ export default {
         },
         
         saveLocation(model){
-            
             this.request(this.saveLocationsRequest, model, undefined,false, this.savedSuccess, this.savedError)
         },
 
@@ -117,9 +116,7 @@ export default {
                 if(response !== false){
                     this.request(this.removeLocationRequest, {id:item.id}, undefined,false, this.deletedSuccess)
                 }
-                
             }) 
-            
         },
 
         async removeLocationRequest(id){
@@ -149,7 +146,7 @@ export default {
         },
 
         async loadLocationsRequest() {
-            return await this.servicesLocations.call('index') 
+            return await this.servicesLocations.call('index',{usable:true}) 
         },
     }
 }

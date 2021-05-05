@@ -42,6 +42,16 @@ class Appointment extends Model
         }
     }
 
+    public function getStaffCustomField($tagInfo = false)
+    {
+        return !empty($this->getStaff()->staff_data['options']['custom_fields'][$tagInfo['key']]) ? $this->getStaff()->staff_data['options']['custom_fields'][$tagInfo['key']] : '';
+    }
+
+    public function getStaffName()
+    {
+        return $this->getStaff()->staff_data['name'];
+    }
+
     public function getLocationSlug()
     {
         switch ($this->type) {
@@ -61,9 +71,9 @@ class Appointment extends Model
         return empty($this->options['sequence']) ? 0 : $this->options['sequence'];
     }
 
-    public function getTitle()
+    public function getTitle($includes_buffer = true)
     {
-        return $this->getStatusTag() . $this->getServiceName() . ' ' . $this->getDuration() . $this->getBuffer() . ' - ' . $this->client->name;
+        return $this->getStatusTag() . $this->getServiceName() . ' ' . $this->getDuration() . ($includes_buffer ? $this->getBuffer() : '') . ' - ' . $this->client->name;
     }
 
     public function getStatusTag()
@@ -194,7 +204,6 @@ class Appointment extends Model
         return self::TYPE_ZOOM;
     }
 
-
     public function getFullDurationInSec()
     {
         return !empty($this->end_at) ? $this->end_at->timestamp - $this->start_at->timestamp : 0;
@@ -212,7 +221,7 @@ class Appointment extends Model
 
     public function getDuration()
     {
-        return ($this->getDurationInSec() / 60) . 'min';
+        return ($this->getDurationInSec() / 60) . __('min', 'wappointment');
     }
 
     public function getBufferInSec()
@@ -223,7 +232,7 @@ class Appointment extends Model
     public function getBuffer()
     {
         $buffer = $this->getBufferInSec();
-        return $buffer > 0 ? '(+' . ($buffer / 60) . 'min)' : '';
+        return $buffer > 0 ? '(+' . ($buffer / 60) .  __('min', 'wappointment') . ')' : '';
     }
 
     public function getStartsDayAndTime($timezone)
@@ -348,7 +357,7 @@ class Appointment extends Model
     public function toDotcom($timezone)
     {
         $toDotcom = [
-            'title' => $this->getTitle(),
+            'title' => $this->getTitle(false),
             'type' => $this->type,
             'video' => $this->getLocationVideo(),
             'starts_at' => $this->start_at->timestamp,

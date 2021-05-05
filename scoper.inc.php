@@ -20,6 +20,18 @@ return [
             ->ignoreVCS(true)
             ->notName('/LICENSE|.*\\.md|.*\\.dist|Docker|METADATA-VERSION.txt|README\\.markdown|Makefile|UPGRADE_TO_2_1|UPGRADE_TO_2_2|phpstan\\.neon|build\\.xml|phpunit\\.xml|build\\.properties|composer\\.json|composer\\.lock/')
             ->exclude([
+                // 'doctrine',
+                // 'egulias',
+                // 'giggsey',
+                // 'guzzlehttp',
+                // 'illuminate',
+                // 'nesbot',
+                // 'phpcompatibility',
+                // 'rakit',
+                // 'sabre',
+                // 'phpcompatibility',
+                // 'squizlabs',
+                // 'symfony',
                 'doc',
                 'docs',
                 'test',
@@ -44,6 +56,7 @@ return [
         'app/required.php',
         'app/Transports/WpMailPatched.php',
         'app/Services/IcsGenerator.php',
+        'app/Services/Permissions.php',
     ],
 
     // When scoping PHP files, there will be scenarios where some of the code being scoped indirectly references the
@@ -138,6 +151,7 @@ if (!function_exists("dds")) {
                     '\Plugin_Upgrader',
                     '\WP_Filesystem_Base',
                     '\WappoSwift_',
+
                 ], $contents);
             }
 

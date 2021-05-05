@@ -28,7 +28,6 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
 
     protected function getForeignName($name)
     {
-        //return Capsule::connection()->getTablePrefix() . $name;
         return is_multisite() ? Capsule::connection()->getTablePrefix() . $name : $name;
     }
 

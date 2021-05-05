@@ -25,7 +25,7 @@
                         </div>
                         <div class="my-2">Widget's settings</div>
                         <div v-if="bookingpage || forceCreation" class="pl-4 small" >
-                            <ShortcodeGenerator @change="updateShortCode" title="Book now" :preview="false"/>
+                            <ShortcodeGenerator @change="updateShortCode" title="Book now" :preview="false" :simple="true"/>
                         </div>
                         <button v-if="save" class="btn btn-primary btn-lg btn-block" @click="createPage">Create Page</button>
                     </div>
@@ -80,7 +80,8 @@ export default {
                 autoOpen:false,
                 largeVersion:false,
                 week:false,
-                demoAs:true
+                demoAs:true,
+                center:false
             },
             editpagedetails:false,
             booking_page_id: 0,

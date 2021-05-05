@@ -22,8 +22,8 @@ class Service
     {
         $services = ServiceServices::all();
         $types = [];
-        foreach ($services as $key => $service) {
-            foreach ($service->locations as $key => $location) {
+        foreach ($services as $service) {
+            foreach ($service->locations as $location) {
                 $types[$location->id] = $location;
             }
         }

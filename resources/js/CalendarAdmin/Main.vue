@@ -7,11 +7,14 @@
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="prevWeek"><</a>
                 <h1 class="h2 align-self-center" @click="refreshEvents"> {{ weekTitle }} </h1>
                 <a class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="nextWeek">></a>
-                <div class="d-flex" v-if="viewData.staff !== undefined && viewData.legacy !== true">
-                  <div v-for="staff in viewData.staff" class="cal-staff-img tt-below" 
-                  :class="{activeStaff:activeStaff.id==staff.id}" @click="changeActiveStaff(staff)" 
-                  :data-tt="staff.name" >
-                    <img :src="staff.avatar" class="wstaff-img" />
+                
+                <div class="tt-below":data-tt="rolledOverName">
+                  <div class="d-flex staff-bar" v-if="viewData.staff !== undefined && viewData.legacy !== true" >
+                    <div v-for="staff in viewData.staff" class="cal-staff-img" 
+                    :class="{activeStaff:activeStaff.id==staff.id}" @click="changeActiveStaff(staff)" 
+                    >
+                      <img :src="staff.avatar" @mouseover="rolledOverName=staff.name" @mouseout="rolledOverName=''" class="wstaff-img" :title="staff.name" :alt="staff.name" />
+                    </div>
                   </div>
                 </div>
                 <FreeSlotsSelector :intervals="getThisWeekIntervals" :viewingFreeSlot="viewingFreeSlot" 
@@ -239,6 +242,7 @@ export default {
     },
     activeBgOverId: false,
     shortDayFormat: 'Do MMM YY',
+    headerDayFormat: 'Do MMM',
     daysProperties: false,
     serviceEvent: null,
     serviceStatus: null,
@@ -248,6 +252,7 @@ export default {
     showCalSettings: false,
     lockCalSettings: false,
     activeStaff: null,
+    rolledOverName: ''
   }),
 
   created(){
@@ -259,21 +264,30 @@ export default {
   },
 
  watch: {
-      events: {
-        handler: function(newValue) {
-              if(this.openconfirm && newValue.length > 1){
-                this.confirmRequest(this.openconfirm)
-                this.openconfirm = false
-              }
-
-          },
+    events: {
+      handler: function(newValue) {
+        if(this.openconfirm && newValue.length > 1){
+          this.confirmRequest(this.openconfirm)
+          this.openconfirm = false
+        }
       },
+    },
   },
  
  computed: {
    activeAvailability(){
-     return this.viewData.legacy !== true ? this.activeStaff.availability:this.activeStaff.availability
+     return this.activeStaff.availability
    },
+   activeDotcom(){
+     return this.viewData.legacy !== true ? this.activeStaff.options.dotcom:this.viewData.is_dotcom_connected
+   },
+   isDotComConnected(){
+     return [undefined, false].indexOf(this.activeDotcom) === -1
+   },
+   dotComServices(){
+     return this.isDotComConnected ? this.activeDotcom.services:[]
+   },
+    
    activeRegav(){
      return this.viewData.legacy !== true ? this.activeStaff.options.regav:this.viewData.regav
    },
@@ -342,6 +356,12 @@ export default {
     
  },
   methods: {
+    async initValueRequest() {
+        return await this.serviceViewData.call('calendar')
+    },
+    hasDotcom(){
+      return this.isDotComConnected
+    },
     changeActiveStaff(staff){
       this.activeStaff = staff
       if(this.queryParameters !== undefined){
@@ -599,6 +619,7 @@ export default {
                 selectMinDistance: 10,
                 selectAllow: this.selectAllow,
                 defaultView: 'timeGridWeek',
+                columnHeaderFormat: this.headerDayFormat,
                 firstDay: this.viewData.week_starts_on,
                 minTime: this.minHour + ':00',
                 maxTime: this.maxHour + ':00',  
@@ -781,7 +802,7 @@ export default {
         //this.resetFirstDay()
         this.writeHistory()
       },
-      writeHistory(){
+      writeHistory(clear = false){
         if(this.firstDay !== undefined){
           this.queryParameters = {
               page: 'wappointment_calendar',
@@ -795,19 +816,29 @@ export default {
             query: Object.assign({},this.queryParameters)
           },
           'Calendar week ' + this.firstDay.format() + ' - ' + this.lastDay.format(),
-          'admin.php?page=wappointment_calendar&start=' + this.firstDay.format() + '&end=' + this.lastDay.format() + '&timezone=' + this.displayTimezone + '&staff='+this.activeStaff.id
+          'admin.php?page=wappointment_calendar'+ (clear === false ? '&start=' + this.firstDay.format() + '&end=' + this.lastDay.format() + '&timezone=' + this.displayTimezone + '&staff='+this.activeStaff.id:'')
         )
         }
         
       },
 
 
+
       today(){
-         this.$refs.calendar.fireMethod('changeView', 'timeGridWeek')
-         this.$refs.calendar.fireMethod('today')
-         this.currentView = 'timeGridWeek'
-         //this.resetFirstDay()
-         this.refreshEvents()
+        this.queryParameters = undefined
+        this.daysProperties = false
+        
+        this.firstDay = undefined
+        this.hasBeenSetCalProps = false
+        this.$refs.calendar.fireMethod('today')
+        //this.resetFirstDay()
+        this.refreshEvents()
+        this.writeHistory(true)
+        //  this.$refs.calendar.fireMethod('changeView', 'timeGridWeek')
+        //  this.$refs.calendar.fireMethod('today')
+        //  this.currentView = 'timeGridWeek'
+        //  this.resetFirstDay()
+        //  this.refreshEvents()
          
       },
       monthView(){
@@ -1418,6 +1449,12 @@ export default {
   border: 1px dashed var(--primary);
   box-shadow: 0px 8px 10px 0 rgba(0,0,0,.08);
   transform: scale(1.05);
+}
+
+.staff-bar{
+  max-width:415px;
+  overflow-x: scroll;
+  overflow-y:hidden
 }
 
 </style>

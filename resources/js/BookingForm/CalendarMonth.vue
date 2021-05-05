@@ -1,10 +1,10 @@
 <template>
     <div v-if="mounted" class="calendarMonth">
         <div class="d-flex justify-content-between align-items-center">
-            <span @click="prevMonth" class="wbtn-secondary wbtn wbtn-round wbtn-top" 
+            <span @click="prevMonth" class="wbtn-secondary wbtn wbtn-round wbtn-top sq" 
             role="button" :class="{'wbtn-disabled' : isCurrentMonth}" :disabled="isCurrentMonth"><span><</span></span> 
-            <div>{{ getMonthYear() }}</div> 
-            <span @click="nextMonth" class="wbtn-secondary wbtn wbtn-round wbtn-top" role="button" 
+            <div>{{ getMonthYear }}</div> 
+            <span @click="nextMonth" class="wbtn-secondary wbtn wbtn-round wbtn-top sq" role="button" 
             :class="{'wbtn-disabled' : isLastMonth}" :disabled="isLastMonth" ><span>></span></span>
         </div>
         <weekHeader :weekHeader="weekHeader"/>

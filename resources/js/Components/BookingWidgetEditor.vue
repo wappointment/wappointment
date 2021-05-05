@@ -79,12 +79,14 @@
                                                 {{cat_object.label}} <span v-if="showCategory !=  cat_object.label">[+]</span>
                                             </div>
                                             <div v-if="showCategory ==  cat_object.label" class="ml-3 mt-3">
-                                                <div class="small" v-if="cat_object.sub !== undefined"> {{ cat_object.sub }}</div>
+                                                <div class="small" v-if="cat_object.sub !== undefined" v-html="parseLabel(cat_object.sub)"></div>
                                                 <div v-for="(fieldDescription, field_key) in cat_object.fields" :data-tt="getFieldTip(stepObj.key, field_key, catid) ? getFieldTip(stepObj.key, field_key, catid) : false" 
                                                 v-if="canShowField(stepObj.key, field_key, catid)" class="tt-below">
                                                     {{ changedInput(stepObj.key, field_key, options[stepObj.key][field_key]) }}
                                                     <component v-if="isComponentTypeActive(options[stepObj.key][field_key],stepObj.key, field_key, field_key)" :key="field_key"  
+                                                    v-bind="getCompProp(fieldDescription)"
                                                     :is="getComponentType(options[stepObj.key][field_key],field_key)" 
+                                                    
                                                     v-model="options[stepObj.key][field_key]" 
                                                     @input="(e) => changedInput(stepObj.key, field_key, e)"
                                                     eventChange="input"
@@ -100,10 +102,16 @@
                                         </div>
                                     </div>
                                     <div v-else>
+                                        <template v-if="widgetFields[stepObj.key] !== undefined && widgetFields[stepObj.key].sub !== undefined">
+                                            <div class="small" v-html="parseLabel(widgetFields[stepObj.key].sub)"></div>
+                                        </template>
+                                        
                                         <div v-for="(inputvalue, field_key) in options[stepObj.key]" :data-tt="getFieldTip(stepObj.key, field_key) ? getFieldTip(stepObj.key, field_key) : false" v-if="canShowField(stepObj.key, field_key)" class="tt-below">
                                             {{ changedInput(stepObj.key, field_key, inputvalue) }}
                                             <component  v-if="isComponentTypeActive(inputvalue,stepObj.key, field_key, field_key)" :key="field_key"  
+                                            v-bind="getCompProp(inputvalue)"
                                             :is="getComponentType(inputvalue,field_key)" 
+                                            
                                             v-model="options[stepObj.key][field_key]" 
                                             @input="(e) => changedInput(stepObj.key, field_key, e)"
                                             eventChange="input"
@@ -151,6 +159,7 @@
 </template>
 
 <script>
+const BBCode = require('../Plugins/bbcode')
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPalette, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
@@ -161,6 +170,7 @@ import FrontDemo from '../FrontDemo'
 import ColorPicker from './ColorPicker'
 import FormFieldCheckbox from '../Form/FormFieldCheckbox'
 import FormFieldSlider from '../Form/FormFieldSlider'
+import FormFieldSelect from '../Form/FormFieldSelect'
 import Colors from '../Modules/Colors'
 import SettingsSave from '../Modules/SettingsSave'
 import CountrySelector from './CountrySelector'
@@ -174,6 +184,7 @@ export default {
         CountrySelector,
         InputPh: window.wappoGet('InputPh'),
         FormFieldCheckbox,
+        FormFieldSelect,
         FormFieldSlider,
         FontAwesomeIcon,
     },
@@ -214,6 +225,10 @@ export default {
                 label: 'Booking button'
             },
             {
+                key: 'staff_selection',
+                label: 'Staff selection'
+            },
+            {
                 key: 'service_selection',
                 label: 'Service selection'
             },
@@ -223,7 +238,7 @@ export default {
             },
             {
                 key: 'service_location',
-                label: 'Location selection'
+                label: 'Modality selection'
             },
             {
                 key: 'selection',
@@ -311,7 +326,9 @@ export default {
 
 
     methods: {
-        
+        parseLabel(label){
+            return BBCode.render(label,{classPrefix: 'bbcode', newLine: false, allowData: true, allowClasses:true})
+        },
         tagHasBeenRemoved(defaultVal, currentValue){
             if(typeof defaultVal == "string"){
                 let tags = this.getTags(defaultVal)
@@ -334,10 +351,9 @@ export default {
             this.options.demoData.form = newValue
         },
         getOrderClass(stepObj,stepIdx){
-            let orderItem = 0;
+            let orderItem = 0
             if((stepIdx >= this.currentIndexStep)){
                 orderItem = stepIdx - this.currentIndexStep
-                
             }else{
                 orderItem = (this.editionsSteps.length - (this.currentIndexStep-stepIdx))
             }
@@ -478,12 +494,19 @@ export default {
         },
 
         getComponentType(value, type){
-            if(['check_','slide_'].indexOf(type.substr(0,6)) !== -1){
-                return type.substr(0,6) == 'check_' ? 'FormFieldCheckbox':'FormFieldSlider'
+            if(['select_service','select_location','select_duration', 'select_package'].indexOf(type) === -1 &&
+                ['check_','slide_','select'].indexOf(type.substr(0,6)) !== -1 
+            ){
+                return type.substr(0,6) == 'check_' ? 'FormFieldCheckbox':(type.substr(0,7) == 'select_' ? 'FormFieldSelect':'FormFieldSlider')
             }else{
                 return value[0] == '#' ? 'ColorPicker':'InputPh'
             }
         },
+
+        getCompProp(options){
+            return options
+        },
+
         allowedType(type){
             return this.config.service.type.indexOf(type) !== -1
         },

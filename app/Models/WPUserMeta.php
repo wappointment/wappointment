@@ -20,7 +20,7 @@ class WPUserMeta extends Model
         }
     }
 
-    public static function getUserIdWithRoles($roles = ['administrator', 'author',  'editor', 'contributor'])
+    public static function getUserIdWithRoles($roles = ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'])
     {
         $wp_capabilities = [];
         foreach ($roles as $role) {

@@ -2,14 +2,14 @@
     <div class="wap-front" :class="getDynaClasses" :id="elementId">
         <StyleGenerator :options="opts" :wrapper="elementId" :largeVersion="largeVersion"></StyleGenerator>
         <div v-if="isPage" :class="'step-'+stepName">
-            <BookingForm v-if="isBookingPage" :options="opts" :wrapperid="elementId" @changedStep="stepChanged"></BookingForm>
+            <BookingForm v-if="isBookingPage" :options="opts" :wrapperid="elementId" @changedStep="stepChanged" />
             <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
         </div>
         
-        <div :class="{'wap-abs':hasCloseCross && isMobilePhone && autoPop}">
-            <div class="wap-wid wclosable" :class="'step-'+stepName" v-if="isWidget">
+        <div :class="getWidClass">
+            <div class="wap-wid wclosable" :class="getStepName" v-if="isWidget">
               <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
-              <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged"></BookingForm>
+              <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :attributesEl="attributesEl" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
               <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
           </div>
         </div>
@@ -55,7 +55,6 @@ export default {
       if(this.opts.demoData !== undefined){
           this.disabledButtons = true
       }
-      console.log('process shortcode')
       this.processShortcode()
     },
 
@@ -76,6 +75,15 @@ export default {
         }
     },
     computed:{
+      getStepName(){
+        return 'step-' + (this.bookForm?this.stepName:'button')
+      },
+        getWidClass(){
+          return {
+            'wap-abs':this.hasCloseCross && this.isMobilePhone && this.autoPop,
+            'd-flex justify-content-center':this.attributesEl.center == 1
+          }
+        },
         bgEnabled(){
           return this.bookForm && (this.isBottomRight || this.isMobilePhone)
         },
@@ -127,19 +135,20 @@ export default {
 
     },
     methods: {
+      
         stepChanged(stepName){
           this.stepName = stepName
         },
         processShortcode(){
           if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){
-            if(this.attributesEl.buttonTitle !== undefined) this.buttonTitle = this.attributesEl.buttonTitle
-            if(this.attributesEl.brcFloats !== undefined) this.brFixed = true
-            if(this.attributesEl.demoAs !== undefined) this.demoAs = true
-            if([undefined,false].indexOf(this.attributesEl.largeVersion) === -1) this.largeVersion = true
-            if([undefined,false].indexOf(this.attributesEl.week) === -1) this.opts.selection.check_viewweek = true
-            if([undefined,false].indexOf(this.attributesEl.popOff) === -1) this.autoPop = false
+            this.buttonTitle = this.attributesEl.buttonTitle !== undefined ? this.attributesEl.buttonTitle:this.buttonTitle
+            this.brFixed = this.attributesEl.brcFloats !== undefined
+            this.demoAs = this.attributesEl.demoAs !== undefined
+            this.largeVersion = [undefined,false].indexOf(this.attributesEl.largeVersion) === -1
+            this.opts.selection.check_viewweek = [undefined,false].indexOf(this.attributesEl.week) === -1
+            this.autoPop = [undefined,false].indexOf(this.attributesEl.popOff) !== -1
             if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) {
-              this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 ? true : false //no auto pop on 
+              this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 //no auto pop on 
               this.toggleBookForm() // this one goes last
             }
             this.opts.attributesEl = Object.assign({},this.attributesEl)
@@ -184,6 +193,7 @@ export default {
 }
 .large-version .wap-wid.step-BookingCalendar{
     max-width: 100%;
+    min-width: 100%;
 }
 .wap-wid{
     max-width: 360px;
@@ -352,6 +362,37 @@ export default {
     min-width: 320px;
 }
 
+
+.wap-booking-fields {
+    text-align: left;
+    margin: .5em 0;
+}
+
+
+.wap-booking-fields .isInvalid input[type="text"], 
+.wap-booking-fields .isInvalid input[type="email"], 
+.wap-booking-fields .isInvalid input[type="url"], 
+.wap-booking-fields .isInvalid input[type="tel"],
+.wap-booking-fields .isInvalid textarea{
+    border-right: 4px solid var(--wappo-error-tx) !important;
+}
+.wap-booking-fields .field-required label::after {
+    content:" *";
+    color:var(--wappo-error-tx);
+}
+
+.wap-front .wappointment-errors{
+    background-color:var(--wappo-error-tx);
+}
+.wap-front .wappointment-errors div{
+    color: #fff;
+    font-size: .9em;
+}
+.phone-field-wrap .dpselect .selection::after,
+.phone-field-wrap strong{
+    color: #645a5a;
+}
+
 @media only screen and (max-width: 500px) {
   .wap-abs{
     position: absolute;
@@ -398,6 +439,15 @@ export default {
     max-width: 100%;
     position:relative;
     z-index: 1;
+  }
+
+  .wap-front.wmobile .wap-bf,
+  .wap-front.wmobile .wap-wid{
+    width:100%;
+  }
+
+  .wap-front.wmobile .wap-wid.step-button{
+    width: auto;
   }
 }
 </style>

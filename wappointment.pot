@@ -1,0 +1,266 @@
+# Copyright (C) 2021 Wappointment
+# This file is distributed under the same license as the Wappointment plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Wappointment 2.1.5\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wappointment\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2021-05-05T11:06:30+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.4.0\n"
+"X-Domain: wappointment\n"
+
+#. Plugin Name of the plugin
+#. Author of the plugin
+msgid "Wappointment"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+msgid "https://wappointment.com"
+msgstr ""
+
+#. Description of the plugin
+msgid "Clients quickly book a meeting with you on Zoom , GoogleMeet , the phone or at your office"
+msgstr ""
+
+#: app/Helpers/Translations.php:10
+msgid "Booking starts at"
+msgstr ""
+
+#: app/Helpers/Translations.php:11
+msgid "The appointment is pending. It will be confirmed once the client completes the payment in WooCommerce."
+msgstr ""
+
+#. translators: %s - number of minutes
+#: app/Helpers/Translations.php:13
+msgid "If the order is not completed within %s minutes, the slot will be made available again automatically."
+msgstr ""
+
+#. translators: %s is replaced with the date the appointment startt at
+#: app/Messages/AdminGeneratesDefault.php:18
+msgid "Date: %s"
+msgstr ""
+
+#. translators: %1$s is replaced with the start time, %2$s is replaced with the end time
+#: app/Messages/AdminGeneratesDefault.php:20
+msgid "Time: %1$s - %2$s"
+msgstr ""
+
+#. translators: %s is replaced with the staff name
+#: app/Messages/AdminGeneratesDefault.php:22
+msgid "Staff: %s"
+msgstr ""
+
+#. translators: %s is replaced with the service name
+#: app/Messages/AdminGeneratesDefault.php:24
+msgid "Service: %s"
+msgstr ""
+
+#. translators: %s is replaced with the location name
+#: app/Messages/AdminGeneratesDefault.php:26
+msgid "Location: %s"
+msgstr ""
+
+#. translators: %s is replaced with the client's name
+#: app/Messages/AdminGeneratesDefault.php:28
+msgid "Client's name: %s"
+msgstr ""
+
+#. translators: %s is replaced with the client's email
+#: app/Messages/AdminGeneratesDefault.php:30
+msgid "Client's email: %s"
+msgstr ""
+
+#. translators: %s is replaced with the client's phone
+#: app/Messages/AdminGeneratesDefault.php:34
+msgid "Client's phone: %s"
+msgstr ""
+
+#. translators: %s is replaced with the client's skype username
+#: app/Messages/AdminGeneratesDefault.php:38
+msgid "Client's skype: %s"
+msgstr ""
+
+#. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
+#: app/Messages/AdminGeneratesDefault.php:43
+msgid "Video meeting: %s"
+msgstr ""
+
+#. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
+#: app/Messages/AdminGeneratesDefault.php:43
+msgid "Begin the meeting"
+msgstr ""
+
+#: app/Messages/AdminNewAppointmentEmail.php:11
+msgid "New appointment"
+msgstr ""
+
+#. translators: %s is replaced with the first name of the staff being booked
+#: app/Messages/AdminNewAppointmentEmail.php:17
+msgid "Hi %s"
+msgstr ""
+
+#: app/Messages/AdminNewAppointmentEmail.php:18
+msgid "Great news! You just got booked!"
+msgstr ""
+
+#: app/Messages/AdminNewAppointmentEmail.php:25
+#: app/Messages/AdminPendingAppointmentEmail.php:55
+msgid "Have a great day!"
+msgstr ""
+
+#: app/Messages/AdminNewAppointmentEmail.php:27
+msgid "Ps: An .ics file with the appointment's details is attached"
+msgstr ""
+
+#: app/Messages/AdminPendingAppointmentEmail.php:15
+msgid "Pending appointment"
+msgstr ""
+
+#: app/Messages/AdminPendingAppointmentEmail.php:27
+msgid "A new appointment is pending!"
+msgstr ""
+
+#: app/Messages/AdminPendingAppointmentEmail.php:31
+msgid "Please confirm the appointment."
+msgstr ""
+
+#: app/Models/Appointment.php:224
+#: app/Models/Appointment.php:235
+msgid "min"
+msgstr ""
+
+#: app/Models/Reminder.php:79
+msgid "Sent after appointment has been confirmed."
+msgstr ""
+
+#: app/Models/Reminder.php:80
+msgid "Sent after appointment has been rescheduled."
+msgstr ""
+
+#: app/Models/Reminder.php:81
+msgid "Sent after appointment has been cancelled."
+msgstr ""
+
+#: app/Models/Reminder.php:82
+msgid "Sent after appointment has been booked when admin approval is required."
+msgstr ""
+
+#. translators: %1$s is replaced with a number of %2$s which are either, minutes, hours or days
+#: app/Models/Reminder.php:91
+msgid "Sent before appointment takes place.(sent %1$s %2$s before)"
+msgstr ""
+
+#. translators: %s - PHP Version number.
+#: app/required.php:233
+msgid "Minimum PHP version required %s"
+msgstr ""
+
+#: app/Services/Permissions.php:75
+msgid "Wappointment Staff"
+msgstr ""
+
+#: app/Services/Permissions.php:82
+msgid "Wappointment manager"
+msgstr ""
+
+#: app/Services/Permissions.php:94
+msgid "Can manage own calendar"
+msgstr ""
+
+#: app/Services/Permissions.php:96
+msgid "Can add Busy blocks"
+msgstr ""
+
+#: app/Services/Permissions.php:97
+msgid "Can delete Busy blocks"
+msgstr ""
+
+#: app/Services/Permissions.php:98
+msgid "Can add Free blocks"
+msgstr ""
+
+#: app/Services/Permissions.php:99
+msgid "Can delete Free blocks"
+msgstr ""
+
+#: app/Services/Permissions.php:100
+msgid "Can reschedule appointment"
+msgstr ""
+
+#: app/Services/Permissions.php:101
+msgid "Can cancel appointment"
+msgstr ""
+
+#: app/Services/Permissions.php:102
+msgid "Can book on behalf of a client"
+msgstr ""
+
+#: app/Services/Permissions.php:103
+msgid "Can confirm pending appointment"
+msgstr ""
+
+#: app/Services/Permissions.php:107
+msgid "Can manage own settings"
+msgstr ""
+
+#: app/Services/Permissions.php:109
+msgid "Can modify weekly availability"
+msgstr ""
+
+#: app/Services/Permissions.php:110
+msgid "Can modify services provided"
+msgstr ""
+
+#: app/Services/Permissions.php:111
+msgid "Can connect Wappointment.com account"
+msgstr ""
+
+#: app/Services/Permissions.php:112
+msgid "Can add ICS calendar"
+msgstr ""
+
+#: app/Services/Permissions.php:113
+msgid "Can delete ICS calendar"
+msgstr ""
+
+#: app/Services/Permissions.php:114
+msgid "Can publish/unpublish self"
+msgstr ""
+
+#: app/Services/Permissions.php:118
+msgid "Can manage own clients"
+msgstr ""
+
+#: app/Services/Permissions.php:120
+msgid "Can delete clients"
+msgstr ""
+
+#: app/Services/Permissions.php:121
+msgid "Can edit clients"
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:12
+msgid "No past appointments found ..."
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:26
+msgid "Date and time"
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:31
+msgid "Service"
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:36
+msgid "Duration"
+msgstr ""
+
+#: app/WP/AppointmentHistory.php:41
+msgid "Staff"
+msgstr ""

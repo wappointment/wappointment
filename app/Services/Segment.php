@@ -3,7 +3,7 @@
 namespace Wappointment\Services;
 
 use Wappointment\ClassConnect\Carbon;
-use Achse\Math\Interval\Integer\IntegerInterval;
+use Wappointment\Achse\Math\Interval\Integer\IntegerInterval;
 
 class Segment
 {
@@ -24,7 +24,7 @@ class Segment
         $intervals = [];
         foreach ($segments as $i => $segment) {
             try {
-                $intervals[$i] = \Achse\Math\Interval\Integer\IntegerIntervalFactory::create(
+                $intervals[$i] = \Wappointment\Achse\Math\Interval\Integer\IntegerIntervalFactory::create(
                     (int) $segment[0],
                     false,
                     (int) $segment[1],
