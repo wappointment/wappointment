@@ -49,7 +49,7 @@ class ServicesController extends RestController
         }
 
         $this->refreshRepository();
-        return ['message' => 'Service saved! Now to use it, assign it to your staff', 'result' => $result];
+        return ['message' => 'Service saved! Next, assign it to your staff in Wappointment > Settings > Calendars & Staff', 'result' => $result];
     }
 
     protected function refreshRepository()

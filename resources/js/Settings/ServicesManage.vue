@@ -67,7 +67,7 @@
         <div v-if="serviceAdd">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
             <ServicesEditLegacy v-if="currentView=='editLegacy'" :legacy="true" :element="elementPassed" @saved="hasBeenSavedDeleted"/>
-            <ServicesAddEdit v-else :element="elementPassed" :legacy="false" @saved="hasBeenSavedDeleted"/>
+            <ServicesAddEdit v-else :element="elementPassed" :legacy="false" @saved="hasBeenSaved"/>
         </div>
     </div>
 </template>
@@ -164,6 +164,12 @@ export default {
         hasBeenSavedNoReload(result){
             return this.hasBeenSavedDeleted(result, false)
         },
+        hasBeenSaved(result){
+            if(result.data.message!==undefined) {
+                this.$WapModal().notifySuccess(result.data.message, 15)
+            }
+            this.hasBeenSavedDeleted()
+        },
         hasBeenSavedDeleted(result, reload = true){
             if(reload) {
                 this.showListing()
@@ -171,7 +177,7 @@ export default {
             }
             
             if(result.data.message!==undefined) {
-                this.$WapModal().notifySuccess(result.data.message, 15)
+                this.$WapModal().notifySuccess(result.data.message)
             }
         },
         deleteService(service_id){

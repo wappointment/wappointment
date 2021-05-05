@@ -102,7 +102,6 @@ export default {
 </script>
 <style>
 .slots-panel{
-    /* position:relative; */
     overflow: hidden;
 }
 .d-section {
