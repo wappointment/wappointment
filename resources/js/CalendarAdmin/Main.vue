@@ -802,7 +802,7 @@ export default {
         //this.resetFirstDay()
         this.writeHistory()
       },
-      writeHistory(){
+      writeHistory(clear = false){
         if(this.firstDay !== undefined){
           this.queryParameters = {
               page: 'wappointment_calendar',
@@ -816,7 +816,7 @@ export default {
             query: Object.assign({},this.queryParameters)
           },
           'Calendar week ' + this.firstDay.format() + ' - ' + this.lastDay.format(),
-          'admin.php?page=wappointment_calendar&start=' + this.firstDay.format() + '&end=' + this.lastDay.format() + '&timezone=' + this.displayTimezone + '&staff='+this.activeStaff.id
+          'admin.php?page=wappointment_calendar'+ (clear === false ? '&start=' + this.firstDay.format() + '&end=' + this.lastDay.format() + '&timezone=' + this.displayTimezone + '&staff='+this.activeStaff.id:'')
         )
         }
         
@@ -833,7 +833,7 @@ export default {
         this.$refs.calendar.fireMethod('today')
         //this.resetFirstDay()
         this.refreshEvents()
-        this.writeHistory()
+        this.writeHistory(true)
         //  this.$refs.calendar.fireMethod('changeView', 'timeGridWeek')
         //  this.$refs.calendar.fireMethod('today')
         //  this.currentView = 'timeGridWeek'

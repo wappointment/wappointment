@@ -7,6 +7,8 @@
             <div data-tt="Opens the calendar's step automatically"><label><input type="checkbox" v-model="open"> Auto-open Calendar</label></div>
             <div data-tt="Calendar will expand to the container's width"><label><input type="checkbox" v-model="large"> Full width Calendar</label></div>
             <div data-tt="Show a week view instead of the full month"><label><input type="checkbox" v-model="week"> Week view</label></div>
+            <div data-tt="The first screen in your booking form will be a staff selection page(if you have more than one staff)">
+                <label :class="{'text-muted':staffSelected}"><input :disabled="staffSelected" type="checkbox" v-model="staffpage"> Select staff first</label></div>
             <template v-if="!simple">
                 <div v-if="filteredCalendars" >
                     <SearchDropdown v-model="active_staff_id" ph="Lock Calendar/Staff" :elements="filteredCalendars" labelSearchKey="name"/>
@@ -68,6 +70,7 @@ export default {
         open:false,
         center: false,
         week:false,
+        staffpage: false,
         titleGiven: '',
         active_staff_id: false,
         active_service_id: false,
@@ -107,7 +110,17 @@ export default {
         },
 
     },
+    watch:{
+        active_staff_id(val){
+            if([undefined, false,''].indexOf(val) === -1){
+                this.staffpage = false
+            }
+        },
+    },
     computed:{
+        staffSelected(){
+            return [undefined, false,''].indexOf(this.active_staff_id) === -1
+        },
         filteredCalendars(){
             if(this.active_service_id && this.calendars_data){
                 let service_id = this.active_service_id
@@ -129,6 +142,7 @@ export default {
             shortcode += this.open? ' open ':''
             shortcode += this.center? ' center ':''
             shortcode += this.week? ' week ':''
+            shortcode += this.staffpage? ' staff_page ':''
             shortcode += this.active_staff_id? ' staff="'+this.active_staff_id+'" ':''
             shortcode += this.active_service_id? ' service="'+this.active_service_id+'" ':''
             shortcode = '['+shortcode+']'
@@ -138,6 +152,7 @@ export default {
                 autoOpen: this.open,
                 week: this.week,
                 center: this.center,
+                staffPage: this.staffpage,
                 buttonTitle: this.titleGiven
             })
             return shortcode
