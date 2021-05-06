@@ -65,8 +65,9 @@ class Calendar extends Model
     {
         $services = \WappointmentLv::collect((new Services)->get());
         //$services = Central::get('ServiceModel')::select('id')->fetch();
+
         $this->services()->sync($services->map(function ($e) {
-            return $e->id;
+            return $e['id'];
         })->toArray());
     }
 }
