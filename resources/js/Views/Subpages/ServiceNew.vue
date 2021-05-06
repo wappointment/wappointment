@@ -9,8 +9,10 @@
 <script>
 import ServiceService from '../../Services/V1/Service'
 import abstractView from '../Abstract'
+import HasWooVariables from '../../Mixins/HasWooVariables'
 export default {
   extends: abstractView,
+  mixins:[HasWooVariables],
   props:['dataPassed', 'servicesService', 'extraOptions', 'buttons', 'minimal'],
   data() {
       return {
@@ -49,6 +51,13 @@ export default {
               ]
             },
             {
+                type: 'checkbox',
+                label: "Sell service",
+                model: "options.woo_sellable",
+                cast: Boolean,
+                default: false,
+            },
+            {
               type: 'address',
               label: 'Short Description',
               model: 'options.description',
@@ -69,7 +78,8 @@ export default {
                 unit: 'min',
                 required_options_props:{
                   'woo_sellable':'woo_sellable'
-                }
+                },
+               
             },
             {
                 type: 'opt-modality',
@@ -110,7 +120,8 @@ export default {
   computed: {
 
     schemaParsed(){
-      return  window.wappointmentExtends.filter('serviceFormSchema', this.schema, this.modelHolder )
+      return this.addPriceField(this.schema)
+      //return  window.wappointmentExtends.filter('serviceFormSchema', this.schema, this.modelHolder )
     },
 
     errorsPassed(){
@@ -118,6 +129,36 @@ export default {
     }
   },
   methods: {
+    generatePriceField(){
+      return {
+          type: 'input',
+          label: "Price" +' (' +this.currencyText+') ',
+          model: "options.woo_price",
+          cast: String,
+          conditions: [
+            { model:'options.woo_sellable', values: [true] }
+          ],
+          liveParse: function(val) {
+              
+              val = val.replace(',','.')
+              val = val.replace(/[^0-9.]/g,'')
+              let floatPos = val.indexOf('.')
+              if( floatPos !== -1 && floatPos < val.length -2){
+                val = Number.parseFloat(val).toFixed(2)
+              }
+            
+            return val
+          }
+      }
+    },
+    addPriceField(schema){
+      for (var i = 0; i < schema.length; i++) {
+          if(schema[i]['type'] == 'opt-multidurations'){
+            schema[i]['woo_price_field'] = this.generatePriceField()
+          }
+      }
+      return schema
+    },
     isReady(ready){
       this.$emit('ready', ready)
     },

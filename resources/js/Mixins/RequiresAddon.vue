@@ -8,7 +8,7 @@ export default {
                 services:{
                     label: 'Services Suites',
                 },
-                woo:{
+                woocommerce:{
                     label: 'Appointments for WooCommerce',
                 },
                 twilio:{
@@ -19,6 +19,12 @@ export default {
                 },
                 packages:{
                     label: 'Packages and credits',
+                },
+                stripe:{
+                    label: 'Stripe payments',
+                },
+                paypal:{
+                    label: 'Paypal payments',
                 },
             },
         };

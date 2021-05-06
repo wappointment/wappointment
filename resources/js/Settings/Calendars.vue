@@ -133,15 +133,15 @@ import SettingsSave from '../Modules/SettingsSave'
 import CalendarsRegav from './CalendarsRegav'
 import DurationCell from '../BookingForm/DurationCell'
 import ShortcodeDesigner from './ShortcodeDesigner'
-
 import StaffAssignServices from './StaffAssignServices'
 import StaffPermissionsManager from './StaffPermissionsManager'
 import StaffCalendarsIntegrations from './StaffCalendarsIntegrations'
 import StaffCalendarsExternal from './StaffCalendarsExternal'
 import StaffCustomFieldEditor from './StaffCustomFieldEditor'
-
 import hasPermissions from '../Mixins/hasPermissions'
 import isSearchable from '../Mixins/isSearchable'
+import HasPopup from '../Mixins/HasPopup'
+
 export default {
     extends: AbstractListing,
     components:{
@@ -150,7 +150,6 @@ export default {
         CalendarsAddEdit,
         WeeklyAvailability,
         Connections,
-        
         CalendarsRegav,
         ShortcodeDesigner,
         StaffCalendarsExternal,
@@ -159,14 +158,12 @@ export default {
         StaffAssignServices,
         StaffCustomFieldEditor
     },
-    mixins:[CalUrl, SettingsSave, hasPermissions, isSearchable],
+    mixins:[CalUrl, SettingsSave, hasPermissions, isSearchable, HasPopup],
     data: () => ({
         currentView: 'listing',
         viewName:'empty',
         elementPassed: null,
         calendarsOrder: [],
-        showModal: false,
-        modalTitle: '',
         showShortcode: false,
         dotcomOpen: false,
         editingExternal: false,
@@ -249,14 +246,7 @@ export default {
             this.openPopup('Edit user permissions')
         },
 
-        openPopup(modalTitle){
-            this.modalTitle = modalTitle
-            this.showModal = true
-        },
-
-        hidePopup(modalTitle){
-            this.modalTitle = 'popTitle'
-            this.showModal = false
+        hideElementsPopup(modalTitle){
             this.showShortcode = false
             this.editingExternal = false
             this.dotcomOpen = false
