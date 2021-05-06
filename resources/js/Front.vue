@@ -152,7 +152,6 @@ export default {
               this.toggleBookForm() // this one goes last
             }
             this.opts.attributesEl = Object.assign({},this.attributesEl)
-            console.log('this.opts.attributesEl',this.opts.attributesEl)
 
           }
         },
