@@ -138,6 +138,9 @@ export default {
         },
     },
     methods: {
+        afterLoaded(response){
+            this.$emit('currency',response.data.currency)
+        },
         soldDuration(durationObj){
             return ['',undefined,false].indexOf(durationObj.woo_price) === -1
         },

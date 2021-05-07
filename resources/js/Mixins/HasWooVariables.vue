@@ -13,10 +13,10 @@ export default {
         return this.wooAddonActive ? window.wappointment_woocommerce.currency_text:''
     },
     wappoCurrencyText(){
-      return 'EUR - €'
+      return this.currency
     },
     wappoCurrency(){
-      return '€'
+      return this.currency
     },
     currencySymb(){
       return this.wooAddonActive ? this.wooCurrency:this.wappoCurrency

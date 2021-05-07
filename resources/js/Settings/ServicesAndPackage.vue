@@ -15,10 +15,10 @@
                 </div>
             </transition>
         </div>
-        <component :is="getComponent" @isolate="isolate" class="p-2 border border-secondary" />
+        <component :is="getComponent" @isolate="isolate" @currency="updateCurrency" class="p-2 border border-secondary" />
         <WapModal v-if="showModal" :show="showModal" @hide="hidePopup" noscroll>
             <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
-            <CurrencyEditor v-if="showCurrency" :currency="currencyInfo"  />
+            <CurrencyEditor v-if="showCurrency" :currency="currency" @close="updateCurrency" />
         </WapModal>
     </div>
 </template>
@@ -41,20 +41,19 @@ export default {
         currentView: 'services',
         showSettings: false,
         settingstimeout: false,
-        isIsolated: false
+        isIsolated: false,
+        currency: ''
     }),
     computed:{
         getComponent(){
             return this.currentView == 'services' ? 'ServicesManage':'ServicesManage'
         },
-        currencyInfo(){
-            return {
-                charge: 'EUR',
-                display: 'FR'
-            }
-        }
     },
     methods: {
+        updateCurrency(currency){
+            this.currency = currency
+            this.hidePopup()
+        },
         isolate(value){
             this.isIsolated = value
         },

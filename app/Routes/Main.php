@@ -74,6 +74,10 @@ class Main extends AbstractRoutes
                     'methods' => ['get', 'post', 'delete'],
                     'controller' => 'LocationsController'
                 ],
+                '/currency' => [
+                    'methods' => ['get', 'post'],
+                    'controller' => 'CurrencyController'
+                ],
             ],
             'GET' => [
                 '/addons/check' => [

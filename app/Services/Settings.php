@@ -100,6 +100,7 @@ class Settings
             'show_welcome' => false,
             'force_ugly_permalinks' => false,
             'allow_staff_cf' => false,
+            'currency' => 'USD'
         ];
     }
 
