@@ -1,9 +1,12 @@
 <template>
     <transition name="fade" mode="out-in">
       <div class="wappointment-wrap" >
-          <UpdateInformation v-if="!db_update"/>
-          <PendingDBUpdate v-else/>
-          <AddonsRequireUpdate />
+          <PendingDBUpdate v-if="db_update"/>
+          <template v-else>
+              <AddonsRequireUpdate v-if="addonsRequiringUpdate.length > 0" :addonsRequiringUpdate="addonsRequiringUpdate" />
+              <UpdateInformation v-else />
+          </template>
+          
           <template v-if="has_messages">
               <transition name="fade" mode="out-in">
                 <WPNotice v-if="fully_loaded">
@@ -31,7 +34,8 @@ export default {
     data: () => ({
         db_update: false,
         has_messages: false,
-        fully_loaded: false
+        fully_loaded: false,
+        addonsRequiringUpdate: []
     }),
     created(){
         if(window.wappointmentAdmin.hasPendingUpdates!== undefined ){
@@ -40,6 +44,7 @@ export default {
         if(window.wappointmentAdmin.hasMessages!== undefined ){
             this.has_messages = window.wappointmentAdmin.hasMessages
         }
+        this.testAddonsRequireUpdate()
     },
     computed:{
         changing(){ //hack to reset the fullyloaded param every time we change of view
@@ -56,6 +61,16 @@ export default {
                 this.$router.push({ name: linkObj.address.replace('[goto_','').replace(']','')})
             }
             return linkObj.address
+        },
+        testAddonsRequireUpdate(){
+            if(window.wappointmentAdmin.addons !== undefined){
+                let addons = window.wappointmentAdmin.addons
+                for (const key in addons) {
+                    if (addons.hasOwnProperty(key) && addons[key].requires_update !== undefined) {
+                        this.addonsRequiringUpdate.push(Object.assign({key:key},addons[key]))
+                    }
+                }
+            }
         }
     }
 }

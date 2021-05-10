@@ -8,7 +8,8 @@
                 <span>V2.2.0</span>    
             </h3>
             <div>
-                The staff selection page is improved
+                <h5>The staff selection page is improved</h5>
+                <img :src="getVersionImage('220', 'staff_image.jpg')" alt="staff page" class="img-fluid" title="staff page"/>
             </div>
             <h5>Changelog 2.2.0</h5>
             <ol>
@@ -20,6 +21,7 @@
                 <li>added appointment history shortcode for logged in users [wap_history]</li>
                 <li>Admin notifications emails are now translatable with LocoTranslate or other translations system alike</li>
                 <li>Improved overall usability in the backend interfaces</li>
+            </ol>
           </div>
     </WapModal>
 </template>
@@ -36,7 +38,7 @@ export default {
         slideshow: false,
         showCode: false
     }),
-
+     
     computed:{
         getUpdateImg(){
             return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/update.png'
@@ -47,8 +49,10 @@ export default {
     },
 
     methods:{
-
-        hideModal(experience){
+        getVersionImage(version, img){
+            return window.apiWappointment.apiSite +'/images/v'+version+'/'+img
+        },
+        hideModal(){
             this.show = false
         },
 
