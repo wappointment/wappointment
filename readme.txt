@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.7
 Requires PHP: 7.0
-Stable tag: 2.1.5
+Stable tag: 2.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,16 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.2.0 - 2021-05-10 =
+* Added staff selection page in booking form 
+* First booking widget screen can now be a staff selection page using a shortcode attribute 
+* Optimization made on calendars availability check requests
+* Added Staff field, for extra information describing your staff(to be used in emails and SMS reminders)
+* Added staff permissions to allow staff to modify their own availability
+* added appointment history shortcode for logged in users [wap_history]
+* Admin notifications emails are now translatable with LocoTranslate or other translations system alike
+* Improved overall usability in the backend interfaces
 
 = 2.1.5 - 2021-04-17 =
 * Added centered option for the booking widget in shortcode mode
