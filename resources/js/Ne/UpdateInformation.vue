@@ -5,11 +5,11 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.2.0</span>    
+                <span>V2.2.0</span>   
+                Staff selection page + Permissions
             </h3>
             <div>
-                <h5>The staff selection page is improved</h5>
-                <img :src="getVersionImage('220', 'staff_image.jpg')" alt="staff page" class="img-fluid" title="staff page"/>
+                <img :src="getVersionImage('220', 'staff_page.gif')" alt="staff page" class="img-fluid" title="staff page"/>
             </div>
             <h5>Changelog 2.2.0</h5>
             <ol>
