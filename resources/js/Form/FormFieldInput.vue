@@ -1,6 +1,6 @@
 <template>
     <div :class="getClassWrapper">
-        <LabelMaterial>
+        <LabelMaterial :valuePassed="updatedValue">
             <input @keydown.prevent.stop.enter="catchEnterEvent"  
              :id="id" :readonly="isReadOnly"
              :type="getInputType" class="form-control" :class="{'is-invalid':hasErrors}"

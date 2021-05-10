@@ -1,7 +1,7 @@
 <template>
   <div :class="labelClass">
     <label :for="id" v-if="floatLabel!=''" >{{ floatLabel }}</label>
-    <slot></slot>
+    <slot/>
     <a v-if="allowBack" class="resetClass" @click="backToDefault" href="javascript:;">reset</a>
   </div>
 </template>
