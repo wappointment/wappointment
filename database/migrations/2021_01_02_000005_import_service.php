@@ -5,6 +5,7 @@ use Wappointment\Models\Location;
 use Wappointment\Models\Service as ServiceModel;
 use Wappointment\System\Status;
 use Wappointment\Services\Service;
+use Wappointment\Services\Services;
 
 class ImportService extends Wappointment\Installation\MigrateHasServices
 {
@@ -24,6 +25,7 @@ class ImportService extends Wappointment\Installation\MigrateHasServices
         $service_free = \Wappointment\Services\Service::getObject();
 
         \Wappointment\Services\Service::updateLocations($service_free->type, $service_free->options, $service_free->address);
+
 
         if ($service_free->service['name'] !== '') { //doesnt run for new installation just upgrades
             $serviceObj = ServiceModel::create([
