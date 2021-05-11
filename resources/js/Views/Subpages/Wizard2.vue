@@ -11,7 +11,7 @@
               <hr>
           </div>
           <CalendarsAddEdit v-if="dataLoaded" ref="caledit" :calendar="viewData.calendar" 
-          :timezones_list="viewData.timezones_list" 
+          :timezones_list="viewData.timezones_list" :calendarsUsed="calendarsUsed"
           :staffs="viewData.staffs" 
             @saved="nextStep"/>
         </div>
@@ -33,6 +33,7 @@ export default {
           viewName: 'regav',
           currentStep: 1,
           totalStep: 3,
+          calendarsUsed:[]
       } 
   },
   methods:{

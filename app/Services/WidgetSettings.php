@@ -250,6 +250,7 @@ class WidgetSettings
         'service_location' => [
             'fields' => [
                 'select_location' => false,
+                'check_price_right' => ['label' => 'Price right aligned']
             ],
             'sub' => 'You can edit modalities names in [url wurl="wappointment_settings#/modalities"]Wappointment > Settings > Services > Modalities[/url]',
         ],
@@ -325,6 +326,9 @@ class WidgetSettings
 
     public function defaultSettings()
     {
+        if (static::wooInstalled()) {
+            $this->settings['service_selection']['check_price_right'] = true;
+        }
         return apply_filters('wappointment_widget_settings_default', $this->settings);
     }
 
@@ -394,5 +398,10 @@ class WidgetSettings
         }
 
         return $merged;
+    }
+
+    private static function wooInstalled()
+    {
+        return Addons::isActive('wappointment_woocommerce');
     }
 }

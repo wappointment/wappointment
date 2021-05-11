@@ -7,6 +7,9 @@ use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\WP\Scheduler as WPScheduler;
 use Wappointment\ClassConnect\Capsule;
 use Wappointment\Services\Wappointment\DotCom;
+use Wappointment\Repositories\Availability;
+use Wappointment\Repositories\CalendarsBack;
+use Wappointment\Repositories\Services;
 
 class Reset
 {
@@ -46,7 +49,7 @@ class Reset
         $this->removeStaffSettings();
         $this->dropTables();
         $this->removeCoreSettings();
-
+        static::clearCache();
         WPScheduler::clearScheduler();
     }
 
@@ -86,5 +89,12 @@ class Reset
         }
 
         Settings::delete();
+    }
+
+    public static function clearCache()
+    {
+        (new CalendarsBack)->refresh();
+        (new Services)->refresh();
+        (new Availability)->refresh();
     }
 }

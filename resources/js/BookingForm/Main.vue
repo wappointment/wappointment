@@ -862,7 +862,7 @@ export default {
     box-shadow: 0px 8px 10px 0 rgba(0,0,0,.08);
     overflow: hidden;
     position: relative;
-    min-width: 280px;
+    min-width: 300px;
 }
 
 .d-flex.ddays > div{

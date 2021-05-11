@@ -5,6 +5,7 @@ namespace Wappointment\Controllers;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Services\Settings;
+use Wappointment\Services\Reset;
 
 class WizardController extends RestController
 {
@@ -21,6 +22,9 @@ class WizardController extends RestController
 
         if ($request->input('step') == 1) {
             new \Wappointment\Installation\Process();
+        }
+        if ($request->input('step') == 2) {
+            Reset::clearCache();
         }
 
         WPHelpers::setOption('wizard_step', $request->input('step'));
