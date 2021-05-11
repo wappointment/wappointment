@@ -185,8 +185,15 @@ export default {
         if(event.source!=''){
           popupData['title'] = 'Do you really want to mute this calendar event?'
         }
-        if(event.options!==undefined && event.options.title!==undefined && event.options.title!=''){
-          popupData['content'] = `<h3>${event.options.title}</h3>`
+        if([null,undefined,false].indexOf(event.options)===-1){
+          if(event.options.title!==undefined && event.options.title!=''){
+            popupData['content'] = `<h3>${event.options.title}</h3>`
+          }else{
+            if(event.options.conditions!==undefined ){
+              popupData['content'] = `<h3>${event.options.conditions}</h3>`
+            }
+          }
+          
         }
         this.$WapModal().confirm(popupData).then((result) => {
           if(result === true){

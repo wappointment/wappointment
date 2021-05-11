@@ -1,9 +1,5 @@
 <template>
-    <div class="container-fluid">
-        <div class="d-flex">
-            <h1>Connect External Calendar</h1>
-        </div>
-        
+    <StaffModalWrapper nosave :user="user">
         <p class="h6 text-muted">Connect your external calendars, to automatically lock times when you're already busy</p>
         <div id="buttons-block">
             <div>
@@ -36,8 +32,7 @@
             </div>
 
         </div>
-    
-    </div>
+    </StaffModalWrapper>
 </template>
 
 <script>
@@ -45,10 +40,11 @@ import RequestMaker from '../Modules/RequestMaker'
 import VideoIframe from '../Ne/VideoIframe'
 import ServiceCalendar from '../Services/V1/Calendars'
 
+import StaffModalWrapper from './StaffModalWrapper'
 export default {
     mixins: [ RequestMaker],
-    components: {VideoIframe},
-    props: ['calendar_id'],
+    components: {VideoIframe, StaffModalWrapper},
+    props: ['calendar_id', 'user'],
     data() {
         return {
             calurl: '',

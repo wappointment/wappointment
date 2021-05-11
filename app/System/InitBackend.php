@@ -41,7 +41,7 @@ class InitBackend
 
     public function registerMenuRoot()
     {
-        $this->menus = new Menus;
+        $this->menus = new \Wappointment\WP\Menus;
     }
 
     public function registerMenuSubs()

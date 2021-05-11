@@ -7,7 +7,7 @@
         </div>
         
         <div :class="getWidClass">
-            <div class="wap-wid wclosable" :class="'step-' + stepName" v-if="isWidget">
+            <div class="wap-wid wclosable" :class="getStepName" v-if="isWidget">
               <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
               <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :attributesEl="attributesEl" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
               <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
@@ -75,6 +75,9 @@ export default {
         }
     },
     computed:{
+      getStepName(){
+        return 'step-' + (this.bookForm?this.stepName:'button')
+      },
         getWidClass(){
           return {
             'wap-abs':this.hasCloseCross && this.isMobilePhone && this.autoPop,
@@ -349,6 +352,31 @@ export default {
     margin: .5em 0;
 }
 
+
+.wap-booking-fields .isInvalid input[type="text"], 
+.wap-booking-fields .isInvalid input[type="email"], 
+.wap-booking-fields .isInvalid input[type="url"], 
+.wap-booking-fields .isInvalid input[type="tel"],
+.wap-booking-fields .isInvalid textarea{
+    border-right: 4px solid var(--wappo-error-tx) !important;
+}
+.wap-booking-fields .field-required label::after {
+    content:" *";
+    color:var(--wappo-error-tx);
+}
+
+.wap-front .wappointment-errors{
+    background-color:var(--wappo-error-tx);
+}
+.wap-front .wappointment-errors div{
+    color: #fff;
+    font-size: .9em;
+}
+.phone-field-wrap .dpselect .selection::after,
+.phone-field-wrap strong{
+    color: #645a5a;
+}
+
 @media only screen and (max-width: 500px) {
   .wap-abs{
     position: absolute;
@@ -395,6 +423,15 @@ export default {
     max-width: 100%;
     position:relative;
     z-index: 1;
+  }
+
+  .wap-front.wmobile .wap-bf,
+  .wap-front.wmobile .wap-wid{
+    width:100%;
+  }
+
+  .wap-front.wmobile .wap-wid.step-button{
+    width: auto;
   }
 }
 </style>

@@ -99,6 +99,7 @@ class Settings
             'booking_page' => 0,
             'show_welcome' => false,
             'force_ugly_permalinks' => false,
+            'allow_staff_cf' => false,
         ];
     }
 

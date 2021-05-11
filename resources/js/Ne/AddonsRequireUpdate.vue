@@ -1,11 +1,11 @@
 <template>
-    <WapModal :show="show" @hide="hideModal" v-if="show">
+    <WapModal :show="show" @hide="hidePopup" v-if="show">
           <h4 slot="title" class="modal-title">Please update your Wappointment addon(s) to their latest version</h4>
           <div class="border border-primary rounded p-2 text-primary">
             <ul class="mb-0">
-                <li v-for="addon in show" class="my-2">
+                <li v-for="addon in addonsRequiringUpdate" class="my-2">
                     <img :src="getImg+'images/'+addon.key+'.png'" :alt="addon.name" class="img-fluid addon-sm mr-2">
-                    <strong>{{ addon.name }}</strong> requires to be updated to at least the version <strong>{{ addon.requires_update }}</strong></li>
+                    <strong>{{ addon.name }}</strong> (minimum version required: <strong>{{ addon.requires_update }}</strong>)</li>
             </ul>
           </div>
           <div class="mt-4">
@@ -20,7 +20,6 @@
                         <img :src="getUpdateImg+'update_addons.png'" alt="Update link appears for your plugin" class="img-fluid rounded">
                     </div>
               </div>
-              
               
               <div class="d-flex align-items-center mt-4 p-4 bg-secondary rounded">
                   <div>
@@ -42,15 +41,11 @@
 </template>
 <script>
 import abstractView from '../Views/Abstract'
-
+import CanPopAgain from '../Mixins/CanPopAgain'
 export default {
     extends: abstractView,
-    data: () => ({
-        show: false
-    }),
-    created(){
-        this.testForUpdates()
-    },
+    mixins: [CanPopAgain],
+    props:['addonsRequiringUpdate'],
     computed:{
         getImg(){
             return window.apiWappointment.apiSite + '/'
@@ -58,33 +53,7 @@ export default {
         getUpdateImg(){
             return this.getImg + 'plugin/' + window.apiWappointment.version + '/'
         },
-    },
-    methods:{
-        
-        hideModal(experience){
-            this.show = false
-        },
-        testForUpdates(){
-            if(window.wappointmentAdmin.addons !== undefined){
-                let addonsRequiringUpdate = []
-                let addons = window.wappointmentAdmin.addons
-                for (const key in addons) {
-                    if (addons.hasOwnProperty(key)) {
-                        if(addons[key].requires_update !== undefined){
-                            addonsRequiringUpdate.push(Object.assign({key:key},addons[key]))
-                        }
-                        
-                    }
-                }
-                if(addonsRequiringUpdate.length >0){
-                    this.show = addonsRequiringUpdate
-                }
-            }
-        }
-
-    },
-   
-    
+    },   
 }
 </script>
 <style >

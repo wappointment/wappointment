@@ -10,6 +10,7 @@ use Wappointment\Services\Status;
 use Wappointment\Managers\Service as ManageService;
 use Wappointment\Managers\Central;
 use Wappointment\Models\Service as ModelService;
+use Wappointment\Repositories\Availability;
 
 class ViewsData
 {
@@ -28,7 +29,7 @@ class ViewsData
     {
         $calendars = Central::get('CalendarModel')::orderBy('sorting')->fetch();
         $staffs = [];
-        foreach ($calendars->toArray() as $key => $calendar) {
+        foreach ($calendars->toArray() as $calendar) {
             $staffs[] = (new \Wappointment\WP\Staff($calendar))->fullData();
         }
         return $staffs;
@@ -44,7 +45,7 @@ class ViewsData
                 'timezones_list' => DateTime::tz(),
                 'calendars' => $calendars,
                 'staffs' => Staff::getWP(),
-                'staffDefault' => Settings::staffDefaults()
+                'staffDefault' => Settings::staffDefaults(),
             ];
         } else {
             $gravatar_img = get_avatar_url(Settings::get('activeStaffId'), ['size' => 40]);
@@ -54,8 +55,7 @@ class ViewsData
                 'avb' => Settings::getStaff('availaible_booking_days'),
                 'staffs' => Staff::getWP(),
                 'activeStaffId' => (int)Settings::get('activeStaffId'),
-                'activeStaffAvatar' => Settings::getStaff('avatarId') ?
-                    wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
+                'activeStaffAvatar' => Settings::getStaff('avatarId') ? wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $gravatar_img,
                 'activeStaffGravatar' => $gravatar_img,
                 'activeStaffName' => Staff::getNameLegacy(),
                 'activeStaffAvatarId' => Settings::getStaff('avatarId'),
@@ -65,6 +65,13 @@ class ViewsData
             ];
         }
         return apply_filters('wappointment_back_regav', $data);
+    }
+
+    private function staffCustomField()
+    {
+        return [
+            'custom_fields' => WPHelpers::getOption('staff_custom_fields', [])
+        ];
     }
 
     private function serverinfo()
@@ -236,8 +243,6 @@ class ViewsData
             $timezone = $staff[0]->options['timezone'];
         }
 
-
-
         return [
             'debug' => \WappointmentLv::isTest(),
             'buffer_time' => Settings::get('buffer_time'),
@@ -272,6 +277,7 @@ class ViewsData
             'notify_rescheduled_appointments' => Settings::get('notify_rescheduled_appointments'),
             'email_notifications' => Settings::get('email_notifications'),
             'mail_status' => (bool) Settings::get('mail_status'),
+            'allow_staff_cf' => Settings::get('allow_staff_cf')
 
         ];
     }
@@ -316,18 +322,6 @@ class ViewsData
 
     private function front_availability()
     {
-        return apply_filters('wappointment_front_availability', [
-            'staffs' => Staff::get(),
-            'week_starts_on' => Settings::get('week_starts_on'),
-            'date_format' => Settings::get('date_format'),
-            'time_format' => Settings::get('time_format'),
-            'min_bookable' => Settings::get('hours_before_booking_allowed'),
-            'date_time_union' => Settings::get('date_time_union', ' - '),
-            'now' => (new Carbon())->format('Y-m-d\TH:i:00'),
-            'buffer_time' => Settings::get('buffer_time'),
-            'services' => ManageService::all(),
-            'site_lang' => substr(get_locale(), 0, 2),
-            'custom_fields' => Central::get('CustomFields')::get()
-        ]);
+        return apply_filters('wappointment_front_availability', (new Availability)->get());
     }
 }

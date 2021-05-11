@@ -1,10 +1,10 @@
 <template>
     <div v-if="currentMonth" class="calendarMonth">
         <div class="d-flex justify-content-between align-items-center">
-            <span @click="prevWeek" class="wbtn-secondary wbtn wbtn-round wbtn-top" role="button" 
+            <span @click="prevWeek" class="wbtn-secondary wbtn wbtn-round wbtn-top sq" role="button" 
             :class="{'wbtn-disabled' : isCurrentWeek}" :disabled="isCurrentWeek"><span><</span></span> 
-            <div>{{ getMonthYear()}}</div> 
-            <span @click="nextWeek" class="wbtn-secondary wbtn wbtn-round wbtn-top" role="button" 
+            <div>{{ getMonthYear}}</div> 
+            <span @click="nextWeek" class="wbtn-secondary wbtn wbtn-round wbtn-top sq" role="button" 
             :class="{'wbtn-disabled' : isLastWeek}" :disabled="isLastWeek" ><span>></span></span>
         </div>
         <weekHeader :weekHeader="weekHeader"/>
@@ -52,7 +52,13 @@ export default {
             }
             
         },
-
+         changeWeek(increment = true, auto = false){
+            this.sideWeek = increment? 'left': 'right'
+            this.changingWeek = true
+            let newWeek = increment ===false ? this.selectedWeek -1:this.selectedWeek +1
+  
+            auto ? this.setWeek(newWeek):setTimeout(this.setWeek.bind('',newWeek ), 600)
+        },
         setWeek(newWeek){
             this.selectedDay = false
             this.changingWeek = false
@@ -98,13 +104,7 @@ export default {
         },
 
 
-        changeWeek(increment = true, auto = false){
-            this.sideWeek = increment? 'left': 'right'
-            this.changingWeek = true
-            let newWeek = increment ===false ? this.selectedWeek -1:this.selectedWeek +1
-  
-            auto ? this.setWeek(newWeek):setTimeout(this.setWeek.bind('',newWeek ), 600)
-        },
+       
         nextWeek(){
             if(this.isLastWeek === true ) return false
 

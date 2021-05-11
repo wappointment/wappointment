@@ -11,4 +11,9 @@ class ViewsDataController extends RestController
     {
         return (new ViewsData())->load($request->input('key'));
     }
+
+    public function getCalendar()
+    {
+        return (new ViewsData())->load('calendar');
+    }
 }

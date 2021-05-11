@@ -1,6 +1,6 @@
 <template>
     <div :class="getClassWrapper">
-        <LabelMaterial extraClass="active">
+        <LabelMaterial extraClass="active" :valuePassed="updatedValue">
             <input  :id="id" :placeholder="label" type="date" class="form-control" :class="{'is-invalid':hasErrors}"
                 @focusout="$emit('activated')"
             v-model="updatedValue"

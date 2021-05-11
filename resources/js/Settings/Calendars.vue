@@ -1,7 +1,10 @@
 <template>
     <div>
         <div v-if="calendarListing">
-            <button @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
+            <div class="d-flex align-items-center">
+                <button v-if="isUserAdministrator" @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
+                <InputPh class="max-200 ml-2 mb-0" v-if="loadedData && elements.calendars.length > 10" type="text" v-model="searchterm" ph="Search name" />
+            </div>
             <div class="table-hover" v-if="loadedData">
                 <table class="table">
                     <thead>
@@ -16,41 +19,47 @@
                     </thead>
                     <draggable @change="orderChanged" v-model="elements.calendars" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.calendars.length > 0">
 
-                        <tr class="row-click" v-for="(calendar, idx) in elements.calendars">
+                        <tr class="row-click" v-for="(calendar, idx) in filteredSearchable">
                             <td>
                                 {{ idx + 1 }}
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
                                     <div class="calendar-pic" :class="[calendar.status == 1 ? 'active':'inactive']">
-                                        <img :src="calendar.avatar" class="img-fluid wrounded" width="40" :alt="calendar.name" />
-                                        <span role="button" class="status" :data-tt="[calendar.status == 1 ? 'Active':'Inactive']" @click="toggleStatus(calendar,idx)"></span>
+                                        <img :src="calendar.avatar" class="wrounded" width="40" :alt="calendar.name" />
+                                        <span v-if="canCalUnpublish" role="button" class="status" :data-tt="[calendar.status == 1 ? 'Active':'Inactive']" @click="toggleStatus(calendar,idx)"></span>
                                     </div>
                                     <div class="ml-2">
                                         <div>{{ calendar.name }}</div>
                                         <small>{{ calendar.timezone }}</small>
                                     </div>
-                                    <div class="actions ml-4 text-muted">
-                                        <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span>
-                                        <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
-                                        <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
-                                        <span>(id: {{ calendar.id }})</span>
-                                    </div>
+                                </div>
+                                <div class="wlist-actions text-muted" v-if="isUserAdministrator">
+                                    <span data-tt="Sort" v-if="searchterm=='' && elements.calendars.length > 1"><span class="dashicons dashicons-move"></span></span>
+                                    <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
+                                    <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
+                                    <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
+                                    <span data-tt="Set Permissions" v-if="isStaffCalendar(calendar)"><span class="dashicons dashicons-unlock" @click.prevent.stop="editPermission(calendar)"></span></span>
+                                    <span data-tt="Set Custom Field" v-if="elements.allowStaffCf" ><span class="dashicons dashicons-editor-code" @click.prevent.stop="setCustomFields(calendar)"></span></span>
+                                    <span>(id: {{ calendar.id }})</span>
                                 </div>
                             </td>
                             <td>
-                                <CalendarsRegav @edit="editAvailability" :calendar="calendar" />
+                                <CalendarsRegav :canEdit="canCalEditWeekly" @edit="editAvailability" :calendar="calendar" />
                             </td>
-                            <td v-if="!elements.db_required">
-                                <div class="d-flex" role="button" v-if="calendar.services.length>0">
-                                    <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid,elements.services) }} </ValueCard>
+                            <td v-if="!elements.db_required" class="cell-services">
+                                <div class="d-flex flex-wrap" role="button" v-if="calendar.services.length>0">
+                                    <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid, elements.services) }} </ValueCard>
                                 </div>
-                                <button class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
+                                <button v-if="canCalEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
                             </td>
                             <td>
                                <Connections :connections="calendar.connected.services === undefined ? []:calendar.connected.services"/>
-                               <a v-if="calendar.connected" href="javascript:;" class="small" @click="goToDotCom(calendar)">edit</a>
-                               <button v-else class="btn btn-xs btn-outline-primary tt-lg mt-2" @click="goToDotCom(calendar)">Connect Account</button>
+                               <div v-if="canCalConnectAccount">
+                                   <a v-if="calendar.connected" href="javascript:;" class="small" @click="goToDotCom(calendar)">edit</a>
+                                    <button v-else class="btn btn-xs btn-outline-primary tt-lg mt-2" @click="goToDotCom(calendar)">Connect Account</button>
+                               </div>
+                               
                             </td>
                             <td>
                                <div class="d-flex" v-if="getExternals(calendar)">
@@ -65,19 +74,18 @@
                                                     Last changed: <span class="data-item">{{ lastChanged(calendar_id, calendar) }}</span> | 
                                                     Process duration: <span class="data-item">{{ calDuration(calendar_id, calendar) }}</span></p>
                                                 </div>
-                                                <button class="align-self-start btn btn-xs btn-link hidden" data-tt="Disconnect Calendar" @click="disconnectCalendar(calendar_id, calendar.id)"><span class="dashicons dashicons-dismiss"></span></button>
+                                                <button v-if="canCalDelIcs" class="align-self-start btn btn-xs btn-link hidden" data-tt="Disconnect Calendar" @click="disconnectCalendar(calendar_id, calendar.id)"><span class="dashicons dashicons-dismiss"></span></button>
                                             </div>  
                                         </div>
                                     </div>
-                                    <a class="small d-flex align-items-center" href="javascript:;" @click="refreshManually(calendar.id)"><span class="dashicons dashicons-update"></span> Refresh all</a>
+                                    <a class="small d-flex align-items-center" href="javascript:;" v-if="canCalAddIcs" @click="refreshManually(calendar.id)"><span class="dashicons dashicons-update"></span> Refresh all</a>
                                 </div>
                                 <div>
-                                    <button class="btn btn-xs btn-outline-primary tt-lg" v-if="!calendarLimitReached(calendar)"
+                                    <button class="btn btn-xs btn-outline-primary tt-lg" v-if="canCalAddIcs && !calendarLimitReached(calendar)"
                                     @click="goToSync(calendar)" data-tt="Make sure clients can't book you when you're busy">Connect external calendar</button>
                                 </div>
                             </td>
                         </tr>
-
                     </draggable>
                      <tbody v-else>
                          <tr>
@@ -91,44 +99,30 @@
         <div v-if="calendarAdd">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
             <CalendarsAddEdit :calendar="elementPassed" :timezones_list="elements.timezones_list" 
-            :staffs="elements.staffs" :services="elements.services"
+            :staffs="elements.staffs" :services="elements.services" :calendarsUsed="calendarsUsed"
             @saved="hasBeenSavedDeleted"/>
         </div>
         <div v-if="calendarRegav">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
             <WeeklyAvailability :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs"/>
         </div>
-        <WapModal v-if="showShortcode" :show="showShortcode ? true:false" @hide="hideShortcode" noscroll>
-            <h4 slot="title" class="modal-title"> 
-                <span>Get Booking Widget Shortcode</span>
-            </h4>
-            <ShortcodeDesigner :calendar_id="showShortcode" :calendars="elements.calendars" :services="elements.services" :showTip="false" />
+
+        <WapModal v-if="showModal" :show="showModal" @hide="hidePopup" noscroll>
+            <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
+            <ShortcodeDesigner v-if="showShortcode" :calendar_id="showShortcode" :calendars="elements.calendars" :services="elements.services" :showTip="false" />
+            <StaffPermissionsManager v-if="showPermissions" :permissions="elements.permissions" :user="showPermissions" @save="savePermissions" />
+            <StaffCustomFieldEditor v-if="editCustomField" :staff="editCustomField" @save="saveCustomFields" />
+            <StaffAssignServices v-if="editingServices" @save="saveServices" :user="editingServices" :current="editingServices.services" :services="elements.services" />
+            <StaffCalendarsIntegrations v-if="dotcomOpen" @reload="reloadListing" :calendar="dotcomOpen" />
+            <StaffCalendarsExternal v-if="editingExternal" :user="editingExternal" :calendar_id="editingExternal.id" @savedSync="reloadListing" @errorSaving="errorSavingCalendar" noback />
         </WapModal>
-        <WapModal v-if="showModal" :show="showModal" @hide="hideModal" large noscroll>
-            <h4 slot="title" class="modal-title"> 
-                <span>Connect Personal calendar</span>
-            </h4>
-            <CalendarsExternal :calendar_id="calendar_main_id" @savedSync="savedSync" @errorSaving="errorSavingCalendar" noback />
-        </WapModal>
-        <WapModal v-if="dotcomOpen" :show="dotcomOpen!==false" large @hide="dotcomOpen = false">
-            <h4 slot="title" class="modal-title"> 
-                Connect to Zoom, Google Calendar etc...
-            </h4>
-            <CalendarsIntegrations @reload="reloadListing" :calendar="dotcomOpen" />
-        </WapModal>
-        <WapModal v-if="editingServices" :show="editingServices!==false" large @hide="editingServices = false">
-            <h4 slot="title" class="modal-title"> 
-                Edit services allowed
-            </h4>
-            <SearchDropdown v-model="editingServices.services" hasMulti ph="Pick services provided by staff" :elements="elements.services" 
-                idKey="id" labelSearchKey="name"></SearchDropdown>
-                <button class="btn btn-primary mt-2" @click="saveServices">Save</button>
-        </WapModal>
+
     </div>
 </template>
 
 <script>
 
+import AbstractListing from '../Views/AbstractListing'
 import ValueCard from '../Fields/ValueCard'
 import ServiceCalendar from '../Services/V1/Calendars'
 import CalendarsAddEdit from './CalendarsAddEdit'
@@ -136,13 +130,18 @@ import WeeklyAvailability from '../RegularAvailability/Edit'
 import Connections from '../RegularAvailability/Connections'
 import CalUrl from '../Modules/CalUrl'
 import SettingsSave from '../Modules/SettingsSave'
-import CalendarsExternal from './CalendarsExternal'
-import CalendarsIntegrations from './CalendarsIntegrations'
 import CalendarsRegav from './CalendarsRegav'
 import DurationCell from '../BookingForm/DurationCell'
-import AbstractListing from '../Views/AbstractListing'
-import SearchDropdown from '../Fields/SearchDropdown'
 import ShortcodeDesigner from './ShortcodeDesigner'
+
+import StaffAssignServices from './StaffAssignServices'
+import StaffPermissionsManager from './StaffPermissionsManager'
+import StaffCalendarsIntegrations from './StaffCalendarsIntegrations'
+import StaffCalendarsExternal from './StaffCalendarsExternal'
+import StaffCustomFieldEditor from './StaffCustomFieldEditor'
+
+import hasPermissions from '../Mixins/hasPermissions'
+import isSearchable from '../Mixins/isSearchable'
 export default {
     extends: AbstractListing,
     components:{
@@ -151,29 +150,37 @@ export default {
         CalendarsAddEdit,
         WeeklyAvailability,
         Connections,
-        CalendarsExternal,
-        CalendarsIntegrations,
+        
         CalendarsRegav,
-        SearchDropdown,
-        ShortcodeDesigner
+        ShortcodeDesigner,
+        StaffCalendarsExternal,
+        StaffCalendarsIntegrations,
+        StaffPermissionsManager,
+        StaffAssignServices,
+        StaffCustomFieldEditor
     },
-    mixins:[CalUrl, SettingsSave],
+    mixins:[CalUrl, SettingsSave, hasPermissions, isSearchable],
     data: () => ({
         currentView: 'listing',
         viewName:'empty',
         elementPassed: null,
         calendarsOrder: [],
         showModal: false,
+        modalTitle: '',
         showShortcode: false,
         dotcomOpen: false,
-        calendar_main_id: false,
-        editingServices: false
+        editingExternal: false,
+        editingServices: false,
+        showPermissions: false,
+        editCustomField: false,
     }),
     created(){
         this.mainService = this.$vueService(new ServiceCalendar)
-        
     },
     computed: {
+        searchable(){
+            return this.elements.calendars
+        },
         calendarListing(){
             return this.currentView == 'listing'
         },
@@ -182,36 +189,119 @@ export default {
         },
         calendarRegav(){
             return this.currentView == 'regav'
+        },
+        onlyOneCalendarEditable(){
+            return this.elements.calendars.length === 1
+        },
+        canCalEditServices(){
+            return this.canCalendarEdit('wappo_self_services')
+        },
+        canCalConnectAccount(){
+            return this.canCalendarEdit('wappo_self_connect_account')
+        },
+        canCalAddIcs(){
+            return this.canCalendarEdit('wappo_self_add_ics')
+        },
+        canCalDelIcs(){
+            return this.canCalendarEdit('wappo_self_del_ics')
+        },
+        canCalEditWeekly(){
+            return this.canCalendarEdit('wappo_self_weekly')
+        },
+        canCalUnpublish(){
+            return this.canCalendarEdit('wappo_self_unpublish')
+        },
+        calendarsUsed(){
+            return this.searchable.map(e => e.wp_uid)
         }
     },
     methods: {
+        canCalendarEdit(something){
+            return this.isUserAdministrator || (this.onlyOneCalendarEditable && this.hasPermission(something))
+        },
+        isStaffCalendar(calendar){
+            return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1 && calendar.roles.indexOf('wappointment_staff') === -1
+        },
         getShortCode(calendar_id){
             this.showShortcode = calendar_id
+            this.openPopup('Get Booking Widget Shortcode')
         },
-        hideShortcode(){
-            this.showShortcode = false
+        goToSync(calendar) {
+            if(this.calendarLimitReached(calendar)){
+                return
+            }
+            this.editingExternal = calendar
+            this.openPopup('Connect Personal calendar')
         },
-        saveServices(){
-            this.request(this.saveServicesRequest,this.editingServices, undefined, false, this.closeRefresh)
+        goToDotCom(calendar){
+            this.dotcomOpen = calendar
+            this.openPopup('Connect to Zoom, Google Calendar etc...')
+        },
+        setCustomFields(calendar){
+            this.editCustomField = calendar
+            this.openPopup('Set custom Fields')
+        },
+        
+        editServices(calendar){
+            this.editingServices = calendar
+            this.openPopup('Edit services allowed')
         },
 
-        closeRefresh(){
+        editPermission(calendar){
+            this.showPermissions = calendar
+            this.openPopup('Edit user permissions')
+        },
+
+        openPopup(modalTitle){
+            this.modalTitle = modalTitle
+            this.showModal = true
+        },
+
+        hidePopup(modalTitle){
+            this.modalTitle = 'popTitle'
+            this.showModal = false
+            this.showShortcode = false
+            this.editingExternal = false
+            this.dotcomOpen = false
             this.editingServices = false
-            this.hasBeenSavedDeleted()
+            this.showPermissions = false
+            this.editCustomField = false
+        },
+        saveCustomFields(customFields, fieldsValues, deletedFields){
+            this.request(this.saveCustomFieldsRequest, {id: this.editCustomField.id, custom_fields:customFields, values:fieldsValues, deleted:deletedFields}, undefined, false, this.closeRefresh)
+        },
+         async saveCustomFieldsRequest(params){
+           return await this.mainService.call('saveCustomFields',params)
+        },
+
+        saveServices(changedServices){
+            this.request(this.saveServicesRequest, {id: this.editingServices.id, services:changedServices}, undefined, false, this.closeRefresh)
         },
 
         async saveServicesRequest(params){
            return await this.mainService.call('saveService',params)
         },
-        editServices(calendar){
-            this.editingServices = calendar
+
+        savePermissions(new_permissions){
+            this.request(this.savePermissionsRequest, {id:this.showPermissions.id, permissions: new_permissions}, undefined, false, this.closeRefresh)
         },
+
+        async savePermissionsRequest(params){
+           return await this.mainService.call('savePermission',params)
+        },
+
+        closeRefresh(){
+            this.hidePopup()
+            this.hasBeenSavedDeleted()
+        },
+        
         displayServiceName(id,services) {
-            return services.find(e => e.id ==id).name
+            let service_found = services.find(e => e.id ==id)
+            return service_found!== undefined ? service_found.name:'Undefined service'
         },
 
         reloadListing(){
-            this.hideModal()
+            this.hidePopup()
             this.showListing()
             this.loadElements()
         },
@@ -239,20 +329,8 @@ export default {
                 this.$router.push({name:'calendars_edit', params:{id:calendar.id}})
             }
         },
-        goToDotCom(calendar){
-            this.dotcomOpen = calendar
-        },
-        hideModal(){
-            this.showModal = false
-            this.dotcomOpen = false
-        },
-        goToSync(calendar) {
-            if(this.calendarLimitReached(calendar)){
-                return
-            }
-            this.calendar_main_id = calendar.id
-            this.showModal = true
-        },
+        
+        
         
         calendarLimitReached(calendar){
             return calendar.calendar_urls!== false && Object.keys(calendar.calendar_urls).length > 3
@@ -263,15 +341,19 @@ export default {
                 this.request(this.requestElements, {}, undefined, false, this.loadedElements, this.failedLoadingElements)
             }
         },
+
         orderChanged(val){
             this.request(this.reorderRequest,{ id:val.moved.element.id, 'new_sorting':val.moved.newIndex }, undefined, false, this.hasBeenSavedNoReload)
         },
+
         async reorderRequest(params){
            return await this.mainService.call('reorder',params)
         },
+
         hasBeenSavedNoReload(result){
             return this.hasBeenSavedDeleted(result, false)
         },
+
         hasBeenSavedDeleted(result, reload = true){
             if(reload) {
                 this.reloadListing()
@@ -286,22 +368,27 @@ export default {
                 }
             })
         },
+
         toggleStatus(calendar, idx){
            return this.elements.db_required ? 
             this.runDbUpdate():this.request(this.toggleRequest,{ id:calendar.id}, undefined, false, this.hasBeenToggled.bind(null,idx))
         },
+
         hasBeenToggled(idx, response){
             let calendarsSaved = this.elements.calendars
             calendarsSaved[idx].status = calendarsSaved[idx].status == 1 ? 0:1
             this.elements.calendars = []
             setTimeout(this.reFeedCalendars.bind(null,calendarsSaved), 100);
         },
+
         reFeedCalendars(calendarsSaved){
             this.elements.calendars = calendarsSaved
         },
+
         async toggleRequest(params){
            return await this.mainService.call('toggle',params)
         },
+
         disconnectCalendar(calendar_id, calendar_main_id){
             this.$WapModal().confirm({
                 title: 'Confirm calendar disconnection?',
@@ -313,12 +400,12 @@ export default {
 
                 this.request(this.disconnectCalendarRequest, {calendar_id: calendar_id,  staff_id: calendar_main_id}, undefined,false, this.disconnectCalendarSuccess)
             }) 
-            
-            
         },
+
         async disconnectCalendarRequest(params) {
             return await this.mainService.call('disconnectCal', params) 
         },
+
         disconnectCalendarSuccess(response){
             this.$WapModal().notifySuccess(response.data.message)
             this.reloadListing()
@@ -434,5 +521,17 @@ export default {
 }
 .cal-icon:hover > .dashicons {
     color: var(--primary);
+}
+
+.cell-services{
+    max-width: 200px;
+}
+.cell-services .d-flex{
+    max-height: 44px;
+    overflow: hidden;
+    margin-bottom: .4em;
+}
+.cell-services .d-flex:hover{
+    max-height: none !important;
 }
 </style>

@@ -50,9 +50,9 @@ class Staff
         return [Settings::get('activeStaffId')];
     }
 
-    public static function getWP()
+    public static function getWP($id = false)
     {
-        return WPUser::whereIn('ID', WPUserMeta::getUserIdWithRoles())->get();
+        return $id === false ? WPUser::whereIn('ID', WPUserMeta::getUserIdWithRoles())->get() : WPUser::where('ID', (int)$id)->get();
     }
 
     public static function getStaffId(Request $request)

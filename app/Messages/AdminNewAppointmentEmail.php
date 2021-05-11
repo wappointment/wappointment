@@ -8,21 +8,23 @@ class AdminNewAppointmentEmail extends AbstractAdminEmail
 
     public function loadContent()
     {
-        $this->subject = 'New appointment';
+        $this->subject = __('New appointment', 'wappointment');
         $this->addLogo();
         $this->addBr();
 
         $this->addLines([
-            'Hi ' . $this->params['appointment']->getStaff()->getFirstName() . ', ',
-            'Great news! You just got booked! '
+            /* translators: %s is replaced with the first name of the staff being booked */
+            sprintf(__('Hi %s', 'wappointment'), $this->params['appointment']->getStaff()->getFirstName()),
+            __('Great news! You just got booked!', 'wappointment')
         ]);
+
 
         $this->addRoundedSquare($this->getEmailContent($this->params['client'], $this->params['appointment']));
 
         $this->addLines([
-            'Have a great day!',
+            __('Have a great day!', 'wappointment'),
             '',
-            'Ps: An .ics file with the appointment\'s details is attached'
+            __('Ps: An .ics file with the appointment\'s details is attached', 'wappointment')
         ]);
 
         $this->attachIcs([$this->params['appointment']], 'appointment', true);

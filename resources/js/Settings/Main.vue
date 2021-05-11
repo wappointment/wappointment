@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <h1 class="px-2">Settings</h1>
     
-    <ul class="nav nav-tabs row px-4" id="myTab" role="tablist">
+    <ul class="nav nav-tabs row px-4" id="myTab" role="tablist" v-if="isUserAdministrator">
         <li v-for="(tab, key) in tabs" class="nav-item">
             <span class="nav-link" :class="{'active' : isActive(key)}" @click="changeTab(key)">{{ tab.label }}</span>
         </li>
@@ -41,9 +41,11 @@ import settingsEmailNSms from './EmailNSms'
 import SettingsAppearance from './Appearance'
 import settingsAdvanced from './Advanced'
 import settingsAddons from './Addons'
+import hasPermissions from '../Mixins/hasPermissions'
 
 export default {
   extends: abstractView,
+  mixins: [hasPermissions],
     data: () => ({
         service: null,
         tabs:{
@@ -74,12 +76,10 @@ export default {
       settingsAddons
     },
 
-
     created() {
          if(window.wappointmentAdmin.addons !== undefined && this.addonsWithSettings().length > 0) {
             this.tabs['addonstab'] = { label: 'Addons'}
         }
-        
     },
     computed: {
         convertedName(){
@@ -109,9 +109,17 @@ export default {
         },
         
         changeTab(selectedTab){
-            //this.activeTab = selectedTab
-            this.$router.push({name: selectedTab})
+            if(this.$route.name == selectedTab){
+                //refresh content
+            }else{
+                this.$router.push({name: selectedTab})
+            }
         },       
     }  
 }
 </script>
+<style>
+.max-200{
+    max-width:200px
+}
+</style>

@@ -7,6 +7,9 @@ use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\WP\Scheduler as WPScheduler;
 use Wappointment\ClassConnect\Capsule;
 use Wappointment\Services\Wappointment\DotCom;
+use Wappointment\Repositories\Availability;
+use Wappointment\Repositories\CalendarsBack;
+use Wappointment\Repositories\Services;
 
 class Reset
 {
@@ -40,7 +43,7 @@ class Reset
 
         do_action('wappointment_reset');
         sleep(2); //giving time for revert on addons
-
+        static::eraseCache();
         $this->dotComInforms();
 
         $this->removeStaffSettings();
@@ -86,5 +89,19 @@ class Reset
         }
 
         Settings::delete();
+    }
+
+    public static function refreshCache()
+    {
+        (new CalendarsBack)->refresh();
+        (new Services)->refresh();
+        (new Availability)->refresh();
+    }
+
+    public static function eraseCache()
+    {
+        (new CalendarsBack)->clear();
+        (new Services)->clear();
+        (new Availability)->clear();
     }
 }

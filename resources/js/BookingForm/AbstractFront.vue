@@ -65,6 +65,7 @@ export default {
           }
         }else{
           this.errorMessages = []
+          console.log('error',error)
           this.errorMessages.push(error.message !== undefined ? error.message : 'An unidentified error occured')
         }
 

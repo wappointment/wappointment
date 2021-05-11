@@ -1,7 +1,7 @@
 <template>
     <div class="wap-bf" :class="{show: canBeBooked, 'has-scroll':requiresScroll}">
         <template v-if="canBeBooked">
-            <BookingFormHeader v-if="showHeader" 
+            <BookingFormHeader v-if="showHeader && noStaffSelectionNeeded" 
             :isStepSlotSelection="isStepSlotSelection"
             :options="options"
             :attributesEl="attributesEl"
@@ -13,10 +13,11 @@
             :rescheduling="rescheduling"
             :appointmentSaved="appointmentSaved"
             :staff="selectedStaff"
-            @changeStaff="changeStaff"
+            :mustSelectStaff="mustSelectStaff"
             @changeService="childChangedStep"
             @changeDuration="childChangedStep"
             @changeLocation="childChangedStep"
+            @showStaffScreen="childChangedStep"
             />
             <div class="wap-form-body" :id="getWapBodyId" >
                 <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
@@ -35,7 +36,6 @@
                 @changeDuration="childChangedStep"
                 @changeLocation="childChangedStep"
                 />
-
                 <div class="wrap-calendar p-2" :class="'step-'+currentStep">
                     <div v-if="loading">
                         <Loader />
@@ -56,7 +56,7 @@
         </template>
         <div v-else>
             <div v-if="dataloaded" class="wappointment-errors">
-                <div>No appointments available</div>
+                <div>{{options.general.noappointments}}</div>
             </div>
             <template v-else>
                 <div class="wappointment-errors" v-if="errorMessages.length > 0">
@@ -87,6 +87,7 @@ import AppointmentTypeSelection from './AppointmentTypeSelection'
 import BookingServiceSelection from './ServiceSelection'
 import BookingDurationSelection from './DurationSelection'
 import BookingLocationSelection from './LocationSelection'
+import BookingStaffSelection from './StaffSelection'
 import MixinLegacy from './MixinLegacy'
 
 let compDeclared = {
@@ -98,6 +99,7 @@ let compDeclared = {
     'BookingServiceSelection': BookingServiceSelection,
     'BookingDurationSelection': BookingDurationSelection,
     'BookingLocationSelection': BookingLocationSelection,
+    'BookingStaffSelection': BookingStaffSelection,
     'DurationCell': DurationCell,
     'abstractFront':AbstractFront,
     'BookingFormSummary': BookingFormSummary,
@@ -136,7 +138,7 @@ export default {
         requiresScroll: false,
         selectedStaff: null,
         showHeader:true,
-        checkCacheIntervalid: false
+        checkCacheIntervalid: false,
     }),
 
     mounted () {
@@ -156,7 +158,20 @@ export default {
     },
 
     computed: {
+        showStaffSelection(){
+            return this.mustSelectStaff || this.loadingStep == "BookingStaffSelection"
+        },
+        
+        mustSelectStaff(){
+            return this.attributesEl !== undefined && this.attributesEl.staffPage !== undefined && this.attributesEl.staffPage === true
+        },
+        staffIsSelected(){
+            return [null, undefined, false].indexOf(this.selectedStaff) === -1
+        },
 
+        noStaffSelectionNeeded(){
+            return !this.showStaffSelection || (this.showStaffSelection && (this.staffIsSelected && this.bfdemo !== true))
+        },
         isLegacyOrNotServiceSuite(){
             return this.isLegacy || this.service.type !== undefined
         },
@@ -204,7 +219,12 @@ export default {
            return this.date_format + '[' + this.viewData.date_time_union + ']' + this.time_format
        },
        canBeBooked(){
-           return this.dataloaded && this.intervalsCollection!== null && this.intervalsCollection.intervals.length > 0
+           return this.dataloaded && 
+           (
+               (this.intervalsCollection!== null && this.intervalsCollection.intervals.length > 0) 
+           || 
+                (this.mustSelectStaff && !this.staffIsSelected)
+           )
        },
        
        staff(){
@@ -413,11 +433,9 @@ export default {
                     const keyCondition = conditionKeys[i]
                     if(this.bfdemo !== true && this[keyCondition] !== conditions[keyCondition]) {
                         if(this.componentsList[component_name].skip !== undefined){
-                            
                             if(this.conditionSkipPass(component_name)){
                                 this.childChangedStep(this.componentsList[component_name].relations.next)
                             }
-                            
                         }
                         return false
                     }
@@ -472,14 +490,14 @@ export default {
                 this.dataloaded = true
                 return
             }
-            this.selectedStaff = this.getDefaultStaff()
-            this.refreshAvail()
-
-            this.setMomentLocale()
 
             this.dataloaded = true
-
-            this.initServiceStaffDurationLocation()
+            if(!this.mustSelectStaff || this.mustSelectStaff && this.getStaffs.length == 1){
+                this.selectedStaff = this.getDefaultStaff()
+                this.refreshAvail()
+                this.setMomentLocale()
+                this.initServiceStaffDurationLocation()
+            }
     
             this.setComponentLists()
 
@@ -508,9 +526,12 @@ export default {
 
         selectFirstStep(step_name, params) {
             if(this.isLegacyOrNotServiceSuite === false){
-                return params.service === false? 'BookingServiceSelection': this.getStepAfterService(params)
+                return params.service === false? this.getStepFirst():this.getStepAfterService(params)
             }
             return step_name
+        },
+        getStepFirst(){
+            return this.noStaffSelectionNeeded ? 'BookingServiceSelection': 'BookingStaffSelection'
         },
         getStepAfterService(params){
             return params.duration === false ? 'BookingDurationSelection': this.getStepAfterDuration(params)
@@ -606,7 +627,9 @@ export default {
             if(this.attributesEl !== undefined && 
                 this.attributesEl.serviceSelection !== undefined){
                     let lockToServiceID = this.attributesEl.serviceSelection
-                    this.service = this.services.find(e => e.id == lockToServiceID)
+                    if([undefined,false,''].indexOf(lockToServiceID) === -1){
+                        this.service = this.services.find(e => e.id == lockToServiceID)
+                    }
                 }
         },
 
@@ -737,12 +760,35 @@ export default {
             componentsList['BookingCalendar'].props.location = "location"
             componentsList['BookingCalendar'].props.viewData = "viewData"
 
+            componentsList['BookingStaffSelection'] = {
+                name: 'BookingStaffSelection',
+                conditions: {
+                    'serviceSelected': false,
+                    'appointmentSaved': false,
+                    'rescheduling': false,
+                    'showStaffSelection': true
+                },
+                props: {
+                    calendars: 'viewData.staffs',
+                    options: 'options',
+                    timeprops: 'timeprops',
+                    viewData: 'viewData',
+                },
+                listeners: {
+                    staffSelected:'changeStaff'
+                },
+                relations:{
+                    'next': 'BookingServiceSelection',
+                }
+            }
+            
             componentsList['BookingServiceSelection'] = {
                 name: 'BookingServiceSelection',
                 conditions: {
                     'serviceSelected':false,
                     'appointmentSaved':false,
                     'rescheduling':false,
+                    'noStaffSelectionNeeded': true
                 },
                 props: {
                     services:"services",
@@ -816,9 +862,13 @@ export default {
     box-shadow: 0px 8px 10px 0 rgba(0,0,0,.08);
     overflow: hidden;
     position: relative;
-    min-width: 280px;
+    min-width: 300px;
 }
 
+.d-flex.ddays > div{
+    width: 14.3%;
+    text-align: center;
+}
 .wap-front .calendarMonth .ddays {
     min-height: 1.1em;
     margin: .4em 0;
@@ -927,7 +977,7 @@ export default {
 
 .wclosable .wclose:hover::before, 
 .wclosable .wclose:hover::after {
-    background-color: var(--wappo-pri-tx-lt);
+    background-color: #fff;
 }
 
 .wap-bf button {

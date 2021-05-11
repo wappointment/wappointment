@@ -4,6 +4,7 @@ use Wappointment\ClassConnect\Capsule;
 use Wappointment\Config\Database;
 use Wappointment\Models\Appointment;
 use Wappointment\System\Status;
+use Wappointment\Services\Services;
 
 class AlterAppointmentsTableForService extends Wappointment\Installation\MigrateHasServices
 {
@@ -14,7 +15,7 @@ class AlterAppointmentsTableForService extends Wappointment\Installation\Migrate
      */
     public function up()
     {
-        if ($this->hasMultiService()) {
+        if ($this->hasMultiService() && count(Services::all()) > 0) {
             return;
         }
         $foreignName = $this->getFKServices();

@@ -42,10 +42,9 @@
     margin-right:0;
   }
 
-/*   .wapmodal-content.standard.noscroll {
-    overflow: unset !important;
-    border-radius: 0 0 0 0;
-  } */
+   .wapmodal-content.standard.noscroll {
+    min-height: 200px;
+  } 
 
   .wapmodal-content.screenshot {
     position: absolute;

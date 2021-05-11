@@ -1,6 +1,6 @@
 
 <template>
-    <div class="d-flex justify-content-between ddays" >
+    <div class="d-flex ddays" >
         <div v-for="(dayH, idy) in weekHeader">
             {{ initial(dayH) }}
         </div>

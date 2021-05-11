@@ -56,6 +56,7 @@ return [
         'app/required.php',
         'app/Transports/WpMailPatched.php',
         'app/Services/IcsGenerator.php',
+        'app/Services/Permissions.php',
     ],
 
     // When scoping PHP files, there will be scenarios where some of the code being scoped indirectly references the
@@ -150,6 +151,7 @@ if (!function_exists("dds")) {
                     '\Plugin_Upgrader',
                     '\WP_Filesystem_Base',
                     '\WappoSwift_',
+
                 ], $contents);
             }
 

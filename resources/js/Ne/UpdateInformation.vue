@@ -5,21 +5,23 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.1.5 added centered mode + bug fixes</span>    
+                <span>V2.2.0</span>   
+                <span class="ml-2">Staff selection page and Permissions</span>
             </h3>
-
-            <h5>Changelog 2.1.5</h5>
+            <div>
+                <span class="h5">Below is how your staff selection page looks like now.</span>
+                <img :src="getVersionImage('220', 'staff_page.gif')" alt="staff page" class="img-fluid img-update" title="staff page"/>
+            </div>
+            <h5>Changelog 2.2.0</h5>
             <ol>
-                <li> Added centered option for the booking widget in shortcode mode</li>
-                <li> Added email reminder duplicate option</li>
-                <li> Improved shortcode generator</li>
-                <li> Improved staff/Calendar creation</li>
-                <li> Improved service creation</li>
-                <li> Improved booking widget appearance</li>
-                <li> Correction on calendar sync timezone handling issue</li>
-                <li> Remove buffer from total duration in attached ics and in appointment's title</li>
-                <li> Fixed missing service information in Wappointment > Calendar for each appointment</li>
-                <li> Fixed missing translation on booking widget</li>
+                <li>Added staff selection page in booking form </li>
+                <li>First booking widget screen can now be a staff selection page using a shortcode attribute </li>
+                <li><strong>Optimization made</strong> on calendars availability check requests</li>
+                <li>Added Staff field, for extra information describing your staff(to be used in emails and SMS reminders)</li>
+                <li>Added <strong>staff permissions</strong> to allow staff to modify their own availability, etc...</li>
+                <li>added <strong>appointment history</strong> shortcode for logged in users [wap_history]</li>
+                <li>Admin notifications emails are now translatable with LocoTranslate or other translations system alike</li>
+                <li>Improved overall usability in the backend interfaces</li>
             </ol>
           </div>
     </WapModal>
@@ -37,7 +39,7 @@ export default {
         slideshow: false,
         showCode: false
     }),
-
+     
     computed:{
         getUpdateImg(){
             return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/update.png'
@@ -48,8 +50,10 @@ export default {
     },
 
     methods:{
-
-        hideModal(experience){
+        getVersionImage(version, img){
+            return window.apiWappointment.apiSite +'/images/v'+version+'/'+img
+        },
+        hideModal(){
             this.show = false
         },
 
@@ -112,5 +116,10 @@ export default {
 }
 .update-section a{
     color: var(--orange);
+}
+.img-update{
+    border: 2px solid #f0f0f0;
+    border-radius: 1em;
+    margin-bottom: 1em;
 }
 </style>

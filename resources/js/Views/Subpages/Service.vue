@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid" v-if="dataLoaded">
       <ServiceLegacy v-if="legacy" :dataPassed="model" @saved="$emit('saved')" :buttons="true"/>
-      <ServiceModulable v-else :dataPassed="model" :buttons="true"/>
+      <ServiceModulable v-else :dataPassed="model" @saved="saveTransmit" :buttons="true"/>
     </div>
 </template>
 
@@ -45,6 +45,9 @@ export default {
         }
         this.$emit('fullyLoaded')
     },
+    saveTransmit(e){
+      this.$emit('saved',e)
+    }
     
   }  
 }

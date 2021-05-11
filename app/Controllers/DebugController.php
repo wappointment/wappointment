@@ -9,7 +9,7 @@ class DebugController extends RestController
 {
     public function freshInstall()
     {
-        new Reset();
+        new Reset;
 
         return ['message' => 'Plugin has been fully reseted.'];
     }
@@ -18,5 +18,11 @@ class DebugController extends RestController
     {
         (new \Wappointment\WP\CustomPage())->makeEditablePage();
         return (new ViewsData())->load('settingsadvanced');
+    }
+
+    public function refreshCache()
+    {
+        Reset::refreshCache();
+        return ['message' => 'Cache has been reseted'];
     }
 }

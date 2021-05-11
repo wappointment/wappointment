@@ -15,6 +15,7 @@ use Wappointment\Services\Preferences;
 use Wappointment\Services\Wappointment\DotCom;
 use Wappointment\Services\VersionDB;
 use Wappointment\Services\Calendars;
+use Wappointment\Services\CurrentUser;
 
 class EventsController extends RestController
 {
@@ -89,7 +90,7 @@ class EventsController extends RestController
 
         $times = $this->TESTprocessAvail($availability);
         $bg_events = [];
-        foreach ($times as $key => $timeslot) {
+        foreach ($times as $timeslot) {
             $bg_events[] = $this->setBgEvent($timeslot[0], $timeslot[1], 'debugging');
         }
 
@@ -102,7 +103,8 @@ class EventsController extends RestController
 
     public function delete(Request $request)
     {
-        $appointment = $this->getAppointmentModel()::find($request->input('id'));
+        $appointment = $this->canEditAppointment($request->input('id'));
+
         if (Appointment::cancel($appointment)) {
             return ['message' => 'Appointment cancelled'];
         }
@@ -127,8 +129,19 @@ class EventsController extends RestController
         throw new \WappointmentException('Appointment cannot be sent', 1);
     }
 
+    protected function canEditAppointment($id)
+    {
+        $appointment = $this->getAppointmentModel()::find((int)$id);
+        if (!CurrentUser::isAdmin() && CurrentUser::calendarId() !== (int) $appointment->staff_id) {
+            throw new \WappointmentException("Cannot modify an appointment which doesnt belong to you", 1);
+        }
+        return $appointment;
+    }
+
     public function put(Request $request)
     {
+        $this->canEditAppointment($request->input('id'));
+
         if (Appointment::confirm($request->input('id'))) {
             return ['message' => 'Appointment confirmed'];
         } else {
@@ -139,9 +152,9 @@ class EventsController extends RestController
     public function patch(Request $request)
     {
         $this->timezone = $request->input('timezone');
-
+        $this->canEditAppointment($request->input('id'));
         if (Appointment::patch(
-            $request->input('id'),
+            (int)$request->input('id'),
             [
                 'start_at' => DateTime::convertUnixTS($request->input('start')),
                 'end_at' => DateTime::convertUnixTS($request->input('end'))
@@ -261,7 +274,8 @@ class EventsController extends RestController
                 'recur' => $event->recur,
                 'source' => empty($event->source) ? '' : $event->source,
                 'onlyDelete' => true,
-                'rendering' => 'background'
+                'rendering' => 'background',
+                'options' =>  $event->options
             ];
 
             if ($event->type == Mstatus::TYPE_FREE) {
@@ -278,11 +292,9 @@ class EventsController extends RestController
                     if ($event->recur > 0) {
                         $addedEvent['className'] = 'calendar recurrent';
                         $addedEvent['type'] = 'calendar';
-                        $addedEvent['options'] = $event->options;
                     } else {
                         $addedEvent['className'] = 'calendar';
                         $addedEvent['type'] = 'calendar';
-                        $addedEvent['options'] = $event->options;
                     }
                 }
             }

@@ -6,6 +6,10 @@ export default class ViewsDataService extends ApiV1 {
             get: {
                 method: 'get',
                 route: '/viewsdata'
+            },
+            calendar: {
+                method: 'get',
+                route: '/config/calendar'
             }
         };
     }

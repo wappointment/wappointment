@@ -10,7 +10,8 @@
         "files":[
             "index.php", 
             "licence.txt", 
-            "readme.txt"
+            "readme.txt",
+            "wappointment.pot"
         ]
     },
     "process_only": {

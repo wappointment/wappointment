@@ -147,8 +147,7 @@ export default {
         return await this.serviceService.call('save', this.modelHolder)
     },
     saved(e){
-        this.$emit('saved')
-        this.serviceSuccess(e)
+        this.$emit('saved', e)
     }
   }  
 }

@@ -22,6 +22,14 @@ export default class CalendarsService extends ApiV1 {
                     method: 'post',
                     route: '/calendars/services'
                 },
+                saveCustomFields:{
+                    method: 'post',
+                    route: '/calendars/customfields'
+                },
+                savePermission:{
+                    method: 'post',
+                    route: '/calendars/permissions'
+                },
                 toggle: {
                     method: 'post',
                     route: '/calendars/toggle'

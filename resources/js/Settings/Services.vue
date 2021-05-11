@@ -62,7 +62,7 @@ export default {
             
         },
         showService(){
-            if(this.elements.db_required){
+            if(this.dataResponse.db_required){
                 return this.runDbUpdate()
             }
             if(this.elements.length > 2){

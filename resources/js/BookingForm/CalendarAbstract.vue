@@ -11,7 +11,7 @@ import monthLocale from '../Standalone/monthLocale'
  * TODO Review moment usage
  */
 export default {
-    props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs','duration', 'viewData'],
+    props: ['options','initIntervalsCollection', 'timeprops', 'duration', 'viewData', 'staffs', 'location','service'],
     mixins: [Dates],
     components: {
         DaySlots, DaysOfWeek, WeekHeader
@@ -104,7 +104,10 @@ export default {
             
             return true
         },
-        
+        getMonthYear() {
+            return monthLocale(this.monthNumber) +' '+ this.yearNumber
+        },
+
         
         todayYear() {
             return parseInt(this.now.format('YYYY'))
@@ -121,7 +124,6 @@ export default {
         reorganiseDays() {
             let newCalendar = []
             for (let weekIndex = 0; weekIndex < this.currentMonth.calendar.length; weekIndex++) {
-                let newWeek = []
                 let week = this.currentMonth.calendar[weekIndex]
                 let nextWeek = this.currentMonth.calendar[weekIndex+1]
                 let endWeekDays = week.slice(0,this.startDay)
@@ -142,7 +144,6 @@ export default {
                         }
                     }
                     let nendWeekDays = nextWeek.slice(0,this.startDay)
-                    let nstartWeekDays  = nextWeek.slice(this.startDay)
                     week = startWeekDays.concat(nendWeekDays)
                 }else{
                     week = startWeekDays
@@ -161,10 +162,7 @@ export default {
         },
         
         lastAvailableSlot(){
-           if(this.intervalsCollection !== null){
-                return this.intervalsCollection.intervals.slice(-1)[0].end
-           }
-           return undefined
+            return this.intervalsCollection !== null && this.intervalsCollection.intervals.length > 0 ?this.intervalsCollection.intervals.slice(-1)[0].end:undefined
         },
         getTzString(){
             return (this.options!== undefined && this.options.selection.timezone!== undefined) ? this.options.selection.timezone: ''
@@ -187,10 +185,7 @@ export default {
         setWeekHeader() {
             let endWeekDays = this.currentMonth.weekdays.slice(0,this.startDay)
             let startWeekDays  = this.currentMonth.weekdays.slice(this.startDay)
-            let orderedDays = []
-            let startingDay = this.startDay
             let weekDays = startWeekDays.concat(endWeekDays)
-            
             let localeweekdays = []
             for (let i = 0; i < weekDays.length; i++) {
                 localeweekdays[i] = this.getLocaleDay(weekDays[i])
@@ -199,10 +194,7 @@ export default {
             this.weekHeader = localeweekdays
         },
 
-        getMonthYear() {
-            return monthLocale(this.monthNumber) +' '+ this.yearNumber
-        },
-
+        
         getLocaleDay(dayname){
             for (const key in this.object_days) {
                 if (this.object_days.hasOwnProperty(key)) {
@@ -413,11 +405,9 @@ export default {
         },
         getDayIntervals(daynumber){
             let start = null
-            let today = false
             let until = null
             let min_start = this.getTodayStart()
             if(this.isCurrentMonth && daynumber === this.todayDay) {
-                today = true
                 
                 start = this.getTodayStart()
     
@@ -443,7 +433,6 @@ export default {
                 }
             }
             
-            
             let dayIntervals = this.currentIntervals.get(start, until)
             return this.prepareDayInterval(dayIntervals, start,until)
         },
@@ -451,6 +440,10 @@ export default {
         /** used to filter more when overidding from an addon */
         prepareDayInterval(dayIntervals, start,until){
             return dayIntervals
+        },
+
+        getMomentObj() {
+            return momenttz.tz(this.currentTz)
         },
 
     }
@@ -461,25 +454,19 @@ export default {
 <style >
 
 .wap-front .wbtn-round,
-.wap-front .calendarMonth .ddays div {
-    min-width: 1.5em;
-    min-height: 1.5em;
+.wap-front .calendarMonth .ddays div.wbtn {
     border-radius: 50%;
     text-align: center;
     font-size: .75em;
-    padding: .5em;
+    padding: 0;
     transition: all .3s ease-in-out;
-    margin: 0 !important;
+    margin: 0 auto !important;
+    max-width: 3em;
 }
 
 .wap-front .wbtn-top.wbtn-round {
-    min-width: 1em;
-    min-height: 1em;
-}
-.wap-front .wbtn-top.wbtn-round span {
-    width: 1em;
-    height: 1em;
-    line-height: 1em;
+    min-width: 40px;
+    margin: 0 !important;
 }
 
 .wap-front .wbtn.wbtn-secondary.wbtn-round.wbtn-disabled, 

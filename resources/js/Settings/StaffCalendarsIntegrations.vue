@@ -3,7 +3,7 @@
         <div class="d-flex justify-content-center align-items-center flex-wrap flex-xl-nowrap">
             <div >
                 <h3 class="d-flex align-items-center">
-                    <div><img :src="calendar.avatar" class="img-fluid wrounded" width="40" /></div>
+                    <div><img :src="calendar.avatar" class="img-fluid wrounded" :alt="calendar.name" width="40" /></div>
                     <div class="ml-2">
                         <div>{{ calendar.name }}</div>
                     </div>

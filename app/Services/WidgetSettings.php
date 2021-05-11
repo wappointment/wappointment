@@ -52,13 +52,17 @@ class WidgetSettings
             'when' => 'When',
             'service' => 'Service',
             'location' => 'Where',
-            'min' => 'min'
+            'min' => 'min',
+            'noappointments' => 'No appointments available'
         ],
         'button' => [
             'title' => 'Book now!',
             'check_full' => false,
             'check_bold' => false,
             'slide_size' => 1.3
+        ],
+        'staff_selection' => [
+            'pickstaff' => 'Select staff',
         ],
         'selection' => [
             'check_viewweek' => false,
@@ -219,6 +223,9 @@ class WidgetSettings
                 'min' => [
                     'tip' => 'minutes'
                 ],
+                'noappointments' => [
+                    'tip' => 'Show when no appointments are available for that staff'
+                ]
             ]
         ],
 
@@ -239,6 +246,12 @@ class WidgetSettings
                 'check_viewweek' => ['label' => 'Week View'],
             ]
 
+        ],
+
+        'service_selection' => [
+            'fields' => [
+                'check_price_right' => ['label' => 'Price right aligned'],
+            ],
         ],
         'service_location' => [
             'fields' => [
@@ -318,6 +331,9 @@ class WidgetSettings
 
     public function defaultSettings()
     {
+        if (static::wooInstalled()) {
+            $this->settings['service_selection']['check_price_right'] = true;
+        }
         return apply_filters('wappointment_widget_settings_default', $this->settings);
     }
 
@@ -387,5 +403,10 @@ class WidgetSettings
         }
 
         return $merged;
+    }
+
+    private static function wooInstalled()
+    {
+        return Addons::isActive('wappointment_woocommerce');
     }
 }

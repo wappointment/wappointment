@@ -18,6 +18,8 @@
                 @getId="getId"
                 />
             </div>
+            <DateInput v-if="'date' == fieldObject.type" :name="fieldObject.namekey" 
+            :error="getError(fieldObject.namekey)" :options="fieldObject" v-model="bookingFormExtended[fieldObject.namekey]" />
             <Checkboxes v-if="'checkboxes' == fieldObject.type" :name="fieldObject.namekey" 
             :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
             <Radios v-if="'radios' == fieldObject.type" :name="fieldObject.namekey" 
@@ -36,6 +38,7 @@
 
 import TextInput from './Fields/TextInput.vue'
 import Checkboxes from './Fields/Checkboxes.vue'
+import DateInput from '../BookingForm/Fields/DateInput.vue'
 import Radios from './Fields/Radios.vue'
 import Checkbox from './Fields/Checkbox.vue'
 import Dropdown from './Fields/Dropdown.vue'
@@ -52,7 +55,8 @@ export default {
         Dropdown,
         TextArea,
         BookingAddress,
-        PhoneInput
+        PhoneInput,
+        DateInput
     },
     props:['duration', 'location', 'custom_fields', 'data', 'disabledButtons', 'options', 'service', 'validators', 'disabledEmail'],
     mixins: [MixinLegacy],

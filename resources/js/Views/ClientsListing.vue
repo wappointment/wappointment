@@ -24,14 +24,14 @@
                                     <div>{{ client.name }} </div>
                                     <div>{{ client.email }} </div>
                                 </div>
-                                <div class="actions ml-4 text-muted">
-                                    <span data-tt="Edit">
-                                        <span class="dashicons dashicons-edit" @click.prevent.stop="$emit('editClient', client)"></span>
-                                    </span>
-                                    <span data-tt="Delete">
-                                        <span class="dashicons dashicons-trash" @click.prevent.stop="$emit('deleteClient', client.id)"></span>
-                                    </span>
-                                </div>
+                            </div>
+                            <div class="wlist-actions text-muted">
+                                <span data-tt="Edit" v-if="canEditClient">
+                                    <span class="dashicons dashicons-edit" @click.prevent.stop="$emit('editClient', client)"></span>
+                                </span>
+                                <span data-tt="Delete" v-if="canDeleteClient">
+                                    <span class="dashicons dashicons-trash" @click.prevent.stop="$emit('deleteClient', client.id)"></span>
+                                </span>
                             </div>
                             
                         </td>
@@ -56,15 +56,19 @@
 
 import ClientsService from '../Services/V1/Client'
 import AbstractListing from './AbstractListing'
-
+import hasPermissions from '../Mixins/hasPermissions'
 export default {
-    name: 'All',
+    label: 'All',
     extends: AbstractListing,
+    mixins:[hasPermissions],
     created(){
         this.mainService = this.$vueService(new ClientsService)
     },
+    data: () => ({
+        keyDataSource:'clients'
+    }),
     methods: {
-
+        
         getPhone(client){
           return client.options.phone !== undefined ? client.options.phone:'---'
         },

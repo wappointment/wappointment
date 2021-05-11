@@ -21,7 +21,6 @@ export default {
         },
 
         loadedInit(step){
-
             if([undefined, null].indexOf(step) === -1) {
                 this.demoConfigure(step)
             }
@@ -30,7 +29,6 @@ export default {
         demoConfigure(step_name){
             let comp_data_step = this.isLegacy ? this.getChildComponentDataForStepLegacy(step_name, this.options.editionsSteps): this.getChildComponentDataForStep(step_name, this.options.editionsSteps)
             let component_name = window.wappointmentExtends.filter('BFDemoGetChildComponentForStep', this.getChildComponentForStep(step_name), {step_name: step_name} ) 
-            
             let component_data = window.wappointmentExtends.filter('BFDemoGetChildComponentDataForStep', comp_data_step, 
             {step_name: step_name, bookingFormObject: this, editionsSteps: this.options.editionsSteps}) 
 
@@ -118,8 +116,18 @@ export default {
             return data
         },
 
-        getChildComponentForStepLegacy(step_name){
+
+        getChildComponentForStep(step_name) {
+
             switch (step_name) {
+                case 'staff_selection':
+                    return 'BookingStaffSelection'
+                case 'service_selection':
+                    return 'BookingServiceSelection'
+                case 'service_duration':
+                    return 'BookingDurationSelection'
+                case 'service_location':
+                    return 'BookingLocationSelection'
                 case 'selection':
                     return 'BookingCalendar'
                 case 'form':
@@ -127,19 +135,6 @@ export default {
                 case 'confirmation':
                     return 'BookingFormConfirmation'
             }
-        },
-
-        getChildComponentForStep(step_name) {
-
-            switch (step_name) {
-                case 'service_selection':
-                    return 'BookingServiceSelection'
-                case 'service_duration':
-                    return 'BookingDurationSelection'
-                case 'service_location':
-                    return 'BookingLocationSelection'
-            }
-            return this.getChildComponentForStepLegacy(step_name)
         },
 
         getSlotAvailableForDemo(){
