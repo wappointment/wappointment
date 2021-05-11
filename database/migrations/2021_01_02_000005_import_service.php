@@ -15,7 +15,7 @@ class ImportService extends Wappointment\Installation\MigrateHasServices
      */
     public function up()
     {
-        if ($this->hasMultiService()) {
+        if ($this->hasMultiService() && count(Services::all()) > 0) {
             return;
         }
         if (!Status::dbVersionAlterRequired()) {
