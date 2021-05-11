@@ -247,10 +247,15 @@ class WidgetSettings
             ]
 
         ],
+
+        'service_selection' => [
+            'fields' => [
+                'check_price_right' => ['label' => 'Price right aligned'],
+            ],
+        ],
         'service_location' => [
             'fields' => [
                 'select_location' => false,
-                'check_price_right' => ['label' => 'Price right aligned']
             ],
             'sub' => 'You can edit modalities names in [url wurl="wappointment_settings#/modalities"]Wappointment > Settings > Services > Modalities[/url]',
         ],

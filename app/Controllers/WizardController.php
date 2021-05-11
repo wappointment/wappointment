@@ -23,8 +23,8 @@ class WizardController extends RestController
         if ($request->input('step') == 1) {
             new \Wappointment\Installation\Process();
         }
-        if ($request->input('step') == 2) {
-            Reset::clearCache();
+        if (in_array($request->input('step'), [2, 3])) {
+            Reset::refreshCache();
         }
 
         WPHelpers::setOption('wizard_step', $request->input('step'));

@@ -43,13 +43,13 @@ class Reset
 
         do_action('wappointment_reset');
         sleep(2); //giving time for revert on addons
-
+        static::eraseCache();
         $this->dotComInforms();
 
         $this->removeStaffSettings();
         $this->dropTables();
         $this->removeCoreSettings();
-        static::clearCache();
+
         WPScheduler::clearScheduler();
     }
 
@@ -91,10 +91,17 @@ class Reset
         Settings::delete();
     }
 
-    public static function clearCache()
+    public static function refreshCache()
     {
         (new CalendarsBack)->refresh();
         (new Services)->refresh();
         (new Availability)->refresh();
+    }
+
+    public static function eraseCache()
+    {
+        (new CalendarsBack)->clear();
+        (new Services)->clear();
+        (new Availability)->clear();
     }
 }
