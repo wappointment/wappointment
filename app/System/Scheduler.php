@@ -28,6 +28,7 @@ class Scheduler
         if (!VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES)) {
             static::syncCalendarLegacy();
         } else {
+            //TODO get only last 5 or 10 by updated_at asc
             foreach (Calendars::all() as $calendar) {
                 (new Availability($calendar))->syncAndRegen();
             }
