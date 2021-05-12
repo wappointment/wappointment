@@ -13,7 +13,7 @@
                         <InputPh v-model="calendarSelected.name" ph="Name" @updatedValue="updateStaffName" />
                     </div>
                     <div class="account-selector">
-                        <StaffSelector :staffs="staffs" :activeStaffId="calendarSelected.wp_uid" @updateStaff="updateStaff"></StaffSelector>
+                        <StaffSelector :staffs="onlyUnusedStaff" :activeStaffId="calendarSelected.wp_uid" @updateStaff="updateStaff"></StaffSelector>
                     </div>
                 </div>
             </div>
@@ -77,6 +77,9 @@ export default {
         services:{
             type: Array,
         },
+        calendarsUsed:{
+            type: Array
+        }
     },
     
     data() {
@@ -110,6 +113,10 @@ export default {
 
     },
   computed: {
+      onlyUnusedStaff(){
+          let wp_uid = this.calendarsUsed
+          return this.staffs.filter(e => wp_uid.indexOf(e.ID) === -1)
+      },
       getRegav(){
           let regav = Object.assign({},this.calendar.regav)
           if(this.calendar.regav.precise === undefined){

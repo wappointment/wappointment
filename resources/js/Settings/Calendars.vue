@@ -99,7 +99,7 @@
         <div v-if="calendarAdd">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
             <CalendarsAddEdit :calendar="elementPassed" :timezones_list="elements.timezones_list" 
-            :staffs="elements.staffs" :services="elements.services"
+            :staffs="elements.staffs" :services="elements.services" :calendarsUsed="calendarsUsed"
             @saved="hasBeenSavedDeleted"/>
         </div>
         <div v-if="calendarRegav">
@@ -207,6 +207,9 @@ export default {
         },
         canCalUnpublish(){
             return this.canCalendarEdit('wappo_self_unpublish')
+        },
+        calendarsUsed(){
+            return this.searchable.map(e => e.wp_uid)
         }
     },
     methods: {

@@ -54,7 +54,6 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
             $filesys
         );
         return $migrator->run($this->migrations_folders);
-        //$migrationCreator = new \Illuminate\Database\Migrations\MigrationCreator($filesys);
     }
 
     public function rollback()
@@ -66,6 +65,5 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
             $filesys
         );
         return $migrator->rollback($this->migrations_folders);
-        //$migrationCreator = new \Illuminate\Database\Migrations\MigrationCreator($filesys);
     }
 }

@@ -2,9 +2,6 @@
 
 namespace Wappointment\Controllers;
 
-use Wappointment\Repositories\Availability;
-use Wappointment\Repositories\CalendarsBack;
-use Wappointment\Repositories\Services;
 use Wappointment\Services\Reset;
 use Wappointment\Services\ViewsData;
 
@@ -12,7 +9,7 @@ class DebugController extends RestController
 {
     public function freshInstall()
     {
-        new Reset();
+        new Reset;
 
         return ['message' => 'Plugin has been fully reseted.'];
     }
@@ -25,10 +22,7 @@ class DebugController extends RestController
 
     public function refreshCache()
     {
-        (new CalendarsBack)->refresh();
-        (new Services)->refresh();
-        (new Availability)->refresh();
-
+        Reset::refreshCache();
         return ['message' => 'Cache has been reseted'];
     }
 }

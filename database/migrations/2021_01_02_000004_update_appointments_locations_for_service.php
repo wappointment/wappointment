@@ -3,6 +3,7 @@
 
 use Wappointment\Models\Appointment;
 use Wappointment\Models\Location;
+use Wappointment\Services\Services;
 
 class UpdateAppointmentsLocationsForService extends Wappointment\Installation\MigrateHasServices
 {
@@ -13,7 +14,7 @@ class UpdateAppointmentsLocationsForService extends Wappointment\Installation\Mi
      */
     public function up()
     {
-        if ($this->hasMultiService()) {
+        if ($this->hasMultiService()  && count(Services::all()) > 0) {
             return;
         }
 

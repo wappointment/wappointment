@@ -5,7 +5,7 @@
                 <p>Wappointment has improvements requiring a Database update: <button class="btn btn-primary btn-sm" @click="runMigrate">Run update</button></p>
             </WPNotice>
         </div>
-        <WapModal v-if="showing" :show="showing" @hide="hide">
+        <WapModal v-if="show" :show="show" @hide="hidePopup">
             <h4 slot="title" class="modal-title">Update Required</h4>
             <div class="wappo-db-update" v-if="!updated">
                 <h4>Wappointment has improvements requiring a Database update.</h4>
@@ -24,26 +24,19 @@ import abstractView from '../Views/Abstract'
 import AppService from '../Services/V1/App'
 import WPNotice from '../WP/Notice'
 import Helpers from '../Modules/Helpers'
+import CanPopAgain from '../Mixins/CanPopAgain'
 export default {
     components: {WPNotice},
     extends: abstractView,
-    mixins:[Helpers],
+    mixins:[Helpers, CanPopAgain],
     data: () => ({
         serviceApp: null,
-        showing:true,
         updated: false
     }),
     created(){
         this.serviceApp = this.$vueService(new AppService)
-        this.$router.afterEach(this.popAgain)
     },
     methods: {
-        popAgain(){
-            this.showing = true
-        },
-        hide(){
-            this.showing = false
-        },
         runMigrate(){
             this.request(this.runMigrateRequest, {}, undefined, false, this.successUpdate)
         },

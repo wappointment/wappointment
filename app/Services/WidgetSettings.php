@@ -247,6 +247,12 @@ class WidgetSettings
             ]
 
         ],
+
+        'service_selection' => [
+            'fields' => [
+                'check_price_right' => ['label' => 'Price right aligned'],
+            ],
+        ],
         'service_location' => [
             'fields' => [
                 'select_location' => false,
@@ -325,6 +331,9 @@ class WidgetSettings
 
     public function defaultSettings()
     {
+        if (static::wooInstalled()) {
+            $this->settings['service_selection']['check_price_right'] = true;
+        }
         return apply_filters('wappointment_widget_settings_default', $this->settings);
     }
 
@@ -394,5 +403,10 @@ class WidgetSettings
         }
 
         return $merged;
+    }
+
+    private static function wooInstalled()
+    {
+        return Addons::isActive('wappointment_woocommerce');
     }
 }
