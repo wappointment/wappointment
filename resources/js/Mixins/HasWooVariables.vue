@@ -18,6 +18,9 @@ export default {
     wappoCurrency(){
       return window.apiWappointment.currency.symbol
     },
+    currencyCode(){
+      return window.apiWappointment.currency.code
+    },
     currencySymb(){
       return this.wooAddonActive ? this.wooCurrency:this.wappoCurrency
     },

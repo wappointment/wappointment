@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="selectedCurrency">
         <SearchDropdown v-model="selectedCurrency" ph="Select a currency" :elements="modifiedCurrencies" 
                 idKey="code" labelSearchKey="name" />
         <button class="btn btn-primary mt-2" @click="save">Save</button>
@@ -11,14 +11,10 @@
 import SearchDropdown from '../Fields/SearchDropdown'
 import RequestMaker from '../Modules/RequestMaker'
 import WappoCurrency from '../Services/V1/Currency'
+import HasWooVariables from '../Mixins/HasWooVariables'
 export default {
-    mixins:[RequestMaker],
+    mixins:[RequestMaker, HasWooVariables],
     components: {SearchDropdown},
-    props:{
-        currency: {
-            type: Object,
-        },
-    },
     data: () => ({
         serviceCurrency:'',
         currencies:[],
@@ -28,7 +24,7 @@ export default {
     created(){
         this.serviceCurrency = this.$vueService(new WappoCurrency)
         this.get()
-        this.selectedCurrency = this.currency
+        
     },
     computed:{
         modifiedCurrencies(){
@@ -47,6 +43,7 @@ export default {
         },
         loaded(response){
             this.currencies = response.data
+            this.selectedCurrency = this.currencyCode
         },
         save(){
             this.request(this.saveRequest, {},  undefined, false, this.savedOk)

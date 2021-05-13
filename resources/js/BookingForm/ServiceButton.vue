@@ -1,21 +1,23 @@
 <template>
-    <div :class="getClasses" @click="selectService(service)">
+    <div :class="getClasses" @click="selectService">
         <WapImage v-if="serviceHasIcon" :element="service" :desc="service.name" size="lg" />
         <div class="service-label" >
             <div class="service-name" >{{ service.name }}</div>
-            <div class="description" v-if="hasDesc(service)">{{ service.options.description }}</div>
-            <div v-if="sellable(service) && !priceAlignRight" class="service-price" >{{ getPriceRange(service) }}<span class="price-currency">{{ currency}}</span></div>
+            <div class="description" v-if="hasDesc">{{ service.options.description }}</div>
+            <div v-if="sellable && !priceAlignRight" class="service-price" >{{ getPriceRange }}<span class="price-currency">{{ currency }}</span></div>
             <slot />
         </div>
-        <div v-if="sellable(service) && priceAlignRight" class="service-price price-right" :class="{'als':hasDesc(service)}" >{{ getPriceRange(service) }}<span class="price-currency">{{ currency}}</span></div>
+        <div v-if="sellable && priceAlignRight" class="service-price price-right" :class="{'als':hasDesc}" >{{ getPriceRange }}<span class="price-currency">{{ currency}}</span></div>
     </div>
     
 </template>
 
 <script>
+import HasWooVariables from '../Mixins/HasWooVariables'
 export default {
     props:['service','options', 'selected', 'viewData', 'extraClass'],
     name: 'ServiceButton',
+    mixins: [HasWooVariables],
     computed: {
         priceAlignRight(){
             return [undefined, false].indexOf(this.options.service_selection.check_price_right) === -1
@@ -32,24 +34,21 @@ export default {
             return classses
         },
         currency(){
-            return window.wappointment_woocommerce !== undefined ? window.wappointment_woocommerce.currency_symbol:''
+            return this.currencySymb
         },
         serviceHasIcon(){
             return this.service.options.icon != ''
-        }
-    },
-    methods:{
-        hasDesc(service){
-            return ['',undefined].indexOf(service.options.description) === -1
         },
-        sellable(service){
-            return service.options.woo_sellable  && this.hasPrice(service) && this.currency != ''
+        sellable(){
+            return this.service.options.woo_sellable  && this.hasPrice && this.currency != ''
         },
-
-        getPrices(service){
+        hasPrice(){
+            return this.getPrices.length > 0
+        },
+        getPrices(){
             let prices = []
-            for (let i = 0; i < service.options.durations.length; i++) {
-                const element = service.options.durations[i]
+            for (let i = 0; i < this.service.options.durations.length; i++) {
+                const element = this.service.options.durations[i]
                 if([undefined,''].indexOf(element.woo_price) === -1){
                     prices.push(element.woo_price)
                 }
@@ -57,31 +56,28 @@ export default {
 
             return prices
         },
-        hasPrice(service){
-            return this.getPrices(service).length > 0
+        hasDesc(){
+            return ['',undefined].indexOf(this.service.options.description) === -1
         },
-        getPriceRange(service){
-            let prices = this.getPrices(service)
+        getPriceRange(){
+            let prices = this.getPrices
             if(prices.length > 1){
                 return Math.min.apply(null, prices)+ ' - ' + Math.max.apply(null, prices)
             }
 
             return prices[0]
         },
-        selectService(service){
-            this.$emit('selectService', service)
+    },
+    methods:{
+
+        selectService(){
+            this.$emit('selectService', this.service)
         }
     }
 }   
 </script>
 <style>
-/* .wap-front  .wbtn.wbtn-cell.wbtn-secondary.wbtn-service {
-    width: 80px;
-    margin: .4em;
-    overflow: hidden;
-    padding: 0;
-    transition: all .3s ease-in-out;
-} */
+
 .wap-front .wbtn.wbtn-cell.wbtn-secondary.wbtn-service,
 .wap-front .wbtn.wbtn-cell.wbtn-secondary.wbtn-service:not(:disabled):not(.disabled):active,
 .wap-front .wbtn.wbtn-cell.wbtn-secondary.wbtn-service:not(:disabled):not(.disabled).active{

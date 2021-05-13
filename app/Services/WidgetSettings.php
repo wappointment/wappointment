@@ -331,7 +331,7 @@ class WidgetSettings
 
     public function defaultSettings()
     {
-        if (static::wooInstalled()) {
+        if (static::servicesAreSold()) {
             $this->settings['service_selection']['check_price_right'] = true;
         }
         return apply_filters('wappointment_widget_settings_default', $this->settings);
@@ -403,6 +403,11 @@ class WidgetSettings
         }
 
         return $merged;
+    }
+
+    private static function servicesAreSold()
+    {
+        return !empty(Settings::get('services_sold')) || static::wooInstalled();
     }
 
     private static function wooInstalled()
