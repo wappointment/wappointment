@@ -114,7 +114,8 @@ export default {
     },
   computed: {
       onlyUnusedStaff(){
-          let wp_uid = this.calendarsUsed
+          let mywp_uid = this.calendarSelected.wp_uid;
+          let wp_uid = this.calendarsUsed.filter(e => e != mywp_uid)
           return this.staffs.filter(e => wp_uid.indexOf(e.ID) === -1)
       },
       getRegav(){

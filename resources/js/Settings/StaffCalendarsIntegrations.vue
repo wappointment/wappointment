@@ -81,8 +81,8 @@ export default {
             this.request(this.refreshWappoRequest,data_save,null, false,this.successRefreshed)
         },
 
-        async refreshWappoRequest() {
-            return await this.service.call('refreshdotcom')
+        async refreshWappoRequest(data_save) {
+            return await this.service.call('refreshdotcom', data_save)
         },
         successRefreshed(response){
             this.is_dotcom_connected = response.data.data.dotcom

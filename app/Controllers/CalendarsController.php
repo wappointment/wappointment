@@ -17,6 +17,7 @@ use Wappointment\Services\CurrentUser;
 use Wappointment\Services\ExternalCalendar;
 use Wappointment\Services\Permissions;
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Services\Wappointment\DotCom;
 
 class CalendarsController extends RestController
 {
@@ -239,5 +240,56 @@ class CalendarsController extends RestController
         $result = $externalCalendar->disconnect($request->input('calendar_id'));
         $this->refreshRepository();
         return $result;
+    }
+
+    public function connect(Request $request)
+    {
+        $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
+        $dotcomapi = new DotCom;
+        $dotcomapi->setStaff($staff_id);
+        $result = $dotcomapi->connect($request->get('account_key'));
+
+        if ($result) {
+            $this->refreshRepository();
+            return [
+                'data' => $result['dotcom'],
+                'message' => 'Account has been connected'
+            ];
+        }
+        throw new \WappointmentException("Couldn't connect with this key.", 1);
+    }
+
+    public function disconnect(Request $request)
+    {
+        $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
+        $dotcom = new DotCom;
+        $dotcom->setStaff($staff_id);
+        $result = $dotcom->disconnect($staff_id);
+
+        if ($result) {
+            $this->refreshRepository();
+            return [
+                'data' => $result,
+                'message' => 'Account has been disconnected'
+            ];
+        }
+        throw new \WappointmentException("Couldn't disconnect account.", 1);
+    }
+
+    public function refresh(Request $request)
+    {
+        $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
+        $dotcom = new DotCom;
+        $dotcom->setStaff($staff_id);
+        $result = $dotcom->refresh();
+
+        if ($result) {
+            $this->refreshRepository();
+            return [
+                'data' => $result,
+                'message' => 'Account has been refreshed'
+            ];
+        }
+        throw new \WappointmentException("Couldn't refresh account.", 1);
     }
 }
