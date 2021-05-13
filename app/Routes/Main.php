@@ -119,7 +119,7 @@ class Main extends AbstractRoutes
                 ],
                 '/wappointment/refresh' => [
                     'method' => 'refresh',
-                    'controller' => 'WappointmentController',
+                    'controller' => 'CalendarsController',
                 ],
                 '/wappointment/subscribe' => [
                     'method' => 'subscribe',
@@ -282,12 +282,12 @@ class Main extends AbstractRoutes
                 ],
                 '/wappointment/connect' => [
                     'method' => 'connect',
-                    'controller' => 'WappointmentController',
+                    'controller' => 'CalendarsController',
                     'cap' => 'wappo_self_connect_account'
                 ],
                 '/wappointment/disconnect' => [
                     'method' => 'disconnect',
-                    'controller' => 'WappointmentController',
+                    'controller' => 'CalendarsController',
                     'cap' => 'wappo_self_connect_account'
                 ],
 

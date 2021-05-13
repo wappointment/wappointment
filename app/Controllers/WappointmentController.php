@@ -2,7 +2,6 @@
 
 namespace Wappointment\Controllers;
 
-use Wappointment\Services\Wappointment\DotCom;
 use Wappointment\Services\Wappointment\EmailList;
 use Wappointment\Services\Wappointment\Contact;
 use Wappointment\Services\Wappointment\BookingTest as BookingTestAPI;
@@ -11,57 +10,9 @@ use Wappointment\Validators\HttpRequest\SubscribeAdmin;
 use Wappointment\Validators\HttpRequest\ContactAdmin;
 use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
-use Wappointment\ClassConnect\Request;
 
 class WappointmentController extends RestController
 {
-    public function connect(Request $request)
-    {
-        $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
-        $dotcomapi = new DotCom;
-        $dotcomapi->setStaff($staff_id);
-        $result = $dotcomapi->connect($request->get('account_key'));
-
-        if ($result) {
-            return [
-                'data' => $result['dotcom'],
-                'message' => 'Account has been connected'
-            ];
-        }
-        throw new \WappointmentException("Couldn't connect with this key.", 1);
-    }
-
-    public function disconnect(Request $request)
-    {
-        $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
-        $dotcom = new DotCom;
-        $dotcom->setStaff($staff_id);
-        $result = $dotcom->disconnect($staff_id);
-
-        if ($result) {
-            return [
-                'data' => $result,
-                'message' => 'Account has been disconnected'
-            ];
-        }
-        throw new \WappointmentException("Couldn't disconnect account.", 1);
-    }
-
-    public function refresh(Request $request)
-    {
-        $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
-        $dotcom = new DotCom;
-        $dotcom->setStaff($staff_id);
-        $result = $dotcom->refresh();
-
-        if ($result) {
-            return [
-                'data' => $result,
-                'message' => 'Account has been refreshed'
-            ];
-        }
-        throw new \WappointmentException("Couldn't refresh account.", 1);
-    }
 
     public function subscribe(SubscribeAdmin $request)
     {
