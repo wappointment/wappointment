@@ -90,10 +90,10 @@ import WCell from '../WComp/WCell'
 import ShortcodeDesigner from './ShortcodeDesigner'
 import isSearchable from '../Mixins/isSearchable'
 import HasPopup from '../Mixins/HasPopup'
-
+import HasWooVariables from '../Mixins/HasWooVariables'
 export default {
     extends: AbstractListing,
-    mixins: [isSearchable, HasPopup],
+    mixins: [isSearchable, HasPopup, HasWooVariables],
     components:{
         WCell,
         ServicesAddEdit,
@@ -138,9 +138,6 @@ export default {
         },
     },
     methods: {
-        afterLoaded(response){
-            this.$emit('currency',response.data.currency)
-        },
         soldDuration(durationObj){
             return ['',undefined,false].indexOf(durationObj.woo_price) === -1
         },
@@ -148,7 +145,7 @@ export default {
             return this.formatPrice(durationObj.woo_price)
         },
         formatPrice(price){
-            return price + '€'
+            return price + this.currencySymb
         },
         isSellable(service){
             return service.options.woo_sellable

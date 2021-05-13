@@ -24,7 +24,6 @@ class ServicesController extends RestController
             'currency' => Settings::get('currency'),
         ];
 
-
         if (!$db_update_required) {
             $data['limit_reached'] = $serviceModel::canCreate() ? false : 'To add more services, get the "Services Suite" addon';
         }

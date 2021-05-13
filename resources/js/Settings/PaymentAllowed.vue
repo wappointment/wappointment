@@ -11,11 +11,6 @@ import HasWooVariables from '../Mixins/HasWooVariables'
 export default {
     components:{WPayment},
     mixins:[HasWooVariables],
-    props:{
-        currency: {
-            type: Object,
-        },
-    },
     data: () => ({
         payment_methods: [
             {
@@ -23,16 +18,6 @@ export default {
                 name: 'On site', 
                 description: 'Customers pay you in person at your business\' address or wherever you deliver the service',
                 status:1
-            },
-            {
-                key: 'stripe',
-                name: 'Stripe', 
-                description: 'Customers pay online with their VISA, Mastercard, Amex etc ... in 44 countries and 135 currencies',
-                hideLabel: true,
-                status:0
-                //#https://stripe.com/docs/currencies
-                //https://stripe.com/en-fr/payments/payment-methods-guide
-                // available in 44 countries and 135 currencies : https://stripe.com/global
             },
             {
                 key: 'paypal',
@@ -43,6 +28,16 @@ export default {
                 //https://www.paypal.com/uk/business/accept-payments
                 // available 200 countries and 25 currencies 
                 //https://www.paypal.com/webapps/mpp/country-worldwide
+            },
+            {
+                key: 'stripe',
+                name: 'Stripe', 
+                description: 'Customers pay online with their VISA, Mastercard, Amex etc ... in 44 countries and 135 currencies',
+                hideLabel: true,
+                status:0
+                //#https://stripe.com/docs/currencies
+                //https://stripe.com/en-fr/payments/payment-methods-guide
+                // available in 44 countries and 135 currencies : https://stripe.com/global
             },
             {
                 key: 'woocommerce',

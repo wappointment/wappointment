@@ -139,6 +139,7 @@ class Init
             'version' => WAPPOINTMENT_VERSION,
             'allowed' => Settings::get('wappointment_allowed'),
             'frontPage' => get_permalink((int) Settings::get('front_page')),
+            'currency' => \Wappointment\Services\Currency::get(),
         ];
         if (is_user_logged_in()) {
             $variables['nonce'] = wp_create_nonce('wp_rest');
