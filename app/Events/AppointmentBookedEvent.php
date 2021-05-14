@@ -23,6 +23,8 @@ class AppointmentBookedEvent extends AbstractEvent
             $this->oldAppointment = $args['oldAppointment'];
         }
 
+        do_action('wappointment_appointment_booked', $this->appointment, $this->client, self::NAME);
+
         $this->triggerAPI();
         $this->reminders = Reminder::select('id', 'event', 'type', 'options')
             ->where('published', 1)
