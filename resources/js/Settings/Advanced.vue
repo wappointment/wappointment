@@ -121,6 +121,15 @@
               </label>
 
             </div>
+            <label class="form-check-label" for="allow-cache">
+              <div class="d-flex align-items-center" data-tt="Runs availability requests faster">
+                <input type="checkbox" v-model="viewData.cache" id="allow-cache" @change="changedVD('cache')">
+                Use Wappointment's cache
+                <button v-if="viewData.cache" class="ml-2 btn btn-secondary btn-sm" @click="refreshCache">
+                  Refresh cache
+                </button>
+              </div>
+          </label>
               <div class="mt-3">
                 <a v-if="viewData.front_page_type == 'page'" :href="'post.php?post='+viewData.front_page_id+'&action=edit'" target="_blank">
                   Edit Reschedule/Cancel page
@@ -182,9 +191,7 @@
           </div>
           
         <div class="mt-3" >
-          <button class="btn btn-secondary btn-sm" @click="refreshCache">
-            Refresh cache
-          </button>
+          
           <button v-if="viewData.debug !== false" class="btn btn-danger btn-sm" @click="startResetConfirm">
             <span class="dashicons dashicons-image-rotate"></span> Uninstall
           </button>
