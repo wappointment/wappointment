@@ -86,6 +86,14 @@ export default {
     padding:0;
     margin:0;
 }
+
+.over360 .ddays .wbtn.no-avail span, 
+.over360 .ddays .wbtn.avail span  {
+    line-height: 2.4em;
+}
+.over360 .wbtn-secondary.wbtn-round span  {
+    line-height: 2em;
+}
 .sq {
   position: relative;
 }

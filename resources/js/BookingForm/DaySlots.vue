@@ -64,7 +64,6 @@ export default {
                 const segment = this.intervals[i]
                 let end = segment.end - this.duration
                 let slotStart = segment.start
-                let allslots = []
                 while (end >= slotStart) {
                     this.identifySlot(slotStart)
                     slotStart += this.duration
@@ -134,6 +133,7 @@ export default {
     display: block;
     text-align: center;
     font-size: .75em;
+    min-height: 28px;
 }
 
 .timezone{

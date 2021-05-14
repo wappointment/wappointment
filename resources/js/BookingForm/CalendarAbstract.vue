@@ -457,18 +457,35 @@ export default {
 .wap-front .calendarMonth .ddays div.wbtn {
     border-radius: 50%;
     text-align: center;
-    font-size: .75em;
     padding: 0;
     transition: all .3s ease-in-out;
     margin: 0 auto !important;
+}
+
+.wap-front .calendarMonth .ddays div.wbtn {
+    font-size: .65em;
+    max-width: 2.4em;
+}
+
+.wap-front.over280 .calendarMonth .ddays div.wbtn {
+    font-size: .67em;
+    max-width: 2.6em;
+}
+.wap-front.over320 .calendarMonth .ddays div.wbtn {
+    font-size: .73em;
+    max-width: 2.8em;
+}
+.wap-front.over360 .calendarMonth .ddays div.wbtn {
+    font-size: .75em;
     max-width: 3em;
 }
 
 .wap-front .wbtn-top.wbtn-round {
-    min-width: 40px;
+    min-width: 36px;
     margin: 0 !important;
+    font-size: .7em;
+    max-width: 2.3em;
 }
-
 .wap-front .wbtn.wbtn-secondary.wbtn-round.wbtn-disabled, 
 .wap-front .wbtn-round.wbtn-disabled:hover {
     background-color: transparent;
