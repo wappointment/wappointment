@@ -8,31 +8,33 @@
                 <span>V2.2.1</span>   
                 <span class="ml-2">Bug fix and optimization off</span>
             </h3>
-            <div>
+            <div class="my-2">
                You can now turn ON cache from <strong>Wappointment > Settings > Advanced > Wappointment's Cache</strong> in order to speed up the availability check in the frontend booking form.
             </div>
             <h5>Changelog 2.2.1</h5>
             <ol>
                 <li>disabling Wappointment's cache by default</li>
-                <li>added hook after booking</li>
                 <li>fixed style on button in booking form relative size</li>
                 <li>fixed issue undefined email when editing Staff</li>
             </ol>
+            <hr/>
             <div>
-                <span class="h5">Below is how your staff selection page looks like now.</span>
+                <span class="h5 text-muted">Below is how your staff selection page looks like now.</span>
                 <img :src="getVersionImage('220', 'staff_page.gif')" alt="staff page" class="img-fluid img-update" title="staff page"/>
             </div>
-            <h5>Changelog 2.2.0</h5>
-            <ol>
-                <li>Added staff selection page in booking form </li>
-                <li>First booking widget screen can now be a staff selection page using a shortcode attribute </li>
-                <li><strong>Optimization made</strong> on calendars availability check requests</li>
-                <li>Added Staff field, for extra information describing your staff(to be used in emails and SMS reminders)</li>
-                <li>Added <strong>staff permissions</strong> to allow staff to modify their own availability, etc...</li>
-                <li>added <strong>appointment history</strong> shortcode for logged in users [wap_history]</li>
-                <li>Admin notifications emails are now translatable with LocoTranslate or other translations system alike</li>
-                <li>Improved overall usability in the backend interfaces</li>
-            </ol>
+            <div class="text-muted">
+                <h5 class="text-muted">Changelog 2.2.0</h5>
+                <ol>
+                    <li>Added staff selection page in booking form </li>
+                    <li>First booking widget screen can now be a staff selection page using a shortcode attribute </li>
+                    <li><strong>Optimization made</strong> on calendars availability check requests</li>
+                    <li>Added Staff field, for extra information describing your staff(to be used in emails and SMS reminders)</li>
+                    <li>Added <strong>staff permissions</strong> to allow staff to modify their own availability, etc...</li>
+                    <li>added <strong>appointment history</strong> shortcode for logged in users [wap_history]</li>
+                    <li>Admin notifications emails are now translatable with LocoTranslate or other translations system alike</li>
+                    <li>Improved overall usability in the backend interfaces</li>
+                </ol>
+            </div>
           </div>
     </WapModal>
 </template>
