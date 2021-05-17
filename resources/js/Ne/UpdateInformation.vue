@@ -5,9 +5,19 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.2.0</span>   
-                <span class="ml-2">Staff selection page and Permissions</span>
+                <span>V2.2.1</span>   
+                <span class="ml-2">Bug fix and optimization off</span>
             </h3>
+            <div>
+               You can now turn ON cache from <strong>Wappointment > Settings > Advanced > Wappointment's Cache</strong> in order to speed up the availability check in the frontend booking form.
+            </div>
+            <h5>Changelog 2.2.1</h5>
+            <ol>
+                <li>disabling Wappointment's cache by default</li>
+                <li>added hook after booking</li>
+                <li>fixed style on button in booking form relative size</li>
+                <li>fixed issue undefined email when editing Staff</li>
+            </ol>
             <div>
                 <span class="h5">Below is how your staff selection page looks like now.</span>
                 <img :src="getVersionImage('220', 'staff_page.gif')" alt="staff page" class="img-fluid img-update" title="staff page"/>

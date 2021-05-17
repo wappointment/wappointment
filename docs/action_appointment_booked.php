@@ -10,26 +10,35 @@ if (!defined('WAPPO_NEVER_DEFINED')) {
 }
 
 /**
- * function triggered when an appointment is confirmed or pending
+ * functions triggered when an appointment is pending, confirmed, canceled and rescheduled
  *
- * @param Object $appointment (Eloquent model object)
- * @param Object $client (Eloquent model object)
- * @param String $event_type
+ * @param Object $eventObject
+ *                  $client = $eventObject->getClient(); // $client (Eloquent model object)
+ *                  $appointment = $eventObject->getAppointment(); // $appointment (Eloquent model object)
+ *                  $service = $eventObject->getService(); // $service (Eloquent model object)
  * @return void
  */
-function my_function_wappointment_appointment_booked($appointment, $client, $event_type)
+function my_function_wappointment_appointment_booked($eventObject)
 {
-    /**
-     * getting an array view of the $appointment and  $client objects
-     * $appointment_array = $appointment->toArray();
-     * $client_array = $client->toArray();
-     */
-    if ($event_type == 'appointment.confirmed') { // confirmed booking
-        // write your code here ..
-    }
-
-    if ($event_type == 'appointment.booked') { // pending booking
-        // write your code here for an appointment which is pending..
-    }
+    // reached when appointment is booked and is pending
 }
-add_action('wappointment_appointment_booked', 'my_function_wappointment_appointment_booked', 10, 3);
+add_action('wappointment_appointment_booked', 'my_function_wappointment_appointment_booked', 10, 1);
+
+function my_function_wappointment_appointment_confirmed($eventObject)
+{
+    // reached when appointment is confirmed
+}
+add_action('wappointment_appointment_confirmed', 'my_function_wappointment_appointment_confirmed', 10, 1);
+
+function my_function_wappointment_appointment_canceled($eventObject)
+{
+    // reached when appointment is canceled
+}
+add_action('wappointment_appointment_canceled', 'my_function_wappointment_appointment_canceled', 10, 1);
+
+
+function my_function_wappointment_appointment_rescheduled($eventObject)
+{
+    // reached when appointment is rescheduled
+}
+add_action('wappointment_appointment_rescheduled', 'my_function_wappointment_appointment_rescheduled', 10, 1);
