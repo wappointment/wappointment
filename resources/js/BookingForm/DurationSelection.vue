@@ -11,16 +11,11 @@
 </template>
 
 <script>
+import HasWooVariables from '../Mixins/HasWooVariables'
+import IsDemo from '../Mixins/IsDemo'
 export default {
     props:['service','relations','options'],
-    data: () => ({
-        disabledButtons: false,
-    }),
-    created(){
-        if(this.options !== undefined && this.options.demoData !== undefined){
-            this.disabledButtons = true
-        }
-    },
+    mixins: [HasWooVariables, IsDemo],
     computed:{
         getClasses(){
             return window.wappointment_services === undefined || window.wappointment_services.is_admin === undefined ? 'wbtn wbtn-secondary wbtn-cell':'btn btn-secondary btn-cell'
@@ -32,7 +27,7 @@ export default {
             return this.service.options.woo_sellable
         },
         currency(){
-            return window.wappointment_woocommerce !== undefined ? window.wappointment_woocommerce.currency_symbol:''
+            return this.currencySymb
         },
         
     },
@@ -44,10 +39,9 @@ export default {
             return duration.woo_price+this.currency
         },
         selectDuration(duration){ 
-            if(this.disabledButtons && this.options !== undefined) {
-              this.options.eventsBus.emits('stepChanged', 'service_location')
-              return
-            } 
+            if(this.triggersDemoEvent('service_location')){
+                return
+            }
             let data =  {duration:parseInt(duration.duration)}
             let nextScreen = 'BookingLocationSelection'
             if(this.service.locations.length == 1){

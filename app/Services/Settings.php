@@ -119,7 +119,12 @@ class Settings
     public static function getHost()
     {
         $parsed_url = parse_url(WPHelpers::getWPOption('home'));
-        return !empty($parsed_url['host']) ? (strpos($parsed_url['host'], 'www.') !== -1 ? str_replace('www.', '', $parsed_url['host']) : $parsed_url['host']) : 'example.com';
+        return !empty($parsed_url['host']) ? static::cleanHost($parsed_url['host']) : 'example.com';
+    }
+
+    protected static function cleanHost($host)
+    {
+        return strpos($host, 'www.') !== -1 ? str_replace('www.', '', $host) : $host;
     }
 
     public static function staffDefaults()

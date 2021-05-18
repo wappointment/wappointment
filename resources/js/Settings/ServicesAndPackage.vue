@@ -7,7 +7,7 @@
                 <div class="d-flex">
                     <div class="text-muted small" v-if="showSettings">
                         <div>
-                            Currency: <span v-if="wooAddonActive" data-tt="Configuration in WooCommerce" class="text-primary">{{ wooCurrencyText }}</span>
+                            Currency: <span v-if="wooAddonActive" data-tt="Configure it in WooCommerce" class="text-dark tt-danger">{{ wooCurrencyText }}</span>
                             <a v-else href="javascript:;" @click="setCurrency">{{ currencyText }}</a>
                         </div>
                         <div class="d-flex align-items-center"><div>Payments accepted:</div> <PaymentAllowed @clicked="clicked" /></div>
@@ -92,3 +92,8 @@ export default {
     }
 }   
 </script>
+<style>
+.text-dark.tt-danger{
+    cursor:default;
+}
+</style>

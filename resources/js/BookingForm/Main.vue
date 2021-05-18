@@ -88,6 +88,7 @@ import BookingServiceSelection from './ServiceSelection'
 import BookingDurationSelection from './DurationSelection'
 import BookingLocationSelection from './LocationSelection'
 import BookingStaffSelection from './StaffSelection'
+import BookingPaymentStep from './Payment'
 import MixinLegacy from './MixinLegacy'
 
 let compDeclared = {
@@ -100,6 +101,7 @@ let compDeclared = {
     'BookingDurationSelection': BookingDurationSelection,
     'BookingLocationSelection': BookingLocationSelection,
     'BookingStaffSelection': BookingStaffSelection,
+    'BookingPaymentStep': BookingPaymentStep,
     'DurationCell': DurationCell,
     'abstractFront':AbstractFront,
     'BookingFormSummary': BookingFormSummary,
@@ -748,9 +750,39 @@ export default {
             }
             if(!this.isLegacyOrNotServiceSuite){
                 componentsList = this.updateComponentList(componentsList)
+                componentsList = this.setPaymentStep(componentsList)
             }
             this.componentsList = window.wappointmentExtends.filter('componentsList', componentsList,
              {service: this.service, rescheduling:this.rescheduling} )
+        },
+
+        setPaymentStep(componentsList){
+            componentsList['BookingPaymentStep'] = {
+                name: 'BookingPaymentStep',
+                conditions: {
+                    'appointmentSaved':true,
+                    'serviceIsNotFree':true,
+                },
+                skip: {
+                'serviceIsNotFree':false,
+                },
+                props: {
+                    options:"options",
+                    appointmentKey:"appointmentKey",
+                    appointmentData:"appointmentSavedData",
+                    service:"service"
+                },
+                listeners: {
+                    confirmedPayment:'childChangedStep',
+                    cancelledPayment:'childChangedStep',
+                    loading: 'childChangedData',
+                },
+                relations: {
+                prev: 'BookingFormInputs',
+                next: 'BookingFormConfirmation'
+                }
+            }
+            return componentsList
         },
 
         updateComponentList(componentsList){

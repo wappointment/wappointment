@@ -46,6 +46,7 @@ import TextArea from './Fields/TextArea.vue'
 import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
 import MixinLegacy from './MixinLegacy'
+import IsDemo from '../Mixins/IsDemo'
 export default {
     components: {
         TextInput,
@@ -59,7 +60,7 @@ export default {
         DateInput
     },
     props:['duration', 'location', 'custom_fields', 'data', 'disabledButtons', 'options', 'service', 'validators', 'disabledEmail'],
-    mixins: [MixinLegacy],
+    mixins: [MixinLegacy, IsDemo],
     data: () => ({
         customFields: [],
         bookingFormExtended: {
@@ -106,9 +107,6 @@ export default {
         },
     },
     computed: {
-        isDemo(){
-            return this.options !== undefined && this.options.demoData !== undefined
-        },
         getServiceFields(){
             return this.isLegacy ? this.legacyGetServiceFields:this.service.options.fields
         },
