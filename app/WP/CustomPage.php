@@ -66,7 +66,6 @@ class CustomPage
         if ($this->isDisplayed()) {
             add_filter('wp_title', [$this, 'metaPageTitle']);
             add_filter('the_title', [$this, 'scanTitle']);
-            add_filter('the_content', [$this, 'scanContent'], 98);
             add_action('init', ['\\Wappointment\\WP\\Helpers', 'enqueueFrontScripts'], 98);
             //\Wappointment\WP\Helpers::enqueueFrontScripts();
         }
@@ -121,7 +120,7 @@ class CustomPage
         }
     }
 
-    public function getPageContent()
+    public static function getPageContent()
     {
         return '<div class="wappointment_page"></div>';
     }
@@ -134,10 +133,5 @@ class CustomPage
     public function scanTitle($title)
     {
         return str_replace($this->page_title, $this->getPageTitle(), $title);
-    }
-
-    public function scanContent($content)
-    {
-        return str_replace($this->page_content, $this->getPageContent(), $content);
     }
 }
