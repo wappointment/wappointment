@@ -3,6 +3,7 @@
 namespace Wappointment\Repositories;
 
 use Wappointment\Services\Flag;
+use Wappointment\Services\Settings;
 
 abstract class AbstractRepository implements RepositoryInterface
 {
@@ -11,6 +12,9 @@ abstract class AbstractRepository implements RepositoryInterface
 
     public function get()
     {
+        if (empty(Settings::get('cache'))) {
+            return $this->query();
+        }
         $cached_result = get_transient($this->getCacheKey());
         return empty($cached_result) ? $this->init() : $cached_result;
     }

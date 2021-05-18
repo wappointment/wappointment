@@ -101,7 +101,8 @@ class Settings
             'force_ugly_permalinks' => false,
             'allow_staff_cf' => false,
             'currency' => 'USD',
-            'services_sold' => false
+            'services_sold' => false,
+            'cache' => false
         ];
     }
 
@@ -335,6 +336,15 @@ class Settings
             return true;
         }
         throw new \WappointmentException('Time is not valid');
+    }
+
+    protected static function cacheSaved($key, $value)
+    {
+        if ($value) {
+            Reset::refreshCache();
+        } else {
+            Reset::eraseCache();
+        }
     }
 
     protected static function daily_summarySaved($key, $value)

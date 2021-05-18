@@ -277,7 +277,8 @@ class ViewsData
             'notify_rescheduled_appointments' => Settings::get('notify_rescheduled_appointments'),
             'email_notifications' => Settings::get('email_notifications'),
             'mail_status' => (bool) Settings::get('mail_status'),
-            'allow_staff_cf' => Settings::get('allow_staff_cf')
+            'allow_staff_cf' => Settings::get('allow_staff_cf'),
+            'cache' => Settings::get('cache'),
 
         ];
     }

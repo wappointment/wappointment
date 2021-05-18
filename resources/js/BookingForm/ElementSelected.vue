@@ -58,12 +58,9 @@ export default {
     color: var(--wappo-success-tx);
 }
 
-.wap-front .wsep{
-    display:inline-flex;
-}
 .wap-front .wsep::before{
     content: ' - ';
-    margin-right: .4em;
+    margin: 0 .4em;
 }
 
 .wclose::before, .wclose::after{

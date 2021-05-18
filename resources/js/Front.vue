@@ -46,11 +46,14 @@ export default {
         brFixed: undefined,
         largeVersion: false,
         autoPop: true,
-        demoAs: false
+        demoAs: false,
+        stepChanging: false
     }),
     created(){
       this.elementId = 'wapfrontwrapper-' + Date.now()
-      if(this.step !== undefined) this.currentStep = this.step
+      if(this.step !== undefined) {
+        this.currentStep = this.step
+      }
       this.opts = this.options === undefined ? window.widgetWappointment : Object.assign ({}, this.options)
       if(this.opts.demoData !== undefined){
           this.disabledButtons = true
@@ -76,7 +79,7 @@ export default {
     },
     computed:{
       getStepName(){
-        return 'step-' + (this.bookForm?this.stepName:'button')
+        return 'step-' + (this.bookForm? this.stepName:'button')
       },
         getWidClass(){
           return {
@@ -104,13 +107,35 @@ export default {
             'wdesk': !this.isMobilePhone,
             'wexpanded': this.isExpanded
           }
-          
-          classes[this.getParameterByName('view')] = true
+          if([null,undefined,false].indexOf(this.getWidthClass) === -1){
+            classes[this.getWidthClass] = true
+          }
+          if([null,undefined,false].indexOf(this.getParameterByName('view')) === -1){
+            classes[this.getParameterByName('view')] = true
+          }
           return classes
         },
-
+        getElement(){
+          return this.elementId && this.stepChanging === false ? document.getElementById(this.elementId):false
+        },
+        getWidthClass(){
+          if([null,false].indexOf(this.getElement) === -1){
+            if(this.getElement.clientWidth > 360){
+              return 'over360'
+            }
+            if(this.getElement.clientWidth > 320){
+              return 'over320'
+            }
+            if(this.getElement.clientWidth > 280){
+              return 'over280'
+            }
+          }
+        },
+        isPortraitMode(){
+          return window.innerHeight > window.innerWidth
+        },
         isMobilePhone(){
-          return window.innerWidth < 500 && window.innerHeight > window.innerWidth
+          return window.innerWidth < 500 && this.isPortraitMode
         },
 
         realButtonTitle(){
@@ -132,12 +157,16 @@ export default {
         getView(){
           return this.step || this.getParameterByName('view')
         }
-
     },
     methods: {
       
         stepChanged(stepName){
           this.stepName = stepName
+          this.stepChanging = true
+          setTimeout(this.changedStep, 200);
+        },
+        changedStep(){
+          this.stepChanging = false
         },
         processShortcode(){
           if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){

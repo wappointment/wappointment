@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.7
 Requires PHP: 7.0
-Stable tag: 2.2.0
+Stable tag: 2.2.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,12 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.2.1 - 2021-05-17 =
+* disabling Wappointment's cache by default
+* added hook after booking
+* fixed style on button in booking form relative size
+* fixed issue undefined email when editing Staff
 
 = 2.2.0 - 2021-05-10 =
 * Added staff selection page in booking form 
