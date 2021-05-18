@@ -26,8 +26,8 @@ export default {
         toggleBookForm() {
             if(this.disabledButtons) {
                 let nextStepIndex = this.options.editionsSteps.findIndex((element) => element.key == 'button') + 1
-              this.options.eventsBus.emits('stepChanged', this.options.editionsSteps[nextStepIndex].key)
-              return
+                this.options.eventsBus.emits('stepChanged', this.options.editionsSteps[nextStepIndex].key)
+                return
             } 
         },
     }

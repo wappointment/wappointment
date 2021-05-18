@@ -24,9 +24,9 @@ import StyleGenerator from './Components/StyleGenerator'
 import Colors from './Modules/Colors'
 import UrlParam from './Modules/UrlParam'
 import ckl from './Standalone/chunkloader.js'
-
+import IsDemo from './Mixins/IsDemo'
 export default {
-    mixins: [Colors, UrlParam],
+    mixins: [Colors, UrlParam, IsDemo],
     props: ['classEl', 'options', 'step', 'attributesEl'],
     components: { 
         BookingButton,
@@ -41,7 +41,6 @@ export default {
         opts: null,
         elementId: '',
         stepName: '',
-        disabledButtons: false,
         buttonTitle: '',
         brFixed: undefined,
         largeVersion: false,
@@ -55,9 +54,6 @@ export default {
         this.currentStep = this.step
       }
       this.opts = this.options === undefined ? window.widgetWappointment : Object.assign ({}, this.options)
-      if(this.opts.demoData !== undefined){
-          this.disabledButtons = true
-      }
       this.processShortcode()
     },
 

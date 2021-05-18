@@ -27,7 +27,7 @@
                     <FieldsGenerated @changed="changedBF" @dataDemoChanged="dataDemoChanged" 
                     :validators="validators" :custom_fields="custom_fields" 
                     :service="service" :location="location" :data="data" 
-                    :options="options" :disabledButtons="disabledButtons" />
+                    :options="options" />
                 
                     <div v-if="termsIsOn" class="wap-terms" v-html="getTerms"></div>
                 </div>
@@ -56,9 +56,10 @@ import FormMixinLegacy from './FormMixinLegacy'
 import MixinLegacy from './MixinLegacy'
 import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
+import IsDemo from '../Mixins/IsDemo'
 export default {
     extends: AbstractFront,
-    mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy],
+    mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
     'timeprops', 'relations', 'appointment_starts_at',
     'duration', 'location', 'custom_fields', 'staffs','selectedStaff'],
@@ -74,7 +75,6 @@ export default {
         phoneValid: false,
         errorsOnFields: {},
         mounted: false,
-        disabledButtons: false,
         bookingFormExtended: null,
         canDisplayInputs: false,
         staff: null
@@ -83,9 +83,6 @@ export default {
     created(){
         
         this.serviceAppointmentService = this.$vueService(new WappoServiceBooking)
-        if(this.options!== undefined && this.options.demoData !== undefined){
-            this.disabledButtons = true
-        }
         if(this.isLegacy){
             if(this.service.type.length == 1 || this.disabledButtons){
                 this.selectType(this.service.type[0])
@@ -206,10 +203,10 @@ export default {
         },
 
         back(){
-            if(this.disabledButtons) {
-              this.options.eventsBus.emits('stepChanged', 'selection')
-              return
-            } 
+
+            if(this.triggersDemoEvent('selection')){
+                return
+            }
             this.$emit('back', this.relations.prev,{selectedSlot:false})
         },
 
@@ -218,10 +215,9 @@ export default {
         },
 
         confirm(){
-            if(this.disabledButtons) {
-              this.options.eventsBus.emits('stepChanged', 'confirmation')
-              return
-            } 
+            if(this.triggersDemoEvent('confirmation')){
+                return
+            }
             let data = this.bookingFormExtended
             data.time = this.selectedSlot
             data.ctz = this.timeprops.ctz

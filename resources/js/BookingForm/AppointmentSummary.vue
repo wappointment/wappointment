@@ -33,8 +33,9 @@
 <script>
 import ElementSelected from './ElementSelected'
 import MixinChange from './MixinChange'
+import IsDemo from '../Mixins/IsDemo'
 export default {
-    mixins:[window.wappointmentExtends.filter('MixinChange', MixinChange)],
+    mixins:[window.wappointmentExtends.filter('MixinChange', MixinChange), IsDemo],
     props: {
         service: {
             type: [Object, Boolean], 

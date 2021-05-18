@@ -71,7 +71,7 @@
                         <FieldsGenerated @changed="changedBF" :disabledEmail="true"
                         :validators="validators" :custom_fields="viewData.custom_fields" 
                         :service="service" :location="location" :data="bookingForm" 
-                        :options="viewData.widget" :disabledButtons="disabledButtons" />
+                        :options="viewData.widget" />
 
                         <div v-if="formHasErrors" class="error">
                             <div v-for="(error,namekeyidx) in errorsOnFields">

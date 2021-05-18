@@ -20,8 +20,9 @@
 <script>
 import minText from './minText'
 import MixinChange from './MixinChange'
+import IsDemo from '../Mixins/IsDemo'
 export default {
-    mixins: [minText, window.wappointmentExtends.filter('MixinChange', MixinChange)],
+    mixins: [minText, window.wappointmentExtends.filter('MixinChange', MixinChange), IsDemo],
     props: {
         staffs: {
             type: Array
@@ -48,14 +49,6 @@ export default {
         rescheduling: {
             type: Boolean
         },
-    },
-    data: () => ({
-        disabledButtons: false,
-    }),
-    created(){
-        if(this.options.demoData !== undefined){
-            this.disabledButtons = true
-        }
     },
     methods:{
         showAllStaff(){

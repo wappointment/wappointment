@@ -59,7 +59,7 @@ export default {
         PhoneInput,
         DateInput
     },
-    props:['duration', 'location', 'custom_fields', 'data', 'disabledButtons', 'options', 'service', 'validators', 'disabledEmail'],
+    props:['duration', 'location', 'custom_fields', 'data', 'options', 'service', 'validators', 'disabledEmail'],
     mixins: [MixinLegacy, IsDemo],
     data: () => ({
         customFields: [],
@@ -97,10 +97,8 @@ export default {
                         }
                     }
                 }
-         
-                if(this.disabledButtons) {
-                    this.options.eventsBus.emits('dataDemoChanged', newValue)
-                } 
+
+                this.triggersDemoEvent(newalue)
                 this.$emit('changed', this.bookingFormExtended, this.errorsOnFields)
             },
             deep: true

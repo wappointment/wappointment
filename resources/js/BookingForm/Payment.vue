@@ -1,20 +1,8 @@
 <template>
     <div>
-      <div v-if="!show">
-        <div class="wdescription" v-if="sellIndividually && !showGPacks">{{options.woo_payment.complete}}</div>
-         <div class="wdescription">{{ getAppointmentReservedString }}</div>
-          <div>
-              <div v-if="sellIndividually && !showGPacks">{{ service.name }} - {{ serviceDuration }}min - {{ servicePrice }}{{ currency }}</div>
-              <div v-if="sellPacks" class="wbtn wbtn-cell wbtn-secondary">
-                  <div v-for="pack in getPacks"  class="wbtn wbtn-cell wbtn-secondary" @click="selectPack(pack)">
-                      <div>{{ pack.hours }}hours</div>
-                      <div class="service-price">{{ pack.price }}{{ currency }}</div>
-                  </div>
-              </div>
-          </div>
-          <button type="button" class="wbtn wbtn-secondary" @click="cancelReservation">{{options.woo_payment.back}}</button>
-          <button type="button" class="wbtn wbtn-primary" @click="increment">{{options.woo_payment.pay}}</button>
-      </div>
+      <div class="wdescription" v-if="sellIndividually && !showGPacks">{{options.woo_payment.complete}}</div>
+      <div class="wdescription">{{ getAppointmentReservedString }}</div>
+      
     </div>
 </template>
 
@@ -22,26 +10,21 @@
 import OrderService from '../Services/V1/Order'
 import AbstractFront from './AbstractFront'
 import IsDemo from '../Mixins/IsDemo'
+import HasWooVariables from '../Mixins/HasWooVariables'
 export default {
     extends: AbstractFront,
-    mixins:[IsDemo],
+    mixins:[IsDemo, HasWooVariables],
     props: ['options', 'relations', 'appointmentKey', 'appointmentData', 'service'],
      data: () => ({
-        show: false,
         showGPacks: false,
         selectedPack: false,
-        disabledButtons: false,
         servicesOrder: null
     }),
     created(){
-
       this.servicesOrder = this.$vueService(new OrderService) 
     },
 
     computed: {
-      currency(){
-        return window.wappointment_woocommerce.currency_symbol
-      },
       sellPacks(){
         return this.service.options.woo_packs_defined === true && this.service.options.woo_packs.length > 0
       },
@@ -117,11 +100,6 @@ export default {
       canceledReservationSuccess(re){
         this.$emit('cancelledPayment', this.relations.prev, {appointmentSaved:false,loading:false})
       },
-
-
-      increment(){
-        this.show = true
-      },  
 
     }
 }   
