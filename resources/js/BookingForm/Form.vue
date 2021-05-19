@@ -57,9 +57,10 @@ import MixinLegacy from './MixinLegacy'
 import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
 import IsDemo from '../Mixins/IsDemo'
+import HasPaidService from '../Mixins/HasPaidService'
 export default {
     extends: AbstractFront,
-    mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo],
+    mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, HasPaidService],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
     'timeprops', 'relations', 'appointment_starts_at',
     'duration', 'location', 'custom_fields', 'staffs','selectedStaff'],
@@ -238,10 +239,12 @@ export default {
         }, 
 
         appointmentBooked(result){
+            console.log('result',result)
             if(result.data.result !== undefined){
-                let relationnext = window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, {result:result, service: this.service} )
-
-                this.$emit('confirmed', relationnext, {
+                
+                this.$emit('confirmed', 
+                this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(), 
+                {
                     appointmentSavedData: result.data.appointment, 
                     isApprovalManual: result.data.status == 0, 
                     appointmentSaved: true, 
@@ -252,7 +255,10 @@ export default {
                 this.$emit('loading', {loading:false})
                 this.appointmentBookingError({message: 'Error in booking request response'})
             }
-            
+        },
+
+        getAddonNextScreen(){
+            return window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, {result:result, service: this.service} )
         },
 
         appointmentBookingError(error){

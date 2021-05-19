@@ -1,23 +1,43 @@
 <template>
     <div>
-      <div class="wdescription" v-if="sellIndividually && !showGPacks">{{options.woo_payment.complete}}</div>
-      <div class="wdescription">{{ getAppointmentReservedString }}</div>
-      
+      <div class="wdescription" v-if="hasPaidDurations">Payment time!</div>
+      <div class="wdescription">Your appointment time is reserved for the next 20 minutes giving you time to pay</div>
+      <div class="wtabs d-flex">
+        <div class="wtab active">
+            <div class="d-flex">
+              <WImage :image="getImage('visa')" class="wstripe"/>
+              <WImage :image="getImage('mastercard')" class="wstripe"/>
+              <WImage :image="getImage('amex')" class="wstripe"/>
+            </div>
+            <div class="d-flex wpowered">
+              <span>Pay safely with</span> <WImage :image="getImage('stripe','.png')" class="wstripe"/>
+            </div>
+        </div>
+        <div class="wtab">
+            <div class="d-flex">
+              <WImage :image="getImage('paypal','.png')" />
+            </div>
+        </div>
+      </div>
+      <div class="wpayment">
+
+      </div>
     </div>
 </template>
 
 <script>
+import WImage from '../WComp/WImage'
 import OrderService from '../Services/V1/Order'
 import AbstractFront from './AbstractFront'
 import IsDemo from '../Mixins/IsDemo'
 import HasWooVariables from '../Mixins/HasWooVariables'
+import HasPaidService from '../Mixins/HasPaidService'
 export default {
     extends: AbstractFront,
-    mixins:[IsDemo, HasWooVariables],
+    mixins:[IsDemo, HasWooVariables, HasPaidService],
     props: ['options', 'relations', 'appointmentKey', 'appointmentData', 'service'],
+    components:{WImage},
      data: () => ({
-        showGPacks: false,
-        selectedPack: false,
         servicesOrder: null
     }),
     created(){
@@ -25,42 +45,28 @@ export default {
     },
 
     computed: {
-      sellPacks(){
-        return this.service.options.woo_packs_defined === true && this.service.options.woo_packs.length > 0
-      },
-      getPacks(){
-        return this.service.options.woo_packs
-      },
-      sellIndividually(){
-        return [undefined,false].indexOf(this.service.options.woo_individually) === -1
-      },
+      
       getAppointmentReservedString(){
-        return this.options.woo_payment.slot_reserved.replace('[minutes]', this.reserved_for) 
-      },
-
-      checkout_url(){
-        let url = window.wappointment_woocommerce.checkout_url
-        url += url.indexOf('?') === -1 ? '?':'&'
-        url += 'wappo_module_off=1'
-        return url
+        //return this.options.woo_payment.slot_reserved.replace('[minutes]', this.reserved_for) 
       },
       serviceDuration(){
         return (this.appointmentData.end_at - this.appointmentData.start_at) / 60
       },
-      servicePrice(){
+      durationPrice(){
         if(this.service.options.durations !== undefined){
-          for (let i = 0; i < this.service.options.durations.length; i++) {
-            if(this.serviceDuration == this.service.options.durations[i].duration){
-              return this.service.options.durations[i].woo_price 
-            }
-          }
-        }else{
-          return this.service.options.woo_price
+          let duration = this.serviceDuration
+          return this.service.options.durations.find(e => e.duration == duration)
         }
       }
     },
     methods: {
-      
+      getImage(method, ext = '.svg'){
+          return {
+              icon: 'methods/'+method+ext,
+              alt: method,
+              title: method
+          }
+      },
       selectPack(pack){
         this.selectedPack = false
         this.$emit('loading', {loading:true})
@@ -71,7 +77,7 @@ export default {
       },
 
       async updateOrderRequest(params) {
-            return await this.servicesWooBooking.call('updateOrder', params) 
+            return await this.servicesOrder.call('updateOrder', params) 
       },
       updatedOrderSuccess(r){
         this.$emit('loading', {loading:false})
@@ -89,7 +95,7 @@ export default {
       },
       
       async cancelReservationRequest() {
-            return await this.servicesWooBooking.call('cancel', {'edit_key':this.appointmentKey}) 
+            return await this.servicesOrder.call('cancel', {'edit_key':this.appointmentKey}) 
       },
 
       canceledReservationFailure(){
@@ -104,3 +110,29 @@ export default {
     }
 }   
 </script>
+<style>
+.wstripe{
+  max-width: 34px;
+}
+.wtabs{
+  border-bottom:1px solid #ececec;
+}
+.wtab{
+  max-width: 33%;
+  padding: .2em;
+  margin-bottom:-1px;
+}
+.wtab.active{
+  border-radius: .2em .2em 0 0;
+  border: 1px solid #ececec;
+  border-bottom: 0;
+}
+.wpowered{
+  font-size:10px;
+}
+.wpayment{
+  min-height: 200px;
+  border: 1px solid #ececec;
+  border-radius: .2em;
+}
+</style>

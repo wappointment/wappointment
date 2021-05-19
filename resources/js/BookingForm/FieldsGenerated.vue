@@ -98,7 +98,7 @@ export default {
                     }
                 }
 
-                this.triggersDemoEvent(newalue)
+                this.triggersDemoEvent(newValue)
                 this.$emit('changed', this.bookingFormExtended, this.errorsOnFields)
             },
             deep: true
