@@ -2,43 +2,47 @@
     <div>
       <div class="wdescription" v-if="hasPaidDurations">Payment time!</div>
       <div class="wdescription">Your appointment time is reserved for the next 20 minutes giving you time to pay</div>
-      <div class="wtabs d-flex">
-        <div class="wtab active">
-            <div class="d-flex">
-              <WImage :image="getImage('visa')" class="wstripe"/>
-              <WImage :image="getImage('mastercard')" class="wstripe"/>
-              <WImage :image="getImage('amex')" class="wstripe"/>
-            </div>
-            <div class="d-flex wpowered">
-              <span>Pay safely with</span> <WImage :image="getImage('stripe','.png')" class="wstripe"/>
-            </div>
-        </div>
-        <div class="wtab">
-            <div class="d-flex">
-              <WImage :image="getImage('paypal','.png')" />
-            </div>
-        </div>
-      </div>
+      <WPaymentMethods :methods="methods" @selected="selected" />
       <div class="wpayment">
-
+        <component :is="activeMethod" :crumb="false" />
       </div>
     </div>
 </template>
 
 <script>
-import WImage from '../WComp/WImage'
 import OrderService from '../Services/V1/Order'
 import AbstractFront from './AbstractFront'
 import IsDemo from '../Mixins/IsDemo'
 import HasWooVariables from '../Mixins/HasWooVariables'
 import HasPaidService from '../Mixins/HasPaidService'
+import WPaymentMethods from '../WComp/WPaymentMethods'
 export default {
     extends: AbstractFront,
     mixins:[IsDemo, HasWooVariables, HasPaidService],
     props: ['options', 'relations', 'appointmentKey', 'appointmentData', 'service'],
-    components:{WImage},
+    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods } ),
      data: () => ({
-        servicesOrder: null
+        servicesOrder: null,
+        activeMethod: '',
+        methods: [
+          {
+            key: 'stripe',
+            cards: ['visa', 'mastercard', 'amex'],
+            desc: 'Pay safely with',
+            logo: true,
+          },
+          {
+            key: 'paypal',
+            cards: ['visa', 'mastercard', 'amex'],
+            desc: 'Pay safely with',
+            logo: true
+          },
+          {
+            key: 'onsite',
+            cards: ['onsite.png'],
+            desc: 'Pay later on site'
+          }
+        ]
     }),
     created(){
       this.servicesOrder = this.$vueService(new OrderService) 
@@ -60,20 +64,8 @@ export default {
       }
     },
     methods: {
-      getImage(method, ext = '.svg'){
-          return {
-              icon: 'methods/'+method+ext,
-              alt: method,
-              title: method
-          }
-      },
-      selectPack(pack){
-        this.selectedPack = false
-        this.$emit('loading', {loading:true})
-        //send a query to update order
-        this.updateOrderRequest({action: 'selectPack', pack: pack, 'edit_key':this.appointmentKey})
-            .then(this.updatedOrderSuccess)
-       
+      selected(methodKey){
+        this.activeMethod = methodKey
       },
 
       async updateOrderRequest(params) {
@@ -111,28 +103,9 @@ export default {
 }   
 </script>
 <style>
-.wstripe{
-  max-width: 34px;
-}
-.wtabs{
-  border-bottom:1px solid #ececec;
-}
-.wtab{
-  max-width: 33%;
-  padding: .2em;
-  margin-bottom:-1px;
-}
-.wtab.active{
-  border-radius: .2em .2em 0 0;
-  border: 1px solid #ececec;
-  border-bottom: 0;
-}
-.wpowered{
-  font-size:10px;
-}
 .wpayment{
   min-height: 200px;
-  border: 1px solid #ececec;
+  border: 2px solid var(--wappo-sec-bg);
   border-radius: .2em;
 }
 </style>

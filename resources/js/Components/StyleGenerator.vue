@@ -10,6 +10,7 @@
             --wappo-sec-sel-tx: {{ hx_rgb(opts.colors.secondary.text_selected) }};
             --wappo-header-tx: {{ hx_rgb(opts.colors.header.text) }};
             --wappo-body-tx: {{ hx_rgb(opts.colors.body.text) }};
+            --wappo-body-bg: {{ hx_rgb(opts.colors.body.bg) }};
             --wappo-success-tx: {{ hx_rgb(opts.colors.confirmation.text) }};
             --wappo-error-tx: {{ hx_rgb(opts.colors.form.error) }};
         }
@@ -118,10 +119,6 @@
             background-color: {{ hx_rgb(opts.colors.body.bg, .9) }};
         }
         
-        .wap-front .wap-form-body{
-            background-color: {{ hx_rgb(opts.colors.body.bg) }};
-        }
-
         .wap-front .wap-form-body .no-avail, 
         .wap-front .wap-form-body .wbtn-link.disabled{
             color: {{ hx_rgb(opts.colors.body.disabled_links) }};

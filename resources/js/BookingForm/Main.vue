@@ -1001,6 +1001,10 @@ export default {
     color: var(--wappo-success-tx);
 }
 
+.wap-front .wap-form-body{
+    background-color: var(--wappo-body-bg);
+}
+
 .wclosable .wclose::before, 
 .wclosable .wclose::after {
     background-color: var(--wappo-pri-tx);
