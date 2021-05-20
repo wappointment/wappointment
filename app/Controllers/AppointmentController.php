@@ -18,7 +18,7 @@ class AppointmentController extends RestController
             throw new \WappointmentException("Malformed parameter", 1);
         }
 
-        $appointment = AppointmentModel::select(['start_at', 'status', 'end_at', 'type', 'client_id', 'options', 'staff_id', 'service_id'])
+        $appointment = AppointmentModel::select(['start_at', 'status', 'end_at', 'type', 'client_id', 'options', 'staff_id', 'service_id', 'location_id'])
             ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
             ->where('edit_key', $request->input('appointmentkey'))
             ->first();
@@ -26,7 +26,6 @@ class AppointmentController extends RestController
         if (empty($appointment)) {
             throw new \WappointmentException("Can't find appointment", 1);
         }
-
         $appointmentData = $appointment->toArraySpecial();
         $appointmentData['edit_key'] = $request->input('appointmentkey');
         if (Settings::get('allow_rescheduling')) {

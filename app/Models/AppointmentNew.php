@@ -305,19 +305,13 @@ class Appointment extends Model
         return $this->isZoom() ? $this->getMeetingLink() : false;
     }
 
-    public function getVideoProvider()
-    {
-        return $this->getLocationVideo() == 'zoom' ? 'zoom' : 'google';
-    }
     public function getMeetingLink()
     {
-        $video_provider = $this->getVideoProvider();
-        $url_meeting_key = in_array($video_provider, ['zoom']) ? 'join_url' : 'google_meet_url';
-
-        return !empty($video_provider) &&
+        $type_meeting = $this->getLocationVideo();
+        return !empty($type_meeting) &&
             !empty($this->options['providers']) &&
-            !empty($this->options['providers'][$video_provider]) &&
-            !empty($this->options['providers'][$video_provider][$url_meeting_key]) ? $this->options['providers'][$video_provider][$url_meeting_key] : false;
+            !empty($this->options['providers'][$type_meeting]) &&
+            !empty($this->options['providers'][$type_meeting]['join_url']) ? $this->options['providers'][$type_meeting]['join_url'] : false;
     }
 
     public function getLinkViewEvent()

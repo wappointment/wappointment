@@ -13,10 +13,10 @@
             <div v-if="currentInstruction.description !== undefined">{{ currentInstruction.description }}</div>
 
             <div v-if="stepAddonsSettings">
-                <component :is="addon.settingKey" :crumb="false"></component>
+                <component :is="addon.settingKey" :crumb="false" />
             </div>
             <div v-else>
-                <component :is="currentStep" :crumb="false" :minimal="true" @changeStep="showStep"></component>
+                <component :is="currentStep" :crumb="false" :minimal="true" @changeStep="showStep" />
             </div>
         </div>
     </div>
@@ -29,11 +29,8 @@ import Regav from '../RegularAvailability/View'
 import abstractView from '../Views/Abstract'
 import RequestMaker from '../Modules/RequestMaker'
 import AbstractListing from '../Views/AbstractListing'
-
 export default {
-  components: window.wappointmentExtends.filter('AddonsSettingsComponents', 
-  { Service, Widget, Regav, AbstractListing }, 
-  {extends: abstractView, mixins: [RequestMaker]} ),
+  components: window.wappointmentExtends.filter('AddonsSettingsComponents', { Service, Widget, Regav, AbstractListing }, {extends: abstractView, mixins: [RequestMaker]} ),
     props: ['addon'],
     data() {
         return {
@@ -57,7 +54,6 @@ export default {
         }
     },
     methods: {
-
         showStep(step){
             this.currentStep = step
         }

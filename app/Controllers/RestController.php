@@ -64,7 +64,6 @@ abstract class RestController
             $methodName = $args['wparams']['method'];
             $request = WPHelpers::requestGet($param->get_params());
 
-            // dd('$args[', $args);
             if ($methodName == 'index' || !empty($args['wparams']['paginated'])) {
                 $this->registerPagination($request);
             }
