@@ -31,12 +31,12 @@ class Segment
                     false
                 );
             } catch (\Throwable $th) {
-                /* \Wappointment\Models\Log::data([
+                \Wappointment\Models\Log::data([
                     'info' => "Error with the segment ",
                     'start' => $this->debugDate($segment[0]),
                     'end' => $this->debugDate($segment[1])
-                ]); */
-                //throw new \WappointmentException("Error with the segment " . $segment[0] . ' - ' . $segment[1], 1);
+                ]);
+                throw new \WappointmentException("Error with the segment " . $segment[0] . ' - ' . $segment[1], 1);
             }
         }
         return $intervals;
@@ -66,39 +66,70 @@ class Segment
         return $segments;
     }
 
-    public function substract($mainSegments, $substractSegments)
+    public function substract($mainSegments, $substractSegments, $debug = false)
     {
 
         $mainSegments = $this->convertToIntervals($mainSegments);
 
         $substractSegments = $this->convertToIntervals($substractSegments);
 
-        foreach ($substractSegments as $j => $substract) {
-            //echo 'NEW SUBSTRACT' . "\n" . $this->debugSegment($substract) . "\n";
+        foreach ($substractSegments as $substract) {
+            if ($debug) {
+                echo 'NEW SUBSTRACT' . "\n" . $this->debugSegment($substract) . "\n";
+            }
 
             foreach ($mainSegments as $i => $main) {
-                if (is_null($main)) {
-                    continue;
-                }
-                //echo 'main segment [' . $i . '] total ' . count($mainSegments) . "\n";
-                if ($this->intersects($main, $substract)) {
-                    //echo  "[substract] COLLIDES WITH \n" . '[main]' . $this->debugSegment($main) . "\n";
-                    if ($substract->isContaining($main)) {
-                        //echo  "[substract] CONTAINS \n" . '[main]' . $this->debugSegment($main) . "\n";
-                        $mainSegments[$i] = null;
-                    } else {
-                        $diff = $main->difference($substract);
-                        $start_array = array_slice($mainSegments, 0, $i);
-                        $end_array = array_slice($mainSegments, $i + 1);
-                        $mainSegments = array_merge($start_array, $diff, $end_array);
-                    }
-                    //$this->debugSegment($diff);
-                    //print_r($this->convertToArrayDebugged($mainSegments));
-                }
+                $mainSegments = $this->processMainSegment($mainSegments, $main, $substract, $i, $debug);
             }
         }
-        //exit;
+
+        if ($debug) {
+            //dd($mainSegments);
+            exit;
+        }
         return $this->convertToArray(array_filter($mainSegments));
+    }
+
+    public function processMainSegment($mainSegments, $main, $substract, $i, $debug = false)
+    {
+        if (is_null($main)) {
+            return $mainSegments;
+        }
+        if ($debug) {
+            echo '--main segment [' . $i . '] total ' . count($mainSegments) . "\n";
+        }
+        if ($this->intersects($main, $substract)) {
+            if ($debug) {
+                echo  "----[substract] COLLIDES WITH \n" . '[main]' . $this->debugSegment($main) . "\n";
+            }
+            $mainSegments = $this->containsOrTouches($mainSegments, $main, $substract, $i, $debug);
+            if ($debug) {
+                dd($mainSegments);
+                print_r($this->convertToArrayDebugged($mainSegments));
+            }
+        }
+        return array_values($mainSegments);
+    }
+
+    public function containsOrTouches($mainSegments, $main, $substract, $i, $debug = false)
+    {
+        if ($substract->isContaining($main)) { // the whole section is unavailable
+            if ($debug) {
+                echo  "---- [substract] CONTAINS \n" . '[main]' . $this->debugSegment($main) . "\n";
+            }
+            unset($mainSegments[$i]);
+        } else { // part of the section is must be available
+            $diff = $main->difference($substract);
+            $start_array = array_slice($mainSegments, 0, $i); // we just remove the section needed
+            $end_array = array_slice($mainSegments, $i + 1);
+
+            $mainSegments = array_merge($start_array, $diff, $end_array);
+
+            if ($debug && !empty($diff)) {
+                $this->debugSegment($diff);
+            }
+        }
+        return $mainSegments;
     }
 
     public function debug($mainSegments)
@@ -144,7 +175,6 @@ class Segment
     {
         $dirtySegments = $this->convertToIntervals($dirtySegments);
 
-        $unionized = [];
         $ignorekey = [];
 
         for ($ki = 0; $ki < count($dirtySegments) + 1; $ki++) {
@@ -162,13 +192,11 @@ class Segment
                     continue;
                 }
 
-
                 if ($debug) {
                     echo '[' . $ki . ']free ' . $this->debugSegment($free) . "\n";
                     echo '[' . $ki2 . ']free2 ' . $this->debugSegment($free2) . "\n";
                     echo 'Union ' . $ki . ' ' . $ki2 . "?\n";
                 }
-
 
                 if (!$this->notInContact($free, $free2)) {
                     if ($this->inContact($free, $free2)) {
