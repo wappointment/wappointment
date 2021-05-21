@@ -11,7 +11,7 @@
             <h5>Changelog 2.2.2</h5>
             <ol>
                 <li>fixed calendar synch not being refreshed automatically</li>
-                <li>New: whenever the Zoom Meeting or Google Meet link is available we provide it in the reminder email directly</li>
+                <li>Reminder emails contain now direct link to Zoom Meeting or Google Meet video appointments </li>
             </ol>
             <hr/>
             <div>
