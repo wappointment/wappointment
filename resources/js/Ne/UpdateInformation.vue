@@ -5,17 +5,13 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.2.1</span>   
-                <span class="ml-2">Bug fix and optimization off</span>
+                <span>V2.2.2</span>   
+                <span class="ml-2">Bug fixes on Calendar Sync</span>
             </h3>
-            <div class="my-2">
-               You can now turn ON cache from <strong>Wappointment > Settings > Advanced > Wappointment's Cache</strong> in order to speed up the availability check in the frontend booking form.
-            </div>
-            <h5>Changelog 2.2.1</h5>
+            <h5>Changelog 2.2.2</h5>
             <ol>
-                <li>disabling Wappointment's cache by default</li>
-                <li>fixed style on button in booking form relative size</li>
-                <li>fixed issue undefined email when editing Staff</li>
+                <li>fixed calendar synch not being refreshed automatically</li>
+                <li>New: whenever the Zoom Meeting or Google Meet link is available we provide it in the reminder email directly</li>
             </ol>
             <hr/>
             <div>
