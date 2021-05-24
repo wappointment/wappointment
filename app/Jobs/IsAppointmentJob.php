@@ -23,7 +23,12 @@ trait IsAppointmentJob
             $params['appointment']['options'] = json_encode($params['appointment']['options']);
         }
         $this->appointment = (new Appointment)->newFromBuilder($params['appointment']);
-        $this->appointment->refresh();
+        try {
+            $this->appointment->refresh();
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
         if (!empty($params['reminder_id'])) {
             $this->reminder_id = $params['reminder_id'];
         }
