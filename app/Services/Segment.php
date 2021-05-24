@@ -31,12 +31,12 @@ class Segment
                     false
                 );
             } catch (\Throwable $th) {
-                \Wappointment\Models\Log::data([
-                    'info' => "Error with the segment ",
-                    'start' => $this->debugDate($segment[0]),
-                    'end' => $this->debugDate($segment[1])
-                ]);
-                throw new \WappointmentException("Error with the segment " . $segment[0] . ' - ' . $segment[1], 1);
+                // \Wappointment\Models\Log::data([
+                //     'info' => "Error with the segment ",
+                //     'start' => $this->debugDate($segment[0]),
+                //     'end' => $this->debugDate($segment[1])
+                // ]);
+                // throw new \WappointmentException("Error with the segment " . $segment[0] . ' - ' . $segment[1], 1);
             }
         }
         return $intervals;
