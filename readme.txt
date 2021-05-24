@@ -139,9 +139,10 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.2.2 - 2021-05-21 =
+= 2.2.2 - 2021-05-24 =
 * fixed calendar synch not being refreshed automatically
 * Reminder emails contain now direct link to Zoom Meeting or Google Meet for video appointments
+* fixed shortcode issue with shortcode remover plugins
 
 = 2.2.1 - 2021-05-17 =
 * disabling Wappointment's cache by default
