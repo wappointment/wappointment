@@ -15,6 +15,18 @@ class Permissions
         $this->setRoles();
     }
 
+    public static function getAllWpRoles()
+    {
+        $array_roles = [];
+        foreach (wp_roles()->roles as $keyRole => $role) {
+            $array_roles[] = [
+                'key' => $keyRole,
+                'name' => $role['name']
+            ];
+        }
+        return $array_roles;
+    }
+
     public function registerRole($roleKey)
     {
         if (!empty($this->roles[$roleKey])) {

@@ -100,7 +100,8 @@ class Settings
             'show_welcome' => false,
             'force_ugly_permalinks' => false,
             'allow_staff_cf' => false,
-            'cache' => false
+            'cache' => false,
+            'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff']
         ];
     }
 

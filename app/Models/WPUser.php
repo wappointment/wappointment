@@ -13,6 +13,7 @@ class WPUser extends Model
     ];
     protected $appends = ['gravatar'];
 
+
     public function __construct(array $attributes = array())
     {
         parent::__construct($attributes);
@@ -22,9 +23,29 @@ class WPUser extends Model
         }
     }
 
+    public static function parseUserObject($userObject)
+    {
+        $keys_allowed = ['ID', 'user_login', 'user_nicename', 'display_name', 'user_email'];
+        $user_data = [];
+        foreach ($keys_allowed as $key) {
+            if ($key == 'ID') {
+                $user_data[$key] = (int)$userObject->data->$key;
+            } else {
+                $user_data[$key] = $userObject->data->$key;
+            }
+        }
+        $user_data['role'] = $userObject->roles[0];
+        $user_data['gravatar'] = static::getGravatar($userObject->data->ID);
+        return $user_data;
+    }
+
+    public static function getGravatar($id)
+    {
+        return get_avatar_url($id, ['size' => 40]);
+    }
     public function getGravatarAttribute()
     {
-        return get_avatar_url($this->ID, ['size' => 40]);
+        return static::getGravatar($this->id);
     }
 
     public function appointments()

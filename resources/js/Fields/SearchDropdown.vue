@@ -28,8 +28,15 @@
                 <span :class="arrowUpClass" @click="makeInactive"></span>
             </div>
             <div class="dropElements d-flex flex-wrap">
-                <ValueCard v-if="filteredElements.length > 0" v-for="elementLoop in filteredElements" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
+                <div v-if="filteredElements.length > 0">
+                    <div v-if="groupKey !=''" v-for="groupElements in filteredElementsByGroup">
+                        <div>{{ groupElements.key }}</div>
+                        <ValueCard v-for="elementLoop in groupElements.values" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
                             :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>
+                    </div>
+                    <ValueCard v-else v-for="elementLoop in filteredElements" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
+                            :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>
+                </div>
                 <div v-else>
                     <div v-if="search">No results for that search</div>
                 </div>
@@ -55,6 +62,9 @@ export default {
         }, 
         value: {
         }, 
+        groupKey: {
+            type: String,
+        },
         icon: {
             type: String,
         },
@@ -130,6 +140,21 @@ export default {
             return funcCB(e, this.keySearch).toLowerCase().indexOf(this.search) !== -1
         })
     },
+    
+    filteredElementsByGroup(){
+        let groupedFiltered = []
+        let groupKey = this.groupKey
+        let groupedKeys = this.filteredElements.map(e => e[groupKey]).filter(this.getDistinct)
+        for (let i = 0; i < groupedKeys.length; i++) {
+            const group = groupedKeys[i]
+            groupedFiltered.push({
+                key: group,
+                values: this.filteredElements.filter(e => e[groupKey] == group)
+            })
+        }
+        
+        return groupedFiltered
+    },
     placeHolderLabel(){
         return this.ph =='' ? this.getLabelElement(this.selectedElement):this.ph
     },
@@ -138,6 +163,9 @@ export default {
     }
   },
   methods: {
+    getDistinct(v,idx,self){
+        return self.indexOf(v) === idx
+    },
     discardElement(val){
         return this.selectElement(this.getElement(val))
     },
