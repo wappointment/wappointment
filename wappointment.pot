@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-05-24T20:58:53+00:00\n"
+"POT-Creation-Date: 2021-05-25T16:21:14+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wappointment\n"
@@ -194,107 +194,107 @@ msgstr ""
 msgid "Minimum PHP version required %s"
 msgstr ""
 
-#: app/Services/Permissions.php:75
+#: app/Services/Permissions.php:87
 #: bin/wappointment (1)/app/Services/Permissions.php:75
 msgid "Wappointment Staff"
 msgstr ""
 
-#: app/Services/Permissions.php:82
+#: app/Services/Permissions.php:94
 #: bin/wappointment (1)/app/Services/Permissions.php:82
 msgid "Wappointment manager"
 msgstr ""
 
-#: app/Services/Permissions.php:94
+#: app/Services/Permissions.php:106
 #: bin/wappointment (1)/app/Services/Permissions.php:94
 msgid "Can manage own calendar"
 msgstr ""
 
-#: app/Services/Permissions.php:96
+#: app/Services/Permissions.php:108
 #: bin/wappointment (1)/app/Services/Permissions.php:96
 msgid "Can add Busy blocks"
 msgstr ""
 
-#: app/Services/Permissions.php:97
+#: app/Services/Permissions.php:109
 #: bin/wappointment (1)/app/Services/Permissions.php:97
 msgid "Can delete Busy blocks"
 msgstr ""
 
-#: app/Services/Permissions.php:98
+#: app/Services/Permissions.php:110
 #: bin/wappointment (1)/app/Services/Permissions.php:98
 msgid "Can add Free blocks"
 msgstr ""
 
-#: app/Services/Permissions.php:99
+#: app/Services/Permissions.php:111
 #: bin/wappointment (1)/app/Services/Permissions.php:99
 msgid "Can delete Free blocks"
 msgstr ""
 
-#: app/Services/Permissions.php:100
+#: app/Services/Permissions.php:112
 #: bin/wappointment (1)/app/Services/Permissions.php:100
 msgid "Can reschedule appointment"
 msgstr ""
 
-#: app/Services/Permissions.php:101
+#: app/Services/Permissions.php:113
 #: bin/wappointment (1)/app/Services/Permissions.php:101
 msgid "Can cancel appointment"
 msgstr ""
 
-#: app/Services/Permissions.php:102
+#: app/Services/Permissions.php:114
 #: bin/wappointment (1)/app/Services/Permissions.php:102
 msgid "Can book on behalf of a client"
 msgstr ""
 
-#: app/Services/Permissions.php:103
+#: app/Services/Permissions.php:115
 #: bin/wappointment (1)/app/Services/Permissions.php:103
 msgid "Can confirm pending appointment"
 msgstr ""
 
-#: app/Services/Permissions.php:107
+#: app/Services/Permissions.php:119
 #: bin/wappointment (1)/app/Services/Permissions.php:107
 msgid "Can manage own settings"
 msgstr ""
 
-#: app/Services/Permissions.php:109
+#: app/Services/Permissions.php:121
 #: bin/wappointment (1)/app/Services/Permissions.php:109
 msgid "Can modify weekly availability"
 msgstr ""
 
-#: app/Services/Permissions.php:110
+#: app/Services/Permissions.php:122
 #: bin/wappointment (1)/app/Services/Permissions.php:110
 msgid "Can modify services provided"
 msgstr ""
 
-#: app/Services/Permissions.php:111
+#: app/Services/Permissions.php:123
 #: bin/wappointment (1)/app/Services/Permissions.php:111
 msgid "Can connect Wappointment.com account"
 msgstr ""
 
-#: app/Services/Permissions.php:112
+#: app/Services/Permissions.php:124
 #: bin/wappointment (1)/app/Services/Permissions.php:112
 msgid "Can add ICS calendar"
 msgstr ""
 
-#: app/Services/Permissions.php:113
+#: app/Services/Permissions.php:125
 #: bin/wappointment (1)/app/Services/Permissions.php:113
 msgid "Can delete ICS calendar"
 msgstr ""
 
-#: app/Services/Permissions.php:114
+#: app/Services/Permissions.php:126
 #: bin/wappointment (1)/app/Services/Permissions.php:114
 msgid "Can publish/unpublish self"
 msgstr ""
 
-#: app/Services/Permissions.php:118
+#: app/Services/Permissions.php:130
 #: bin/wappointment (1)/app/Services/Permissions.php:118
 msgid "Can manage own clients"
 msgstr ""
 
-#: app/Services/Permissions.php:120
+#: app/Services/Permissions.php:132
 #: bin/wappointment (1)/app/Services/Permissions.php:120
 msgid "Can delete clients"
 msgstr ""
 
-#: app/Services/Permissions.php:121
+#: app/Services/Permissions.php:133
 #: bin/wappointment (1)/app/Services/Permissions.php:121
 msgid "Can edit clients"
 msgstr ""
