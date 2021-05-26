@@ -12,14 +12,14 @@ class Calendars
         return Central::get('CalendarModel');
     }
 
-    public static function all($onlyAvailable = false)
+    public static function all($onlyAvailable = false, $cron = false)
     {
         $query = static::getModel()::active()->orderBy('sorting');
         if ($onlyAvailable) {
             $query->whereNotNull('availability');
         } else {
             //this is admin we add permissions
-            if (!CurrentUser::isAdmin()) {
+            if ($cron === false && !CurrentUser::isAdmin()) {
                 $query->where('wp_uid', CurrentUser::id());
             }
         }

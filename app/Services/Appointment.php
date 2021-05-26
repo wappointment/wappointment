@@ -8,6 +8,9 @@ use Wappointment\Helpers\Events;
 use Wappointment\Managers\Central;
 use Wappointment\WP\Helpers as WPHelpers;
 
+/**
+ * LEGACY
+ */
 class Appointment
 {
     public static function delete($id)

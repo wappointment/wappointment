@@ -119,6 +119,10 @@ class Appointment extends Model
     {
         return $this->belongsTo(Service::class, 'service_id');
     }
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'location_id');
+    }
 
     public function toArraySpecial()
     {
@@ -132,12 +136,15 @@ class Appointment extends Model
         return $array;
     }
 
+    protected function getLocationObject()
+    {
+        return !empty($this->location) ? $this->location : Location::find($this->location_id);
+    }
 
     public function getLocationVideo()
     {
         if ($this->location_id > 0) {
-            $location = Location::find($this->location_id);
-
+            $location = $this->getLocationObject();
             return !empty($location) && !empty($location->options['video']) ? $location->options['video'] : false;
         } else {
             return $this->getLocationVideoLegacy();
@@ -271,7 +278,6 @@ class Appointment extends Model
     public function getServiceAddress()
     {
         return ServicesAppointment::getAddress($this->getService()->address, $this);
-        //return apply_filters('wappointment_get_service_address', $this->getService()->address, $this);
     }
 
     public function getLinkAddEventToCalendar()
@@ -294,9 +300,31 @@ class Appointment extends Model
         return $this->getPageLink('new-event');
     }
 
+    public function videoAppointmentHasLink()
+    {
+        return $this->isZoom() ? $this->getMeetingLink() : false;
+    }
+
+    public function getVideoProvider()
+    {
+        return $this->getLocationVideo() == 'zoom' ? 'zoom' : 'google';
+    }
+    public function getMeetingLink()
+    {
+        $video_provider = $this->getVideoProvider();
+        $url_meeting_key = in_array($video_provider, ['zoom']) ? 'join_url' : 'google_meet_url';
+
+        return !empty($video_provider) &&
+            !empty($this->options['providers']) &&
+            !empty($this->options['providers'][$video_provider]) &&
+            !empty($this->options['providers'][$video_provider][$url_meeting_key]) ? $this->options['providers'][$video_provider][$url_meeting_key] : false;
+    }
+
     public function getLinkViewEvent()
     {
-        return $this->getPageLink('view-event');
+        //if meeting link is already present return it directly.
+        $link = $this->videoAppointmentHasLink();
+        return $link ? $link : $this->getPageLink('view-event');
     }
 
     public function client()

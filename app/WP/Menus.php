@@ -26,7 +26,6 @@ class Menus
             $this->sub_menus['addons'] = ['label' => 'Addons', 'cap' => 'administrator'];
             $this->sub_menus['help'] = ['label' => 'Help', 'cap' => 'administrator'];
         }
-        //dd(wp_get_current_user());
         add_menu_page(
             WAPPOINTMENT_NAME,
             WAPPOINTMENT_NAME,

@@ -150,10 +150,11 @@ class Availability
         // substract busy times to availability
         $busy_status = $this->segmentService->convertModel($newBusyStatuses->all());
         $busy_status = $this->segmentService->flatten($busy_status);
+        $busy_status = $this->reOrder($busy_status);
 
         $this->availabilities = $this->segmentService->substract($this->availabilities, $busy_status);
 
-        $this->reOrder();
+        $this->availabilities = $this->reOrder($this->availabilities);
 
         $result = $save ? ($this->isLegacy ? $this->saveLegacy() : $this->save()) : $this->availabilities;
         $this->refreshAvailability();
@@ -242,17 +243,18 @@ class Availability
         return Status::expand($recurringBusy, $endTs);
     }
 
-    private function reOrder()
+    private function reOrder($arrayToReorder)
     {
         $newOrder = [];
-        foreach ($this->availabilities as $key => $avail) {
+        foreach ($arrayToReorder as $key => $avail) {
             $newOrder[$avail[0]] = $key;
         }
+        ksort($newOrder);
         $newAvail = [];
         foreach ($newOrder as $index) {
-            $newAvail[] = $this->availabilities[$index];
+            $newAvail[] = $arrayToReorder[$index];
         }
 
-        $this->availabilities = $newAvail;
+        return $newAvail;
     }
 }

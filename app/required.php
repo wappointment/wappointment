@@ -3,8 +3,10 @@
 if (!defined('WAPPOINTMENT_SITE')) define('WAPPOINTMENT_SITE', 'https://wappointment.com');
 define('WAPPOINTMENT_DB_FORMAT', 'Y-m-d H:i');
 
-
-
+use Wappointment\ClassConnect\Arr;
+use Wappointment\ClassConnect\Collection;
+use Wappointment\ClassConnect\HigherOrderTapProxy;
+use Wappointment\ClassConnect\Carbon;
 
 /**
  * Simple widget insertion in php code useful for custom made versions
@@ -22,6 +24,20 @@ function wappointment_booking_widget($attr, $return = false)
     }
     echo $widget;
 }
+
+if (!function_exists('availdd')) {
+    function availdd($availability)
+    {
+        foreach ($availability as $key => $avail) {
+            $availability[$key] = [
+                0 => Carbon::createFromTimestamp($avail[0])->toDateTimeString(),
+                1 => Carbon::createFromTimestamp($avail[1])->toDateTimeString(),
+            ];
+        }
+        dd($availability);
+    }
+}
+
 /**
  * @method string getMessage()
  * @method \Throwable|null getPrevious()
@@ -48,9 +64,7 @@ class WappointmentValidationException extends \Exception
     }
 }
 
-use Wappointment\ClassConnect\Arr;
-use Wappointment\ClassConnect\Collection;
-use Wappointment\ClassConnect\HigherOrderTapProxy;
+
 
 class WappointmentLv
 {

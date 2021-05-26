@@ -29,7 +29,7 @@ class Scheduler
             static::syncCalendarLegacy();
         } else {
             //TODO get only last 5 or 10 by updated_at asc
-            foreach (Calendars::all() as $calendar) {
+            foreach (Calendars::all(false, true) as $calendar) {
                 (new Availability($calendar))->syncAndRegen();
             }
         }
@@ -107,7 +107,7 @@ class Scheduler
             if (!VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES)) {
                 self::regenerateAvailability();
             } else {
-                foreach (Calendars::all() as $calendar) {
+                foreach (Calendars::all(false, true) as $calendar) {
                     (new Availability($calendar))->regenerate();
                 }
             }

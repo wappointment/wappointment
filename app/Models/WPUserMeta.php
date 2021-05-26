@@ -3,6 +3,7 @@
 namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
+use Wappointment\Services\Settings;
 
 class WPUserMeta extends Model
 {
@@ -20,8 +21,14 @@ class WPUserMeta extends Model
         }
     }
 
-    public static function getUserIdWithRoles($roles = ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'])
+    /**
+     * TODO most likely to remove
+     *
+     * @return void
+     */
+    public static function getUserIdWithRoles()
     {
+        $roles = Settings::get('calendar_roles');
         $wp_capabilities = [];
         foreach ($roles as $role) {
             $wp_capabilities[] = serialize([$role => true]);

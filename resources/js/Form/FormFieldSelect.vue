@@ -1,7 +1,7 @@
 <template>
     <div>
         <SearchDropdown v-model="updatedValue" :ph="label" :elements="elements" :extraClass="getExtraClass"
-             :idKey="idKey" :labelSearchKey="labelSearchKey" :flexWrap="flexWrap" :hasMulti="multi" :horizontal="horizontal"></SearchDropdown>
+             :idKey="idKey" :labelSearchKey="labelSearchKey" :flexWrap="flexWrap" :hasMulti="multi" :horizontal="horizontal" :groupKey="groupKey"></SearchDropdown>
         <div class="small text-danger" v-if="hasErrors">
             <div v-for="error in errors">
                 {{ error }}
@@ -20,6 +20,9 @@ export default {
     components: {SearchDropdown},
     props: {
         labelSearchKey: {
+            type: String,
+        },
+        groupKey: {
             type: String,
         },
         idKey: {

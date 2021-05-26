@@ -1,7 +1,7 @@
 <template>
     <div>
         <SearchStaff v-if="staffLoaded" v-model="staffId" :ph="labelDefault" :elements="staffsPassed" 
-            idKey="ID" labelSearchKey="display_name" @searching="searching" :displayElement="displayElementFunc" />
+            idKey="ID" labelSearchKey="display_name" groupKey="role" @searching="searching" :displayElement="displayElementFunc" />
         <div v-if="isEmailWithNoValue && isUserAdministrator" class="bg-secondary p-2 rounded mt-2 border border-primary">
             <h4 v-if="accountCreated === false">Create a new account? </h4>
             <h4 v-else class="text-success"><span class="dashicons dashicons-yes-alt"></span> Account Created </h4>

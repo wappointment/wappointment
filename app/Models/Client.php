@@ -5,6 +5,7 @@ namespace Wappointment\Models;
 use Wappointment\ClassConnect\Model;
 use Wappointment\Services\Settings;
 use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
+use Wappointment\ClassConnect\Carbon;
 
 class Client extends Model
 {
@@ -24,6 +25,13 @@ class Client extends Model
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
+    }
+
+    public function hasActiveBooking()
+    {
+        $start_at_string = Carbon::now('UTC')->format(WAPPOINTMENT_DB_FORMAT);
+        return Appointment::where('client_id', $this->id)
+            ->where('start_at', '>=', $start_at_string)->count();
     }
 
     public function getEmailAttribute($value)

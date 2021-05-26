@@ -3,7 +3,6 @@
 namespace Wappointment\Services;
 
 use Wappointment\Models\WPUser;
-use Wappointment\Models\WPUserMeta;
 use Wappointment\ClassConnect\Request;
 use Wappointment\WP\Staff as WPStaff;
 use Wappointment\WP\StaffLegacy;
@@ -52,7 +51,26 @@ class Staff
 
     public static function getWP($id = false)
     {
-        return $id === false ? WPUser::whereIn('ID', WPUserMeta::getUserIdWithRoles())->get() : WPUser::where('ID', (int)$id)->get();
+        $wp_users = $id === false ? static::getUserByRoles() : [static::getUserById($id)];
+
+        foreach ($wp_users as $key => $wp_user) {
+            $wp_users[$key] = WPUser::parseUserObject($wp_user);
+        }
+
+        return $wp_users;
+    }
+
+    public static function getUserByRoles()
+    {
+        return get_users(['role__in' => Settings::get('calendar_roles')]);
+    }
+
+    public static function getUserById($id)
+    {
+        return get_user_by('id', (int)$id);
+        return WPUser::whereIn('ID', [(int)$id])
+            ->select(['ID', 'user_login', 'user_nicename', 'display_name', 'user_email'])
+            ->get();
     }
 
     public static function getStaffId(Request $request)
