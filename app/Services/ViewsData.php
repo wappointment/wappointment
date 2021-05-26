@@ -280,7 +280,8 @@ class ViewsData
             'allow_staff_cf' => Settings::get('allow_staff_cf'),
             'cache' => Settings::get('cache'),
             'calendar_roles' => Settings::get('calendar_roles'),
-            'all_roles' => Permissions::getAllWpRoles()
+            'all_roles' => Permissions::getAllWpRoles(),
+            'max_active_bookings' => (int)Settings::get('max_active_bookings')
 
         ];
     }

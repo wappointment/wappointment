@@ -12,6 +12,10 @@ class Client
 
         $client = static::clientLoadAdd($booking);
 
+        if (static::maxActiveBookingReached($client)) {
+            throw new \WappointmentException(__('Max active bookings reached! Cancel one of your appointments in order to book a new one.', 'wappointment'), 1);
+        }
+
         //book with that client
         return $client->book($booking);
     }
@@ -24,6 +28,11 @@ class Client
         //book with that client
         return $client->bookLegacy($booking);
     }
+    protected static function maxActiveBookingReached(MClient $client)
+    {
+        $max_active_bookings = (int)Settings::get('max_active_bookings');
+        return $max_active_bookings > 0 && $client->hasActiveBooking() >= $max_active_bookings;
+    }
 
     protected static function clientLoadAdd(Booking $booking)
     {
@@ -32,6 +41,7 @@ class Client
         if (!empty($client) && !empty($client->deleted_at)) {
             $client->restore();
         }
+
         $dataClient = $booking->preparedData();
         if (empty($dataClient['name'])) {
             $dataClient['name'] = '';

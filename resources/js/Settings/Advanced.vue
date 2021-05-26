@@ -111,6 +111,17 @@
                   </label>
 
               </div>
+              <div class="mb-2">
+                <label class="form-check-label" for="max-active-booking" data-tt="Limit the number of active appointments a client can book with his email address">
+                  <div class="d-flex align-items-center">
+                    <input id="max-active-booking-active" 
+                      v-model="maxBookings" @change="toggleMaxBookings" type="checkbox" >Limit active bookings per client 
+                    <div class="input-group-sm mx-2">
+                      <input v-if="maxBookings" id="max-active-booking" v-model="viewData.max_active_bookings" 
+                      @change="changedMaxActive" class="form-control min-field" size="2" type="text">
+                    </div> </div>
+                </label>
+              </div>
             
           </div>
         </div>
@@ -158,52 +169,49 @@
           <hr/>
           <div class="d-flex align-items-center">
                 <InputValueCards ph="Email notifications are sent to" v-model="viewData.email_notifications" @changed="changedVD('email_notifications')" /> 
-            </div>
-            <div class="d-flex align-items-center mt-2">
-              <Checkbox :value="viewData.weekly_summary"  @changed="changedCheck('weekly_summary')"></Checkbox>
-              <label class="form-check-label">
-              Weekly summary <span v-if="viewData.weekly_summary">every 
-                <weekDays id="weekly-summary"  :selected="viewData.weekly_summary_day" @changed="changedDay"></weekDays> at 
-                <dayTime :selected="viewData.weekly_summary_time" @changed="changedTime" :timeFormat="viewData.time_format"></dayTime> 
-                <small class="text-muted">{{ viewData.timezone }}</small></span>
-              </label>
-            </div>
-            <div class="d-flex align-items-center mt-2">
-              <Checkbox :value="viewData.daily_summary"  @changed="changedCheck('daily_summary')"></Checkbox>
-              <label class="form-check-label" >
-              Daily summary <span v-if="viewData.daily_summary"> at 
-                <dayTime :selected="viewData.daily_summary_time" :timeFormat="viewData.time_format" @changed="changedDayTime"></dayTime>
-                <small class="text-muted">{{ viewData.timezone }}</small></span>
-              </label>
-            </div>
-            <div class="d-flex align-items-center mt-2">
-              <Checkbox :value="viewData.notify_new_appointments"  @changed="changedCheck('notify_new_appointments')"></Checkbox>
-              <label class="form-check-label">
-              New Appointments 
-              </label>
-            </div>
-            <div class="d-flex align-items-center mt-2">
-              <Checkbox :value="viewData.notify_canceled_appointments"  @changed="changedCheck('notify_canceled_appointments')"></Checkbox>
-              <label class="form-check-label">
-              Cancelled Appointments 
-              </label>
-            </div>
-            <div class="d-flex align-items-center mt-2">
-              <Checkbox :value="viewData.notify_rescheduled_appointments"  @changed="changedCheck('notify_rescheduled_appointments')"></Checkbox>
-              <label class="form-check-label">
-              Rescheduled Appointments 
-              </label>
-            </div>
-            <div class="mt-4">
-              <hr/>
-              <NotificationEmail :status="viewData.mail_status" @configureEmail="goToMailConfig"/>
-            </div>
-
-            
           </div>
+          <div class="d-flex align-items-center mt-2">
+            <Checkbox :value="viewData.weekly_summary"  @changed="changedCheck('weekly_summary')"></Checkbox>
+            <label class="form-check-label">
+            Weekly summary <span v-if="viewData.weekly_summary">every 
+              <weekDays id="weekly-summary"  :selected="viewData.weekly_summary_day" @changed="changedDay"></weekDays> at 
+              <dayTime :selected="viewData.weekly_summary_time" @changed="changedTime" :timeFormat="viewData.time_format"></dayTime> 
+              <small class="text-muted">{{ viewData.timezone }}</small></span>
+            </label>
+          </div>
+          <div class="d-flex align-items-center mt-2">
+            <Checkbox :value="viewData.daily_summary"  @changed="changedCheck('daily_summary')"></Checkbox>
+            <label class="form-check-label" >
+            Daily summary <span v-if="viewData.daily_summary"> at 
+              <dayTime :selected="viewData.daily_summary_time" :timeFormat="viewData.time_format" @changed="changedDayTime"></dayTime>
+              <small class="text-muted">{{ viewData.timezone }}</small></span>
+            </label>
+          </div>
+          <div class="d-flex align-items-center mt-2">
+            <Checkbox :value="viewData.notify_new_appointments"  @changed="changedCheck('notify_new_appointments')"></Checkbox>
+            <label class="form-check-label">
+            New Appointments 
+            </label>
+          </div>
+          <div class="d-flex align-items-center mt-2">
+            <Checkbox :value="viewData.notify_canceled_appointments"  @changed="changedCheck('notify_canceled_appointments')"></Checkbox>
+            <label class="form-check-label">
+            Cancelled Appointments 
+            </label>
+          </div>
+          <div class="d-flex align-items-center mt-2">
+            <Checkbox :value="viewData.notify_rescheduled_appointments"  @changed="changedCheck('notify_rescheduled_appointments')"></Checkbox>
+            <label class="form-check-label">
+            Rescheduled Appointments 
+            </label>
+          </div>
+          <div class="mt-4">
+            <hr/>
+            <NotificationEmail :status="viewData.mail_status" @configureEmail="goToMailConfig"/>
+          </div>
+        </div>
           
         <div class="mt-3" >
-          
           <button v-if="viewData.debug !== false" class="btn btn-danger btn-sm" @click="startResetConfirm">
             <span class="dashicons dashicons-image-rotate"></span> Uninstall
           </button>
@@ -251,6 +259,7 @@ export default {
   data() {
     return {
       viewName: 'settingsadvanced',
+      maxBookings:false,
       isToggled: {
         date_format : false,
         time_format : false,
@@ -273,6 +282,23 @@ export default {
     this.mainCrumbLabel = this.tablabel
   },
   methods: {
+    changedMaxActive(){
+      if(this.viewData.max_active_bookings<1){
+        this.maxBookings = false
+      }
+      this.changedVD('max_active_bookings', this.viewData.max_active_bookings>0? this.viewData.max_active_bookings:0)
+    },
+    toggleMaxBookings(){
+      let bookings = this.maxBookings? 1:0
+      this.viewData.max_active_bookings = bookings
+      this.changed(bookings, 'max_active_bookings')
+      
+    },
+    loaded(viewData){
+        this.viewData = viewData.data
+        this.$emit('fullyLoaded')
+        this.maxBookings = parseInt(this.viewData.max_active_bookings) > 0
+    },
     EditTextPage(){
       this.setCrumb('EditCancelPage', 'Edit Cancel/reschedule page', 'EditTextPage')
     },

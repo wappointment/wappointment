@@ -101,7 +101,8 @@ class Settings
             'force_ugly_permalinks' => false,
             'allow_staff_cf' => false,
             'cache' => false,
-            'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff']
+            'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'],
+            'max_active_bookings' => 0
         ];
     }
 
