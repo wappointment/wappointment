@@ -79,4 +79,19 @@ class Client extends Model
     {
         return [$this->email => sanitize_text_field($this->name)];
     }
+
+    public function generateOrder(Appointment $appointment)
+    {
+        //if pending order already exist, just get that one
+        $pendingOrder = Order::where('client_id', $this->id)->pending()->first();
+
+        if (empty($pendingOrder)) {
+            $pendingOrder = Order::create(['client_id' => $this->id]);
+        }
+
+        $pendingOrder->add($appointment);
+        $pendingOrder->refreshTotal();
+        $pendingOrder->load('prices');
+        return $pendingOrder;
+    }
 }

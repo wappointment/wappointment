@@ -770,6 +770,7 @@ export default {
                     options:"options",
                     appointmentKey:"appointmentKey",
                     appointmentData:"appointmentSavedData",
+                    order:"order",
                     service:"service"
                 },
                 listeners: {

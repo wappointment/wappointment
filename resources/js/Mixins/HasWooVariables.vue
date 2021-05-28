@@ -28,6 +28,14 @@ export default {
       return this.wooAddonActive ? this.wooCurrencyText:this.wappoCurrencyText
     }
   },
+  methods:{
+    displayPrice(priceValue){
+      return this.displayCents(priceValue)+this.currencySymb
+    },
+    displayCents(priceValue){
+      return (priceValue/100).toFixed(2)
+    }
+  }
 
 };
 </script>

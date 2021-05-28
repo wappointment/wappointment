@@ -31,6 +31,11 @@ class Service extends Model
         return $this->belongsToMany('Wappointment\Models\Location', 'wappo_service_location');
     }
 
+    public function isSold()
+    {
+        return !empty($this->options['woo_sellable']);
+    }
+
 
     public function hasDuration($duration)
     {
@@ -40,5 +45,14 @@ class Service extends Model
             }
         }
         throw new \WappointmentException("Error with duration", 1);
+    }
+
+    public function getDurationPriceId($duration)
+    {
+        foreach ($this->options['durations'] as $duration_row) {
+            if ($duration_row['duration'] == $duration && !empty($duration_row['price_id'])) {
+                return $duration_row['price_id'];
+            }
+        }
     }
 }

@@ -14,6 +14,16 @@ class Price extends Model
 
     protected $dates = ['deleted_at'];
     protected $table = 'wappo_prices';
-    protected $visible = ['id', 'reference_id', 'type', 'name', 'price', 'staff_id'];
-    protected $fillable = ['reference_id', 'type', 'name', 'price', 'staff_id'];
+    protected $visible = ['id', 'reference_id', 'type', 'name', 'price', 'staff_id', 'parent'];
+    protected $fillable = ['reference_id', 'type', 'name', 'price', 'staff_id', 'parent'];
+
+    public function scopeService($query)
+    {
+        return $query->where('type', static::TYPE_SERVICE);
+    }
+
+    public function scopePackage($query)
+    {
+        return $query->where('type', static::TYPE_PACKAGE);
+    }
 }

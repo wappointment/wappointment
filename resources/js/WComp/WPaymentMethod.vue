@@ -1,20 +1,16 @@
 <template>
     <div class="wtab" :class="{active: isActive }" @click="$emit('click', method.key)" role="button">
-        <div class="d-flex justify-content-around">
-          <WImage v-for="card in method.cards":image="getImage(card)" class="wstripe" :key="card"/>
-        </div>
-        <div class="d-flex wpowered align-items-center" v-if="method.desc">
-          <span v-if="method.desc" >{{ method.desc }}</span> 
-          <WImage v-if="method.logo" :image="getImage(method.key,'.png')" class="wstripe"/>
-        </div>
+        <WImage :image="getImage(method.key,'.png')" />
     </div>
 </template>
 
 <script>
 
 import WImage from './WImage'
+import GetImage from '../Mixins/GetImage'
 export default {
     components:{WImage},
+    mixins: [GetImage],
     props:{
       method:{
         type: Object
@@ -28,21 +24,10 @@ export default {
         return this.active == this.method.key
       }
     },
-    methods: {
-      getImage(method, ext = '.svg'){
-        return {
-          icon: 'methods/' + method + (method.indexOf('.') === -1 ? ext:''),
-          alt: method,
-          title: method
-        }
-      },
-    },
 }
 </script>
 <style >
-.wstripe{
-  max-width: 34px;
-}
+
 .wtab{
   max-width: 34%;
   padding: .2em;
@@ -61,16 +46,10 @@ export default {
 }
 .wtab img {
     filter: grayscale(1);
-    max-height: 22px;
 }
 .wtab.active img,
 .wtab:hover img{
   filter: grayscale(0);
 }
-.wpowered{
-  font-size:10px;
-}
-.wpowered .img-fluid.wstripe[alt="paypal"] {
-    max-height: 14px;
-}
+
 </style>

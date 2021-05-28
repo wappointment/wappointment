@@ -21,6 +21,7 @@ class CreatePricesTable extends Wappointment\Installation\Migrate
             $table->unsignedInteger('reference_id'); //refer to a pack or a service
             $table->unsignedInteger('staff_id')->nullable()->default(null);
             $table->unsignedMediumInteger('price')->nullable();
+            $table->unsignedInteger('parent')->nullable()->default(null);
             $table->softDeletes();
             $table->timestamps();
         });

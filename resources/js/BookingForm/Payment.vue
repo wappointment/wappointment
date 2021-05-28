@@ -1,10 +1,23 @@
 <template>
     <div>
       <div class="wdescription" v-if="hasPaidDurations">Payment time!</div>
-      <div class="wdescription">Your appointment time is reserved for the next 20 minutes giving you time to pay</div>
+      <div class="witem" v-for="charge in order.prices">
+      {{ charge.price.name }} : {{ displayPrice(charge.price.price) }}
+      </div>
       <WPaymentMethods :methods="methods" @selected="selected" />
-      <div class="wpayment">
-        <component :is="activeMethod" :crumb="false" />
+      <div class="wpayment" v-if="activeMethod">
+        <component :is="activeMethod" />
+        <div class="wfooter">
+          <div class="wtotal">
+            Total: <strong>{{ displayPrice(order.total) }}</strong>
+          </div>
+          <div class="d-flex wcards" v-if="selectedMethod.cards!== undefined">
+            <WImage v-for="card in selectedMethod.cards":image="getImage(card)" class="wcard" :key="card"/>
+          </div>
+          <div class="d-flex wpowered align-items-center" v-if="selectedMethod.desc">
+            <span v-if="selectedMethod.desc" >{{ selectedMethod.desc }}</span> 
+          </div>
+        </div>
       </div>
     </div>
 </template>
@@ -14,13 +27,17 @@ import OrderService from '../Services/V1/Order'
 import AbstractFront from './AbstractFront'
 import IsDemo from '../Mixins/IsDemo'
 import HasWooVariables from '../Mixins/HasWooVariables'
+import GetImage from '../Mixins/GetImage'
 import HasPaidService from '../Mixins/HasPaidService'
 import WPaymentMethods from '../WComp/WPaymentMethods'
+import WImage from '../WComp/WImage'
+import CanLoadScriptAsync from '../Mixins/CanLoadScriptAsync'
+
 export default {
     extends: AbstractFront,
-    mixins:[IsDemo, HasWooVariables, HasPaidService],
-    props: ['options', 'relations', 'appointmentKey', 'appointmentData', 'service'],
-    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods } ),
+    mixins:[IsDemo, HasWooVariables, HasPaidService, GetImage],
+    props: ['options', 'relations', 'appointmentKey', 'appointmentData', 'service', 'order'],
+    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage }, {asyncLoad: CanLoadScriptAsync} ),
      data: () => ({
         servicesOrder: null,
         activeMethod: '',
@@ -28,18 +45,15 @@ export default {
           {
             key: 'stripe',
             cards: ['visa', 'mastercard', 'amex'],
-            desc: 'Pay safely with',
-            logo: true,
+            desc: 'Pay securely with Stripe',
           },
           {
             key: 'paypal',
             cards: ['visa', 'mastercard', 'amex'],
-            desc: 'Pay safely with',
-            logo: true
+            desc: 'Pay securely with Paypal',
           },
           {
             key: 'onsite',
-            cards: ['onsite.png'],
             desc: 'Pay later on site'
           }
         ]
@@ -49,7 +63,14 @@ export default {
     },
 
     computed: {
-      
+      selectedMethod(){
+        let activeMethod = this.activeMethod
+        if(activeMethod == ''){
+          return false
+        }
+        return this.methods.find(e => e.key == activeMethod)
+        
+      },
       getAppointmentReservedString(){
         //return this.options.woo_payment.slot_reserved.replace('[minutes]', this.reserved_for) 
       },
@@ -64,6 +85,7 @@ export default {
       }
     },
     methods: {
+      
       selected(methodKey){
         this.activeMethod = methodKey
       },
@@ -107,5 +129,25 @@ export default {
   min-height: 200px;
   border: 2px solid var(--wappo-sec-bg);
   border-radius: .2em;
+  position:relative;
+  padding: .4em;
 }
+.witem{
+  font-size:.7em;
+}
+
+.wpowered{
+  font-size:10px;
+}
+.wcards{
+  height: 25px;
+}
+.wcard{
+  margin-right: .2em;
+}
+.wfooter{
+  position: absolute;
+  bottom: 0;
+}
+
 </style>

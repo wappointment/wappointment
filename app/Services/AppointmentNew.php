@@ -82,7 +82,7 @@ class AppointmentNew
         return $addedEvent;
     }
 
-    public static function getLocation($location, $appointment)
+    public static function getLocation($locationLegacy, $appointment)
     {
         $location = static::getAppointmentLocation($appointment);
 
@@ -126,7 +126,18 @@ class AppointmentNew
         return Central::get('AppointmentModel');
     }
 
-    public static function create($data)
+    public static function create($data, Client $client)
+    {
+        $appointment = static::createAppointment($data);
+        $order = null;
+        if ($client->bookingRequest->getService()->isSold()) {
+            $appointment->hydrateService($client->bookingRequest->getService());
+            $order = $client->generateOrder($appointment);
+        }
+        return ['appointment' => $appointment, 'client' => $client, 'order' => $order];
+    }
+
+    protected static function createAppointment($data)
     {
         if (empty($data['options']) || !is_array($data['options'])) {
             $data['options'] = [];
@@ -294,15 +305,14 @@ class AppointmentNew
 
     protected static function book($data, Client $client, $is_admin = false)
     {
-        $appointment = static::create($data);
+        $dataReturn = static::create($data, $client);
 
-        if ($appointment->status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION) {
-            Events::dispatch('AppointmentBookedEvent', ['appointment' => $appointment, 'client' => $client]);
+        if ($dataReturn['appointment']->status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION) {
+            Events::dispatch('AppointmentBookedEvent', $dataReturn);
         } else {
-            Events::dispatch('AppointmentConfirmedEvent', ['appointment' => $appointment, 'client' => $client]);
+            Events::dispatch('AppointmentConfirmedEvent', $dataReturn);
         }
 
-        //return $appointment;
         //if availability has not been refreshed for a while we refresh it now otherwise we queue a job for it
         if (!defined('DISABLE_WP_CRON') || $is_admin === true) {
             //when web cron is disabled we need an immediate refresh of availability
@@ -323,8 +333,8 @@ class AppointmentNew
             //we immediately spawn a process to trigger availability regenerate in the back
             WPHelpers::cronTrigger();
         }
-
-        return $appointment;
+        return $dataReturn;
+        //return $appointment;
     }
 
     public static function tryCancel($edit_key)
@@ -368,6 +378,10 @@ class AppointmentNew
 
     protected static function getDefaultStatus($service)
     {
+        if ($service->isSold()) {
+            return static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
+        }
+
         $default_status = ((int) Settings::get('approval_mode') === 1) ?
             static::getAppointmentModel()::STATUS_CONFIRMED : static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
 

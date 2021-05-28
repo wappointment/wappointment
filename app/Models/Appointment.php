@@ -33,6 +33,8 @@ class Appointment extends Model
 
     protected $appends = ['duration_sec', 'location_label'];
 
+    protected $services = [];
+
     public function getStaff()
     {
         if (VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES)) {
@@ -119,6 +121,7 @@ class Appointment extends Model
     {
         return $this->belongsTo(Service::class, 'service_id');
     }
+
     public function location()
     {
         return $this->belongsTo(Location::class, 'location_id');
@@ -407,5 +410,53 @@ class Appointment extends Model
             $toDotcom['skype']  = $this->client->getSkype();
         }
         return $toDotcom;
+    }
+
+    public function getDurationId()
+    {
+        $ids = [];
+        foreach ($this->services as $service) {
+            $ids[] = $service->getDurationPriceId($this->getDurationInSec() / 60);
+        }
+        return $ids;
+    }
+
+    public function getServicesPrices()
+    {
+        $staff_id = $this->staff_id;
+
+        $duration_ids = $this->getDurationId();
+        //get prices where duration_id is found in id or parent
+        $query = Price::service();
+        $query->where(function ($query) use ($duration_ids) {
+            $query->whereIn('parent', $duration_ids);
+            $query->orWhereIn('id', $duration_ids);
+        });
+
+        $allPrices = $query->where(function ($query) use ($staff_id) {
+            $query->whereNull('staff_id');
+            $query->orWhere('staff_id', $staff_id);
+        })->get();
+
+        return $this->filterPrices($allPrices);
+    }
+
+    public function filterPrices($prices)
+    {
+        //remove overriden prices
+        $getOverridedIds = $prices->filter(function ($e) {
+            return !empty($e->staff_id);
+        })->map(function ($e) {
+            return $e->parent;
+        });
+        $overridedIds = array_values($getOverridedIds->toArray());
+        return $prices->filter(function ($e) use ($overridedIds) {
+            return !in_array($e->id, $overridedIds);
+        });
+    }
+
+    public function hydrateService($services)
+    {
+        $this->services = !is_array($services) ? [$services] : $services;
     }
 }

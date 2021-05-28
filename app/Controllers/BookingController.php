@@ -21,10 +21,12 @@ class BookingController extends RestController
         }
 
         $result = Client::book($booking);
-        if (isset($result['errors'])) {
-            return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['errors']);
+        if (isset($result['appointment']['errors'])) {
+            return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['appointment']['errors']);
         }
-        return ['result' => true, 'appointment' => (new \Wappointment\ClassConnect\Collection($result->toArraySpecial()))->except(['id', 'client_id'])];
+        $result['result'] = true;
+        $result['appointment'] = (new \Wappointment\ClassConnect\Collection($result['appointment']->toArraySpecial()))->except(['id', 'client_id']);
+        return $result;
     }
 
     public function adminBook(BookingAdmin $booking)

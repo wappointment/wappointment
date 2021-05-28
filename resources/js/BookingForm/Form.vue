@@ -239,25 +239,27 @@ export default {
         }, 
 
         appointmentBooked(result){
-            console.log('result',result)
             if(result.data.result !== undefined){
-                
-                this.$emit('confirmed', 
-                this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(), 
-                {
-                    appointmentSavedData: result.data.appointment, 
+                let data ={
+                    appointmentSavedData: result.data.appointment,
+                    order: result.data.order,
                     isApprovalManual: result.data.status == 0, 
                     appointmentSaved: true, 
                     appointmentKey: result.data.appointment.edit_key, 
                     loading: false
-                })
+                }
+                console.log('data',data)
+                this.$emit('confirmed', 
+                this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
+                data
+                )
             }else{
                 this.$emit('loading', {loading:false})
                 this.appointmentBookingError({message: 'Error in booking request response'})
             }
         },
 
-        getAddonNextScreen(){
+        getAddonNextScreen(result){
             return window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, {result:result, service: this.service} )
         },
 
