@@ -807,7 +807,7 @@ export default {
           this.queryParameters = {
               page: 'wappointment_calendar',
               start: this.firstDay.format(),
-              end: this.lastDay.format(),
+              end: this.firstDay.clone().day(8).format(),
               timezone: this.displayTimezone,
               staff: this.activeStaff.id,
             }

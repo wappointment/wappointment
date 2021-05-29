@@ -117,7 +117,7 @@ class Segment
             if ($debug) {
                 echo  "---- [substract] CONTAINS \n" . '[main]' . $this->debugSegment($main) . "\n";
             }
-            unset($mainSegments[$i]);
+            $mainSegments[$i] = null;
         } else { // part of the section is must be available
             $diff = $main->difference($substract);
             $start_array = array_slice($mainSegments, 0, $i); // we just remove the section needed

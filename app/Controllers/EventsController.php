@@ -206,6 +206,7 @@ class EventsController extends RestController
         $ends_at_carbon = DateTime::timeZToUtc($request->input('end'))->setTimezone('UTC');
         $start_at_string = DateTime::timeZToUtc($request->input('start'))->setTimezone('UTC')->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $ends_at_carbon->format(WAPPOINTMENT_DB_FORMAT);
+
         $events = [];
         $appointments = Appointment::adminCalendarGetAppointments([
             'start_at' => $start_at_string,
