@@ -5,9 +5,6 @@
  * simply copy and modify the code for your own needs
  * in your active theme's functions.php for instance
  */
-if (!defined('WAPPO_NEVER_DEFINED')) {
-    exit;
-}
 
 /**
  * functions triggered when an appointment is pending, confirmed, canceled and rescheduled

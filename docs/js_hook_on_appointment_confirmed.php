@@ -5,9 +5,6 @@
  * simply copy and modify the code for your own needs
  * in your active theme's functions.php for instance
  */
-if (!defined('WAPPO_NEVER_DEFINED')) {
-    exit;
-}
 
 /**
  * you can add a similar function to your theme's functions.php file in order to
