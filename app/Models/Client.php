@@ -86,7 +86,7 @@ class Client extends Model
         $pendingOrder = Order::where('client_id', $this->id)->pending()->first();
 
         if (empty($pendingOrder)) {
-            $pendingOrder = Order::create(['client_id' => $this->id]);
+            $pendingOrder = Order::create(['client_id' => $this->id, 'transaction_id' => uniqid('onsite_' . $this->id)]);
         }
 
         $pendingOrder->add($appointment);

@@ -17,13 +17,28 @@ class Price extends Model
     protected $visible = ['id', 'reference_id', 'type', 'name', 'price', 'staff_id', 'parent'];
     protected $fillable = ['reference_id', 'type', 'name', 'price', 'staff_id', 'parent'];
 
-    public function scopeService($query)
+    public function scopeIsService($query)
     {
         return $query->where('type', static::TYPE_SERVICE);
     }
 
-    public function scopePackage($query)
+    public function scopeIsPackage($query)
     {
         return $query->where('type', static::TYPE_PACKAGE);
+    }
+
+    public function reference()
+    {
+        return (int)$this->type === static::TYPE_SERVICE ? $this->service() : $this->package();
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
+    }
+
+    public function package()
+    {
+        return $this->belongsTo(Package::class, 'package_id');
     }
 }

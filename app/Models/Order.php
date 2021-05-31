@@ -4,17 +4,21 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
+use Wappointment\Services\AppointmentNew;
 
 class Order extends Model
 {
     use SoftDeletes;
 
     protected $table = 'wappo_orders';
-
-    protected $fillable = [
-        'transaction_id', 'status', 'total', 'refunded_at', 'client_id'
-    ];
+    protected $fillable = ['transaction_id', 'status', 'total', 'refunded_at', 'client_id'];
     protected $with = ['prices'];
+
+    const STATUS_PENDING = 0;
+    const STATUS_PROCESSING = 1;
+    const STATUS_COMPLETED = 2;
+    const STATUS_CANCELLED = -1;
+    const STATUS_REFUNDED = -2;
 
     public function client()
     {
@@ -26,13 +30,47 @@ class Order extends Model
         return $query->where('status', 0);
     }
 
+    public function setProcessing()
+    {
+        $this->status = static::STATUS_PROCESSING;
+    }
+
+    public function setCompleted()
+    {
+        $this->status = static::STATUS_COMPLETED;
+    }
+
+    public function setCancelled()
+    {
+        $this->status = static::STATUS_CANCELLED;
+    }
+
+    public function setRefund()
+    {
+        $this->status = static::STATUS_REFUNDED;
+    }
+
     public function prices()
     {
         return $this->hasMany('Wappointment\Models\OrderPrice', 'order_id');
     }
 
+    public function clearLastAdded()
+    {
+        $appointment_ids = [];
+        $charge_ids = [];
+        foreach ($this->prices as $charge) {
+            $appointment_ids[] = $charge->appointment_id;
+            $charge_ids[] = $charge->id;
+        }
+
+        AppointmentNew::silentCancel($appointment_ids, $charge_ids);
+    }
+
     public function add(Appointment $appointment)
     {
+        //clear all prices by cancel previously placed appointment silently
+        $this->clearLastAdded();
         $prices = $appointment->getServicesPrices();
 
         foreach ($prices as $price) { //TODO insert many rows at once

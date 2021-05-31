@@ -427,7 +427,7 @@ class Appointment extends Model
 
         $duration_ids = $this->getDurationId();
         //get prices where duration_id is found in id or parent
-        $query = Price::service();
+        $query = Price::isService();
         $query->where(function ($query) use ($duration_ids) {
             $query->whereIn('parent', $duration_ids);
             $query->orWhereIn('id', $duration_ids);

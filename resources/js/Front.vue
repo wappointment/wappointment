@@ -261,6 +261,10 @@ export default {
   text-transform: none;
 }
 
+.wap-front .wbtn-block{
+  width: 100%;
+}
+
 
   .wap-front .wbtn:hover, 
   .wap-front .wbtn:focus {

@@ -35,6 +35,10 @@ class Main extends AbstractRoutes
                     'method' => 'save',
                     'hint' => 'LegacyBooking'
                 ],
+                '/order/confirm' => [
+                    'controller' => 'OrderController',
+                    'method' => 'confirm',
+                ],
             ],
             'PATCH' => [
                 '/booking' => [

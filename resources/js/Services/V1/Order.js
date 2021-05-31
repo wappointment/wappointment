@@ -8,9 +8,13 @@ export default class OrderService{
                 method: 'post', 
                 route: '/order/create',
             },
-            payd: {
+            pay: {
                 method: 'post', 
                 route: '/order/pay'
+            }, 
+            confirm: {
+                method: 'post', 
+                route: '/order/confirm'
             }, 
         };
     }

@@ -664,7 +664,7 @@ export default {
                         loading: 'childChangedData',
                     },
                     relations:{
-                        'next': 'BookingFormInputs',
+                        next: 'BookingFormInputs',
                     }
                 },
                 RescheduleConfirm: {
@@ -687,8 +687,8 @@ export default {
                         serviceError: 'serviceError'
                     },
                     relations:{
-                        'next': 'BookingFormConfirmation',
-                        'prev': 'BookingCalendar',
+                        next: 'BookingFormConfirmation',
+                        prev: 'BookingCalendar',
                     }
                 },
                 BookingFormInputs: {
@@ -721,8 +721,8 @@ export default {
                         serviceError: 'serviceError'
                     },
                     relations:{
-                        'next': 'BookingFormConfirmation',
-                        'prev': 'BookingCalendar',
+                        next: 'BookingFormConfirmation',
+                        prev: 'BookingCalendar',
                     }
                 },
                 
@@ -779,8 +779,8 @@ export default {
                     loading: 'childChangedData',
                 },
                 relations: {
-                prev: 'BookingFormInputs',
-                next: 'BookingFormConfirmation'
+                    prev: 'BookingFormInputs',
+                    next: 'BookingFormConfirmation'
                 }
             }
             return componentsList
@@ -811,7 +811,7 @@ export default {
                     staffSelected:'changeStaff'
                 },
                 relations:{
-                    'next': 'BookingServiceSelection',
+                    next: 'BookingServiceSelection',
                 }
             }
             
@@ -832,7 +832,7 @@ export default {
                     serviceSelected:'childChangedStep'
                 },
                 relations:{
-                    'next': 'BookingDurationSelection',
+                    next: 'BookingDurationSelection',
                 }
             }
 
@@ -853,8 +853,8 @@ export default {
                     backToService:'childChangedStep'
                 },
                 relations:{
-                    'next': 'BookingLocationSelection',
-                    'prev': 'BookingServiceSelection',
+                    next: 'BookingLocationSelection',
+                    prev: 'BookingServiceSelection',
                 }
             }
 
@@ -876,8 +876,8 @@ export default {
                     backToDuration:'childChangedStep'
                 },
                 relations:{
-                    'next': 'BookingCalendar',
-                    'prev': 'BookingDurationSelection',
+                    next: 'BookingCalendar',
+                    prev: 'BookingDurationSelection',
                 }
             }
             return componentsList

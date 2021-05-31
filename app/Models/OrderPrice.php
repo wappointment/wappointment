@@ -3,12 +3,9 @@
 namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
-use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
 
 class OrderPrice extends Model
 {
-    use SoftDeletes;
-
     protected $table = 'wappo_order_price';
 
     protected $fillable = [

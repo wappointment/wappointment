@@ -2,7 +2,7 @@
 
 <template>
     <div class="wtabs d-flex">
-        <WPaymentMethod v-for="method in methods" :key="method.key" :method="method" :active="active" @click="clicked"/>
+        <WPaymentMethod v-if="methods.length > 1" v-for="method in methods" :key="method.key" :method="method" :active="active" @click="clicked"/>
     </div>
 </template>
 

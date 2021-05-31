@@ -7,6 +7,7 @@ use Wappointment\Models\Location;
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Helpers\Events;
 use Wappointment\Managers\Central;
+use Wappointment\Models\OrderPrice;
 use Wappointment\WP\Helpers as WPHelpers;
 
 class AppointmentNew
@@ -365,15 +366,53 @@ class AppointmentNew
         \Wappointment\Models\Log::canceledAppointment($appointment);
 
         $client = $appointment->client()->first();
-        $staff_id_regenerate = $appointment->getStaffId();
+        static::clearCharges([$appointment->id]);
+        $staff_id = static::destroy($appointment);
+        if ($staff_id) {
+            (new Availability($staff_id))->regenerate();
+            Events::dispatch('AppointmentCanceledEvent', ['appointment' => $appointment, 'client' => $client]);
+            return true;
+        }
+        return false;
+    }
+
+    public static function destroy($appointment)
+    {
+        $staff_id = $appointment->getStaffId();
         $appointment->incrementSequence();
         $result = $appointment->destroy($appointment->id);
+        return $result ? $staff_id : false;
+    }
 
-        if ($result) {
-            (new Availability($staff_id_regenerate))->regenerate();
-            Events::dispatch('AppointmentCanceledEvent', ['appointment' => $appointment, 'client' => $client]);
+    public static function clearCharges($appointment_ids = [], $charge_ids = [])
+    {
+        if (!empty($charge_ids)) {
+            return OrderPrice::destroy($charge_ids);
         }
-        return $result;
+        $prim_ids = OrderPrice::select('id')->whereIn('appointment_id', $appointment_ids)->get()->map(function ($e) {
+            return $e->id;
+        })->toArray();
+        OrderPrice::destroy($prim_ids);
+    }
+
+    public static function silentCancel($appointment_ids = [], $charge_ids = [])
+    {
+
+        static::clearCharges($appointment_ids, $charge_ids);
+        $appointments = AppointmentModel::whereIn('id', $appointment_ids)->get();
+        $staff_ids = [];
+        foreach ($appointments as $appointment) {
+            $staff_id = static::destroy($appointment);
+            if ($staff_id && !in_array($staff_id, $staff_ids)) {
+                $staff_ids[] = $staff_id;
+            }
+        }
+
+        if (!empty($staff_ids)) {
+            foreach ($staff_ids as $staff_id) {
+                (new Availability($staff_id))->regenerate();
+            }
+        }
     }
 
     protected static function getDefaultStatus($service)
