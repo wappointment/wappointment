@@ -281,8 +281,8 @@ class ViewsData
             'cache' => Settings::get('cache'),
             'calendar_roles' => Settings::get('calendar_roles'),
             'all_roles' => Permissions::getAllWpRoles(),
-            'max_active_bookings' => (int)Settings::get('max_active_bookings')
-
+            'max_active_bookings' => (int)Settings::get('max_active_bookings'),
+            'autofill' => (int)Settings::get('autofill')
         ];
     }
 

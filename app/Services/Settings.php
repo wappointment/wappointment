@@ -102,7 +102,8 @@ class Settings
             'allow_staff_cf' => false,
             'cache' => false,
             'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'],
-            'max_active_bookings' => 0
+            'max_active_bookings' => 0,
+            'autofill' => true
         ];
     }
 

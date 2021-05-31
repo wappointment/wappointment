@@ -189,7 +189,7 @@ export default {
             this.phoneId = id
         },
         tryPrefill(){
-            if(window.apiWappointment.wp_user !== undefined){
+            if(window.apiWappointment.wp_user !== undefined && window.apiWappointment.wp_user.autofill){
                 this.bookingFormExtended.email = window.apiWappointment.wp_user.email
                 if(this.bookingFormExtended.name !== undefined){
                     this.bookingFormExtended.name = window.apiWappointment.wp_user.name
