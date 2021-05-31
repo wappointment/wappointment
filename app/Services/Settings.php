@@ -103,7 +103,8 @@ class Settings
             'currency' => 'USD',
             'services_sold' => false,
             'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'],
-            'max_active_bookings' => 0
+            'max_active_bookings' => 0,
+            'autofill' => true
         ];
     }
 

@@ -153,7 +153,7 @@ export default {
         },
 
         tryPrefill(){
-            if(window.apiWappointment.wp_user !== undefined){
+            if(window.apiWappointment.wp_user !== undefined && window.apiWappointment.wp_user.autofill){
                 this.bookingForm.email = window.apiWappointment.wp_user.email
                 this.bookingForm.name = window.apiWappointment.wp_user.name
             }

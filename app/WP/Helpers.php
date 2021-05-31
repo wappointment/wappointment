@@ -78,7 +78,8 @@ class Helpers
         return [
             'email' => $wp_user->user_email,
             'name' => $wp_user->display_name,
-            'permissions' => array_keys($wp_user->allcaps)
+            'permissions' => array_keys($wp_user->allcaps),
+            'autofill' => Settings::get('autofill')
         ];
     }
 

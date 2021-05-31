@@ -111,34 +111,28 @@
                   </label>
 
               </div>
-              <div class="mb-2">
-                <label class="form-check-label" for="max-active-booking" data-tt="Limit the number of active appointments a client can book with his email address">
-                  <div class="d-flex align-items-center">
-                    <input id="max-active-booking-active" 
-                      v-model="maxBookings" @change="toggleMaxBookings" type="checkbox" >Limit active bookings per client 
-                    <div class="input-group-sm mx-2">
-                      <input v-if="maxBookings" id="max-active-booking" v-model="viewData.max_active_bookings" 
-                      @change="changedMaxActive" class="form-control min-field" size="2" type="text">
-                    </div> </div>
-                </label>
-              </div>
-            
           </div>
         </div>
         <div class="card p-2 px-3">
           <div class="h5">Edge use cases</div>
           <hr/>
-          <div>
-            <label for="roles-allowed" class="m-0">Users listed for calendars creation</label>
-            <div class="small text-muted">In Wappointment > Settings > Calendars & Staff</div>
-            <FormFieldSelect :multi="true" :horizontal="true" v-model="viewData.calendar_roles" :elements="viewData.all_roles" 
-            idKey="key" labelSearchKey="name" ph="Select roles allowed" @change="changedRoles" />
+          
+          <div class="mb-2">
+            <label class="form-check-label" for="max-active-booking" data-tt="Limit the number of active appointments a client can book with his email address">
+              <div class="d-flex align-items-center">
+                <input id="max-active-booking-active" 
+                  v-model="maxBookings" @change="toggleMaxBookings" type="checkbox" >Limit active bookings per client 
+                <div class="input-group-sm mx-2">
+                  <input v-if="maxBookings" id="max-active-booking" v-model="viewData.max_active_bookings" 
+                  @change="changedMaxActive" class="form-control min-field" size="2" type="text">
+                </div> </div>
+            </label>
           </div>
           <div class="mb-2">
-              <label class="form-check-label" for="allow-staffcf" data-tt="Create fields describing your staff to be used in emails and SMS">
+              <label class="form-check-label" for="allow-autofill" data-tt="If a user is logged in on your site, we'll prefill the booking form's fields">
                   <div class="d-flex align-items-center">
-                    <input type="checkbox" v-model="viewData.allow_staff_cf" id="allow-staffcf" @change="changedVD('allow_staff_cf')">
-                    Allow staff's advanced description
+                    <input type="checkbox" v-model="viewData.autofill" id="allow-autofill" @change="changedVD('autofill')">
+                    Autofill booking form for logged in users
                   </div>
               </label>
           </div>
@@ -152,6 +146,20 @@
                 </button>
               </div>
             </label>
+          </div>
+          <div class="mb-2">
+              <label class="form-check-label" for="allow-staffcf" data-tt="Create fields describing your staff to be used in emails and SMS">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.allow_staff_cf" id="allow-staffcf" @change="changedVD('allow_staff_cf')">
+                    Allow staff's advanced description
+                  </div>
+              </label>
+          </div>
+          <div>
+            <label for="roles-allowed" class="m-0">Users listed for calendars creation</label>
+            <div class="small text-muted">In Wappointment > Settings > Calendars & Staff</div>
+            <FormFieldSelect :multi="true" :horizontal="true" v-model="viewData.calendar_roles" :elements="viewData.all_roles" 
+            idKey="key" labelSearchKey="name" ph="Select roles allowed" @change="changedRoles" />
           </div>
           <div class="mt-3">
             <a v-if="viewData.front_page_type == 'page'" :href="'post.php?post='+viewData.front_page_id+'&action=edit'" target="_blank">

@@ -5,13 +5,13 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.2.2</span>   
-                <span class="ml-2">Bug fixes on Calendar Sync</span>
+                <span>V2.2.3</span>   
+                <span class="ml-2">Limit Active booking and bug fix</span>
             </h3>
-            <h5>Changelog 2.2.2</h5>
+            <h5>Changelog 2.2.3</h5>
             <ol>
-                <li>fixed calendar synch not being refreshed automatically</li>
-                <li>Reminder emails contain now direct link to Zoom Meeting or Google Meet video appointments </li>
+                <li>added setting "Limit active bookings" per client, in order to avoid over booking from one single person</li>
+                <li>fixed availability calculation issue with big busy slots</li>
             </ol>
             <hr/>
             <div>

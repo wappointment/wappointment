@@ -31,18 +31,18 @@ export default {
 
       isBusy(){
         if(this.getThisWeekIntervals!==0) {
-          for (let index = 0; index < this.getThisWeekIntervals.intervals.length; index++) {
-            const element = this.getThisWeekIntervals.intervals[index]
-            if(
-              this.selectWraps(element) ||
-              this.selectIntersectsLeft(element) ||
-              this.selectIntersectsRight(element) ||
-              this.selectIsWithin(element)
-            ){
-              return false
-            }
+            for (let index = 0; index < this.getThisWeekIntervals.intervals.length; index++) {
+              const element = this.getThisWeekIntervals.intervals[index]
+              if(
+                this.selectWraps(element) ||
+                this.selectIntersectsLeft(element) ||
+                this.selectIntersectsRight(element) ||
+                this.selectIsWithin(element)
+              ){
+                return false
+              }
 
-          }
+            }
         }
         
         return true
@@ -56,8 +56,10 @@ export default {
       && selEnd.unix() <= element.end
     },
     selectWraps(element){
-      return this.startTime.unix() <= element.start 
-      && this.endTime.unix() >= element.end
+      let selStart = this.momenttz.tz(this.startTime.format(), this.timezone)
+      let selEnd = this.momenttz.tz(this.endTime.format(), this.timezone)
+      return selStart.unix() <= element.start 
+      && selEnd.unix() >= element.end
     },
     selectIntersectsLeft(element){
       return this.startTime.unix() < element.start 
