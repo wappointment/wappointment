@@ -246,7 +246,6 @@ import NotificationEmail from '../Notification/Email'
 import InputValueCards from '../Fields/InputValueCards'
 import FormFieldSelect from '../Form/FormFieldSelect'
 
-
 export default {
   extends: abstractView,
   props:['tablabel'],

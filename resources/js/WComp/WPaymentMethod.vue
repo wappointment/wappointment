@@ -46,6 +46,7 @@ export default {
 }
 .wtab img {
     filter: grayscale(1);
+    max-width: 70px;
 }
 .wtab.active img,
 .wtab:hover img{
