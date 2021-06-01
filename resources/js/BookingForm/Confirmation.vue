@@ -102,7 +102,9 @@ export default {
                 appointment: {start:this.appointment.start_at, end:this.appointment.end_at, key:this.appointment.edit_key}, 
                 modality: this.appointment.location_label, 
                 service: this.service.name, 
-                staff: this.staff.n} )
+                staff: this.staff.n,
+                client: this.result
+                } )
         }
     },
     computed: {
