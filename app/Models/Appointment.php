@@ -395,7 +395,9 @@ class Appointment extends Model
             'timezone' => $timezone,
             'emails' => [
                 $this->client->email
-            ]
+            ],
+            'cancellink' => $this->getLinkCancelEvent(),
+            'reschedulelink' => $this->getLinkRescheduleEvent(),
         ];
         if ($this->isZoom()) {
             $toDotcom['viewlink']  = $this->getLinkViewEvent();
