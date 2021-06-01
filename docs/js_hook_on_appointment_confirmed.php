@@ -17,10 +17,11 @@
 function my_wappo_footer_function()
 {
 
-    echo '<script>';
-    echo "document.addEventListener('wappo_confirmed', function (e) {
-            window.location.replace('https://mysite.com/myurl');
-          }, false);";
-    echo '</script>';
+  echo '<script>';
+  echo "document.addEventListener('wappo_confirmed', function (e) {
+              // window.location.replace('https://mysite.com/myurl');
+              console.log('appointment Data', e.wdata )
+            }, false);";
+  echo '</script>';
 }
 add_action('wp_print_footer_scripts', 'my_wappo_footer_function');
