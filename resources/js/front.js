@@ -23,9 +23,17 @@ Vue.component('v-style', {
 Vue.mixin({
     methods: {
 
-        triggerWEvent(eventName){
-            const event = document.createEvent('Event')
-            event.initEvent(eventName, true, true)
+        triggerWEvent(eventName, eventData){
+            let event = null
+            if(typeof(Event) === 'function') {
+                event = new Event(eventName)
+            }else{
+                event = document.createEvent('Event')
+                event.initEvent(eventName, true, true)
+            }
+            
+            event.wdata = eventData
+            console.log('event',event.wdata)
             document.dispatchEvent(event)
         }
     }

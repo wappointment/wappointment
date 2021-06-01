@@ -98,7 +98,11 @@ export default {
         if(this.options.demoData !== undefined){
             this.options.eventsBus.listens('dataDemoChanged', this.dataChanged)
         }else{
-            this.triggerWEvent('wappo_confirmed')
+            this.triggerWEvent('wappo_confirmed', {
+                appointment: {start:this.appointment.start_at, end:this.appointment.end_at, key:this.appointment.edit_key}, 
+                modality: this.appointment.location_label, 
+                service: this.service.name, 
+                staff: this.staff.n} )
         }
     },
     computed: {
