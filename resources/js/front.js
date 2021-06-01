@@ -33,7 +33,6 @@ Vue.mixin({
             }
             
             event.wdata = eventData
-            console.log('event',event.wdata)
             document.dispatchEvent(event)
         }
     }
