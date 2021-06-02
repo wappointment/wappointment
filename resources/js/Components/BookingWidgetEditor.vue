@@ -376,7 +376,6 @@ export default {
         },
 
         stepChanged(step){
-            
             this.setStep(step, this.getLabelForStep(step))
             
         },

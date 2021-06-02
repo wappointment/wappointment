@@ -23,8 +23,9 @@ import SearchStaff from '../Fields/SearchDropdown'
 import WPUsersService from '../Services/WP/Users' 
 import RequestMaker from '../Modules/RequestMaker' 
 import hasPermissions from '../Mixins/hasPermissions' 
+import CanEasyReplace from '../Mixins/CanEasyReplace' 
 export default {
-    mixins:[RequestMaker, hasPermissions],
+    mixins:[RequestMaker, hasPermissions, CanEasyReplace],
     components:{SearchStaff},
     props: {
         staffs: null,
@@ -59,8 +60,9 @@ export default {
             this.request(this.createAccountRequest,  undefined,undefined,false,  this.successCreatedAccount)
         },
 
+        
         async createAccountRequest() {
-            let params = {username:this.search_term, email:this.search_term, password:this.generatedPassword, roles:['wappointment_staff']}
+            let params = {username: this.toAlphaNum(this.search_term), email:this.search_term, password:this.generatedPassword, roles:['wappointment_staff']}
             return await this.serviceWPUser.call('create', params )
         },
 
