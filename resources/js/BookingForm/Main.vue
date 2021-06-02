@@ -1124,14 +1124,15 @@ export default {
     transition: border-right ease-in-out .3s;
 }
 
-.wap-front .form-control, .wap-front .phone-field{
+.wap-front .form-control, 
+.wap-front .phone-field{
     width: 100%;
     font-weight: 400;
     line-height: 1.5;
-    color: #495057;
+    color: var(--wappo-input-col);
     background-color: #fff;
     background-clip: padding-box;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--wappo-input-bor);
     border-radius: .25em;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
@@ -1152,32 +1153,18 @@ export default {
   border: 0;
 }
 
-.wap-front .form-control::-webkit-input-placeholder {
-  color: #6c757d;
+.wap-front .form-control::-webkit-input-placeholder,
+.wap-front .form-control::-moz-placeholder,
+.wap-front .form-control:-ms-input-placeholder,
+.wap-front .form-control::-ms-input-placeholder,
+.wap-front .form-control::placeholder  {
+  color: var(--wappo-input-ph);
   opacity: 1;
 }
 
-.wap-front .form-control::-moz-placeholder {
-  color: #6c757d;
-  opacity: 1;
-}
 
-.wap-front .form-control:-ms-input-placeholder {
-  color: #6c757d;
-  opacity: 1;
-}
-
-.wap-front .form-control::-ms-input-placeholder {
-  color: #6c757d;
-  opacity: 1;
-}
-
-.wap-front .form-control::placeholder {
-  color: #6c757d;
-  opacity: 1;
-}
-
-.wap-front .form-control:disabled, .form-control[readonly] {
+.wap-front .form-control:disabled, 
+.form-control[readonly] {
   background-color: #e9ecef;
   opacity: 1;
 }

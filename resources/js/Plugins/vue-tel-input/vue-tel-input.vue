@@ -390,7 +390,7 @@ export default {
   outline: none;
   padding-left: .5em;
   min-width: 100px;
-  color: #495057;
+  color: var(--wappo-input-col);
   background: #fff;
 }
 .phone-field-wrap ul {

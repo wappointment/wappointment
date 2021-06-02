@@ -13,12 +13,18 @@ class Order extends Model
     protected $table = 'wappo_orders';
     protected $fillable = ['transaction_id', 'status', 'total', 'refunded_at', 'client_id'];
     protected $with = ['prices'];
+    protected $appends = ['charge'];
 
     const STATUS_PENDING = 0;
     const STATUS_PROCESSING = 1;
     const STATUS_COMPLETED = 2;
     const STATUS_CANCELLED = -1;
     const STATUS_REFUNDED = -2;
+
+    public function getChargeAttribute()
+    {
+        return $this->total;
+    }
 
     public function client()
     {
@@ -90,5 +96,21 @@ class Order extends Model
             $total += $price->price->price;
         }
         $this->update(['total' => $total]);
+    }
+
+    public function confirmAppointments()
+    {
+        foreach ($this->prices as $charge) {
+            AppointmentNew::confirm($charge->appointment_id);
+        }
+    }
+
+    public function complete()
+    {
+        $this->confirmAppointments();
+
+        $this->setCompleted();
+        $this->save();
+        return $this;
     }
 }

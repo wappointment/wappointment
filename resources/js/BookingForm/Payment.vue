@@ -12,13 +12,7 @@
       <div class="wpayment" v-if="activeMethod">
         
         <div class="wfooter">
-          <component :is="activeMethod" @confirm="confirm" @cancel="cancel" />
-          <div class="d-flex wcards" v-if="selectedMethod.cards!== undefined">
-            <WImage v-for="card in selectedMethod.cards":image="getImage(card)" class="wcard" :key="card"/>
-          </div>
-          <div class="d-flex wpowered align-items-center" v-if="selectedMethod.desc">
-            <span v-if="selectedMethod.desc" >{{ selectedMethod.desc }}</span> 
-          </div>
+          <component :is="activeMethod" :order="order" @loading="loadingTransfer" :method="selectedMethod" @confirm="confirm" @cancel="cancel" />
         </div>
       </div>
     </div>
@@ -40,7 +34,7 @@ export default {
     extends: AbstractFront,
     mixins:[IsDemo, HasWooVariables, HasPaidService, GetImage],
     props: ['options', 'relations', 'appointmentKey', 'appointmentData', 'service', 'order'],
-    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage, onsite }, {asyncLoad: CanLoadScriptAsync} ),
+    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage, onsite }, {asyncLoad: CanLoadScriptAsync, GetImage:GetImage} ),
      data: () => ({
         servicesOrder: null,
         activeMethod: '',
@@ -73,22 +67,24 @@ export default {
       }
     },
     methods: {
-      
+      loadingTransfer(data){
+        this.$emit('loading', data)
+      },
       selected(methodKey){
         this.activeMethod = methodKey
       },
       cancel(){
         console.log('cancel')
       },
-      confirm(){
-        console.log('confirm')
+      confirm(alreadyConfirmed = false){
+        if(alreadyConfirmed !== false){
+          return this.confirmSuccess()
+        }
         this.$emit('loading', {loading:true})
         this.confirmRequest().then(this.confirmFailure).catch(this.confirmSuccess)
       },
       
       async confirmRequest() {
-        console.log('this.appointmentSavedData.order.transaction_id')
-        alert('hello')
             return await this.servicesOrder.call('confirm', {'transaction_id':this.order.transaction_id}) 
       },
 
