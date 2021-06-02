@@ -27,7 +27,7 @@ class CurrentUser
 
     public static function isAdmin()
     {
-        return static::hasCap('administrator');
+        return static::hasCap('switch_themes');
     }
 
     public static function canViewCalendar()
@@ -46,6 +46,6 @@ class CurrentUser
 
     public static function hasCap($capability)
     {
-        return static::get()->has_cap('administrator') || static::get()->has_cap($capability);
+        return static::get()->has_cap('switch_themes') || static::get()->has_cap($capability);
     }
 }
