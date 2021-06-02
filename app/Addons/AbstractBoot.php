@@ -155,6 +155,11 @@ abstract class AbstractBoot implements Boot
         }
     }
 
+    /**
+     * todo remove
+     *
+     * @return void
+     */
     public static function hooksAndFiltersWhenInstalled()
     {
 

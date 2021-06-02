@@ -1,23 +1,24 @@
 <template>
     <div>
+      <div>
+          <div class="witem" v-for="charge in order.prices">
+          {{ charge.price.name }} : {{ displayPrice(charge.price.price) }}
+          </div>
+          <div class="wtotal">
+            Total: <strong>{{ displayPrice(order.total) }}</strong>
+          </div>
+      </div>
       <WPaymentMethods :methods="methods" @selected="selected" />
       <div class="wpayment" v-if="activeMethod">
-        <div class="mx-2">
-           <div class="witem" v-for="charge in order.prices">
-            {{ charge.price.name }} : {{ displayPrice(charge.price.price) }}
-            </div>
-            <div class="wtotal">
-              Total: <strong>{{ displayPrice(order.total) }}</strong>
-            </div>
-            <div class="d-flex wcards" v-if="selectedMethod.cards!== undefined">
-              <WImage v-for="card in selectedMethod.cards":image="getImage(card)" class="wcard" :key="card"/>
-            </div>
-            <div class="d-flex wpowered align-items-center" v-if="selectedMethod.desc">
-              <span v-if="selectedMethod.desc" >{{ selectedMethod.desc }}</span> 
-            </div>
-        </div>
+        
         <div class="wfooter">
           <component :is="activeMethod" @confirm="confirm" @cancel="cancel" />
+          <div class="d-flex wcards" v-if="selectedMethod.cards!== undefined">
+            <WImage v-for="card in selectedMethod.cards":image="getImage(card)" class="wcard" :key="card"/>
+          </div>
+          <div class="d-flex wpowered align-items-center" v-if="selectedMethod.desc">
+            <span v-if="selectedMethod.desc" >{{ selectedMethod.desc }}</span> 
+          </div>
         </div>
       </div>
     </div>
@@ -105,7 +106,6 @@ export default {
 </script>
 <style>
 .wpayment{
-  min-height: 200px;
   border: 2px solid var(--wappo-sec-bg);
   border-radius: .2em;
   position:relative;
@@ -124,9 +124,6 @@ export default {
 }
 .wcard{
   margin-right: .2em;
-}
-.wfooter{
-  margin-top: .4em;
 }
 
 </style>
