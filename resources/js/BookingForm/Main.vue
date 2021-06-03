@@ -739,6 +739,7 @@ export default {
                         isApprovalManual:"isApprovalManual",
                         staff:"selectedStaff", 
                         appointment_starts_at: 'appointmentStartsAt',
+                        rescheduling: 'rescheduling',
                     },
                     listeners: {
                         loading: 'childChangedData',
