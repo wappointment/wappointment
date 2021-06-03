@@ -1,6 +1,11 @@
 <template>
     <div class="d-flex">
         <WPayment v-for="payment in filteredPayments" :payment="payment" :key="payment.key" @click="clicked" />
+        <WapModal v-if="showModal" :show="showModal" @hide="hidePopup" large noscroll>
+            <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
+            <span>{{paymentEditing.description}}</span>
+            <!-- <component :is="getAddon.componentKey" @close="hidePopup"></component> -->
+      </WapModal>
     </div>
 </template>
 
@@ -8,10 +13,12 @@
 
 import WPayment from '../WComp/WPayment'
 import HasWooVariables from '../Mixins/HasWooVariables'
+import HasPopup from '../Mixins/HasPopup'
 export default {
     components:{WPayment},
-    mixins:[HasWooVariables],
+    mixins:[HasWooVariables, HasPopup],
     data: () => ({
+        payment_edit:null,
         payment_methods: [
             {
                 key: 'onsite',
@@ -58,10 +65,22 @@ export default {
             let paymentNew = this.wooAddonActive ? this.payment_methods.filter(a => a.key == 'woocommerce'):this.payment_methods
             return paymentNew.sort((a,b) => a.status < b.status)
         },
+        paymentEditing(){
+            let payment_edit = this.payment_edit
+            return this.filteredPayments.find(e => e.key == payment_edit)
+        }
     },
     methods:{
         clicked(payment){
-            this.$emit('clicked', payment)
+            this.payment_edit = payment
+            if(this.paymentEditing.status > 0){
+                this.openPopup(this.paymentEditing.name)
+            }else{
+                this.$emit('clicked', payment)
+            }
+            
+
+            
         },
     }
 }

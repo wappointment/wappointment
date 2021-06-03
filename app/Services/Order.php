@@ -16,9 +16,8 @@ class Order
 
     public function processing()
     {
-        foreach ($this->order->prices as $charge) {
-            AppointmentNew::confirm($charge->appointment_id);
-        }
+        $this->order->confirmAppointments();
+
         $this->order->setProcessing();
         $this->order->save();
     }

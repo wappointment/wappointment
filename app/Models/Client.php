@@ -69,7 +69,6 @@ class Client extends Model
         return empty($this->options['tz']) ? Settings::getStaff('timezone') : $this->options['tz'];
     }
 
-
     protected function getRealDuration($service)
     {
         return ((int) $service['duration'] + (int) Settings::get('buffer_time')) * 60;
@@ -80,14 +79,20 @@ class Client extends Model
         return [$this->email => sanitize_text_field($this->name)];
     }
 
-    public function generateOrder(Appointment $appointment)
+    public function getOrder()
     {
-        //if pending order already exist, just get that one
         $pendingOrder = Order::where('client_id', $this->id)->pending()->first();
 
         if (empty($pendingOrder)) {
             $pendingOrder = Order::create(['client_id' => $this->id, 'transaction_id' => uniqid('onsite_' . $this->id)]);
         }
+        return $pendingOrder;
+    }
+
+    public function generateOrder(Appointment $appointment)
+    {
+        //if pending order already exist, just get that one
+        $pendingOrder = $this->getOrder();
 
         $pendingOrder->add($appointment);
         $pendingOrder->refreshTotal();
