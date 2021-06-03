@@ -38,7 +38,7 @@ add_action('wp_print_footer_scripts', 'my_wappo_analytics_appointment_confirmed'
  *
  * @return void
  */
-function my_wappo_analytics_appointment_rescheuled()
+function my_wappo_analytics_appointment_rescheduled()
 {
 
   echo '<script>';
@@ -48,4 +48,4 @@ function my_wappo_analytics_appointment_rescheuled()
             }, false);";
   echo '</script>';
 }
-add_action('wp_print_footer_scripts', 'my_wappo_analytics_appointment_rescheuled');
+add_action('wp_print_footer_scripts', 'my_wappo_analytics_appointment_rescheduled');
