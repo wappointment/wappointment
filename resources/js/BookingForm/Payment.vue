@@ -8,7 +8,7 @@
             Total: <strong>{{ displayPrice(order.total) }}</strong>
           </div>
       </div>
-      <WPaymentMethods :methods="methods" @selected="selected" />
+      <WPaymentMethods :methods="activeMethods" @selected="selected" />
       <div class="wpayment" v-if="activeMethod">
         
         <div class="wfooter">
@@ -45,12 +45,15 @@ export default {
     },
 
     computed: {
+      activeMethods(){
+        return this.methods.filter(e => e.installed > 0 && e.active > 0)
+      },
       selectedMethod(){
         let activeMethod = this.activeMethod
         if(activeMethod == ''){
           return false
         }
-        return this.methods.find(e => e.key == activeMethod)
+        return this.activeMethods.find(e => e.key == activeMethod)
         
       },
       getAppointmentReservedString(){

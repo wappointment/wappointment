@@ -104,7 +104,8 @@ class Settings
             'services_sold' => false,
             'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'],
             'max_active_bookings' => 0,
-            'autofill' => true
+            'autofill' => true,
+            'onsite_active' => false
         ];
     }
 
