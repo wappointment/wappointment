@@ -74,6 +74,7 @@ export default {
         'staff',
         'options',
         'appointment_starts_at',
+        'rescheduling'
     ],
     data: () => ({
         showSaveButtons: false,
@@ -98,7 +99,7 @@ export default {
         if(this.options.demoData !== undefined){
             this.options.eventsBus.listens('dataDemoChanged', this.dataChanged)
         }else{
-            this.triggerWEvent('wappo_confirmed', {
+            this.triggerWEvent( this.rescheduling? 'wappo_rescheduled':'wappo_confirmed', {
                 appointment: {start:this.appointment.start_at, end:this.appointment.end_at, key:this.appointment.edit_key}, 
                 modality: this.appointment.location_label, 
                 service: this.service.name, 
