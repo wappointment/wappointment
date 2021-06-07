@@ -163,7 +163,7 @@ export default {
         },
         
         mustSelectStaff(){
-            return this.attributesEl !== undefined && this.attributesEl.staffPage !== undefined && this.attributesEl.staffPage === true
+            return this.attributesEl !== undefined && this.attributesEl.staffPage !== undefined && this.attributesEl.staffPage == 1
         },
         staffIsSelected(){
             return [null, undefined, false].indexOf(this.selectedStaff) === -1
