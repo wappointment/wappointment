@@ -40,7 +40,8 @@ export default class CalendarsService extends ApiV1 {
                 },
                 saveCal: { 
                     method: 'post', 
-                    route: '/calendars/savecal'
+                    route: '/calendars/savecal',
+                    timeout: 30000  
                 },
                 refreshCalendars: { 
                     method: 'post', 
