@@ -114,7 +114,7 @@
             <StaffCustomFieldEditor v-if="editCustomField" :staff="editCustomField" @save="saveCustomFields" />
             <StaffAssignServices v-if="editingServices" @save="saveServices" :user="editingServices" :current="editingServices.services" :services="elements.services" />
             <StaffCalendarsIntegrations v-if="dotcomOpen" @reload="reloadListing" :calendar="dotcomOpen" />
-            <StaffCalendarsExternal v-if="editingExternal" :user="editingExternal" :calendar_id="editingExternal.id" @savedSync="reloadListing" @errorSaving="errorSavingCalendar" noback />
+            <StaffCalendarsExternal v-if="editingExternal" :user="editingExternal" :calendar_id="editingExternal.id" @savedSync="reloadListing" noback />
         </WapModal>
 
     </div>

@@ -4,7 +4,7 @@
       <div class="d-flex flex-wrap justify-content-around" >
         <div class="wbtn wbtn-cell wbtn-duration wbtn-secondary d-flex align-items-center" role="button" v-for="(duration,idx) in durationsOrdered"  @click="selectDuration(duration)">
             <span class="mr-2 wduration" :class="{wsold: canSell(duration)}">{{duration.duration}}{{options.general.min}}</span>
-            <span v-if="canSell(duration)" class="wprice">{{ getPrice(duration) }}</span>
+            <span v-if="canSell(duration)" class="wprice">{{ formatPrice(duration.woo_price) }}</span>
         </div>
       </div>
     </div>
@@ -12,10 +12,11 @@
 
 <script>
 import HasWooVariables from '../Mixins/HasWooVariables'
+import PriceFormatMixin from './PriceFormatMixin'
 import IsDemo from '../Mixins/IsDemo'
 export default {
     props:['service','relations','options'],
-    mixins: [HasWooVariables, IsDemo],
+    mixins: [PriceFormatMixin, HasWooVariables, IsDemo],
     computed:{
         getClasses(){
             return window.wappointment_services === undefined || window.wappointment_services.is_admin === undefined ? 'wbtn wbtn-secondary wbtn-cell':'btn btn-secondary btn-cell'
@@ -26,18 +27,8 @@ export default {
         sellable(){
             return this.service.options.woo_sellable
         },
-        currency(){
-            return this.currencySymb
-        },
-        
     },
     methods:{
-        canSell(duration){
-            return this.sellable && this.currency !== '' && [undefined, ''].indexOf(duration.woo_price) === -1
-        },
-        getPrice(duration){
-            return duration.woo_price+this.currency
-        },
         selectDuration(duration){ 
             if(this.triggersDemoEvent('service_location')){
                 return

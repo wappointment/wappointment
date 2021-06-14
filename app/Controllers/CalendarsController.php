@@ -30,7 +30,7 @@ class CalendarsController extends RestController
         $data = [
             'db_required' => $db_update_required,
             'timezones_list' => DateTime::tz(),
-            'calendars' => $calendars,
+            'calendars' => empty($calendars) ? [] : $calendars,
             'staffs' => StaffServices::getWP(CurrentUser::isAdmin() ? false : CurrentUser::id()),
             'staffDefault' => Settings::staffDefaults(),
             'permissions' => (new Permissions)->getCaps(),

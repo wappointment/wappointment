@@ -35,9 +35,6 @@ export default {
         this.hideAndRefresh()
     },
     
-    errorSavingCalendar(error){
-        this.$WapModal().notifyError(error.response.data.message)
-    },
     savedSync(response){
         this.hideAndRefresh()
         this.$WapModal().notifySuccess(response.data.message)

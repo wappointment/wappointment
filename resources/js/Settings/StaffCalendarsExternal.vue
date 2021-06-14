@@ -104,10 +104,7 @@ export default {
             this.request(this.saveCalRequest, {
                 calendar_id: this.calendar_id,
                 calurl: this.calurl
-                }, null ,false,this.saveCalSuccess,this.saveCalError)
-        },
-        saveCalError(error){
-            this.$emit('errorSaving',error)
+                }, null ,false,this.saveCalSuccess)
         },
         saveCalSuccess(response){
             this.$emit('savedSync', response)

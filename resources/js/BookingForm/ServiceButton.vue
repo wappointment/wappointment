@@ -14,10 +14,11 @@
 
 <script>
 import HasWooVariables from '../Mixins/HasWooVariables'
+import PriceFormatMixin from './PriceFormatMixin'
 export default {
     props:['service','options', 'selected', 'viewData', 'extraClass'],
     name: 'ServiceButton',
-    mixins: [HasWooVariables],
+    mixins: [HasWooVariables, PriceFormatMixin],
     computed: {
         priceAlignRight(){
             return [undefined, false].indexOf(this.options.service_selection.check_price_right) === -1
@@ -62,10 +63,10 @@ export default {
         getPriceRange(){
             let prices = this.getPrices
             if(prices.length > 1){
-                return Math.min.apply(null, prices)+ ' - ' + Math.max.apply(null, prices)
+                return this.formatPrice(Math.min.apply(null, prices))+ ' - ' + this.formatPrice(Math.max.apply(null, prices))
             }
 
-            return prices[0]
+            return this.formatPrice(prices[0])
         },
     },
     methods:{
