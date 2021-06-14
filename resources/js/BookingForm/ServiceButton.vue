@@ -4,18 +4,21 @@
         <div class="service-label" >
             <div class="service-name" >{{ service.name }}</div>
             <div class="description" v-if="hasDesc(service)">{{ service.options.description }}</div>
-            <div v-if="sellable(service) && !priceAlignRight" class="service-price" >{{ getPriceRange(service) }}<span class="price-currency">{{ currency}}</span></div>
+            <div v-if="sellable(service) && !priceAlignRight" class="service-price" >{{ getPriceRange(service) }}</div>
             <slot />
         </div>
-        <div v-if="sellable(service) && priceAlignRight" class="service-price price-right" :class="{'als':hasDesc(service)}" >{{ getPriceRange(service) }}<span class="price-currency">{{ currency}}</span></div>
+        <div v-if="sellable(service) && priceAlignRight" class="service-price price-right" :class="{'als':hasDesc(service)}" >{{ getPriceRange(service) }}</div>
     </div>
     
 </template>
 
 <script>
+import PriceFormatMixin from './PriceFormatMixin'
+
 export default {
     props:['service','options', 'selected', 'viewData', 'extraClass'],
     name: 'ServiceButton',
+    mixins:[PriceFormatMixin],
     computed: {
         priceAlignRight(){
             return [undefined, false].indexOf(this.options.service_selection.check_price_right) === -1
@@ -63,10 +66,10 @@ export default {
         getPriceRange(service){
             let prices = this.getPrices(service)
             if(prices.length > 1){
-                return Math.min.apply(null, prices)+ ' - ' + Math.max.apply(null, prices)
+                return this.formatPrice(Math.min.apply(null, prices))+ ' - ' + this.formatPrice(Math.max.apply(null, prices))
             }
 
-            return prices[0]
+            return this.formatPrice(prices[0])
         },
         selectService(service){
             this.$emit('selectService', service)

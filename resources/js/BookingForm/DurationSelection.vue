@@ -4,15 +4,17 @@
       <div class="d-flex flex-wrap justify-content-around" >
         <div class="wbtn wbtn-cell wbtn-duration wbtn-secondary d-flex align-items-center" role="button" v-for="(duration,idx) in durationsOrdered"  @click="selectDuration(duration)">
             <span class="mr-2 wduration" :class="{wsold: canSell(duration)}">{{duration.duration}}{{options.general.min}}</span>
-            <span v-if="canSell(duration)" class="wprice">{{ getPrice(duration) }}</span>
+            <span v-if="canSell(duration)" class="wprice">{{ formatPrice(duration.woo_price) }}</span>
         </div>
       </div>
     </div>
 </template>
 
 <script>
+import PriceFormatMixin from './PriceFormatMixin'
 export default {
     props:['service','relations','options'],
+    mixins:[PriceFormatMixin],
     data: () => ({
         disabledButtons: false,
     }),
@@ -31,18 +33,9 @@ export default {
         sellable(){
             return this.service.options.woo_sellable
         },
-        currency(){
-            return window.wappointment_woocommerce !== undefined ? window.wappointment_woocommerce.currency_symbol:''
-        },
         
     },
     methods:{
-        canSell(duration){
-            return this.sellable && this.currency !== '' && [undefined, ''].indexOf(duration.woo_price) === -1
-        },
-        getPrice(duration){
-            return duration.woo_price+this.currency
-        },
         selectDuration(duration){ 
             if(this.disabledButtons && this.options !== undefined) {
               this.options.eventsBus.emits('stepChanged', 'service_location')
