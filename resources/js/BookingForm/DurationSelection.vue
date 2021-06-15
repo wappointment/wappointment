@@ -11,12 +11,11 @@
 </template>
 
 <script>
-import HasWooVariables from '../Mixins/HasWooVariables'
-import PriceFormatMixin from './PriceFormatMixin'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 import IsDemo from '../Mixins/IsDemo'
 export default {
     props:['service','relations','options'],
-    mixins: [PriceFormatMixin, HasWooVariables, IsDemo],
+    mixins: [CanFormatPrice, IsDemo],
     computed:{
         getClasses(){
             return window.wappointment_services === undefined || window.wappointment_services.is_admin === undefined ? 'wbtn wbtn-secondary wbtn-cell':'btn btn-secondary btn-cell'

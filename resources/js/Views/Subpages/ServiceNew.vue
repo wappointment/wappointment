@@ -9,10 +9,10 @@
 <script>
 import ServiceService from '../../Services/V1/Service'
 import abstractView from '../Abstract'
-import HasWooVariables from '../../Mixins/HasWooVariables'
+import CanFormatPrice from '../../Mixins/CanFormatPrice'
 export default {
   extends: abstractView,
-  mixins:[HasWooVariables],
+  mixins:[CanFormatPrice],
   props:['dataPassed', 'servicesService', 'extraOptions', 'buttons', 'minimal'],
   data() {
       return {

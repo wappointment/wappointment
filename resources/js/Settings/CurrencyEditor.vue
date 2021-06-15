@@ -11,9 +11,9 @@
 import SearchDropdown from '../Fields/SearchDropdown'
 import RequestMaker from '../Modules/RequestMaker'
 import WappoCurrency from '../Services/V1/Currency'
-import HasWooVariables from '../Mixins/HasWooVariables'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
-    mixins:[RequestMaker, HasWooVariables],
+    mixins:[RequestMaker, CanFormatPrice],
     components: {SearchDropdown},
     data: () => ({
         serviceCurrency:'',
@@ -24,7 +24,6 @@ export default {
     created(){
         this.serviceCurrency = this.$vueService(new WappoCurrency)
         this.get()
-        
     },
     computed:{
         modifiedCurrencies(){

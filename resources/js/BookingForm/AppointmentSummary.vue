@@ -116,8 +116,8 @@ export default {
 <style>
 @import '../../css/closable.css';
 .wap-front .wsummary-section {
-    padding: .4em;
     font-size: .8em;
+    padding: .4em;
 }
 
 .wmy-4{

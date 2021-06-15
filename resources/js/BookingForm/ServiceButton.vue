@@ -4,21 +4,20 @@
         <div class="service-label" >
             <div class="service-name" >{{ service.name }}</div>
             <div class="description" v-if="hasDesc">{{ service.options.description }}</div>
-            <div v-if="sellable && !priceAlignRight" class="service-price" >{{ getPriceRange }}<span class="price-currency">{{ currency }}</span></div>
+            <div v-if="sellable && !priceAlignRight" class="service-price" >{{ getPriceRange }}</div>
             <slot />
         </div>
-        <div v-if="sellable && priceAlignRight" class="service-price price-right" :class="{'als':hasDesc}" >{{ getPriceRange }}<span class="price-currency">{{ currency}}</span></div>
+        <div v-if="sellable && priceAlignRight" class="service-price price-right" :class="{'als':hasDesc}" >{{ getPriceRange }}</div>
     </div>
     
 </template>
 
 <script>
-import HasWooVariables from '../Mixins/HasWooVariables'
-import PriceFormatMixin from './PriceFormatMixin'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
     props:['service','options', 'selected', 'viewData', 'extraClass'],
     name: 'ServiceButton',
-    mixins: [HasWooVariables, PriceFormatMixin],
+    mixins: [CanFormatPrice],
     computed: {
         priceAlignRight(){
             return [undefined, false].indexOf(this.options.service_selection.check_price_right) === -1
@@ -33,9 +32,6 @@ export default {
                 classses += ' selected'
             }
             return classses
-        },
-        currency(){
-            return this.currencySymb
         },
         serviceHasIcon(){
             return this.service.options.icon != ''

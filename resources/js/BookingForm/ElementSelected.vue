@@ -9,9 +9,9 @@
 </template>
 
 <script>
-import HasWooVariables from '../Mixins/HasWooVariables'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
-    mixins:[HasWooVariables],
+    mixins:[CanFormatPrice],
     props: {
         service: {
             type: Object, 
@@ -39,7 +39,7 @@ export default {
             for (let i = 0; i < this.service.options.durations.length; i++) {
                 const dur = this.service.options.durations[i]
                 if(dur.duration == this.duration && ['',undefined].indexOf(dur.woo_price) === -1 ){
-                    return dur.woo_price + this.currencySymb
+                    return this.formatPrice(dur.woo_price)
                 }
             }
             

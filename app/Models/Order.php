@@ -75,7 +75,8 @@ class Order extends Model
 
     public function add(Appointment $appointment)
     {
-        //clear all prices by cancel previously placed appointment silently
+
+        //clear all prices by cancelling previously placed appointment silently
         $this->clearLastAdded();
         $prices = $appointment->getServicesPrices();
 

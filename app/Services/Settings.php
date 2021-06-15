@@ -105,7 +105,7 @@ class Settings
             'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'],
             'max_active_bookings' => 0,
             'autofill' => true,
-            'onsite_active' => false
+            'active_methods' => []
         ];
     }
 
@@ -196,6 +196,11 @@ class Settings
             $method = $setting_key . 'BeforeSave';
             if (method_exists(static::class, $method)) {
                 static::$method($value);
+            }
+
+            $methodTransform = $setting_key . 'TransformValue';
+            if (method_exists(static::class, $methodTransform)) {
+                $updatedValues[$setting_key] = static::$methodTransform($value);
             }
 
             static::updateLocalSettings($updatedValues);
@@ -429,8 +434,6 @@ class Settings
         throw new \WappointmentException('Hour field is not valid');
     }
 
-
-
     // remove slots that are in the future but are not bookable
     protected static function availabilityPrepare($availabilities)
     {
@@ -458,6 +461,19 @@ class Settings
     {
         //transfer all staff id settings to the right full owner
         WPHelpers::transferStaffOptions(Settings::get('activeStaffId'), $newStaffId);
+    }
+
+    protected static function active_methodsTransformValue($method)
+    {
+        $active_methods = Settings::get('active_methods');
+
+        if (in_array($method, $active_methods)) { //deactivate
+            $active_methods = array_diff($active_methods, [$method]);
+        } else { //activate
+            $active_methods[] = $method;
+        }
+
+        return $active_methods;
     }
 
     protected static function email_notificationsValid($value)

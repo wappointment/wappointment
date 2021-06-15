@@ -1,12 +1,14 @@
 <template>
     <div>
       <div>
-          <div class="witem" v-for="charge in order.prices">
-          {{ charge.price.name }} : {{ displayPrice(charge.price.price) }}
-          </div>
-          <div class="wtotal">
-            Total: <strong>{{ displayPrice(order.total) }}</strong>
-          </div>
+        <div class="wcharge" v-for="charge in order.prices">
+            <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline" >
+                <span class="welementname">{{ charge.price.name }} - {{ formatCentsPrice(charge.price.price) }}</span>
+            </div>
+        </div>
+        <div class="wtotal">
+          Total: <strong>{{ formatCentsPrice(order.total) }}</strong>
+        </div>
       </div>
       <WPaymentMethods :methods="activeMethods" @selected="selected" />
       <div class="wpayment" v-if="activeMethod">
@@ -22,19 +24,20 @@
 import OrderService from '../Services/V1/Order'
 import AbstractFront from './AbstractFront'
 import IsDemo from '../Mixins/IsDemo'
-import HasWooVariables from '../Mixins/HasWooVariables'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 import GetImage from '../Mixins/GetImage'
 import HasPaidService from '../Mixins/HasPaidService'
 import WPaymentMethods from '../WComp/WPaymentMethods'
 import WImage from '../WComp/WImage'
 import CanLoadScriptAsync from '../Mixins/CanLoadScriptAsync'
 import onsite from './PayOnSite'
+import ElementSelected from './ElementSelected'
 
 export default {
     extends: AbstractFront,
-    mixins:[IsDemo, HasWooVariables, HasPaidService, GetImage],
+    mixins:[IsDemo, CanFormatPrice, HasPaidService, GetImage],
     props: ['options', 'relations', 'appointmentKey', 'appointmentData', 'service', 'order'],
-    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage, onsite }, {asyncLoad: CanLoadScriptAsync, GetImage:GetImage} ),
+    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage, onsite, ElementSelected }, {asyncLoad: CanLoadScriptAsync, GetImage:GetImage} ),
      data: () => ({
         servicesOrder: null,
         activeMethod: '',
@@ -104,6 +107,9 @@ export default {
 }   
 </script>
 <style>
+.wcharge {
+    font-size: .8em;
+}
 .wpayment{
   border: 2px solid var(--wappo-sec-bg);
   border-radius: .2em;

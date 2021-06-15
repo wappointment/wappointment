@@ -58,9 +58,10 @@ import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
 import IsDemo from '../Mixins/IsDemo'
 import HasPaidService from '../Mixins/HasPaidService'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
     extends: AbstractFront,
-    mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, HasPaidService],
+    mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, CanFormatPrice, HasPaidService],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
     'timeprops', 'relations', 'appointment_starts_at',
     'duration', 'location', 'custom_fields', 'staffs','selectedStaff'],

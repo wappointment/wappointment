@@ -90,10 +90,10 @@ import WCell from '../WComp/WCell'
 import ShortcodeDesigner from './ShortcodeDesigner'
 import isSearchable from '../Mixins/isSearchable'
 import HasPopup from '../Mixins/HasPopup'
-import HasWooVariables from '../Mixins/HasWooVariables'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
     extends: AbstractListing,
-    mixins: [isSearchable, HasPopup, HasWooVariables],
+    mixins: [isSearchable, HasPopup, CanFormatPrice],
     components:{
         WCell,
         ServicesAddEdit,
@@ -143,9 +143,6 @@ export default {
         },
         getDurationPrice(durationObj){
             return this.formatPrice(durationObj.woo_price)
-        },
-        formatPrice(price){
-            return price + this.currencySymb
         },
         isSellable(service){
             return service.options.woo_sellable

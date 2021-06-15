@@ -131,7 +131,7 @@ class AppointmentNew
     {
         $appointment = static::createAppointment($data);
         $order = null;
-        if ($client->bookingRequest->getService()->isSold()) {
+        if ($client->bookingRequest->getService()->isSold() && !Payment::isWooActive()) {
             $appointment->hydrateService($client->bookingRequest->getService());
             $order = $client->generateOrder($appointment);
         }

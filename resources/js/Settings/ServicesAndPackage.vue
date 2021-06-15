@@ -7,10 +7,13 @@
                 <div class="d-flex">
                     <div class="text-muted small" v-if="showSettings">
                         <div>
-                            Currency: <span v-if="wooAddonActive" data-tt="Configure it in WooCommerce" class="text-dark tt-danger">{{ wooCurrencyText }}</span>
+                            Currency: <span v-if="wooAddonActive" data-tt="Configure it in WooCommerce" class="text-dark tt-danger">{{ currencyText }}</span>
                             <a v-else href="javascript:;" @click="setCurrency">{{ currencyText }}</a>
                         </div>
-                        <div class="d-flex align-items-center"><div>Payments accepted:</div> <PaymentAllowed @clicked="clicked" /></div>
+                        <div class="d-flex align-items-center">
+                            <div>Payments accepted:</div> 
+                            <PaymentAllowed @clicked="clicked" />
+                        </div>
                     </div>
                 </div>
             </transition>
@@ -29,9 +32,9 @@ import PaymentAllowed from './PaymentAllowed'
 import RequiresAddon from '../Mixins/RequiresAddon'
 import ServicesManage from './ServicesManage'
 import HasPopup from '../Mixins/HasPopup'
-import HasWooVariables from '../Mixins/HasWooVariables'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
-    mixins:[RequiresAddon, HasPopup, HasWooVariables],
+    mixins:[RequiresAddon, HasPopup, CanFormatPrice],
     components:{
         ServicesManage,
         CurrencyEditor,
