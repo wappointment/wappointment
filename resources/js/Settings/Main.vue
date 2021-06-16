@@ -24,9 +24,6 @@
         <div class="tab-pane fade" :class="{'show active' : isActive('advanced')}" v-if="isActive('advanced')">
             <settingsAdvanced @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.advanced.label" />
         </div>
-        <div class="tab-pane fade" :class="{'show active' : isActive('addonstab')}" v-if="isActive('addonstab')">
-            <settingsAddons @fullyLoaded="$emit('fullyLoaded')" />
-        </div>
     </div>
     
   </div>
@@ -40,7 +37,6 @@ import settingsServices from './Services'
 import settingsEmailNSms from './EmailNSms'
 import SettingsAppearance from './Appearance'
 import settingsAdvanced from './Advanced'
-import settingsAddons from './Addons'
 import hasPermissions from '../Mixins/hasPermissions'
 
 export default {
@@ -73,14 +69,8 @@ export default {
       settingsEmailNSms,
       settingsAdvanced,
       SettingsAppearance,
-      settingsAddons
     },
 
-    created() {
-         if(window.wappointmentAdmin.addons !== undefined && this.addonsWithSettings().length > 0) {
-            this.tabs['addonstab'] = { label: 'Addons'}
-        }
-    },
     computed: {
         convertedName(){
             return ['modalities', 'modalities_add', 'modalities_edit'].indexOf(this.$route.name) !== -1  ? 'services':this.$route.name

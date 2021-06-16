@@ -1,18 +1,7 @@
 <template>
     <div>
-      <div>
-        <div class="wcharge" v-for="charge in order.prices">
-            <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline" >
-                <span class="welementname">{{ charge.price.name }} - {{ formatCentsPrice(charge.price.price) }}</span>
-            </div>
-        </div>
-        <div class="wtotal">
-          Total: <strong>{{ formatCentsPrice(order.total) }}</strong>
-        </div>
-      </div>
       <WPaymentMethods :methods="activeMethods" @selected="selected" />
       <div class="wpayment" v-if="activeMethod">
-        
         <div class="wfooter">
           <component :is="activeMethod" :order="order" @loading="loadingTransfer" :method="selectedMethod" @confirm="confirm" @cancel="cancel" />
         </div>
@@ -24,7 +13,6 @@
 import OrderService from '../Services/V1/Order'
 import AbstractFront from './AbstractFront'
 import IsDemo from '../Mixins/IsDemo'
-import CanFormatPrice from '../Mixins/CanFormatPrice'
 import GetImage from '../Mixins/GetImage'
 import HasPaidService from '../Mixins/HasPaidService'
 import WPaymentMethods from '../WComp/WPaymentMethods'
@@ -32,12 +20,13 @@ import WImage from '../WComp/WImage'
 import CanLoadScriptAsync from '../Mixins/CanLoadScriptAsync'
 import onsite from './PayOnSite'
 import ElementSelected from './ElementSelected'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 
 export default {
     extends: AbstractFront,
-    mixins:[IsDemo, CanFormatPrice, HasPaidService, GetImage],
+    mixins:[IsDemo, HasPaidService, GetImage],
     props: ['options', 'relations', 'appointmentKey', 'appointmentData', 'service', 'order'],
-    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage, onsite, ElementSelected }, {asyncLoad: CanLoadScriptAsync, GetImage:GetImage} ),
+    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage, onsite, ElementSelected }, {asyncLoad: CanLoadScriptAsync, GetImage:GetImage, CanFormatPrice:CanFormatPrice} ),
      data: () => ({
         servicesOrder: null,
         activeMethod: '',
@@ -107,12 +96,9 @@ export default {
 }   
 </script>
 <style>
-.wcharge {
-    font-size: .8em;
-}
 .wpayment{
   border: 2px solid var(--wappo-sec-bg);
-  border-radius: .2em;
+  border-radius: 0 .4em .4em .4em;
   position:relative;
   overflow: hidden;
 }
@@ -121,9 +107,6 @@ export default {
   border-bottom: 1px solid var(--wappo-sec-bg);
 }
 
-.wpowered{
-  font-size:10px;
-}
 .wcards{
   height: 25px;
 }

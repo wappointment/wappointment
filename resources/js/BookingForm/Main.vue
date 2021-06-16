@@ -36,6 +36,9 @@
                 @changeDuration="childChangedStep"
                 @changeLocation="childChangedStep"
                 />
+                <template v-else>
+                    <AppointmentOrder v-if="order" :order="order" />
+                </template>
                 <div class="wrap-calendar p-2" :class="'step-'+currentStep">
                     <div v-if="loading">
                         <Loader />
@@ -79,6 +82,7 @@ import BookingCalendar from './Calendar'
 import BookingFormInputs from './Form'
 import BookingFormHeader from './Header'
 import BookingFormSummary from './AppointmentSummary'
+import AppointmentOrder from './AppointmentOrder'
 import DurationCell from './DurationCell'
 BookingFormHeader.components = {DurationCell}
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
@@ -105,6 +109,7 @@ let compDeclared = {
     'DurationCell': DurationCell,
     'abstractFront':AbstractFront,
     'BookingFormSummary': BookingFormSummary,
+    'AppointmentOrder': AppointmentOrder,
     'AppointmentTypeSelection': AppointmentTypeSelection
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )

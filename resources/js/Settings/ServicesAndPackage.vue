@@ -5,14 +5,14 @@
             <button @click="managePackages" class="btn btn-light mr-2 active">Sell packages</button>
             <transition name="fade" mode="out-in">
                 <div class="d-flex">
-                    <div class="text-muted small" v-if="showSettings">
-                        <div>
+                    <div  v-if="showSettings">
+                        <div class="text-muted small">
                             Currency: <span v-if="wooAddonActive" data-tt="Configure it in WooCommerce" class="text-dark tt-danger">{{ currencyText }}</span>
                             <a v-else href="javascript:;" @click="setCurrency">{{ currencyText }}</a>
                         </div>
                         <div class="d-flex align-items-center">
                             <div>Payments accepted:</div> 
-                            <PaymentAllowed @clicked="clicked" />
+                            <PaymentAllowed @clicked="clicked" @opened="opened" @closed="closed" />
                         </div>
                     </div>
                 </div>
@@ -45,6 +45,7 @@ export default {
         showSettings: false,
         settingstimeout: false,
         isIsolated: false,
+        popupOn:false
     }),
     computed:{
         getComponent(){
@@ -69,6 +70,15 @@ export default {
                 this.requiresAddon('woocommerce')
             }
         },
+        closed(){
+            this.removeSettings()
+            this.popupOn = false
+        },
+        opened(){
+            this.popupOn = true
+            clearTimeout(this.settingstimeout)
+        },
+
         showSettingsNow(){
             if(this.settingstimeout !== false){
                 clearTimeout(this.settingstimeout)
@@ -77,7 +87,10 @@ export default {
             this.showSettings=true
         },
         delayRemove(){
-            this.settingstimeout = setTimeout(this.removeSettings, 2000);
+            if(this.popupOn === false){
+                this.settingstimeout = setTimeout(this.removeSettings, 2000)
+            }
+            
         },
         removeSettings(){
             this.showSettings = false

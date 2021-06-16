@@ -105,7 +105,7 @@ class Settings
             'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'],
             'max_active_bookings' => 0,
             'autofill' => true,
-            'active_methods' => []
+            'onsite_enabled' => true
         ];
     }
 
@@ -461,19 +461,6 @@ class Settings
     {
         //transfer all staff id settings to the right full owner
         WPHelpers::transferStaffOptions(Settings::get('activeStaffId'), $newStaffId);
-    }
-
-    protected static function active_methodsTransformValue($method)
-    {
-        $active_methods = Settings::get('active_methods');
-
-        if (in_array($method, $active_methods)) { //deactivate
-            $active_methods = array_diff($active_methods, [$method]);
-        } else { //activate
-            $active_methods[] = $method;
-        }
-
-        return $active_methods;
     }
 
     protected static function email_notificationsValid($value)

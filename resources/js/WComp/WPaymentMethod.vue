@@ -1,6 +1,7 @@
 <template>
-    <div class="wtab" :class="{active: isActive }" @click="$emit('click', method.key)" role="button">
-        <WImage :image="getImage(method.key,'.png')" />
+    <div class="wtab" :class="[isActive?'active':'inactive']" @click="$emit('click', method.key)" role="button">
+        <WImage v-if="icon" :image="getImage(method.key,'.png')" />
+        <span class="wmethod-name">{{method.desc}}</span>
     </div>
 </template>
 
@@ -17,6 +18,10 @@ export default {
       },
       active:{
         type: String
+      },
+      icon:{
+        type: Boolean,
+        default:false
       }
     },
     computed: {
@@ -28,21 +33,33 @@ export default {
 </script>
 <style >
 
-.wtab{
-  max-width: 34%;
-  padding: .2em;
-  border: 2px solid transparent;
+.wap-front .wtab,
+.wap-front .wrap-calendar div.wtab{
+  font-size: 14px;
+  margin-right: .4em;
+  padding: .8em;
+  border: 2px solid var(--wappo-sec-bg);
   border-bottom: 0 !important;
   cursor: pointer;
+  background-color:var(--wappo-body-bg);
+  color: var(--wappo-sec-tx);
+  border-radius:.4em .4em 0 0;
+  font-weight: bold;
 }
-.wtab.active{
-  background-color: var(--wappo-body-bg);
+.wap-front .wtab.active, 
+.wap-front .wrap-calendar div.wtab.active{
+  background-color: var(--wappo-sec-sel-bg);
+  color: var(--wappo-sec-sel-tx);
   margin-bottom: -2px;
 }
-.wtab.active,
-.wtab:hover{
-  border-radius: .2em .2em 0 0;
+.wap-front .wtab.active,
+.wap-front .wtab:hover{
+  border-radius: .4em .4em 0 0;
   border: 2px solid var(--wappo-sec-bg);
+}
+
+.wap-front .wtab.active:hover{
+  background-color: var(--wappo-sec-bg);
 }
 .wtab img {
     filter: grayscale(1);

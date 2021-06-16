@@ -40,28 +40,30 @@ class Payment
             [
                 'key' => 'onsite',
                 'name' => 'On Site',
-                'desc' => 'Pay on site',
+                'desc' => 'Pay later',
                 'description' => 'Customers pay you in person at your business\' address or wherever you deliver the service',
                 'installed' => true,
-                'active' => static::isMethodActive('onsite'),
+                'active' => Settings::get('onsite_enabled'),
             ],
             [
                 'key' => 'stripe',
                 'name' => 'Stripe',
-                'desc' => 'Pay with Credit card',
+                'desc' => 'Credit/Debit card',
                 'description' => 'Customers pay online with their VISA, Mastercard, Amex etc ... in 44 countries and 135 currencies',
                 'installed' => false,
                 'hideLabel' => true,
-                'active' => static::isMethodActive('stripe'),
+                'active' => false,
+                'cards' => ['visa', 'mastercard', 'amex']
             ],
             [
                 'key' => 'paypal',
                 'name' => 'Paypal',
-                'desc' => 'Pay with Paypal',
+                'desc' => 'Paypal',
                 'description' => 'Customers pay online with their Paypal Account, VISA, Mastercard, Amex etc ... in 25 currencies and 200 countries',
                 'installed' => false,
                 'hideLabel' => true,
-                'active' => static::isMethodActive('paypal'),
+                'active' => false,
+                'cards' => ['visa', 'mastercard', 'amex']
             ],
             [
                 'key' => 'woocommerce',
@@ -81,15 +83,5 @@ class Payment
         $methods = static::methods();
 
         return count($methods) < 2 && $methods[0]['key'] == 'woocommerce';
-    }
-
-    public static function isMethodActive($method)
-    {
-        static $activeMethods = false;
-        if ($activeMethods === false) {
-            $activeMethods = Settings::get('active_methods');
-        }
-
-        return in_array($method, $activeMethods);
     }
 }
