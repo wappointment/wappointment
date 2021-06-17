@@ -11,15 +11,26 @@ class Order extends Model
     use SoftDeletes;
 
     protected $table = 'wappo_orders';
-    protected $fillable = ['transaction_id', 'status', 'total', 'refunded_at', 'client_id'];
+    protected $fillable = ['transaction_id', 'status', 'total', 'refunded_at', 'client_id', 'options', 'paid_at', 'payment'];
     protected $with = ['prices'];
     protected $appends = ['charge'];
+    protected $dates = [
+        'refunded_at', 'paid_at', 'created_at', 'updated_at',
+    ];
+    protected $casts = [
+        'options' => 'array',
+    ];
 
     const STATUS_PENDING = 0;
     const STATUS_PROCESSING = 1;
     const STATUS_COMPLETED = 2;
     const STATUS_CANCELLED = -1;
     const STATUS_REFUNDED = -2;
+
+    const PAYMENT_ONSITE = 0;
+    const PAYMENT_STRIPE = 1;
+    const PAYMENT_PAYPAL = 2;
+
 
     public function getChargeAttribute()
     {
@@ -44,6 +55,11 @@ class Order extends Model
     public function setCompleted()
     {
         $this->status = static::STATUS_COMPLETED;
+        $this->paid_at = date('Y-m-d H:i:s');
+    }
+    public function setPaypal()
+    {
+        $this->payment = static::PAYMENT_PAYPAL;
     }
 
     public function setCancelled()
@@ -101,17 +117,21 @@ class Order extends Model
 
     public function confirmAppointments()
     {
+
         foreach ($this->prices as $charge) {
             AppointmentNew::confirm($charge->appointment_id);
         }
     }
 
-    public function complete()
+    public function complete($save = true)
     {
         $this->confirmAppointments();
 
         $this->setCompleted();
-        $this->save();
+        if ($save) {
+            $this->save();
+        }
+
         return $this;
     }
 }

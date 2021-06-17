@@ -16,8 +16,9 @@ import HasPopup from '../Mixins/HasPopup'
 import onsiteSettings from './PayOnSiteSettings'
 import RequestMaker from '../Modules/RequestMaker'
 import abstractView from '../Views/Abstract'
+import CurrenciesSupported from './CurrenciesSupported'
 export default {
-    components:window.wappointmentExtends.filter('PaymentMethodsSettings',  {WPayment, onsiteSettings}, {extends: abstractView, mixins: [RequestMaker]}),
+    components:window.wappointmentExtends.filter('PaymentMethodsSettings',  {WPayment, onsiteSettings}, {extends: abstractView, mixins: [RequestMaker, CanFormatPrice], components:{CurrenciesSupported}}),
     mixins:[CanFormatPrice, HasPopup],
     data: () => ({
         payment_edit:null,

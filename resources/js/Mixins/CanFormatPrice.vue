@@ -21,6 +21,9 @@ export default {
         currencySeparator(){
             return this.wooAddonActive ? window.wappointment_woocommerce.decimals_sep:window.apiWappointment.currency.decimals_sep
         },
+        thousandSeparator(){
+            return this.wooAddonActive ? window.wappointment_woocommerce.thousand_sep:window.apiWappointment.currency.thousand_sep
+        },
         wappoCurrencyText(){
             return window.apiWappointment.currency.code + ' - '+this.wappoCurrency
         },
@@ -46,7 +49,7 @@ export default {
         formatPrice(price, cents = false){
             return this.priceFormat
             .replace('[currency]',this.currency)
-            .replace('[price]', this.displayCents(price * (cents ?1:100)))
+            .replace('[price]', this.formatThousands(this.displayCents(price * (cents ?1:100))))
         },
 
         formatCentsPrice(price){
@@ -54,7 +57,20 @@ export default {
         },
 
         displayCents(priceValue){
-            return (priceValue/100).toFixed(2).replace('.', this.currencySeparator)
+            let priceWithoutCents = (priceValue/100)
+            return this.currencySeparator === false ? Math.floor(priceWithoutCents):priceWithoutCents.toFixed(2).replace('.', this.currencySeparator)
+        },
+
+        formatThousands(price){
+            let priceString = price.toString()
+            let aboveDecimals = this.currencySeparator === false? priceString:priceString.split(this.currencySeparator)[0]
+            let formattedString = ''
+            let reversed = aboveDecimals.split('').reverse().join('')
+            for (let i = 0; i < reversed.length; i++) {
+                formattedString += reversed[i] + (((i+1)%3 === 0) && reversed.length > i+1?this.thousandSeparator:'')
+            }
+    
+            return formattedString.split('').reverse().join('') + (this.currencySeparator === false?'': this.currencySeparator+priceString.split(this.currencySeparator)[1])
         }
            
     }

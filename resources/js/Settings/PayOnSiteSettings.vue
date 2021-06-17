@@ -20,7 +20,7 @@ export default {
     props:['method'],
     methods:{
         activate(){
-            this.settingSave('active_methods', this.method.key)
+            this.settingSave('onsite_enabled', this.method.active)
         },
     }
 }

@@ -126,7 +126,7 @@ return [
     'name' => 'Burundian franc',
     'symbol' => 'Fr',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   16 => [
@@ -246,7 +246,7 @@ return [
     'name' => 'Chilean peso',
     'symbol' => '$',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   31 => [
@@ -310,7 +310,7 @@ return [
     'name' => 'Djiboutian franc',
     'symbol' => 'Fr',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   39 => [
@@ -438,7 +438,7 @@ return [
     'name' => 'Guinean franc',
     'symbol' => 'Fr',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   55 => [
@@ -591,7 +591,7 @@ return [
     'name' => 'Japanese yen',
     'symbol' => '¥',
     'position' => 2,
-    'decimals_sep' => '.',
+    'decimals_sep' => false,
     'thousand_sep' => ',',
     'decimals' => 0,
   ],
@@ -625,7 +625,7 @@ return [
     'name' => 'Comorian franc',
     'symbol' => 'Fr',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   78 => [
@@ -641,7 +641,7 @@ return [
     'name' => 'South Korean won',
     'symbol' => '₩',
     'position' => 1,
-    'decimals_sep' => '.',
+    'decimals_sep' => false,
     'thousand_sep' => ',',
     'decimals' => 0,
   ],
@@ -738,7 +738,7 @@ return [
     'name' => 'Malagasy ariary',
     'symbol' => 'Ar',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   92 => [
@@ -946,7 +946,7 @@ return [
     'name' => 'Paraguayan guaraní',
     'symbol' => '₲',
     'position' => 2,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => '.',
   ],
   118 => [
@@ -986,7 +986,7 @@ return [
     'name' => 'Rwandan franc',
     'symbol' => 'Fr',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   123 => [
@@ -1187,7 +1187,7 @@ return [
     'name' => 'Ugandan shilling',
     'symbol' => 'UGX',
     'position' => 2,
-    'decimals_sep' => '.',
+    'decimals_sep' => false,
     'thousand_sep' => ',',
     'decimals' => 0,
   ],
@@ -1236,7 +1236,7 @@ return [
     'name' => 'Vietnamese đồng',
     'symbol' => '₫',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   154 => [
@@ -1244,7 +1244,7 @@ return [
     'name' => 'Vanuatu vatu',
     'symbol' => 'Vt',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   155 => [
@@ -1260,7 +1260,7 @@ return [
     'name' => 'Central African CFA franc',
     'symbol' => 'CFA',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   157 => [
@@ -1276,7 +1276,7 @@ return [
     'name' => 'West African CFA franc',
     'symbol' => 'CFA',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   159 => [
@@ -1284,7 +1284,7 @@ return [
     'name' => 'CFP franc',
     'symbol' => 'Fr',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
   160 => [

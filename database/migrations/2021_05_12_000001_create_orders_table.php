@@ -20,8 +20,10 @@ class CreateOrdersTable extends Wappointment\Installation\Migrate
             $table->tinyInteger('status')->default(0);
             $table->unsignedMediumInteger('total')->nullable();
             $table->timestamp('refunded_at')->nullable();
+            $table->timestamp('paid_at')->nullable();
+            $table->tinyInteger('payment')->default(0);
             $table->unsignedInteger('client_id')->nullable()->default(null);
-            //$table->text('options')->nullable();
+            $table->text('options')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
