@@ -9,7 +9,13 @@ export default {
             return this.wooAddonIsActive ? window.wappointment_woocommerce.currency_symbol:''
         },
         priceFormat(){
-            return this.wooAddonIsActive ? window.wappointment_woocommerce.currency_format:'[price][currency]'
+            return this.wooAddonIsActive ? this.getWooPriceFormat: this.defaultFormat
+        },
+        getWooPriceFormat(){
+            return  window.wappointment_woocommerce.currency_format !== undefined ?window.wappointment_woocommerce.currency_format:this.defaultFormat
+        },
+        defaultFormat(){
+            return '[price][currency]'
         }
     },
     methods: {
