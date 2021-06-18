@@ -1,5 +1,7 @@
 <script>
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
+  mixins: [CanFormatPrice],
     methods:{
       getClientAppointment(appointment){
         return`<div>
@@ -16,7 +18,12 @@ export default {
           if (appointment.extendedProps.client.options.hasOwnProperty(key)) {
             const element = appointment.extendedProps.client.options[key];
             if(appointment.extendedProps.client.options[key]!= '' && key !== 'staff_id') {
-              clientoptions += `<div> ${this.getFieldLabel(key)}: ${this.getValueLabel(key,appointment.extendedProps.client.options[key])} </div>`
+              if(key == 'owes'){
+                clientoptions += `<div> ${this.getFieldLabel(key)}: <span class="bg-warning p-1 rounded text-white">${this.formatPrice(appointment.extendedProps.client.options[key], true)}</span> </div>`
+              }else{
+                clientoptions += `<div> ${this.getFieldLabel(key)}: ${this.getValueLabel(key,appointment.extendedProps.client.options[key])} </div>`
+              }
+              
             }
           }
         }
@@ -25,6 +32,9 @@ export default {
       getFieldLabel(namekey){
            if(namekey == 'tz') {
              return 'Timezone'
+           }
+           if(namekey == 'owes') {
+             return 'Owes'
            }
             for (let i = 0; i < this.viewData.custom_fields.length; i++) {
                 const element = this.viewData.custom_fields[i]

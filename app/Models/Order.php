@@ -18,7 +18,7 @@ class Order extends Model
     protected $appends = ['charge', 'payment_label', 'status_label'];
 
     const STATUS_PENDING = 0;
-    const STATUS_PROCESSING = 1;
+    const STATUS_AWAITING = 1;
     const STATUS_COMPLETED = 2;
     const STATUS_CANCELLED = -1;
     const STATUS_REFUNDED = -2;
@@ -41,8 +41,8 @@ class Order extends Model
         switch ($this->status) {
             case self::STATUS_PENDING:
                 return 'Pending';
-            case self::STATUS_PROCESSING:
-                return  'Processing';
+            case self::STATUS_AWAITING:
+                return  'Awaiting payment';
             case self::STATUS_COMPLETED:
                 return  'Completed';
             case self::STATUS_CANCELLED:
@@ -65,7 +65,10 @@ class Order extends Model
     }
 
 
-
+    public function isOnSite()
+    {
+        return $this->payment == self::PAYMENT_ONSITE;
+    }
 
     public function getChargeAttribute()
     {
@@ -84,7 +87,17 @@ class Order extends Model
 
     public function setProcessing()
     {
-        $this->status = static::STATUS_PROCESSING;
+        $this->status = static::STATUS_AWAITING;
+        if ($this->isOnSite()) {
+            $options = $this->client->options;
+            if (empty($this->client->options['owes'])) {
+                $options['owes'] = 0;
+            }
+            //set client owing
+            $options['owes'] += $this->total;
+            $this->client->options = $options;
+            $this->client->save();
+        }
     }
 
     public function setCompleted()
@@ -163,6 +176,7 @@ class Order extends Model
         $this->confirmAppointments();
 
         $this->setCompleted();
+
         if ($save) {
             $this->save();
         }

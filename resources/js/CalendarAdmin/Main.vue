@@ -123,6 +123,11 @@
                 background-size: 30px 30px;
             }
 
+            .fc-event-container .fc-event.appointment-owes, 
+            .fc-container .fc-event.appointment-owes {
+                border: 2px dashed #d7b637 !important;
+            }
+
             .fc-event.past-event {
                 background-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, 1) }} !important;
             }
