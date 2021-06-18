@@ -3,6 +3,7 @@
 namespace Wappointment\WP;
 
 use Wappointment\System\Status;
+use Wappointment\Services\Payment;
 
 class Menus
 {
@@ -21,6 +22,9 @@ class Menus
          * TODO probably can drop that condition
          */
         if (Status::wizardComplete()) {
+            if (!Payment::isWooActive()) {
+                $this->sub_menus['orders'] = ['label' => 'Orders', 'cap' => $this->getClientCap()];
+            }
             $this->sub_menus['clients'] = ['label' => 'Clients', 'cap' => $this->getClientCap()];
             $this->sub_menus['settings'] = ['label' => 'Settings', 'cap' => $this->getSettingsCap()];
             $this->sub_menus['addons'] = ['label' => 'Addons', 'cap' => 'administrator'];

@@ -12,14 +12,10 @@ class Order extends Model
 
     protected $table = 'wappo_orders';
     protected $fillable = ['transaction_id', 'status', 'total', 'refunded_at', 'client_id', 'options', 'paid_at', 'payment'];
-    protected $with = ['prices'];
-    protected $appends = ['charge'];
-    protected $dates = [
-        'refunded_at', 'paid_at', 'created_at', 'updated_at',
-    ];
-    protected $casts = [
-        'options' => 'array',
-    ];
+    protected $with = ['client', 'prices', 'appointments'];
+    protected $dates = ['refunded_at', 'paid_at', 'created_at', 'updated_at'];
+    protected $casts = ['options' => 'array'];
+    protected $appends = ['charge', 'payment_label', 'status_label'];
 
     const STATUS_PENDING = 0;
     const STATUS_PROCESSING = 1;
@@ -30,6 +26,45 @@ class Order extends Model
     const PAYMENT_ONSITE = 0;
     const PAYMENT_STRIPE = 1;
     const PAYMENT_PAYPAL = 2;
+
+
+    public function appointments()
+    {
+        return $this->belongsToMany(
+            Appointment::class,
+            'wappo_order_price'
+        );
+    }
+
+    public function getStatusLabelAttribute()
+    {
+        switch ($this->status) {
+            case self::STATUS_PENDING:
+                return 'Pending';
+            case self::STATUS_PROCESSING:
+                return  'Processing';
+            case self::STATUS_COMPLETED:
+                return  'Completed';
+            case self::STATUS_CANCELLED:
+                return  'Cancelled';
+            case self::STATUS_REFUNDED:
+                return  'Refunded';
+        }
+    }
+
+    public function getPaymentLabelAttribute()
+    {
+        switch ($this->payment) {
+            case self::PAYMENT_ONSITE:
+                return 'Pay On Site';
+            case self::PAYMENT_STRIPE:
+                return  'Stripe';
+            case self::PAYMENT_PAYPAL:
+                return  'Paypal';
+        }
+    }
+
+
 
 
     public function getChargeAttribute()

@@ -110,7 +110,11 @@ class Main extends AbstractRoutes
                     'controller' => 'ServicesController',
                     'paginated' => true
                 ],
-
+                '/orders' => [
+                    'controller' => 'OrdersBackController',
+                    'method' => 'index',
+                    'paginated' => true
+                ],
             ],
             'POST' => [
                 '/events/record' => [

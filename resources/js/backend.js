@@ -63,12 +63,18 @@ const Calendars = () => import(/* webpackChunkName: "group-calendars-manage" */ 
 let ClientsPageExtended = () => import(/* webpackChunkName: "group-clients" */ './Views/ClientsWrapper')
 let ServicesDeliveryExtended = () => new Promise((resolutionFunc) => resolutionFunc(window.wappointmentExtends.filter('ServicesDelivery', ServicesDelivery)))
 const WappointmentErrorFileNotLoading = () => import(/* webpackChunkName: "wappo-error" */ './Views/WappointmentErrorFileNotLoading')
+let OrdersPage = () => import(/* webpackChunkName: "group-clients" */ './Views/Orders')
 
 let WappoBackroutes = [
   {
       path: 'calendar',
       name: 'wappointment_calendar',
       component: CalendarPage
+  },
+  {
+      path: 'orders',
+      name: 'wappointment_orders',
+      component: OrdersPage
   },
   {
       path: 'settings',

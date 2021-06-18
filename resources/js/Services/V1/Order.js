@@ -16,6 +16,10 @@ export default class OrderService{
                 method: 'post', 
                 route: '/order/confirm'
             }, 
+            index: { 
+                method: 'get', 
+                route: 'orders'
+            },
         };
     }
 
