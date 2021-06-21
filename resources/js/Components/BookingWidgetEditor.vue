@@ -74,10 +74,12 @@
                                 <div class="widget-fields" v-if="isCurrentStep(stepObj.key)" :data-step="'Step '+(4-idx)+': '+stepObj.label" 
                                 :class="{'active-fields': (step == stepObj.key)}">
                                     <div v-if="widgetFields[stepObj.key] !== undefined && widgetFields[stepObj.key].categories !== undefined">
-                                        <div :class="{'selected-tab': showCategory ==  cat_object.label}" v-for="(cat_object, catid) in widgetFields[stepObj.key].categories">
-                                            <div :class="[showCategory ==  cat_object.label ? 'btn btn-light btn-sm':'btn btn-link btn-sm']"  role="button" @click="showCategory = cat_object.label">
-                                                {{cat_object.label}} <span v-if="showCategory !=  cat_object.label">[+]</span>
+                                        <div class="d-flex">
+                                            <div v-for="(cat_object, catid) in widgetFields[stepObj.key].categories" class="d-flex mr-2" :class="[showCategory ==  cat_object.label ? 'btn btn-secondary btn-sm':'btn btn-light btn-sm']"  role="button" @click="showCategory = cat_object.label">
+                                                {{cat_object.label}}
                                             </div>
+                                        </div>
+                                        <div :class="{'selected-tab': showCategory ==  cat_object.label}" v-for="(cat_object, catid) in widgetFields[stepObj.key].categories">
                                             <div v-if="showCategory ==  cat_object.label" class="ml-3 mt-3">
                                                 <div class="small" v-if="cat_object.sub !== undefined" v-html="parseLabel(cat_object.sub)"></div>
                                                 <div v-for="(fieldDescription, field_key) in cat_object.fields" :data-tt="getFieldTip(stepObj.key, field_key, catid) ? getFieldTip(stepObj.key, field_key, catid) : false" 

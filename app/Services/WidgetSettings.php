@@ -131,8 +131,9 @@ class WidgetSettings
         ],
 
         'swift_payment' => [
+            'onsite_tab' => 'Pay later',
             'onsite_desc' => 'You will pay on the day of your appointment',
-            'confirm' => 'Confirm',
+            'onsite_confirm' => 'Confirm',
         ],
     ];
 
@@ -312,6 +313,20 @@ class WidgetSettings
                         'phone' => ['tip' => 'Phone appointments only'],
                         'physical' => ['tip' => 'Appointments at a location only'],
                         'zoom' => ['tip' => 'Video appointments only'],
+                    ]
+                ],
+            ]
+        ],
+
+        'swift_payment' => [
+            'categories' => [
+                [
+                    'label' => 'On Site Payment',
+                    'fields' => [
+                        'onsite_tab' => false,
+                        'onsite_desc' => false,
+                        'onsite_confirm' => false,
+
                     ]
                 ],
             ]

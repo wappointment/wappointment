@@ -1,6 +1,6 @@
 <template>
     <div class="wtabs d-flex">
-        <WPaymentMethod v-if="methods.length > 1" v-for="method in methods" :key="method.key" :method="method" :active="active" @click="clicked"/>
+        <WPaymentMethod v-if="methods.length > 1" v-for="method in methods" :key="method.key" :method="method" :tab="options.swift_payment[method.key+'_tab']"  :active="active" @click="clicked"/>
     </div>
 </template>
 
@@ -8,7 +8,7 @@
 
 import WPaymentMethod from './WPaymentMethod'
 export default {
-    props:['methods'],
+    props:['methods', 'options'],
     components: { WPaymentMethod },
     data: () => ({
         active: '',
@@ -20,7 +20,8 @@ export default {
       clicked(methodKey){
         this.active = methodKey
         this.$emit('selected', methodKey)
-      }
+      },
+
     }
 }
 </script>

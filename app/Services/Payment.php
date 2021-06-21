@@ -40,7 +40,6 @@ class Payment
             [
                 'key' => 'onsite',
                 'name' => 'On Site',
-                'desc' => 'Pay later',
                 'description' => 'Customers pay you in person at your business\' address or wherever you deliver the service',
                 'installed' => true,
                 'active' => Settings::get('onsite_enabled'),
@@ -48,7 +47,6 @@ class Payment
             [
                 'key' => 'stripe',
                 'name' => 'Stripe',
-                'desc' => 'Credit/Debit card',
                 'description' => 'Customers pay online with their VISA, Mastercard, Amex etc ... in 44 countries and 135 currencies',
                 'installed' => false,
                 'hideLabel' => true,
@@ -58,7 +56,6 @@ class Payment
             [
                 'key' => 'paypal',
                 'name' => 'Paypal',
-                'desc' => 'Paypal',
                 'description' => 'Customers pay online with their Paypal Account, VISA, Mastercard, Amex etc ... in 25 currencies and 200 countries',
                 'installed' => false,
                 'hideLabel' => true,
@@ -68,7 +65,6 @@ class Payment
             [
                 'key' => 'woocommerce',
                 'name' => 'WooCommerce',
-                'desc' => 'Pay with WooCommerce',
                 'description' => 'WooCommerce is the most popular ecommerce plugin for WordPress. Already familiar with WooCommerce? Then selling your time with Wappointment and WooCommerce will be real easy.',
                 'installed' => false,
                 'hideLabel' => true,

@@ -410,9 +410,10 @@ export default {
 }
 
 .wap-front .wappointment-errors{
-    background-color:var(--wappo-error-tx);
+    background-color:var(--wappo-error-tx);    
 }
-.wap-front .wappointment-errors div{
+
+.wap-front .wrap-calendar div.wappointment-errors{
     color: #fff;
     font-size: .9em;
 }

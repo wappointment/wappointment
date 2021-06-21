@@ -1,7 +1,7 @@
 <template>
     <div class="wtab" :class="[isActive?'active':'inactive']" @click="$emit('click', method.key)" role="button">
         <WImage v-if="icon" :image="getImage(method.key,'.png')" />
-        <span class="wmethod-name">{{method.desc}}</span>
+        <span class="wmethod-name">{{ tab }}</span>
     </div>
 </template>
 
@@ -22,6 +22,9 @@ export default {
       icon:{
         type: Boolean,
         default:false
+      },
+      tab:{
+        type: String
       }
     },
     computed: {
