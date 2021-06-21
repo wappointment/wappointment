@@ -163,7 +163,7 @@ const BBCode = require('../Plugins/bbcode')
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPalette, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
+const BWEditorTools = require('../Standalone/BWEditorTools')
 library.add(faPalette,faEdit, faSave)
 import Front from '../Front'
 import FrontDemo from '../FrontDemo'
@@ -249,6 +249,10 @@ export default {
                 label: 'Form'
             },
             {
+                key: 'swift_payment',
+                label: 'Payment'
+            },
+            {
                 key: 'confirmation',
                 label: 'Confirmation'
             }
@@ -258,7 +262,7 @@ export default {
     }),
 
     created(){
-        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.isLegacy? this.editionsStepsLegacy:this.editionsSteps,  this.config )
+        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.isLegacy? this.editionsStepsLegacy:this.editionsSteps,  this.config, BWEditorTools )
         this.reverseEditionsSteps = this.editionsSteps.slice(0).reverse()
         this.options = Object.assign ({}, this.preoptions)
         this.options.editionsSteps = this.editionsSteps

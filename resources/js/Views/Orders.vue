@@ -1,6 +1,16 @@
 <template>
   <div class="wpage px-4 pb-2">
-        <WPListingHelp @perPage="perPage" v-if="per_page" :per_page="per_page"/>
+        <WPListingHelp @perPage="perPage" v-if="per_page" :per_page="per_page">
+          <div>
+            <div class="d-flex mb-2 align-items-center">
+                <label for="per_page" class="col-sm-3">Tax applied on all transactions</label>
+                  <div class="col-sm-4">
+                      <input type="text" v-model="tax" @change="saveTax">
+                  </div>
+            </div>
+             
+          </div>
+        </WPListingHelp>
         <div class="d-flex align-items-center">
           <h1 class="my-3 mr-3" @click="reloadListing">Orders</h1>
         </div>
@@ -15,13 +25,15 @@ import ordersListing from './OrdersListing'
 import WPListingHelp from '../WP/ScreenListing'
 import OrderService from '../Services/V1/Order'
 import Request from '../Modules/RequestMaker'
+import SettingsSave from '../Modules/SettingsSave'
 
 export default {
     components: {WPListingHelp, ordersListing},
-    mixins: [Request],
+    mixins: [Request, SettingsSave],
     data: () => ({
         clientDataToSave: null,
         per_page: false,
+        tax: 0,
     }),
    
     created(){
@@ -29,6 +41,9 @@ export default {
     },
 
     methods: {
+        saveTax(){
+          this.settingSave('tax', this.tax)
+        },  
         perPage(per_page){
           this.$refs.listing.perPage(per_page)
         },
@@ -43,6 +58,7 @@ export default {
 
         loadedResult(response){
           this.per_page = parseInt(response.data.viewData.per_page)
+          this.tax = parseInt(response.data.viewData.tax)
           this.$emit('fullyLoaded')
         },
 

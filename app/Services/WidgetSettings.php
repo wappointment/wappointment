@@ -129,6 +129,11 @@ class WidgetSettings
         'service_location' => [
             'select_location' => 'How should we meet?',
         ],
+
+        'swift_payment' => [
+            'onsite_desc' => 'You will pay on the day of your appointment',
+            'confirm' => 'Confirm',
+        ],
     ];
 
     private $fields = [

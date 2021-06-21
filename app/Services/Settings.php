@@ -105,7 +105,8 @@ class Settings
             'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'],
             'max_active_bookings' => 0,
             'autofill' => true,
-            'onsite_enabled' => true
+            'onsite_enabled' => true,
+            'tax' => 0,
         ];
     }
 

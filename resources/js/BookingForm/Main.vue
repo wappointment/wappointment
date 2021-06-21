@@ -146,6 +146,7 @@ export default {
         selectedStaff: null,
         showHeader:true,
         checkCacheIntervalid: false,
+        order:false
     }),
 
     mounted () {

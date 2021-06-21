@@ -20,6 +20,7 @@ class OrdersBackController extends RestController
             'page' => $request->input('page'),
             'viewData' => [
                 'per_page' => Settings::getStaff('per_page'),
+                'tax' => Settings::get('tax'),
             ],
             'orders' => $this->getOrders()
         ];

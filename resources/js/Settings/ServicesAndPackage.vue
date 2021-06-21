@@ -11,7 +11,7 @@
                             <a v-else href="javascript:;" @click="setCurrency">{{ currencyText }}</a>
                         </div>
                         <div class="d-flex align-items-center">
-                            <div>Payments accepted:</div> 
+                            <div class="text-muted small">Payments accepted:</div> 
                             <PaymentAllowed @clicked="clicked" @opened="opened" @closed="closed" />
                         </div>
                     </div>
