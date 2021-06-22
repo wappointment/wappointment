@@ -48,6 +48,9 @@ export default {
         rescheduling: {
             type: Boolean
         },
+        attributesEl: {
+            type: Object
+        },
     },
     data: () => ({
         disabledButtons: false,
