@@ -6,6 +6,7 @@ use Wappointment\ClassConnect\Model;
 use Wappointment\Services\Settings;
 use Wappointment\Services\DateTime;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Messages\EmailHelper;
 use Wappointment\Services\AppointmentNew as ServicesAppointment;
 use Wappointment\Services\VersionDB;
 
@@ -249,13 +250,7 @@ class Appointment extends Model
 
     private function getPageLink($view = 'reschedule-event')
     {
-        static $page_link = '';
-        if ($page_link == '') {
-            $page_link = get_permalink(Settings::get('front_page'));
-        }
-        return $page_link .
-            ((strpos($page_link, '?') !== false) ? '&' : '?')
-            . 'view=' . $view . '&appointmentkey=' . $this->edit_key;
+        return (new EmailHelper)->getLinkEvent($view) . (empty($this->edit_key) ? '' : '&appointmentkey=' . $this->edit_key);
     }
 
     public function getServiceName()

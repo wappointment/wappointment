@@ -17,7 +17,7 @@ class TagsReplacement
     public function __construct($params)
     {
         $this->params = $params;
-
+        $this->params['email_helper'] = new EmailHelper;
         $this->prepareTags();
     }
 
@@ -139,7 +139,8 @@ class TagsReplacement
                 'model' => 'appointment',
                 'key' => 'linkNew',
                 'label' => 'Link to book a new appointment',
-                'getMethod' => 'getLinkNewEvent'
+                'getMethod' => 'getLinkNewEvent',
+                'modelCall' => 'email_helper'
             ],
             [
                 'model' => 'appointment',
