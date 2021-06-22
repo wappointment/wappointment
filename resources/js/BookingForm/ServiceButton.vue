@@ -123,6 +123,16 @@ export default {
     background-size: cover;
 }
 
+.wap-front.large-version .wservice-large {
+    max-width:none ;
+    margin:1em .2em;
+}
+
+.wap-front .wbtn-service.wservice-large .wap-icon-image {
+    height: 160px;
+    width: 160px;
+}
+
 .wap-front .wbtn-service .service-label{
     margin: 0 .5em;
     overflow: hidden;

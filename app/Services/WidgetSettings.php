@@ -122,6 +122,7 @@ class WidgetSettings
         ],
         'service_selection' => [
             'select_service' => 'Pick a service',
+            'check_full_width' => false
         ],
         'service_duration' => [
             'select_duration' => 'How long will be the session?',
@@ -251,6 +252,7 @@ class WidgetSettings
         'service_selection' => [
             'fields' => [
                 'check_price_right' => ['label' => 'Price right aligned'],
+                'check_full_width' => ['label' => 'Wide Buttons', 'tip' => 'Format adapted to long description on full width booking widget'],
             ],
         ],
         'service_location' => [
