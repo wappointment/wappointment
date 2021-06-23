@@ -123,9 +123,10 @@ export default {
     background-size: cover;
 }
 
-.wap-front.large-version .wservice-large {
+.wap-front.large-version .wbtn.wbtn-cell.wbtn-secondary.wservice-large, 
+.wap-front.large-version .wbtn.wbtn-cell.wbtn-secondary.wservice-large:not(:disabled):active {
     max-width:none ;
-    margin:1em .2em;
+    margin:1em 0;
 }
 
 .wap-front .wbtn-service.wservice-large .wap-icon-image {
