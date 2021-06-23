@@ -27,7 +27,8 @@ class Database
     private static function config()
     {
         $db = new \Wappointment\WP\Database();
-        return [
+
+        $config = [
             'driver' => 'mysql',
             'host' => $db->getHost(),
             'port' => $db->getPort(),
@@ -40,6 +41,13 @@ class Database
             'strict' => true,
             'engine' => null,
         ];
+
+        if (is_numeric($db->getPort())) {
+            $config['host'] = $db->getHost();
+            $config['port'] = $db->getPort();
+        } else {
+            $config['unix_socket'] = $db->getPort();
+        }
     }
     private static function configms()
     {

@@ -53,14 +53,11 @@ class Database
     public function getDbCollate()
     {
         return $this->collate;
-        /* $defaultCollate = $this->getDbCharset() != 'utf8mb4' ? 'utf8_general_ci' : 'utf8mb4_unicode_ci';
-        return !defined('DB_COLLATE') || empty(DB_COLLATE) ? 'utf8_general_ci' : DB_COLLATE; */
     }
 
     public function getDbCharset()
     {
         return $this->charset;
-        /* return !defined('DB_CHARSET') || empty(DB_CHARSET) ? 'utf8' : DB_CHARSET; */
     }
 
     public function getHost()
