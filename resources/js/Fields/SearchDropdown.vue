@@ -31,8 +31,10 @@
                 <div v-if="filteredElements.length > 0">
                     <div v-if="groupKey !=''" v-for="groupElements in filteredElementsByGroup">
                         <div>{{ groupElements.key }}</div>
-                        <ValueCard v-for="elementLoop in groupElements.values" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
+                        <div class="d-flex">
+                            <ValueCard v-for="elementLoop in groupElements.values" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
                             :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>
+                        </div>
                     </div>
                     <ValueCard v-else v-for="elementLoop in filteredElements" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
                             :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>

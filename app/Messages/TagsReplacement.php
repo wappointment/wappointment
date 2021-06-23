@@ -17,7 +17,7 @@ class TagsReplacement
     public function __construct($params)
     {
         $this->params = $params;
-
+        $this->params['email_helper'] = new EmailHelper;
         $this->prepareTags();
     }
 
@@ -139,7 +139,16 @@ class TagsReplacement
                 'model' => 'appointment',
                 'key' => 'linkNew',
                 'label' => 'Link to book a new appointment',
-                'getMethod' => 'getLinkNewEvent'
+                'getMethod' => 'getLinkNewEvent',
+                'modelCall' => 'email_helper'
+            ],
+            [
+                'model' => 'appointment',
+                'key' => 'linkNewStaff',
+                'label' => 'Link to book a new appointment with the same staff',
+                'getMethod' => 'getLinkNewEventStaff',
+                'modelCall' => 'email_helper',
+                'requiresParams' => true
             ],
             [
                 'model' => 'appointment',
@@ -191,7 +200,7 @@ class TagsReplacement
                         return call_user_func([
                             $this->params[$model_key],
                             $tag['getMethod']
-                        ], $tag);
+                        ], empty($tag['requiresParams']) ? $tag : $this->params);
                     }
                 }
             } else {

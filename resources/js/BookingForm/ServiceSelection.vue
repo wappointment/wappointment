@@ -2,7 +2,14 @@
     <div v-if="services.length>0">
       <div class="title wtitle" v-if="options!==undefined">{{options.service_selection.select_service}}</div>
       <input v-if="services.length > 10" class="form-control" type="text" v-model="search">
-      <div class="d-flex flex-wrap justify-content-around" >
+      <template v-if="options.service_selection.check_full_width"> 
+          <ServiceButton v-for="(service,idx) in filteredServices" class="wservice-large" :key="'service-sel-'+idx"  
+        :service="service" 
+        :options="options" 
+        :viewData="viewData"
+        @selectService="selectService" />
+      </template>
+      <div class="d-flex flex-wrap justify-content-around" v-else >
               <ServiceButton v-for="(service,idx) in filteredServices" :key="'service-sel-'+idx"  
         :service="service" 
         :options="options" 

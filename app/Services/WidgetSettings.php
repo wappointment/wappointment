@@ -49,6 +49,7 @@ class WidgetSettings
         ],
         'general' => [
             'check_header_compact_mode' => false,
+            'check_hide_staff_name' => false,
             'when' => 'When',
             'service' => 'Service',
             'location' => 'Where',
@@ -122,6 +123,7 @@ class WidgetSettings
         ],
         'service_selection' => [
             'select_service' => 'Pick a service',
+            'check_full_width' => false
         ],
         'service_duration' => [
             'select_duration' => 'How long will be the session?',
@@ -208,6 +210,10 @@ class WidgetSettings
                     'label' => 'Header Compact mode',
                     'tip' => 'Appointment details is compacted in the header'
                 ],
+                'check_hide_staff_name' => [
+                    'label' => 'Hide staff name',
+                    'tip' => 'Ideal if you are not having multiple staff'
+                ],
                 'location' => [
                     'conditions' => [
                         ['key' => 'general.check_header_compact_mode', 'val' => false]
@@ -257,6 +263,7 @@ class WidgetSettings
         'service_selection' => [
             'fields' => [
                 'check_price_right' => ['label' => 'Price right aligned'],
+                'check_full_width' => ['label' => 'Wide Buttons', 'tip' => 'Format adapted to long description on full width booking widget'],
             ],
         ],
         'service_location' => [
