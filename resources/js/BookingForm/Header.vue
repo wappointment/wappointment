@@ -1,16 +1,16 @@
 <template>
     <div class="wap-head">
-        <div v-if="staffSelected" class="d-flex" :class="[isCompactHeader ? 'align-items-start':'align-items-center']">
+        <div v-if="staffSelected" class="d-flex" :class="getClassWrapper">
             <div class="staff-av" role="button" @click="showAllStaff" >
                 <div :data-tt="canChangeStaff ? 'Change Staff':''">
                     <div role="img" :style="getStyleBackground(staff)" :title="staff.n" class="wstaff-img"></div>
                 </div>
             </div>
-            <div class="staff-desc">
-                <div role="button" @click="showAllStaff"><strong>{{ staff.n }}</strong></div>
+            <div class="staff-desc" v-if="showRightText">
+                <div role="button" @click="showAllStaff" v-if="showStaffName" :class="{'wcan-edit':canChangeStaff}"><strong>{{ staff.n }}</strong></div>
                 <div class="header-service" v-if="service!== false && isCompactHeader">
-                    <span class="compact-servicename">{{ service.name }}</span>
-                    <span v-if="duration" class="wduration">{{duration}}{{getMinText}}</span>
+                    <span class="compact-servicename" role="button" :class="{'wcan-edit':canChangeService}" @click="changeService">{{ service.name }}</span>
+                    <span v-if="duration" role="button" class="wduration" :class="{'wcan-edit':canChangeDuration}" @click="changeDuration">{{duration}}{{getMinText}}</span>
                 </div>
             </div>
         </div>
@@ -61,12 +61,13 @@ export default {
         }
     },
     methods:{
+        
         showAllStaff(){
             if(this.disabledButtons) {
               return
             } 
             if(this.canChangeStaff){
-                return this.$emit('showStaffScreen', 'BookingStaffSelection',{selectedStaff:null,selectedSlot:false,service: false,location: false,duration: false,})
+                return this.$emit('showStaffScreen', 'BookingStaffSelection',{ selectedStaff:null, selectedSlot:false, service: false, location: false, duration: false,})
             }
         },
         getStyleBackground(staff){
@@ -74,14 +75,32 @@ export default {
         }
     },
     computed:{
+        getClassWrapper(){
+            return [
+                this.itemsCenterVertically ? 'align-items-center':'align-items-start',
+                this.showRightText ? '':'justify-content-center',
+            ]
+        },
+        showRightText(){
+            return (this.isCompactHeader && (this.service || this.showStaffName )) || (!this.isCompactHeader && this.showStaffName)
+        },
+        itemsCenterVertically(){
+            return !this.isCompactHeader || (this.isCompactHeader && !this.showStaffName)
+        },
         staffSelected(){
             return this.staff !== null
         },
         staffsFilterd(){
             return this.canChangeStaff && this.staffSelected ? [this.staff]:[]
         },
+        hasNoGeneralOptions(){
+            return this.options.general === undefined
+        },
         isCompactHeader(){
-            return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
+            return this.hasNoGeneralOptions || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
+        },
+        showStaffName(){
+            return this.hasNoGeneralOptions || [undefined, false].indexOf(this.options.general.check_hide_staff_name) !== -1
         },
     }
 
@@ -176,6 +195,10 @@ export default {
 .compact-servicename{
     max-width: 75%;
     display: inline-block;
+}
+.wcan-edit{
+    cursor: pointer;
+    text-decoration: underline;
 }
 
 </style>

@@ -2,14 +2,14 @@
     <div class="wap-front" :class="getDynaClasses" :id="elementId">
         <StyleGenerator :options="opts" :wrapper="elementId" :largeVersion="largeVersion"></StyleGenerator>
         <div v-if="isPage" :class="'step-'+stepName">
-            <BookingForm v-if="isBookingPage" :options="opts" :wrapperid="elementId" @changedStep="stepChanged" />
+            <BookingForm v-if="isBookingPage" :options="opts" :wrapperid="elementId" @changedStep="stepChanged" :attributesEl="attributesElProcess" />
             <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
         </div>
         
-        <div :class="getWidClass">
+        <div :class="getWidClass" >
             <div class="wap-wid wclosable" :class="getStepName" v-if="isWidget">
               <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
-              <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :attributesEl="attributesEl" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
+              <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :attributesEl="attributesElProcess" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
               <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
           </div>
         </div>
@@ -47,7 +47,7 @@ export default {
         largeVersion: false,
         autoPop: true,
         demoAs: false,
-        stepChanging: false
+        stepChanging: false,
     }),
     created(){
       this.elementId = 'wapfrontwrapper-' + Date.now()
@@ -78,6 +78,13 @@ export default {
         }
     },
     computed:{
+      attributesElProcess(){
+        let attributesEl = Object.assign({},this.attributesEl)
+         if(this.getParameterByName('staff')){
+            attributesEl.staffSelection = this.getParameterByName('staff')
+          }
+        return attributesEl
+      },
       getStepName(){
         return 'step-' + (this.bookForm? this.stepName:'button')
       },
@@ -181,6 +188,7 @@ export default {
               this.toggleBookForm() // this one goes last
             }
           }
+         
         },
         backToButton(){
           if(this.canPop){

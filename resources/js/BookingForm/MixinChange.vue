@@ -37,22 +37,31 @@ export default {
               this.options.eventsBus.emits('stepChanged', 'service_selection')
               return
             } 
-            this.$emit('changeService', 'BookingServiceSelection', {service:false, location:false, duration:false, selectedSlot: false})
+            if(this.staff.services.length > 1 && this.canChangeService){
+                this.$emit('changeService', 'BookingServiceSelection', {service:false, location:false, duration:false, selectedSlot: false})
+            }
+            
         },
         changeDuration(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'service_duration')
               return
             } 
+            if(this.canChangeDuration){
             this.$emit('changeDuration', 'BookingDurationSelection', {location:false, duration:false, selectedSlot: false})
+            }
         },
         changeLocation(){
             if(this.disabledButtons) {
               this.options.eventsBus.emits('stepChanged', 'service_location')
               return
             } 
-            this.$emit('changeLocation', 'BookingLocationSelection', {location:false})
+            if(this.canChangeLocation){
+                this.$emit('changeLocation', 'BookingLocationSelection', {location:false})
+            }
+            
         }
+
     }
 }
 </script>

@@ -49,6 +49,7 @@ class WidgetSettings
         ],
         'general' => [
             'check_header_compact_mode' => false,
+            'check_hide_staff_name' => false,
             'when' => 'When',
             'service' => 'Service',
             'location' => 'Where',
@@ -202,6 +203,10 @@ class WidgetSettings
                 'check_header_compact_mode' => [
                     'label' => 'Header Compact mode',
                     'tip' => 'Appointment details is compacted in the header'
+                ],
+                'check_hide_staff_name' => [
+                    'label' => 'Hide staff name',
+                    'tip' => 'Ideal if you are not having multiple staff'
                 ],
                 'location' => [
                     'conditions' => [
