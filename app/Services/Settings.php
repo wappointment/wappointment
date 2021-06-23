@@ -107,6 +107,7 @@ class Settings
             'autofill' => true,
             'onsite_enabled' => true,
             'tax' => 0,
+            'payments_order' => [],
         ];
     }
 

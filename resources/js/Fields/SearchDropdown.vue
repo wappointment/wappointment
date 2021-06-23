@@ -27,11 +27,11 @@
                 </LabelMaterial>
                 <span :class="arrowUpClass" @click="makeInactive"></span>
             </div>
-            <div class="dropElements d-flex flex-wrap">
+            <div class="dropElements">
                 <div v-if="filteredElements.length > 0">
                     <div v-if="groupKey !=''" v-for="groupElements in filteredElementsByGroup">
                         <div>{{ groupElements.key }}</div>
-                        <div class="d-flex">
+                        <div class="d-flex flex-wrap">
                             <ValueCard v-for="elementLoop in groupElements.values" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
                             :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>
                         </div>
@@ -40,7 +40,7 @@
                             :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>
                 </div>
                 <div v-else>
-                    <div v-if="search">No results for that search</div>
+                    There are no results
                 </div>
             </div>
         </div>

@@ -329,6 +329,7 @@ class WidgetSettings
             'categories' => [
                 [
                     'label' => 'On Site Payment',
+                    'key' => 'onsite',
                     'fields' => [
                         'onsite_tab' => false,
                         'onsite_desc' => false,
@@ -336,7 +337,8 @@ class WidgetSettings
 
                     ]
                 ],
-            ]
+            ],
+            'categories_draggable' => true
 
         ],
 
@@ -391,6 +393,7 @@ class WidgetSettings
 
     private function setHiddenFields($fields)
     {
+        $fields['swift_payment']['categories'] = Payment::orderMethods($fields['swift_payment']['categories']);
 
         if ((int) Settings::get('approval_mode') === 1) {
             $fields['confirmation']['pending']['hidden'] = true;

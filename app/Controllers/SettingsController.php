@@ -26,7 +26,12 @@ class SettingsController extends RestController
                 (new WidgetSettings)->save($request->input('val'));
                 return ['message' => 'Settings saved'];
             } else {
-                return Settings::save($request->input('key'), $request->input('val'));
+                Settings::save($request->input('key'), $request->input('val'));
+                $data = ['message' => 'Settings saved'];
+                if ($request->input('key') == 'payments_order') {
+                    $data['methods'] = \Wappointment\Services\Payment::methods();
+                }
+                return $data;
             }
         }
     }

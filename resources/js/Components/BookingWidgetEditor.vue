@@ -8,9 +8,9 @@
                         <Front :options="preoptions"  classEl="wappointment_widget" :attributesEl="shortcodeParams" ></Front>
                     </div>
                     <div v-if="editingMode && frontAvailability!==undefined" class="d-flex flex-wrap preview-book">
-                        <div  v-for="(stepObj,idx) in editionsSteps" class="bordered" :class="orderedClass(stepObj,idx)" :data-tt="stepObj.key==step?labelActiveStep:false">
-                            <div  class="overflowhidden" :class="'step-'+stepObj.key">
-                                <FrontDemo :options="options"  classEl="wappointment_widget" :step="stepObj.key" ></FrontDemo>
+                        <div v-for="(stepObj,idx) in editionsSteps" class="bordered" :class="orderedClass(stepObj,idx)" :data-tt="stepObj.key==step?labelActiveStep:false">
+                            <div class="overflowhidden" :class="'step-'+stepObj.key" v-if="!reloading">
+                                <FrontDemo :options="options" classEl="wappointment_widget" :step="stepObj.key" />
                             </div>
                         </div>
                     </div>
@@ -74,9 +74,23 @@
                                 <div class="widget-fields" v-if="isCurrentStep(stepObj.key)" :data-step="'Step '+(4-idx)+': '+stepObj.label" 
                                 :class="{'active-fields': (step == stepObj.key)}">
                                     <div v-if="widgetFields[stepObj.key] !== undefined && widgetFields[stepObj.key].categories !== undefined">
-                                        <div class="d-flex">
-                                            <div v-for="(cat_object, catid) in widgetFields[stepObj.key].categories" class="d-flex mr-2" :class="[showCategory ==  cat_object.label ? 'btn btn-secondary btn-sm':'btn btn-light btn-sm']"  role="button" @click="showCategory = cat_object.label">
-                                                {{cat_object.label}}
+                                        <draggable v-if="widgetFields[stepObj.key].categories_draggable !== undefined" 
+                                            class="nav nav-tabs ml-2" 
+                                            v-model="categoriesOrder" @change="changeCategoriesOrder" draggable=".candrg" >
+                                            <div v-for="(cat_object, catid) in categoriesOrder" class="nav-item d-flex candrg mr-2" 
+                                              role="button" @click="showCategory = cat_object.label">
+                                                <a class="nav-link" :class="{'active':showCategory ==  cat_object.label}">
+                                                    <span class="dashicons dashicons-move"></span>
+                                                    {{ cat_object.label }}
+                                                </a>
+                                            </div>
+                                        </draggable>
+                                        <div class="nav nav-tabs ml-2" v-else>
+                                            <div v-for="(cat_object, catid) in widgetFields[stepObj.key].categories" class="nav-item d-flex mr-2" 
+                                             role="button" @click="showCategory = cat_object.label">
+                                                <a class="nav-link" :class="{'active':showCategory ==  cat_object.label}">
+                                                    {{ cat_object.label }}
+                                                </a>
                                             </div>
                                         </div>
                                         <div :class="{'selected-tab': showCategory ==  cat_object.label}" v-for="(cat_object, catid) in widgetFields[stepObj.key].categories">
@@ -177,6 +191,7 @@ import Colors from '../Modules/Colors'
 import SettingsSave from '../Modules/SettingsSave'
 import CountrySelector from './CountrySelector'
 import eventsBus from '../eventsBus'
+import draggable from 'vuedraggable'
 
 export default {
     components: {
@@ -189,6 +204,7 @@ export default {
         FormFieldSelect,
         FormFieldSlider,
         FontAwesomeIcon,
+        draggable
     },
     mixins: [Colors, SettingsSave],
     props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability', 'editingMode', 'shortcodeParams'],
@@ -260,6 +276,8 @@ export default {
             }
         ],
         reverseEditionsSteps: [],
+        categoriesOrder: [],
+        reloading: false
 
     }),
 
@@ -286,6 +304,8 @@ export default {
         eventsBus.listens('dataDemoChanged', this.dataChanged)
 
         this.stepChanged('general')
+
+        this.categoriesOrder = this.widgetFields.swift_payment.categories
 
     },
 
@@ -332,6 +352,28 @@ export default {
 
 
     methods: {
+        changeCategoriesOrder(data){
+            this.$WapModal()
+                .request(this.settingSaveRequest({
+                    key:'payments_order',
+                    val: this.categoriesOrder.map(item => item.key)
+                }))
+                .then(this.savedCategoriesSuccess)
+                .catch(this.serviceError)
+        },
+        savedCategoriesSuccess(s){
+            this.serviceSuccess(s)
+            window.apiWappointment.methods = s.data.methods
+            this.reloadStep()
+            
+        },
+        reloadStep(){
+            this.reloading = true
+            setTimeout(() => {
+                this.reloading = false
+            }, 50)
+            
+        },
         parseLabel(label){
             return BBCode.render(label,{classPrefix: 'bbcode', newLine: false, allowData: true, allowClasses:true})
         },

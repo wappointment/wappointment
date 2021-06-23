@@ -3,7 +3,8 @@
       <WPaymentMethods :methods="activeMethods" @selected="selected" :options="options" />
       <div class="wpayment" v-if="activeMethod">
         <div class="wfooter">
-          <component :is="activeMethod" :order="order" :options="options" @loading="loadingTransfer" :method="selectedMethod" @confirm="confirm" @cancel="cancel" />
+          <component :is="activeMethod" :order="order" :options="options" :method="selectedMethod" 
+          @loading="loadingTransfer" @confirm="confirm" @cancel="cancel" />
         </div>
       </div>
     </div>

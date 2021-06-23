@@ -36,7 +36,7 @@ class Payment
 
     public static function methods()
     {
-        return apply_filters('wappointment_payment_methods', [
+        $methods = [
             [
                 'key' => 'onsite',
                 'name' => 'On Site',
@@ -70,8 +70,31 @@ class Payment
                 'hideLabel' => true,
                 'active' => false,
             ],
+        ];
 
-        ]);
+        return apply_filters('wappointment_payment_methods', static::orderMethods($methods));
+    }
+
+    public static function orderMethods($methods)
+    {
+        $ordered_methods = [];
+        $methods_order = Settings::get('payments_order');
+
+        foreach ($methods_order as $payment_key) {
+            foreach ($methods as $key => $method) {
+                if ($method !== false && $method['key'] == $payment_key) {
+                    $ordered_methods[] = $method;
+                    $methods[$key] = false;
+                }
+            }
+        }
+        // push the methods left that were not appearing in the order array
+        foreach ($methods as $method) {
+            if ($method !== false) {
+                $ordered_methods[] = $method;
+            }
+        }
+        return $ordered_methods;
     }
 
     public static function isWooActive()
