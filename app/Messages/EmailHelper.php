@@ -6,6 +6,16 @@ use Wappointment\Services\Settings;
 
 class EmailHelper
 {
+    public function getLinkNewEventStaff($params)
+    {
+        return $this->getLinkNewEvent() . '&staff=' . $this->getStaffId($params);
+    }
+
+    protected function getStaffId($params)
+    {
+        return empty($params['appointment']) ? false : $params['appointment']['staff_id'];
+    }
+
     public function getLinkNewEvent()
     {
         return $this->getLinkEvent('new-event');

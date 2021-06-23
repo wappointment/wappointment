@@ -144,6 +144,14 @@ class TagsReplacement
             ],
             [
                 'model' => 'appointment',
+                'key' => 'linkNewStaff',
+                'label' => 'Link to book a new appointment with the same staff',
+                'getMethod' => 'getLinkNewEventStaff',
+                'modelCall' => 'email_helper',
+                'requiresParams' => true
+            ],
+            [
+                'model' => 'appointment',
                 'key' => 'linkView',
                 'label' => 'Link to view the appointment details (Meeting room url etc ...)',
                 'getMethod' => 'getLinkViewEvent'
@@ -192,7 +200,7 @@ class TagsReplacement
                         return call_user_func([
                             $this->params[$model_key],
                             $tag['getMethod']
-                        ], $tag);
+                        ], empty($tag['requiresParams']) ? $tag : $this->params);
                     }
                 }
             } else {
