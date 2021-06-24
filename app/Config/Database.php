@@ -7,14 +7,14 @@ class Database
     public static $prefix_self = 'wappo';
     private static $capsule = null;
 
-    public static function capsule()
+    public static function capsule($alt_port = false)
     {
         if (is_null(self::$capsule)) {
             self::$capsule = new \Illuminate\Database\Capsule\Manager();
 
-            self::$capsule->addConnection(self::config());
+            self::$capsule->addConnection(self::config($alt_port));
             if (is_multisite()) {
-                self::$capsule->addConnection(self::configms(), 'ms');
+                self::$capsule->addConnection(self::configms($alt_port), 'ms');
             }
 
             self::$capsule->setAsGlobal();
@@ -24,7 +24,7 @@ class Database
         return self::$capsule;
     }
 
-    private static function config()
+    private static function config($alt_port = false)
     {
         $db = new \Wappointment\WP\Database();
 
@@ -40,20 +40,20 @@ class Database
             'engine' => null,
         ];
 
-        if (is_numeric($db->getPort())) {
+        if (is_numeric($db->getPort()) || strpos($db->getPort(), '/') !== 0) {
             $config['host'] = $db->getHost();
-            $config['port'] = $db->getPort();
+            $config['port'] = $alt_port ? $db->getAltPort() : $db->getPort();
         } else {
             $config['unix_socket'] = $db->getPort();
         }
 
         return $config;
     }
-    private static function configms()
-    {
 
+    private static function configms($alt_port = false)
+    {
         $db = new \Wappointment\WP\Database();
-        $config =  self::config();
+        $config =  self::config($alt_port);
         $config['prefix'] = $db->getMainPrefix();
         return $config;
     }

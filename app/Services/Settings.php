@@ -103,7 +103,8 @@ class Settings
             'cache' => false,
             'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'],
             'max_active_bookings' => 0,
-            'autofill' => true
+            'autofill' => true,
+            'alt_port' => false,
         ];
     }
 

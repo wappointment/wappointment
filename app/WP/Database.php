@@ -2,13 +2,14 @@
 
 namespace Wappointment\WP;
 
+use Wappointment\Services\Settings;
+
 class Database
 {
     public $host = '';
     public $charset = '';
     public $collate = '';
     private $port = '3306';
-    private $alt_port = '';
     private $prefix = '';
     private $mainprefix = '';
 
@@ -27,14 +28,18 @@ class Database
             $this->host = $host_port[0];
             $this->port = $host_port[1];
         } else {
-            if (!empty(ini_get('mysqli.default_port'))) {
-                $this->alt_port = ini_get('mysqli.default_port'); // make sure this cannot break working connection
+            if (Settings::get('alt_port') && !empty($this->getAltPort())) {
+                $this->port = $this->getAltPort(); // make sure this cannot break working connection
             }
         }
         $this->charset =  $wpdb->charset;
         $this->collate =  $wpdb->collate;
     }
 
+    public function getAltPort()
+    {
+        return ini_get('mysqli.default_port');
+    }
     public function getDbName()
     {
         return DB_NAME;
