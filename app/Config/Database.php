@@ -30,8 +30,6 @@ class Database
 
         $config = [
             'driver' => 'mysql',
-            'host' => $db->getHost(),
-            'port' => $db->getPort(),
             'database' => $db->getDbName(),
             'username' => $db->getDbUser(),
             'password' => $db->getDbPass(),
@@ -48,6 +46,7 @@ class Database
         } else {
             $config['unix_socket'] = $db->getPort();
         }
+
         return $config;
     }
     private static function configms()
