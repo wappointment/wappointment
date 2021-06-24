@@ -48,6 +48,7 @@ class Database
         } else {
             $config['unix_socket'] = $db->getPort();
         }
+        return $config;
     }
     private static function configms()
     {
