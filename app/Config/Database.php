@@ -24,6 +24,11 @@ class Database
         return self::$capsule;
     }
 
+    public static function resetCapsule()
+    {
+        self::$capsule = null;
+    }
+
     private static function config($alt_port = false)
     {
         $db = new \Wappointment\WP\Database();
@@ -53,7 +58,7 @@ class Database
     private static function configms($alt_port = false)
     {
         $db = new \Wappointment\WP\Database();
-        $config =  self::config($alt_port);
+        $config = self::config($alt_port);
         $config['prefix'] = $db->getMainPrefix();
         return $config;
     }

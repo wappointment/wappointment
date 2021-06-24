@@ -11,6 +11,7 @@ class DatabasePrivileges extends \Wappointment\Installation\MethodsRunner
         try {
             \Wappointment\Config\Database::capsule()->getConnection('default')->getPdo();
         } catch (\Throwable $th) {
+            \Wappointment\Config\Database::resetCapsule();
             $this->tryAlternativePort();
         }
         return true;
