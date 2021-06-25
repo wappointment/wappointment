@@ -5,31 +5,41 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.2.3</span>   
-                <span class="ml-2">Limit Active booking and bug fix</span>
+                <span>V2.2.4</span>   
+                <span class="ml-2">Many small improvements and bug fixes</span>
             </h3>
-            <h5>Changelog 2.2.3</h5>
+            <h5>Changelog 2.2.4</h5>
             <ol>
-                <li>added setting "Limit active bookings" per client, in order to avoid over booking from one single person</li>
-                <li>fixed availability calculation issue with big busy slots</li>
+                <li>Added enable/disable auto-fill option of booking form for logged in users</li>
+                <li>Added a "Wide format" for Services with long descriptions</li>
+                <li>Added option on booking widget editor to hide the staff name</li>
+                <li>Added cancel and reschedule links in auto generated event in Google Calendar</li>
+                <li>Added link in email editor for making a new appointment with same staff</li>
+                <li>Added compatibility for unix socket for DB connection</li>
+                <li>Added compatibility with Local by FlyWheel (Long overdue DB connection issue)</li>
+                <li>Improved js event trigger on appointment confirmation for 3rd party integrations</li>
+                <li>Fixed bug with cache ON and Calendars & Staff listing empty, impossible to create new staff</li>
+                <li>Increased timeout limit on .ICS calendar sync</li>
             </ol>
-            <hr/>
-            <div>
-                <span class="h5 text-muted">Below is how your staff selection page looks like now.</span>
-                <img :src="getVersionImage('220', 'staff_page.gif')" alt="staff page" class="img-fluid img-update" title="staff page"/>
-            </div>
-            <div class="text-muted">
-                <h5 class="text-muted">Changelog 2.2.0</h5>
-                <ol>
-                    <li>Added staff selection page in booking form </li>
-                    <li>First booking widget screen can now be a staff selection page using a shortcode attribute </li>
-                    <li><strong>Optimization made</strong> on calendars availability check requests</li>
-                    <li>Added Staff field, for extra information describing your staff(to be used in emails and SMS reminders)</li>
-                    <li>Added <strong>staff permissions</strong> to allow staff to modify their own availability, etc...</li>
-                    <li>added <strong>appointment history</strong> shortcode for logged in users [wap_history]</li>
-                    <li>Admin notifications emails are now translatable with LocoTranslate or other translations system alike</li>
-                    <li>Improved overall usability in the backend interfaces</li>
-                </ol>
+            <div class="wprevious-version">
+                <hr/>
+                <div>
+                    <span class="h5 text-muted">Below is how your staff selection page looks like now.</span>
+                    <img :src="getVersionImage('220', 'staff_page.gif')" alt="staff page" class="img-fluid img-update" title="staff page"/>
+                </div>
+                <div class="text-muted">
+                    <h5 class="text-muted">Changelog 2.2.0</h5>
+                    <ol>
+                        <li>Added staff selection page in booking form </li>
+                        <li>First booking widget screen can now be a staff selection page using a shortcode attribute </li>
+                        <li><strong>Optimization made</strong> on calendars availability check requests</li>
+                        <li>Added Staff field, for extra information describing your staff(to be used in emails and SMS reminders)</li>
+                        <li>Added <strong>staff permissions</strong> to allow staff to modify their own availability, etc...</li>
+                        <li>added <strong>appointment history</strong> shortcode for logged in users [wap_history]</li>
+                        <li>Admin notifications emails are now translatable with LocoTranslate or other translations system alike</li>
+                        <li>Improved overall usability in the backend interfaces</li>
+                    </ol>
+                </div>
             </div>
           </div>
     </WapModal>
@@ -129,5 +139,8 @@ export default {
     border: 2px solid #f0f0f0;
     border-radius: 1em;
     margin-bottom: 1em;
+}
+.wprevious-version{
+    background: #ccc;
 }
 </style>
