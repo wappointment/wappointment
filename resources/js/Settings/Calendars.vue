@@ -304,6 +304,7 @@ export default {
             }else if(this.$route.name == 'calendars_zoom_account'){
                 this.goToDotCom(this.elements.calendars[0])
             }
+            this.$emit('fullyLoaded')
         },
         getExternals(calendar){
             if(calendar.calendar_urls!== undefined){

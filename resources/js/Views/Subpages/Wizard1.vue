@@ -27,7 +27,6 @@
     </div>
     <Notifications v-if="installationErrors.length > 0" :messages="installationErrors" :title="mainInstallationError"></Notifications>
     
-    
   </div>
 </template>
 

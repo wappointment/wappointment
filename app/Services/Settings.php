@@ -108,6 +108,7 @@ class Settings
             'onsite_enabled' => true,
             'tax' => 0,
             'payments_order' => [],
+            'alt_port' => false,
         ];
     }
 

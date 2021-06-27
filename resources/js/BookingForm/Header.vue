@@ -31,10 +31,10 @@ export default {
             type: Array
         },
         staff:{
-            type:[Object]
+            type:Object
         },
         options: {
-            type:[Object]
+            type:Object
         },
 
         service: {

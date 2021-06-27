@@ -28,6 +28,7 @@
                 :duration="duration" 
                 :services="services"
                 :staffs="getStaffs"
+                :staff="selectedStaff"
                 :rescheduling="rescheduling"
                 :startsAt="appointmentStartsAt"
                 :location="location"

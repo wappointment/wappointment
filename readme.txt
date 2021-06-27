@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.7
 Requires PHP: 7.0
-Stable tag: 2.2.3
+Stable tag: 2.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,18 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.2.4 - 2021-06-27 =
+* Added cancel and reschedule link in auto generated event in Google calendar
+* Improved js event trigger on appointment confirmation for 3rd party integrations
+* Added enable/disable auto-fill option of booking form for logged in users
+* Added a "Wide format" for Services with long descriptions
+* Fixed bug with cache ON and Calendars & Staff listing empty, impossible to create new staff
+* Increased timeout limit on .ICS calendar sync
+* Added link in email editor for making a new appointment with same staff
+* Added option on booking widget editor to hide the staff name
+* Added compatibility for unix socket for DB connection
+* Added compatibility with Local by FlyWheel (Long overdue DB connection issue)
 
 = 2.2.3 - 2021-05-29 =
 * added Limit active bookings per client, in order to avoid over booking from one single person

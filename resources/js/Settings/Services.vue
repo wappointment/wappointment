@@ -1,7 +1,7 @@
 <template>
     <div >
         <BreadCrumbs v-if="crumbs.length>0" :crumbs="crumbs" @click="goTo"/>
-        <router-view></router-view>
+        <router-view @fullyLoaded="$emit('fullyLoaded')"></router-view>
     </div>
 </template>
 
