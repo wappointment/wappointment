@@ -74,7 +74,7 @@ export default {
 
     methods:{
         showPrevious(){
-            this.previous = true
+            this.previous = !this.previous
         },
         getVersionImage(version, img){
             return window.apiWappointment.apiSite +'/images/v'+version+'/'+img

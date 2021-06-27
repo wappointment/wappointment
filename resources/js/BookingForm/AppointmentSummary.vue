@@ -51,7 +51,10 @@ export default {
             type: Object
         },
         attributesEl: {
-            type:[Object]
+            type:Object
+        },
+        staff:{
+            type:Object
         },
         services:{
             type: Array
