@@ -159,7 +159,7 @@ export default {
             this.request(this.reorderRequest,{id:val.moved.element.id, 'new_sorting':val.moved.newIndex},undefined,false,this.hasBeenSavedNoReload)
         },
         async reorderRequest(params){
-           return await this.mainService.call('reorder',params)
+           return await this.mainService.call('reorder', params)
         },
         hasBeenSavedNoReload(result){
             return this.hasBeenSavedDeleted(result, false)

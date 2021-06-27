@@ -86,6 +86,7 @@ export default {
             if(this.afterLoaded !== undefined && typeof this.afterLoaded == 'function'){
                 this.afterLoaded(response)
             }
+            this.$emit('fullyLoaded')
             
         },
         failedLoadingElements(fail){

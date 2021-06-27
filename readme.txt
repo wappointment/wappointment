@@ -139,7 +139,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.2.4 - 2021-06-25 =
+= 2.2.4 - 2021-06-27 =
 * Added cancel and reschedule link in auto generated event in Google calendar
 * Improved js event trigger on appointment confirmation for 3rd party integrations
 * Added enable/disable auto-fill option of booking form for logged in users

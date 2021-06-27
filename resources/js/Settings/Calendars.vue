@@ -133,13 +133,11 @@ import SettingsSave from '../Modules/SettingsSave'
 import CalendarsRegav from './CalendarsRegav'
 import DurationCell from '../BookingForm/DurationCell'
 import ShortcodeDesigner from './ShortcodeDesigner'
-
 import StaffAssignServices from './StaffAssignServices'
 import StaffPermissionsManager from './StaffPermissionsManager'
 import StaffCalendarsIntegrations from './StaffCalendarsIntegrations'
 import StaffCalendarsExternal from './StaffCalendarsExternal'
 import StaffCustomFieldEditor from './StaffCustomFieldEditor'
-
 import hasPermissions from '../Mixins/hasPermissions'
 import isSearchable from '../Mixins/isSearchable'
 export default {
@@ -150,7 +148,6 @@ export default {
         CalendarsAddEdit,
         WeeklyAvailability,
         Connections,
-        
         CalendarsRegav,
         ShortcodeDesigner,
         StaffCalendarsExternal,
@@ -314,6 +311,7 @@ export default {
             }else if(this.$route.name == 'calendars_zoom_account'){
                 this.goToDotCom(this.elements.calendars[0])
             }
+            this.$emit('fullyLoaded')
         },
         getExternals(calendar){
             if(calendar.calendar_urls!== undefined){

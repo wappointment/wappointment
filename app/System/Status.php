@@ -81,7 +81,7 @@ class Status
         if (static::dotComNotSetYet()) {
             $services = \Wappointment\Managers\Service::all();
 
-            $services[] = $services[0];
+            //$services[] = $services[0];
 
             foreach ($services as $service) {
                 if (\Wappointment\Managers\Service::hasZoom($service)) {
@@ -96,6 +96,7 @@ class Status
                 }
             }
         }
+
         return $messages;
     }
 
