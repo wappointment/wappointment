@@ -91,14 +91,6 @@ class TagsReplacement
                 'getMethod' => 'getStaffName',
                 'modelCall' => 'appointment'
             ],
-            [
-                'model' => 'order',
-                'key' => 'summary',
-                'label' => 'Display an order summary table for the ',
-                'getMethod' => 'getOrderTable',
-                'modelCall' => 'email_helper',
-                'requiresParams' => true
-            ],
 
         ];
 
