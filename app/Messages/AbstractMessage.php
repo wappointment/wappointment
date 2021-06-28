@@ -17,6 +17,12 @@ abstract class AbstractMessage implements InterfaceMessage
         if (method_exists($this, 'replaceTags')) {
             $this->replaceTags();
         }
+        $this->finalRemoveEmptyLines();
+    }
+
+    public function finalRemoveEmptyLines()
+    {
+        $this->body = str_replace('<p></p>', '', $this->body);
     }
 
     public function renderMessage()
