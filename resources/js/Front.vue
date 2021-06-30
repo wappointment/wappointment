@@ -83,7 +83,8 @@ export default {
          if(this.getParameterByName('staff')){
             attributesEl.staffSelection = this.getParameterByName('staff')
           }
-        return attributesEl
+          
+        return this.castAttributes(attributesEl)
       },
       getStepName(){
         return 'step-' + (this.bookForm? this.stepName:'button')
@@ -166,7 +167,15 @@ export default {
         }
     },
     methods: {
-      
+        castAttributes(attributes){
+          let castAsInt = ['staffSelection', 'serviceSelection']
+          for (let i = 0; i < castAsInt.length; i++) {
+            if(attributes[castAsInt[i]]){
+              attributes[castAsInt[i]] = parseInt(attributes[castAsInt[i]])
+            }
+          }
+          return attributes
+        },
         stepChanged(stepName){
           this.stepName = stepName
           this.stepChanging = true

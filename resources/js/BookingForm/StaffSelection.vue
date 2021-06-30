@@ -19,8 +19,11 @@
 import ServiceButton from './ServiceButton'
 import FirstAvailabilities from './FirstAvailabilities'
 import Intervals from '../Standalone/intervals'
+import MixinChange from './MixinChange'
+    
 export default {
-    props:['calendars','options', 'timeprops','viewData'],
+    mixins: [ window.wappointmentExtends.filter('MixinChange', MixinChange)],
+    props:['calendars','options', 'timeprops','viewData', 'attributesEl'],
     data: () => ({
         disabledButtons: false,
         search:''
@@ -34,8 +37,11 @@ export default {
     computed:{
         filteredStaff(){
             let searchterm = this.search.toLowerCase()
-            return this.calendars.map(e => Object.assign({name:e.n, options:{icon:{src:e.a.replace('?s=46','?s=80'),wp_id:true}}}, e)).filter(e => e.name.toLowerCase().indexOf(searchterm) !== -1)
-        }
+            
+            return this.calendars.map(e => Object.assign(
+                {name:e.n, options:{icon:{src:e.a.replace('?s=46','?s=80'),wp_id:true}}}, e)
+                ).filter(e => e.name.toLowerCase().indexOf(searchterm) !== -1)
+        },
     },
     methods:{
         getIntervalsCollection(staff){

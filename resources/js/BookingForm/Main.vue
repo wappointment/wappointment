@@ -90,7 +90,7 @@ import BookingDurationSelection from './DurationSelection'
 import BookingLocationSelection from './LocationSelection'
 import BookingStaffSelection from './StaffSelection'
 import MixinLegacy from './MixinLegacy'
-
+import MixinChange from './MixinChange'
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
     'RescheduleConfirm': RescheduleConfirm,
@@ -107,7 +107,7 @@ let compDeclared = {
     'AppointmentTypeSelection': AppointmentTypeSelection
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
-let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Colors, Dates, MixinLegacy] )
+let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Colors, Dates, MixinLegacy, window.wappointmentExtends.filter('MixinChange', MixinChange)] )
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
@@ -231,6 +231,14 @@ export default {
        staff(){
            return this.selectedStaff
        },
+       filterStaffByService(){
+            let staffs = this.getStaffs
+            if(this.serviceLocked){
+                let serviceSelected = parseInt(this.attributesEl.serviceSelection)
+                staffs = staffs.filter(e  => e.services.indexOf(serviceSelected) !== -1)
+            }
+            return staffs
+        },
        timeprops(){
            let timeprops = {
                currentTz: this.currentTz,
@@ -458,21 +466,21 @@ export default {
 
         getDefaultStaff(){
             let ordered = []
-            if(this.viewData.staffs!== undefined && this.viewData.staffs.length > 1){
-                for (let i = 0; i < this.viewData.staffs.length; i++) {
-                    if(this.viewData.staffs[i].services.length > 0 && this.viewData.staffs[i].availability.length > 0){
+            if(this.filterStaffByService!== undefined && this.filterStaffByService.length > 1){
+                for (let i = 0; i < this.filterStaffByService.length; i++) {
+                    if(this.filterStaffByService[i].services.length > 0 && this.filterStaffByService[i].availability.length > 0){
                         ordered.push({
                             id: i,
-                            start:this.viewData.staffs[i].availability[0][0],
-                            end:this.viewData.staffs[i].availability[0][1]
+                            start:this.filterStaffByService[i].availability[0][0],
+                            end:this.filterStaffByService[i].availability[0][1]
                         }) 
                     
                     }
                 }
                 ordered.sort((a, b) => a.start > b.start)
-                return this.viewData.staffs[ordered[0].id]
+                return this.filterStaffByService[ordered[0].id]
             }else{
-                return this.viewData.staffs[0]
+                return this.filterStaffByService[0]
             }
         },
         
@@ -577,11 +585,7 @@ export default {
             if(this.isLegacyOrNotServiceSuite){
                 this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
             }else{
-                if(this.services.length == 1){
-                    this.service = this.services[0]
-                }else{
-                    this.testLockedService()
-                }
+                this.testLockedService()
             }
         },
         demoAutoSelect(){
@@ -627,11 +631,16 @@ export default {
         testLockedService(){
             if(this.attributesEl !== undefined && 
                 this.attributesEl.serviceSelection !== undefined){
-                    let lockToServiceID = this.attributesEl.serviceSelection
-                    if([undefined,false,''].indexOf(lockToServiceID) === -1){
-                        this.service = this.services.find(e => e.id == lockToServiceID)
-                    }
+                let lockToServiceID = this.attributesEl.serviceSelection
+                if([undefined,false,''].indexOf(lockToServiceID) === -1){
+                    this.service = this.services.find(e => parseInt(e.id) == lockToServiceID)
                 }
+                if(this.service === undefined){
+                    throw "Service "+lockToServiceID+" not available for staff"
+                }
+            }else{
+                this.service = this.services[0]
+            }
         },
 
         getFirstDuration(service){
@@ -710,7 +719,7 @@ export default {
                         relatedComps: 'relatedComps', 
                         appointment_starts_at: 'appointmentStartsAt',
                         custom_fields: 'viewData.custom_fields',
-                        staffs:  'viewData.staffs'
+                        staffs:  'filterStaffByService'
                     },
                     listeners: {
                         back:'childChangedStep',
@@ -771,10 +780,11 @@ export default {
                     'showStaffSelection': true
                 },
                 props: {
-                    calendars: 'viewData.staffs',
+                    calendars: 'filterStaffByService',
                     options: 'options',
                     timeprops: 'timeprops',
                     viewData: 'viewData',
+                    attributesEl: 'attributesEl'
                 },
                 listeners: {
                     staffSelected:'changeStaff'

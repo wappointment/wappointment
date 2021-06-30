@@ -20,8 +20,9 @@
 <script>
 import minText from './minText'
 import MixinChange from './MixinChange'
+import MixinChangeCommands from './MixinChangeCommands'
 export default {
-    mixins: [minText, window.wappointmentExtends.filter('MixinChange', MixinChange)],
+    mixins: [minText, window.wappointmentExtends.filter('MixinChange', MixinChange), MixinChangeCommands],
     props: {
         staffs: {
             type: Array
