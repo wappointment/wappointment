@@ -8,6 +8,7 @@ use Wappointment\Services\Services;
 use Wappointment\Services\VersionDB;
 use Wappointment\Managers\Service;
 use Wappointment\Repositories\Services as RepositoriesServices;
+use Wappointment\Services\Payment;
 use Wappointment\Services\Settings;
 
 class ServicesController extends RestController
@@ -21,7 +22,8 @@ class ServicesController extends RestController
         $data = [
             'db_required' => $db_update_required,
             'services' => $services,
-            'currency' => Settings::get('currency'),
+            'currency' => Payment::currencyCode(),
+            'tax' => Settings::get('tax'),
         ];
 
         if (!$db_update_required) {

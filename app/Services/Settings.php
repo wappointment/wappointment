@@ -311,6 +311,14 @@ class Settings
         return true;
     }
 
+    protected static function taxValid($value)
+    {
+        if (self::between($value, 0, 100)) {
+            return true;
+        }
+        throw new \WappointmentException('Tax is not valid');
+    }
+
     protected static function weekly_summary_dayValid($value)
     {
         if (self::between($value, 0, 6)) {

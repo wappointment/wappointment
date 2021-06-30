@@ -6,9 +6,18 @@
             <transition name="fade" mode="out-in">
                 <div class="d-flex">
                     <div  v-if="showSettings">
-                        <div class="text-muted small">
-                            Currency: <span v-if="wooAddonActive" data-tt="Configure it in WooCommerce" class="text-dark tt-danger">{{ currencyText }}</span>
-                            <a v-else href="javascript:;" @click="setCurrency">{{ currencyText }}</a>
+                        <div class="d-flex align-items-center">
+                            <div class="text-muted small">
+                                Currency: <span v-if="wooAddonActive" data-tt="Configure it in WooCommerce" class="text-dark tt-danger">{{ currencyText }}</span>
+                                <a v-else href="javascript:;" @click="setCurrency">{{ currencyText }}</a>
+                            </div>
+                            <div v-if="!wooAddonActive" class="text-muted small ml-2">
+                                Tax: <a v-if="!canEditTax" href="javascript:;" @click="editTax">{{ tax }}%</a>
+                                <span v-else>
+                                    <input type="text" v-model="tax" size="2" @keyup.enter.prevent="saveTax" >% 
+                                    <button class="btn btn-outline-primary btn-sm" @click="saveTax">Save</button>
+                                </span>
+                            </div>
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="text-muted small">Payments accepted:</div> 
@@ -18,7 +27,7 @@
                 </div>
             </transition>
         </div>
-        <component :is="getComponent" @isolate="isolate" class="p-2 border border-secondary" />
+        <component :is="getComponent" @isolate="isolate" @dataUp="dataUp" class="p-2 border border-secondary" />
         <WapModal v-if="showModal" :show="showModal" @hide="hidePopup" noscroll>
             <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
             <CurrencyEditor v-if="showCurrency"  @close="updateCurrency" />
@@ -33,8 +42,10 @@ import RequiresAddon from '../Mixins/RequiresAddon'
 import ServicesManage from './ServicesManage'
 import HasPopup from '../Mixins/HasPopup'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
+import SettingsSave from '../Modules/SettingsSave'
+
 export default {
-    mixins:[RequiresAddon, HasPopup, CanFormatPrice],
+    mixins:[RequiresAddon, HasPopup, CanFormatPrice, SettingsSave],
     components:{
         ServicesManage,
         CurrencyEditor,
@@ -45,14 +56,27 @@ export default {
         showSettings: false,
         settingstimeout: false,
         isIsolated: false,
-        popupOn:false
+        popupOn:false,
+        tax: 0,
+        canEditTax: false
     }),
+
     computed:{
         getComponent(){
             return this.currentView == 'services' ? 'ServicesManage':'ServicesManage'
         },
     },
     methods: {
+        dataUp(data){
+            console.log('data',data)
+            this.tax = data.tax
+        },
+        saveTax(){
+            this.settingSave('tax', this.tax)
+        },
+        editTax(){
+            this.canEditTax = true
+        },
         updateCurrency(){
             window.location.reload()
         },
@@ -73,6 +97,7 @@ export default {
         closed(){
             this.removeSettings()
             this.popupOn = false
+            
         },
         opened(){
             this.popupOn = true
@@ -94,6 +119,7 @@ export default {
         },
         removeSettings(){
             this.showSettings = false
+            this.canEditTax = false
         },
         manageServices(){
             this.currentView = 'services'

@@ -343,6 +343,44 @@ class WidgetSettings
         ],
 
     ];
+    private $steps = [
+        [
+            'key' => 'button',
+            'label' => 'Booking button'
+        ],
+        [
+            'key' => 'staff_selection',
+            'label' => 'Staff selection'
+        ],
+        [
+            'key' => 'service_selection',
+            'label' => 'Service selection'
+        ],
+        [
+            'key' => 'service_duration',
+            'label' => 'Duration selection'
+        ],
+        [
+            'key' => 'service_location',
+            'label' => 'Modality selection'
+        ],
+        [
+            'key' => 'selection',
+            'label' => 'Slot selection'
+        ],
+        [
+            'key' => 'form',
+            'label' => 'Form'
+        ],
+        [
+            'key' => 'swift_payment',
+            'label' => 'Payment'
+        ],
+        [
+            'key' => 'confirmation',
+            'label' => 'Confirmation'
+        ],
+    ];
 
     private $db_settings = [];
     private $merged_settings = [];
@@ -356,6 +394,27 @@ class WidgetSettings
         $this->db_settings = WPHelpers::getOption($this->key_option, []);
         $this->merged_settings = empty($this->db_settings) ?
             $this->defaultSettings() : $this->merge($this->defaultSettings(), $this->db_settings);
+    }
+
+    public function steps()
+    {
+        $steps = $this->steps;
+        $payment_off = true;
+        if ($payment_off) {
+            $steps = $this->removeStep('swift_payment', $steps);
+        }
+        return $steps;
+    }
+
+    protected function removeStep($stepKey, $steps)
+    {
+        $newSteps = [];
+        foreach ($steps as $step) {
+            if ($step['key'] != $stepKey) {
+                $newSteps[] = $step;
+            }
+        }
+        return $newSteps;
     }
 
     public function defaultSettings()

@@ -7,16 +7,29 @@ use Wappointment\Helpers\Get;
 class Payment
 {
 
-    public static function currencies()
+    public static function currency()
     {
-        $currencies = Get::list('currencies');
-        $code = Settings::get('currency');
-        foreach ($currencies as $currency) {
-            if ($currency['code'] == $code) {
+        static $currency_loaded = false;
+        if ($currency_loaded !== false) {
+            return $currency_loaded;
+        }
+        foreach (static::currencies() as $currency) {
+            if ($currency['code'] == static::currencyCode()) {
                 $currency['format'] = static::getFormat($currency);
+                $currency_loaded = $currency;
                 return $currency;
             }
         }
+    }
+
+    public static function currencyCode()
+    {
+        return Settings::get('currency');
+    }
+
+    public static function currencies()
+    {
+        return Get::list('currencies');
     }
 
     public static function getFormat($currency)
@@ -31,6 +44,12 @@ class Payment
             case 4:
                 return '[currency] [price]';
         }
+    }
+
+    public static function formatPrice($price)
+    {
+        $currency = static::currency();
+        return str_replace(['[price]', '[currency]'], [$price, $currency['symbol']], $currency['format']);
     }
 
 

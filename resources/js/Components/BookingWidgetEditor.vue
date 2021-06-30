@@ -207,7 +207,7 @@ export default {
         draggable
     },
     mixins: [Colors, SettingsSave],
-    props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability', 'editingMode', 'shortcodeParams'],
+    props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability', 'editingMode', 'shortcodeParams', 'steps'],
     data: () => ({
         step: 'general',
         showAdvancedColors: false,
@@ -237,44 +237,7 @@ export default {
                 label: 'Confirmation'
             }
         ],
-        editionsSteps: [
-            {
-                key: 'button',
-                label: 'Booking button'
-            },
-            {
-                key: 'staff_selection',
-                label: 'Staff selection'
-            },
-            {
-                key: 'service_selection',
-                label: 'Service selection'
-            },
-            {
-                key: 'service_duration',
-                label: 'Duration selection'
-            },
-            {
-                key: 'service_location',
-                label: 'Modality selection'
-            },
-            {
-                key: 'selection',
-                label: 'Slot selection'
-            },
-            {
-                key: 'form',
-                label: 'Form'
-            },
-            {
-                key: 'swift_payment',
-                label: 'Payment'
-            },
-            {
-                key: 'confirmation',
-                label: 'Confirmation'
-            }
-        ],
+        editionsSteps: [],
         reverseEditionsSteps: [],
         categoriesOrder: [],
         reloading: false
@@ -282,7 +245,8 @@ export default {
     }),
 
     created(){
-        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.isLegacy? this.editionsStepsLegacy:this.editionsSteps,  this.config, BWEditorTools )
+        
+        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.isLegacy? this.editionsStepsLegacy:this.steps,  this.config, BWEditorTools )
         this.reverseEditionsSteps = this.editionsSteps.slice(0).reverse()
         this.options = Object.assign ({}, this.preoptions)
         this.options.editionsSteps = this.editionsSteps

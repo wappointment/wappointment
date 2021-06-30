@@ -3,6 +3,7 @@
 namespace Wappointment\Messages;
 
 use Wappointment\Messages\Templates\Order as OrderMessage;
+use Wappointment\Services\Payment;
 use Wappointment\Services\Settings;
 
 class EmailHelper
@@ -39,12 +40,27 @@ class EmailHelper
 
     protected static function generateOrderTable($params)
     {
+        $params['appointment']->load('order');
+        $order = $params['appointment']->order->first();
         $rows = [
-            ['Service', 'Price'],
-            ['Consultation - 60min', '30 €'],
-            ['test - 30min', '75 €'],
-            ['Total', '105 €'],
+            [
+                'cells' => [__('Service', 'wappointment'), __('Price', 'wappointment')],
+                'class' => 'lineb',
+                'cellClass' => 'muted'
+            ],
         ];
+        foreach ($order->prices as $price) {
+            $rows[] = [$price->price->name, Payment::formatPrice($price->price->price / 100)];
+        }
+        $rows[] = [
+            'cells' => ['Total', Payment::formatPrice($order->total / 100)],
+            'class' => 'bold lineb linet'
+        ];
+        $rows[] = [
+            'cells' => ['Status', $order['payment_label'] . ' - ' . $order['status_label']],
+            'class' => 'small'
+        ];
+
         return OrderMessage::table($rows);
     }
 

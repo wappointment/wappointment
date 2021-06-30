@@ -5,13 +5,14 @@ namespace Wappointment\Models;
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
 use Wappointment\Services\AppointmentNew;
+use Wappointment\Services\Payment;
 
 class Order extends Model
 {
     use SoftDeletes;
 
     protected $table = 'wappo_orders';
-    protected $fillable = ['transaction_id', 'status', 'total', 'refunded_at', 'client_id', 'options', 'paid_at', 'payment'];
+    protected $fillable = ['transaction_id', 'status', 'total', 'refunded_at', 'client_id', 'options', 'paid_at', 'payment', 'currency'];
     protected $with = ['client', 'prices', 'appointments'];
     protected $dates = ['refunded_at', 'paid_at', 'created_at', 'updated_at'];
     protected $casts = ['options' => 'array'];
@@ -19,14 +20,13 @@ class Order extends Model
 
     const STATUS_PENDING = 0;
     const STATUS_AWAITING = 1;
-    const STATUS_COMPLETED = 2;
+    const STATUS_PAID = 2;
     const STATUS_CANCELLED = -1;
     const STATUS_REFUNDED = -2;
 
     const PAYMENT_ONSITE = 0;
     const PAYMENT_STRIPE = 1;
     const PAYMENT_PAYPAL = 2;
-
 
     public function appointments()
     {
@@ -40,15 +40,15 @@ class Order extends Model
     {
         switch ($this->status) {
             case self::STATUS_PENDING:
-                return 'Pending';
+                return __('Pending', 'wappointment');
             case self::STATUS_AWAITING:
-                return  'Awaiting payment';
-            case self::STATUS_COMPLETED:
-                return  'Completed';
+                return  __('Awaiting payment', 'wappointment');
+            case self::STATUS_PAID:
+                return  __('Paid', 'wappointment');
             case self::STATUS_CANCELLED:
-                return  'Cancelled';
+                return  __('Cancelled', 'wappointment');
             case self::STATUS_REFUNDED:
-                return  'Refunded';
+                return  __('Refunded', 'wappointment');
         }
     }
 
@@ -56,7 +56,7 @@ class Order extends Model
     {
         switch ($this->payment) {
             case self::PAYMENT_ONSITE:
-                return 'Pay On Site';
+                return __('Pay On Site', 'wappointment');
             case self::PAYMENT_STRIPE:
                 return  'Stripe';
             case self::PAYMENT_PAYPAL:
@@ -100,14 +100,19 @@ class Order extends Model
         }
     }
 
-    public function setCompleted()
+    public function setPaid()
     {
-        $this->status = static::STATUS_COMPLETED;
+        $this->currency = Payment::currencyCode();
+        $this->status = static::STATUS_PAID;
         $this->paid_at = date('Y-m-d H:i:s');
     }
     public function setPaypal()
     {
         $this->payment = static::PAYMENT_PAYPAL;
+    }
+    public function setStripe()
+    {
+        $this->payment = static::PAYMENT_STRIPE;
     }
 
     public function setCancelled()
@@ -175,7 +180,7 @@ class Order extends Model
     {
         $this->confirmAppointments();
 
-        $this->setCompleted();
+        $this->setPaid();
 
         if ($save) {
             $this->save();

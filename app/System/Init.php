@@ -138,7 +138,7 @@ class Init
             'version' => WAPPOINTMENT_VERSION,
             'allowed' => Settings::get('wappointment_allowed'),
             'frontPage' => get_permalink((int) Settings::get('front_page')),
-            'currency' => \Wappointment\Services\Payment::currencies(),
+            'currency' => \Wappointment\Services\Payment::currency(),
             'methods' => \Wappointment\Services\Payment::methods()
         ];
 

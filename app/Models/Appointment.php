@@ -36,6 +36,26 @@ class Appointment extends Model
 
     protected $services = [];
 
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'location_id');
+    }
+
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'client_id');
+    }
+
+    public function order()
+    {
+        return $this->belongsToMany(Order::class, 'wappo_order_price', 'appointment_id', 'order_id');
+    }
+
     public function getStaff()
     {
         if (VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES)) {
@@ -116,16 +136,6 @@ class Appointment extends Model
         }
         return ServicesAppointment::getLocation($location, $this);
         //return apply_filters('wappointment_service_location', $location, $this);
-    }
-
-    public function service()
-    {
-        return $this->belongsTo(Service::class, 'service_id');
-    }
-
-    public function location()
-    {
-        return $this->belongsTo(Location::class, 'location_id');
     }
 
     public function toArraySpecial()
@@ -307,6 +317,7 @@ class Appointment extends Model
     {
         return $this->getLocationVideo() == 'zoom' ? 'zoom' : 'google';
     }
+
     public function getMeetingLink()
     {
         $video_provider = $this->getVideoProvider();
@@ -323,11 +334,6 @@ class Appointment extends Model
         //if meeting link is already present return it directly.
         $link = $this->videoAppointmentHasLink();
         return $link ? $link : $this->getPageLink('view-event');
-    }
-
-    public function client()
-    {
-        return $this->belongsTo(Client::class, 'client_id');
     }
 
     public function canRescheduleUntilTimestamp()

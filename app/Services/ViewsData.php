@@ -154,6 +154,7 @@ class ViewsData
             'front_availability' => $this->front_availability(),
             'widget' => (new WidgetSettings)->get(),
             'widgetDefault' => (new WidgetSettings)->defaultSettings(),
+            'steps' => (new WidgetSettings)->steps(),
             'config' => [
                 'service' => Service::get(),
                 'approval_mode' => Settings::get('approval_mode'),

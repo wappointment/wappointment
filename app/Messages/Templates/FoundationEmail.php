@@ -192,10 +192,10 @@ class FoundationEmail
   {
     $styleToLoad = '';
 
-    foreach ($this->includedStyles as $key => $style) {
+    foreach ($this->includedStyles as $style) {
       $styleToLoad .= $this->getStyle($style);
     }
-    return $styleToLoad;
+    return apply_filters('wappointment_style_email', $styleToLoad);
   }
 
   public function includeStyle($name)
@@ -206,6 +206,7 @@ class FoundationEmail
   public function getStyle($name)
   {
     $styless = $this->getStyles();
+
     return isset($styless[$name]) ? $styless[$name] : '';
   }
 
@@ -459,6 +460,9 @@ class FoundationEmail
                                 width: 100%;
                                 position: relative; }
                               
+                                table.row.rowheader {
+                                  background: #f2efef; }
+                              
                               table.spacer {
                                 width: 100%; }
                                 table.spacer td {
@@ -494,7 +498,11 @@ class FoundationEmail
                                   th.column .column center,
                                   th.column .columns center {
                                     min-width: none !important; }
-                              
+              
+                              th.columns.middle, {
+                                padding-top: 4px; 
+                                padding-bottom: 4px;
+                              }
                               td.columns.last,
                               td.column.last,
                               th.columns.last,
@@ -1335,6 +1343,9 @@ class FoundationEmail
                                 margin-bottom: 16px;
                                 Margin-bottom: 16px; }
                               
+                                th.callout-inner.radius {
+                                  border-radius: 12px;
+                                  border: none; }
                               th.callout-inner {
                                 width: 100%;
                                 border: 1px solid #cbcbcb;
@@ -1342,11 +1353,11 @@ class FoundationEmail
                                 background: #fefefe; }
                                 th.callout-inner.primary {
                                   background: #def0fc;
-                                  border: 1px solid #444444;
+                                  border: 1px solid #d0cfcf;
                                   color: #0a0a0a; }
                                 th.callout-inner.secondary {
-                                  background: #ebebeb;
-                                  border: 1px solid #444444;
+                                  background: #f2efef;
+                                  border: none;
                                   color: #0a0a0a; }
                                 th.callout-inner.success {
                                   background: #e1faea;
