@@ -23,7 +23,6 @@
 
             <div class="row mb-2">
                   <label for="date-format" class="col-sm-3 dateformatlabel"> Date format</label>
-
                   <div class="col-sm-9">
                     <div class="d-flex">
                       <div class="input-group input-group-sm">
@@ -100,12 +99,31 @@
                 </div> hrs before appointment</div>
             </div>
 
+            <div class="mb-2">
+                  
+                
+                <div class="d-flex align-items-center">
+                  
+                    <label class="form-check-label w-100" for="video_link">
+                      <div class="min-label">
+                    <input type="checkbox" v-model="video_link_edit" id="video_link" >
+                     Video Meeting link is accessible X minutes before the appointment starts
+                     </div>
+                     </label>
+                    
+                  <FormFieldDuration v-if="showVideoLink" v-model="viewData.video_link_shows" @change="changedVidLink"/>
+                </div>
+                <div class="small text-muted">If you want to restrict when your clients get access to the Video meeting url</div>
+                
+
+            </div>
+            
             <div class="d-flex mb-2">
                   
                   <label class="form-check-label w-100" for="buffer_time">
                   <div class="d-flex align-items-center">
                     <div class="min-label">Buffer time</div>
-                    <FormFieldDuration v-model="viewData.buffer_time" model="buffer_time" @change="changed"/>
+                    <FormFieldDuration v-model="viewData.buffer_time"  @change="changedBuffer"/>
                   </div>
                   <div class="small text-muted">Time(in minutes) reserved to prepare your next appointment</div>
                   </label>
@@ -283,12 +301,32 @@ export default {
         'H:i',
         'H\\hi',
       ],
+      video_link_edit: false,
     };
   },
   created(){
     this.mainCrumbLabel = this.tablabel
   },
+  watch:{
+    video_link_edit(val){
+      if(val === false){
+        this.viewData.video_link_shows = 0
+        this.changedVidLink(0)
+      }
+    }
+  },
+  computed:{
+    showVideoLink(){
+      return this.video_link_edit || parseInt(this.viewData.video_link_shows) > 0
+    }
+  },
   methods: {
+    changedVidLink(val){
+      return this.changed(val, 'video_link_shows')
+    },
+    changedBuffer(val){
+      return this.changed(val, 'buffer_time')
+    },
     changedMaxActive(){
       if(this.viewData.max_active_bookings<1){
         this.maxBookings = false
@@ -304,6 +342,7 @@ export default {
     loaded(viewData){
         this.viewData = viewData.data
         this.$emit('fullyLoaded')
+        this.video_link_edit = parseInt(this.viewData.video_link_shows) > 0
         this.maxBookings = parseInt(this.viewData.max_active_bookings) > 0
     },
     EditTextPage(){

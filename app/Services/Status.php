@@ -40,6 +40,13 @@ class Status
                 'name' => 'Post SMTP',
             ];
         }
+        if (defined('HAET_MAIL_PATH')) {
+            return [
+                'config' => 'options-general.php?page=wp-html-mail',
+                'icon' => 'https://ps.w.org/wp-html-mail/assets/icon-128x128.png?rev=1730334',
+                'name' => 'WP HTML Mail',
+            ];
+        }
         return false;
     }
 

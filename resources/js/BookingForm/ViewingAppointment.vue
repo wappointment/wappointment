@@ -248,23 +248,9 @@ export default {
             return this.showReschedule && this.rescheduledConfirmed
         },
         hasMeetingRoom(){
-            if(this.zoomMeetingRoom){
-                return this.zoomMeetingRoom
-            }
-            if(this.googleMeetingRoom){
-                return this.googleMeetingRoom
-            }
+            return [undefined,false,''].indexOf(this.appointment.video_meeting) === -1 ? this.appointment.video_meeting:false
         },
-        zoomMeetingRoom(){
-            return this.appointment.options['providers'] !== undefined 
-            && this.appointment.options['providers']['zoom'] !== undefined 
-            && this.appointment.options['providers']['zoom']['join_url'] !== undefined ? this.appointment.options['providers']['zoom']['join_url']: false
-        },
-        googleMeetingRoom(){
-            return this.appointment.options['providers'] !== undefined 
-            && this.appointment.options['providers']['google'] !== undefined 
-            && this.appointment.options['providers']['google']['google_meet_url'] !== undefined ? this.appointment.options['providers']['google']['google_meet_url']: false
-        },
+
         startDatei18n(){
             return this.appointment.converted !== undefined ? this.appointment.converted :this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
         },

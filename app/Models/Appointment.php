@@ -145,7 +145,10 @@ class Appointment extends Model
         $array['start_at'] = $this->start_at->timestamp;
         $array['end_at'] = $this->end_at->timestamp;
         $array['type'] = $this->getLocationSlug();
-
+        $array['video_meeting'] = $this->videoAppointmentHasLink();
+        if (!empty($array['options']['providers'])) {
+            unset($array['options']['providers']);
+        }
         unset($array['id']);
         return $array;
     }
@@ -323,10 +326,19 @@ class Appointment extends Model
         $video_provider = $this->getVideoProvider();
         $url_meeting_key = in_array($video_provider, ['zoom']) ? 'join_url' : 'google_meet_url';
 
-        return !empty($video_provider) &&
+        return $this->canShowLink() && !empty($video_provider) &&
             !empty($this->options['providers']) &&
             !empty($this->options['providers'][$video_provider]) &&
             !empty($this->options['providers'][$video_provider][$url_meeting_key]) ? $this->options['providers'][$video_provider][$url_meeting_key] : false;
+    }
+
+    public function canShowLink()
+    {
+        $when_shows_link = (int)Settings::get('video_link_shows');
+        if ($when_shows_link > 0 && $this->start_at->timestamp - ($when_shows_link * 60) > time()) {
+            return false;
+        }
+        return true;
     }
 
     public function getLinkViewEvent()

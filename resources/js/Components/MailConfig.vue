@@ -384,7 +384,11 @@ export default {
             return ['smtp'].indexOf(this.sendconfig.method) !== -1
         },
         getImageUrl(){
-            return window.apiWappointment.baseUrl+'/'+encodeURIComponent(this.sendconfig.wp_mail_overidden.icon).replaceAll("%2F",'/')
+            let icon = this.sendconfig.wp_mail_overidden.icon
+            if(icon.indexOf('http') === 0){
+                return icon
+            }
+            return window.apiWappointment.baseUrl+'/'+encodeURIComponent(icon).replaceAll("%2F",'/')
         },
         mailFromOtherPlugin(){
             return this.sendconfig!== undefined &&  this.sendconfig.wp_mail_overidden !== false
