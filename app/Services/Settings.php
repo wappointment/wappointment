@@ -105,6 +105,7 @@ class Settings
             'max_active_bookings' => 0,
             'autofill' => true,
             'alt_port' => false,
+            'video_link_shows' => 0
         ];
     }
 

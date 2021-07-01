@@ -245,6 +245,7 @@ class ViewsData
 
         return [
             'debug' => \WappointmentLv::isTest(),
+            'video_link_shows' => Settings::get('video_link_shows'),
             'buffer_time' => Settings::get('buffer_time'),
             'front_page_id' => (int) Settings::get('front_page'),
             'front_page' => get_permalink((int) Settings::get('front_page')),
