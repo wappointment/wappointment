@@ -639,7 +639,9 @@ export default {
                     throw "Service "+lockToServiceID+" not available for staff"
                 }
             }else{
-                this.service = this.services[0]
+                if(this.services.length < 2){
+                    this.service = this.services[0]
+                }
             }
         },
 
