@@ -43,14 +43,10 @@ import ServicesManage from './ServicesManage'
 import HasPopup from '../Mixins/HasPopup'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
 import SettingsSave from '../Modules/SettingsSave'
-
+let componentsLoaded = window.wappointmentExtends.filter('ServicesAndPackagesViews', { ServicesManage, CurrencyEditor, PaymentAllowed })
 export default {
     mixins:[RequiresAddon, HasPopup, CanFormatPrice, SettingsSave],
-    components:{
-        ServicesManage,
-        CurrencyEditor,
-        PaymentAllowed
-    },
+    components: componentsLoaded,
     data: () => ({
         currentView: 'services',
         showSettings: false,
@@ -58,12 +54,13 @@ export default {
         isIsolated: false,
         popupOn:false,
         tax: 0,
-        canEditTax: false
+        canEditTax: false,
+        hasPackageView: componentsLoaded.PackagesManage !== undefined,
     }),
 
     computed:{
         getComponent(){
-            return this.currentView == 'services' ? 'ServicesManage':'ServicesManage'
+            return this.currentView == 'services' ? 'ServicesManage':'PackagesManage'
         },
     },
     methods: {
@@ -125,7 +122,10 @@ export default {
             this.currentView = 'services'
         },
         managePackages(){
-            this.requiresAddon('packages')
+            if(!this.hasPackageView){
+                return this.requiresAddon('packages')
+            }
+            this.currentView = 'packages'
         },
         setCurrency(){
             this.openPopup('Set currency')
