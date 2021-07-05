@@ -34,6 +34,20 @@ class Appointment extends Model
 
     protected $appends = ['duration_sec', 'location_label'];
 
+    public function client()
+    {
+        return $this->belongsTo(Client::class, 'client_id');
+    }
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
+    }
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'location_id');
+    }
+
     public function getStaff()
     {
         if (VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES)) {
@@ -116,14 +130,6 @@ class Appointment extends Model
         //return apply_filters('wappointment_service_location', $location, $this);
     }
 
-    public function service()
-    {
-        return $this->belongsTo(Service::class, 'service_id');
-    }
-    public function location()
-    {
-        return $this->belongsTo(Location::class, 'location_id');
-    }
 
     public function toArraySpecial()
     {
@@ -132,6 +138,7 @@ class Appointment extends Model
         $array['start_at'] = $this->start_at->timestamp;
         $array['end_at'] = $this->end_at->timestamp;
         $array['type'] = $this->getLocationSlug();
+        $array['client'] = $this->client; //important for save to calendar button
         $array['video_meeting'] = $this->videoAppointmentHasLink();
         if (!empty($array['options']['providers'])) {
             unset($array['options']['providers']);
@@ -335,10 +342,7 @@ class Appointment extends Model
         return $link ? $link : $this->getPageLink('view-event');
     }
 
-    public function client()
-    {
-        return $this->belongsTo(Client::class, 'client_id');
-    }
+
 
     public function canRescheduleUntilTimestamp()
     {

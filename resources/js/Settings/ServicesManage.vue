@@ -19,7 +19,7 @@
 
                         <tr  class="row-click" v-for="(service, idx) in filteredSearchable">
                             <td>
-                                <div @mouseover="">{{ idx + 1 }} </div> 
+                                <div>{{ idx + 1 }} </div> 
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
