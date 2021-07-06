@@ -20,8 +20,12 @@ export default {
     props:['method'],
     methods:{
         activate(){
-            this.settingSave('onsite_enabled', this.method.active)
+            this.settingSave('onsite_enabled', this.method.active, this.success)
         },
+        success(e){
+            this.$WapModal().notifySuccess(e.data.message)
+            this.$WapModal().reload()
+        }
     }
 }
 </script>

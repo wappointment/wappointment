@@ -75,7 +75,7 @@ export default {
             this.canEditTax = true
         },
         updateCurrency(){
-            window.location.reload()
+            this.$WapModal().reload()
         },
         isolate(value){
             this.isIsolated = value

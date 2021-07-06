@@ -767,7 +767,10 @@ export default {
             }
             if(!this.isLegacyOrNotServiceSuite){
                 componentsList = this.updateComponentList(componentsList)
-                componentsList = this.setPaymentStep(componentsList)
+                if(window.apiWappointment.methods !== undefined && window.apiWappointment.methods.length > 0){
+                    console.log('set payment step')
+                    componentsList = this.setPaymentStep(componentsList)
+                }
             }
             this.componentsList = window.wappointmentExtends.filter('componentsList', componentsList,
              {service: this.service, rescheduling:this.rescheduling} )

@@ -399,8 +399,7 @@ class WidgetSettings
     public function steps()
     {
         $steps = $this->steps;
-        $payment_off = true;
-        if ($payment_off) {
+        if (!Payment::active()) {
             $steps = $this->removeStep('swift_payment', $steps);
         }
         return $steps;

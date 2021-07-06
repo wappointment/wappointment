@@ -20,8 +20,8 @@ export default {
       settingSaveMany(settings){
         this.requestRunner({settings: settings})
       },
-      settingSave(setting, value){
-        this.requestRunner({key: setting, val: value})
+      settingSave(setting, value, success = false){
+        this.requestRunner({key: setting, val: value}, false, success)
       }, 
       settingStaffSave(setting, value, success = false){
         this.requestRunner({key: setting, val: value}, true, success)

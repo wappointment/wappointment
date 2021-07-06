@@ -477,7 +477,6 @@ export default {
         //this.$refs.calendar.option( 'timeZone', selectedTimezone)
         this.writeHistory()
 
-        //if(initSave === false)window.location.reload()
         if(initSave === false) {
           this.reload()
         }

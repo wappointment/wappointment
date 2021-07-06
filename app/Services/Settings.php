@@ -109,7 +109,7 @@ class Settings
             'tax' => 0,
             'payments_order' => [],
             'alt_port' => false,
-            'video_link_shows' => 0
+            'video_link_shows' => 0,
         ];
     }
 
