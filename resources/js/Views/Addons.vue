@@ -4,7 +4,7 @@
       <div class="d-flex mb-2">
                 <label class="form-check-label w-100" for="allow-wappointment">
                   <div class="d-flex align-items-center" v-if="dataLoaded">
-                    <input type="checkbox" v-model="viewData.wappointment_allowed" id="allow-wappointment" @change="changedWappointmentAllowed()">
+                    <input type="checkbox" v-model="viewData.wappointment_allowed" id="allow-wappointment" @change="changedWappointmentAllowed">
                     <div>Allow connection to wappointment.com</div>
                   </div>
                 </label>
@@ -12,7 +12,7 @@
     </WPScreenOptions>
 
     <div class="d-flex align-items-center">
-      <h1 class="m-2">Addons</h1>
+      <h1 class="m-2 clickable" @click="loadAddons">Addons</h1>
       <div v-if="dataLoaded">
         <button class="btn btn-secondary" @click="openModal">
           <div class="d-flex align-items-center">
@@ -20,12 +20,18 @@
             <div class="ml-2">Enter licence key</div>
           </div>
         </button>
-        <a href="javascript:;" v-if="debugIsOn" @click="checkLicence">checkLicence</a>
       </div>
     </div>
+    
       
     <div  v-if="dataLoaded">
-      
+      <div class="small text-muted">
+        <div v-if="viewData.has_addon">
+            <a href="javascript:;" class="btn btn-secondary btn-sm"  @click="clearLicence"><span class="dashicons dashicons-trash"></span> Clear licence</a>
+            <div>Wanna detach your licence(s) from that site? <a href="https://wappointment.com/client/licences" target="_blank">detach on wappointment.com</a></div>
+        </div>
+        <a href="javascript:;" v-if="debugIsOn" @click="checkLicence">checkLicence</a>
+      </div>
       <div class="addons d-flex flex-wrap">
           <template v-for="(bundle,id) in getBundles"> 
             <BundlePreview 
@@ -74,9 +80,11 @@ import AddonPreview from '../Components/Addon'
 import BundlePreview from '../Components/Bundle'
 let services_install = window.wappointmentExtends.filter('AddonsServiceInstall', {})
 import WPScreenOptions from '../WP/ScreenOptions'
+import RequestMaker from '../Modules/RequestMaker'
 
 export default {
     extends: abstractView,
+    mixins: [RequestMaker],
     data: () => ({
         serviceAddons: null,
         paramsBase: {},
@@ -94,7 +102,7 @@ export default {
       this.services_install = services_install
 
       if(window.apiWappointment.allowed === true) {
-        return this.request(this.loadAddons, false,undefined,false,  this.loadedAddons)
+        return this.request(this.requestLoadAddons, false,undefined,false,  this.loadedAddons)
       }
       
       this.authorizeAddons()
@@ -165,7 +173,7 @@ export default {
             if(response.remember) {
               window.apiWappointment.allowed = true
             }
-            this.request(this.loadAddons, response.remember,undefined,false,  this.loadedAddons)
+            this.loadAddons(response.remember)
         })  
       },
        
@@ -174,13 +182,21 @@ export default {
         },
         
         checkLicence(){
-          this.$WapModal().request(this.checkLicenceRequest()).then(this.successInstalled).catch(this.failedCheckRequest)
+          this.request(this.checkLicenceRequest, null, this.successInstalled, this.failedCheckRequest)
             //this.request(this.checkLicenceRequest, false, this.loadedAddons)
         },
-
+        clearLicence(){
+          this.request(this.clearLicenceRequest, false, this.successInstalled)
+        },
+        async clearLicenceRequest() {
+            return await this.serviceAddons.call('clear')
+        },
+        loadAddons(remember = false){
+           this.request(this.requestLoadAddons, remember,undefined,false,  this.loadedAddons)
+        },
         failedCheckRequest(error){
           this.failedRequest(error)
-          this.request(this.loadAddons, false,undefined,false,  this.loadedAddons)
+          this.loadAddons()
         },
  
         async checkLicenceRequest() {
@@ -193,7 +209,7 @@ export default {
         },
 
         
-        async loadAddons(remember = false){
+        async requestLoadAddons(remember = false){
           return await this.serviceAddons.call('get', {remember: remember})
         },
 
@@ -203,7 +219,7 @@ export default {
         },
 
         install(addon){
-          this.$WapModal().request(this.installAddonRequest(addon)).then(this.successInstalled).catch(this.failedRequest)
+          this.request(this.installAddonRequest, addon, this.successInstalled, this.failedRequest)
         },
 
         async installAddonRequest(addon) {
@@ -211,8 +227,7 @@ export default {
         }, 
 
         successInstalled(response){
-          this.$WapModal().notifySuccess(response.data.message)
-          this.request(this.loadAddons, false,undefined,false,  this.loadedAddons)
+          this.loadAddons()
         },
 
         successActivate(response){
@@ -229,7 +244,7 @@ export default {
         },
 
         activate(addon){
-          this.$WapModal().request(this.activateAddonRequest(addon)).then(this.successActivate).catch(this.failedRequest)
+          this.request(this.activateAddonRequest, addon, this.successActivate, this.failedRequest)
         },
 
         async activateAddonRequest(addon) {
@@ -237,7 +252,7 @@ export default {
         }, 
 
         deactivate(addon){
-          this.$WapModal().request(this.deactivateAddonRequest(addon)).then(this.successInstalled).catch(this.failedRequest)
+          this.request(this.deactivateAddonRequest, addon, this.successInstalled, this.failedRequest)
         },
         
         async deactivateAddonRequest(addon) {
@@ -246,14 +261,13 @@ export default {
 
         register(){
           if(this.productKey == '') return
-          this.$WapModal().request(this.registerWappointmentRequest()).then(this.successRequestAlt).catch(this.failedRequest)
+          this.request(this.registerWappointmentRequest, null, this.successRequestAlt, this.failedRequest)
         },
 
         successRequestAlt(response) {
           if(response.data.message!==undefined) {
             this.hideModal()
             this.viewData.addons = response.data.addons
-            return this.$WapModal().notifySuccess(response.data.message)
           }
         },
 

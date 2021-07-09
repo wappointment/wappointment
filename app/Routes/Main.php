@@ -105,6 +105,10 @@ class Main extends AbstractRoutes
 
             ],
             'POST' => [
+                '/addons/clear' => [
+                    'method' => 'clear',
+                    'controller' => 'AddonsController'
+                ],
                 '/events/record' => [
                     'method' => 'recordDotcom',
                     'controller' => 'EventsController'
