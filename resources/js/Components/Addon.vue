@@ -20,32 +20,43 @@
                 </div>
 
                 <div v-else class="mt-auto">
-                    <div class="d-flex align-items-center">
-                        <span class="indicator"></span>
-                        <span>
-                            Licence <strong class="text-success">active</strong> until: <u class="small">{{ addon.expires_at }}</u>
-                        </span>
-                        </div>
+                    <div>
+                        <span class="indicator" :class="[addon.expires_in > 50 ? 'bg-success':'bg-warning']"></span>
+                        <template v-if="addon.expires_in > 0">
+                            <span >
+                            Licence <strong :class="[addon.expires_in > 50 ? 'text-success':'text-warning']">
+                                {{ addon.expires_in > 50 ? 'active':'expiring' }}</strong> 
+                            </span>
+                            <div class="small" >Expires in {{ addon.expires_in }} days</div>
+                        </template>
+                        <template v-else>
+                             <span>
+                            Licence <strong class="text-danger">expired</strong> 
+                            </span>
+                            <div class="small">You must renew in order to get future updates</div>
+                        </template>
+                        <a href="#renew" v-if="addon.expires_in < 51">Renew now</a>
+                    </div>
                     <div v-if="isPlugin" class="my-2">
-                    <div v-if="!isInstalled">
-                        <button class="btn btn-primary" @click="install">Install</button>
-                    </div>
-                    <div v-else>
-                        
-                        <button v-if="!isActivated" class="btn btn-primary" @click="activate">Activate</button>
-                        <button v-else class="btn btn-secondary btn-sm" @click="deactivate">Deactivate</button>
-                        
-                        <button v-if="requireSetup" class="btn btn-sm" :class="['btn-primary']" @click="runInstallation">
-                            <span class="dashicons dashicons-admin-generic"></span> Run Installation
-                        </button>
-                        <button v-if="!requireSetup && hasWizard" class="btn btn-sm" 
-                        :class="[wizardHasBeenRanAlready?'btn-secondary':'btn-primary']" @click="openWizardModal">
-                            <span class="dashicons dashicons-admin-generic"></span> Run Wizard
-                        </button>
-                        <div v-if="hasWarning" class="text-danger">
-                            {{ addon.warning }}
+                        <div v-if="!isInstalled">
+                            <button class="btn btn-primary" @click="install">Install</button>
                         </div>
-                    </div>
+                        <div v-else>
+                            
+                            <button v-if="!isActivated" class="btn btn-primary" @click="activate">Activate</button>
+                            <button v-else class="btn btn-secondary btn-sm" @click="deactivate">Deactivate</button>
+                            
+                            <button v-if="requireSetup" class="btn btn-sm" :class="['btn-primary']" @click="runInstallation">
+                                <span class="dashicons dashicons-admin-generic"></span> Run Installation
+                            </button>
+                            <button v-if="!requireSetup && hasWizard" class="btn btn-sm" 
+                            :class="[wizardHasBeenRanAlready?'btn-secondary':'btn-primary']" @click="openWizardModal">
+                                <span class="dashicons dashicons-admin-generic"></span> Run Wizard
+                            </button>
+                            <div v-if="hasWarning" class="text-danger">
+                                {{ addon.warning }}
+                            </div>
+                        </div>
                     </div>
                     
                 </div>

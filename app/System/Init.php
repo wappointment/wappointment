@@ -143,7 +143,7 @@ class Init
             $variables['nonce'] = wp_create_nonce('wp_rest');
             $variables['wp_user'] = WPHelpers::wpUserData();
         }
-        if (defined('WAPPOINTMENT_DEBUG')) {
+        if (defined('WP_DEBUG')) {
             $variables['debug'] = true;
         }
         if (is_admin()) {

@@ -24,7 +24,13 @@ class Addons extends API
             foreach ($data->addons as &$package) {
                 foreach ($solutions as $solution) {
                     if ($solution->package_key == $package->key || ($this->isAPlugin($package) && $this->getPluginDetails($package)->id == $solution->id)) {
-                        $package->expires_at = (new Carbon($solution->expires_at))->format('d/m/Y');
+                        $expires_at_carbon = (new Carbon($solution->expires_at));
+                        $package->expires_at = $expires_at_carbon->format('d/m/Y');
+                        $carbonnow = Carbon::now();
+                        $package->expires_in = $expires_at_carbon->diffInDays($carbonnow);
+                        if ($carbonnow->gt($expires_at_carbon)) {
+                            $package->expires_in = -$package->expires_in;
+                        }
                     }
                     $package->plugin = false;
                     if ($this->isAPlugin($package)) {

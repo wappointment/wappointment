@@ -267,7 +267,7 @@ export default {
         successRequestAlt(response) {
           if(response.data.message!==undefined) {
             this.hideModal()
-            this.viewData.addons = response.data.addons
+            this.loadAddons()
           }
         },
 

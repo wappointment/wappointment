@@ -35,6 +35,7 @@ class Licences extends API
         $data = $this->processResponse($response);
 
         $this->recordDetails($data);
+
         return $data;
     }
 
