@@ -6,6 +6,9 @@
  * in your active theme's functions.php for instance
  */
 
+/**
+ * This code should be placed in your active themes functions.php file
+ */
 
 /**
  * Edit logo in emails sent to the staff notifications of new cancel and reschedule bookings, daily emails etc ..
