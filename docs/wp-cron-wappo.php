@@ -17,3 +17,4 @@ if (!defined('ABSPATH')) {
 
 \Wappointment\System\Scheduler::syncCalendar();
 \Wappointment\System\Scheduler::processQueue();
+die();
