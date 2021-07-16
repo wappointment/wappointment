@@ -168,6 +168,10 @@ class Main extends AbstractRoutes
                     'controller' => 'DebugController',
                     'method' => 'updatePage',
                 ],
+                '/addmanagerrole' => [
+                    'controller' => 'DebugController',
+                    'method' => 'addManagerRole',
+                ],
                 '/settings' => [
                     'controller' => 'SettingsController',
                     'method' => 'save',

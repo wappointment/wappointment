@@ -187,6 +187,15 @@
                 Make Reschedule/Cancel page editable
             </button>
           </div>
+
+          <div class="mt-3">
+            <span v-if="viewData.manager_added">
+              Manager role is available
+            </span>
+            <button v-else class="btn btn-secondary btn-sm" @click="addManagerRole" data-tt="Only if you need a manager without administrator capabilities in your staff">
+                Add manager role
+            </button>
+          </div>
           
         </div>
 
@@ -380,7 +389,25 @@ export default {
     toggle(element){
       this.isToggled[element] = !this.isToggled[element]
     },
-   
+
+    addManagerRole(){
+      this.$WapModal().confirm({
+          title: 'Are you sure you need this?',
+          content: 'This is useful if you have a manager in the team who need to handle your Wappointment\'s settings without being an administrator'
+        }).then((result) => {
+          if(result === true){
+              this.request(this.addManagerRoleRequest,  undefined, undefined,false, this.updateViewData)
+          } 
+        })
+      
+    },
+    updateViewData(response){
+      this.viewData = response.data
+    },
+    async addManagerRoleRequest() {
+        return await this.service.call('addmanagerrole')
+    },
+
     updatePage(){
       this.$WapModal().confirm({
           title: 'Are you sure you need this?',
