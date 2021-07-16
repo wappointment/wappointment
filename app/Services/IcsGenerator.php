@@ -162,13 +162,14 @@ class IcsGenerator
             }
         }
 
+
+        $description = apply_filters('wappointment_ics_description', $description, $appointment);
+
         if ($appointment->isZoom()) {
             $description .= "\n\nAppointment is a Video meeting";
             $description .= "\nMeeting will be accessible from the link below: " .
                 "\n " . $appointment->getLinkViewEvent();
         }
-
-        $description = apply_filters('wappointment_ics_description', $description, $appointment);
 
         $canCanCelOrRescheduleOrBoth = Settings::get('allow_rescheduling') ? true : (Settings::get('allow_cancellation') ? true : false);
 

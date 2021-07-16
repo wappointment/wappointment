@@ -23,12 +23,12 @@ class LegacyBookingController extends RestController
 
         $appointmentArray = $appointment->toArraySpecial();
 
-        if (Settings::get('allow_rescheduling')) {
-            $appointmentArray['canRescheduleUntil'] = $appointment->canRescheduleUntilTimestamp();
-        }
-        if (Settings::get('allow_cancellation')) {
-            $appointmentArray['canCancelUntil'] = $appointment->canCancelUntilTimestamp();
-        }
+        // if (Settings::get('allow_rescheduling')) {
+        //     $appointmentArray['canRescheduleUntil'] = $appointment->canRescheduleUntilTimestamp();
+        // }
+        // if (Settings::get('allow_cancellation')) {
+        //     $appointmentArray['canCancelUntil'] = $appointment->canCancelUntilTimestamp();
+        // }
         return [
             'appointment' => (new \Wappointment\ClassConnect\Collection($appointmentArray))->except(['rest_route', 'id', 'client_id'])
 

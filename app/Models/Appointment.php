@@ -32,7 +32,7 @@ class Appointment extends Model
     const STATUS_AWAITING_CONFIRMATION = 0;
     const STATUS_CONFIRMED = 1;
 
-    protected $appends = ['duration_sec', 'location_label'];
+    protected $appends = ['duration_sec', 'location_label', 'can_cancel_until', 'can_reschedule_until'];
 
     public function client()
     {
@@ -176,6 +176,21 @@ class Appointment extends Model
     {
         return $this->getLocation();
     }
+    public function getCanRescheduleUntilAttribute()
+    {
+        if (Settings::get('allow_rescheduling')) {
+            return $this->canRescheduleUntilTimestamp();
+        }
+    }
+    public function getCanCancelUntilAttribute()
+    {
+        if (Settings::get('allow_cancellation')) {
+            return $this->canCancelUntilTimestamp();
+        }
+    }
+
+
+
 
     public function getStaffId()
     {

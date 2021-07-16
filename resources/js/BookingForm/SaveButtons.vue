@@ -81,6 +81,7 @@ export default {
             return (html ? "<a href='"+url+"' target='_blank'>":'')+ (html && label!= '' ?label:url) + (html ? "</a>":'')
         },
          getLinks(html = false){
+             console.log('html',html)
             if(html){
                 return lnb + lnb +  (this.canReschedule? this.generateLink('reschedule-event', html, 'Reschedule'):'') + 
                 ((this.canCancel && this.canReschedule) ?' - ':'') 
@@ -95,10 +96,10 @@ export default {
     },
     computed: {
         canCancel(){
-            return this.appointment.canCancelUntil !== undefined && this.getUnixNow() < this.appointment.canCancelUntil
+            return this.appointment.can_cancel_until !== undefined && this.getUnixNow() < this.appointment.can_cancel_until
         },
         canReschedule(){
-            return this.appointment.canRescheduleUntil!== undefined && this.getUnixNow() < this.appointment.canRescheduleUntil
+            return this.appointment.can_reschedule_until!== undefined && this.getUnixNow() < this.appointment.can_reschedule_until
         },
 
         isoFormat(){
