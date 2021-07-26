@@ -52,7 +52,11 @@ export default {
         return window.apiWappointment.apiSite + '/plugin/' + window.apiWappointment.version + '/'+this.fixedEncodeURIComponent(this.messages[0])+'/error.png'
       }
     },
-    
+    created(){
+      if(this.messages.length ===1 && this.messages[0].length <400){
+        this.showDetails = true
+      }
+    },
     data() {
       return {
           showDetails: false,
