@@ -41,6 +41,8 @@ class IcsGenerator
             'ATTENDEE' => ['name' => $client->name, 'email' =>  $client->email],
         ];
 
+        $addparams = apply_filters('wappointment_ics_organizer', $addparams);
+
         $this->generateEvent($appointment, $client, $staff, $addparams, $mergeparams);
     }
 

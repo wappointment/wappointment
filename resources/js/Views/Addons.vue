@@ -30,7 +30,7 @@
             <a href="javascript:;" class="btn btn-secondary btn-sm"  @click="clearLicence"><span class="dashicons dashicons-trash"></span> Clear licence</a>
             <div>Want to detach your licence(s) from that site? <a href="https://wappointment.com/client/licences" target="_blank">detach on wappointment.com</a></div>
         </div>
-        <span><span class="dashicons dashicons-update"></span> <a href="javascript:;" @click="checkLicence">refresh licence</a></span>
+        <span v-if="viewData.site_key"><span class="dashicons dashicons-update"></span> <a href="javascript:;" @click="checkLicence">refresh licence</a></span>
       </div>
       <div class="addons d-flex flex-wrap">
           <template v-for="(bundle,id) in getBundles"> 
