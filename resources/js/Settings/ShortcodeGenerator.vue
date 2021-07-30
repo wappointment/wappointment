@@ -3,9 +3,10 @@
     <div class="d-flex align-items-center justify-content-between">
         <div class="commands-div">
             <div data-tt="Booking button's title"><label><InputPh v-model="titleGiven" ph="Button title"/></label></div>
-            <div data-tt="Center the widget within the container"><label><input type="checkbox" v-model="center"> Center</label></div>
+            <div data-tt="Opens in a full screen popup"><label><input type="checkbox" v-model="popup"> Opens in a full screen popup</label></div>
+            <div data-tt="Center the widget within the container"><label><input type="checkbox" v-model="center" :disabled="popup"> Center</label></div>
             <div data-tt="Opens the calendar's step automatically"><label><input type="checkbox" v-model="open"> Auto-open Calendar</label></div>
-            <div data-tt="Calendar will expand to the container's width"><label><input type="checkbox" v-model="large"> Full width Calendar</label></div>
+            <div data-tt="Calendar will expand to the container's width"><label><input type="checkbox" v-model="large" :disabled="popup"> Full width Calendar</label></div>
             <div data-tt="Show a week view instead of the full month"><label><input type="checkbox" v-model="week"> Week view</label></div>
             <div data-tt="The first screen in your booking form will be a staff selection page(if you have more than one staff)">
                 <label :class="{'text-muted':staffSelected}"><input :disabled="staffSelected" type="checkbox" v-model="staffpage"> Select staff first</label></div>
@@ -68,6 +69,7 @@ export default {
     data: () => ({
         large:false,
         open:false,
+        popup:false,
         center: false,
         week:false,
         staffpage: false,
@@ -116,6 +118,12 @@ export default {
                 this.staffpage = false
             }
         },
+        popup(val){
+            if(val){
+                this.center = false
+                this.large = false
+            }
+        }
     },
     computed:{
         staffSelected(){
@@ -140,6 +148,7 @@ export default {
             let shortcode = 'wap_widget title="'+this.titleGiven+'"'
             shortcode += this.large? ' large ':'' 
             shortcode += this.open? ' open ':''
+            shortcode += this.popup? ' popup ':''
             shortcode += this.center? ' center ':''
             shortcode += this.week? ' week ':''
             shortcode += this.staffpage? ' staff_page ':''
@@ -150,6 +159,7 @@ export default {
             this.$emit('change', shortcode, {
                 largeVersion: this.large,
                 autoOpen: this.open,
+                popup: this.popup,
                 week: this.week,
                 center: this.center,
                 staffPage: this.staffpage,
