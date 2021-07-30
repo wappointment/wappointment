@@ -127,7 +127,6 @@ class Appointment extends Model
                 break;
         }
         return ServicesAppointment::getLocation($location, $this);
-        //return apply_filters('wappointment_service_location', $location, $this);
     }
 
 
@@ -140,6 +139,8 @@ class Appointment extends Model
         $array['type'] = $this->getLocationSlug();
         $array['client'] = $this->client; //important for save to calendar button
         $array['video_meeting'] = $this->videoAppointmentHasLink();
+        $staff = $this->getStaff();
+        $array['ics_organizer'] = 'ORGANIZER;CN=' . $staff->staff_data['name'] . ':mailto:' . $staff->emailAddress();
         if (!empty($array['options']['providers'])) {
             unset($array['options']['providers']);
         }

@@ -236,9 +236,7 @@ export default {
               let wappo_module = document.getElementById(this.elementId).getElementsByClassName('wap-front')[0]
               let cloneWrapper = document.createElement('div')
               cloneWrapper.setAttribute('id', 'clone-'+this.elementId)
-              console.log('cloneWrapper',cloneWrapper)
               document.getElementById('wap-footer-container').appendChild(cloneWrapper)
-              console.log('wappo_module',wappo_module)
               cloneWrapper.appendChild(wappo_module)
               
             }

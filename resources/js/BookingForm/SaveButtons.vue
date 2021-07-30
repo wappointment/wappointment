@@ -81,7 +81,6 @@ export default {
             return (html ? "<a href='"+url+"' target='_blank'>":'')+ (html && label!= '' ?label:url) + (html ? "</a>":'')
         },
          getLinks(html = false){
-             console.log('html',html)
             if(html){
                 return lnb + lnb +  (this.canReschedule? this.generateLink('reschedule-event', html, 'Reschedule'):'') + 
                 ((this.canCancel && this.canReschedule) ?' - ':'') 
@@ -165,6 +164,7 @@ export default {
                 'BEGIN:VCALENDAR',
                 'VERSION:2.0',
                 'BEGIN:VEVENT',
+                'ORGANIZER:'          + this.appointment.ics_organizer,
                 'URL:'          + document.URL,
                 'DTSTART:'      + this.formattedStartDate,
                 'DTEND:'        + this.formattedEndDate,
