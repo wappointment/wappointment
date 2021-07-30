@@ -64,6 +64,10 @@ export default {
       }
       this.processShortcode()
     },
+    mounted(){
+
+      this.processAutoOpens()
+    },
 
      watch:{
         step(val){
@@ -172,6 +176,9 @@ export default {
         },
         getView(){
           return this.step || this.getParameterByName('view')
+        },
+        hasAttributesToProcess(){
+          return this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0
         }
     },
     methods: {
@@ -192,7 +199,7 @@ export default {
           this.stepChanging = false
         },
         processShortcode(){
-          if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){
+          if(this.hasAttributesToProcess){
             this.buttonTitle = this.attributesEl.buttonTitle !== undefined ? this.attributesEl.buttonTitle:this.buttonTitle
             this.brFixed = this.attributesEl.brcFloats !== undefined
             this.popup = this.attributesEl.popup !== undefined
@@ -200,12 +207,15 @@ export default {
             this.largeVersion = [undefined,false].indexOf(this.attributesEl.largeVersion) === -1
             this.opts.selection.check_viewweek = [undefined,false].indexOf(this.attributesEl.week) === -1
             this.autoPop = [undefined,false].indexOf(this.attributesEl.popOff) !== -1
-            if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) {
-              this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 //no auto pop on 
-              this.toggleBookForm() // this one goes last
-            }
+            
           }
          
+        },
+        processAutoOpens(){
+          if(this.hasAttributesToProcess && [undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) {
+            this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 //no auto pop on 
+            this.toggleBookForm() // this one goes last
+          }
         },
         backToButton(){
           if(this.canPop || this.popup){
@@ -213,8 +223,10 @@ export default {
             document.body.classList.remove('wappo-popped')
           }
           if(this.popup){
-            let wappo_module = document.getElementById('wap-footer-container').getElementsByClassName('wap-front')[0]
+            let clone = document.getElementById('clone-'+this.elementId)
+            let wappo_module = clone.getElementsByClassName('wap-front')[0]
               document.getElementById(this.elementId).appendChild(wappo_module)
+              clone.remove()
           }
           this.bookForm = false
         },
@@ -222,7 +234,13 @@ export default {
             this.bookForm = !this.bookForm
             if(this.popup){
               let wappo_module = document.getElementById(this.elementId).getElementsByClassName('wap-front')[0]
-              document.getElementById('wap-footer-container').appendChild(wappo_module)
+              let cloneWrapper = document.createElement('div')
+              cloneWrapper.setAttribute('id', 'clone-'+this.elementId)
+              console.log('cloneWrapper',cloneWrapper)
+              document.getElementById('wap-footer-container').appendChild(cloneWrapper)
+              console.log('wappo_module',wappo_module)
+              cloneWrapper.appendChild(wappo_module)
+              
             }
             if(this.canPop || this.popup){
               document.body.classList.add('wappo-popped')
@@ -403,7 +421,6 @@ export default {
     right: 0;
     bottom: 0;
     margin: 1rem;
-    z-index: 999999998;
     max-height: 95%;
     min-width: 320px;
 }
@@ -447,7 +464,6 @@ export default {
   left: 0;
   bottom: 0;
   overflow-y: scroll;
-  font-size: 18px;
 }
 
 .wap-front.poppedup .wappo_module{
@@ -459,9 +475,10 @@ export default {
   z-index: 99;
 }
 .wap-front.poppedup .wappo_module .wap-wid{
-  min-width: 500px;
+  width: 500px;
   margin: 0 auto;
   position: relative;
+  max-width:none;
 }
 .wap-front.poppedup .wap-bg{
   position: fixed;
