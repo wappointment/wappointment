@@ -40,21 +40,45 @@ Vue.mixin({
 
 
 const vuesInstances = [];
-const vues = document.querySelectorAll(".wappointment_page, .wappointment_widget");
+const wappoInstances = document.querySelectorAll(".wappointment_page, .wappointment_widget");
+const footerContainer = getFooterContainer();
 
-for (let index = 0; index < vues.length; index++) {
-    const el = vues[index]
-    vuesInstances[index] = new Vue({
-        el, 
-        components: { Front },
-        render: h => h(Front, {
-            props: {
-                'classEl' : el.getAttribute('class'),
-                'attributesEl':  Object.assign({},el.dataset),
-                'buttonTitle' : el.getAttribute('data-button-title') ? el.getAttribute('data-button-title'):'Book an appointment',
-                'brFixed' : [undefined,null].indexOf(el.getAttribute('data-brfixed')) === -1 ? true:false
-            }
-        }),
-    }) 
-    
+for (const el of wappoInstances) {
+
+    if([undefined,null].indexOf(el.getAttribute('data-brc-floats')) === -1){
+        console.log('test there is one fixed')
+        footerContainer.appendChild(el)
+    }
+}
+
+
+for (const el of wappoInstances) {
+    vuesInstances.push(
+        new Vue({
+            el, 
+            components: { Front },
+            render: h => h(Front, {
+                props: {
+                    'classEl' : el.getAttribute('class'),
+                    'attributesEl':  Object.assign({},el.dataset),
+                    'buttonTitle' : el.getAttribute('data-button-title') ? el.getAttribute('data-button-title'):'Book an appointment',
+                    'brFixed' : [undefined,null].indexOf(el.getAttribute('data-brfixed')) === -1 ? true:false
+                }
+            }),
+        }) 
+    )
+}
+
+function getFooterContainer(){
+    let id = 'wap-footer-container'
+    let modalContainer = document.getElementById(id)
+
+    if(modalContainer === null){
+      modalContainer = document.createElement('div')
+      modalContainer.setAttribute('id', id)
+      modalContainer.setAttribute('style', 'position:absolute;z-index:9999999999999999999999;')
+      modalContainer.setAttribute('class', 'wappointment-wrap')
+      modalContainer = document.body.appendChild(modalContainer)
+    }
+    return modalContainer
 }
