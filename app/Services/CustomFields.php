@@ -20,7 +20,7 @@ class CustomFields
             'name' => 'Full Name:',
             'type' => 'input',
             'namekey' => 'name',
-            'validations' => 'required|max:100',
+            'validations' => 'required|is_string|max:100',
             'errors' => [
                 'max' => 'Name is too long'
             ],
@@ -53,7 +53,7 @@ class CustomFields
 
     public static $validationRules = [
         'namekey' => '',
-        'name' => 'required',
+        'name' => 'required|is_string|max:100',
         'required' => '',
         'type' => 'required',
         'values' => 'required_if:type,checkboxes,select,radios',

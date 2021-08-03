@@ -27,10 +27,18 @@ import routerSetupRedirect from './Standalone/routerSetupRedirect'
 import routerQueryRedirect from './Standalone/routerQueryRedirect'
 import getRoutePush from './Standalone/getRoutePush'
 import ServicesDelivery from './Settings/ServicesDelivery'
-
+import VueSanitize from 'vue-sanitize'
 
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
+Vue.use(VueSanitize, {
+  allowedTags: ['img', 'div', 'strong', 'span'],
+  allowedAttributes: {
+    'img': ['title', 'class', 'src', 'width'],
+    'div': ['class'],
+    'span': ['class'],
+  }
+})
 
 Vue.component('WapImage', WapImage)
 Vue.component('v-style', {
@@ -38,6 +46,15 @@ Vue.component('v-style', {
       return createElement('style', this.$slots.default)
   }
 });
+Vue.mixin({
+  methods: {
+    cleanString: function (string) {
+      let doc = new DOMParser().parseFromString(string, 'text/html')
+      return doc.body.textContent || ''
+    },
+  },
+})
+
 Vue.component('WAPFormGenerator', FormGenerator)
 Vue.component('StickyBar', StickyBar)
 Vue.component('InputPh', InputPh)

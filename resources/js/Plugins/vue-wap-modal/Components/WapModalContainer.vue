@@ -12,7 +12,7 @@
       :loader="loader" :screenshot="screenshot" :options="options" :prompt="prompt" 
       @hide="hideModal"  @canceled="canceled" @confirmed="confirmed">
             <h4 class="modal-title" slot="title">{{ title }}</h4>
-            <div v-if="content" v-html="content"></div>
+            <div v-if="content" v-html="cleanHtml"></div>
       </WapModal>
     </div>
 </template>
@@ -73,7 +73,9 @@ export default {
   },
 
   computed: {
-
+    cleanHtml(){
+      return this.$sanitize(this.content)
+    },
     hasActiveNotifications(){
       return this.notifications.length > 0
     }

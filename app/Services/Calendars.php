@@ -38,7 +38,7 @@ class Calendars
         $validator = new RakitValidator;
 
         $validationRules = [
-            'name' => 'required',
+            'name' => 'required|is_string|max:100',
             'avatar_id' => '',
             'gravatar' => '',
             'timezone' => 'required',

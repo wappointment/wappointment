@@ -37,18 +37,19 @@ export default {
                 const element = this.viewData.custom_fields[i]
                 if(element['namekey'] == namekey && element.values !== undefined){
                   if(Array.isArray(values)){
+
                     for (let k = 0; k < values.length; k++) {
                       const valuekey = values[k]
-                      newvalues[k] = this.getValueLabelFrom(element.values, valuekey)
+                      newvalues[k]= this.getValueLabelFrom(element.values, valuekey)
                     }
-                    
+                    newvalues = newvalues.join(', ')
                   }else{
                     newvalues = this.getValueLabelFrom(element.values, newvalues)
                   }
                   
                 }
             }
-            return newvalues
+            return this.cleanString(newvalues)
         },
 
         getValueLabelFrom(valuesDescriptions, keyValue){
@@ -56,7 +57,7 @@ export default {
               const subelement = valuesDescriptions[j]
 
               if(subelement.value == keyValue){
-                return subelement.label
+                return this.cleanString(subelement.label)
               }  
             }
             return 'errorLabel'
@@ -127,10 +128,10 @@ export default {
       },
 
       getClientAvatarSize(appointment, size = 30){
-        return `<img class="rounded-circle" src="${appointment.extendedProps.client.avatar.replace('s=30', 's='+size)}" title="${appointment.extendedProps.client.name}">`
+        return `<img class="rounded-circle" src="${appointment.extendedProps.client.avatar.replace('s=30', 's='+size)}">`
       },
       getClientAvatarName(appointment){
-        return `${this.getClientAvatarSize(appointment, 60)} ${appointment.extendedProps.client.name}`
+        return `${this.getClientAvatarSize(appointment, 60)} ${this.cleanString(appointment.extendedProps.client.name)}`
       },
 
       getAppointmentHtml(event, element){
@@ -139,15 +140,15 @@ export default {
         let startM = this.toMoment(event.start)
         let endM = this.toMoment(event.end)
 
-        return `<div class="d-flex">
+        return this.$sanitize(`<div class="d-flex">
                   <div> ${this.getClientAvatarSize(event)} </div>
                   <div class="ml-1">
-                  <div class="client-name"> ${event.extendedProps.client.name} </div> 
+                  <div class="client-name"> ${this.cleanString(event.extendedProps.client.name)} </div> 
                   ${this.getService(event)}
                   <div class="time"> ${this.formatTime(startM)}  -  ${this.formatTime(endM)}</div>
                   ${this.getLocation(event)}
                   </div>
-                </div>`
+                </div>`)
       },
       getLocation(event){
         return `<div>${this.getIconClass(event)} ${this.getLocationName(event)} </div>`
@@ -157,17 +158,17 @@ export default {
         return `<div>${this.getIconClassService(event)} ${this.getServiceName(event)} : ${duration}min </div>`
       },
       getServiceName(event){
-        return this.isAppointmentCoreSystem(event) ? this.viewData.service.name: ( event.extendedProps.service !== undefined ? event.extendedProps.service.name:'')
+        return this.isAppointmentCoreSystem(event) ? this.viewData.service.name: ( event.extendedProps.service !== undefined ? this.cleanString(event.extendedProps.service.name):'')
       },
 
       getLocationName(event){
-        return this.isAppointmentCoreSystem(event) ? event.extendedProps.location:this.getLocationAttribute(event,'name')
+        return this.isAppointmentCoreSystem(event) ? this.cleanString(event.extendedProps.location):this.getLocationAttribute(event,'name')
       },
       getIconClassService(event){
         return  event.extendedProps.service !== undefined && event.extendedProps.service.options.icon !== undefined && event.extendedProps.service.options.icon.src !== undefined?'<img class="img-bw" width="20" src="' + event.extendedProps.service.options.icon.src + '"/>':''
       },
       getIconClass(event){
-        let type = this.isAppointmentCoreSystem(event) ? event.extendedProps.location:this.getLocationAttribute(event,'type')
+        let type = this.isAppointmentCoreSystem(event) ? this.cleanString(event.extendedProps.location):this.getLocationAttribute(event,'type')
         
         switch (type) {
           case 'skype':

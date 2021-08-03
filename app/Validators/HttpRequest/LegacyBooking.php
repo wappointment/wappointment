@@ -19,7 +19,7 @@ class LegacyBooking extends AbstractProcessor
     protected function validationRules()
     {
         return [
-            'name' => 'required|max:100',
+            'name' => 'required|is_string|max:100',
             'email' => 'required|email',
             'type' => 'required|in:physical,phone,skype,zoom',
             'phone' => 'required_if:type,phone|is_phone',

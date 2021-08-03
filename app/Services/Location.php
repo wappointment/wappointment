@@ -4,8 +4,6 @@ namespace Wappointment\Services;
 
 use Wappointment\Models\Location as LocationModel;
 use Wappointment\ClassConnect\RakitValidator;
-use Wappointment\Validators\HasValues;
-use Wappointment\Validators\RequiredIfHas;
 use Wappointment\Managers\Service as ServiceManager;
 
 class Location
@@ -21,11 +19,9 @@ class Location
             'options.video' => 'Select video provider',
         ];
         $validator->setMessages($validation_messages);
-        $validator->addValidator('hasvalues', new HasValues());
-        $validator->addValidator('required_if_has', new RequiredIfHas());
 
         $validationRules = [
-            'name' => 'required',
+            'name' => 'required|is_string|max:100',
             'type' => 'required|numeric',
             'options' => '',
             'options.address' => 'required_if_has:type,' . LocationModel::TYPE_AT_LOCATION,

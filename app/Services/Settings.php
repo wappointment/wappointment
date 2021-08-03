@@ -4,6 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\ClassConnect\RakitValidator;
 
 class Settings
 {
@@ -474,7 +475,8 @@ class Settings
 
     protected static function emailField($value)
     {
-        $validator = new \Rakit\Validation\Validator;
+
+        $validator = new RakitValidator;
 
         $validation = $validator->validate(['email' => $value], [
             'email' => 'required|email'

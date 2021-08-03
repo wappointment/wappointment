@@ -71,7 +71,7 @@ class Client extends Model
 
     public function getCustomField($tag = false)
     {
-        return empty($tag) ? '' : $this->options[$tag['key']];
+        return empty($tag) || empty($this->options[$tag['key']]) ? '' : $this->options[$tag['key']];
     }
 
 

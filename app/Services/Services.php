@@ -5,8 +5,6 @@ namespace Wappointment\Services;
 use Wappointment\Managers\Service as ServiceCentral;
 use Wappointment\Services\ServiceInterface;
 use Wappointment\ClassConnect\RakitValidator;
-use Wappointment\Validators\HasValues;
-use Wappointment\Validators\RequiredIfHas;
 use Wappointment\Validators\RequiredIfFields;
 use Wappointment\Models\Location as LocationModel;
 
@@ -32,12 +30,10 @@ class Services implements ServiceInterface
             'locations_id' => 'Please select how do you deliver the service',
         ];
         $validator->setMessages(apply_filters('wappointment_service_validation_messages', $validation_messages));
-        $validator->addValidator('hasvalues', new HasValues());
-        $validator->addValidator('required_if_has', new RequiredIfHas());
-        $validator->addValidator('required_if_fields', new RequiredIfFields());
+        $validator->addValidator('required_if_fields', new RequiredIfFields);
 
         $validationRules = [
-            'name' => 'required',
+            'name' => 'required|is_string|max:100',
             'options' => '',
             'options.durations' => 'required|array',
             'options.durations.*.duration' => 'required|numeric',
