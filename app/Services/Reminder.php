@@ -15,7 +15,7 @@ class Reminder
         $validator = new RakitValidator;
 
         $validationRules = [
-            'subject' => 'required|is_string|max:100',
+            'subject' => 'required|is_adv_string|max:100',
             'type' => 'required',
             'event' => 'required',
             'options' => 'required|array',

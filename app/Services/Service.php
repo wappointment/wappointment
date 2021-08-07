@@ -18,7 +18,7 @@ class Service implements ServiceInterface
         $validator->setMessages(apply_filters('wappointment_service_validation_messages', $validation_messages));
 
         $validationRules = [
-            'name' => 'required|is_string|max:100',
+            'name' => 'required|is_adv_string|max:100',
             'duration' => 'required|numeric',
             'type' => 'required|array|hasvalues:physical,phone,skype,zoom',
             'address' => 'required_if_has:type,physical',

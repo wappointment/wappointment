@@ -21,7 +21,7 @@ class Location
         $validator->setMessages($validation_messages);
 
         $validationRules = [
-            'name' => 'required|is_string|max:100',
+            'name' => 'required|is_adv_string|max:100',
             'type' => 'required|numeric',
             'options' => '',
             'options.address' => 'required_if_has:type,' . LocationModel::TYPE_AT_LOCATION,

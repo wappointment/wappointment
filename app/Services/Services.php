@@ -33,7 +33,7 @@ class Services implements ServiceInterface
         $validator->addValidator('required_if_fields', new RequiredIfFields);
 
         $validationRules = [
-            'name' => 'required|is_string|max:100',
+            'name' => 'required|is_adv_string|max:100',
             'options' => '',
             'options.durations' => 'required|array',
             'options.durations.*.duration' => 'required|numeric',
