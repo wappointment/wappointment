@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.8
 Requires PHP: 7.0
-Stable tag: 2.2.4
+Stable tag: 2.2.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -138,6 +138,17 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.2.5 - 2021-08-07 =
+* fixed Security vulnerability reported by researcher Renos Nikolaou @r3n_hat
+* added popup option for Booking widget shortcode
+* improved popup system no more overlay from 3rd party themes or plugins
+* fixed issue staff and service selection broken in specific use case
+* added compatibility with plugin WP HTML Mail
+* added option to show the meeting link only x minutes before the appointment starts
+* fixed issue on save to calendar button
+* added warning for PHP 8 users
+* fixed exception for disappearing Sunday 1st in booking widget
 
 = 2.2.4 - 2021-06-27 =
 * Added cancel and reschedule link in auto generated event in Google calendar

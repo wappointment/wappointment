@@ -5,22 +5,22 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.2.4</span>   
-                <span class="ml-2">Many small improvements and bug fixes</span>
+                <span>V2.2.5</span>   
+                <span class="ml-2">Security issue fixed and more</span>
             </h3>
             <div class="p-4 ml-4">
-                <h5>Changelog 2.2.4</h5>
+                <h5>Changelog 2.2.5</h5>
                 <ol>
-                    <li>Added enable/disable auto-fill option of booking form for logged in users</li>
-                    <li>Added a "Wide format" for Services with long descriptions</li>
-                    <li>Added option on booking widget editor to hide the staff name</li>
-                    <li>Added cancel and reschedule links in auto generated event in Google Calendar</li>
-                    <li>Added link in email editor for making a new appointment with same staff</li>
-                    <li>Added compatibility for unix socket for DB connection</li>
-                    <li>Added compatibility with Local by FlyWheel (Long overdue DB connection issue)</li>
-                    <li>Improved js event trigger on appointment confirmation for 3rd party integrations</li>
-                    <li>Fixed bug with cache ON and Calendars & Staff listing empty, impossible to create new staff</li>
-                    <li>Increased timeout limit on .ICS calendar sync</li>
+                    <li>Fixed Security vulnerability reported by researcher Renos Nikolaou @r3n_hat</li>
+                    <li>Added popup option for Booking widget shortcode</li>
+                    <li>Improved popup system no more overlay from 3rd party themes or plugins</li>
+                    <li>Fixed issue staff and service selection broken in specific use case</li>
+                    <li>Added compatibility with plugin WP HTML Mail</li>
+                    <li>Added option to show the meeting link only x minutes before the appointment starts</li>
+                    <li>Fixed issue on save to calendar button</li>
+                    <li>Added warning for PHP 8 users</li>
+                    <li>Fixed exception for disappearing Sunday 1st in booking widget</li>
+                    
                 </ol>
             </div>
             <div class="wprevious-version">
