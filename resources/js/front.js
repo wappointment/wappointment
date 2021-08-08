@@ -20,6 +20,7 @@ Vue.component('v-style', {
         return createElement('style', this.$slots.default)
     }
 });
+
 Vue.mixin({
     methods: {
 
@@ -34,7 +35,11 @@ Vue.mixin({
             
             event.wdata = eventData
             document.dispatchEvent(event)
-        }
+        },
+        cleanString: function (string) {
+            let doc = new DOMParser().parseFromString(string, 'text/html')
+            return doc.body.textContent || ''
+        },
     }
 });
 
