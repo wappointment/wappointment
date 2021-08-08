@@ -133,7 +133,10 @@ export default {
         },
         getPhoneCountries(){
             return this.phoneSelected ? this.locationObj.options.countries:this.service.options.countries
-        }
+        },
+        forceEmail(){
+            return window.apiWappointment.wp_user !== undefined && window.apiWappointment.wp_user.forceemail
+        },
     },
     methods: {
 
@@ -198,7 +201,7 @@ export default {
         },
         showOnlyIfEmailOrText(fieldObject){
             if(['input','email'].indexOf(fieldObject.type) === -1) return false
-            if(fieldObject.type == 'email' && this.disabledEmail !== undefined) return false
+            if(fieldObject.type == 'email' && (this.disabledEmail !== undefined || this.forceEmail)) return false
             return true
         },
 

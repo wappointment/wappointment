@@ -283,7 +283,8 @@ class ViewsData
             'calendar_roles' => Settings::get('calendar_roles'),
             'all_roles' => Permissions::getAllWpRoles(),
             'max_active_bookings' => (int)Settings::get('max_active_bookings'),
-            'autofill' => (int)Settings::get('autofill')
+            'autofill' => (int)Settings::get('autofill'),
+            'forceemail' => Settings::get('forceemail')
         ];
     }
 

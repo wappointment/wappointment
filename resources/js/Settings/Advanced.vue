@@ -155,6 +155,14 @@
               </label>
           </div>
           <div class="mb-2">
+              <label class="form-check-label" for="allow-autofill" data-tt="If a user is logged in on your site, we'll use his account email address">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.forceemail" id="allow-autofill" @change="changedVD('forceemail')">
+                    Force user account's email
+                  </div>
+              </label>
+          </div>
+          <div class="mb-2">
             <label class="form-check-label" for="allow-cache">
               <div class="d-flex align-items-center" data-tt="Runs availability requests faster">
                 <input type="checkbox" v-model="viewData.cache" id="allow-cache" @change="changedVD('cache')">
