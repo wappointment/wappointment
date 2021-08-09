@@ -95,10 +95,10 @@ export default {
     },
     computed: {
         canCancel(){
-            return this.appointment.canCancelUntil !== undefined && this.getUnixNow() < this.appointment.canCancelUntil
+            return this.appointment.can_cancel_until !== undefined && this.getUnixNow() < this.appointment.can_cancel_until
         },
         canReschedule(){
-            return this.appointment.canRescheduleUntil!== undefined && this.getUnixNow() < this.appointment.canRescheduleUntil
+            return this.appointment.can_reschedule_until!== undefined && this.getUnixNow() < this.appointment.can_reschedule_until
         },
 
         isoFormat(){
@@ -164,6 +164,7 @@ export default {
                 'BEGIN:VCALENDAR',
                 'VERSION:2.0',
                 'BEGIN:VEVENT',
+                'ORGANIZER:'          + this.appointment.ics_organizer,
                 'URL:'          + document.URL,
                 'DTSTART:'      + this.formattedStartDate,
                 'DTEND:'        + this.formattedEndDate,

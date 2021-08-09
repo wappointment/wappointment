@@ -2,25 +2,23 @@
 
 namespace Wappointment\Services;
 
+use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Models\Location;
-use Wappointment\Validators\HasValues;
-use Wappointment\Validators\RequiredIfHas;
 
 class Service implements ServiceInterface
 {
     public static function save($serviceData)
     {
-        $validator = new \Rakit\Validation\Validator;
+
+        $validator = new RakitValidator;
         $validation_messages = [
             'type' => 'Please select how do you perform the service',
             'options.countries' => 'You need to select countries you will call for the phone service',
         ];
         $validator->setMessages(apply_filters('wappointment_service_validation_messages', $validation_messages));
-        $validator->addValidator('hasvalues', new HasValues());
-        $validator->addValidator('required_if_has', new RequiredIfHas());
 
         $validationRules = [
-            'name' => 'required',
+            'name' => 'required|is_adv_string|max:100',
             'duration' => 'required|numeric',
             'type' => 'required|array|hasvalues:physical,phone,skype,zoom',
             'address' => 'required_if_has:type,physical',

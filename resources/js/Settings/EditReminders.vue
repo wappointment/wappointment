@@ -1,6 +1,6 @@
 <template>
     <div class="reduced" v-if="viewData!== null">
-        <WAPFormGenerator ref="mcformgenerator" :schema="schema" :data="model" 
+        <WAPFormGenerator ref="mcformgenerator" :schema="schema" :data="model" :errors="errors"
         @submit="save" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
         labelButton="Save" @ready="readytosubmit">
         </WAPFormGenerator>
@@ -31,6 +31,7 @@ export default {
           formready: false,
           recipient: '',
           errorMessages: [],
+          errors:{},
           formKey: 'formmailconfig',
           schema: [
               {
@@ -179,8 +180,21 @@ export default {
         },
 
         save() {
-            this.request(this.saveReminderRequest, undefined,undefined,false,  this.saved)
+            this.request(this.saveReminderRequest, undefined,undefined,false,  this.saved, this.failedValidation)
         },
+        
+
+      failedValidation(e){
+        if(e.response!== undefined && e.response.data!== undefined 
+        && e.response.data.data!== undefined && 
+        e.response.data.data.errors!== undefined &&
+        e.response.data.data.errors.validations !== undefined){
+          this.errors = e.response.data.data.errors.validations
+          this.formKey = 'form' + ((new Date()).getTime())
+        }
+        this.$refs.mcformgenerator.reRender()
+        this.serviceError(e)
+      },
         saved(e){
           this.successRequest(e)
         },

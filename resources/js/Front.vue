@@ -1,20 +1,23 @@
 <template>
-    <div class="wap-front" :class="getDynaClasses" :id="elementId">
-        <StyleGenerator :options="opts" :wrapper="elementId" :largeVersion="largeVersion"></StyleGenerator>
-        <div v-if="isPage" :class="'step-'+stepName">
-            <BookingForm v-if="isBookingPage" :options="opts" :wrapperid="elementId" @changedStep="stepChanged" :attributesEl="attributesElProcess" />
-            <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
-        </div>
-        
-        <div :class="getWidClass" >
-            <div class="wap-wid wclosable" :class="getStepName" v-if="isWidget">
-              <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
-              <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :attributesEl="attributesElProcess" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
-              <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
+    <div :id="elementId">
+      <div class="wap-front" :class="getDynaClasses" >
+          <StyleGenerator :options="opts" :wrapper="elementId" :largeVersion="largeVersion"></StyleGenerator>
+          <div v-if="isPage" :class="'step-'+stepName">
+              <BookingForm v-if="isBookingPage" :options="opts" :wrapperid="elementId" @changedStep="stepChanged" :attributesEl="attributesElProcess" />
+              <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
           </div>
-        </div>
-        <div class="wap-bg" v-if="bgEnabled" @click="backToButton"></div>
+          
+          <div class="wappo_module" :class="getWidClass" >
+              <div class="wap-wid wclosable" :class="getStepName" v-if="isWidget">
+                <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
+                <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :attributesEl="attributesElProcess" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
+                <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
+            </div>
+          </div>
+          <div class="wap-bg" v-if="bgEnabled" @click="backToButton"></div>
+      </div>
     </div>
+    
 </template>
 
 <script>
@@ -44,6 +47,7 @@ export default {
         disabledButtons: false,
         buttonTitle: '',
         brFixed: undefined,
+        popup: false,
         largeVersion: false,
         autoPop: true,
         demoAs: false,
@@ -59,6 +63,10 @@ export default {
           this.disabledButtons = true
       }
       this.processShortcode()
+    },
+    mounted(){
+
+      this.processAutoOpens()
     },
 
      watch:{
@@ -96,7 +104,7 @@ export default {
           }
         },
         bgEnabled(){
-          return this.bookForm && (this.isBottomRight || this.isMobilePhone)
+          return this.bookForm && (this.isBottomRight || this.isMobilePhone || this.popup)
         },
         canPop(){
           return this.bgEnabled && this.isMobilePhone && this.autoPop
@@ -104,8 +112,11 @@ export default {
         isExpanded(){
           return this.bookForm && this.canPop
         },
+        isPoppedUp(){
+          return this.popup && this.bookForm
+        },
         hasCloseCross(){
-          return this.bgEnabled && (this.isBottomRight || this.isExpanded)
+          return this.bgEnabled && (this.isBottomRight || this.isExpanded || this.isPoppedUp)
         },
         getDynaClasses(){
           let classes = {
@@ -113,7 +124,8 @@ export default {
             'large-version': this.largeVersion,
             'wmobile': this.isMobilePhone,
             'wdesk': !this.isMobilePhone,
-            'wexpanded': this.isExpanded
+            'wexpanded': this.isExpanded,
+            'poppedup': this.isPoppedUp
           }
           if([null,undefined,false].indexOf(this.getWidthClass) === -1){
             classes[this.getWidthClass] = true
@@ -164,14 +176,16 @@ export default {
         },
         getView(){
           return this.step || this.getParameterByName('view')
+        },
+        hasAttributesToProcess(){
+          return this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0
         }
     },
     methods: {
         castAttributes(attributes){
-          let castAsInt = ['staffSelection', 'serviceSelection']
-          for (let i = 0; i < castAsInt.length; i++) {
-            if(attributes[castAsInt[i]]){
-              attributes[castAsInt[i]] = parseInt(attributes[castAsInt[i]])
+          for (const el of ['staffSelection', 'serviceSelection']) {
+            if(attributes[el]){
+              attributes[el] = parseInt(attributes[el])
             }
           }
           return attributes
@@ -185,32 +199,50 @@ export default {
           this.stepChanging = false
         },
         processShortcode(){
-          if(this.attributesEl !== undefined && Object.keys(this.attributesEl).length > 0){
+          if(this.hasAttributesToProcess){
             this.buttonTitle = this.attributesEl.buttonTitle !== undefined ? this.attributesEl.buttonTitle:this.buttonTitle
             this.brFixed = this.attributesEl.brcFloats !== undefined
+            this.popup = this.attributesEl.popup !== undefined
             this.demoAs = this.attributesEl.demoAs !== undefined
             this.largeVersion = [undefined,false].indexOf(this.attributesEl.largeVersion) === -1
             this.opts.selection.check_viewweek = [undefined,false].indexOf(this.attributesEl.week) === -1
             this.autoPop = [undefined,false].indexOf(this.attributesEl.popOff) !== -1
-            if([undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) {
-              this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 //no auto pop on 
-              this.toggleBookForm() // this one goes last
-            }
+            
           }
          
         },
+        processAutoOpens(){
+          if(this.hasAttributesToProcess && [undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) {
+            this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 //no auto pop on 
+            this.toggleBookForm() // this one goes last
+          }
+        },
         backToButton(){
-          if(this.canPop){
-            document.documentElement.classList.remove("wappo-popped")
-            document.body.classList.remove("wappo-popped")
+          if(this.canPop || this.popup){
+            document.documentElement.classList.remove('wappo-popped')
+            document.body.classList.remove('wappo-popped')
+          }
+          if(this.popup){
+            let clone = document.getElementById('clone-'+this.elementId)
+            let wappo_module = clone.getElementsByClassName('wap-front')[0]
+              document.getElementById(this.elementId).appendChild(wappo_module)
+              clone.remove()
           }
           this.bookForm = false
         },
         toggleBookForm() {
             this.bookForm = !this.bookForm
-            if(this.canPop){
-              document.body.classList.add("wappo-popped")
-              document.documentElement.classList.add("wappo-popped")
+            if(this.popup){
+              let wappo_module = document.getElementById(this.elementId).getElementsByClassName('wap-front')[0]
+              let cloneWrapper = document.createElement('div')
+              cloneWrapper.setAttribute('id', 'clone-'+this.elementId)
+              document.getElementById('wap-footer-container').appendChild(cloneWrapper)
+              cloneWrapper.appendChild(wappo_module)
+              
+            }
+            if(this.canPop || this.popup){
+              document.body.classList.add('wappo-popped')
+              document.documentElement.classList.add('wappo-popped')
             }
         },
     }
@@ -387,7 +419,6 @@ export default {
     right: 0;
     bottom: 0;
     margin: 1rem;
-    z-index: 999999998;
     max-height: 95%;
     min-width: 320px;
 }
@@ -423,7 +454,47 @@ export default {
     color: #645a5a;
 }
 
+.wap-front.poppedup{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  overflow-y: scroll;
+}
+
+.wap-front.poppedup .wappo_module{
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 99;
+}
+.wap-front.poppedup .wappo_module .wap-wid{
+  width: 500px;
+  margin: 0 auto;
+  position: relative;
+  max-width:none;
+}
+.wap-front.poppedup .wap-bg{
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, .7);
+  top: 0;
+  z-index: 0;
+  overflow-y: scroll;
+  margin: 0 auto;
+}
+
+
+
 @media only screen and (max-width: 500px) {
+  .wap-front.poppedup .wappo_module .wap-wid{
+    min-width:100%;
+  }
   .wap-abs{
     position: absolute;
     bottom: 0;
@@ -431,6 +502,8 @@ export default {
     max-height: 95%;
     overflow-y: scroll;
   }
+
+  .wap-front.wexpanded .wap-bg
   .wap-front.br-fixed .wap-bg,
   .wap-front.wexpanded .wap-bg{
     position: fixed;

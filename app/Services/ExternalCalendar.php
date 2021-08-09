@@ -2,6 +2,7 @@
 
 namespace Wappointment\Services;
 
+use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Models\Calendar;
 
@@ -142,7 +143,8 @@ class ExternalCalendar
     protected function calurlValid($value)
     {
         // 1 is url
-        $validator = new \Rakit\Validation\Validator;
+
+        $validator = new RakitValidator;
 
         $validation = $validator->validate(['calurl' => $value], [
             'calurl' => 'required|url:http,https'

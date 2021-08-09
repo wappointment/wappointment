@@ -28,9 +28,12 @@
       <div class="small text-muted">
         <div v-if="viewData.has_addon">
             <a href="javascript:;" class="btn btn-secondary btn-sm"  @click="clearLicence"><span class="dashicons dashicons-trash"></span> Clear licence</a>
-            <div>Wanna detach your licence(s) from that site? <a href="https://wappointment.com/client/licences" target="_blank">detach on wappointment.com</a></div>
+            <div>Want to detach your licence(s) from that site? <a href="https://wappointment.com/client/licences" target="_blank">detach on wappointment.com</a></div>
+            <div>
+              <span ><span class="dashicons dashicons-update"></span> <a href="javascript:;" @click="checkLicence">refresh licence</a></span>
+            </div>          
         </div>
-        <a href="javascript:;" v-if="debugIsOn" @click="checkLicence">checkLicence</a>
+        
       </div>
       <div class="addons d-flex flex-wrap">
           <template v-for="(bundle,id) in getBundles"> 

@@ -88,6 +88,7 @@ class TagsReplacement
                 'model' => 'staff',
                 'key' => 'name',
                 'label' => 'Staff Name',
+                'sanitize' => true,
                 'getMethod' => 'getStaffName',
                 'modelCall' => 'appointment'
             ],
@@ -107,6 +108,7 @@ class TagsReplacement
                     'key' => $custom_field['key'],
                     'label' => 'Staff Custom Field - ' . $custom_field['name'],
                     'getMethod' => 'getStaffCustomField',
+                    'sanitize' => true,
                     'modelCall' => 'appointment'
                 ];
             }

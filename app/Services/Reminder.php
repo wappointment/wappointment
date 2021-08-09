@@ -2,6 +2,7 @@
 
 namespace Wappointment\Services;
 
+use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Models\Reminder as MReminder;
 use Wappointment\Models\Appointment;
 use Wappointment\Helpers\TipTap;
@@ -10,9 +11,11 @@ class Reminder
 {
     public static function save($reminderData)
     {
-        $validator = new \Rakit\Validation\Validator;
+
+        $validator = new RakitValidator;
 
         $validationRules = [
+            'subject' => 'required|is_adv_string|max:100',
             'type' => 'required',
             'event' => 'required',
             'options' => 'required|array',

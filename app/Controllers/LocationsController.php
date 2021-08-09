@@ -38,6 +38,9 @@ class LocationsController extends RestController
 
     public function delete(Request $request)
     {
+        if ((int)$request->input('id') < 5) {
+            throw new \WappointmentException("Can't delete core modality", 1);
+        }
         return ['message' => 'Modality deleted', 'result' => Location::destroy($request->input('id')), 'deleted' => $request->input('id')];
     }
 }

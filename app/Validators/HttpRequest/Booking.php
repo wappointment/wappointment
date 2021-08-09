@@ -7,7 +7,9 @@ use Wappointment\Managers\Service as ServiceCentral;
 use Wappointment\Models\Location as LocationModel;
 use Wappointment\Managers\Central;
 use Wappointment\Models\Calendar;
+use Wappointment\Services\Settings;
 use Wappointment\Services\VersionDB;
+use Wappointment\WP\Helpers;
 
 class Booking extends LegacyBooking
 {
@@ -26,11 +28,19 @@ class Booking extends LegacyBooking
             static::$startKey => 'The selected time is not valid',
         ];
     }
+    public function getUserEmail()
+    {
+        return $this->forceEmail() ? Helpers::currentUserEmail() : $this->get('email');
+    }
+
+    protected function forceEmail()
+    {
+        return Settings::get('forceemail');
+    }
 
     public function generateValidation($inputs)
     {
         $this->validationRulesArray = [
-            'email' => 'required|email',
             static::$startKey => 'required|min:' . $this->getTimeMin(),
             'ctz' => '',
             'location' => 'required|min:1',
@@ -38,6 +48,9 @@ class Booking extends LegacyBooking
             'duration' => 'required|min:5',
             'staff_id' => ''
         ];
+        if (!$this->forceEmail()) {
+            $this->validationRulesArray['email'] = 'required|email';
+        }
 
         $custom_fields = Central::get('CustomFields')::get();
         foreach ($this->service->options['fields'] as $key => $field) {
@@ -160,7 +173,7 @@ class Booking extends LegacyBooking
             }
             switch ($cfield) {
                 case 'email':
-                    $dataClient['email'] = $this->get('email');
+                    $dataClient['email'] = $this->forceEmail() ? Helpers::currentUserEmail() : $this->get('email');
                     break;
                 case 'name':
                     $dataClient['name'] = $this->get('name');

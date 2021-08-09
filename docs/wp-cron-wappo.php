@@ -17,4 +17,17 @@ if (!defined('ABSPATH')) {
 
 \Wappointment\System\Scheduler::syncCalendar();
 \Wappointment\System\Scheduler::processQueue();
+
+$last_scheduled = get_option('wappointment_last_daily_schedule');
+$hour_now = (int)date('H');
+
+if (
+    ((empty($last_scheduled)) || (is_numeric($last_scheduled) && $last_scheduled + (3600 * 24) < time()))
+    && $hour_now > 0 && $hour_now < 2
+) {
+    \Wappointment\System\Scheduler::dailyProcess();
+    update_option('wappointment_last_daily_schedule', time());
+}
+
+
 die();

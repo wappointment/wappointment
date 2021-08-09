@@ -21,21 +21,21 @@
 
                 <div v-else class="mt-auto">
                     <div>
-                        <span class="indicator" :class="[addon.expires_in > 50 ? 'bg-success':'bg-warning']"></span>
+                        <span class="indicator" :class="getClassExpire('bg-')"></span>
                         <template v-if="addon.expires_in > 0">
                             <span >
-                            Licence <strong :class="[addon.expires_in > 50 ? 'text-success':'text-warning']">
+                            Licence <strong :class="getClassExpire('text-')">
                                 {{ addon.expires_in > 50 ? 'active':'expiring' }}</strong> 
                             </span>
                             <div class="small" >Expires in {{ addon.expires_in }} days</div>
+                            <RenewDiscount :days_left="addon.expires_in" :price="addon.options.prices[0].price" :renewUrl="renewUrl" />
                         </template>
                         <template v-else>
                              <span>
                             Licence <strong class="text-danger">expired</strong> 
                             </span>
-                            <div class="small">You must renew in order to get future updates</div>
+                            <RenewDiscount :days_left="addon.expires_in" :price="addon.options.prices[0].price" :renewUrl="renewUrl" />
                         </template>
-                        <a href="#renew" v-if="addon.expires_in < 51">Renew now</a>
                     </div>
                     <div v-if="isPlugin" class="my-2">
                         <div v-if="!isInstalled">
@@ -75,14 +75,17 @@
 
 <script>
 import HelpersPackages from '../Helpers/Packages'
-import AbstractListing from '../Views/AbstractListing'
+import RenewDiscount from '../Addons/RenewDiscount'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 
 export default {
-    components: {SubscribeNewsletter},
+    components: {SubscribeNewsletter, RenewDiscount},
     mixins: [HelpersPackages],
     props: ['addon', 'viewData', 'apiSite', 'idx'],
     computed: {
+        renewUrl(){
+            return this.apiSite+'/renew/site_'+this.viewData.site_key
+        },
         cdnUrl(){
             return this.apiSite.replace('https://','https://cdn.')  
         },
@@ -133,6 +136,19 @@ export default {
         }
     },
     methods: {
+        getClassExpire(prefix){
+            let classes = []
+            if(this.addon.expires_in > 50){
+                classes.push(prefix+'success')
+            }else{
+                if(this.addon.expires_in <0){
+                    classes.push(prefix+'danger')
+                }else{
+                    classes.push(prefix+'warning')
+                }
+            }
+            return classes
+        },
         runInstallation(){
             this.$emit('runInstallation', this.addon)
         },

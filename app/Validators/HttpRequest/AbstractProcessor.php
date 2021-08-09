@@ -2,6 +2,7 @@
 
 namespace Wappointment\Validators\HttpRequest;
 
+use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\ClassConnect\Request;
 
 abstract class AbstractProcessor implements InterfaceProcessor
@@ -61,7 +62,7 @@ abstract class AbstractProcessor implements InterfaceProcessor
 
         $inputs = $this->prepareInputs($inputs);
 
-        $this->validator = new \Rakit\Validation\Validator;
+        $this->validator = new RakitValidator;
         $this->validator->setMessages($this->validationMessages());
         if (method_exists($this, 'addValidators')) {
             $this->addValidators();

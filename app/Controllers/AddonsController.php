@@ -21,6 +21,7 @@ class AddonsController extends RestController
         $data->statuses = $statuses === false ? [] : $statuses;
         $data->wappointment_allowed = Settings::get('wappointment_allowed');
         $data->has_addon = !empty(WPHelpers::getOption('site_details'));
+        $data->site_key = WPHelpers::getOption('site_key');
         return $data;
     }
 
