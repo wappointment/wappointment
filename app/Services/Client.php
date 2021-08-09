@@ -37,7 +37,7 @@ class Client
     protected static function clientLoadAdd(Booking $booking)
     {
         //create or load client account
-        $client = MClient::where('email', $booking->get('email'))->withTrashed()->first();
+        $client = MClient::where('email', $booking->getUserEmail())->withTrashed()->first();
         if (!empty($client) && !empty($client->deleted_at)) {
             $client->restore();
         }

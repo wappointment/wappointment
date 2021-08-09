@@ -32,8 +32,7 @@ class Appointment extends Model
     const STATUS_AWAITING_CONFIRMATION = 0;
     const STATUS_CONFIRMED = 1;
 
-    protected $appends = ['duration_sec', 'location_label'];
-
+    protected $appends = ['duration_sec', 'location_label', 'can_cancel_until', 'can_reschedule_until'];
     protected $services = [];
 
     public function service()
@@ -135,7 +134,6 @@ class Appointment extends Model
                 break;
         }
         return ServicesAppointment::getLocation($location, $this);
-        //return apply_filters('wappointment_service_location', $location, $this);
     }
 
     public function toArraySpecial()
@@ -145,7 +143,10 @@ class Appointment extends Model
         $array['start_at'] = $this->start_at->timestamp;
         $array['end_at'] = $this->end_at->timestamp;
         $array['type'] = $this->getLocationSlug();
+        $array['client'] = $this->client; //important for save to calendar button
         $array['video_meeting'] = $this->videoAppointmentHasLink();
+        $staff = $this->getStaff();
+        $array['ics_organizer'] = 'ORGANIZER;CN=' . $staff->staff_data['name'] . ':mailto:' . $staff->emailAddress();
         if (!empty($array['options']['providers'])) {
             unset($array['options']['providers']);
         }
@@ -182,6 +183,21 @@ class Appointment extends Model
     {
         return $this->getLocation();
     }
+    public function getCanRescheduleUntilAttribute()
+    {
+        if (Settings::get('allow_rescheduling')) {
+            return $this->canRescheduleUntilTimestamp();
+        }
+    }
+    public function getCanCancelUntilAttribute()
+    {
+        if (Settings::get('allow_cancellation')) {
+            return $this->canCancelUntilTimestamp();
+        }
+    }
+
+
+
 
     public function getStaffId()
     {

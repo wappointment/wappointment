@@ -123,6 +123,10 @@ export default {
 
         reorganiseDays() {
             let newCalendar = []
+
+            if(this.currentMonth.firstWeekday === this.startDay - 1){ //exception week of 1 day
+                newCalendar.push([0,0,0,0,0,0,1])
+            }
             for (let weekIndex = 0; weekIndex < this.currentMonth.calendar.length; weekIndex++) {
                 let week = this.currentMonth.calendar[weekIndex]
                 let nextWeek = this.currentMonth.calendar[weekIndex+1]

@@ -25,8 +25,10 @@
                                 <div class="wlist-actions text-muted">
                                     <!-- <span data-tt="Sort"><span class="dashicons dashicons-move"></span></span> -->
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(locationObj)"></span></span>
-                                    <!-- <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(locationObj.id)"></span></span>
-                                    <span>(id: {{ locationObj.id }})</span> -->
+                                    <span data-tt="Delete" v-if="locationObj.id > 4">
+                                        <span class="dashicons dashicons-trash" @click.prevent.stop="deleteModality(locationObj.id)"></span>
+                                    </span>
+                                    <!--<span>(id: {{ locationObj.id }})</span> -->
                                 </div>
                             </td>
     
@@ -106,6 +108,20 @@ export default {
         },
         hasBeenSavedNoReload(result){
             return this.hasBeenSavedDeleted(result, false)
+        },
+        
+        deleteModality(modality_id){
+            this.$WapModal().confirm({
+                title: 'Do you really want to delete this modality?',
+            }).then((response) => {
+                if(response !== false){
+                    this.request(this.deleteRequest,{id:modality_id},undefined,false,this.hasBeenSavedDeleted)
+                }
+            })
+        },
+
+        async deleteRequest(params){
+           return await this.mainService.call('delete',params)
         },
         hasBeenSavedDeleted(result, reload = true){
             if(reload) {

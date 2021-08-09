@@ -4,6 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\ClassConnect\RakitValidator;
 
 class Settings
 {
@@ -110,6 +111,9 @@ class Settings
             'payments_order' => [],
             'alt_port' => false,
             'video_link_shows' => 0,
+            'forceemail' => false,
+            'allow_refreshavb' => false,
+            'refreshavb_at' => 23
         ];
     }
 
@@ -381,6 +385,20 @@ class Settings
         }
     }
 
+    protected static function allow_refreshavbSaved($key, $value)
+    {
+        if ($value) {
+            Queue::queueRefreshAVBJob();
+        } else {
+            Queue::cancelRefreshAVBJob();
+        }
+    }
+
+    protected static function refreshavb_atSaved($key, $value)
+    {
+        Queue::queueRefreshAVBJob();
+    }
+
     protected static function daily_summary_timeSaved($key, $value)
     {
         self::daily_summarySaved($key, true);
@@ -494,7 +512,8 @@ class Settings
 
     protected static function emailField($value)
     {
-        $validator = new \Rakit\Validation\Validator;
+
+        $validator = new RakitValidator;
 
         $validation = $validator->validate(['email' => $value], [
             'email' => 'required|email'

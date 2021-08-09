@@ -46,7 +46,6 @@
 
 import AppointmentTypeSelection from './AppointmentTypeSelection'
 import AbstractFront from './AbstractFront'
-import Strip from '../Helpers/Strip'
 import {isEmail, isEmpty} from 'validator'
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
 import MixinTypeSelected from './MixinTypeSelected'
@@ -61,7 +60,7 @@ import HasPaidService from '../Mixins/HasPaidService'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
     extends: AbstractFront,
-    mixins: [ Strip, MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, CanFormatPrice, HasPaidService],
+    mixins: [ MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, CanFormatPrice, HasPaidService],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
     'timeprops', 'relations', 'appointment_starts_at',
     'duration', 'location', 'custom_fields', 'staffs','selectedStaff'],
@@ -104,7 +103,7 @@ export default {
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
         },
         getTerms(){
-            return this.strip(this.options.form.terms).replace('[link]', '<a href="'+this.options.form.terms_link+'" target="_blank">').replace('[/link]', '</a>')
+            return this.cleanString(this.options.form.terms).replace('[link]', '<a href="'+this.cleanString(this.options.form.terms_link)+'" target="_blank">').replace('[/link]', '</a>')
         },
         termsIsOn(){
             return this.options.form.check_terms === true

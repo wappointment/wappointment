@@ -255,10 +255,10 @@ export default {
             return this.appointment.converted !== undefined ? this.appointment.converted :this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
         },
         canStillReschedule(){
-            return this.getUnixNow() < this.appointment.canRescheduleUntil
+            return this.getUnixNow() < this.appointment.can_reschedule_until
         },
         canStillCancel(){
-            return this.getUnixNow() < this.appointment.canCancelUntil
+            return this.getUnixNow() < this.appointment.can_cancel_until
         },
         isReschedulePage(){
             return this.viewData == 'reschedule-event'

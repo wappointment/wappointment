@@ -37,6 +37,7 @@ class TagsReplacement
                     'key' => $custom_field['key'],
                     'label' => 'Staff Custom Field - ' . $custom_field['name'],
                     'getMethod' => 'getStaffCustomField',
+                    'sanitize' => true,
                     'modelCall' => 'appointment'
                 ];
             }

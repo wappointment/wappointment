@@ -133,8 +133,8 @@ export default {
             "start_at": start_at,
             "end_at":start_at+(3600),
             "type":"phone",
-            "canRescheduleUntil":start_at-(3600*3),
-            "canCancelUntil":start_at-(3600*3),
+            "can_reschedule_until":start_at-(3600*3),
+            "can_cancel_until":start_at-(3600*3),
             'duration_sec': 3600,
             'options': {
               'provider':{

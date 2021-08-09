@@ -28,12 +28,12 @@ class AppointmentController extends RestController
         }
         $appointmentData = $appointment->toArraySpecial();
         $appointmentData['edit_key'] = $request->input('appointmentkey');
-        if (Settings::get('allow_rescheduling')) {
-            $appointmentData['canRescheduleUntil'] = $appointment->canRescheduleUntilTimestamp();
-        }
-        if (Settings::get('allow_cancellation')) {
-            $appointmentData['canCancelUntil'] = $appointment->canCancelUntilTimestamp();
-        }
+        // if (Settings::get('allow_rescheduling')) {
+        //     $appointmentData['canRescheduleUntil'] = $appointment->canRescheduleUntilTimestamp();
+        // }
+        // if (Settings::get('allow_cancellation')) {
+        //     $appointmentData['canCancelUntil'] = $appointment->canCancelUntilTimestamp();
+        // }
         $isLegacy = !VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES);
 
         return [

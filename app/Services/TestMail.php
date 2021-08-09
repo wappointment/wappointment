@@ -2,6 +2,7 @@
 
 namespace Wappointment\Services;
 
+use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Services\Mail as MailService;
 use Wappointment\Validators\IsSmtp;
 
@@ -59,7 +60,8 @@ class TestMail
 
     public static function validateSendGridApi($mailerConfig)
     {
-        $validator = new \Rakit\Validation\Validator;
+
+        $validator = new RakitValidator;
         $validator->setMessages([
             'sgkey' => 'Enter a valid SendGrid API key',
         ]);
@@ -80,7 +82,7 @@ class TestMail
 
     public static function validateMailgunApi($mailerConfig)
     {
-        $validator = new \Rakit\Validation\Validator;
+        $validator = new RakitValidator;
         $validator->setMessages([
             'mgkey' => 'Enter a valid Mailgun API key',
         ]);
@@ -102,8 +104,8 @@ class TestMail
 
     public static function validateSMTP($mailerConfig)
     {
-        $validator = new \Rakit\Validation\Validator;
-        $validator->addValidator('is_smtp', new IsSmtp());
+        $validator = new RakitValidator;
+        $validator->addValidator('is_smtp', new IsSmtp);
 
         $validator->setMessages([
             'username' => 'Username is required',

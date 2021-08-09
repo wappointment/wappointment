@@ -20,6 +20,8 @@ class AddonsController extends RestController
         $statuses = WPHelpers::getOption('subscribed_status');
         $data->statuses = $statuses === false ? [] : $statuses;
         $data->wappointment_allowed = Settings::get('wappointment_allowed');
+        $data->has_addon = !empty(WPHelpers::getOption('site_details'));
+        $data->site_key = WPHelpers::getOption('site_key');
         return $data;
     }
 
@@ -53,6 +55,14 @@ class AddonsController extends RestController
         $resultCheck = (new Licences)->check();
         if ($resultCheck) {
             return ['message' => 'Success checking licence'];
+        }
+    }
+
+    public function clear()
+    {
+        $resultCheck = (new Licences)->clear();
+        if ($resultCheck) {
+            return ['message' => 'Success clearing licence'];
         }
     }
 }

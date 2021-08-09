@@ -29,15 +29,19 @@
             </div>
             <div class="dropElements">
                 <div v-if="filteredElements.length > 0">
-                    <div v-if="groupKey !=''" v-for="groupElements in filteredElementsByGroup">
-                        <div>{{ groupElements.key }}</div>
-                        <div class="d-flex flex-wrap">
-                            <ValueCard v-for="elementLoop in groupElements.values" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
-                            :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>
+                    <div v-if="groupKey !=''" >
+                        <div v-if="groupKey !=''" v-for="groupElements in filteredElementsByGroup">
+                            <div>{{ groupElements.key }}</div>
+                            <div class="d-flex">
+                                <ValueCard v-for="elementLoop in groupElements.values" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
+                                :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>
+                            </div>
                         </div>
                     </div>
-                    <ValueCard v-else v-for="elementLoop in filteredElements" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
+                   <div v-else >
+                        <ValueCard  v-for="elementLoop in filteredElements" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
                             :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>
+                   </div>
                 </div>
                 <div v-else>
                     There are no results
@@ -66,6 +70,7 @@ export default {
         }, 
         groupKey: {
             type: String,
+            default: ''
         },
         icon: {
             type: String,
@@ -144,6 +149,9 @@ export default {
     },
     
     filteredElementsByGroup(){
+        if(this.groupKey == ''){
+            return []
+        }
         let groupedFiltered = []
         let groupKey = this.groupKey
         let groupedKeys = this.filteredElements.map(e => e[groupKey]).filter(this.getDistinct)

@@ -215,7 +215,8 @@
 
 
         /** wrapper tag **/
-        {{ '#'+wrapper }}.wap-front {
+        {{ '#'+wrapper }} .wap-front, 
+        #wap-footer-container .wap-front {
             font-size: {{ baseFontSize }};
         }
         
@@ -250,16 +251,15 @@ export default {
         if(this.largeVersion){
             if(this.widthWrapper > '620'){
                 this.baseFontSize = '22px'
+            }else{
+                this.baseFontSize = this.widthWrapper < '620' ? '21px':'20px'
             }
-            if(this.widthWrapper < '620'){
-                this.baseFontSize = '21px'
-            }
-        }
-        
-        if(this.widthWrapper < '320'){
+            
+        }else{
             this.baseFontSize = '20px'
         }
-
+        
+        
     }
 }
 </script>

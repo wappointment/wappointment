@@ -20,32 +20,43 @@
                 </div>
 
                 <div v-else class="mt-auto">
-                    <div class="d-flex align-items-center">
-                        <span class="indicator"></span>
-                        <span>
-                            Licence <strong class="text-success">active</strong> until: <u class="small">{{ addon.expires_at }}</u>
-                        </span>
-                        </div>
+                    <div>
+                        <span class="indicator" :class="getClassExpire('bg-')"></span>
+                        <template v-if="addon.expires_in > 0">
+                            <span >
+                            Licence <strong :class="getClassExpire('text-')">
+                                {{ addon.expires_in > 50 ? 'active':'expiring' }}</strong> 
+                            </span>
+                            <div class="small" >Expires in {{ addon.expires_in }} days</div>
+                            <RenewDiscount :days_left="addon.expires_in" :price="addon.options.prices[0].price" :renewUrl="renewUrl" />
+                        </template>
+                        <template v-else>
+                             <span>
+                            Licence <strong class="text-danger">expired</strong> 
+                            </span>
+                            <RenewDiscount :days_left="addon.expires_in" :price="addon.options.prices[0].price" :renewUrl="renewUrl" />
+                        </template>
+                    </div>
                     <div v-if="isPlugin" class="my-2">
-                    <div v-if="!isInstalled">
-                        <button class="btn btn-primary" @click="install">Install</button>
-                    </div>
-                    <div v-else>
-                        
-                        <button v-if="!isActivated" class="btn btn-primary" @click="activate">Activate</button>
-                        <button v-else class="btn btn-secondary btn-sm" @click="deactivate">Deactivate</button>
-                        
-                        <button v-if="requireSetup" class="btn btn-sm" :class="['btn-primary']" @click="runInstallation">
-                            <span class="dashicons dashicons-admin-generic"></span> Run Installation
-                        </button>
-                        <button v-if="!requireSetup && hasWizard" class="btn btn-sm" 
-                        :class="[wizardHasBeenRanAlready?'btn-secondary':'btn-primary']" @click="openWizardModal">
-                            <span class="dashicons dashicons-admin-generic"></span> Run Wizard
-                        </button>
-                        <div v-if="hasWarning" class="text-danger">
-                            {{ addon.warning }}
+                        <div v-if="!isInstalled">
+                            <button class="btn btn-primary" @click="install">Install</button>
                         </div>
-                    </div>
+                        <div v-else>
+                            
+                            <button v-if="!isActivated" class="btn btn-primary" @click="activate">Activate</button>
+                            <button v-else class="btn btn-secondary btn-sm" @click="deactivate">Deactivate</button>
+                            
+                            <button v-if="requireSetup" class="btn btn-sm" :class="['btn-primary']" @click="runInstallation">
+                                <span class="dashicons dashicons-admin-generic"></span> Run Installation
+                            </button>
+                            <button v-if="!requireSetup && hasWizard" class="btn btn-sm" 
+                            :class="[wizardHasBeenRanAlready?'btn-secondary':'btn-primary']" @click="openWizardModal">
+                                <span class="dashicons dashicons-admin-generic"></span> Run Wizard
+                            </button>
+                            <div v-if="hasWarning" class="text-danger">
+                                {{ addon.warning }}
+                            </div>
+                        </div>
                     </div>
                     
                 </div>
@@ -64,14 +75,17 @@
 
 <script>
 import HelpersPackages from '../Helpers/Packages'
-import AbstractListing from '../Views/AbstractListing'
+import RenewDiscount from '../Addons/RenewDiscount'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 
 export default {
-    components: {SubscribeNewsletter},
+    components: {SubscribeNewsletter, RenewDiscount},
     mixins: [HelpersPackages],
     props: ['addon', 'viewData', 'apiSite', 'idx'],
     computed: {
+        renewUrl(){
+            return this.apiSite+'/renew/site_'+this.viewData.site_key
+        },
         cdnUrl(){
             return this.apiSite.replace('https://','https://cdn.')  
         },
@@ -122,6 +136,19 @@ export default {
         }
     },
     methods: {
+        getClassExpire(prefix){
+            let classes = []
+            if(this.addon.expires_in > 50){
+                classes.push(prefix+'success')
+            }else{
+                if(this.addon.expires_in <0){
+                    classes.push(prefix+'danger')
+                }else{
+                    classes.push(prefix+'warning')
+                }
+            }
+            return classes
+        },
         runInstallation(){
             this.$emit('runInstallation', this.addon)
         },

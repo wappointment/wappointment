@@ -31,6 +31,10 @@ export default class AddonsService extends ApiV1 {
                 route: '/addons/check',
                 timeout: 20000
             },
+            clear: { 
+                method: 'post',
+                route: '/addons/clear',
+            },
         };
     }
 

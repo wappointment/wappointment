@@ -1,5 +1,4 @@
 <?php
-
 return [
     [
         'model' => 'client',
@@ -65,6 +64,7 @@ return [
         'model' => 'staff',
         'key' => 'name',
         'label' => 'Staff Name',
+        'sanitize' => true,
         'getMethod' => 'getStaffName',
         'modelCall' => 'appointment'
     ],
@@ -76,4 +76,5 @@ return [
         'modelCall' => 'email_helper',
         'requiresParams' => true
     ]
+
 ];

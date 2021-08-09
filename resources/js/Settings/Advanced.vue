@@ -155,6 +155,14 @@
               </label>
           </div>
           <div class="mb-2">
+              <label class="form-check-label" for="allow-forcemail" data-tt="If a user is logged in on your site, we'll force his account email address and hide the email field">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.forceemail" id="allow-forcemail" @change="changedVD('forceemail')">
+                    Force user account's email
+                  </div>
+              </label>
+          </div>
+          <div class="mb-2">
             <label class="form-check-label" for="allow-cache">
               <div class="d-flex align-items-center" data-tt="Runs availability requests faster">
                 <input type="checkbox" v-model="viewData.cache" id="allow-cache" @change="changedVD('cache')">
@@ -170,6 +178,18 @@
                   <div class="d-flex align-items-center">
                     <input type="checkbox" v-model="viewData.allow_staff_cf" id="allow-staffcf" @change="changedVD('allow_staff_cf')">
                     Allow staff's advanced description
+                  </div>
+              </label>
+          </div>
+          <div class="mb-2">
+              <label class="form-check-label" for="allow-refreshavb" data-tt="Your staff availability gets refreshed everyday, with this option you control at which time of the day does it get refreshed">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.allow_refreshavb" id="allow-refreshavb" @change="changedVD('allow_refreshavb')">
+                    Available booking days refreshes at 
+                    <span v-if="viewData.allow_refreshavb" class="ml-1">  
+                      <dayTime :selected="viewData.refreshavb_at" :timeFormat="viewData.time_format" @changed="changedRefreshAVBTime"></dayTime>
+                      <small class="text-muted">{{ viewData.timezone }}</small>
+                    </span>
                   </div>
               </label>
           </div>
@@ -447,10 +467,14 @@ export default {
     changedDayTime(value){
       this.changedDDPEXT(value, 'daily_summary_time')
     },
+    changedRefreshAVBTime(value){
+      console.log('before request',value, 'refreshavb_at')
+      this.changedDDPEXT(value, 'refreshavb_at')
+    },
 
     changedDDPEXT(value, key){
       this.viewData[key] = value
-      this.changed(key)
+      this.changedVD(key)
     },
     changedCheck(key){
       this.viewData[key] = !this.viewData[key]

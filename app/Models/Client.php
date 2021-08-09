@@ -69,6 +69,12 @@ class Client extends Model
         return empty($this->options['tz']) ? Settings::getStaff('timezone') : $this->options['tz'];
     }
 
+    public function getCustomField($tag = false)
+    {
+        return empty($tag) || empty($this->options[$tag['key']]) ? '' : $this->options[$tag['key']];
+    }
+
+
     protected function getRealDuration($service)
     {
         return ((int) $service['duration'] + (int) Settings::get('buffer_time')) * 60;

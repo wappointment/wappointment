@@ -2,6 +2,7 @@
 
 namespace Wappointment\System;
 
+use Wappointment\Repositories\CalendarsBack;
 use Wappointment\Services\Settings;
 use Wappointment\Services\VersionDB;
 use Wappointment\WP\Helpers as WPHelpers;
@@ -32,6 +33,7 @@ class Scheduler
             foreach (Calendars::all(false, true) as $calendar) {
                 (new Availability($calendar))->syncAndRegen();
             }
+            (new CalendarsBack)->refresh();
         }
     }
 
@@ -110,6 +112,7 @@ class Scheduler
                 foreach (Calendars::all(false, true) as $calendar) {
                     (new Availability($calendar))->regenerate();
                 }
+                (new CalendarsBack)->refresh();
             }
             // we at least regenerate once a day to avoid empty calendar after aa while without a booking
             self::checkLicence();

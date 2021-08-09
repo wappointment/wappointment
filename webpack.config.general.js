@@ -6,7 +6,6 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   mode: process.env.NODE_ENV,
@@ -28,7 +27,8 @@ module.exports = {
   optimization: {
     splitChunks: {
       automaticNameDelimiter: '-',
-    }
+    },
+    minimize: true
   },
   module: {
     rules: [
@@ -88,7 +88,6 @@ module.exports = {
       }),
     new WebpackAssetsManifest({}),
     new VueLoaderPlugin(),
-    new UglifyJsPlugin(),
     new webpack.HashedModuleIdsPlugin(),
   ], 
 
