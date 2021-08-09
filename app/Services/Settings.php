@@ -107,7 +107,9 @@ class Settings
             'autofill' => true,
             'alt_port' => false,
             'video_link_shows' => 0,
-            'forceemail' => false
+            'forceemail' => false,
+            'allow_refreshavb' => false,
+            'refreshavb_at' => 23
         ];
     }
 
@@ -359,6 +361,20 @@ class Settings
         } else {
             Queue::cancelDailyJob();
         }
+    }
+
+    protected static function allow_refreshavbSaved($key, $value)
+    {
+        if ($value) {
+            Queue::queueRefreshAVBJob();
+        } else {
+            Queue::cancelRefreshAVBJob();
+        }
+    }
+
+    protected static function refreshavb_atSaved($key, $value)
+    {
+        Queue::queueRefreshAVBJob();
     }
 
     protected static function daily_summary_timeSaved($key, $value)

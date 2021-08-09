@@ -284,7 +284,9 @@ class ViewsData
             'all_roles' => Permissions::getAllWpRoles(),
             'max_active_bookings' => (int)Settings::get('max_active_bookings'),
             'autofill' => (int)Settings::get('autofill'),
-            'forceemail' => Settings::get('forceemail')
+            'forceemail' => Settings::get('forceemail'),
+            'allow_refreshavb' => Settings::get('allow_refreshavb'),
+            'refreshavb_at' => Settings::get('refreshavb_at'),
         ];
     }
 

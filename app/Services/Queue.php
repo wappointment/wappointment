@@ -5,6 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\Models\Job;
 use Wappointment\Models\FailedJob;
 use Wappointment\Helpers\Debug;
+use Wappointment\WP\Helpers;
 
 class Queue
 {
@@ -188,7 +189,6 @@ class Queue
             ->delete();
     }
 
-
     public static function cancelJob($queue = 'daily', $staff_id_only = false)
     {
         $query = Job::where('queue', $queue);
@@ -198,40 +198,50 @@ class Queue
         $query->delete();
     }
 
+    public static function cancelRefreshAVBJob()
+    {
+        static::cancelJob('avb_daily');
+    }
+
+    public static function queueRefreshAVBJob()
+    {
+        static::cancelRefreshAVBJob();
+
+        self::push(
+            'Wappointment\Jobs\AVBDaily',
+            [],
+            'avb_daily',
+            static::generateTime(Settings::get('refreshavb_at'), static::getDefaultTz())->timestamp
+        );
+    }
+
     public static function cancelDailyJob($staff_id_only = false)
     {
         static::cancelJob('daily', $staff_id_only);
-    }
-    public static function cancelWeeklyJob($staff_id_only = false)
-    {
-        static::cancelJob('weekly', $staff_id_only);
     }
 
     public static function queueDailyJob($staff_id_only = false)
     {
         self::cancelDailyJob($staff_id_only);
 
-        $sumary_time = Settings::get('daily_summary_time');
+        $daily_sumary_time = Settings::get('daily_summary_time');
         foreach (Staff::get() as $staff) {
             if ($staff_id_only !== false && $staff_id_only !== $staff['id']) {
                 continue;
             }
-            $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
-                $sumary_time,
-                0,
-                0,
-                $staff['t']
+            self::push(
+                'Wappointment\Jobs\AdminEmailDailySummary',
+                ['staff_id' => $staff['id']],
+                'daily',
+                static::generateTime($daily_sumary_time, $staff['t'])->timestamp
             );
-
-            if ($available_at->timestamp < time()) {
-                $available_at->addDay();
-            }
-
-            self::push('Wappointment\Jobs\AdminEmailDailySummary', ['staff_id' => $staff['id']], 'daily', $available_at->timestamp);
         }
     }
 
-
+    public static function cancelWeeklyJob($staff_id_only = false)
+    {
+        static::cancelJob('weekly', $staff_id_only);
+    }
 
     public static function queueWeeklyJob($staff_id_only = false)
     {
@@ -243,12 +253,8 @@ class Queue
             if ($staff_id_only !== false && $staff_id_only !== $staff['id']) {
                 continue;
             }
-            $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
-                $summary_time,
-                0,
-                0,
-                $staff['t']
-            );
+
+            $available_at = static::generateTime($summary_time, $staff['t']);
 
             while ($available_at->timestamp < time() || !$available_at->isDayOfWeek($summary_day)) {
                 $available_at->addDay();
@@ -256,5 +262,31 @@ class Queue
 
             self::push('Wappointment\Jobs\AdminEmailWeeklySummary', ['staff_id' => $staff['id']], 'weekly', $available_at->timestamp);
         }
+    }
+
+    protected static function generateTime($hour_trigger, $timezone)
+    {
+        $available_at = \Wappointment\ClassConnect\Carbon::createFromTime(
+            $hour_trigger,
+            0,
+            0,
+            $timezone
+        );
+
+        if ($available_at->timestamp < time()) {
+            $available_at->addDay();
+        }
+        return $available_at;
+    }
+
+    protected static function getDefaultTz()
+    {
+        $site_timezone = Helpers::getWPOption('timezone_string');
+        return empty($site_timezone) ? static::getTimezoneDefaultStaff() : $site_timezone;
+    }
+
+    protected static function getTimezoneDefaultStaff()
+    {
+        return Staff::get()[0]['t'];
     }
 }
