@@ -83,7 +83,7 @@ export default {
                 case 0:
                     return 'text-primary'
                 case 1:
-                    return 'text-info'
+                    return 'text-danger'
                 case 2:
                     return 'text-success'
                 case -1:
