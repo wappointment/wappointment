@@ -206,8 +206,10 @@ class Availability
         $dayNumber = 1;
         $now = Carbon::today($this->timezone);
         $min_time = Carbon::now($this->timezone)->addHours(Settings::get('hours_before_booking_allowed'));
+        $max_time = Carbon::now($this->timezone)->addDays($this->days);
         $availability = [];
-        while ($dayNumber <= $this->days) {
+
+        while ($now->timestamp < $max_time->timestamp) {
             $dayName = $this->daysOfTheWeek[$now->dayOfWeek];
 
             $dailyAvailability = $this->regav[$dayName];
