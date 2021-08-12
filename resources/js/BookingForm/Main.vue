@@ -148,7 +148,9 @@ export default {
         selectedStaff: null,
         showHeader:true,
         checkCacheIntervalid: false,
-        order:false
+        order:false,
+        selectedVariation:false,
+        selectedPackage: false
     }),
 
     mounted () {

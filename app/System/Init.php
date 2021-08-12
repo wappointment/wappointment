@@ -49,6 +49,8 @@ class Init
         add_action('wp_print_scripts', [$this, 'jsVariables']);
         new \Wappointment\Routes\Main();
         (new \Wappointment\WP\CustomPage())->boot();
+        add_filter('wappointment_package_save', ['\\Wappointment\\Services\\AdminPackage', 'dataSave'], 10, 2);
+        add_filter('wappointment_package_delete', ['\\Wappointment\\Services\\AdminPackage', 'delete']);
     }
 
     public function initInstalled()

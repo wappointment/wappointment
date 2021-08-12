@@ -46,7 +46,6 @@ trait CanBook
         $this->bookingRequest = $booking;
         $end = $booking->get('end');
 
-        $staff_id = empty($booking->get('staff_id')) ? null : $booking->get('staff_id');
         //test that this is bookable
         $hasBeenBooked = AppointmentService::adminBook($this, $booking->get('start'), $end, 'unused', $booking->getService(), $booking->staff);
         if (!$hasBeenBooked) {

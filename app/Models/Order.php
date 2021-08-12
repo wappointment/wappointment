@@ -150,12 +150,18 @@ class Order extends Model
         $prices = $appointment->getServicesPrices();
 
         foreach ($prices as $price) { //TODO insert many rows at once
-            OrderPrice::create([
-                'order_id' => $this->id,
-                'price_id' => $price->id,
-                'appointment_id' => $appointment->id,
-            ]);
+            $this->recordItem($price->id, $price->price, $appointment->id);
         }
+    }
+
+    public function recordItem($price_id, $price_value, $appointment_id)
+    {
+        OrderPrice::create([
+            'order_id' => $this->id,
+            'price_id' => $price_id,
+            'price_value' => $price_value,
+            'appointment_id' => $appointment_id,
+        ]);
     }
 
     public function refreshTotal()
@@ -163,14 +169,13 @@ class Order extends Model
         $prices = OrderPrice::where('order_id', $this->id)->with('price')->get();
         $total = 0;
         foreach ($prices as $price) {
-            $total += $price->price->price;
+            $total += $price->price_value;
         }
         $this->update(['total' => $total]);
     }
 
     public function confirmAppointments()
     {
-
         foreach ($this->prices as $charge) {
             AppointmentNew::confirm($charge->appointment_id);
         }

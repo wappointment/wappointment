@@ -48,9 +48,11 @@ class Price
     public function save()
     {
         if ($this->id === false) {
-            return ModelsPrice::create($this->getData());
+            $result = ModelsPrice::create($this->getData());
+            return $result->toArray()['id'];
         } else {
-            return ModelsPrice::where('id', (int)$this->id)->update($this->getData());
+            ModelsPrice::where('id', (int)$this->id)->update($this->getData());
+            return $this->id;
         }
     }
 }
