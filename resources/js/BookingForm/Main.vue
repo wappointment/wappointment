@@ -96,6 +96,7 @@ import BookingStaffSelection from './StaffSelection'
 import BookingPaymentStep from './Payment'
 import MixinLegacy from './MixinLegacy'
 import MixinChange from './MixinChange'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
     'RescheduleConfirm': RescheduleConfirm,
@@ -114,7 +115,7 @@ let compDeclared = {
     'AppointmentTypeSelection': AppointmentTypeSelection
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
-let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Colors, Dates, MixinLegacy, window.wappointmentExtends.filter('MixinChange', MixinChange)] )
+let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [CanFormatPrice, Colors, Dates, MixinLegacy, window.wappointmentExtends.filter('MixinChange', MixinChange)] )
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
