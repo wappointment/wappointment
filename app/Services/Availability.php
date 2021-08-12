@@ -90,7 +90,8 @@ class Availability
         // get busy and free time
         $today = Carbon::today();
 
-        $end = $today->copy()->addDays($this->days);
+        $end = Carbon::createFromTimestamp($this->getMaxTs())->endOfDay();
+        //$end = $today->copy()->addDays($this->days);
         $start_at_string = $today->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $end->format(WAPPOINTMENT_DB_FORMAT);
 
