@@ -201,13 +201,24 @@ class Availability
         ]);
     }
 
+    protected function daysRegenerating()
+    {
+        if (!Settings::get('allow_refreshavb')) {
+            return $this->days;
+        }
+        // if it's the daily job and we need to wait for that moment
+        return Settings::get('allow_refreshavb') && Carbon::now($this->timezone)->hour >= Settings::get('refreshavb_at') ? $this->days : $this->days - 1;
+    }
+
     private function generateAvailabilityWithRA()
     {
 
         $dayNumber = 1;
         $now = Carbon::today($this->timezone);
         $min_time = Carbon::now($this->timezone)->addHours(Settings::get('hours_before_booking_allowed'));
-        $max_time = Carbon::now($this->timezone)->addDays($this->days)->endOfDay();
+        //dd('days_regen', $this->daysRegenerating());
+
+        $max_time = Carbon::now($this->timezone)->addDays($this->daysRegenerating())->endOfDay();
         $availability = [];
 
         while ($now->timestamp < $max_time->timestamp) {

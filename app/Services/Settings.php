@@ -370,10 +370,12 @@ class Settings
         } else {
             Queue::cancelRefreshAVBJob();
         }
+        Regenerate::all();
     }
 
     protected static function refreshavb_atSaved($key, $value)
     {
+        Regenerate::all();
         Queue::queueRefreshAVBJob();
     }
 
