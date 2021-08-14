@@ -2,17 +2,14 @@
 
 namespace Wappointment\Jobs;
 
-use Wappointment\Services\Availability;
 use Wappointment\Services\Queue;
-use Wappointment\Services\Staff;
+use Wappointment\Services\Regenerate;
 
 class AVBDaily implements JobInterface
 {
     public function handle()
     {
-        foreach (Staff::get() as $staff) {
-            (new Availability($staff['id']))->regenerate();
-        }
+        Regenerate::all();
         Queue::queueRefreshAVBJob();
     }
 }
