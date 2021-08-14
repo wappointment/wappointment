@@ -33,6 +33,8 @@
                 :startsAt="appointmentStartsAt"
                 :location="location"
                 :appointmentSaved="appointmentSaved"
+                :selectedPackage="selectedPackage"
+                :selectedVariation="selectedVariation"
                 @changeService="childChangedStep"
                 @changeDuration="childChangedStep"
                 @changeLocation="childChangedStep"

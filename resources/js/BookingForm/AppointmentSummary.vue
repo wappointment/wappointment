@@ -65,7 +65,9 @@ export default {
             type: Array
         },
         rescheduling:{},
-        appointmentSaved: {}
+        appointmentSaved: {},
+        selectedVariation:{},
+        selectedPackage:{},
     },
     components: { 
         ElementSelected: window.wappointmentExtends.filter('ElementSelected', ElementSelected)
