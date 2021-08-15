@@ -726,6 +726,8 @@ export default {
                         selectedStaff:"selectedStaff",
                         timeprops: 'timeprops', 
                         service:"service",
+                        selectedPackage:"selectedPackage",
+                        selectedVariation:"selectedVariation",
                         duration:"duration",
                         location:"location",
                         errors:"errorMessages",

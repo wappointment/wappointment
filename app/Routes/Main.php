@@ -82,6 +82,7 @@ class Main extends AbstractRoutes
                     'methods' => ['get', 'post'],
                     'controller' => 'CurrencyController'
                 ],
+
             ],
             'GET' => [
                 '/addons/check' => [
@@ -218,6 +219,10 @@ class Main extends AbstractRoutes
                 '/calendars/permissions' => [
                     'controller' => 'CalendarsController',
                     'method' => 'savePermissions',
+                ],
+                '/order/refund' => [
+                    'controller' => 'OrderController',
+                    'method' => 'refund',
                 ],
             ],
         ],

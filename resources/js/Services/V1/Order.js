@@ -20,6 +20,10 @@ export default class OrderService{
                 method: 'get', 
                 route: 'orders'
             },
+            refund: {
+                method: 'post', 
+                route: '/order/refund'
+            },
         };
     }
 

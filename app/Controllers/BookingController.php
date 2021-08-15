@@ -16,6 +16,7 @@ class BookingController extends RestController
 
     public function save(Booking $booking)
     {
+
         if ($booking->hasErrors()) {
             return WPHelpers::restError('Review your fields', 500, $booking->getErrors());
         }

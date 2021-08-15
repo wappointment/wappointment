@@ -4,6 +4,7 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\SoftDeletes;
+use Wappointment\Managers\Central;
 
 class Price extends Model
 {
@@ -26,19 +27,43 @@ class Price extends Model
     {
         return $query->where('type', static::TYPE_PACKAGE);
     }
-
-    public function reference()
+    public function isServiceItem()
     {
-        return (int)$this->type === static::TYPE_SERVICE ? $this->service() : $this->package();
+        return (int)$this->type === static::TYPE_SERVICE;
     }
 
-    public function service()
+    public function isPackageItem()
     {
-        return $this->belongsTo(Service::class, 'service_id');
+        return !$this->isServiceItem();
     }
 
-    public function package()
+    public function getReference()
     {
-        return $this->belongsTo(Package::class, 'package_id');
+        return $this->isServiceItem() ? $this->getService() : $this->getPackage();
+    }
+
+    public function generateItemName(Appointment $appointment)
+    {
+        if ($appointment->boughtWithPackage()) {
+            $reference = $this->getReference();
+            $package_price_id = $appointment->packageVariation();
+
+            foreach ($reference->options['variations'] as $variation) {
+                if ($variation['price_id'] == $package_price_id) {
+                    return $reference->options['name'] . ' - ' . $variation['credits'] . ' ' . $reference->type_label;
+                }
+            }
+        } else {
+            return $appointment->getServiceName() . ' - ' . $appointment->getDuration();
+        }
+    }
+
+    public function getPackage()
+    {
+        return \WappointmentAddonPackages\Models\Package::find($this->reference_id);
+    }
+    public function getService()
+    {
+        return Service::find($this->reference_id);
     }
 }

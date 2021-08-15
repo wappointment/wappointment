@@ -42,7 +42,9 @@ class AppointmentNew
             'service_id' => $client->bookingRequest->get('service'),
             'location_id' => $location->id,
             'duration' => $client->bookingRequest->get('duration'),
-            'staff_id' => empty($staff_id) ? 0 : static::getStaffId($staff_id)
+            'staff_id' => empty($staff_id) ? 0 : static::getStaffId($staff_id),
+            'package_id' => $client->bookingRequest->get('package_id'),
+            'package_price_id' => $client->bookingRequest->get('package_price_id'),
         ];
 
         return static::book($appointmentData, $client, $forceConfirmed);
@@ -143,6 +145,12 @@ class AppointmentNew
         if (empty($data['options']) || !is_array($data['options'])) {
             $data['options'] = [];
         }
+        if (!empty($data['package_id'])) {
+            $data['options']['buying_package'] = true;
+            $data['options']['package_id'] = $data['package_id'];
+            $data['options']['package_price_id'] = $data['package_price_id'];
+        }
+
         $data['options']['buffer_time'] = (int) Settings::get('buffer_time');
         return static::getAppointmentModel()::create($data);
     }

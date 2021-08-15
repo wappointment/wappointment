@@ -11,7 +11,7 @@ class EmailHelper
     public function getOrderTable($params)
     {
         //return order table only if there is an appointment param and it's not woocoomerce
-        if (!empty($params['appointment']) && empty($params['appointment']->options['woo_order_id'])) {
+        if (!empty($params['appointment']) && !is_array($params['appointment']) && empty($params['appointment']->options['woo_order_id'])) {
             return $this->generateOrderTable($params);
         }
         return '';
@@ -49,17 +49,20 @@ class EmailHelper
                 'cellClass' => 'muted'
             ],
         ];
-        foreach ($order->prices as $price) {
-            $rows[] = [$price->price->name, Payment::formatPrice($price->price->price / 100)];
+        if (!empty($order)) {
+            foreach ($order->prices as $price) {
+                $rows[] = [$price->price->name, Payment::formatPrice($price->price->price / 100)];
+            }
+            $rows[] = [
+                'cells' => ['Total', Payment::formatPrice($order->total / 100)],
+                'class' => 'bold lineb linet'
+            ];
+            $rows[] = [
+                'cells' => ['Status', $order['payment_label'] . ' - ' . $order['status_label']],
+                'class' => 'small'
+            ];
         }
-        $rows[] = [
-            'cells' => ['Total', Payment::formatPrice($order->total / 100)],
-            'class' => 'bold lineb linet'
-        ];
-        $rows[] = [
-            'cells' => ['Status', $order['payment_label'] . ' - ' . $order['status_label']],
-            'class' => 'small'
-        ];
+
 
         return OrderMessage::table($rows);
     }

@@ -9,7 +9,7 @@ class OrderPrice extends Model
     protected $table = 'wappo_order_price';
 
     protected $fillable = [
-        'order_id', 'price_id', 'appointment_id', 'price_value'
+        'order_id', 'price_id', 'appointment_id', 'price_value', 'item_name',
     ];
     protected $with = ['price'];
 

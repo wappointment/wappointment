@@ -106,11 +106,11 @@ class Calendars
     public static function autoRecordNotification()
     {
         if (Settings::get('weekly_summary')) {
-            Queue::queueDailyJob();
+            Queue::queueWeeklyJob();
         }
 
         if (Settings::get('daily_summary')) {
-            Queue::queueWeeklyJob();
+            Queue::queueDailyJob();
         }
     }
 

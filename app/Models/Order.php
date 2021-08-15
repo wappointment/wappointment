@@ -12,7 +12,7 @@ class Order extends Model
     use SoftDeletes;
 
     protected $table = 'wappo_orders';
-    protected $fillable = ['transaction_id', 'status', 'total', 'refunded_at', 'client_id', 'options', 'paid_at', 'payment', 'currency'];
+    protected $fillable = ['transaction_id', 'status', 'total', 'refunded_at', 'client_id', 'options', 'paid_at', 'payment', 'currency', 'tax_percent', 'tax_amount'];
     protected $with = ['client', 'prices', 'appointments'];
     protected $dates = ['refunded_at', 'paid_at', 'created_at', 'updated_at'];
     protected $casts = ['options' => 'array'];
@@ -69,10 +69,18 @@ class Order extends Model
     {
         return $this->payment == self::PAYMENT_ONSITE;
     }
+    public function isStripe()
+    {
+        return $this->payment == self::PAYMENT_STRIPE;
+    }
+    public function isPaypal()
+    {
+        return $this->payment == self::PAYMENT_PAYPAL;
+    }
 
     public function getChargeAttribute()
     {
-        return $this->total;
+        return $this->total + $this->tax_amount;
     }
 
     public function client()
@@ -120,6 +128,15 @@ class Order extends Model
         $this->status = static::STATUS_CANCELLED;
     }
 
+    public function setAutoCancelled()
+    {
+        $this->status = static::STATUS_CANCELLED;
+        $options = $this->options;
+        $options['auto_cancelled_at'] = time();
+        $this->options = $options;
+        $this->save();
+    }
+
     public function setRefund()
     {
         $this->status = static::STATUS_REFUNDED;
@@ -147,18 +164,24 @@ class Order extends Model
 
         //clear all prices by cancelling previously placed appointment silently
         $this->clearLastAdded();
-        $prices = $appointment->getServicesPrices();
 
-        foreach ($prices as $price) { //TODO insert many rows at once
-            $this->recordItem($price->id, $price->price, $appointment->id);
+        if ($appointment->paidWithPackage()) {
+            $prices = $appointment->getPackagePrices();
+        } else {
+            $prices = $appointment->getServicesPrices();
+        }
+
+        foreach ($prices as $price) {
+            $this->recordItem($price->id, $price->price, $appointment->id, $price->generateItemName($appointment));
         }
     }
 
-    public function recordItem($price_id, $price_value, $appointment_id)
+    public function recordItem($price_id, $price_value, $appointment_id, $item_name)
     {
         OrderPrice::create([
             'order_id' => $this->id,
             'price_id' => $price_id,
+            'item_name' => $item_name,
             'price_value' => $price_value,
             'appointment_id' => $appointment_id,
         ]);
@@ -171,7 +194,17 @@ class Order extends Model
         foreach ($prices as $price) {
             $total += $price->price_value;
         }
-        $this->update(['total' => $total]);
+        $this->update(
+            [
+                'total' => $total,
+                'tax_amount' => $this->calculateTax($total)
+            ]
+        );
+    }
+
+    public function calculateTax($amount)
+    {
+        return $amount / 100 * $this->tax_percent;
     }
 
     public function confirmAppointments()
@@ -191,6 +224,18 @@ class Order extends Model
             $this->save();
         }
 
+        do_action('wappointment_order_completed', $this);
         return $this;
+    }
+
+    public function refund()
+    {
+        if (!$this->isOnSite()) {
+            //refund
+            do_action('wappointment_order_refund', $this);
+        }
+
+        // $this->setRefund();
+        // $this->save();
     }
 }

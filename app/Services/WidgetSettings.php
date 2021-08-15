@@ -53,6 +53,7 @@ class WidgetSettings
             'when' => 'When',
             'service' => 'Service',
             'location' => 'Where',
+            'package' => 'Package',
             'min' => 'min',
             'noappointments' => 'No appointments available'
         ],

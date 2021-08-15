@@ -13,9 +13,11 @@
             --wappo-body-bg: {{ hx_rgb(opts.colors.body.bg) }};
             --wappo-success-tx: {{ hx_rgb(opts.colors.confirmation.text) }};
             --wappo-error-tx: {{ hx_rgb(opts.colors.form.error) }};
+            --wappo-valid-tx: {{ hx_rgb(opts.colors.form.success) }};
             --wappo-input-col: {{ hx_rgb('#495057') }};
             --wappo-input-ph: {{ hx_rgb('#aeadad') }};
             --wappo-input-bor: {{ hx_rgb('#ced4da') }};
+            --wappo-input-box-s: {{ hx_rgb(opts.colors.primary.bg, .25) }};
         }
         .wap-front .wbtn.wbtn-primary-light,
         .wap-front .wbtn.wbtn-primary-light:not(:disabled):not(.disabled):active, 

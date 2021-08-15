@@ -63,7 +63,7 @@ export default {
     mixins: [ MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, CanFormatPrice, HasPaidService],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
     'timeprops', 'relations', 'appointment_starts_at',
-    'duration', 'location', 'custom_fields', 'staffs','selectedStaff'],
+    'duration', 'location', 'custom_fields', 'staffs','selectedStaff','selectedPackage','selectedVariation'],
     components: {
         BookingAddress,
         PhoneInput,
@@ -226,6 +226,11 @@ export default {
             data.location = this.location.id
             data.duration = this.duration
             data.staff_id = this.staff.id
+            if(this.selectedPackage){
+                data.package_id = this.selectedPackage.id
+                data.package_price_id = this.selectedVariation.price_id
+            }
+            
             //turns loading mode on in parent
             this.$emit('loading', {loading:true, dataSent: data})
             //create request

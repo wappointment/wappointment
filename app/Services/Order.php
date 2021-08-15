@@ -21,4 +21,10 @@ class Order
         $this->order->setProcessing();
         $this->order->save();
     }
+
+    public static function refund($order_id)
+    {
+        $order = ModelOrder::findOrFail($order_id);
+        $order->refund();
+    }
 }

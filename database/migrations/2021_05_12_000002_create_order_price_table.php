@@ -20,6 +20,7 @@ class CreateOrderPriceTable extends Wappointment\Installation\Migrate
             $table->increments('id');
             $table->unsignedInteger('order_id');
             $table->unsignedInteger('price_id');
+            $table->string('item_name');
             $table->unsignedMediumInteger('price_value');
             $table->unsignedInteger('appointment_id')->nullable()->default(null);
             $table->foreign('order_id', $foreignNameOrder)->references('id')->on(Database::$prefix_self . '_orders');

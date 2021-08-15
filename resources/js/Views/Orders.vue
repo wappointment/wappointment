@@ -3,9 +3,9 @@
         <WPListingHelp @perPage="perPage" v-if="per_page" :per_page="per_page">
           <div>
             <div class="d-flex mb-2 align-items-center">
-                <label for="per_page" class="col-sm-3">Tax applied on all transactions</label>
+                <label for="per_page" class="col-sm-3">Tax</label>
                   <div class="col-sm-4">
-                      <input type="text" v-model="tax" @change="saveTax">
+                      <input type="text" v-model="tax" size="2" @change="saveTax"> %
                   </div>
             </div>
              
@@ -58,7 +58,7 @@ export default {
 
         loadedResult(response){
           this.per_page = parseInt(response.data.viewData.per_page)
-          this.tax = parseInt(response.data.viewData.tax)
+          this.tax = parseFloat(response.data.viewData.tax)
           this.$emit('fullyLoaded')
         },
 

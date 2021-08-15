@@ -46,7 +46,9 @@ class Booking extends LegacyBooking
             'location' => 'required|min:1',
             'service' => 'required|min:1',
             'duration' => 'required|min:5',
-            'staff_id' => ''
+            'staff_id' => '',
+            'package_id' => '',
+            'package_price_id' => ''
         ];
         if (!$this->forceEmail()) {
             $this->validationRulesArray['email'] = 'required|email';

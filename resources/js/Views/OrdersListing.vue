@@ -29,13 +29,16 @@
                             </div>
                         </td>
                          <td>
-                            <div>{{ formatPrice(order.total, true) }}</div>
-                            <div :class="getStatusClass(order.status)" >{{ order.status_label }}</div>
+                            <div>{{ formatPrice(order.charge, true) }} <span class="text-muted small ml-2" v-if="order.tax_amount>0"> (Tax {{ formatPrice(order.tax_amount, true) }})</span></div>
+                            <div :class="getStatusClass(order.status)" >
+                                {{ order.status_label }}
+                                <a v-if="order.status==2" href="javascript:;" class="btn btn-secondary" @click="refund(order)">Refund</a>
+                            </div>
                             <div class="text-muted small">{{ order.payment_label}}</div>
                         </td>
                         <td>
                             <div v-for="charge in order.prices">
-                                {{ formatPrice(charge.price.price, true) }} - {{ charge.price.name }} - {{ displayAppointment(order.appointments, charge.appointment_id)}}
+                                {{ formatPrice(charge.price_value, true) }} - {{ charge.item_name }} - {{ displayModality(order.appointments, charge.appointment_id)}}
                             </div>
                         </td>
                         <td>
@@ -71,12 +74,23 @@ export default {
         keyDataSource:'orders'
     }),
     methods: {
+
+        refund(order){
+            this.request(this.refundOrderRequest,order,undefined,false,this.orderRefunded)
+        },
+        async refundOrderRequest(order){
+            return await this.mainService.call('refund',{order_id:order.id})
+        },
+        orderRefunded(response){
+            this.serviceSuccess(response)
+            this.reload()
+        },
         afterLoaded(response){
             this.$emit('loaded', response)
         },
-        displayAppointment(appointments, id){
+        displayModality(appointments, id){
             let appointmentData = appointments.find(e => e.id == id)
-            return appointmentData.location_label + ' '+(appointmentData.duration_sec/60)+'min' +' '
+            return appointmentData.location_label
         },
         getStatusClass(status){
             switch (status) {

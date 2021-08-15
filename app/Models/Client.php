@@ -90,9 +90,18 @@ class Client extends Model
         $pendingOrder = Order::where('client_id', $this->id)->pending()->first();
 
         if (empty($pendingOrder)) {
-            $pendingOrder = Order::create(['client_id' => $this->id, 'transaction_id' => uniqid('onsite_' . $this->id)]);
+            $pendingOrder = Order::create([
+                'client_id' => $this->id,
+                'transaction_id' => uniqid('onsite_' . $this->id),
+                'tax_percent' => $this->getTaxPercentage()
+            ]);
         }
         return $pendingOrder;
+    }
+
+    public function getTaxPercentage()
+    {
+        return !empty($this->client->options['tax_percent']) ? $this->client->options['tax_percent'] : Settings::get('tax');
     }
 
     public function generateOrder(Appointment $appointment)

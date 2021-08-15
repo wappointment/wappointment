@@ -59,6 +59,9 @@ export default {
             this.dataResponse = response.data
             return this.keyDataSource === false ? this.dataResponse:this.dataResponse[this.keyDataSource]
         },
+        reload(){
+            this.loadElements()
+        },
         loadedElements(response){
             
             let dataSource = this.getDataSource(response)

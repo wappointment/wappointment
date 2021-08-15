@@ -113,7 +113,9 @@ class Settings
             'video_link_shows' => 0,
             'forceemail' => false,
             'allow_refreshavb' => false,
-            'refreshavb_at' => 23
+            'refreshavb_at' => 23,
+            'clean_pending_every' => 25,
+            'clean_last_check' => false
         ];
     }
 

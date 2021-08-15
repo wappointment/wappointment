@@ -56,6 +56,11 @@ class TagsReplacement
         return str_replace($this->finds, $this->replaces, $subject);
     }
 
+    /**
+     * Todo generate the value of only the found tags
+     *
+     * @return void
+     */
     private function prepareTags()
     {
         foreach (array_merge(static::emailsTags(), static::emailsLinks()) as $tag) {

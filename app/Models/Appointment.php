@@ -100,7 +100,11 @@ class Appointment extends Model
 
     public function getStatusTag()
     {
-        return $this->status == static::STATUS_AWAITING_CONFIRMATION ? '[Pending]' : '';
+        return $this->isPending() ? '[Pending]' : '';
+    }
+    public function isPending()
+    {
+        return $this->status == static::STATUS_AWAITING_CONFIRMATION;
     }
 
     public function incrementSequence()
@@ -152,6 +156,16 @@ class Appointment extends Model
         }
         unset($array['id']);
         return $array;
+    }
+
+    public function boughtWithPackage()
+    {
+        return !empty($this->options['buying_package']);
+    }
+
+    public function packageVariation()
+    {
+        return $this->options['package_price_id'];
     }
 
     protected function getLocationObject()
@@ -443,7 +457,7 @@ class Appointment extends Model
         return $toDotcom;
     }
 
-    public function getDurationId()
+    public function getDurationsPriceIds()
     {
         $ids = [];
         foreach ($this->services as $service) {
@@ -454,22 +468,41 @@ class Appointment extends Model
 
     public function getServicesPrices()
     {
-        $staff_id = $this->staff_id;
+        return $this->filterPrices($this->queryPrices(
+            Price::isService(),
+            $this->getDurationsPriceIds()
+        ));
+    }
 
-        $duration_ids = $this->getDurationId();
-        //get prices where duration_id is found in id or parent
-        $query = Price::isService();
-        $query->where(function ($query) use ($duration_ids) {
-            $query->whereIn('parent', $duration_ids);
-            $query->orWhereIn('id', $duration_ids);
+    public function paidWithPackage()
+    {
+        return !empty($this->options['package_price_id']);
+    }
+
+    public function getPackagePricesId()
+    {
+        return $this->paidWithPackage() ? [$this->options['package_price_id']] : false;
+    }
+
+    public function getPackagePrices()
+    {
+        return $this->filterPrices($this->queryPrices(
+            Price::isPackage(),
+            $this->getPackagePricesId()
+        ));
+    }
+
+    public function queryPrices($query, $price_ids)
+    {
+        $query->where(function ($query) use ($price_ids) {
+            $query->whereIn('parent', $price_ids);
+            $query->orWhereIn('id', $price_ids);
         });
-
-        $allPrices = $query->where(function ($query) use ($staff_id) {
+        $staff_id = $this->staff_id;
+        return $query->where(function ($query) use ($staff_id) {
             $query->whereNull('staff_id');
             $query->orWhere('staff_id', $staff_id);
         })->get();
-
-        return $this->filterPrices($allPrices);
     }
 
     public function filterPrices($prices)
