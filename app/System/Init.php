@@ -4,6 +4,7 @@ namespace Wappointment\System;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Config\Database;
+use Wappointment\Services\IcsGenerator;
 use Wappointment\Services\Settings;
 use Wappointment\Services\VersionDB;
 
@@ -141,7 +142,8 @@ class Init
             'allowed' => Settings::get('wappointment_allowed'),
             'frontPage' => get_permalink((int) Settings::get('front_page')),
             'currency' => \Wappointment\Services\Payment::currency(),
-            'methods' => \Wappointment\Services\Payment::methods()
+            'methods' => \Wappointment\Services\Payment::methods(),
+            'signature' => \Wappointment\Services\IcsGenerator::getIcsSignature(),
         ];
 
         if (is_user_logged_in()) {

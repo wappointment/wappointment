@@ -174,7 +174,6 @@ export default {
         this.request(this.saveServiceRequest,  undefined, undefined, false, this.saved, this.failedValidation)
     },
     failedValidation(e){
-      console.log('e.response',e.response)
       if(e.response!== undefined && e.response.data!== undefined 
       && e.response.data.data!== undefined && 
       e.response.data.data.errors!== undefined &&

@@ -15,7 +15,7 @@ class Service
     public function __construct($serviceArray)
     {
         $this->service = $serviceArray;
-        $this->name = $serviceArray['name'];
+        $this->name = !empty($serviceArray['name']) ? $serviceArray['name'] : '';
         $this->type = !empty($serviceArray['type']) && is_array($serviceArray['type']) ? $serviceArray['type'] : [];
         $this->address = $this->hasPhysical() && !empty($serviceArray['address']) ? $serviceArray['address'] : '';
         $this->duration = empty($serviceArray['duration']) ? 0 : $serviceArray['duration'];

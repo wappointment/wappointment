@@ -59,7 +59,7 @@ export default {
         },
 
         eventDescription(html = false){
-             let pwd_link = "Booked with " + this.getLink(apiWappointment.apiSite, html)
+             let pwd_link = apiWappointment.signature
              return this.getAppointmentDetails(html) + this.getLinks(html) + lnb + this.getLineSeparator('_', pwd_link.length/2) +
              lnb + lnb + pwd_link
         },
