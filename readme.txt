@@ -79,6 +79,11 @@ Quickly define when and how many of them do they receive (1 day before appointme
 * Receive daily and weekly notifications
 * Customize and personalize your confirmations and reminders sent to your clients
 
+= Advanced options for edge use-cases =
+* Limit/Maximun active bookings per client
+* Force user account's email for logged in users
+* Open new slots in new day at a specific time e.g." new slots everyday at 11pm"
+
 = Have a Question? =
 Our plugin is free, and easy to install. Try it first :)
 And for any question or doubt, you can reach us:

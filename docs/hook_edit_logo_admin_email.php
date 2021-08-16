@@ -15,10 +15,9 @@
  */
 add_filter('wappointment_admin_email_head_image', 'my_func_wappointment_admin_email_head_image');
 
-function my_func_wappointment_admin_email_head_image($imageLink)
+function my_func_wappointment_admin_email_head_image()
 {
-    $imageLink = 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png';
-    return $imageLink;
+    return 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png';
 }
 
 
@@ -27,8 +26,18 @@ function my_func_wappointment_admin_email_head_image($imageLink)
  */
 add_filter('wappointment_admin_email_head_link', 'my_func_wappointment_admin_email_head_link');
 
-function my_func_wappointment_admin_email_head_link($linkValue)
+function my_func_wappointment_admin_email_head_link()
 {
-    $linkValue = 'https://google.com/';
-    return $linkValue;
+    return 'https://google.com/';
+}
+
+
+/**
+ * Edit ics attachments signatures only for premium
+ */
+add_filter('wappointment_ics_signature', 'my_wappointment_ics_signature');
+
+function my_wappointment_ics_signature()
+{
+    return "\nBooked through https://google.com/";
 }
