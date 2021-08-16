@@ -6,7 +6,7 @@
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
                 <span>V2.2.6</span>   
-                <span class="ml-2">Security issue fixed and more</span>
+                <span class="ml-2">Bug fix and a few new options</span>
             </h3>
             <div class="p-4 ml-4">
                 <h5>Changelog 2.2.6</h5>

@@ -184,7 +184,13 @@ class IcsGenerator
         }
         $description .= "\n-----------------------------------";
 
-        return $description . "\nBooked with https://wappointment.com";
+        return $description . static::getIcsSignature();
+    }
+
+    public static function getIcsSignature()
+    {
+        $ics_signature = "\nBooked with https://wappointment.com";
+        return !empty(\Wappointment\WP\Helpers::getOption('site_details')) ? apply_filters('wappointment_ics_signature', $ics_signature) : $ics_signature;
     }
 
     protected function appointments($staff_id, $start = false, $end = false)
