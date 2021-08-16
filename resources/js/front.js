@@ -51,7 +51,6 @@ const footerContainer = getFooterContainer();
 for (const el of wappoInstances) {
 
     if([undefined,null].indexOf(el.getAttribute('data-brc-floats')) === -1){
-        console.log('test there is one fixed')
         footerContainer.appendChild(el)
     }
 }

@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.8
 Requires PHP: 7.0
-Stable tag: 2.2.5
+Stable tag: 2.2.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,11 @@ Quickly define when and how many of them do they receive (1 day before appointme
 * Receive daily and weekly notifications
 * Customize and personalize your confirmations and reminders sent to your clients
 
+= Advanced options for edge use-cases =
+* Limit/Maximun active bookings per client
+* Force user account's email for logged in users
+* Open new slots in new day at a specific time e.g." new slots everyday at 11pm"
+
 = Have a Question? =
 Our plugin is free, and easy to install. Try it first :)
 And for any question or doubt, you can reach us:
@@ -138,6 +143,11 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.2.6 - 2021-08-16 =
+* fixed issue broken booking form when using data privacy link
+* added option to force email from loggedin user hidding the email field
+* added option to open slots for a new day from a specific time
 
 = 2.2.5 - 2021-08-07 =
 * fixed Security vulnerability reported by researcher Renos Nikolaou @r3n_hat

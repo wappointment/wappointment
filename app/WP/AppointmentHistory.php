@@ -23,22 +23,22 @@ class AppointmentHistory
 
     public static function dateLabel($atts)
     {
-        return empty($atts['dateLabel']) ? __('Date and time', 'wappointment') : $atts['dateLabel'];
+        return empty($atts['date_label']) ? __('Date and time', 'wappointment') : $atts['date_label'];
     }
 
     public static function serviceLabel($atts)
     {
-        return empty($atts['serviceLabel']) ? __('Service', 'wappointment') : $atts['serviceLabel'];
+        return empty($atts['service_label']) ? __('Service', 'wappointment') : $atts['service_label'];
     }
 
     public static function durationLabel($atts)
     {
-        return empty($atts['durationLabel']) ? __('Duration', 'wappointment') : $atts['durationLabel'];
+        return empty($atts['duration_label']) ? __('Duration', 'wappointment') : $atts['duration_label'];
     }
 
     public static function staffLabel($atts)
     {
-        return empty($atts['staffLabel']) ? __('Staff', 'wappointment') : $atts['staffLabel'];
+        return empty($atts['staff_label']) ? __('Staff', 'wappointment') : $atts['staff_label'];
     }
 
     public static function renderAppointmentListing($client, $atts)

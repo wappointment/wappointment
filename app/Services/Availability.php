@@ -90,7 +90,8 @@ class Availability
         // get busy and free time
         $today = Carbon::today();
 
-        $end = $today->copy()->addDays($this->days);
+        $end = Carbon::createFromTimestamp($this->getMaxTs())->endOfDay();
+        //$end = $today->copy()->addDays($this->days);
         $start_at_string = $today->format(WAPPOINTMENT_DB_FORMAT);
         $end_at_string = $end->format(WAPPOINTMENT_DB_FORMAT);
 
@@ -200,16 +201,28 @@ class Availability
         ]);
     }
 
+    protected function daysRegenerating()
+    {
+        if (!Settings::get('allow_refreshavb')) {
+            return $this->days;
+        }
+        // if it's the daily job and we need to wait for that moment
+        return Settings::get('allow_refreshavb') && Carbon::now($this->timezone)->hour >= Settings::get('refreshavb_at') ? $this->days : $this->days - 1;
+    }
+
     private function generateAvailabilityWithRA()
     {
 
         $dayNumber = 1;
         $now = Carbon::today($this->timezone);
         $min_time = Carbon::now($this->timezone)->addHours(Settings::get('hours_before_booking_allowed'));
-        $availability = [];
-        while ($dayNumber <= $this->days) {
-            $dayName = $this->daysOfTheWeek[$now->dayOfWeek];
+        //dd('days_regen', $this->daysRegenerating());
 
+        $max_time = Carbon::now($this->timezone)->addDays($this->daysRegenerating())->endOfDay();
+        $availability = [];
+
+        while ($now->timestamp < $max_time->timestamp) {
+            $dayName = $this->daysOfTheWeek[$now->dayOfWeek];
             $dailyAvailability = $this->regav[$dayName];
 
             foreach ($dailyAvailability as $dayTimeblock) {

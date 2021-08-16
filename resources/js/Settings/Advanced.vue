@@ -182,10 +182,10 @@
               </label>
           </div>
           <div class="mb-2">
-              <label class="form-check-label" for="allow-refreshavb" data-tt="Your staff availability gets refreshed everyday, with this option you control at which time of the day does it get refreshed">
+              <label class="form-check-label" for="allow-refreshavb" data-tt="Your staff availability gets a new open day after that time">
                   <div class="d-flex align-items-center">
                     <input type="checkbox" v-model="viewData.allow_refreshavb" id="allow-refreshavb" @change="changedVD('allow_refreshavb')">
-                    Available booking days refreshes at 
+                    New available day is opening from 
                     <span v-if="viewData.allow_refreshavb" class="ml-1">  
                       <dayTime :selected="viewData.refreshavb_at" :timeFormat="viewData.time_format" @changed="changedRefreshAVBTime"></dayTime>
                       <small class="text-muted">{{ viewData.timezone }}</small>
@@ -495,7 +495,6 @@ export default {
       this.changedDDPEXT(value, 'daily_summary_time')
     },
     changedRefreshAVBTime(value){
-      console.log('before request',value, 'refreshavb_at')
       this.changedDDPEXT(value, 'refreshavb_at')
     },
 

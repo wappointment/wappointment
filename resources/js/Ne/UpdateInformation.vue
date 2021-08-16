@@ -5,22 +5,15 @@
           <div class="update-section">
               <h3  class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.2.5</span>   
-                <span class="ml-2">Security issue fixed and more</span>
+                <span>V2.2.6</span>   
+                <span class="ml-2">Bug fix and a few new options</span>
             </h3>
             <div class="p-4 ml-4">
-                <h5>Changelog 2.2.5</h5>
+                <h5>Changelog 2.2.6</h5>
                 <ol>
-                    <li>Fixed Security vulnerability reported by researcher Renos Nikolaou @r3n_hat</li>
-                    <li>Added popup option for Booking widget shortcode</li>
-                    <li>Improved popup system no more overlay from 3rd party themes or plugins</li>
-                    <li>Fixed issue staff and service selection broken in specific use case</li>
-                    <li>Added compatibility with plugin WP HTML Mail</li>
-                    <li>Added option to show the meeting link only x minutes before the appointment starts</li>
-                    <li>Fixed issue on save to calendar button</li>
-                    <li>Added warning for PHP 8 users</li>
-                    <li>Fixed exception for disappearing Sunday 1st in booking widget</li>
-                    
+                    <li>fixed issue broken booking form when using data privacy link</li>
+                    <li>added option to force email from loggedin user hidding the email field</li>
+                    <li>added option to open slots for a new day from a specific time</li>
                 </ol>
             </div>
             <div class="wprevious-version">

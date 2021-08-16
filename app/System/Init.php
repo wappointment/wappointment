@@ -4,6 +4,7 @@ namespace Wappointment\System;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Config\Database;
+use Wappointment\Services\IcsGenerator;
 use Wappointment\Services\Settings;
 use Wappointment\Services\VersionDB;
 
@@ -138,6 +139,7 @@ class Init
             'version' => WAPPOINTMENT_VERSION,
             'allowed' => Settings::get('wappointment_allowed'),
             'frontPage' => get_permalink((int) Settings::get('front_page')),
+            'signature' => \Wappointment\Services\IcsGenerator::getIcsSignature(),
         ];
         if (is_user_logged_in()) {
             $variables['nonce'] = wp_create_nonce('wp_rest');
