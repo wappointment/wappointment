@@ -468,7 +468,6 @@ export default {
       this.changedDDPEXT(value, 'daily_summary_time')
     },
     changedRefreshAVBTime(value){
-      console.log('before request',value, 'refreshavb_at')
       this.changedDDPEXT(value, 'refreshavb_at')
     },
 
