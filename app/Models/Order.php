@@ -176,6 +176,15 @@ class Order extends Model
         }
     }
 
+    public function getDescription()
+    {
+        $description = "";
+        foreach ($this->prices as $price) {
+            $description .= "\n" . $price->item_name;
+        }
+        return $description;
+    }
+
     public function recordItem($price_id, $price_value, $appointment_id, $item_name)
     {
         OrderPrice::create([

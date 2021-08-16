@@ -71,6 +71,10 @@ class Helpers
         return false;
     }
 
+    public static function siteName()
+    {
+        return get_bloginfo('name');
+    }
     public static function wpUserData()
     {
         $wp_user = self::currentUser();
