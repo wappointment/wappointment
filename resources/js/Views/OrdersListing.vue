@@ -76,7 +76,14 @@ export default {
     methods: {
 
         refund(order){
-            this.request(this.refundOrderRequest,order,undefined,false,this.orderRefunded)
+            this.$WapModal().confirm({
+                title: 'Do you really want to refund this order?',
+            }).then((result) => {
+                if(result === true){
+                    this.request(this.refundOrderRequest,order,undefined,false,this.orderRefunded)
+                }
+            })
+            
         },
         async refundOrderRequest(order){
             return await this.mainService.call('refund',{order_id:order.id})

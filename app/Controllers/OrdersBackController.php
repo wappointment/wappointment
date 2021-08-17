@@ -5,10 +5,10 @@ namespace Wappointment\Controllers;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Models\Order as OrderModel;
 use Wappointment\Services\Settings;
+use Wappointment\Services\Order as ServicesOrder;
 
 class OrdersBackController extends RestController
 {
-
 
     public function index(Request $request)
     {
@@ -32,5 +32,12 @@ class OrdersBackController extends RestController
 
 
         return $query->paginate(Settings::getStaff('per_page'));
+    }
+
+
+    public function refund(Request $request)
+    {
+        ServicesOrder::refund($request->input('order_id'));
+        return ['message' => 'Order has been refunded'];
     }
 }

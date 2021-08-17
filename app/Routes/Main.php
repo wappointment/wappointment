@@ -221,7 +221,7 @@ class Main extends AbstractRoutes
                     'method' => 'savePermissions',
                 ],
                 '/order/refund' => [
-                    'controller' => 'OrderController',
+                    'controller' => 'OrdersBackController',
                     'method' => 'refund',
                 ],
             ],

@@ -244,7 +244,7 @@ class Order extends Model
             do_action('wappointment_order_refund', $this);
         }
 
-        // $this->setRefund();
-        // $this->save();
+        $this->setRefund();
+        $this->save();
     }
 }
