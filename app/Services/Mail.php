@@ -11,6 +11,7 @@ class Mail
     private $config = [];
     private $to = [];
     private $from = [];
+    private $reply = [];
     private $subject = '';
     private $body = '';
     private $bodyVersion = 'text/html';
@@ -80,6 +81,11 @@ class Mail
         return $this->to ? $this->to : [];
     }
 
+    public function getReply()
+    {
+        return $this->reply ? $this->reply : [];
+    }
+
     public function from($email, $name = '')
     {
         $this->from = $this->mergeAddresses($this->from, $email, $name);
@@ -89,6 +95,12 @@ class Mail
     public function to($email, $name = '')
     {
         $this->to = $this->mergeAddresses($this->to, $email, $name);
+        return $this;
+    }
+
+    public function reply($email, $name = '')
+    {
+        $this->reply = $this->mergeAddresses($this->reply, $email, $name);
         return $this;
     }
 
@@ -127,6 +139,11 @@ class Mail
             ->setFrom($this->getFrom())
             ->setTo($this->getTo())
             ->setBody($this->body, $this->bodyVersion);
+
+        if (!empty($this->reply)) {
+            $message->setReplyTo($this->getReply());
+        }
+
         if (!empty($this->alt)) {
             $message->addPart($this->alt, $this->altVersion);
         }
