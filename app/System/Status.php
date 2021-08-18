@@ -81,8 +81,6 @@ class Status
         if (static::dotComNotSetYet()) {
             $services = \Wappointment\Managers\Service::all();
 
-            //$services[] = $services[0];
-
             foreach ($services as $service) {
                 if (\Wappointment\Managers\Service::hasZoom($service)) {
                     $messages[] = [
@@ -94,6 +92,14 @@ class Status
                     ];
                     break;
                 }
+            }
+        }
+        $messagesOld = \Wappointment\WP\Alerts::get();
+        if (!empty($messagesOld)) {
+            foreach ($messagesOld as $messageOld) {
+                $messages[] = [
+                    'message' => $messageOld,
+                ];
             }
         }
 

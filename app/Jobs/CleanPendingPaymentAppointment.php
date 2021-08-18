@@ -9,11 +9,15 @@ use Wappointment\Jobs\JobInterface;
 use Wappointment\Services\Queue;
 use Wappointment\Models\Job;
 use Wappointment\Models\Order;
+use Wappointment\Services\Payment;
 
 class CleanPendingPaymentAppointment implements JobInterface
 {
     public function handle()
     {
+        if (Payment::isWooActive()) { //there is already an auto clean job for woocommerce
+            return false;
+        }
         // 1 - get orders that are pending for more than  the last X minutes
 
         $orders = Order::pending()->where('updated_at', '<', Carbon::now()->subSeconds(

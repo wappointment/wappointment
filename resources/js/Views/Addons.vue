@@ -245,6 +245,8 @@ export default {
           
         },
 
+        
+
         activate(addon){
           this.request(this.activateAddonRequest, addon, this.successActivate, this.failedRequest)
         },
@@ -254,7 +256,7 @@ export default {
         }, 
 
         deactivate(addon){
-          this.request(this.deactivateAddonRequest, addon, this.successInstalled, this.failedRequest)
+          this.request(this.deactivateAddonRequest, addon, this.successActivate, this.failedRequest)
         },
         
         async deactivateAddonRequest(addon) {
