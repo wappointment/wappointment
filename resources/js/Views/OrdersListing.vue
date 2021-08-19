@@ -15,7 +15,7 @@
                 <tbody>
                     <tr class="row-click" v-if="elements.length > 0" v-for="(order, idx) in elements">
                         <td>
-                            <div>{{ idx + 1 }} </div> 
+                            <div>{{ idx + 1 }} <span>(id :{{ order.id}})</span> </div> 
                         </td>
                         <td>
                             <div class="d-flex align-items-center">

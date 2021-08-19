@@ -110,6 +110,7 @@ class Client extends Model
         $pendingOrder = $this->getOrder();
 
         $pendingOrder->add($appointment);
+        $appointment->recordOrderReference($pendingOrder);
         $pendingOrder->refreshTotal();
         $pendingOrder->load('prices');
         return $pendingOrder;

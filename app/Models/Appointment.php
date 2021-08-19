@@ -523,4 +523,12 @@ class Appointment extends Model
     {
         $this->services = !is_array($services) ? [$services] : $services;
     }
+
+    public function recordOrderReference(Order $order)
+    {
+        $options = $this->options;
+        $options['order_id'] = $order->id;
+        $this->options = $options;
+        $this->save();
+    }
 }

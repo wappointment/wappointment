@@ -156,12 +156,26 @@ export default {
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
         this.confirmRequest(eventId)
       },
-
+      pendingOrderOrNot(params){
+        if(params.appointment.extendedProps.options.order_id !== undefined) {
+          return `<div class="bg-dark p-2 text-white rounded align-items-center mb-2">
+            <div class="h5 text-white"><span class="dashicons dashicons-cart"></span> Pending Order : </div>
+            <div class="small text-danger">Awaiting payment for that appointment 
+            <a target="_blank" href="/wp-admin/admin.php?page=wappointment_orders">View pending order #${params.appointment.extendedProps.options.order_id}</a></div>
+            <div class="text-muted small">The client has ${params.viewData.clean_pending_every} minutes to complete the payment.
+            It will then be automatically cancelled.</div>
+            <div class="text-white">Click confirm to skip payment for that user.</div>
+          </div>`
+        }
+        return ''
+      },
       confirmRequest(eventId){
         let appointment = this.findAppointmentById(eventId)
+        let params = {appointment, viewData:this.viewData}
+
         this.$WapModal().confirm({
           title: 'Do you really want to confirm this appointment?',
-          content: window.wappointmentExtends.filter('ConfirmPopup', this.getAppointmentInfoHTML(appointment), {appointment, viewData:this.viewData}) 
+          content: window.wappointmentExtends.filter('ConfirmPopup', this.getAppointmentInfoHTML(appointment) +this.pendingOrderOrNot(params), params) 
         }).then((result) => {
           if(result === true){
               this.request(this.confirmEventRequest, eventId, undefined,false,  this.refreshEvents)
