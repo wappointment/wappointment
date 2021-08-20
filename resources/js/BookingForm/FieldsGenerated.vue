@@ -248,7 +248,10 @@ export default {
         },
 
         fieldPassValidations(fieldObject, validations, value){
-            
+
+            if(fieldObject.core === undefined && fieldObject.required!==true){
+                return true
+            }
             let field_required = 'Field is required'
             switch(fieldObject.type){
 
