@@ -41,3 +41,24 @@ function my_wappointment_ics_signature()
 {
     return "\nBooked through https://google.com/";
 }
+
+
+/**
+ * edit colors of admin email
+ */
+add_filter('wappointment_admin_email_color', 'my_wappointment_admin_email_color', 10, 2);
+
+function my_wappointment_admin_email_color($colorValue, $colorName)
+{
+
+    switch ($colorName) {
+        case 'primary':
+            return '#6664CB';
+        case 'primaryLight':
+            return '#7A78D5';
+        case 'separator':
+            return '#d5d5d5';
+        default:
+            return $colorValue;
+    }
+}
