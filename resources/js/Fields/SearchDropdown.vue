@@ -38,7 +38,7 @@
                             </div>
                         </div>
                     </div>
-                   <div v-else >
+                   <div v-else class="d-flex flex-wrap">
                         <ValueCard  v-for="elementLoop in filteredElements" :class="{'clickable':true,'unselected':!isSelected(elementLoop)}" :key="value" :canDiscard="false" @click="selectElement(elementLoop)"
                             :value="value">{{ displayElementFunc(elementLoop) }}</ValueCard>
                    </div>

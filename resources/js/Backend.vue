@@ -175,6 +175,18 @@ export default {
   transform:scaleY(0)
 }
 
+/* used in regular availability */
+.save-floating-button{
+    box-shadow: 0px 8px 34px 0 rgba(0,0,0,.1);
+    position: fixed;
+    bottom: 0;
+    z-index: 999999;
+    padding: 1rem;
+    min-width: 200px;
+    background: #fff;
+    border-radius: .5rem .5rem 0 0;
+}
+
 @media (max-width: 769px) { 
     
     .auto-fold #wpcontent{

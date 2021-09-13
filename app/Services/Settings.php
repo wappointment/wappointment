@@ -115,7 +115,18 @@ class Settings
             'allow_refreshavb' => false,
             'refreshavb_at' => 23,
             'clean_pending_every' => 25,
-            'clean_last_check' => false
+            'clean_last_check' => false,
+            'regavDefault' => [
+                'monday' => [[480, 720], [840, 1140]],
+                'tuesday' => [[480, 720], [840, 1140]],
+                'wednesday' => [[480, 720], [840, 1140]],
+                'thursday' => [[480, 720], [840, 1140]],
+                'friday' => [[480, 720], [840, 1140]],
+                'saturday' => [],
+                'sunday' => [],
+                'precise' => true
+            ],
+            'servicesDefault' => true
         ];
     }
 
@@ -144,16 +155,7 @@ class Settings
     {
         $timezone = WPHelpers::getWPOption('timezone_string');
         return [
-            'regav' => [
-                'monday' => [[480, 720], [840, 1140]],
-                'tuesday' => [[480, 720], [840, 1140]],
-                'wednesday' => [[480, 720], [840, 1140]],
-                'thursday' => [[480, 720], [840, 1140]],
-                'friday' => [[480, 720], [840, 1140]],
-                'saturday' => [],
-                'sunday' => [],
-                'precise' => true
-            ],
+            'regav' => static::get('regavDefault'),
             'availaible_booking_days' => 60,
             'calurl' => '',
             'timezone' => $timezone,

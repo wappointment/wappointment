@@ -247,7 +247,7 @@ export default {
     },
     activeBgOverId: false,
     shortDayFormat: 'Do MMM YY',
-    headerDayFormat: 'Do MMM',
+    headerDayFormat: 'ddd Do',
     daysProperties: false,
     serviceEvent: null,
     serviceStatus: null,

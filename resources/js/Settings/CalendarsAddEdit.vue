@@ -45,7 +45,7 @@
             </div>
             
         </div>
-        <div v-if="requireSave" class="save-buttons">
+        <div v-if="requireSave" class="save-floating-button">
             <button class="btn btn-primary" @click="saveCalendar">Save</button>
         </div>
     </div>
@@ -216,16 +216,6 @@ export default {
 }
 .changename .label-wrapper{
     margin-bottom: 0 !important;
-}
-.save-buttons{
-    box-shadow: 0px 8px 34px 0 rgba(0,0,0,.1);
-    position: fixed;
-    bottom: 0;
-    z-index: 999999;
-    padding: 1rem;
-    min-width: 200px;
-    background: #fff;
-    border-radius: .5rem .5rem 0 0;
 }
 .account-selector{
     width: 380px;
