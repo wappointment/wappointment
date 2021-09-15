@@ -117,12 +117,12 @@ class Status
 
     private static function generateRecurring($statusRecurrent, $until)
     {
+
         $newEvents = [];
         $from = time();
         $i = 0;
         self::$diff = $statusRecurrent->end_at->timestamp - $statusRecurrent->start_at->timestamp;
         $next = self::getNext($statusRecurrent, $from, $until);
-
 
         while ($next) {
             $newEvents[] = $next;
@@ -131,8 +131,10 @@ class Status
             if ($i > 300) {
                 throw new \WappointmentException('Error Infinite loop', 1);
             }
-            $next = self::getNext($next, $from, $until);
-            if (empty($next) || $next->start_at->timestamp <= $from) {
+            $next = self::getNext($next, $from, $until + 1);
+            // +1 is for when we generate recurrent in the weekly view, making sure that the last day is not forgotten when daily recurring
+
+            if (empty($next) || $next->start_at->timestamp < $from) {
                 break; //if increment doesn't occur we just give up
             }
         }
