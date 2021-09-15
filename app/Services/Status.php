@@ -131,8 +131,10 @@ class Status
             if ($i > 300) {
                 throw new \WappointmentException('Error Infinite loop', 1);
             }
-            $next = self::getNext($next, $from, $until);
-            if (empty($next) || $next->start_at->timestamp <= $from) {
+            $next = self::getNext($next, $from, $until + 1);
+            // +1 is for when we generate recurrent in the weekly view, making sure that the last day is not forgotten when daily recurring
+
+            if (empty($next) || $next->start_at->timestamp < $from) {
                 break; //if increment doesn't occur we just give up
             }
         }
