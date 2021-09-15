@@ -190,6 +190,8 @@ class Reminder
         }
 
 
+        $email_confirmed[] = ['p' => '[order:summary],'];
+
         foreach ($footer as $footerRow) {
             $email_confirmed[] = $footerRow;
             $email_reminder[] = $footerRow;

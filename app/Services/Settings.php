@@ -107,6 +107,7 @@ class Settings
             'max_active_bookings' => 0,
             'autofill' => true,
             'onsite_enabled' => true,
+            'cache' => false,
             'tax' => 0,
             'payments_order' => [],
             'alt_port' => false,

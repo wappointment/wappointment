@@ -213,8 +213,9 @@ class Order extends Model
 
     public function calculateTax($amount)
     {
-        return $amount / 100 * $this->tax_percent;
+        return round($amount / 100 * $this->tax_percent);
     }
+
 
     public function confirmAppointments()
     {

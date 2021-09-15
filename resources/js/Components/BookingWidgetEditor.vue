@@ -107,6 +107,8 @@
                                                     @input="(e) => changedInput(stepObj.key, field_key, e)"
                                                     eventChange="input"
                                                     :label="fieldDescription.label" 
+                                                    :completeTrigger="fieldDescription.togglesave !== undefined"
+                                                    @toggleComplete="reloadStep"
                                                     :ph="defaultSettings[stepObj.key][field_key]"
                                                     :options="fieldDescription.options !== undefined ? fieldDescription.options:{}" 
                                                     allowReset></component>
@@ -316,6 +318,7 @@ export default {
 
 
     methods: {
+
         changeCategoriesOrder(data){
             this.$WapModal()
                 .request(this.settingSaveRequest({

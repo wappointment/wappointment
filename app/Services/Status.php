@@ -117,12 +117,12 @@ class Status
 
     private static function generateRecurring($statusRecurrent, $until)
     {
+
         $newEvents = [];
         $from = time();
         $i = 0;
         self::$diff = $statusRecurrent->end_at->timestamp - $statusRecurrent->start_at->timestamp;
         $next = self::getNext($statusRecurrent, $from, $until);
-
 
         while ($next) {
             $newEvents[] = $next;

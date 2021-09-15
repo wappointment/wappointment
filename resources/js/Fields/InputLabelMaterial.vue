@@ -21,7 +21,7 @@ export default {
         phIsvalue: {
             type:Boolean,
             default: true
-        }
+        },
     },
     components: {LabelMaterial},
     data: () => ({

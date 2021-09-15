@@ -54,7 +54,7 @@ class Payment
     public static function formatPrice($price)
     {
         $currency = static::currency();
-        return str_replace(['[price]', '[currency]'], [$price, $currency['symbol']], $currency['format']);
+        return str_replace(['[price]', '[currency]'], [number_format($price, 2), $currency['symbol']], $currency['format']);
     }
 
 

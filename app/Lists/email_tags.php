@@ -71,7 +71,7 @@ return [
     [
         'model' => 'order',
         'key' => 'summary',
-        'label' => 'Display an order summary table for the ',
+        'label' => 'Order summary acting as a bill',
         'getMethod' => 'getOrderTable',
         'modelCall' => 'email_helper',
         'requiresParams' => true

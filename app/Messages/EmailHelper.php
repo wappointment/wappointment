@@ -53,8 +53,13 @@ class EmailHelper
             foreach ($order->prices as $price) {
                 $rows[] = [$price->price->name, Payment::formatPrice($price->price->price / 100)];
             }
+
+            if ($order->tax_amount > 0) {
+                $rows[] = ['Tax', Payment::formatPrice(round($order->tax_amount / 100, 2))];
+            }
+
             $rows[] = [
-                'cells' => ['Total', Payment::formatPrice($order->total / 100)],
+                'cells' => ['Total', Payment::formatPrice(($order->total + $order->tax_amount) / 100)],
                 'class' => 'bold lineb linet'
             ];
             $rows[] = [
@@ -62,7 +67,6 @@ class EmailHelper
                 'class' => 'small'
             ];
         }
-
 
         return OrderMessage::table($rows);
     }
