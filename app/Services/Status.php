@@ -110,7 +110,9 @@ class Status
         }
 
         foreach ($recurringBusy as $recurring) {
-            $punctualEvents = array_merge($punctualEvents, self::generateRecurring($recurring, $until));
+            $recurring_until = !empty($recurring->options['until']) ? $recurring->options['until'] : false;
+            $until_end_recurring = $recurring_until !== false && $recurring_until < $until ? $recurring_until : $until;
+            $punctualEvents = array_merge($punctualEvents, self::generateRecurring($recurring, $until_end_recurring));
         }
         return $punctualEvents;
     }

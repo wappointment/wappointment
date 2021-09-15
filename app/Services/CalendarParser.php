@@ -121,7 +121,7 @@ class CalendarParser
     private function getUntil($vevent)
     {
         return empty($vevent->RRULE->getParts()['UNTIL']) ?
-            null : $this->vcalDateToCarbon($vevent->RRULE->getParts()['UNTIL'], $vevent);
+            null : $this->vcalDateToCarbon($vevent->RRULE->getParts()['UNTIL'], $vevent, true);
     }
 
     private function getRecur($vevent)
@@ -217,7 +217,7 @@ class CalendarParser
         }
         if ($recur > STATUS::RECUR_NOT) {
             if (!empty($until)) {
-                $options['until'] = $until;
+                $options['until'] = $until->timestamp;
             }
             if (!empty($vevent->RRULE)) {
                 if (!empty($vevent->RRULE->getParts()['BYDAY'])) {
