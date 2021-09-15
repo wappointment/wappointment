@@ -114,9 +114,10 @@ class Services implements ServiceInterface
                 'reference_id' => !empty($serviceData['id']) ? $serviceData['id'] : 0,
                 'name' => $serviceData['name'] . ' - ' . $duration['duration'] . 'min',
             ]);
-            $result = $price->save();
+            $price_id = $price->save();
+
             if (empty($duration['price_id'])) {
-                $duration['price_id'] = $price->id;
+                $duration['price_id'] = $price_id;
             }
 
             $durations[$key] = $duration;
