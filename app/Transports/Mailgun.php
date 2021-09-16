@@ -70,15 +70,9 @@ class Mailgun extends Transport
             ],
 
         ];
-        $reply_to = $this->getReplyTo($message);
-        if (!empty($reply_to)) {
-            foreach ($reply_to as $email => $name) {
-                $reply_to_string = '<' . $email . '>';
-                if (!empty($name)) {
-                    $reply_to_string = $name . ' ' . $reply_to_string;
-                }
-            }
 
+        $reply_to_string = $message->getReplyString();
+        if (!empty($reply_to_string)) {
             $multipart[] = [
                 'name' => 'h:Reply-To',
                 'contents' => $reply_to_string,
