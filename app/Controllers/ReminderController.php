@@ -69,15 +69,8 @@ class ReminderController extends RestController
     public function get()
     {
         $queryReminders = MReminder::select($this->columns);
-        if ((int) Settings::get('approval_mode') == 1) {
-            $queryReminders->whereNotIn('event', [MReminder::APPOINTMENT_PENDING]);
-        }
-        if ((int) Settings::get('allow_rescheduling') != 1) {
-            $queryReminders->whereNotIn('event', [MReminder::APPOINTMENT_RESCHEDULED]);
-        }
-        if ((int) Settings::get('allow_cancellation') != 1) {
-            $queryReminders->whereNotIn('event', [MReminder::APPOINTMENT_CANCELLED]);
-        }
+
+        $queryReminders->activeReminders();
         $queryReminders->whereIn('type', MReminder::getTypes('code'));
 
         $data = [
