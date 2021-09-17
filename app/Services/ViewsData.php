@@ -288,6 +288,8 @@ class ViewsData
             'forceemail' => Settings::get('forceemail'),
             'allow_refreshavb' => Settings::get('allow_refreshavb'),
             'refreshavb_at' => Settings::get('refreshavb_at'),
+            'clean_pending_every' => Settings::get('clean_pending_every'),
+            'payment_active' => Payment::active(),
         ];
     }
 

@@ -129,6 +129,17 @@
                   </label>
 
               </div>
+              <div class="d-flex mb-2" v-if="viewData.payment_active">
+                  
+                  <label class="form-check-label w-100" for="buffer_time">
+                  <div class="d-flex align-items-center">
+                    <div class="min-label">Auto cancel pending appointment</div>
+                    <FormFieldDuration v-model="viewData.clean_pending_every"  @change="changedCleaningPending"/>
+                  </div>
+                  <div class="small text-muted">Pending appointments are automatically cancelled after {{ viewData.clean_pending_every }} min without payment completion </div>
+                  </label>
+
+              </div>
           </div>
         </div>
         <div class="card p-2 px-3">
@@ -347,6 +358,10 @@ export default {
     changedBuffer(val){
       return this.changed(val, 'buffer_time')
     },
+    changedCleaningPending(val){
+      return this.changed(val, 'clean_pending_every')
+    },
+    
     changedMaxActive(){
       if(this.viewData.max_active_bookings<1){
         this.maxBookings = false
