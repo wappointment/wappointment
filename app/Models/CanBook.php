@@ -53,4 +53,9 @@ trait CanBook
         }
         return $hasBeenBooked;
     }
+
+    public function bookNoOrder()
+    {
+        $this->generatingOrder = false;
+    }
 }

@@ -12,7 +12,7 @@ class Client extends Model
     use SoftDeletes, CanBook, CanBookLegacy;
 
     protected $table = 'wappo_clients';
-
+    public $generatingOrder = true;
     protected $fillable = [
         'name', 'email', 'options'
     ];
@@ -106,6 +106,9 @@ class Client extends Model
 
     public function generateOrder(Appointment $appointment)
     {
+        if (!$this->generatingOrder) {
+            return null;
+        }
         //if pending order already exist, just get that one
         $pendingOrder = $this->getOrder();
 
