@@ -6,6 +6,7 @@ use WappoSwift_Mime_SimpleMessage;
 use WappoSwift_MimePart;
 use WappoSwift_Attachment;
 use GuzzleHttp\ClientInterface;
+use stdClass;
 
 class Sendgrid extends Transport
 {
@@ -65,9 +66,15 @@ class Sendgrid extends Transport
         if ($contents = $this->getContents($message)) {
             $data['content'] = $contents;
         }
-
-        if ($reply_to = $this->getReplyTo($message)) {
-            $data['reply_to'] = $reply_to;
+        $reply_to = $this->getReplyTo($message);
+        if (!empty($reply_to)) {
+            foreach ($reply_to as $email => $name) {
+                $data['reply_to'] = [];
+                $data['reply_to']['email'] = $email;
+                if (!empty($name)) {
+                    $data['reply_to']['name'] = $name;
+                }
+            }
         }
 
         $attachments = $this->getAttachments($message);
@@ -114,10 +121,10 @@ class Sendgrid extends Transport
 
     private function getReplyTo(WappoSwift_Mime_SimpleMessage $message)
     {
-        if ($message->getReplyTo()) {
-            foreach ($message->getReplyTo() as $email => $name) {
-                return ['email' => $email, 'name' => $name];
-            }
+
+        $reply_to = $message->getReplyTo();
+        if (!empty($reply_to)) {
+            return $reply_to;
         }
         return null;
     }

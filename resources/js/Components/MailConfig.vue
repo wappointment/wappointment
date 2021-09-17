@@ -285,13 +285,32 @@ export default {
                     cast: String,
                     validation: ['required','number'],
                 },
+
+              ]
+            },
+
+            {
+              type: 'row',
+              class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
+              classEach: 'mr-2',
+              conditions: [
+                { model:'method', values: ['smtp'] }
+              ],
+              fields: [
                 {
                     type: "select",
-                    labelDefault: 'Select encryption',
+                    label: 'Encryption',
                     model: "encryption",
                     cast: String,
                     elements: [{id:'', name: 'none'},{id:'ssl', name: 'ssl'},{id:'tls', name: 'tls'} ],
                     labelKey: 'name',
+                },
+                {
+                    type: "checkbox",
+                    label: 'Disable .ics Attachments?',
+                    model: "attachments_off",
+                    cast: Boolean,
+                    tip: 'If you\'re having issue sending emails, try to tick that box'
                 },
 
               ]

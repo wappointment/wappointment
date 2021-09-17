@@ -62,25 +62,48 @@ class Mailgun extends Transport
      */
     protected function payload(WappoSwift_Mime_SimpleMessage $message, $to)
     {
+
+        $multipart = [
+            [
+                'name' => 'to',
+                'contents' => $to,
+            ],
+
+        ];
+
+        $reply_to_string = $message->getReplyString();
+        if (!empty($reply_to_string)) {
+            $multipart[] = [
+                'name' => 'h:Reply-To',
+                'contents' => $reply_to_string,
+            ];
+        }
+
+        $multipart[] =
+            [
+                'name' => 'message',
+                'contents' => $message->toString(),
+                'filename' => 'message.mime',
+            ];
+
         return [
             'auth' => [
                 'api',
                 $this->key,
             ],
-            'multipart' => [
-                [
-                    'name' => 'to',
-                    'contents' => $to,
-                ],
-                [
-                    'name' => 'message',
-                    'contents' => $message->toString(),
-                    'filename' => 'message.mime',
-                ],
-            ],
+            'multipart' => $multipart
         ];
     }
 
+    private function getReplyTo(WappoSwift_Mime_SimpleMessage $message)
+    {
+
+        $reply_to = $message->getReplyTo();
+        if (!empty($reply_to)) {
+            return $reply_to;
+        }
+        return null;
+    }
 
     /**
      * Get the domain being used by the transport.

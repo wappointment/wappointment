@@ -22,10 +22,15 @@ class AdminNewAppointmentEmail extends AbstractAdminEmail
         $this->addRoundedSquare($this->getEmailContent($this->params['client'], $this->params['appointment']));
 
         $this->addLines([
-            __('Have a great day!', 'wappointment'),
+            'Have a great day!',
             '',
-            __('Ps: An .ics file with the appointment\'s details is attached', 'wappointment')
         ]);
+
+        if (!$this->areAttachmentsDisabled()) {
+            $this->addLines([
+                'Ps: An .ics file with the appointment\'s details is attached'
+            ]);
+        }
 
         $this->attachIcs([$this->params['appointment']], 'appointment', true);
     }

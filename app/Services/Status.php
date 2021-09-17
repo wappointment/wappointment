@@ -124,7 +124,7 @@ class Status
         $from = time();
         $i = 0;
         self::$diff = $statusRecurrent->end_at->timestamp - $statusRecurrent->start_at->timestamp;
-        $next = self::getNext($statusRecurrent, $from, $until);
+        $next = self::getNext($statusRecurrent, $from, $until, true);
 
         while ($next) {
             $newEvents[] = $next;
@@ -144,8 +144,27 @@ class Status
         return $newEvents;
     }
 
-    private static function getNext($statusRecurrent, $from, $until)
+    private static function getPreviousFrom($from, $recur)
     {
+        $day_in_sec = (3600 * 24);
+        switch ($recur) {
+            case MStatus::RECUR_DAILY:
+                return $from - $day_in_sec;
+            case MStatus::RECUR_WEEKLY:
+                return $from - ($day_in_sec * 7);
+            case MStatus::RECUR_MONTHLY:
+            case MStatus::RECUR_YEARLY:
+            default:
+                return $from;
+        }
+    }
+
+    private static function getNext($statusRecurrent, $from, $until, $first_recurring = false)
+    {
+
+        if ($first_recurring) {
+            $from = self::getPreviousFrom($from, $statusRecurrent->recur);
+        }
 
         if ($from < $until) {
             $start_at =  $statusRecurrent->start_at;
@@ -170,7 +189,7 @@ class Status
     {
         $interval = self::getInterval($statusRecurrent);
 
-        $daysAdded = $start_at->timestamp > time() ? 0 : Carbon::now()->diffInDays($start_at);
+        $daysAdded = $start_at->timestamp > $from ? 0 : Carbon::createFromTimestamp($from)->diffInDays($start_at);
         $start_at->addDays($daysAdded);
 
         while ($start_at->timestamp < $from) {

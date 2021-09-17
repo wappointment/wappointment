@@ -46,7 +46,7 @@ class WappoSwift_Mime_SimpleMessage extends WappoSwift_Mime_MimePart
             'MIME-Version',
             'Content-Type',
             'Content-Transfer-Encoding',
-            ]);
+        ]);
         $this->getHeaders()->setAlwaysDisplayed(['Date', 'Message-ID', 'From']);
         $this->getHeaders()->addTextHeader('MIME-Version', '1.0');
         $this->setDate(new DateTimeImmutable());
@@ -281,6 +281,21 @@ class WappoSwift_Mime_SimpleMessage extends WappoSwift_Mime_MimePart
         return $this->getHeaderFieldModel('Reply-To');
     }
 
+    public function getReplyString()
+    {
+        $reply_to_string = '';
+        $reply_to = $this->getReplyTo();
+        if (!empty($reply_to)) {
+            foreach ($reply_to as $email => $name) {
+                $reply_to_string = '<' . $email . '>';
+                if (!empty($name)) {
+                    $reply_to_string = $name . ' ' . $reply_to_string;
+                }
+            }
+        }
+        return $reply_to_string;
+    }
+
     /**
      * Add a To: address to this message.
      *
@@ -457,17 +472,21 @@ class WappoSwift_Mime_SimpleMessage extends WappoSwift_Mime_MimePart
             self::PRIORITY_NORMAL => 'Normal',
             self::PRIORITY_LOW => 'Low',
             self::PRIORITY_LOWEST => 'Lowest',
-            ];
+        ];
         $pMapKeys = array_keys($priorityMap);
         if ($priority > max($pMapKeys)) {
             $priority = max($pMapKeys);
         } elseif ($priority < min($pMapKeys)) {
             $priority = min($pMapKeys);
         }
-        if (!$this->setHeaderFieldModel('X-Priority',
-            sprintf('%d (%s)', $priority, $priorityMap[$priority]))) {
-            $this->getHeaders()->addTextHeader('X-Priority',
-                sprintf('%d (%s)', $priority, $priorityMap[$priority]));
+        if (!$this->setHeaderFieldModel(
+            'X-Priority',
+            sprintf('%d (%s)', $priority, $priorityMap[$priority])
+        )) {
+            $this->getHeaders()->addTextHeader(
+                'X-Priority',
+                sprintf('%d (%s)', $priority, $priorityMap[$priority])
+            );
         }
 
         return $this;
@@ -483,9 +502,10 @@ class WappoSwift_Mime_SimpleMessage extends WappoSwift_Mime_MimePart
      */
     public function getPriority()
     {
-        list($priority) = sscanf($this->getHeaderFieldModel('X-Priority'),
+        list($priority) = sscanf(
+            $this->getHeaderFieldModel('X-Priority'),
             '%[1-5]'
-            );
+        );
 
         return $priority ?? 3;
     }
@@ -558,7 +578,7 @@ class WappoSwift_Mime_SimpleMessage extends WappoSwift_Mime_MimePart
     {
         $this->attach($entity);
 
-        return 'cid:'.$entity->getId();
+        return 'cid:' . $entity->getId();
     }
 
     /**
@@ -614,9 +634,13 @@ class WappoSwift_Mime_SimpleMessage extends WappoSwift_Mime_MimePart
     /** Turn the body of this message into a child of itself if needed */
     protected function becomeMimePart()
     {
-        $part = new parent($this->getHeaders()->newInstance(), $this->getEncoder(),
-            $this->getCache(), $this->getIdGenerator(), $this->userCharset
-            );
+        $part = new parent(
+            $this->getHeaders()->newInstance(),
+            $this->getEncoder(),
+            $this->getCache(),
+            $this->getIdGenerator(),
+            $this->userCharset
+        );
         $part->setContentType($this->userContentType);
         $part->setBody($this->getBody());
         $part->setFormat($this->userFormat);
