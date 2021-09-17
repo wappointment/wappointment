@@ -91,7 +91,8 @@ class Settings
                 'port' => '',
                 'username' => '',
                 'password' => '',
-                'wpmail_html' => false
+                'wpmail_html' => false,
+                'attachments_off' => false
             ],
             'reschedule_link' => 'Reschedule',
             'cancellation_link' => 'Cancel',
