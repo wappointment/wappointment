@@ -13,9 +13,9 @@ class Reminder
     {
 
         $validator = new RakitValidator;
-
+        $reminderData['subject'] = strip_tags($reminderData['subject']);
         $validationRules = [
-            'subject' => 'required|is_adv_string|max:100',
+            'subject' => 'required|max:100',
             'type' => 'required',
             'event' => 'required',
             'options' => 'required|array',
