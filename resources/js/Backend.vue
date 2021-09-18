@@ -4,7 +4,7 @@
           <PendingDBUpdate v-if="db_update"/>
           <template v-else>
               <AddonsRequireUpdate v-if="addonsRequiringUpdate.length > 0" :addonsRequiringUpdate="addonsRequiringUpdate" />
-              <UpdateInformation v-else />
+              <UpdatePage v-else />
           </template>
           
           <template v-if="has_messages">
@@ -27,10 +27,10 @@
 <script>
 import WPNotice from './WP/Notice'
 import PendingDBUpdate from './Ne/PendingDBUpdate'
-import UpdateInformation from './Ne/UpdateInformation'
+import UpdatePage from './UpdatePage'
 import AddonsRequireUpdate from './Ne/AddonsRequireUpdate'
 export default {
-    components: {PendingDBUpdate, UpdateInformation, AddonsRequireUpdate, WPNotice},
+    components: {PendingDBUpdate, UpdatePage, AddonsRequireUpdate, WPNotice},
     data: () => ({
         db_update: false,
         has_messages: false,
