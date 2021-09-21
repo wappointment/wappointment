@@ -380,12 +380,12 @@ class Appointment extends Model
 
     public function canRescheduleUntilTimestamp()
     {
-        return $this->start_at->getTimestamp() - ((int) Settings::get('hours_before_rescheduling_allowed') * 60 * 60);
+        return $this->start_at->getTimestamp() - ((float) Settings::get('hours_before_rescheduling_allowed') * 60 * 60);
     }
 
     public function canCancelUntilTimestamp()
     {
-        return $this->start_at->getTimestamp() - ((int) Settings::get('hours_before_cancellation_allowed') * 60 * 60);
+        return $this->start_at->getTimestamp() - ((float) Settings::get('hours_before_cancellation_allowed') * 60 * 60);
     }
 
     public function canStillReschedule()
