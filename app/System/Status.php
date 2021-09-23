@@ -11,7 +11,7 @@ class Status
 {
     public static $version = WAPPOINTMENT_VERSION;
     private static $last_step = 4;
-    private static $db_version_required = '2.2.0';
+    private static $db_version_required = '2.3.0';
 
     public static function isInstalled()
     {
@@ -81,8 +81,6 @@ class Status
         if (static::dotComNotSetYet()) {
             $services = \Wappointment\Managers\Service::all();
 
-            //$services[] = $services[0];
-
             foreach ($services as $service) {
                 if (\Wappointment\Managers\Service::hasZoom($service)) {
                     $messages[] = [
@@ -94,6 +92,14 @@ class Status
                     ];
                     break;
                 }
+            }
+        }
+        $messagesOld = \Wappointment\WP\Alerts::get();
+        if (!empty($messagesOld)) {
+            foreach ($messagesOld as $messageOld) {
+                $messages[] = [
+                    'message' => $messageOld,
+                ];
             }
         }
 

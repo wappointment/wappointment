@@ -4,6 +4,7 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\Messages\AppointmentEmailFiller;
+use Wappointment\Services\Settings;
 
 class Reminder extends Model
 {
@@ -39,6 +40,22 @@ class Reminder extends Model
             }
         }
         return 1;
+    }
+
+    public function scopeActiveReminders($query)
+    {
+        $is_in = [static::APPOINTMENT_STARTS, static::APPOINTMENT_CONFIRMED];
+        if ((int) Settings::get('approval_mode') != 1) {
+            $is_in[] = static::APPOINTMENT_PENDING;
+        }
+        if (Settings::get('allow_rescheduling')) {
+            $is_in[] = static::APPOINTMENT_RESCHEDULED;
+        }
+        if (Settings::get('allow_cancellation')) {
+            $is_in[] = static::APPOINTMENT_CANCELLED;
+        }
+
+        $query->whereIn('event', apply_filters('wappointment_reminders_listed', $is_in));
     }
 
     public static function getTypes($col = false)

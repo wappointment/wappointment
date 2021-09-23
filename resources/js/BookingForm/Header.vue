@@ -21,8 +21,9 @@
 import minText from './minText'
 import MixinChange from './MixinChange'
 import MixinChangeCommands from './MixinChangeCommands'
+import IsDemo from '../Mixins/IsDemo'
 export default {
-    mixins: [minText, window.wappointmentExtends.filter('MixinChange', MixinChange), MixinChangeCommands],
+    mixins: [minText, window.wappointmentExtends.filter('MixinChange', MixinChange), MixinChangeCommands, IsDemo],
     props: {
         staffs: {
             type: Array
@@ -52,14 +53,6 @@ export default {
         attributesEl: {
             type: Object
         },
-    },
-    data: () => ({
-        disabledButtons: false,
-    }),
-    created(){
-        if(this.options.demoData !== undefined){
-            this.disabledButtons = true
-        }
     },
     methods:{
         

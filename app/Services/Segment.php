@@ -51,7 +51,7 @@ class Segment
                 $interval->getRight()->getValue()->toInt()
             ];
         }
-        return $segments;
+        return array_values($segments);
     }
 
     public function convertToArrayDebugged($intervals)

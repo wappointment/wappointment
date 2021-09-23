@@ -53,6 +53,7 @@ class WidgetSettings
             'when' => 'When',
             'service' => 'Service',
             'location' => 'Where',
+            'package' => 'Package',
             'min' => 'min',
             'noappointments' => 'No appointments available'
         ],
@@ -130,6 +131,12 @@ class WidgetSettings
         ],
         'service_location' => [
             'select_location' => 'How should we meet?',
+        ],
+
+        'swift_payment' => [
+            'onsite_tab' => 'Pay later',
+            'onsite_desc' => 'You will pay on the day of your appointment',
+            'onsite_confirm' => 'Confirm',
         ],
     ];
 
@@ -317,9 +324,63 @@ class WidgetSettings
                     ]
                 ],
             ]
+        ],
+
+        'swift_payment' => [
+            'categories' => [
+                [
+                    'label' => 'On Site Payment',
+                    'key' => 'onsite',
+                    'fields' => [
+                        'onsite_tab' => false,
+                        'onsite_desc' => false,
+                        'onsite_confirm' => false,
+
+                    ]
+                ],
+            ],
+            'categories_draggable' => true
 
         ],
 
+    ];
+    private $steps = [
+        [
+            'key' => 'button',
+            'label' => 'Booking button'
+        ],
+        [
+            'key' => 'staff_selection',
+            'label' => 'Staff selection'
+        ],
+        [
+            'key' => 'service_selection',
+            'label' => 'Service selection'
+        ],
+        [
+            'key' => 'service_duration',
+            'label' => 'Duration selection'
+        ],
+        [
+            'key' => 'service_location',
+            'label' => 'Modality selection'
+        ],
+        [
+            'key' => 'selection',
+            'label' => 'Slot selection'
+        ],
+        [
+            'key' => 'form',
+            'label' => 'Form'
+        ],
+        [
+            'key' => 'swift_payment',
+            'label' => 'Payment'
+        ],
+        [
+            'key' => 'confirmation',
+            'label' => 'Confirmation'
+        ],
     ];
 
     private $db_settings = [];
@@ -336,9 +397,29 @@ class WidgetSettings
             $this->defaultSettings() : $this->merge($this->defaultSettings(), $this->db_settings);
     }
 
+    public function steps()
+    {
+        $steps = $this->steps;
+        if (!Payment::active()) {
+            $steps = $this->removeStep('swift_payment', $steps);
+        }
+        return $steps;
+    }
+
+    protected function removeStep($stepKey, $steps)
+    {
+        $newSteps = [];
+        foreach ($steps as $step) {
+            if ($step['key'] != $stepKey) {
+                $newSteps[] = $step;
+            }
+        }
+        return $newSteps;
+    }
+
     public function defaultSettings()
     {
-        if (static::wooInstalled()) {
+        if (static::servicesAreSold()) {
             $this->settings['service_selection']['check_price_right'] = true;
         }
         return apply_filters('wappointment_widget_settings_default', $this->settings);
@@ -371,6 +452,7 @@ class WidgetSettings
 
     private function setHiddenFields($fields)
     {
+        $fields['swift_payment']['categories'] = Payment::orderMethods($fields['swift_payment']['categories']);
 
         if ((int) Settings::get('approval_mode') === 1) {
             $fields['confirmation']['pending']['hidden'] = true;
@@ -410,6 +492,11 @@ class WidgetSettings
         }
 
         return $merged;
+    }
+
+    private static function servicesAreSold()
+    {
+        return !empty(Settings::get('services_sold')) || static::wooInstalled();
     }
 
     private static function wooInstalled()

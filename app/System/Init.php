@@ -50,6 +50,8 @@ class Init
         add_action('wp_print_scripts', [$this, 'jsVariables']);
         new \Wappointment\Routes\Main();
         (new \Wappointment\WP\CustomPage())->boot();
+        add_filter('wappointment_package_save', ['\\Wappointment\\Services\\AdminPackage', 'dataSave'], 10, 2);
+        add_filter('wappointment_package_delete', ['\\Wappointment\\Services\\AdminPackage', 'delete']);
     }
 
     public function initInstalled()
@@ -139,8 +141,11 @@ class Init
             'version' => WAPPOINTMENT_VERSION,
             'allowed' => Settings::get('wappointment_allowed'),
             'frontPage' => get_permalink((int) Settings::get('front_page')),
+            'currency' => \Wappointment\Services\Payment::currency(),
+            'methods' => \Wappointment\Services\Payment::methods(),
             'signature' => \Wappointment\Services\IcsGenerator::getIcsSignature(),
         ];
+
         if (is_user_logged_in()) {
             $variables['nonce'] = wp_create_nonce('wp_rest');
             $variables['wp_user'] = WPHelpers::wpUserData();

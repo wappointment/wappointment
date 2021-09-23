@@ -33,10 +33,15 @@
                 :startsAt="appointmentStartsAt"
                 :location="location"
                 :appointmentSaved="appointmentSaved"
+                :selectedPackage="selectedPackage"
+                :selectedVariation="selectedVariation"
                 @changeService="childChangedStep"
                 @changeDuration="childChangedStep"
                 @changeLocation="childChangedStep"
                 />
+                <template v-else>
+                    <AppointmentOrder v-if="order" :order="order" />
+                </template>
                 <div class="wrap-calendar p-2" :class="'step-'+currentStep">
                     <div v-if="loading">
                         <Loader />
@@ -80,6 +85,7 @@ import BookingCalendar from './Calendar'
 import BookingFormInputs from './Form'
 import BookingFormHeader from './Header'
 import BookingFormSummary from './AppointmentSummary'
+import AppointmentOrder from './AppointmentOrder'
 import DurationCell from './DurationCell'
 BookingFormHeader.components = {DurationCell}
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
@@ -89,8 +95,10 @@ import BookingServiceSelection from './ServiceSelection'
 import BookingDurationSelection from './DurationSelection'
 import BookingLocationSelection from './LocationSelection'
 import BookingStaffSelection from './StaffSelection'
+import BookingPaymentStep from './Payment'
 import MixinLegacy from './MixinLegacy'
 import MixinChange from './MixinChange'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
     'RescheduleConfirm': RescheduleConfirm,
@@ -101,13 +109,15 @@ let compDeclared = {
     'BookingDurationSelection': BookingDurationSelection,
     'BookingLocationSelection': BookingLocationSelection,
     'BookingStaffSelection': BookingStaffSelection,
+    'BookingPaymentStep': BookingPaymentStep,
     'DurationCell': DurationCell,
     'abstractFront':AbstractFront,
     'BookingFormSummary': BookingFormSummary,
+    'AppointmentOrder': AppointmentOrder,
     'AppointmentTypeSelection': AppointmentTypeSelection
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
-let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Colors, Dates, MixinLegacy, window.wappointmentExtends.filter('MixinChange', MixinChange)] )
+let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [CanFormatPrice, Colors, Dates, MixinLegacy, window.wappointmentExtends.filter('MixinChange', MixinChange)] )
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
@@ -140,6 +150,9 @@ export default {
         selectedStaff: null,
         showHeader:true,
         checkCacheIntervalid: false,
+        order:false,
+        selectedVariation:false,
+        selectedPackage: false
     }),
 
     mounted () {
@@ -674,7 +687,7 @@ export default {
                         loading: 'childChangedData',
                     },
                     relations:{
-                        'next': 'BookingFormInputs',
+                        next: 'BookingFormInputs',
                     }
                 },
                 RescheduleConfirm: {
@@ -697,8 +710,8 @@ export default {
                         serviceError: 'serviceError'
                     },
                     relations:{
-                        'next': 'BookingFormConfirmation',
-                        'prev': 'BookingCalendar',
+                        next: 'BookingFormConfirmation',
+                        prev: 'BookingCalendar',
                     }
                 },
                 BookingFormInputs: {
@@ -713,6 +726,8 @@ export default {
                         selectedStaff:"selectedStaff",
                         timeprops: 'timeprops', 
                         service:"service",
+                        selectedPackage:"selectedPackage",
+                        selectedVariation:"selectedVariation",
                         duration:"duration",
                         location:"location",
                         errors:"errorMessages",
@@ -731,8 +746,8 @@ export default {
                         serviceError: 'serviceError'
                     },
                     relations:{
-                        'next': 'BookingFormConfirmation',
-                        'prev': 'BookingCalendar',
+                        next: 'BookingFormConfirmation',
+                        prev: 'BookingCalendar',
                     }
                 },
                 
@@ -761,9 +776,43 @@ export default {
             }
             if(!this.isLegacyOrNotServiceSuite){
                 componentsList = this.updateComponentList(componentsList)
+                if(window.apiWappointment.methods !== undefined && window.apiWappointment.methods.length > 0){
+                    console.log('set payment step')
+                    componentsList = this.setPaymentStep(componentsList)
+                }
             }
             this.componentsList = window.wappointmentExtends.filter('componentsList', componentsList,
              {service: this.service, rescheduling:this.rescheduling} )
+        },
+
+        setPaymentStep(componentsList){
+            componentsList['BookingPaymentStep'] = {
+                name: 'BookingPaymentStep',
+                conditions: {
+                    'appointmentSaved':true,
+                    'serviceIsNotFree':true,
+                },
+                skip: {
+                'serviceIsNotFree':false,
+                },
+                props: {
+                    options:"options",
+                    appointmentKey:"appointmentKey",
+                    appointmentData:"appointmentSavedData",
+                    order:"order",
+                    service:"service"
+                },
+                listeners: {
+                    confirmedPayment:'childChangedStep',
+                    cancelledPayment:'childChangedStep',
+                    loading: 'childChangedData',
+                },
+                relations: {
+                    prev: 'BookingFormInputs',
+                    next: 'BookingFormConfirmation'
+                }
+            }
+            return componentsList
         },
 
         updateComponentList(componentsList){
@@ -792,7 +841,7 @@ export default {
                     staffSelected:'changeStaff'
                 },
                 relations:{
-                    'next': 'BookingServiceSelection',
+                    next: 'BookingServiceSelection',
                 }
             }
             
@@ -813,7 +862,7 @@ export default {
                     serviceSelected:'childChangedStep'
                 },
                 relations:{
-                    'next': 'BookingDurationSelection',
+                    next: 'BookingDurationSelection',
                 }
             }
 
@@ -834,8 +883,8 @@ export default {
                     backToService:'childChangedStep'
                 },
                 relations:{
-                    'next': 'BookingLocationSelection',
-                    'prev': 'BookingServiceSelection',
+                    next: 'BookingLocationSelection',
+                    prev: 'BookingServiceSelection',
                 }
             }
 
@@ -857,8 +906,8 @@ export default {
                     backToDuration:'childChangedStep'
                 },
                 relations:{
-                    'next': 'BookingCalendar',
-                    'prev': 'BookingDurationSelection',
+                    next: 'BookingCalendar',
+                    prev: 'BookingDurationSelection',
                 }
             }
             return componentsList
@@ -983,6 +1032,10 @@ export default {
     color: var(--wappo-success-tx);
 }
 
+.wap-front .wap-form-body{
+    background-color: var(--wappo-body-bg);
+}
+
 .wclosable .wclose::before, 
 .wclosable .wclose::after {
     background-color: var(--wappo-pri-tx);
@@ -1101,14 +1154,15 @@ export default {
     transition: border-right ease-in-out .3s;
 }
 
-.wap-front .form-control, .wap-front .phone-field{
+.wap-front .form-control, 
+.wap-front .phone-field{
     width: 100%;
     font-weight: 400;
     line-height: 1.5;
-    color: #495057;
+    color: var(--wappo-input-col);
     background-color: #fff;
     background-clip: padding-box;
-    border: 1px solid #ced4da;
+    border: 1px solid var(--wappo-input-bor);
     border-radius: .25em;
     transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
@@ -1129,32 +1183,18 @@ export default {
   border: 0;
 }
 
-.wap-front .form-control::-webkit-input-placeholder {
-  color: #6c757d;
+.wap-front .form-control::-webkit-input-placeholder,
+.wap-front .form-control::-moz-placeholder,
+.wap-front .form-control:-ms-input-placeholder,
+.wap-front .form-control::-ms-input-placeholder,
+.wap-front .form-control::placeholder  {
+  color: var(--wappo-input-ph);
   opacity: 1;
 }
 
-.wap-front .form-control::-moz-placeholder {
-  color: #6c757d;
-  opacity: 1;
-}
 
-.wap-front .form-control:-ms-input-placeholder {
-  color: #6c757d;
-  opacity: 1;
-}
-
-.wap-front .form-control::-ms-input-placeholder {
-  color: #6c757d;
-  opacity: 1;
-}
-
-.wap-front .form-control::placeholder {
-  color: #6c757d;
-  opacity: 1;
-}
-
-.wap-front .form-control:disabled, .form-control[readonly] {
+.wap-front .form-control:disabled, 
+.form-control[readonly] {
   background-color: #e9ecef;
   opacity: 1;
 }

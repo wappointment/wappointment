@@ -3,6 +3,7 @@
 namespace Wappointment\Addons;
 
 use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Helpers\Get;
 
 abstract class AbstractBoot implements Boot
 {
@@ -155,6 +156,11 @@ abstract class AbstractBoot implements Boot
         }
     }
 
+    /**
+     * todo remove
+     *
+     * @return void
+     */
     public static function hooksAndFiltersWhenInstalled()
     {
 
@@ -182,11 +188,16 @@ abstract class AbstractBoot implements Boot
             'icon' => static::$addon_settings_icon,
             'settings' => (bool) static::$has_settings,
         ];
-
-        if (is_admin() && version_compare(static::convertVersionToMajor(WAPPOINTMENT_VERSION), static::convertVersionToMajor(static::$addon_version)) === 1) {
-            $addons[static::$addon_key]['requires_update'] = static::convertVersionToMajor(WAPPOINTMENT_VERSION) . '.0';
+        $wappo_compatible_with_addon_version = static::compatibleWithAddon();
+        if (is_admin() && version_compare(static::$addon_version, $wappo_compatible_with_addon_version, '<')) {
+            $addons[static::$addon_key]['requires_update'] = $wappo_compatible_with_addon_version;
         }
         return $addons;
+    }
+
+    protected static function compatibleWithAddon()
+    {
+        return Get::list('addons_compatibility')[static::$addon_key];
     }
 
     protected static function convertVersionToMajor($version)

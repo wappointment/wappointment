@@ -27,11 +27,11 @@
                 <div v-if="clientSelected">
                     <div class="d-flex align-items-center">
                         <div class="mr-2">
-                        <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name">
+                            <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name" :alt="clientSelected.name">
                         </div>
                         <div>
-                        <h6 class="m-0">{{ clientSelected.name }}</h6>
-                        <small>{{ clientSelected.email }}</small>
+                            <h6 class="m-0">{{ clientSelected.name }}</h6>
+                            <small>{{ clientSelected.email }}</small>
                         </div>
                     </div>
                     <a class="text-primary" href="javascript:;" @click="clearClientSelection">Change client</a>
@@ -71,7 +71,7 @@
                         <FieldsGenerated @changed="changedBF" :disabledEmail="true"
                         :validators="validators" :custom_fields="viewData.custom_fields" 
                         :service="service" :location="location" :data="bookingForm" 
-                        :options="viewData.widget" :disabledButtons="disabledButtons" />
+                        :options="viewData.widget" />
 
                         <div v-if="formHasErrors" class="error">
                             <div v-for="(error,namekeyidx) in errorsOnFields">
@@ -79,11 +79,7 @@
                             </div>
                         </div>
                     </div>
-
-                    
-
                 </div>
-
             </div>
         </div>
         <div>

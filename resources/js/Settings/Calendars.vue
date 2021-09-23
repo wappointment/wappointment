@@ -11,8 +11,12 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Name</th>
-                            <th scope="col">Weekly Availability</th>
-                            <th scope="col" v-if="!elements.db_required">Services</th>
+                            <th scope="col">
+                                <div class="headerToggle">Weekly Availability <a href="javascript:;" @click="setDefaultAvailability">set default</a></div>
+                            </th>
+                            <th scope="col" v-if="!elements.db_required">
+                                <div class="headerToggle">Services <a href="javascript:;" @click="setDefaultServices">set default</a></div>
+                            </th>
                             <th scope="col">Integrations</th>
                             <th scope="col">Connected calendars</th>
                         </tr>
@@ -107,7 +111,7 @@
             <WeeklyAvailability :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs"/>
         </div>
 
-        <WapModal v-if="showModal" :show="showModal" @hide="hidePopup" noscroll>
+        <WapModal v-if="showModal" :show="showModal" @hide="hidePopup" :large="largeModal" noscroll>
             <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
             <ShortcodeDesigner v-if="showShortcode" :calendar_id="showShortcode" :calendars="elements.calendars" :services="elements.services" :showTip="false" />
             <StaffPermissionsManager v-if="showPermissions" :permissions="elements.permissions" :user="showPermissions" @save="savePermissions" />
@@ -115,6 +119,8 @@
             <StaffAssignServices v-if="editingServices" @save="saveServices" :user="editingServices" :current="editingServices.services" :services="elements.services" />
             <StaffCalendarsIntegrations v-if="dotcomOpen" @reload="reloadListing" :calendar="dotcomOpen" />
             <StaffCalendarsExternal v-if="editingExternal" :user="editingExternal" :calendar_id="editingExternal.id" @savedSync="reloadListing" noback />
+            <StaffDefaultAvailability v-if="editingDefaultAvailability" :defaultSettings="elements.staffDefault" />
+            <StaffDefaultServices v-if="editingDefaultServices" :defaultSettings="elements.servicesDefault" :services="elements.services" />
         </WapModal>
 
     </div>
@@ -138,8 +144,12 @@ import StaffPermissionsManager from './StaffPermissionsManager'
 import StaffCalendarsIntegrations from './StaffCalendarsIntegrations'
 import StaffCalendarsExternal from './StaffCalendarsExternal'
 import StaffCustomFieldEditor from './StaffCustomFieldEditor'
+import StaffDefaultAvailability from './StaffDefaultAvailability'
+import StaffDefaultServices from './StaffDefaultServices'
 import hasPermissions from '../Mixins/hasPermissions'
 import isSearchable from '../Mixins/isSearchable'
+import HasPopup from '../Mixins/HasPopup'
+
 export default {
     extends: AbstractListing,
     components:{
@@ -154,22 +164,25 @@ export default {
         StaffCalendarsIntegrations,
         StaffPermissionsManager,
         StaffAssignServices,
-        StaffCustomFieldEditor
+        StaffCustomFieldEditor,
+        StaffDefaultAvailability,
+        StaffDefaultServices
     },
-    mixins:[CalUrl, SettingsSave, hasPermissions, isSearchable],
+    mixins:[CalUrl, SettingsSave, hasPermissions, isSearchable, HasPopup],
     data: () => ({
         currentView: 'listing',
         viewName:'empty',
         elementPassed: null,
         calendarsOrder: [],
-        showModal: false,
-        modalTitle: '',
         showShortcode: false,
         dotcomOpen: false,
         editingExternal: false,
         editingServices: false,
         showPermissions: false,
         editCustomField: false,
+        editingDefaultAvailability: false,
+        editingDefaultServices: false,
+        largeModal: false
     }),
     created(){
         this.mainService = this.$vueService(new ServiceCalendar)
@@ -238,6 +251,16 @@ export default {
             this.editCustomField = calendar
             this.openPopup('Set custom Fields')
         },
+        setDefaultAvailability(){
+            this.editingDefaultAvailability = true
+            this.largeModal = true
+            this.openPopup('Default availability')
+        },
+
+        setDefaultServices(){
+            this.editingDefaultServices = true
+            this.openPopup('Default services')
+        },
         
         editServices(calendar){
             this.editingServices = calendar
@@ -249,20 +272,16 @@ export default {
             this.openPopup('Edit user permissions')
         },
 
-        openPopup(modalTitle){
-            this.modalTitle = modalTitle
-            this.showModal = true
-        },
-
-        hidePopup(modalTitle){
-            this.modalTitle = 'popTitle'
-            this.showModal = false
+        hideElementsPopup(modalTitle){
             this.showShortcode = false
             this.editingExternal = false
             this.dotcomOpen = false
             this.editingServices = false
             this.showPermissions = false
             this.editCustomField = false
+            this.editingDefaultAvailability = false
+            this.editingDefaultServices = false
+            this.largeModal = false
         },
         saveCustomFields(customFields, fieldsValues, deletedFields){
             this.request(this.saveCustomFieldsRequest, {id: this.editCustomField.id, custom_fields:customFields, values:fieldsValues, deleted:deletedFields}, undefined, false, this.closeRefresh)
@@ -531,5 +550,11 @@ export default {
 }
 .cell-services .d-flex:hover{
     max-height: none !important;
+}
+.headerToggle a{
+    display: none;
+}
+.headerToggle:hover a{
+    display: inline;
 }
 </style>

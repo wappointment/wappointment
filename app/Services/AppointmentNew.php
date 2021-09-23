@@ -7,6 +7,7 @@ use Wappointment\Models\Location;
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Helpers\Events;
 use Wappointment\Managers\Central;
+use Wappointment\Models\OrderPrice;
 use Wappointment\WP\Helpers as WPHelpers;
 
 class AppointmentNew
@@ -41,7 +42,9 @@ class AppointmentNew
             'service_id' => $client->bookingRequest->get('service'),
             'location_id' => $location->id,
             'duration' => $client->bookingRequest->get('duration'),
-            'staff_id' => empty($staff_id) ? 0 : static::getStaffId($staff_id)
+            'staff_id' => empty($staff_id) ? 0 : static::getStaffId($staff_id),
+            'package_id' => $client->bookingRequest->get('package_id'),
+            'package_price_id' => $client->bookingRequest->get('package_price_id'),
         ];
 
         return static::book($appointmentData, $client, $forceConfirmed);
@@ -82,7 +85,7 @@ class AppointmentNew
         return $addedEvent;
     }
 
-    public static function getLocation($location, $appointment)
+    public static function getLocation($locationLegacy, $appointment)
     {
         $location = static::getAppointmentLocation($appointment);
 
@@ -126,11 +129,28 @@ class AppointmentNew
         return Central::get('AppointmentModel');
     }
 
-    public static function create($data)
+    public static function create($data, Client $client)
+    {
+        $appointment = static::createAppointment($data);
+        $order = null;
+        if ($client->bookingRequest->getService()->isSold() && !Payment::isWooActive()) {
+            $appointment->hydrateService($client->bookingRequest->getService());
+            $order = $client->generateOrder($appointment);
+        }
+        return ['appointment' => $appointment, 'client' => $client, 'order' => $order];
+    }
+
+    protected static function createAppointment($data)
     {
         if (empty($data['options']) || !is_array($data['options'])) {
             $data['options'] = [];
         }
+        if (!empty($data['package_id'])) {
+            $data['options']['buying_package'] = true;
+            $data['options']['package_id'] = $data['package_id'];
+            $data['options']['package_price_id'] = $data['package_price_id'];
+        }
+
         $data['options']['buffer_time'] = (int) Settings::get('buffer_time');
         return static::getAppointmentModel()::create($data);
     }
@@ -294,15 +314,14 @@ class AppointmentNew
 
     protected static function book($data, Client $client, $is_admin = false)
     {
-        $appointment = static::create($data);
+        $dataReturn = static::create($data, $client);
 
-        if ($appointment->status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION) {
-            Events::dispatch('AppointmentBookedEvent', ['appointment' => $appointment, 'client' => $client]);
+        if ($dataReturn['appointment']->status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION) {
+            Events::dispatch('AppointmentBookedEvent', $dataReturn);
         } else {
-            Events::dispatch('AppointmentConfirmedEvent', ['appointment' => $appointment, 'client' => $client]);
+            Events::dispatch('AppointmentConfirmedEvent', $dataReturn);
         }
 
-        //return $appointment;
         //if availability has not been refreshed for a while we refresh it now otherwise we queue a job for it
         if (!defined('DISABLE_WP_CRON') || $is_admin === true) {
             //when web cron is disabled we need an immediate refresh of availability
@@ -323,8 +342,8 @@ class AppointmentNew
             //we immediately spawn a process to trigger availability regenerate in the back
             WPHelpers::cronTrigger();
         }
-
-        return $appointment;
+        return $dataReturn;
+        //return $appointment;
     }
 
     public static function tryCancel($edit_key)
@@ -355,19 +374,61 @@ class AppointmentNew
         \Wappointment\Models\Log::canceledAppointment($appointment);
 
         $client = $appointment->client()->first();
-        $staff_id_regenerate = $appointment->getStaffId();
+        static::clearCharges([$appointment->id]);
+        $staff_id = static::destroy($appointment);
+        if ($staff_id) {
+            (new Availability($staff_id))->regenerate();
+            Events::dispatch('AppointmentCanceledEvent', ['appointment' => $appointment, 'client' => $client]);
+            return true;
+        }
+        return false;
+    }
+
+    public static function destroy($appointment)
+    {
+        $staff_id = $appointment->getStaffId();
         $appointment->incrementSequence();
         $result = $appointment->destroy($appointment->id);
+        return $result ? $staff_id : false;
+    }
 
-        if ($result) {
-            (new Availability($staff_id_regenerate))->regenerate();
-            Events::dispatch('AppointmentCanceledEvent', ['appointment' => $appointment, 'client' => $client]);
+    public static function clearCharges($appointment_ids = [], $charge_ids = [])
+    {
+        if (!empty($charge_ids)) {
+            return OrderPrice::destroy($charge_ids);
         }
-        return $result;
+        $prim_ids = OrderPrice::select('id')->whereIn('appointment_id', $appointment_ids)->get()->map(function ($e) {
+            return $e->id;
+        })->toArray();
+        OrderPrice::destroy($prim_ids);
+    }
+
+    public static function silentCancel($appointment_ids = [], $charge_ids = [])
+    {
+
+        static::clearCharges($appointment_ids, $charge_ids);
+        $appointments = AppointmentModel::whereIn('id', $appointment_ids)->get();
+        $staff_ids = [];
+        foreach ($appointments as $appointment) {
+            $staff_id = static::destroy($appointment);
+            if ($staff_id && !in_array($staff_id, $staff_ids)) {
+                $staff_ids[] = $staff_id;
+            }
+        }
+
+        if (!empty($staff_ids)) {
+            foreach ($staff_ids as $staff_id) {
+                (new Availability($staff_id))->regenerate();
+            }
+        }
     }
 
     protected static function getDefaultStatus($service)
     {
+        if ($service->isSold()) {
+            return static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
+        }
+
         $default_status = ((int) Settings::get('approval_mode') === 1) ?
             static::getAppointmentModel()::STATUS_CONFIRMED : static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
 

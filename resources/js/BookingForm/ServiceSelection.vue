@@ -22,19 +22,15 @@
 
 <script>
 import ServiceButton from './ServiceButton'
+import IsDemo from '../Mixins/IsDemo'
 export default {
     props:['services','relations','options', 'admin', 'viewData'],
-          
+    mixins:[IsDemo],
     data: () => ({
-        disabledButtons: false,
         search: ''
     }),
     components:{ServiceButton},
-    created(){
-        if(this.options !== undefined &&  this.options.demoData !== undefined){
-            this.disabledButtons = true
-        }
-    },
+
     computed:{
         filteredServices(){
             let searchterm = this.search.toLowerCase()
@@ -44,10 +40,9 @@ export default {
 
     methods:{
         selectService(service){
-            if(this.disabledButtons && this.options !== undefined ) {
-              this.options.eventsBus.emits('stepChanged', 'service_duration')
-              return
-            } 
+            if(this.triggersDemoEvent('service_duration')){
+                return
+            }
             let data = {service:service}
             let nextScreen = ''
             if(service.options.durations.length > 1){

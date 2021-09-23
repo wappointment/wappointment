@@ -299,12 +299,7 @@ export default {
         clientsError(){
             this.clientSearching = false
         },
-        confirmNewBookingRequest(){
-            if(this.readyToBook) {
-                this.request(this.bookingRequest,{start:this.startTime, end:this.endTime},  undefined,false, this.refreshEvents)
-            }
-        
-        },
+       
         refreshEvents(){
             this.$emit('confirmed')
         },
@@ -374,7 +369,11 @@ export default {
             }
             this.changeLocation()
         },
-
+         confirmNewBookingRequest(){
+            if(this.readyToBook) {
+                this.request(this.bookingRequest,{start:this.startTime, end:this.endTime},  undefined,false, this.refreshEvents)
+            }
+        },
         async bookingRequest(params) {
 
           return await this.serviceBooking.call('bookadmin', Object.assign({ 

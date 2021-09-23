@@ -23,7 +23,6 @@ class InitBackend
         }
         if (WPHelpers::isPluginPage()) {
             add_action('admin_init', [$this, 'enqueueBackendPlugin']);
-            add_action('admin_notices', ['\Wappointment\WP\Alerts', 'display']);
             add_action('wp_print_scripts', [$this, 'jsVariables']);
         }
     }

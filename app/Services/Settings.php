@@ -91,7 +91,8 @@ class Settings
                 'port' => '',
                 'username' => '',
                 'password' => '',
-                'wpmail_html' => false
+                'wpmail_html' => false,
+                'attachments_off' => false
             ],
             'reschedule_link' => 'Reschedule',
             'cancellation_link' => 'Cancel',
@@ -101,15 +102,33 @@ class Settings
             'show_welcome' => false,
             'force_ugly_permalinks' => false,
             'allow_staff_cf' => false,
-            'cache' => false,
+            'currency' => 'USD',
+            'services_sold' => false,
             'calendar_roles' => ['administrator', 'author',  'editor', 'contributor', 'wappointment_staff'],
             'max_active_bookings' => 0,
             'autofill' => true,
+            'onsite_enabled' => true,
+            'cache' => false,
+            'tax' => 0,
+            'payments_order' => [],
             'alt_port' => false,
             'video_link_shows' => 0,
             'forceemail' => false,
             'allow_refreshavb' => false,
-            'refreshavb_at' => 23
+            'refreshavb_at' => 23,
+            'clean_pending_every' => 25,
+            'clean_last_check' => false,
+            'regavDefault' => [
+                'monday' => [[480, 720], [840, 1140]],
+                'tuesday' => [[480, 720], [840, 1140]],
+                'wednesday' => [[480, 720], [840, 1140]],
+                'thursday' => [[480, 720], [840, 1140]],
+                'friday' => [[480, 720], [840, 1140]],
+                'saturday' => [],
+                'sunday' => [],
+                'precise' => true
+            ],
+            'servicesDefault' => true
         ];
     }
 
@@ -126,23 +145,19 @@ class Settings
     public static function getHost()
     {
         $parsed_url = parse_url(WPHelpers::getWPOption('home'));
-        return !empty($parsed_url['host']) ? (strpos($parsed_url['host'], 'www.') !== -1 ? str_replace('www.', '', $parsed_url['host']) : $parsed_url['host']) : 'example.com';
+        return !empty($parsed_url['host']) ? static::cleanHost($parsed_url['host']) : 'example.com';
+    }
+
+    protected static function cleanHost($host)
+    {
+        return strpos($host, 'www.') !== -1 ? str_replace('www.', '', $host) : $host;
     }
 
     public static function staffDefaults()
     {
         $timezone = WPHelpers::getWPOption('timezone_string');
         return [
-            'regav' => [
-                'monday' => [[480, 720], [840, 1140]],
-                'tuesday' => [[480, 720], [840, 1140]],
-                'wednesday' => [[480, 720], [840, 1140]],
-                'thursday' => [[480, 720], [840, 1140]],
-                'friday' => [[480, 720], [840, 1140]],
-                'saturday' => [],
-                'sunday' => [],
-                'precise' => true
-            ],
+            'regav' => static::get('regavDefault'),
             'availaible_booking_days' => 60,
             'calurl' => '',
             'timezone' => $timezone,
@@ -195,6 +210,11 @@ class Settings
             $method = $setting_key . 'BeforeSave';
             if (method_exists(static::class, $method)) {
                 static::$method($value);
+            }
+
+            $methodTransform = $setting_key . 'TransformValue';
+            if (method_exists(static::class, $methodTransform)) {
+                $updatedValues[$setting_key] = static::$methodTransform($value);
             }
 
             static::updateLocalSettings($updatedValues);
@@ -300,6 +320,14 @@ class Settings
             return false;
         }
         return true;
+    }
+
+    protected static function taxValid($value)
+    {
+        if (self::between($value, 0, 100)) {
+            return true;
+        }
+        throw new \WappointmentException('Tax is not valid');
     }
 
     protected static function weekly_summary_dayValid($value)
@@ -443,8 +471,6 @@ class Settings
         }
         throw new \WappointmentException('Hour field is not valid');
     }
-
-
 
     // remove slots that are in the future but are not bookable
     protected static function availabilityPrepare($availabilities)

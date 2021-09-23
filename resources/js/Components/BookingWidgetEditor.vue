@@ -8,9 +8,9 @@
                         <Front :options="preoptions"  classEl="wappointment_widget" :attributesEl="shortcodeParams" ></Front>
                     </div>
                     <div v-if="editingMode && frontAvailability!==undefined" class="d-flex flex-wrap preview-book">
-                        <div  v-for="(stepObj,idx) in editionsSteps" class="bordered" :class="orderedClass(stepObj,idx)" :data-tt="stepObj.key==step?labelActiveStep:false">
-                            <div  class="overflowhidden" :class="'step-'+stepObj.key">
-                                <FrontDemo :options="options"  classEl="wappointment_widget" :step="stepObj.key" ></FrontDemo>
+                        <div v-for="(stepObj,idx) in editionsSteps" class="bordered" :class="orderedClass(stepObj,idx)" :data-tt="stepObj.key==step?labelActiveStep:false">
+                            <div class="overflowhidden" :class="'step-'+stepObj.key" v-if="!reloading">
+                                <FrontDemo :options="options" classEl="wappointment_widget" :step="stepObj.key" />
                             </div>
                         </div>
                     </div>
@@ -74,10 +74,26 @@
                                 <div class="widget-fields" v-if="isCurrentStep(stepObj.key)" :data-step="'Step '+(4-idx)+': '+stepObj.label" 
                                 :class="{'active-fields': (step == stepObj.key)}">
                                     <div v-if="widgetFields[stepObj.key] !== undefined && widgetFields[stepObj.key].categories !== undefined">
-                                        <div :class="{'selected-tab': showCategory ==  cat_object.label}" v-for="(cat_object, catid) in widgetFields[stepObj.key].categories">
-                                            <div :class="[showCategory ==  cat_object.label ? 'btn btn-light btn-sm':'btn btn-link btn-sm']"  role="button" @click="showCategory = cat_object.label">
-                                                {{cat_object.label}} <span v-if="showCategory !=  cat_object.label">[+]</span>
+                                        <draggable v-if="widgetFields[stepObj.key].categories_draggable !== undefined" 
+                                            class="nav nav-tabs ml-2" 
+                                            v-model="categoriesOrder" @change="changeCategoriesOrder" draggable=".candrg" >
+                                            <div v-for="(cat_object, catid) in categoriesOrder" class="nav-item d-flex candrg mr-2" 
+                                              role="button" @click="showCategory = cat_object.label">
+                                                <a class="nav-link" :class="{'active':showCategory ==  cat_object.label}">
+                                                    <span class="dashicons dashicons-move"></span>
+                                                    {{ cat_object.label }}
+                                                </a>
                                             </div>
+                                        </draggable>
+                                        <div class="nav nav-tabs ml-2" v-else>
+                                            <div v-for="(cat_object, catid) in widgetFields[stepObj.key].categories" class="nav-item d-flex mr-2" 
+                                             role="button" @click="showCategory = cat_object.label">
+                                                <a class="nav-link" :class="{'active':showCategory ==  cat_object.label}">
+                                                    {{ cat_object.label }}
+                                                </a>
+                                            </div>
+                                        </div>
+                                        <div :class="{'selected-tab': showCategory ==  cat_object.label}" v-for="(cat_object, catid) in widgetFields[stepObj.key].categories">
                                             <div v-if="showCategory ==  cat_object.label" class="ml-3 mt-3">
                                                 <div class="small" v-if="cat_object.sub !== undefined" v-html="parseLabel(cat_object.sub)"></div>
                                                 <div v-for="(fieldDescription, field_key) in cat_object.fields" :data-tt="getFieldTip(stepObj.key, field_key, catid) ? getFieldTip(stepObj.key, field_key, catid) : false" 
@@ -91,6 +107,8 @@
                                                     @input="(e) => changedInput(stepObj.key, field_key, e)"
                                                     eventChange="input"
                                                     :label="fieldDescription.label" 
+                                                    :completeTrigger="fieldDescription.togglesave !== undefined"
+                                                    @toggleComplete="reloadStep"
                                                     :ph="defaultSettings[stepObj.key][field_key]"
                                                     :options="fieldDescription.options !== undefined ? fieldDescription.options:{}" 
                                                     allowReset></component>
@@ -163,7 +181,7 @@ const BBCode = require('../Plugins/bbcode')
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faPalette, faEdit, faSave } from '@fortawesome/free-solid-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
+const BWEditorTools = require('../Standalone/BWEditorTools')
 library.add(faPalette,faEdit, faSave)
 import Front from '../Front'
 import FrontDemo from '../FrontDemo'
@@ -175,6 +193,7 @@ import Colors from '../Modules/Colors'
 import SettingsSave from '../Modules/SettingsSave'
 import CountrySelector from './CountrySelector'
 import eventsBus from '../eventsBus'
+import draggable from 'vuedraggable'
 
 export default {
     components: {
@@ -187,9 +206,10 @@ export default {
         FormFieldSelect,
         FormFieldSlider,
         FontAwesomeIcon,
+        draggable
     },
     mixins: [Colors, SettingsSave],
-    props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability', 'editingMode', 'shortcodeParams'],
+    props: ['preoptions','bgcolor', 'config', 'widgetFields', 'defaultSettings', 'frontAvailability', 'editingMode', 'shortcodeParams', 'steps'],
     data: () => ({
         step: 'general',
         showAdvancedColors: false,
@@ -219,46 +239,16 @@ export default {
                 label: 'Confirmation'
             }
         ],
-        editionsSteps: [
-            {
-                key: 'button',
-                label: 'Booking button'
-            },
-            {
-                key: 'staff_selection',
-                label: 'Staff selection'
-            },
-            {
-                key: 'service_selection',
-                label: 'Service selection'
-            },
-            {
-                key: 'service_duration',
-                label: 'Duration selection'
-            },
-            {
-                key: 'service_location',
-                label: 'Modality selection'
-            },
-            {
-                key: 'selection',
-                label: 'Slot selection'
-            },
-            {
-                key: 'form',
-                label: 'Form'
-            },
-            {
-                key: 'confirmation',
-                label: 'Confirmation'
-            }
-        ],
+        editionsSteps: [],
         reverseEditionsSteps: [],
+        categoriesOrder: [],
+        reloading: false
 
     }),
 
     created(){
-        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.isLegacy? this.editionsStepsLegacy:this.editionsSteps,  this.config )
+        
+        this.editionsSteps = window.wappointmentExtends.filter('WidgetEditorEditionsSteps', this.isLegacy? this.editionsStepsLegacy:this.steps,  this.config, BWEditorTools )
         this.reverseEditionsSteps = this.editionsSteps.slice(0).reverse()
         this.options = Object.assign ({}, this.preoptions)
         this.options.editionsSteps = this.editionsSteps
@@ -280,6 +270,8 @@ export default {
         eventsBus.listens('dataDemoChanged', this.dataChanged)
 
         this.stepChanged('general')
+
+        this.categoriesOrder = this.widgetFields.swift_payment.categories
 
     },
 
@@ -326,6 +318,29 @@ export default {
 
 
     methods: {
+
+        changeCategoriesOrder(data){
+            this.$WapModal()
+                .request(this.settingSaveRequest({
+                    key:'payments_order',
+                    val: this.categoriesOrder.map(item => item.key)
+                }))
+                .then(this.savedCategoriesSuccess)
+                .catch(this.serviceError)
+        },
+        savedCategoriesSuccess(s){
+            this.serviceSuccess(s)
+            window.apiWappointment.methods = s.data.methods
+            this.reloadStep()
+            
+        },
+        reloadStep(){
+            this.reloading = true
+            setTimeout(() => {
+                this.reloading = false
+            }, 50)
+            
+        },
         parseLabel(label){
             return BBCode.render(label,{classPrefix: 'bbcode', newLine: false, allowData: true, allowClasses:true})
         },

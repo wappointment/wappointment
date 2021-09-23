@@ -31,7 +31,6 @@ export default {
             let component_name = window.wappointmentExtends.filter('BFDemoGetChildComponentForStep', this.getChildComponentForStep(step_name), {step_name: step_name} ) 
             let component_data = window.wappointmentExtends.filter('BFDemoGetChildComponentDataForStep', comp_data_step, 
             {step_name: step_name, bookingFormObject: this, editionsSteps: this.options.editionsSteps}) 
-
             this.childChangedStep(component_name ,component_data)
         },
 
@@ -130,6 +129,8 @@ export default {
                     return 'BookingLocationSelection'
                 case 'selection':
                     return 'BookingCalendar'
+                case 'swift_payment':
+                    return 'BookingPaymentStep'
                 case 'form':
                     return 'BookingFormInputs'
                 case 'confirmation':

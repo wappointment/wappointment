@@ -39,6 +39,7 @@ class CalendarsController extends RestController
 
         if (!$db_update_required) {
             $data['services'] = (new Services)->get();
+            $data['servicesDefault'] = Settings::get('servicesDefault');
             $data['limit_reached'] = Central::get('CalendarModel')::canCreate() ? false : 'To add more calendars, get the "Calendars & Staff" addon';
         }
         return $data;

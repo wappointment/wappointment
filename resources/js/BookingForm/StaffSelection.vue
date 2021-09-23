@@ -20,20 +20,14 @@ import ServiceButton from './ServiceButton'
 import FirstAvailabilities from './FirstAvailabilities'
 import Intervals from '../Standalone/intervals'
 import MixinChange from './MixinChange'
-    
+import IsDemo from '../Mixins/IsDemo'
 export default {
-    mixins: [ window.wappointmentExtends.filter('MixinChange', MixinChange)],
+    mixins: [ window.wappointmentExtends.filter('MixinChange', MixinChange), IsDemo],
     props:['calendars','options', 'timeprops','viewData', 'attributesEl'],
     data: () => ({
-        disabledButtons: false,
         search:''
     }),
     components:{FirstAvailabilities, ServiceButton},
-    created(){
-        if(this.options !== undefined &&  this.options.demoData !== undefined){
-            this.disabledButtons = true
-        }
-    },
     computed:{
         filteredStaff(){
             let searchterm = this.search.toLowerCase()
@@ -53,8 +47,7 @@ export default {
         },
         selectStaff(staff){
 
-            if(this.disabledButtons && this.options !== undefined || !this.hasIntervals(staff)) {
-              //this.options.eventsBus.emits('stepChanged', 'service_duration')
+            if(this.isDemo || !this.hasIntervals(staff)) {
               return
             } 
 

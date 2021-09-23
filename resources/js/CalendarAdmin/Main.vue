@@ -123,6 +123,11 @@
                 background-size: 30px 30px;
             }
 
+            .fc-event-container .fc-event.appointment-owes, 
+            .fc-container .fc-event.appointment-owes {
+                border: 2px dashed #d7b637 !important;
+            }
+
             .fc-event.past-event {
                 background-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, 1) }} !important;
             }
@@ -242,7 +247,7 @@ export default {
     },
     activeBgOverId: false,
     shortDayFormat: 'Do MMM YY',
-    headerDayFormat: 'Do MMM',
+    headerDayFormat: 'ddd Do',
     daysProperties: false,
     serviceEvent: null,
     serviceStatus: null,
@@ -472,7 +477,6 @@ export default {
         //this.$refs.calendar.option( 'timeZone', selectedTimezone)
         this.writeHistory()
 
-        //if(initSave === false)window.location.reload()
         if(initSave === false) {
           this.reload()
         }

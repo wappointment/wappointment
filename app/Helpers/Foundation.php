@@ -2,21 +2,8 @@
 
 namespace Wappointment\Helpers;
 
-use Wappointment\Messages\Templates\FoundationEmail;
-
 class Foundation
 {
-    public static function convertTipTapToHTML($bodyTipTapContentArray)
-    {
-        $htmlBody = '';
-        $foundationEmail = new FoundationEmail();
-        foreach ($bodyTipTapContentArray as $key => $keyValuePair) {
-            foreach ($keyValuePair as $key => $value) {
-                $conversionMethod = 'convert' . ucfirst($key);
-                $convertedArray[] = self::$conversionMethod($value);
-            }
-        }
-    }
 
     protected function convertCustomfield($model, $attribute)
     {

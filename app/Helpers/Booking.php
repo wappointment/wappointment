@@ -2,6 +2,8 @@
 
 namespace Wappointment\Helpers;
 
+use Wappointment\Models\Service as ModelsService;
+
 class Booking
 {
     public $data = [];
@@ -13,5 +15,11 @@ class Booking
     public function get($key)
     {
         return isset($this->data[$key]) ? $this->data[$key] : '';
+    }
+
+    public function getService()
+    {
+
+        return ModelsService::find($this->data['service']);
     }
 }

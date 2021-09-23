@@ -2,7 +2,7 @@
 import RequiresAddon from '../Mixins/RequiresAddon'
 export default {
     mixins: [RequiresAddon],
-    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr', 'minimal'],
+    props: ['value', 'label', 'tip', 'model', 'eventChange', 'definition', 'errors', 'parentModel', 'parentErrors', 'id_ovr', 'minimal', 'completeTrigger'],
     watch: {
         updatedValue(newVal, oldVal){
             if(this.formGen !== false && this.model === undefined ) return
@@ -16,8 +16,15 @@ export default {
             let type = this.definition !== undefined && this.definition.type !== undefined ? this.definition.type:''
             if(oldVal !== undefined) {
                 let typeDefi = this.definition === undefined ? '':this.definition.type 
-                return this.$emit(this.eventEmit, newVal, this.model, typeDefi)
+                this.$emit(this.eventEmit, newVal, this.model, typeDefi)
+
+                if(this.completeTrigger){ // trick for booking widget editor
+                    this.$emit('toggleComplete')
+                }
+                return
             }
+
+            
         }
     },
     data: () => ({

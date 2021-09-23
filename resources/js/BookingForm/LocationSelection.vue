@@ -13,16 +13,10 @@
 </template>
 
 <script>
+import IsDemo from '../Mixins/IsDemo'
 export default {
+    mixins:[IsDemo],
     props:['service','relations','options'],
-    data: () => ({
-        disabledButtons: false,
-    }),
-    created(){
-        if(this.options !== undefined && this.options.demoData !== undefined){
-            this.disabledButtons = true
-        }
-    },
     computed:{
         locations(){
             return this.service.locations
@@ -30,10 +24,9 @@ export default {
     },
     methods:{
         selectLocation(location){ 
-            if(this.disabledButtons  && this.options !== undefined) {
-              this.options.eventsBus.emits('stepChanged', 'selection')
-              return
-            } 
+            if(this.triggersDemoEvent('selection')){
+                return
+            }
             this.$emit('locationSelected', 'BookingCalendar', {location:location})
         }
     }

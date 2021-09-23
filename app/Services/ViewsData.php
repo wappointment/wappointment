@@ -154,6 +154,7 @@ class ViewsData
             'front_availability' => $this->front_availability(),
             'widget' => (new WidgetSettings)->get(),
             'widgetDefault' => (new WidgetSettings)->defaultSettings(),
+            'steps' => (new WidgetSettings)->steps(),
             'config' => [
                 'service' => Service::get(),
                 'approval_mode' => Settings::get('approval_mode'),
@@ -288,6 +289,8 @@ class ViewsData
             'forceemail' => Settings::get('forceemail'),
             'allow_refreshavb' => Settings::get('allow_refreshavb'),
             'refreshavb_at' => Settings::get('refreshavb_at'),
+            'clean_pending_every' => Settings::get('clean_pending_every'),
+            'payment_active' => Payment::active(),
         ];
     }
 

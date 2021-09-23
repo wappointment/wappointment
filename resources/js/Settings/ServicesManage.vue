@@ -2,7 +2,7 @@
     <div >
         <div v-if="serviceListing">
             <div class="d-flex align-items-center">
-                <button @click="showService" class="btn btn-outline-primary btn my-2">Add service</button>
+                <button @click="showService" class="btn btn-outline-primary btn my-2 btn-sm">Add service</button>
                 <InputPh v-if="elements && elements.length > 10" class="max-200 ml-2 mb-0" type="text" v-model="searchterm" ph="Search name" />
             </div>
             <div class="table-hover" v-if="elements">
@@ -22,9 +22,17 @@
                                 <div>{{ idx + 1 }} </div> 
                             </td>
                             <td>
-                                <div class="d-flex align-items-center">
-                                    <WapImage v-if="serviceHasIcon(service)" :element="service" :config="{mauto:false}" :desc="service.name" size="lg" /> 
-                                    <div class="ml-2">{{ service.name }}</div>
+                                <div>
+                                    <div class="d-flex align-items-center">
+                                        <WapImage v-if="serviceHasIcon(service)" :element="service" :config="{mauto:false}" :desc="service.name" size="lg" /> 
+                                        <div class="ml-2">
+                                            <div>{{ service.name }}</div>
+                                            <div class="small">
+                                                <div v-if="isSellable(service)" class="text-success">Selling</div>
+                                                <div v-else class="text-info">Free</div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="wlist-actions text-muted">
                                     <span data-tt="Sort" v-if="searchterm == '' && elements.length > 1" ><span class="dashicons dashicons-move"></span></span>
@@ -36,7 +44,9 @@
                             </td>
                             <td>
                                 <div class="d-flex">
-                                    <DurationCell v-for="(durationObj,dkey) in getDurations(service)" :key="dkey" :show="true" :duration="durationObj.duration"/>
+                                    <WCell class="duration-cell" v-for="(durationObj,dkey) in getDurations(service)" :key="dkey">
+                                        <span>{{durationObj.duration}}min</span><span v-if="isSellable(service) && soldDuration(durationObj)">{{ getDurationPrice(durationObj) }}</span>
+                                    </WCell>
                                 </div>
                             </td>
                             <td>
@@ -57,11 +67,9 @@
                 </table>
             </div>
             <Pagination v-if="isPaginated"  :pagination="pagination" @changePage="changePage"/>
-            <WapModal v-if="showShortcode" :show="showShortcode" @hide="hideShortcode" noscroll>
-                <h4 slot="title" class="modal-title"> 
-                    <span>Get Booking Widget Shortcode</span>
-                </h4>
-                <ShortcodeDesigner :service_id="showShortcode" :showTip="false" />
+            <WapModal v-if="showModal" :show="showModal" @hide="hidePopup" noscroll>
+                <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
+                <ShortcodeDesigner v-if="showShortcode" :service_id="showShortcode" :showTip="false" />
             </WapModal>
         </div>
         <div v-if="serviceAdd">
@@ -78,17 +86,19 @@ import WappoServiceService from '../Services/V1/Services'
 import ServicesAddEdit from './ServicesAddEdit'
 import ServicesEditLegacy from '../Views/Subpages/Service'
 import AbstractListing from '../Views/AbstractListing'
-import DurationCell from '../BookingForm/DurationCell'
+import WCell from '../WComp/WCell'
 import ShortcodeDesigner from './ShortcodeDesigner'
 import isSearchable from '../Mixins/isSearchable'
+import HasPopup from '../Mixins/HasPopup'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
     extends: AbstractListing,
-    mixins: [isSearchable],
+    mixins: [isSearchable, HasPopup, CanFormatPrice],
     components:{
-        DurationCell,
+        WCell,
         ServicesAddEdit,
         ServicesEditLegacy,
-        ShortcodeDesigner
+        ShortcodeDesigner,
     },
     data: () => ({
         currentView: 'listing',
@@ -96,12 +106,18 @@ export default {
         elementPassed: null,
         servicesOrder: [],
         showShortcode: false,
+        showCurrency: false,
         keyDataSource:'services'
     }),
     created(){
         this.mainService = this.$vueService(new WappoServiceService)
         if(this.$route.name === 'modalities'){
             this.goToDelivery()
+        }
+    },
+    watch:{
+        currentView(val){
+            this.$emit('isolate', val != 'listing')
         }
     },
     computed: {
@@ -119,11 +135,29 @@ export default {
         },
         limitReached(){
             return this.dataResponse!== null && this.dataResponse.limit_reached
-        }
+        },
     },
     methods: {
+        afterLoaded(response){
+            this.$emit('dataUp', response.data)
+        },
+        soldDuration(durationObj){
+            return ['',undefined,false].indexOf(durationObj.woo_price) === -1
+        },
+        getDurationPrice(durationObj){
+            return this.formatPrice(durationObj.woo_price)
+        },
+        isSellable(service){
+            return service.options.woo_sellable
+        },
+        hideElementsPopup(){
+            this.showShortcode = false
+            this.showCurrency = false
+        },
+        
         getShortCode(service_id){
             this.showShortcode = service_id
+            this.openPopup('Get Booking Widget Shortcode')
         },
         hideShortcode(){
             this.showShortcode = false
@@ -244,5 +278,17 @@ export default {
 .location {
     margin: .2rem;
     color: #717171;
+}
+.wcell.duration-cell{
+    padding: 0;
+}
+.wcell.duration-cell span{
+    display: inline-block;
+    padding: .3em;
+}
+
+.wcell.duration-cell span:nth-child(2) {
+    background: #fbfbfb;
+    border-left:1px solid #ccc;
 }
 </style>

@@ -236,7 +236,6 @@ export default {
         successActivate(response){
 
           if(response.data.message !== undefined){
-            this.$WapModal().notifySuccess(response.data.message)
             this.$WapModal()
               .request(this.sleep(4000))
             window.location = window.apiWappointment.base_admin + '?page=wappointment_addons'
@@ -245,6 +244,8 @@ export default {
           }
           
         },
+
+        
 
         activate(addon){
           this.request(this.activateAddonRequest, addon, this.successActivate, this.failedRequest)
@@ -255,7 +256,7 @@ export default {
         }, 
 
         deactivate(addon){
-          this.request(this.deactivateAddonRequest, addon, this.successInstalled, this.failedRequest)
+          this.request(this.deactivateAddonRequest, addon, this.successActivate, this.failedRequest)
         },
         
         async deactivateAddonRequest(addon) {

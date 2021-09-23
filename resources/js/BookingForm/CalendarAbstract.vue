@@ -7,12 +7,13 @@ import DaysOfWeek from './DaysOfWeek'
 import WeekHeader from './WeekHeader'
 import weekdaysLocale from '../Standalone/weekdaysLocale'
 import monthLocale from '../Standalone/monthLocale'
+import IsDemo from '../Mixins/IsDemo'
 /**
  * TODO Review moment usage
  */
 export default {
     props: ['options','initIntervalsCollection', 'timeprops', 'duration', 'viewData', 'staffs', 'location','service'],
-    mixins: [Dates],
+    mixins: [Dates, IsDemo],
     components: {
         DaySlots, DaysOfWeek, WeekHeader
     }, 
@@ -40,7 +41,6 @@ export default {
             day: false,
             init: false
         },
-        disabledButtons: false,
         object_days: {},
         weekHeader: []
     }),
@@ -256,10 +256,9 @@ export default {
         },
 
         selectSlot(slot){
-            if(this.disabledButtons) {
-              this.options.eventsBus.emits('stepChanged', 'form')
-              return
-            } 
+            if(this.triggersDemoEvent('form')){
+                return
+            }
             
             this.$emit('selectSlot', slot)
         },

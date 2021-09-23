@@ -27,9 +27,9 @@ import StyleGenerator from './Components/StyleGenerator'
 import Colors from './Modules/Colors'
 import UrlParam from './Modules/UrlParam'
 import ckl from './Standalone/chunkloader.js'
-
+import IsDemo from './Mixins/IsDemo'
 export default {
-    mixins: [Colors, UrlParam],
+    mixins: [Colors, UrlParam, IsDemo],
     props: ['classEl', 'options', 'step', 'attributesEl'],
     components: { 
         BookingButton,
@@ -44,7 +44,6 @@ export default {
         opts: null,
         elementId: '',
         stepName: '',
-        disabledButtons: false,
         buttonTitle: '',
         brFixed: undefined,
         popup: false,
@@ -59,9 +58,6 @@ export default {
         this.currentStep = this.step
       }
       this.opts = this.options === undefined ? window.widgetWappointment : Object.assign ({}, this.options)
-      if(this.opts.demoData !== undefined){
-          this.disabledButtons = true
-      }
       this.processShortcode()
     },
     mounted(){
@@ -207,9 +203,23 @@ export default {
             this.largeVersion = [undefined,false].indexOf(this.attributesEl.largeVersion) === -1
             this.opts.selection.check_viewweek = [undefined,false].indexOf(this.attributesEl.week) === -1
             this.autoPop = [undefined,false].indexOf(this.attributesEl.popOff) !== -1
-            
+
+            this.opts.attributesEl = Object.assign({},this.attributesEl)
+
           }
-         
+        },
+        translateAttributesEl(){
+          let attributes = {}
+          for (const key in this.attributesEl) {
+            if (this.attributesEl.hasOwnProperty(key) && 
+            ['buttonTitle','brFixed','demoAs','largeVersion',
+            'week','popOff','autoOpen','autoPop','staffSelection','serviceSelection'].indexOf(key) !== -1) {
+
+              attributes[key] = this.attributesEl[key]
+              
+            }
+          }
+          return attributes
         },
         processAutoOpens(){
           if(this.hasAttributesToProcess && [undefined,false].indexOf(this.attributesEl.autoOpen) === -1 ) {
@@ -297,6 +307,10 @@ export default {
   background: transparent;
   height: auto;
   text-transform: none;
+}
+
+.wap-front .wbtn-block{
+  width: 100%;
 }
 
 
@@ -443,9 +457,10 @@ export default {
 }
 
 .wap-front .wappointment-errors{
-    background-color:var(--wappo-error-tx);
+    background-color:var(--wappo-error-tx);    
 }
-.wap-front .wappointment-errors div{
+
+.wap-front .wrap-calendar div.wappointment-errors{
     color: #fff;
     font-size: .9em;
 }

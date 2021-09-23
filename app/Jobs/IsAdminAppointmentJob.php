@@ -39,7 +39,16 @@ trait IsAdminAppointmentJob
             $this->transport->to($email_staff);
         }
 
+        $this->addReplyTo();
+
         return $this->generateContent();
+    }
+
+    protected function addReplyTo()
+    {
+        if (!empty($this->appointment)) {
+            $this->transport->reply($this->appointment->client->email, $this->appointment->client->name);
+        }
     }
 
     protected function isLegacy()

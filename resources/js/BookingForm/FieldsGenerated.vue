@@ -46,6 +46,7 @@ import TextArea from './Fields/TextArea.vue'
 import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
 import MixinLegacy from './MixinLegacy'
+import IsDemo from '../Mixins/IsDemo'
 export default {
     components: {
         TextInput,
@@ -58,8 +59,8 @@ export default {
         PhoneInput,
         DateInput
     },
-    props:['duration', 'location', 'custom_fields', 'data', 'disabledButtons', 'options', 'service', 'validators', 'disabledEmail'],
-    mixins: [MixinLegacy],
+    props:['duration', 'location', 'custom_fields', 'data', 'options', 'service', 'validators', 'disabledEmail'],
+    mixins: [MixinLegacy, IsDemo],
     data: () => ({
         customFields: [],
         bookingFormExtended: {
@@ -96,19 +97,14 @@ export default {
                         }
                     }
                 }
-         
-                if(this.disabledButtons) {
-                    this.options.eventsBus.emits('dataDemoChanged', newValue)
-                } 
+
+                //this.triggersDemoEvent(newValue)
                 this.$emit('changed', this.bookingFormExtended, this.errorsOnFields)
             },
             deep: true
         },
     },
     computed: {
-        isDemo(){
-            return this.options !== undefined && this.options.demoData !== undefined
-        },
         getServiceFields(){
             return this.isLegacy ? this.legacyGetServiceFields:this.service.options.fields
         },
@@ -248,7 +244,10 @@ export default {
         },
 
         fieldPassValidations(fieldObject, validations, value){
-            
+
+            if(fieldObject.core === undefined && fieldObject.required!==true){
+                return true
+            }
             let field_required = 'Field is required'
             switch(fieldObject.type){
 

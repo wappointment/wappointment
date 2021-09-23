@@ -4,7 +4,7 @@
         <div class="d-flex">
             <textarea class="form-control" v-model="updateValue"
             :id="name"
-            :rows="rows || 2"
+            :rows="rows"
             :placeholder="getLabel" :required="isRequired"></textarea>
         </div>
     </div>
@@ -14,5 +14,11 @@
 import abstractInput from './abstractInput.vue'
 export default {
     extends: abstractInput,
+    props:{
+        rows:{
+            type:Number,
+            default: 2
+        }
+    }
 }   
 </script>

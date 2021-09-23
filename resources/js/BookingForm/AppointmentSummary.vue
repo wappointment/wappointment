@@ -27,6 +27,16 @@
                 <span  class="wclose" @click="changeTime" ></span>
             </div>
         </div>
+        <div class="wsummary-section wsec-package" v-if="[false,null].indexOf(selectedPackage)===-1">
+            <div class="wlabel"  v-if="hasText(['general','package'])">{{options.general.package}}</div>
+            <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline">
+                <WapImage v-if="packageHasIcon" :element="selectedPackage" :desc="selectedPackage.options.name" size="auto" />
+                <span class="welementname wml-2">{{ selectedPackage.options.name }}</span>
+                <span class="wcredits wsep">{{selectedVariation.credits}} {{selectedPackage.type_label}}</span>
+                <span class="wprice wsep">{{ formatPrice(selectedVariation.price) }}</span>
+                <span  class="wclose" @click="changePackage" ></span>
+            </div>
+        </div>
     </div>
 </template>
 
@@ -34,8 +44,10 @@
 import ElementSelected from './ElementSelected'
 import MixinChange from './MixinChange'
 import MixinChangeCommands from './MixinChangeCommands'
+import IsDemo from '../Mixins/IsDemo'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
-    mixins:[window.wappointmentExtends.filter('MixinChange', MixinChange), MixinChangeCommands],
+    mixins:[window.wappointmentExtends.filter('MixinChange', MixinChange), MixinChangeCommands,IsDemo, CanFormatPrice],
     props: {
         service: {
             type: [Object, Boolean], 
@@ -64,7 +76,12 @@ export default {
             type: Array
         },
         rescheduling:{},
-        appointmentSaved: {}
+        appointmentSaved: {},
+        selectedVariation:{},
+        selectedPackage:{
+            type:[Object, Boolean],
+            default:null
+        },
     },
     components: { 
         ElementSelected: window.wappointmentExtends.filter('ElementSelected', ElementSelected)
@@ -94,6 +111,9 @@ export default {
         },
         serviceHasIcon(){
             return this.service.options.icon != ''
+        },
+        packageHasIcon(){
+            return this.selectedPackage.options.icon != ''
         }
     },
     methods:{
@@ -111,6 +131,9 @@ export default {
         },
         changeTime(){
             this.$emit('changeService', 'BookingCalendar', {selectedSlot:false})
+        },
+        changePackage(){
+            this.$emit('changeService', 'PackagesSelection', {selectedPackage:false, selectedVariation: false})
         }
     }
     
@@ -119,8 +142,8 @@ export default {
 <style>
 @import '../../css/closable.css';
 .wap-front .wsummary-section {
-    padding: .4em;
     font-size: .8em;
+    padding: .4em;
 }
 
 .wmy-4{

@@ -27,7 +27,7 @@
                     <FieldsGenerated @changed="changedBF" @dataDemoChanged="dataDemoChanged" 
                     :validators="validators" :custom_fields="custom_fields" 
                     :service="service" :location="location" :data="data" 
-                    :options="options" :disabledButtons="disabledButtons" />
+                    :options="options" />
                 
                     <div v-if="termsIsOn" class="wap-terms" v-html="getTerms"></div>
                 </div>
@@ -55,12 +55,15 @@ import FormMixinLegacy from './FormMixinLegacy'
 import MixinLegacy from './MixinLegacy'
 import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
+import IsDemo from '../Mixins/IsDemo'
+import HasPaidService from '../Mixins/HasPaidService'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
     extends: AbstractFront,
-    mixins: [  MixinTypeSelected, FormMixinLegacy,MixinLegacy],
+    mixins: [ MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, CanFormatPrice, HasPaidService],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
     'timeprops', 'relations', 'appointment_starts_at',
-    'duration', 'location', 'custom_fields', 'staffs','selectedStaff'],
+    'duration', 'location', 'custom_fields', 'staffs','selectedStaff','selectedPackage','selectedVariation'],
     components: {
         BookingAddress,
         PhoneInput,
@@ -73,7 +76,6 @@ export default {
         phoneValid: false,
         errorsOnFields: {},
         mounted: false,
-        disabledButtons: false,
         bookingFormExtended: null,
         canDisplayInputs: false,
         staff: null
@@ -82,9 +84,6 @@ export default {
     created(){
         
         this.serviceAppointmentService = this.$vueService(new WappoServiceBooking)
-        if(this.options!== undefined && this.options.demoData !== undefined){
-            this.disabledButtons = true
-        }
         if(this.isLegacy){
             if(this.service.type.length == 1 || this.disabledButtons){
                 this.selectType(this.service.type[0])
@@ -205,10 +204,10 @@ export default {
         },
 
         back(){
-            if(this.disabledButtons) {
-              this.options.eventsBus.emits('stepChanged', 'selection')
-              return
-            } 
+
+            if(this.triggersDemoEvent('selection')){
+                return
+            }
             this.$emit('back', this.relations.prev,{selectedSlot:false})
         },
 
@@ -217,10 +216,9 @@ export default {
         },
 
         confirm(){
-            if(this.disabledButtons) {
-              this.options.eventsBus.emits('stepChanged', 'confirmation')
-              return
-            } 
+            if(this.triggersDemoEvent('confirmation')){
+                return
+            }
             let data = this.bookingFormExtended
             data.time = this.selectedSlot
             data.ctz = this.timeprops.ctz
@@ -228,6 +226,11 @@ export default {
             data.location = this.location.id
             data.duration = this.duration
             data.staff_id = this.staff.id
+            if(this.selectedPackage){
+                data.package_id = this.selectedPackage.id
+                data.package_price_id = this.selectedVariation.price_id
+            }
+            
             //turns loading mode on in parent
             this.$emit('loading', {loading:true, dataSent: data})
             //create request
@@ -242,20 +245,27 @@ export default {
 
         appointmentBooked(result){
             if(result.data.result !== undefined){
-                let relationnext = window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, {result:result, service: this.service} )
-
-                this.$emit('confirmed', relationnext, {
-                    appointmentSavedData: result.data.appointment, 
+                let data ={
+                    appointmentSavedData: result.data.appointment,
+                    order: result.data.order,
                     isApprovalManual: result.data.status == 0, 
                     appointmentSaved: true, 
                     appointmentKey: result.data.appointment.edit_key, 
                     loading: false
-                })
+                }
+                console.log('data',data)
+                this.$emit('confirmed', 
+                this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
+                data
+                )
             }else{
                 this.$emit('loading', {loading:false})
                 this.appointmentBookingError({message: 'Error in booking request response'})
             }
-            
+        },
+
+        getAddonNextScreen(result){
+            return window.wappointmentExtends.filter('AppointmentBookedNextScreen', this.relations.next, {result:result, service: this.service} )
         },
 
         appointmentBookingError(error){

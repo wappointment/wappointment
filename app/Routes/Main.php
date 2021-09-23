@@ -35,6 +35,10 @@ class Main extends AbstractRoutes
                     'method' => 'save',
                     'hint' => 'LegacyBooking'
                 ],
+                '/order/confirm' => [
+                    'controller' => 'OrderController',
+                    'method' => 'confirm',
+                ],
             ],
             'PATCH' => [
                 '/booking' => [
@@ -74,6 +78,11 @@ class Main extends AbstractRoutes
                     'methods' => ['get', 'post', 'delete'],
                     'controller' => 'LocationsController'
                 ],
+                '/currency' => [
+                    'methods' => ['get', 'post'],
+                    'controller' => 'CurrencyController'
+                ],
+
             ],
             'GET' => [
                 '/addons/check' => [
@@ -102,7 +111,11 @@ class Main extends AbstractRoutes
                     'controller' => 'ServicesController',
                     'paginated' => true
                 ],
-
+                '/orders' => [
+                    'controller' => 'OrdersBackController',
+                    'method' => 'index',
+                    'paginated' => true
+                ],
             ],
             'POST' => [
                 '/addons/clear' => [
@@ -210,6 +223,10 @@ class Main extends AbstractRoutes
                 '/calendars/permissions' => [
                     'controller' => 'CalendarsController',
                     'method' => 'savePermissions',
+                ],
+                '/order/refund' => [
+                    'controller' => 'OrdersBackController',
+                    'method' => 'refund',
                 ],
             ],
         ],

@@ -12,7 +12,7 @@ class Client extends Model
     use SoftDeletes, CanBook, CanBookLegacy;
 
     protected $table = 'wappo_clients';
-
+    public $generatingOrder = true;
     protected $fillable = [
         'name', 'email', 'options'
     ];
@@ -83,5 +83,39 @@ class Client extends Model
     public function mailableAddress()
     {
         return [$this->email => sanitize_text_field($this->name)];
+    }
+
+    public function getOrder()
+    {
+        $pendingOrder = Order::where('client_id', $this->id)->pending()->first();
+
+        if (empty($pendingOrder)) {
+            $pendingOrder = Order::create([
+                'client_id' => $this->id,
+                'transaction_id' => uniqid('onsite_' . $this->id),
+                'tax_percent' => $this->getTaxPercentage()
+            ]);
+        }
+        return $pendingOrder;
+    }
+
+    public function getTaxPercentage()
+    {
+        return !empty($this->client->options['tax_percent']) ? $this->client->options['tax_percent'] : Settings::get('tax');
+    }
+
+    public function generateOrder(Appointment $appointment)
+    {
+        if (!$this->generatingOrder) {
+            return null;
+        }
+        //if pending order already exist, just get that one
+        $pendingOrder = $this->getOrder();
+
+        $pendingOrder->add($appointment);
+        $appointment->recordOrderReference($pendingOrder);
+        $pendingOrder->refreshTotal();
+        $pendingOrder->load('prices');
+        return $pendingOrder;
     }
 }

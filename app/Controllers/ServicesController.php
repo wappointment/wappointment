@@ -8,20 +8,22 @@ use Wappointment\Services\Services;
 use Wappointment\Services\VersionDB;
 use Wappointment\Managers\Service;
 use Wappointment\Repositories\Services as RepositoriesServices;
+use Wappointment\Services\Payment;
+use Wappointment\Services\Settings;
 
 class ServicesController extends RestController
 {
 
     public function get(Request $request)
     {
-
         $serviceModel = Service::model();
         $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
         $services = $db_update_required ? $this->getlegacy() : (new RepositoriesServices)->get();
         $data = [
             'db_required' => $db_update_required,
             'services' => $services,
-            'page' => $request->input('page'),
+            'currency' => Payment::currencyCode(),
+            'tax' => Settings::get('tax'),
         ];
 
         if (!$db_update_required) {

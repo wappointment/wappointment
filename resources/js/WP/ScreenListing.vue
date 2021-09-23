@@ -1,7 +1,7 @@
 <template>
     <WPScreenOptions>
-        <div class="d-flex mb-2">
-            <label class="form-check-label w-100" for="per_page">
+        <div>
+            <slot />
             <div class="d-flex align-items-center">
                 <label for="per_page" class="col-sm-3">Results per page</label>
                 <div class="col-sm-4">
@@ -14,7 +14,6 @@
                     </select>
                 </div>
             </div>
-            </label>
         </div>
     </WPScreenOptions>
 </template>

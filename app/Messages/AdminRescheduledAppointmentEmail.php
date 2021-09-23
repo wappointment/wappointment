@@ -33,8 +33,13 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
         $this->addLines([
             'Have a great day!',
             '',
-            'Ps: An .ics file with the appointment\'s details is attached'
         ]);
+
+        if (!$this->areAttachmentsDisabled()) {
+            $this->addLines([
+                'Ps: An .ics file with the appointment\'s details is attached'
+            ]);
+        }
         $this->attachIcs([$this->params['appointment']], 'appointment', true);
     }
 }

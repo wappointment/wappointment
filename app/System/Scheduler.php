@@ -8,6 +8,8 @@ use Wappointment\Services\VersionDB;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Calendars;
 use Wappointment\Services\Availability;
+use Wappointment\Services\Flag;
+use Wappointment\Jobs\CleanPendingPaymentAppointment;
 
 /**
  * TODO Most of this class is static but it has a constructor, review
@@ -77,6 +79,7 @@ class Scheduler
             }
         }
         static::checkDotCom();
+        static::registerCleanPending();
     }
 
     /**
@@ -87,6 +90,15 @@ class Scheduler
     public static function checkDotCom()
     {
         (new \Wappointment\Services\Wappointment\DotCom)->checkForUpdates();
+    }
+
+    public static function registerCleanPending()
+    {
+        //Flag::save('CleanPending', false);
+        if (!Flag::get('CleanPending')) {
+            CleanPendingPaymentAppointment::registerJob();
+            Flag::save('CleanPending', true);
+        }
     }
 
     /**

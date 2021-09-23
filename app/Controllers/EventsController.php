@@ -223,6 +223,7 @@ class EventsController extends RestController
         }
 
         foreach ($appointments as $event) {
+            $owes = !empty($event->client->options['owes']) ? $event->client->options['owes'] : 0;
             $addedEvent = [
                 'start' => $event->start_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
                 'end' => $event->end_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
@@ -235,7 +236,8 @@ class EventsController extends RestController
                 'type' => 'appointment',
                 'onlyDelete' => true,
                 'rendering' => (bool) $event->status ? 'appointment-confirmed' : 'appointment-pending',
-                'className' => (bool) $event->status ? 'appointment-confirmed' : 'appointment-pending'
+                'className' => ($owes > 0 ? 'appointment-owes ' : '') . ((bool) $event->status ? 'appointment-confirmed' : 'appointment-pending'),
+                'owes' => $owes
             ];
             if ($this->isLegacy) {
                 $events[] = $addedEvent;
@@ -263,6 +265,7 @@ class EventsController extends RestController
         $recurringBusy = $recurringBusyQuery->get();
 
         $maxts = (new \Wappointment\Services\Availability($staff_id))->getMaxTs();
+
         $punctualEvent = Status::expand($recurringBusy, $maxts < $ends_at_carbon->timestamp ? $maxts : $ends_at_carbon->timestamp);
 
         $statusEvents = $statusEvents->concat($punctualEvent);

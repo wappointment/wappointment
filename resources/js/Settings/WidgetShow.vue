@@ -13,7 +13,7 @@
       <div v-if="isWidgetShown">
           <transition name="slide-fade-top">
             <BookingWidgetEditor  :bgcolor="getBgColor" :editingMode="editing" :widgetFields="widgetFields" :shortcodeParams="params"
-            :config="viewData.config" :preoptions="widgetData" :defaultSettings="widgetDefault" :frontAvailability="frontAvailability" />
+            :config="viewData.config" :preoptions="widgetData" :defaultSettings="widgetDefault" :frontAvailability="frontAvailability" :steps="viewData.steps" />
           </transition>
       </div>
       <div v-else>

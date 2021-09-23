@@ -9,7 +9,9 @@
 </template>
 
 <script>
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
+    mixins:[CanFormatPrice],
     props: {
         service: {
             type: Object, 
@@ -31,7 +33,16 @@ export default {
         },
 
         getPrice(){
-            return this.getWooPrice !== undefined && typeof this.getWooPrice == 'function' ? this.getWooPrice():false
+            if(this.service.options.durations === undefined){
+                return false
+            }
+            for (let i = 0; i < this.service.options.durations.length; i++) {
+                const dur = this.service.options.durations[i]
+                if(dur.duration == this.duration && ['',undefined].indexOf(dur.woo_price) === -1 ){
+                    return this.formatPrice(dur.woo_price)
+                }
+            }
+            
         }
     },
 }

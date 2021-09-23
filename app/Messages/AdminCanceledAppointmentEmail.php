@@ -22,8 +22,14 @@ class AdminCanceledAppointmentEmail extends AbstractAdminEmail
         $this->addLines([
             'Have a great day!',
             '',
-            'Ps: An .ics file with the appointment\'s details is attached'
         ]);
+
+        if (!$this->areAttachmentsDisabled()) {
+            $this->addLines([
+                'Ps: An .ics file with the appointment\'s details is attached'
+            ]);
+        }
+
 
         $this->attachCancelled([$this->params['appointment']], 'cancelled_appointment');
     }

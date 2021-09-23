@@ -2,6 +2,7 @@
 
 namespace Wappointment\Messages;
 
+use Wappointment\Helpers\Get;
 use Wappointment\Services\Settings;
 use Wappointment\WP\Helpers as WPHelpers;
 
@@ -23,79 +24,7 @@ class TagsReplacement
 
     public static function emailsTags()
     {
-        $email_tags_core = [
-            [
-                'model' => 'client',
-                'key' => 'name',
-                'label' => 'Client\'s name',
-                'sanitize' => true
-            ],
-            [
-                'model' => 'client',
-                'key' => 'email',
-                'label' => 'Client\'s email',
-                'sanitize' => true
-            ],
-            [
-                'model' => 'client',
-                'key' => 'phone',
-                'label' => 'Client\'s phone',
-                'getMethod' => 'getPhone',
-                'sanitize' => true
-            ],
-            [
-                'model' => 'client',
-                'key' => 'skype',
-                'label' => 'Client\'s skype',
-                'getMethod' => 'getSkype',
-                'sanitize' => true
-            ],
-            [
-                'model' => 'service',
-                'key' => 'name',
-                'label' => 'Service name',
-                'getMethod' => 'getServiceName',
-                'sanitize' => true,
-                'modelCall' => 'appointment'
-            ],
-            [
-                'model' => 'service',
-                'key' => 'address',
-                'label' => 'Service address',
-                'getMethod' => 'getServiceAddress',
-                'sanitize' => true,
-                'modelCall' => 'appointment'
-            ],
-            [
-                'model' => 'appointment',
-                'key' => 'duration',
-                'label' => 'Appointment\'s duration',
-                'getMethod' => 'getDuration'
-            ],
-            [
-                'model' => 'appointment',
-                'key' => 'location',
-                'label' => 'Appointment\'s location',
-                'getMethod' => 'getLocation'
-            ],
-            [
-                'model' => 'appointment',
-                'key' => 'starts',
-                'label' => 'Appointment\'s date and time',
-                'getMethod' => 'getStartsDayAndTime'
-            ],
-            [
-                'model' => 'staff',
-                'key' => 'name',
-                'label' => 'Staff Name',
-                'sanitize' => true,
-                'getMethod' => 'getStaffName',
-                'modelCall' => 'appointment'
-            ],
-
-        ];
-
-        return apply_filters('wappointment_emails_tags', static::appendStaffCF($email_tags_core));
+        return apply_filters('wappointment_emails_tags', static::appendStaffCF(Get::list('email_tags')));
     }
 
     public static function appendStaffCF($email_tags_core)
@@ -118,51 +47,7 @@ class TagsReplacement
 
     public static function emailsLinks()
     {
-        $email_links_core = [
-            [
-                'model' => 'appointment',
-                'key' => 'linkAddEventToCalendar',
-                'label' => 'Link to save appointment to calendar',
-                'getMethod' => 'getLinkAddEventToCalendar'
-            ],
-            [
-                'model' => 'appointment',
-                'key' => 'linkRescheduleEvent',
-                'label' => 'Link to reschedule appointment',
-                'getMethod' => 'getLinkRescheduleEvent'
-            ],
-            [
-                'model' => 'appointment',
-                'key' => 'linkCancelEvent',
-                'label' => 'Link to cancel appointment',
-                'getMethod' => 'getLinkCancelEvent'
-            ],
-            [
-                'model' => 'appointment',
-                'key' => 'linkNew',
-                'label' => 'Link to book a new appointment',
-                'getMethod' => 'getLinkNewEvent',
-                'modelCall' => 'email_helper'
-            ],
-            [
-                'model' => 'appointment',
-                'key' => 'linkNewStaff',
-                'label' => 'Link to book a new appointment with the same staff',
-                'getMethod' => 'getLinkNewEventStaff',
-                'modelCall' => 'email_helper',
-                'requiresParams' => true
-            ],
-            [
-                'model' => 'appointment',
-                'key' => 'linkView',
-                'label' => 'Link to view the appointment details (Meeting room url etc ...)',
-                'getMethod' => 'getLinkViewEvent'
-            ],
-
-
-        ];
-
-        return apply_filters('wappointment_emails_links', $email_links_core);
+        return apply_filters('wappointment_emails_links', Get::list('email_links'));
     }
 
 
@@ -171,9 +56,14 @@ class TagsReplacement
         return str_replace($this->finds, $this->replaces, $subject);
     }
 
+    /**
+     * Todo generate the value of only the found tags
+     *
+     * @return void
+     */
     private function prepareTags()
     {
-        foreach (array_merge(static::emailsTags(), static::emailsLinks()) as $key => $tag) {
+        foreach (array_merge(static::emailsTags(), static::emailsLinks()) as $tag) {
             $tag_find = '[' . $tag['model'] . ':' . $tag['key'] . ']';
             $replace = $this->getValue($tag);
             if (!empty($tag['sanitize'])) {

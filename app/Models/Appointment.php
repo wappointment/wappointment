@@ -33,19 +33,26 @@ class Appointment extends Model
     const STATUS_CONFIRMED = 1;
 
     protected $appends = ['duration_sec', 'location_label', 'can_cancel_until', 'can_reschedule_until'];
+    protected $services = [];
+
+    public function service()
+    {
+        return $this->belongsTo(Service::class, 'service_id');
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'location_id');
+    }
 
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');
     }
 
-    public function service()
+    public function order()
     {
-        return $this->belongsTo(Service::class, 'service_id');
-    }
-    public function location()
-    {
-        return $this->belongsTo(Location::class, 'location_id');
+        return $this->belongsToMany(Order::class, 'wappo_order_price', 'appointment_id', 'order_id');
     }
 
     public function getStaff()
@@ -93,7 +100,11 @@ class Appointment extends Model
 
     public function getStatusTag()
     {
-        return $this->status == static::STATUS_AWAITING_CONFIRMATION ? '[Pending]' : '';
+        return $this->isPending() ? '[Pending]' : '';
+    }
+    public function isPending()
+    {
+        return $this->status == static::STATUS_AWAITING_CONFIRMATION;
     }
 
     public function incrementSequence()
@@ -129,7 +140,6 @@ class Appointment extends Model
         return ServicesAppointment::getLocation($location, $this);
     }
 
-
     public function toArraySpecial()
     {
         $array = parent::toArray();
@@ -146,6 +156,16 @@ class Appointment extends Model
         }
         unset($array['id']);
         return $array;
+    }
+
+    public function boughtWithPackage()
+    {
+        return !empty($this->options['buying_package']);
+    }
+
+    public function packageVariation()
+    {
+        return $this->options['package_price_id'];
     }
 
     protected function getLocationObject()
@@ -358,8 +378,6 @@ class Appointment extends Model
         return $link ? $link : $this->getPageLink('view-event');
     }
 
-
-
     public function canRescheduleUntilTimestamp()
     {
         return $this->start_at->getTimestamp() - ((int) Settings::get('hours_before_rescheduling_allowed') * 60 * 60);
@@ -437,5 +455,80 @@ class Appointment extends Model
             $toDotcom['skype']  = $this->client->getSkype();
         }
         return $toDotcom;
+    }
+
+    public function getDurationsPriceIds()
+    {
+        $ids = [];
+        foreach ($this->services as $service) {
+            $ids[] = $service->getDurationPriceId($this->getDurationInSec() / 60);
+        }
+        return $ids;
+    }
+
+    public function getServicesPrices()
+    {
+        return $this->filterPrices($this->queryPrices(
+            Price::isService(),
+            $this->getDurationsPriceIds()
+        ));
+    }
+
+    public function paidWithPackage()
+    {
+        return !empty($this->options['package_price_id']);
+    }
+
+    public function getPackagePricesId()
+    {
+        return $this->paidWithPackage() ? [$this->options['package_price_id']] : false;
+    }
+
+    public function getPackagePrices()
+    {
+        return $this->filterPrices($this->queryPrices(
+            Price::isPackage(),
+            $this->getPackagePricesId()
+        ));
+    }
+
+    public function queryPrices($query, $price_ids)
+    {
+        $query->where(function ($query) use ($price_ids) {
+            $query->whereIn('parent', $price_ids);
+            $query->orWhereIn('id', $price_ids);
+        });
+        $staff_id = $this->staff_id;
+        return $query->where(function ($query) use ($staff_id) {
+            $query->whereNull('staff_id');
+            $query->orWhere('staff_id', $staff_id);
+        })->get();
+    }
+
+    public function filterPrices($prices)
+    {
+        //remove overriden prices
+        $getOverridedIds = $prices->filter(function ($e) {
+            return !empty($e->staff_id);
+        })->map(function ($e) {
+            return $e->parent;
+        });
+        $overridedIds = array_values($getOverridedIds->toArray());
+        return $prices->filter(function ($e) use ($overridedIds) {
+            return !in_array($e->id, $overridedIds);
+        });
+    }
+
+    public function hydrateService($services)
+    {
+        $this->services = !is_array($services) ? [$services] : $services;
+    }
+
+    public function recordOrderReference(Order $order)
+    {
+        $options = $this->options;
+        $options['order_id'] = $order->id;
+        $this->options = $options;
+        $this->save();
     }
 }

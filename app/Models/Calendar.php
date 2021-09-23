@@ -4,8 +4,8 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\SoftDeletes;
-use Wappointment\Managers\Central;
 use Wappointment\Repositories\Services;
+use Wappointment\Services\Settings;
 
 class Calendar extends Model
 {
@@ -63,11 +63,19 @@ class Calendar extends Model
 
     public function addAllServices()
     {
-        $services = \WappointmentLv::collect((new Services)->get());
-        //$services = Central::get('ServiceModel')::select('id')->fetch();
+        $this->services()->sync($this->getDefaultServicesId());
+    }
 
-        $this->services()->sync($services->map(function ($e) {
-            return $e['id'];
-        })->toArray());
+    protected function getDefaultServicesId()
+    {
+        $default = Settings::get('servicesDefault');
+        if ($default === true) {
+            $services = \WappointmentLv::collect((new Services)->get());
+
+            return $services->map(function ($e) {
+                return $e['id'];
+            })->toArray();
+        }
+        return $default;
     }
 }

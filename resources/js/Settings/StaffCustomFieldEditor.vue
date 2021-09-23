@@ -6,7 +6,7 @@
         </div>
         <div class="p-2 rounded bg-secondary">
             <div v-if="adding">
-                <InputPh :value="field_name" @input="updateFieldName" ph="Field name" />
+                <InputPh v-model="field_name" ph="Field name" />
                 <button class="btn btn-primary" :class="{'disabled':!isValidField}" @click="saveField">Save field</button>
             </div>
             <div v-else>

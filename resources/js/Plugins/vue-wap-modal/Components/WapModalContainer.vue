@@ -8,6 +8,12 @@
           @expired="notifyHasExpired"></WapNotify>
         </template>
       </div>
+      <div v-if="isReloading" class="wapmodal wapmodal-show d-flex align-items-center justify-content-center">
+          <div>
+            <WLoader />
+            <div class="text-white text-center">Page is reloading</div>
+          </div>
+      </div>
       <WapModal v-if="show" :show="show" 
       :loader="loader" :screenshot="screenshot" :options="options" :prompt="prompt" 
       @hide="hideModal"  @canceled="canceled" @confirmed="confirmed">
@@ -36,7 +42,8 @@ export default {
       finalCallback: null,
       notifications: [],
       cleared: [],
-      list_body_elements:[]
+      list_body_elements:[],
+      isReloading:false
     };
   },
   watch: {
@@ -82,7 +89,10 @@ export default {
   },
 
   methods: {
-
+    reload(){
+      this.isReloading = true
+      window.location.reload()
+    },
     isActive(notif){
       return this.cleared.indexOf(notif.id) == -1 
     },

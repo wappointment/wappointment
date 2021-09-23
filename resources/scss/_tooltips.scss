@@ -53,6 +53,7 @@
 
 .tt-lg[data-tt]::before{
   min-width: 300px;
+  text-align: left;
 }
 .tt-lg[data-tt]::before,
 .tt-lg[data-tt]::after{
@@ -93,12 +94,28 @@
 }
 
 
+.tt-success[data-tt]::before {
+  background-color: rgba(83, 168, 65, 0.8);
+  content: '\2714  ' attr(data-tt);
+}
+.tt-disabled[data-tt]::before {
+  background-color: rgba(144, 144, 159, 0.8);
+  content: '\2716  ' attr(data-tt);
+}
+
+.tt-disabled img {
+  filter:grayscale(1);
+}
+.tt-disabled:hover img {
+  filter:grayscale(0);
+}
+
 .tt-danger[data-tt]::before{
   background-color: rgba($danger, 1);
 }
-.tt-success[data-tt]::before{
-  background-color: rgba($success, 1);
-}
+// .tt-success[data-tt]::before{
+//   background-color: rgba($success, 1);
+// }
 .tt-info[data-tt]::before{
   background-color: #9f9f9f;
 }

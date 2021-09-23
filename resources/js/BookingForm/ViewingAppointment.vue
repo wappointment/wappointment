@@ -81,7 +81,6 @@ import ViewingAppointmentMixin from './ViewingAppointmentMixin'
 import MixinTypeSelected from './MixinTypeSelected'
 import momenttz from '../appMoment'
 import minText from './minText'
-
 let mixins = {ViewingAppointmentMixin:ViewingAppointmentMixin}
 mixins = window.wappointmentExtends.filter('ViewingAppointmentMixin', mixins)
 
@@ -117,7 +116,6 @@ export default {
         showCancelConfirmation: false,
         appointmentCanceled: false,
         errorLoading: '',
-        disabledButtons: false,
         rescheduleData: null,
         momenttz: momenttz,
         timeLeft: '',
@@ -208,7 +206,9 @@ export default {
         },
 
         cancelAppointmentConfirmed(){
-            if(this.disabledButtons) return false
+            if(this.disabledButtons) {
+                return false
+            }
             this.loading = true
             this.buttonClicked = true
             this.cancelAppointmentRequest()
@@ -228,7 +228,9 @@ export default {
         appointmentCancelError(){
         },
         rescheduleEvent(){
-            if(this.disabledButtons) return false
+            if(this.disabledButtons) {
+                return false
+            }
             this.buttonClicked = true
             this.showReschedule = true
         },

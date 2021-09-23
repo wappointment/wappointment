@@ -7,6 +7,7 @@ use Wappointment\Services\ServiceInterface;
 use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Validators\RequiredIfFields;
 use Wappointment\Models\Location as LocationModel;
+use Wappointment\Models\Price as ModelsPrice;
 
 class Services implements ServiceInterface
 {
@@ -81,20 +82,63 @@ class Services implements ServiceInterface
                 throw new \WappointmentValidationException("Cannot save Services");
             }
         }
-
+        $serviceData = static::savePrices($serviceData);
         $serviceData = apply_filters('wappointment_service_before_saved', $serviceData, $serviceDB);
 
         if (!empty($serviceDB)) {
             $serviceDB->update($serviceData);
         } else {
             $serviceDB = static::getModel()::create($serviceData);
+            static::updatePricesReference($serviceDB->id, $serviceData);
         }
+
         if (!empty($serviceData['locations_id'])) {
             $serviceDB->locations()->sync($serviceData['locations_id']);
         }
 
         do_action('wappointment_service_saved', $serviceData);
         return $serviceDB;
+    }
+
+    public static function savePrices($serviceData)
+    {
+        $durations  = static::getDurations($serviceData);
+        if (empty($durations)) {
+            return $serviceData;
+        }
+        foreach ($durations as $key => $duration) {
+            $price = new Price(empty($duration['price_id']) ? false : $duration['price_id']);
+            $price->forService();
+            $price->setPrice($duration['woo_price']);
+            $price->setData([
+                'reference_id' => !empty($serviceData['id']) ? $serviceData['id'] : 0,
+                'name' => $serviceData['name'] . ' - ' . $duration['duration'] . 'min',
+            ]);
+            $price_id = $price->save();
+
+            if (empty($duration['price_id'])) {
+                $duration['price_id'] = $price_id;
+            }
+
+            $durations[$key] = $duration;
+        }
+        $serviceData['options']['durations'] = array_values($durations);
+        return $serviceData;
+    }
+
+    public static function updatePricesReference($id, $serviceData)
+    {
+        $durations  = static::getDurations($serviceData);
+        $price_ids = [];
+        foreach ($durations as $duration) {
+            $price_ids[] = $duration['price_id'];
+        }
+        ModelsPrice::whereIn('id', $price_ids)->update(['reference_id' => $id]);
+    }
+
+    public static function getDurations($serviceData)
+    {
+        return !empty($serviceData['options']['woo_sellable']) && !empty($serviceData['options']['durations']) ? $serviceData['options']['durations'] : [];
     }
 
     public static function patch($service_id, $data)

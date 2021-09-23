@@ -13,9 +13,9 @@ class Reminder
     {
 
         $validator = new RakitValidator;
-
+        $reminderData['subject'] = strip_tags($reminderData['subject']);
         $validationRules = [
-            'subject' => 'required|is_adv_string|max:100',
+            'subject' => 'required|max:100',
             'type' => 'required',
             'event' => 'required',
             'options' => 'required|array',
@@ -189,6 +189,8 @@ class Reminder
             $email_reminder[] = [$type => $messageService[$type]];
         }
 
+
+        $email_confirmed[] = ['p' => '[order:summary],'];
 
         foreach ($footer as $footerRow) {
             $email_confirmed[] = $footerRow;
