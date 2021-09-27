@@ -129,8 +129,7 @@
             color: {{ hx_rgb(opts.colors.body.disabled_links) }};
         }
 
-        .wap-front .wap-head,
-        .wap-front .wfooter {
+        .wap-front .wap-head {
             background-color: {{ hx_rgb(opts.colors.header.bg) }};
         }
         .wap-front .wap-head.showall{
