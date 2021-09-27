@@ -41,7 +41,7 @@ export default {
   font-size: 14px;
   margin-right: .4em;
   padding: .8em;
-  border: 2px solid var(--wappo-sec-bg);
+  border: 2px solid var(--wappo-payment-border);
   border-bottom: 0 !important;
   cursor: pointer;
   background-color:var(--wappo-body-bg);

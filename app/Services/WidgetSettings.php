@@ -37,6 +37,7 @@ class WidgetSettings
             'form' => [
                 'success' => '#66c677', //success_co
                 'error' => '#ed7575', //error_co
+                'payment' => '#f7f7f7',
             ],
             'address' => [
                 'bg' => '#e6e6e6',
@@ -188,6 +189,7 @@ class WidgetSettings
                 'fields' => [
                     'success' => ['label' => 'Success'],
                     'error' => ['label' => 'Error'],
+                    'payment' => ['label' => 'Payment Border'],
                 ]
             ],
             'address' => [

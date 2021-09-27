@@ -98,14 +98,14 @@ export default {
 </script>
 <style>
 .wpayment{
-  border: 2px solid var(--wappo-sec-bg);
+  border: 2px solid var(--wappo-payment-border);
   border-radius: 0 .4em .4em .4em;
   position:relative;
   overflow: hidden;
 }
 .witem{
   font-size:.7em;
-  border-bottom: 1px solid var(--wappo-sec-bg);
+  border-bottom: 1px solid var(--wappo-payment-border);
 }
 
 .wcards{
