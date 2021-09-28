@@ -198,16 +198,21 @@ export default {
           if(this.hasAttributesToProcess){
             this.buttonTitle = this.attributesEl.buttonTitle !== undefined ? this.attributesEl.buttonTitle:this.buttonTitle
             this.brFixed = this.attributesEl.brcFloats !== undefined
-            this.popup = this.attributesEl.popup !== undefined
             this.demoAs = this.attributesEl.demoAs !== undefined
             this.largeVersion = [undefined,false].indexOf(this.attributesEl.largeVersion) === -1
             this.opts.selection.check_viewweek = [undefined,false].indexOf(this.attributesEl.week) === -1
             this.autoPop = [undefined,false].indexOf(this.attributesEl.popOff) !== -1
+            this.popup = this.attributeIsEmpty('popup') && !this.demoAs
 
             this.opts.attributesEl = Object.assign({},this.attributesEl)
 
           }
         },
+
+        attributeIsEmpty(attributestring){
+          return [false,undefined].indexOf(this.attributesEl[attributestring]) === -1
+        },
+
         translateAttributesEl(){
           let attributes = {}
           for (const key in this.attributesEl) {

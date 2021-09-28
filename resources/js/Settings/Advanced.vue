@@ -251,6 +251,12 @@
             </label>
           </div>
           <div class="d-flex align-items-center mt-2">
+            <Checkbox :value="viewData.notify_pending_appointments"  @changed="changedCheck('notify_pending_appointments')"></Checkbox>
+            <label class="form-check-label">
+            Pending Appointments 
+            </label>
+          </div>
+          <div class="d-flex align-items-center mt-2">
             <Checkbox :value="viewData.notify_canceled_appointments"  @changed="changedCheck('notify_canceled_appointments')"></Checkbox>
             <label class="form-check-label">
             Cancelled Appointments 

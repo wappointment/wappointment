@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Wappointment plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wappointment 2.2.6\n"
+"Project-Id-Version: Wappointment 2.3.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wappointment-plugin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-08-16T08:44:10+00:00\n"
+"POT-Creation-Date: 2021-09-28T15:44:37+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wappointment\n"
@@ -109,15 +109,6 @@ msgstr ""
 msgid "Great news! You just got booked!"
 msgstr ""
 
-#: app/Messages/AdminNewAppointmentEmail.php:25
-#: app/Messages/AdminPendingAppointmentEmail.php:55
-msgid "Have a great day!"
-msgstr ""
-
-#: app/Messages/AdminNewAppointmentEmail.php:27
-msgid "Ps: An .ics file with the appointment's details is attached"
-msgstr ""
-
 #: app/Messages/AdminPendingAppointmentEmail.php:15
 msgid "Pending appointment"
 msgstr ""
@@ -130,29 +121,66 @@ msgstr ""
 msgid "Please confirm the appointment."
 msgstr ""
 
-#: app/Models/Appointment.php:258
-#: app/Models/Appointment.php:269
+#: app/Messages/AdminPendingAppointmentEmail.php:55
+msgid "Have a great day!"
+msgstr ""
+
+#: app/Messages/EmailHelper.php:52
+#: app/WP/AppointmentHistory.php:31
+msgid "Service"
+msgstr ""
+
+#: app/Messages/EmailHelper.php:52
+msgid "Price"
+msgstr ""
+
+#: app/Models/Appointment.php:278
+#: app/Models/Appointment.php:289
 msgid "min"
 msgstr ""
 
-#: app/Models/Reminder.php:79
+#: app/Models/Order.php:43
+msgid "Pending"
+msgstr ""
+
+#: app/Models/Order.php:45
+msgid "Awaiting payment"
+msgstr ""
+
+#: app/Models/Order.php:47
+msgid "Paid"
+msgstr ""
+
+#: app/Models/Order.php:49
+msgid "Cancelled"
+msgstr ""
+
+#: app/Models/Order.php:51
+msgid "Refunded"
+msgstr ""
+
+#: app/Models/Order.php:59
+msgid "Pay On Site"
+msgstr ""
+
+#: app/Models/Reminder.php:97
 msgid "Sent after appointment has been confirmed."
 msgstr ""
 
-#: app/Models/Reminder.php:80
+#: app/Models/Reminder.php:98
 msgid "Sent after appointment has been rescheduled."
 msgstr ""
 
-#: app/Models/Reminder.php:81
+#: app/Models/Reminder.php:99
 msgid "Sent after appointment has been cancelled."
 msgstr ""
 
-#: app/Models/Reminder.php:82
+#: app/Models/Reminder.php:100
 msgid "Sent after appointment has been booked when admin approval is required."
 msgstr ""
 
 #. translators: %1$s is replaced with a number of %2$s which are either, minutes, hours or days
-#: app/Models/Reminder.php:91
+#: app/Models/Reminder.php:109
 msgid "Sent before appointment takes place.(sent %1$s %2$s before)"
 msgstr ""
 
@@ -255,10 +283,6 @@ msgstr ""
 
 #: app/WP/AppointmentHistory.php:26
 msgid "Date and time"
-msgstr ""
-
-#: app/WP/AppointmentHistory.php:31
-msgid "Service"
 msgstr ""
 
 #: app/WP/AppointmentHistory.php:36

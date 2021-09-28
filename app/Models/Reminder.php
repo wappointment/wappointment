@@ -4,6 +4,7 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\Messages\AppointmentEmailFiller;
+use Wappointment\Services\Payment;
 use Wappointment\Services\Settings;
 
 class Reminder extends Model
@@ -45,7 +46,7 @@ class Reminder extends Model
     public function scopeActiveReminders($query)
     {
         $is_in = [static::APPOINTMENT_STARTS, static::APPOINTMENT_CONFIRMED];
-        if ((int) Settings::get('approval_mode') != 1) {
+        if ((int) Settings::get('approval_mode') != 1 || Payment::active()) {
             $is_in[] = static::APPOINTMENT_PENDING;
         }
         if (Settings::get('allow_rescheduling')) {
@@ -96,7 +97,7 @@ class Reminder extends Model
             self::APPOINTMENT_CONFIRMED => __('Sent after appointment has been confirmed.', 'wappointment'),
             self::APPOINTMENT_RESCHEDULED => __('Sent after appointment has been rescheduled.', 'wappointment'),
             self::APPOINTMENT_CANCELLED => __('Sent after appointment has been cancelled.', 'wappointment'),
-            self::APPOINTMENT_PENDING => __('Sent after appointment has been booked when admin approval is required.', 'wappointment'),
+            self::APPOINTMENT_PENDING => __('Sent after appointment has been booked (when admin approval is required or when payment method is active)', 'wappointment'),
         ];
         $labels = apply_filters('wappointment_reminders_labels', $labels);
         return empty($labels[$this->event]) ? 'undefined' : $labels[$this->event];

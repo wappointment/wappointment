@@ -275,6 +275,7 @@ class ViewsData
             'daily_summary' => Settings::get('daily_summary'),
             'daily_summary_time' => Settings::get('daily_summary_time'),
             'notify_new_appointments' => Settings::get('notify_new_appointments'),
+            'notify_pending_appointments' => Settings::get('notify_pending_appointments'),
             'notify_canceled_appointments' => Settings::get('notify_canceled_appointments'),
             'notify_rescheduled_appointments' => Settings::get('notify_rescheduled_appointments'),
             'email_notifications' => Settings::get('email_notifications'),
