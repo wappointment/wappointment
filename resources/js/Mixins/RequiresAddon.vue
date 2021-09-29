@@ -18,7 +18,7 @@ export default {
                     label: 'Calendars & Staff',
                 },
                 packages:{
-                    label: 'Packages and credits',
+                    label: 'Packages',
                 },
                 stripe:{
                     label: 'Stripe payments',

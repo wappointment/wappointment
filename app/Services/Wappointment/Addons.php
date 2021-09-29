@@ -58,7 +58,7 @@ class Addons extends API
     }
     private function pluginFileName($package)
     {
-        return $this->pluginNamekey($package) . DIRECTORY_SEPARATOR . 'index.php';
+        return $this->pluginNamekey($package) . '/index.php';
     }
 
     private function pluginName($package)
