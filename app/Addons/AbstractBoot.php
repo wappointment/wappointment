@@ -196,7 +196,7 @@ abstract class AbstractBoot implements Boot
             <div class="w-major-update-warning">
                 <div class="error-message error inline notice-error notice-alt">
                     <div>
-                        Your licence may be out of date, if so, you need to renew your licence in order to update.
+                        Your licence may be out of date, if so, you need to renew your licence in order to update to version <?php echo $plugin['new_version'] ?>
                         <a href="<?php echo WAPPOINTMENT_SITE . "/renew/site_" . WPHelpers::getOption('site_key'); ?>" target="_blank">Renew now</a>
                     </div>
                     <div>You believe it's a mistake? Refresh your licence in <a href="admin.php?page=wappointment_addons">Wappointment > Addons</a></div>
