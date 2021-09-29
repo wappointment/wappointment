@@ -4,6 +4,7 @@ namespace Wappointment\Addons;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Helpers\Get;
+use Wappointment\Services\Wappointment\Addons;
 
 abstract class AbstractBoot implements Boot
 {
@@ -33,7 +34,6 @@ abstract class AbstractBoot implements Boot
         if (!\Wappointment\System\Status::isInstalled() || !static::canRun()) {
             return;
         }
-
         //only triggerred once the plugin is ready to be used
         static::installedFilters();
     }
@@ -178,6 +178,57 @@ abstract class AbstractBoot implements Boot
             add_filter('wappointment_js_vars', [static::$name_space . 'Boot', 'jsVariables']);
         }
         add_action('admin_init', [static::$name_space . 'Boot', 'adminInit'], 11);
+
+
+        add_action('in_plugin_update_message-' . static::pluginNamekey() . '/index.php', [static::$name_space . 'Boot', 'versionUpdateWarning'], 10, 2);
+    }
+
+    protected static function pluginNamekey()
+    {
+        return str_replace('_', '-', static::$addon_key);
+    }
+
+    public static function versionUpdateWarning($plugin)
+    {
+        if (!static::hasAccessToNewVersion($plugin['new_version'])) {
+?>
+            <hr class="w-major-update-warning__separator" />
+            <div class="w-major-update-warning">
+                <div class="error-message error inline notice-error notice-alt">
+                    <div>
+                        Your licence may be out of date, if so, you need to renew your licence in order to update.
+                        <a href="<?php echo WAPPOINTMENT_SITE . "/renew/site_" . WPHelpers::getOption('site_key'); ?>" target="_blank">Renew now</a>
+                    </div>
+                    <div>You believe it's a mistake? Refresh your licence in <a href="admin.php?page=wappointment_addons">Wappointment > Addons</a></div>
+                </div>
+            </div>
+<?php
+        }
+    }
+
+    protected static function hasAccessToNewVersion($new_version)
+    {
+        return version_compare($new_version, static::getMaxVersion()) < 0;
+    }
+
+    protected static function getMaxVersion()
+    {
+        return static::getLicenceDetail()->latest_version->version;
+    }
+
+    protected static function getLicenceDetail()
+    {
+        static $siteDetails = false;
+
+        if ($siteDetails === false) {
+            $siteDetails = Addons::licensedSolutions();
+        }
+
+        foreach ($siteDetails as $solution) {
+            if ($solution->namekey == static::pluginNamekey()) {
+                return $solution;
+            }
+        }
     }
 
     public static function registerAddon($addons)

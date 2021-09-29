@@ -18,7 +18,7 @@ class Addons extends API
     public function get()
     {
         $response = $this->client->request('GET', $this->call('/api/addons'));
-        $solutions = $this->licensedSolutions();
+        $solutions = static::licensedSolutions();
         $data = $this->processResponse($response);
         if (!empty($solutions)) {
             foreach ($data->addons as &$package) {
@@ -174,7 +174,7 @@ class Addons extends API
         if (count($package->solutions) > 1) {
             throw new \Exception("Package is not installable");
         }
-        $solutions = $this->licensedSolutions();
+        $solutions = static::licensedSolutions();
         foreach ($solutions as $solution) {
             if ($package->solutions[0]['id'] === $solution->id) {
                 return $solution;
@@ -183,7 +183,7 @@ class Addons extends API
         throw new \Exception("Cannot install package");
     }
 
-    private function licensedSolutions()
+    public static function licensedSolutions()
     {
         return !empty(WPHelpers::getOption('site_details')) ? json_decode(WPHelpers::getOption('site_details')) : [];
     }
