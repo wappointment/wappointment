@@ -448,6 +448,10 @@ export default {
     margin: .5em 0;
 }
 
+.wap-booking-fields input,
+.wap-booking-fields textarea{
+  color: var(--wappo-body-tx) !important;
+}
 
 .wap-booking-fields .isInvalid input[type="text"], 
 .wap-booking-fields .isInvalid input[type="email"], 
