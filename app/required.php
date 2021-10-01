@@ -70,7 +70,7 @@ class WappointmentLv
 {
     public static function isTest()
     {
-        return substr(WAPPOINTMENT_SITE, -5) === '.test' || substr(WAPPOINTMENT_SITE, -3) === '.fr';
+        return substr(WAPPOINTMENT_SITE, -5) === '.test' || substr(WAPPOINTMENT_SITE, -3) === '.fr' || defined('WAPPOINTMENT_TEST');
     }
     public static function blank($value)
     {

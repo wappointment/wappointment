@@ -54,6 +54,7 @@ abstract class AbstractBoot implements Boot
     {
         return !static::$has_installation || static::isInstalled();
     }
+
     public static function addonStatusWrapper($package)
     {
         if (static::isInstalledOrdoesntRequireInstallation()) {

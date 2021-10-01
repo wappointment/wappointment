@@ -447,6 +447,18 @@ class WidgetSettings
         return $this->merged_settings;
     }
 
+    public function getSetting($settingName)
+    {
+        $find = explode('.', $settingName);
+        if (empty($this->merged_settings[$find[0]])) {
+            return 'undefined';
+        }
+        if (empty($this->merged_settings[$find[0]][$find[1]])) {
+            return 'undefined';
+        }
+        return $this->merged_settings[$find[0]][$find[1]];
+    }
+
     public function adminFieldsInfo()
     {
         return $this->setHiddenFields($this->defaultFields());

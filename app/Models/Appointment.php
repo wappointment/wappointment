@@ -210,9 +210,6 @@ class Appointment extends Model
         }
     }
 
-
-
-
     public function getStaffId()
     {
         return VersionDB::canServices() ? $this->staff_id : Settings::get('activeStaffId');
@@ -362,10 +359,15 @@ class Appointment extends Model
             !empty($this->options['providers'][$video_provider][$url_meeting_key]) ? $this->options['providers'][$video_provider][$url_meeting_key] : false;
     }
 
+    public function isOver()
+    {
+        return $this->end_at->getTimestamp() - time() < 0;
+    }
+
     public function canShowLink()
     {
         $when_shows_link = (int)Settings::get('video_link_shows');
-        if ($when_shows_link > 0 && $this->start_at->timestamp - ($when_shows_link * 60) > time()) {
+        if (($when_shows_link > 0 && $this->start_at->timestamp - ($when_shows_link * 60) > time()) || $this->isOver()) {
             return false;
         }
         return true;
@@ -390,7 +392,7 @@ class Appointment extends Model
 
     public function canStillReschedule()
     {
-        return ($this->canRescheduleUntilTimestamp() - Carbon::now()->timestamp) > 0;
+        return ($this->canRescheduleUntilTimestamp() - time()) > 0;
     }
 
     public function isConfirmed()
@@ -400,7 +402,7 @@ class Appointment extends Model
 
     public function canStillCancel()
     {
-        return !$this->isConfirmed() || ($this->canCancelUntilTimestamp() - Carbon::now()->timestamp) > 0;
+        return !$this->isConfirmed() || ($this->canCancelUntilTimestamp() - time()) > 0;
     }
 
     public function cancelLimit()

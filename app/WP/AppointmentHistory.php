@@ -3,6 +3,7 @@
 namespace Wappointment\WP;
 
 use Wappointment\Models\Client;
+use Wappointment\Services\WidgetSettings;
 
 class AppointmentHistory
 {
@@ -52,13 +53,33 @@ class AppointmentHistory
             . '</tr>';
         foreach ($client->appointments->sortByDesc('id') as $appointment) {
             $history .= '<tr>';
-            $history .= '<td>' . $appointment->getStartsDayAndTime($client->getTimezone()) . '</td>';
+            $history .= '<td>'
+                . '<div>' . $appointment->getStartsDayAndTime($client->getTimezone()) . '</div>'
+                . '<div>' . static::renderCancelRescheduleLink($appointment) . '</div>'
+                . '</td>';
             $history .= '<td>' . $appointment->getServiceName() . '</td>';
             $history .= '<td>' . $appointment->getDuration() . '</td>';
             $history .= '<td>' . $appointment->getStaffName() . '</td>';
             $history .= '</tr>';
         }
         return $history . '</table></div>';
+    }
+
+    public static function renderCancelRescheduleLink($appointment)
+    {
+        $links = '<div class="wlinksWaphistory" >';
+        $videoLocation = $appointment->getLocationVideo();
+        $widget = new WidgetSettings();
+        if ($videoLocation && $appointment->canShowLink()) {
+            $links .= '<span><a href="' .  $appointment->getLinkViewEvent() . '">' . $widget->getSetting('view.join') . '</a></span>';
+        }
+        if ($appointment->canStillCancel()) {
+            $links .= '<span><a href="' .  $appointment->getLinkCancelEvent() . '">' . $widget->getSetting('cancel.button') . '</a></span>';
+        }
+        if ($appointment->canStillReschedule()) {
+            $links .= '<span><a href="' .  $appointment->getLinkRescheduleEvent() . '">' . $widget->getSetting('reschedule.button') . '</a></span>';
+        }
+        return $links . '</div>';
     }
 
     public static function getStyle()
@@ -79,6 +100,15 @@ class AppointmentHistory
         tr:nth-child(even) {
           background-color: #dddddd;
         }
+        .wlinksWaphistory span:before{
+            content: " - ";
+        }
+
+        .wlinksWaphistory span:first-child:before{
+            content: "";
+        }
+
+        
         </style>';
     }
 }
