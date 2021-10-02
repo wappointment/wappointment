@@ -205,7 +205,7 @@
               </label>
           </div>
           <div>
-            <label for="roles-allowed" class="m-0">Users listed for calendars creation</label>
+            <label for="roles-allowed" class="m-0">WordPress' users listed for calendars creation</label>
             <div class="small text-muted">In Wappointment > Settings > Calendars & Staff</div>
             <FormFieldSelect :multi="true" :horizontal="true" v-model="viewData.calendar_roles" :elements="viewData.all_roles" 
             idKey="key" labelSearchKey="name" ph="Select roles allowed" @change="changedRoles" />

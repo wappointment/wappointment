@@ -29,6 +29,11 @@ class Database
         self::$capsule = null;
     }
 
+    public static function getWpSitePrefix()
+    {
+        return self::config()['prefix'];
+    }
+
     private static function config($alt_port = false)
     {
         $db = new \Wappointment\WP\Database();

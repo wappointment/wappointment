@@ -5,6 +5,7 @@ namespace Wappointment\System;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Settings;
 use Wappointment\Services\Addons;
+use Wappointment\Services\Reset;
 
 class InitBackend
 {
@@ -25,8 +26,20 @@ class InitBackend
             add_action('admin_init', [$this, 'enqueueBackendPlugin']);
             add_action('wp_print_scripts', [$this, 'jsVariables']);
         }
+
+        //when a site is deleted in ms we clean the tables
+        add_action('wp_uninitialize_site', [$this, 'deleteDbTables']);
     }
 
+
+    public function deleteDbTables($blog_data)
+    {
+
+        switch_to_blog($blog_data->blog_id);
+        $reset = new Reset;
+        $reset->dropTables();
+        restore_current_blog();
+    }
 
     public function addDisplayPostStates($post_states, $post)
     {

@@ -38,6 +38,25 @@ class Reset
         'since_last_refresh',
     ];
 
+    private $db_drop = [
+        'appointments',
+        'calendars',
+        'calendar_service',
+        'clients',
+        'failed_jobs',
+        'jobs',
+        'locations',
+        'logs',
+        'migrations',
+        'orders',
+        'order_price',
+        'prices',
+        'reminders',
+        'services',
+        'service_location',
+        'statuses',
+    ];
+
     public function __construct()
     {
 
@@ -71,15 +90,20 @@ class Reset
     }
 
 
-    private function dropTables()
+    public function dropTables()
     {
-        $migrate = new \Wappointment\Installation\Migrate();
-        $migrate->rollback();
-
-        Capsule::schema()->dropIfExists(Database::$prefix_self . '_migrations');
-        if (Capsule::schema()->hasTable(Database::$prefix_self . '_migrations')) {
-            throw new \WappointmentException("Error while DROPPING DB tables", 1);
+        Capsule::schema()->disableForeignKeyConstraints();
+        $db_list = [];
+        foreach ($this->db_drop as $table_name) {
+            $db_list[] = Database::$prefix_self . '_' . $table_name;
         }
+
+        foreach (apply_filters('wappointment_db_drop', $db_list) as $table_name) {
+            $full_table = Database::getWpSitePrefix() . $table_name;
+            global $wpdb;
+            $wpdb->query("DROP TABLE IF EXISTS $full_table");
+        }
+        Capsule::schema()->enableForeignKeyConstraints();
     }
 
     private function removeCoreSettings()
