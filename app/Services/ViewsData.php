@@ -281,6 +281,7 @@ class ViewsData
             'email_notifications' => Settings::get('email_notifications'),
             'mail_status' => (bool) Settings::get('mail_status'),
             'allow_staff_cf' => Settings::get('allow_staff_cf'),
+            'calendar_handles_free' => Settings::get('calendar_handles_free'),
             'cache' => Settings::get('cache'),
             'calendar_roles' => Settings::get('calendar_roles'),
             'all_roles' => Permissions::getAllWpRoles(),

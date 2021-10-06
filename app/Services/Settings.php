@@ -129,7 +129,8 @@ class Settings
                 'sunday' => [],
                 'precise' => true
             ],
-            'servicesDefault' => true
+            'servicesDefault' => true,
+            'calendar_handles_free' => false
         ];
     }
 

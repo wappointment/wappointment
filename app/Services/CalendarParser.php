@@ -16,6 +16,7 @@ class CalendarParser
     protected $statusEvents;
     protected $timezone = false;
     protected $staff_id = 0;
+    protected $handles_free = false;
 
     /**
      * Create a new job instance.
@@ -28,6 +29,7 @@ class CalendarParser
         $this->source = md5($this->url);
         $this->content = $content;
         $this->staff_id = $staff_id;
+        $this->handles_free = Settings::get('calendar_handles_free');
     }
 
     public function handle()
@@ -84,7 +86,7 @@ class CalendarParser
                 'end_at' => $end_at_record,
                 'recur' => $recur,
                 'source' => $this->source,
-                'type' => STATUS::TYPE_BUSY,
+                'type' => $this->getStatus($vevent),
                 'eventkey' => md5($this->source . (string) $vevent->UID . (string) $vevent->DTSTART),
                 'options' => $this->getOptions($vevent, $until, $recur),
                 'staff_id' => $this->staff_id
@@ -100,6 +102,12 @@ class CalendarParser
             'inserted' => $this->insertIgnoreOrUpsert($this->statusEvents->toArray()),
             'duration' => round(microtime(true) - $start, 2)
         ];
+    }
+
+    public function getStatus($vevent)
+    {
+        $column = 'X-MICROSOFT-CDO-BUSYSTATUS';
+        return $this->handles_free && !empty($vevent->$column) && $vevent->$column->getValue() == 'FREE' ? STATUS::TYPE_FREE : STATUS::TYPE_BUSY;
     }
 
     private function insertIgnoreOrUpsert($array)

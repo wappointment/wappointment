@@ -193,6 +193,15 @@
               </label>
           </div>
           <div class="mb-2">
+            <label class="form-check-label" for="allow-calendar_handles_free">
+              <div class="d-flex align-items-center" data-tt="Certain calendar app such as Outlook live allow you to set a time where you are free, make sure we can process this information">
+                <input type="checkbox" v-model="viewData.calendar_handles_free" id="allow-calendar_handles_free" @change="changedVD('calendar_handles_free')">
+                Recognize FREE status in .ICS import
+              </div>
+            </label>
+          </div>
+          
+          <div class="mb-2">
               <label class="form-check-label" for="allow-refreshavb" data-tt="Your staff availability gets a new open day after that time">
                   <div class="d-flex align-items-center">
                     <input type="checkbox" v-model="viewData.allow_refreshavb" id="allow-refreshavb" @change="changedVD('allow_refreshavb')">
