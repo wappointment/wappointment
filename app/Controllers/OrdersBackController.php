@@ -40,4 +40,20 @@ class OrdersBackController extends RestController
         ServicesOrder::refund($request->input('order_id'));
         return ['message' => 'Order has been refunded'];
     }
+
+    public function markAsPaid(Request $request)
+    {
+
+        ServicesOrder::markPaid($request->input('order_id'), $request->input('purchase_info'));
+
+        return ['message' => 'Order has been paid'];
+    }
+
+    public function cancel(Request $request)
+    {
+
+        ServicesOrder::cancel($request->input('order_id'), $request->input('cancel_info'));
+
+        return ['message' => 'Order has been cancelled'];
+    }
 }

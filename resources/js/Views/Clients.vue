@@ -75,6 +75,12 @@ export default {
                   model: 'options.skype',
                   cast: String,
             },
+            {
+                  type: 'input',
+                  label: 'Owes',
+                  model: 'options.owes',
+                  cast: Number,
+            },
 
         ]
     }),

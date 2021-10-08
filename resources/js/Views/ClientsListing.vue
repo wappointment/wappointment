@@ -21,7 +21,7 @@
                                     <img :src="client.avatar" :alt="client.name" class="border border-secondary wrounded mr-2">
                                 </div>
                                 <div>
-                                    <div>{{ client.name }} </div>
+                                    <div>{{ client.name }} <span v-if="owes(client)"class="owes bg-warning p-1 rounded text-white">Owes: {{owes(client)}}</span></div>
                                     <div>{{ client.email }} </div>
                                 </div>
                             </div>
@@ -57,10 +57,11 @@
 import ClientsService from '../Services/V1/Client'
 import AbstractListing from './AbstractListing'
 import hasPermissions from '../Mixins/hasPermissions'
+import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
     label: 'All',
     extends: AbstractListing,
-    mixins:[hasPermissions],
+    mixins:[hasPermissions, CanFormatPrice],
     created(){
         this.mainService = this.$vueService(new ClientsService)
     },
@@ -68,7 +69,9 @@ export default {
         keyDataSource:'clients'
     }),
     methods: {
-        
+        owes(client){
+            return client.options.owes !== undefined && client.options.owes > 0 ? this.formatPrice(client.options.owes, true):false
+        },
         getPhone(client){
           return client.options.phone !== undefined ? client.options.phone:'---'
         },

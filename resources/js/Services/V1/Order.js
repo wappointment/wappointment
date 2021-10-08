@@ -24,6 +24,14 @@ export default class OrderService{
                 method: 'post', 
                 route: '/order/refund'
             },
+            markpaid: {
+                method: 'post', 
+                route: '/order/paid'
+            },
+            cancel: {
+                method: 'post', 
+                route: '/order/cancel'
+            },
         };
     }
 

@@ -17,4 +17,9 @@ class OrderPrice extends Model
     {
         return $this->belongsTo(Price::class, 'price_id');
     }
+
+    public function appointment()
+    {
+        return $this->belongsTo(Appointment::class, 'appointment_id');
+    }
 }

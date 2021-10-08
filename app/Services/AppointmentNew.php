@@ -155,11 +155,14 @@ class AppointmentNew
         return static::getAppointmentModel()::create($data);
     }
 
-    public static function confirm($id)
+    public static function confirm($id, $soft = false)
     {
         $oldAppointment = $appointment = static::getAppointmentModel()::where('id', (int)$id)
             ->where('status', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)->first();
         if (empty($appointment)) {
+            if ($soft === true) {
+                return false;
+            }
             throw new \WappointmentException("Can't find appointment", 1);
         } else {
             $result = $appointment->update(['status' => static::getAppointmentModel()::STATUS_CONFIRMED]);

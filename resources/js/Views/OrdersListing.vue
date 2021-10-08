@@ -32,9 +32,12 @@
                             <div>{{ formatPrice(order.charge, true) }} <span class="text-muted small ml-2" v-if="order.tax_amount>0"> (Tax {{ formatPrice(order.tax_amount, true) }})</span></div>
                             <div :class="getStatusClass(order.status)" >
                                 {{ order.status_label }}
-                                <a v-if="order.status==2" href="javascript:;" class="btn btn-secondary" @click="refund(order)">Refund</a>
-                                <a v-if="order.status==1" href="javascript:;" class="btn btn-secondary" @click="orderConfirmed(order)">Mark as paid</a>
                             </div>
+                            <a v-if="order.status==2" href="javascript:;" class="btn btn-secondary btn-sm" @click="refund(order)">Refund</a>
+                            <span v-if="order.status==1">
+                                <a href="javascript:;" class="btn btn-secondary btn-sm" @click="markAsPaid(order)">Mark as paid</a>
+                                <a href="javascript:;" class="btn btn-secondary btn-sm" @click="cancelOrder(order)">Cancel</a>
+                            </span>
                             <div class="text-muted small">{{ order.payment_label}}</div>
                         </td>
                         <td>
@@ -81,7 +84,7 @@ export default {
                 title: 'Do you really want to refund this order?',
             }).then((result) => {
                 if(result === true){
-                    this.request(this.refundOrderRequest,order,undefined,false,this.orderRefunded)
+                    this.request(this.refundOrderRequest,order,undefined,false,this.actionConfirmed)
                 }
             })
             
@@ -89,23 +92,37 @@ export default {
         async refundOrderRequest(order){
             return await this.mainService.call('refund',{order_id:order.id})
         },
-        orderConfirmed(response){
+        actionConfirmed(response){
             this.serviceSuccess(response)
             this.reload()
         },
 
-        confirmPayment(order){
+        cancelOrder(order){
             this.$WapModal().confirm({
-                title: 'Do you really want to mark this order as paid?',
+                title: 'Do you really want to cancel this order?',
             }).then((result) => {
                 if(result === true){
-                    this.request(this.confirmOrderRequest,order,undefined,false,this.orderRefunded)
+                    this.request(this.cancelOrderRequest,order,undefined,false,this.actionConfirmed)
                 }
             })
             
         },
-        async confirmOrderRequest(order){
-            return await this.mainService.call('confirm',{order_id:order.id})
+        async cancelOrderRequest(order){
+            return await this.mainService.call('cancel',{order_id:order.id})
+        },
+
+        markAsPaid(order){
+            this.$WapModal().confirm({
+                title: 'Do you really want to mark this order as paid?',
+            }).then((result) => {
+                if(result === true){
+                    this.request(this.markAsPaidRequest,order,undefined,false,this.actionConfirmed)
+                }
+            })
+            
+        },
+        async markAsPaidRequest(order){
+            return await this.mainService.call('markpaid',{order_id:order.id})
         },
 
         afterLoaded(response){

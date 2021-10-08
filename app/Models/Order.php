@@ -126,6 +126,24 @@ class Order extends Model
     public function setCancelled()
     {
         $this->status = static::STATUS_CANCELLED;
+
+        do_action('wappointment_order_cancelled', $this);
+        $this->cancelAllConnected();
+        $this->decrementOwes();
+    }
+
+    /*
+    cancel all products related to that order
+    */
+    private function cancelAllConnected()
+    {
+
+        foreach ($this->prices as $charge) {
+            //cancel appointment
+            if ($charge->appointment_id > 0) {
+                AppointmentNew::cancel($charge->appointment);
+            }
+        }
     }
 
     public function setAutoCancelled()
@@ -140,6 +158,7 @@ class Order extends Model
     public function setRefund()
     {
         $this->status = static::STATUS_REFUNDED;
+        $this->refunded_at = date('Y-m-d H:i:s');
     }
 
     public function prices()
@@ -219,8 +238,9 @@ class Order extends Model
 
     public function confirmAppointments()
     {
+
         foreach ($this->prices as $charge) {
-            AppointmentNew::confirm($charge->appointment_id);
+            AppointmentNew::confirm($charge->appointment_id, true);
         }
     }
 
@@ -230,6 +250,8 @@ class Order extends Model
 
         $this->setPaid();
 
+        $this->decrementOwes();
+
         if ($save) {
             $this->save();
         }
@@ -238,12 +260,29 @@ class Order extends Model
         return $this;
     }
 
+    public function decrementOwes()
+    {
+        if ($this->isOnSite()) {
+            $options = $this->client->options;
+
+            //set client owing
+            $options['owes'] -= $this->total;
+            if ($options['owes'] < 0) {
+                $options['owes'] = 0;
+            }
+            $this->client->options = $options;
+            $this->client->save();
+        }
+    }
+
     public function refund()
     {
         if (!$this->isOnSite()) {
             //refund
             do_action('wappointment_order_refund', $this);
         }
+        do_action('wappointment_order_refunded', $this);
+        $this->cancelAllConnected();
 
         $this->setRefund();
         $this->save();
