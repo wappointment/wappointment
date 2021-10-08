@@ -224,6 +224,10 @@ class Main extends AbstractRoutes
                     'controller' => 'OrdersBackController',
                     'method' => 'refund',
                 ],
+                '/order/paid' => [
+                    'controller' => 'OrdersBackController',
+                    'method' => 'markAsPaid',
+                ],
             ],
         ],
         'mixed' => [

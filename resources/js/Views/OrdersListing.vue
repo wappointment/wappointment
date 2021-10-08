@@ -33,6 +33,7 @@
                             <div :class="getStatusClass(order.status)" >
                                 {{ order.status_label }}
                                 <a v-if="order.status==2" href="javascript:;" class="btn btn-secondary" @click="refund(order)">Refund</a>
+                                <a v-if="order.status==1" href="javascript:;" class="btn btn-secondary" @click="orderConfirmed(order)">Mark as paid</a>
                             </div>
                             <div class="text-muted small">{{ order.payment_label}}</div>
                         </td>
@@ -88,10 +89,25 @@ export default {
         async refundOrderRequest(order){
             return await this.mainService.call('refund',{order_id:order.id})
         },
-        orderRefunded(response){
+        orderConfirmed(response){
             this.serviceSuccess(response)
             this.reload()
         },
+
+        confirmPayment(order){
+            this.$WapModal().confirm({
+                title: 'Do you really want to mark this order as paid?',
+            }).then((result) => {
+                if(result === true){
+                    this.request(this.confirmOrderRequest,order,undefined,false,this.orderRefunded)
+                }
+            })
+            
+        },
+        async confirmOrderRequest(order){
+            return await this.mainService.call('confirm',{order_id:order.id})
+        },
+
         afterLoaded(response){
             this.$emit('loaded', response)
         },

@@ -194,11 +194,19 @@
           </div>
           <div class="mb-2">
             <label class="form-check-label" for="allow-calendar_handles_free">
-              <div class="d-flex align-items-center" data-tt="Certain calendar app such as Outlook live allow you to set a time where you are free, make sure we can process this information">
+              <div class="d-flex align-items-center" data-tt="Certain calendar app such as Outlook live allow you to set a time where you are free, with that option, we will set open your availability whenever we spot those.">
                 <input type="checkbox" v-model="viewData.calendar_handles_free" id="allow-calendar_handles_free" @change="changedVD('calendar_handles_free')">
                 Recognize FREE status in .ICS import
               </div>
             </label>
+            <div v-if="viewData.calendar_handles_free" class="ml-4 mt-2">
+                <label class="form-check-label" for="allow-calendar_ignores_free">
+                  <div class="d-flex align-items-center" data-tt="When a FREE event is spotted, we just ignore it">
+                    <input type="checkbox" v-model="viewData.calendar_ignores_free" id="allow-calendar_ignores_free" @change="changedVD('calendar_ignores_free')">
+                    Ignore FREE events
+                  </div>
+                </label>
+            </div>
           </div>
           
           <div class="mb-2">

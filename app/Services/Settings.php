@@ -130,7 +130,8 @@ class Settings
                 'precise' => true
             ],
             'servicesDefault' => true,
-            'calendar_handles_free' => false
+            'calendar_handles_free' => false,
+            'calendar_ignores_free' => false,
         ];
     }
 
