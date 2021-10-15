@@ -27,6 +27,7 @@ export default {
             this.staff = d.data.staff
             this.time_format = this.convertDateFormat(d.data.time_format)
             this.date_format = this.convertDateFormat(d.data.date_format)
+            this.zoom_browser = d.data.zoom_browser
             this.date_time_union = d.data.date_time_union
             this.loadedAppointment = true
             this.loading = false

@@ -132,6 +132,7 @@ class Settings
             'servicesDefault' => true,
             'calendar_handles_free' => false,
             'calendar_ignores_free' => false,
+            'zoom_browser' => false
         ];
     }
 

@@ -221,6 +221,14 @@
                   </div>
               </label>
           </div>
+          <div class="mb-2">
+              <label class="form-check-label" for="zoom-browser" data-tt="Zoom requires an app to be installed; check this option to launch a meeting where the app is not required(easier for your clients)">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.zoom_browser" id="zoom-browser" @change="changedVD('zoom_browser')">
+                    Zoom without app
+                  </div>
+              </label>
+          </div>
           <div>
             <label for="roles-allowed" class="m-0">WordPress' users listed for calendars creation</label>
             <div class="small text-muted">In Wappointment > Settings > Calendars & Staff</div>

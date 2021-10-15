@@ -293,6 +293,7 @@ class ViewsData
             'refreshavb_at' => Settings::get('refreshavb_at'),
             'clean_pending_every' => Settings::get('clean_pending_every'),
             'payment_active' => Payment::active(),
+            'zoom_browser' => Settings::get('zoom_browser'),
         ];
     }
 
