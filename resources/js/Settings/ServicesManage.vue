@@ -2,7 +2,8 @@
     <div >
         <div v-if="serviceListing">
             <div class="d-flex align-items-center">
-                <button @click="showService" class="btn btn-outline-primary btn my-2 btn-sm">Add service</button>
+                <button @click="showService" class="btn btn-outline-primary btn my-2 btn-sm">Add 1on1 service</button>
+                <button @click="showGroupService" class="btn btn-outline-primary btn my-2 btn-sm ml-2">Add Group service</button>
                 <InputPh v-if="elements && elements.length > 10" class="max-200 ml-2 mb-0" type="text" v-model="searchterm" ph="Search name" />
             </div>
             <div class="table-hover" v-if="elements">
@@ -39,7 +40,7 @@
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(service.id)"></span></span>
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(service)"></span></span>
                                     <span data-tt="Delete"  ><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(service.id)"></span></span>
-                                    <span >(id: {{ service.id }})</span>
+                                    <span>(id: {{ service.id }})</span>
                                 </div>
                             </td>
                             <td>
@@ -91,9 +92,10 @@ import ShortcodeDesigner from './ShortcodeDesigner'
 import isSearchable from '../Mixins/isSearchable'
 import HasPopup from '../Mixins/HasPopup'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
+
 export default {
     extends: AbstractListing,
-    mixins: [isSearchable, HasPopup, CanFormatPrice],
+    mixins: window.wappointmentExtends.filter('ServicesManageMixins', [isSearchable, HasPopup, CanFormatPrice]),
     components:{
         WCell,
         ServicesAddEdit,
@@ -107,7 +109,7 @@ export default {
         servicesOrder: [],
         showShortcode: false,
         showCurrency: false,
-        keyDataSource:'services'
+        keyDataSource:'services',
     }),
     created(){
         this.mainService = this.$vueService(new WappoServiceService)
@@ -258,6 +260,12 @@ export default {
                 this.elementPassed = null
             }
             
+        },
+        showGroupService(){
+            if(this.showGroupServiceRun !== undefined){
+                return this.showGroupServiceRun()
+            }
+            return this.requiresAddon('group')
         },
         showListing(){
             if(this.crumb){

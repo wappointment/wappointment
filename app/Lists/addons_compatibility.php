@@ -8,4 +8,5 @@ return [
   'wappointment_stripe' => '1.0.0',
   'wappointment_paypal' => '1.0.0',
   'wappointment_packages' => '1.0.0',
+  'wappointment_group' => '1.0.0',
 ];

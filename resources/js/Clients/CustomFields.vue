@@ -231,8 +231,6 @@ export default {
         },
         addCF(){
             this.requiresAddon('services')
-            // this.showAddCF = true
-            // this.modelHolder = initModel()
         },
 
         saveCF(model){

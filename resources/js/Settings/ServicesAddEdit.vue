@@ -41,7 +41,6 @@ export default {
             this.model.options.fields.push('email')
             this.model.options.fields.push('name')
         }
-        
     },
 
     methods: {

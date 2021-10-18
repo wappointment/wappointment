@@ -106,9 +106,8 @@ export default {
                 { model:'options.fields', values: ['phone'] },
               ],
               validation: ['required']
-          },
+            },
           ]
-
       } 
   },
   created(){
@@ -120,8 +119,7 @@ export default {
   computed: {
 
     schemaParsed(){
-      return this.addPriceField(this.schema)
-      //return  window.wappointmentExtends.filter('serviceFormSchema', this.schema, this.modelHolder )
+      return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schema))
     },
 
     errorsPassed(){
