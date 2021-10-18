@@ -21,7 +21,7 @@ class Services implements ServiceInterface
         $services = static::getModel()::orderBy('sorting')->fetch();
         return $services->filter(function ($service, $key) {
             return count($service->locations) > 0;
-        })->all();
+        })->toArray();
     }
 
     public static function save($serviceData)
