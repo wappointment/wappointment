@@ -2,7 +2,7 @@
 
 namespace Wappointment\Validators;
 
-use Wappointment\ClassConnect\PhoneNumberUtil;
+use Wappointment\Services\Phone as ServicesPhone;
 
 class Phone extends \Rakit\Validation\Rule
 {
@@ -19,14 +19,13 @@ class Phone extends \Rakit\Validation\Rule
         if (empty($value)) {
             return false;
         }
-        $phoneUtil = PhoneNumberUtil::getInstance();
-        $number = $phoneUtil->parse($value);
+        $phone = new ServicesPhone($value);
 
-        if ($phoneUtil->isValidNumber($number) === false) {
+        if ($phone->validate() === false) {
             return false;
         }
 
-        if (!empty($this->countries) && !in_array($phoneUtil->getRegionCodeForNumber($number), $this->countries)) {
+        if (!empty($this->countries) && !$phone->countryIsAccepted($this->countries)) {
             return false;
         }
 
