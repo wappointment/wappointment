@@ -70,7 +70,7 @@ export default {
 }
 
 .wap-front .wsep::before{
-    content: ' - ';
+    content: ' ';
     margin: 0 .4em;
 }
 
