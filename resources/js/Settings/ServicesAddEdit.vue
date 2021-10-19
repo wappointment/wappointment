@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
       <ServiceModulable :dataPassed="model" 
-      :servicesService="servicesService" @saved="savedTransmit"/>
+      :servicesService="servicesService" :params="params" @saved="savedTransmit"/>
     </div>
 </template>
 
@@ -18,6 +18,10 @@ export default {
             default:''
         },
         element: {
+            type: Object,
+            default:null
+        },
+        params: {
             type: Object,
             default:null
         },

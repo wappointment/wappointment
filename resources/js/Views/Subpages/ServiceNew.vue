@@ -13,7 +13,7 @@ import CanFormatPrice from '../../Mixins/CanFormatPrice'
 export default {
   extends: abstractView,
   mixins:[CanFormatPrice],
-  props:['dataPassed', 'servicesService', 'extraOptions', 'buttons', 'minimal'],
+  props:['dataPassed', 'servicesService', 'extraOptions', 'buttons', 'minimal', 'params'],
   data() {
       return {
           serviceService: null,
@@ -90,7 +90,7 @@ export default {
             },
             {
               type: 'opt-customfields',
-              label: 'When client select this service, display following fields',
+              label: 'When client select this service, display the following fields',
               model: 'options.fields',
               bus: true,
               listenBus: true,
@@ -119,7 +119,7 @@ export default {
   computed: {
 
     schemaParsed(){
-      return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schema))
+      return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schema), this.params)
     },
 
     errorsPassed(){

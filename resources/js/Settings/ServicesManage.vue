@@ -20,7 +20,7 @@
 
                         <tr  class="row-click" v-for="(service, idx) in filteredSearchable">
                             <td>
-                                <div>{{ idx + 1 }} </div> 
+                                <div>{{ idx + 1 }}</div> 
                             </td>
                             <td>
                                 <div>
@@ -76,7 +76,7 @@
         <div v-if="serviceAdd">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
             <ServicesEditLegacy v-if="currentView=='editLegacy'" :legacy="true" :element="elementPassed" @saved="hasBeenSavedDeleted"/>
-            <ServicesAddEdit v-else :element="elementPassed" :legacy="false" @saved="hasBeenSaved"/>
+            <ServicesAddEdit v-else :element="elementPassed" :params="paramsPassed" :legacy="false" @saved="hasBeenSaved"/>
         </div>
     </div>
 </template>
@@ -92,10 +92,11 @@ import ShortcodeDesigner from './ShortcodeDesigner'
 import isSearchable from '../Mixins/isSearchable'
 import HasPopup from '../Mixins/HasPopup'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
+import CanResetValues from '../Mixins/CanResetValues'
 
 export default {
     extends: AbstractListing,
-    mixins: window.wappointmentExtends.filter('ServicesManageMixins', [isSearchable, HasPopup, CanFormatPrice]),
+    mixins: window.wappointmentExtends.filter('ServicesManageMixins', [isSearchable, HasPopup, CanFormatPrice, CanResetValues]),
     components:{
         WCell,
         ServicesAddEdit,
@@ -110,6 +111,7 @@ export default {
         showShortcode: false,
         showCurrency: false,
         keyDataSource:'services',
+        paramsPassed: {}
     }),
     created(){
         this.mainService = this.$vueService(new WappoServiceService)
@@ -230,16 +232,8 @@ export default {
            return await this.mainService.call('delete',params)
         },
         editElement(element){
-            if(this.crumb){
-                this.$emit('updateCrumb',[
-                    { target: 'goToMain', label: 'General'},
-                    { target: 'goToService', label: 'Services', subview: 'listing' },
-                    { target: 'goToServiceAdd', label: 'Edit' , disabled:true},
-                ], 'edit', {element:element})
-            }else{
-                this.currentView = this.requiresDBUpgrade ? 'editLegacy':'edit'
-                this.elementPassed = element
-            }
+            this.currentView = this.requiresDBUpgrade ? 'editLegacy':'edit'
+            this.elementPassed = element
         },
         showService(){
             if(this.requiresDBUpgrade){
@@ -249,16 +243,8 @@ export default {
                 return this.requiresAddon('services', this.elements.limit_reached)
             }
 
-            if(this.crumb){
-                this.$emit('updateCrumb',[
-                    { target: 'goToMain', label: 'General'},
-                    { target: 'goToService', label: 'Services', subview: 'listing' },
-                    { target: 'goToServiceAdd', label: 'Add' , disabled:true},
-                ], 'add')
-            }else{
-                this.currentView = 'add'
-                this.elementPassed = null
-            }
+            this.currentView = 'add'
+            this.elementPassed = null
             
         },
         showGroupService(){
@@ -268,16 +254,8 @@ export default {
             return this.requiresAddon('group')
         },
         showListing(){
-            if(this.crumb){
-                this.$emit('updateCrumb',[
-                    { target: 'goToMain', label: 'General'},
-                    { target: 'goToService', label: 'Services' , disabled:true},
-                ],'listing')
-              }else{
-                this.currentView = 'listing'
-                this.elementPassed = null
-            }
-
+            this.currentView = 'listing'
+            this.resettingValues()
         },
     }
 }   
