@@ -23,10 +23,20 @@ class Service
         $services = ServiceServices::all();
         $types = [];
         foreach ($services as $service) {
-            foreach ($service->locations as $location) {
-                $types[$location->id] = $location;
+            foreach (static::getLocations($service) as $location) {
+                $types[static::getLocationId($location)] = $location;
             }
         }
         return count($types) > 1;
+    }
+
+    public static function getLocations($service)
+    {
+        return is_array($service) ? $service['locations'] : $service->locations;
+    }
+
+    public static function getLocationId($location)
+    {
+        return is_array($location) ? $location['id'] : $location->id;
     }
 }
