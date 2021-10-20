@@ -135,7 +135,6 @@ export default {
       },
 
       runInstallation(addon){
-        
         let solution_key = addon.solutions[0].namekey.replace('-','_')
         if(this.services_install[solution_key] !== undefined){
           this.currentServiceAddon = this.$vueService(this.services_install[solution_key]) 
