@@ -15,7 +15,6 @@
         "rakit/validation": "^0.18.0",
         "nesbot/carbon": "~1.37.0",
         "soundasleep/html2text": "^0.5.0",
-        "giggsey/libphonenumber-for-php": "^8.10",
         "egulias/email-validator": "2.1.14",
         "doctrine/dbal": "2.5.13",
         "pelago/emogrifier": "^3.1",

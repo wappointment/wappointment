@@ -13,8 +13,8 @@
                         <strong class="date-start">{{ startDatei18n }}</strong> 
                         <span v-if="!justRescheduled">{{timeLeft}}</span>
                     </div>
-                    <div v-if="zoomSelected && isViewEventPage">
-                        <a v-if="hasMeetingRoom" :href="hasMeetingRoom" class="wbtn wbtn-primary wbtn-lg">{{ options.view.join }}</a>
+                    <div v-if="zoomSelected && isViewEventPage && !isOver">
+                        <a v-if="hasMeetingRoom" :href="meetingUrl" class="wbtn wbtn-primary wbtn-lg">{{ options.view.join }}</a>
                         <div v-else>
                             <div class="h4">{{ options.view.missing_url }}</div>
                         </div>
@@ -120,7 +120,8 @@ export default {
         momenttz: momenttz,
         timeLeft: '',
         timeLeftId: false,
-        rescheduledConfirmed: false
+        rescheduledConfirmed: false,
+        zoom_browser: false
     }),
     created(){
         this.currentTz = this.tzGuess()
@@ -140,6 +141,7 @@ export default {
                 this.refreshAppointment()
             }
         }
+        
     },
     methods: {
         changedRescheduleStep(rescheduleStep){
@@ -147,7 +149,14 @@ export default {
                 this.rescheduledConfirmed = true
             }
         },
-        initCountDown(){
+        autoRedirect(){
+            if(this.isViewEventPage && this.zoomSelected && this.hasMeetingRoom && this.isStarted && !this.isOver){ // auto redirect once the meeting has started
+                window.location.replace(this.meetingUrl)
+            }
+        },
+        initCountDown(){ // run once the appointment is loaded
+            
+            this.autoRedirect()
             this.initDate = new Date()
             this.initDate.setTime(this.selectedSlot*1000)
             // Update the count down every 1 second
@@ -241,6 +250,12 @@ export default {
         
     },
     computed: {
+        isStarted(){
+            return this.selectedSlot < Math.round(Date.now()/1000)
+        },
+        isOver(){
+            return this.appointment.end_at < Math.round(Date.now()/1000)
+        },
         getDuration(){
             return this.appointment.duration_sec / 60
         },
@@ -249,6 +264,14 @@ export default {
         },
         hasMeetingRoom(){
             return [undefined,false,''].indexOf(this.appointment.video_meeting) === -1 ? this.appointment.video_meeting:false
+        },
+        meetingUrl(){
+            let zoomflag = '.zoom.us/j/'
+            if(this.zoom_browser && this.hasMeetingRoom.indexOf(zoomflag) !== false){
+                let meetingsplit = this.hasMeetingRoom.split(zoomflag)[1].split('?')
+                return 'https://zoom.us/wc/'+meetingsplit[0]+'/start?'+meetingsplit[1]
+            }
+            return this.hasMeetingRoom
         },
 
         startDatei18n(){
