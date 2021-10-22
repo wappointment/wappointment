@@ -61,7 +61,9 @@ return [
     ],
     'selection' => [
         'check_viewweek' => false,
+        /* translators: %s - total slot. */
         'title' => sprintf(__('%s free slots', 'wappointment'), '[total_slots]'),
+        /* translators: %s - timezome. */
         'timezone' => sprintf(__('Timezone: %s', 'wappointment'), '[timezone]'),
         'morning' => __('Morning', 'wappointment'),
         'afternoon' => __('Afternoon', 'wappointment'),
@@ -79,6 +81,7 @@ return [
         'back' => __('Back', 'wappointment'),
         'confirm' => __('Confirm', 'wappointment'),
         'check_terms' => false,
+        /* translators: %s - a "we process your data" link is added. */
         'terms' => sprintf(__('See how %s', 'wappointment'), '[link]' . __('we process your data', 'wappointment') . '[/link]'),
         'terms_link' => '',
     ],
@@ -89,6 +92,7 @@ return [
         'duration' => __('Duration:', 'wappointment'),
         'pending' => __('The appointment is pending and should be quickly confirmed', 'wappointment'),
         'skype' => __('The appointment will take place on Skype, we will call you on this account:', 'wappointment'),
+        /* translators: %s - a "here" link is added. */
         'zoom' => sprintf(__('The appointment will take place by Video meeting online, the link will show %s.', 'wappointment'), '[meeting_link]' . __('here', 'wappointment') . '[/meeting_link]'),
         'phone' => __('The appointment will take place over the phone, we will call you on this number:', 'wappointment'),
         'physical' => __('The appointment will take place at this address:', 'wappointment'),
@@ -97,6 +101,7 @@ return [
     'view' => [
         'join' => __('Join Meeting', 'wappointment'),
         'missing_url' => __('The meeting room link will appear once it is time to start.', 'wappointment'),
+        /* translators: %1$s - number of days, %2$s - number of hours, %3$s - number of minutes, %4$s - number of seconds */
         'timeleft' => sprintf(__('(%1$sd %2$sh %3$sm %4$ss)', 'wappointment'), '[days_left]', '[hours_left]', '[minutes_left]', '[seconds_left]'),
     ],
     'cancel' => [

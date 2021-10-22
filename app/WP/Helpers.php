@@ -217,7 +217,7 @@ class Helpers
         do_action('wappointment_enqueue_front');
     }
 
-    public static function enqueue($script, $requires = [])
+    public static function enqueue($script, $requires = ['wp-i18n'])
     {
         $scriptname = WAPPOINTMENT_SLUG . '_' . $script;
         wp_register_script($scriptname, \Wappointment\System\Helpers::assetUrl($script . '.js'), $requires, WAPPOINTMENT_VERSION, true);

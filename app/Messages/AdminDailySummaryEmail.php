@@ -33,7 +33,7 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
         $this->tz = $this->staff->timezone;
         $this->date_string = $this->tomorrowCarbon()->format(Settings::get('date_format'));
 
-
+        /* translators: %s - today's date. */
         $this->subject = sprintf(__('Daily summary for %s', 'wappointment'), $this->date_string);
         $this->sections = new Sections($this->tomorrowCarbon()->timestamp, $this->tomorrowCarbon()->timestamp + 86400, $this->staff, $this->isLegacy());
     }
@@ -51,18 +51,24 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
 
 
         $lines = [
+            /* translators: %s - client's first name. */
             sprintf(__('Hi %s,', 'wappointment'), $this->staff->getFirstName()),
+            /* translators: %s - today's date. */
             sprintf(__('Here is a summary of your appointments for %s', 'wappointment'), $this->date_string)
         ];
 
         if (!empty($coverage)) {
             $newlines = [
+                /* translators: %s - number of appointments. */
                 sprintf(__('New Appointments: %s', 'wappointment'), count($this->sections->appointments)),
+                /* translators: %1$s - numbers of slots, %2$s slots duration. */
                 sprintf(__('Available slots: %1$s (duration %2%s min', 'wappointment'), $this->sections->getFreeSlots($serviceDurationInSeconds), Service::get()['duration']),
+                /* translators: %s - percentage. */
                 sprintf(__('Coverage: %s', 'wappointment'), $coverage),
             ];
         } else {
             $newlines = [
+                /* translators: %s - todays date. */
                 sprintf(__('No availabilities for %s', 'wappointment'), $this->date_string),
             ];
         }

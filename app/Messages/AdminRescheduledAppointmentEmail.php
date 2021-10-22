@@ -16,6 +16,7 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
         $tz = $this->getStaffTz($this->params['appointment']);
 
         $this->addLines([
+            /* translators: %s - client's first name. */
             sprintf(__('Hi %s,', 'wappointment'), $this->params['appointment']->getStaff()->getFirstName()),
             __('A client rescheduled his appointment, find the details below.', 'wappointment'),
         ]);

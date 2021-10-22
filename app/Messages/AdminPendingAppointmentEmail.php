@@ -23,6 +23,7 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
         );
 
         $lines = [
+            /* translators: %s - client's first name. */
             sprintf(__('Hi %s,', 'wappointment'), $this->params['appointment']->getStaff()->getFirstName()),
             __('A new appointment is pending!', 'wappointment'),
         ];

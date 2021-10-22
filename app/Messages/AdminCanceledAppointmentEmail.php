@@ -13,6 +13,7 @@ class AdminCanceledAppointmentEmail extends AbstractAdminEmail
         $this->addBr();
 
         $this->addLines([
+            /* translators: %s - client's first name. */
             sprintf(__('Hi %s,', 'wappointment'), $this->params['appointment']->getStaff()->getFirstName()),
             __('Unfortunately a client cancelled his appointment.', 'wappointment')
         ]);

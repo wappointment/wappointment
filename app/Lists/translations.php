@@ -1,5 +1,6 @@
 <?php
 return [
+    /* translators: %s - addon's name. */
     'add_calendars_addon' => __('Add more calendar with the "%s" addon', 'wappointment'),
     'element_saved' =>  __('Saved successfully!', 'wappointment'),
     'element_reordered' => __('Reordered successfully!', 'wappointment'),
@@ -12,5 +13,6 @@ return [
     'error_deleting' => __('Error while deleting', 'wappointment'),
     'error_updating' => __('Error while updating', 'wappointment'),
     'error_sending' => __('Error while sending', 'wappointment'),
+    /* translators: %s - addon's name. */
     'add_services_addon' => __('Add more services with the "%s" addon', 'wappointment')
 ];

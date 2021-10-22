@@ -30,6 +30,7 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         $this->tz = $this->staff->timezone;
         $this->date_start_string = $this->startWeek()->toDateString();
         $this->date_end_string = $this->endWeek()->toDateString();
+        /* translators: %1$s - start of the week's date %2$s end of the week's date. */
         $this->subject = sprintf(__('Weekly summary  %1$s - %2$s', 'wappointment'), $this->date_start_string, $this->date_end_string);
 
         $this->sections = new Sections($this->startWeek()->timestamp, $this->endWeek()->timestamp, $this->staff, $this->isLegacy());
@@ -46,14 +47,19 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         $coverage = $this->sections->getCoverage($serviceDurationInSeconds);
 
         $lines = [
+            /* translators: %s - client's first name. */
             sprintf(__('Hi %s,', 'wappointment'), $this->staff->getFirstName()),
+            /* translators: %1$s - start of the week's date %2$s end of the week's date. */
             sprintf(__('Here is a summary of your appointments for this week: %1$s - %2$s', 'wappointment'), $this->date_start_string, $this->date_end_string),
         ];
 
         if (!empty($coverage)) {
             $newlines = [
+                /* translators: %s - number of appointments. */
                 sprintf(__('New Appointments: %s', 'wappointment'), count($this->sections->appointments)),
+                /* translators: %1$s - numbers of slots, %2$s slots duration. */
                 sprintf(__('Available slots: %1$s (duration %2%s min', 'wappointment'), $this->sections->getFreeSlots($serviceDurationInSeconds), Service::get()['duration']),
+                /* translators: %s - percentage. */
                 sprintf(__('Coverage: %s', 'wappointment'), $coverage),
             ];
         } else {

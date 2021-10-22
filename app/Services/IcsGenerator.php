@@ -179,7 +179,9 @@ class IcsGenerator
 
         if ($canCanCelOrRescheduleOrBoth) {
             $description .= "\n\n" . __('Need to modify this event?', 'wappointment') . "\n\n";
+            /* translators: %1$s - date %2$s rescheule link. */
             $description .= Settings::get('allow_rescheduling') ? sprintf(__("Reschedule (until %1$s): \n %2$s \n\n", 'wappointment'), $appointment->rescheduleLimit(), $appointment->getLinkRescheduleEvent())  : '';
+            /* translators: %1$s - date %2$s cancel link. */
             $description .= Settings::get('allow_cancellation') ? sprintf(__("Cancel (until %1$s): \n %2$s \n\n", 'wappointment'), $appointment->cancelLimit(), $appointment->getLinkCancelEvent()) : '';
         }
         $description .= "\n-----------------------------------";

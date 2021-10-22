@@ -35,6 +35,7 @@ class TagsReplacement
                 $email_tags_core[] =  [
                     'model' => 'staff',
                     'key' => $custom_field['key'],
+                    /* translators: %s - field name. */
                     'label' => sprintf(__('Staff Custom Field - %s', 'wappointment'), $custom_field['name']),
                     'getMethod' => 'getStaffCustomField',
                     'sanitize' => true,

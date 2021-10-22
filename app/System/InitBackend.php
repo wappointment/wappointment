@@ -167,6 +167,7 @@ class InitBackend
         $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_settings')) . '" >' . __('Settings', 'wappointment') . '</a>';
 
         if (Status::canSeeUpdatePage()) {
+            /* translators: %s - version number */
             $links[] = '<a class="wappo_whatsnew" href="' . esc_url(WPHelpers::adminUrl('wappointment_calendar#see_whats_new')) . '" >' . sprintf(__('See Improvements in %s', 'wappointment'), 'v' . WAPPOINTMENT_VERSION) . '</a>';
         }
 
