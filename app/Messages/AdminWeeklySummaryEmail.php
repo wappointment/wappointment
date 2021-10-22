@@ -30,7 +30,7 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         $this->tz = $this->staff->timezone;
         $this->date_start_string = $this->startWeek()->toDateString();
         $this->date_end_string = $this->endWeek()->toDateString();
-        $this->subject = 'Weekly summary ' . $this->date_start_string . ' - ' . $this->date_end_string;
+        $this->subject = sprintf(__('Weekly summary  %1$s - %2$s', 'wappointment'), $this->date_start_string, $this->date_end_string);
 
         $this->sections = new Sections($this->startWeek()->timestamp, $this->endWeek()->timestamp, $this->staff, $this->isLegacy());
     }
@@ -46,19 +46,19 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         $coverage = $this->sections->getCoverage($serviceDurationInSeconds);
 
         $lines = [
-            'Hi ' .  $this->staff->getFirstName() . ', ',
-            'Here is a summary of your appointments for this week: ' . $this->date_start_string . ' - ' . $this->date_end_string
+            sprintf(__('Hi %s,', 'wappointment'), $this->staff->getFirstName()),
+            sprintf(__('Here is a summary of your appointments for this week: %1$s - %2$s', 'wappointment'), $this->date_start_string, $this->date_end_string),
         ];
 
         if (!empty($coverage)) {
             $newlines = [
-                'New Appointments: ' . count($this->sections->appointments),
-                'Available Slots: ' . $this->sections->getFreeSlots($serviceDurationInSeconds) . ' (duration ' . Service::get()['duration'] . 'min)',
-                'Coverage: ' . $coverage
+                sprintf(__('New Appointments: %s', 'wappointment'), count($this->sections->appointments)),
+                sprintf(__('Available slots: %1$s (duration %2%s min', 'wappointment'), $this->sections->getFreeSlots($serviceDurationInSeconds), Service::get()['duration']),
+                sprintf(__('Coverage: %s', 'wappointment'), $coverage),
             ];
         } else {
             $newlines = [
-                'No availabilities for this week'
+                __('No availabilities for this week', 'wappointment'),
             ];
         }
 
@@ -67,7 +67,7 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
 
         if ($this->sections->getFreeSlots($serviceDurationInSeconds) == 0) {
             $this->addButton(
-                'Open new slots',
+                __('Open new slots', 'wappointment'),
                 WPHelpers::adminUrl('wappointment_calendar'),
                 false
             );
@@ -76,9 +76,9 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
         $this->getAppointmentsListWeek($this->startWeek(), $this->endWeek());
 
         $this->addLines([
-            'Have a great week!',
+            __('Have a great week!', 'wappointment'),
             '',
-            'Ps: An .ics file with all your appointments is attached'
+            __('Ps: An .ics file with all your appointments is attached', 'wappointment')
         ]);
         $this->attachIcs($this->sections->appointments, 'weekly_appointments', true);
     }
@@ -97,7 +97,7 @@ class AdminWeeklySummaryEmail extends AdminDailySummaryEmail
                     $appointmentSumarry[] = $this->getAppointmentFormatted($appointment);
                 }
             } else {
-                $appointmentSumarry[] = '<small>No appointments for that day</small>';
+                $appointmentSumarry[] = '<small>' . __('No appointments for that day', 'wappointment') . '</small>';
             }
             $appointmentSumarry[] = ' ';
             $startingDay->addDay();

@@ -22,7 +22,7 @@ class DatabasePrivileges extends \Wappointment\Installation\MethodsRunner
         try {
             \Wappointment\Config\Database::capsule(true)->getConnection('default')->getPdo();
         } catch (\Throwable $th) {
-            throw new \WappointmentException('It seems impossible to CONNECT to your Database.');
+            throw new \WappointmentException(__('It seems impossible to CONNECT to your Database.', 'wappointment'));
         }
         Settings::save('alt_port', true);
     }

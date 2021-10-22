@@ -17,7 +17,7 @@ use Wappointment\ClassConnect\Carbon;
  */
 function wappointment_booking_widget($attr, $return = false)
 {
-    $button_title = (is_array($attr) && isset($attr['button'])) ? $attr['button'] : (!empty($attr) ? $attr : 'Book now!');
+    $button_title = (is_array($attr) && isset($attr['button'])) ? $attr['button'] : (!empty($attr) ? $attr : __('Book now!', 'wappointment'));
     $widget = \Wappointment\WP\Widget::baseHtml($button_title);
     if ($return) {
         return $widget;

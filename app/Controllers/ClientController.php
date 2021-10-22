@@ -3,6 +3,7 @@
 namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
+use Wappointment\Helpers\Translations;
 use Wappointment\Models\Appointment;
 use Wappointment\Services\Client;
 use Wappointment\Validators\HttpRequest\BookingAdmin;
@@ -15,23 +16,19 @@ use Wappointment\Services\Settings;
 
 class ClientController extends RestController
 {
-    public function search(Request $request)
-    {
-        return Client::search($request->input('email'));
-    }
 
     public function book(BookingAdmin $booking)
     {
         if ($booking->hasErrors()) {
-            return WPHelpers::restError('Review your fields', 500, $booking->getErrors());
+            return WPHelpers::restError(Translations::get('review_fields'), 500, $booking->getErrors());
         }
 
         $result = Admin::book($booking);
         if (isset($result['errors'])) {
-            return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['errors']);
+            return WPHelpers::restError(Translations::get('booking_failed'), 500, $result['errors']);
         }
 
-        return ['message' => 'Appointment recorded'];
+        return ['message' => __('Appointment recorded', 'wappointment')];
     }
 
     public function index(Request $request)
@@ -74,7 +71,7 @@ class ClientController extends RestController
         Client::save($request->all());
 
         return [
-            'message' => 'Client save',
+            'message' => Translations::get('element_saved'),
         ];
     }
 
@@ -85,7 +82,7 @@ class ClientController extends RestController
 
         return [
             'elementDeleted' => $request->input('id'),
-            'message' => 'Client deleted',
+            'message' => Translations::get('element_deleted'),
         ];
     }
 
@@ -94,7 +91,7 @@ class ClientController extends RestController
         if (!CurrentUser::isAdmin()) {
             $appointment = Appointment::where('client_id', (int)$request->input('id'))->where('staff_id', CurrentUser::calendarId())->first();
             if (empty($appointment)) {
-                throw new \WappointmentException("Cannot modify clients that are not yours", 1);
+                throw new \WappointmentException(__('Cannot modify clients that are not yours', 'wappointment'), 1);
             }
         }
     }

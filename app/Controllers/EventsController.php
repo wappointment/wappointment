@@ -4,6 +4,7 @@ namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Helpers\Translations;
 use Wappointment\Managers\Central;
 use Wappointment\Services\Settings;
 use Wappointment\Services\DateTime;
@@ -106,9 +107,9 @@ class EventsController extends RestController
         $appointment = $this->canEditAppointment($request->input('id'));
 
         if (Appointment::cancel($appointment)) {
-            return ['message' => 'Appointment cancelled'];
+            return ['message' => __('Appointment cancelled', 'wappointment')];
         }
-        throw new \WappointmentException('Error deleting appointment', 1);
+        throw new \WappointmentException(__('Error deleting appointment', 'wappointment'), 1);
     }
 
     public function recordDotcom(Request $request)
@@ -133,7 +134,7 @@ class EventsController extends RestController
     {
         $appointment = $this->getAppointmentModel()::find((int)$id);
         if (!CurrentUser::isAdmin() && CurrentUser::calendarId() !== (int) $appointment->staff_id) {
-            throw new \WappointmentException("Cannot modify an appointment which doesnt belong to you", 1);
+            throw new \WappointmentException(__('Cannot modify an appointment which doesnt belong to you', 'wappointment'), 1);
         }
         return $appointment;
     }
@@ -143,9 +144,9 @@ class EventsController extends RestController
         $this->canEditAppointment($request->input('id'));
 
         if (Appointment::confirm($request->input('id'))) {
-            return ['message' => 'Appointment confirmed'];
+            return ['message' => __('Appointment confirmed', 'wappointment')];
         } else {
-            throw new \WappointmentException('Appointment couldn\'t be confirmed', 1);
+            throw new \WappointmentException(__('Error confirming appointment', 'wappointment'), 1);
         }
     }
 
@@ -160,9 +161,9 @@ class EventsController extends RestController
                 'end_at' => DateTime::convertUnixTS($request->input('end'))
             ]
         )) {
-            return ['message' => 'Appointment updated'];
+            return ['message' => Translations::get('element_updated')];
         } else {
-            throw new \WappointmentException('Appointment couldn\'t be updated', 1);
+            throw new \WappointmentException(Translations::get('error_updating'), 1);
         }
     }
 

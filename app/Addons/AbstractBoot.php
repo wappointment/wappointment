@@ -249,7 +249,7 @@ abstract class AbstractBoot implements Boot
 
     protected static function compatibleWithAddon()
     {
-        return Get::list('addons_compatibility')[static::$addon_key];
+        return Get::list('addons')[static::$addon_key]['min'];
     }
 
     protected static function convertVersionToMajor($version)

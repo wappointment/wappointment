@@ -23,7 +23,7 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
         );
 
         $lines = [
-            'Hi ' . $this->params['appointment']->getStaff()->getFirstName() . ', ',
+            sprintf(__('Hi %s,', 'wappointment'), $this->params['appointment']->getStaff()->getFirstName()),
             __('A new appointment is pending!', 'wappointment'),
         ];
 
@@ -44,7 +44,7 @@ class AdminPendingAppointmentEmail extends AbstractAdminEmail
         if ($buttonConfirm === true) {
             $tz = $this->getStaffTz($this->params['appointment']);
             $this->addButton(
-                'Confirm appointment',
+                __('Confirm appointment', 'wappointment'),
                 WPHelpers::adminUrl('wappointment_calendar&start=' .
                     $st . '&end=' . $end . '&timezone=' . $tz . '&open_confirm=' . (int) $this->params['appointment']->id)
             );

@@ -11,7 +11,7 @@ class Database extends \Wappointment\Installation\MethodsRunner
         if (extension_loaded('pdo')) {
             return true;
         } else {
-            throw new \WappointmentException('Wappointment requires the php extension "pdo" to work.');
+            throw new \WappointmentException(__('Wappointment requires the php extension "pdo" to work.', 'wappointment'));
         }
     }
 
@@ -21,7 +21,7 @@ class Database extends \Wappointment\Installation\MethodsRunner
         if (extension_loaded('pdo_mysql')) {
             return true;
         } else {
-            throw new \WappointmentException('Wappointment requires the php extension "pdo_mysql" to work.');
+            throw new \WappointmentException(__('Wappointment requires the php extension "pdo_mysql" to work.', 'wappointment'));
         }
     }
 }

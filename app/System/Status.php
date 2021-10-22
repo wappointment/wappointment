@@ -84,9 +84,9 @@ class Status
             foreach ($services as $service) {
                 if (\Wappointment\Managers\Service::hasZoom($service)) {
                     $messages[] = [
-                        'message' => 'Hey! You are using Video meetings, great for you! Generate meetings automatically with Zoom, Google meet etc ... by connecting these services',
+                        'message' => __('Hey! You are using Video meetings, great for you!', 'wappointment') . __('Generate meetings automatically with Zoom, GoogleMeet etc... by connecting these services', 'wappointment'),
                         'link' => [
-                            'label' => 'Connect Account',
+                            'label' => __('Connect Account', 'wappointment'),
                             'address' => '[goto_calendars_zoom_account]'
                         ]
                     ];

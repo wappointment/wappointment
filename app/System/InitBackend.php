@@ -164,30 +164,11 @@ class InitBackend
 
     public function customPluginLinks($links)
     {
-        $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_settings')) . '" >Settings</a>';
+        $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_settings')) . '" >' . __('Settings', 'wappointment') . '</a>';
 
         if (Status::canSeeUpdatePage()) {
-            $links[] = '<a class="wappo_whatsnew" href="' . esc_url(WPHelpers::adminUrl('wappointment_calendar#see_whats_new')) . '" >See Improvements in v' . WAPPOINTMENT_VERSION . '</a>';
+            $links[] = '<a class="wappo_whatsnew" href="' . esc_url(WPHelpers::adminUrl('wappointment_calendar#see_whats_new')) . '" >' . sprintf(__('See Improvements in %s', 'wappointment'), 'v' . WAPPOINTMENT_VERSION) . '</a>';
         }
-        /* if (Status::installedForXDays() > 30) {
-            $links[] = '<a href="https://wordpress.org/support/plugin/wappointment/reviews/#new-post" target="_blank" class="btn btn-outline-secondary text-dark ml-2">
-                Support us with stars
-                <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span>
-            </a> <style>.plugins .plugin-title .dashicons.dashicons-star-filled::before {
-                padding: 0px;
-                background-color: transparent;
-                box-shadow: none;
-                font-size: 17px;
-                color: #ffb900;
-            }
-            .plugins .plugin-title .dashicons, .plugins .plugin-title img {
-                float: none;
-                width: auto;
-                height: auto;
-                padding: 0;
-            }
-            </style>';
-        } */
 
         return $links;
     }

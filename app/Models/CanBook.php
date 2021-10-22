@@ -18,7 +18,7 @@ trait CanBook
         if ($bookingRequest->get('service')) {
             $service = Service::find((int)$bookingRequest->get('service'));
             if (empty($service)) {
-                throw new \WappointmentException("Error cannot load the service", 1);
+                throw new \WappointmentException(__('Error cannot load the service', 'wappointment'), 1);
             }
         } else {
             return $this->bookLegacy($bookingRequest, $forceConfirmed); //legacy trick for older version of wappo-woo
@@ -36,7 +36,7 @@ trait CanBook
 
         //test that this is bookable
         if (!$hasBeenBooked) {
-            throw new \WappointmentException('Error cannot book at this time', 1);
+            throw new \WappointmentException(__('Error cannot book at this time', 'wappointment'), 1);
         }
         return $hasBeenBooked;
     }
@@ -49,7 +49,7 @@ trait CanBook
         //test that this is bookable
         $hasBeenBooked = AppointmentService::adminBook($this, $booking->get('start'), $end, 'unused', $booking->getService(), $booking->staff);
         if (!$hasBeenBooked) {
-            throw new \WappointmentException('Error cannot book at this time', 1);
+            throw new \WappointmentException(__('Error cannot book at this time', 'wappointment'), 1);
         }
         return $hasBeenBooked;
     }

@@ -5,6 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\Managers\Service as ServiceCentral;
 use Wappointment\Services\ServiceInterface;
 use Wappointment\ClassConnect\RakitValidator;
+use Wappointment\Helpers\Translations;
 use Wappointment\Validators\RequiredIfFields;
 use Wappointment\Models\Location as LocationModel;
 use Wappointment\Models\Price as ModelsPrice;
@@ -28,7 +29,7 @@ class Services implements ServiceInterface
     {
         $validator = new RakitValidator;
         $validation_messages = [
-            'locations_id' => 'Please select how do you deliver the service',
+            'locations_id' => __('Please select how do you deliver the service', 'wappointment'),
         ];
         $validator->setMessages(apply_filters('wappointment_service_validation_messages', $validation_messages));
         $validator->addValidator('required_if_fields', new RequiredIfFields);
@@ -51,7 +52,7 @@ class Services implements ServiceInterface
         $validation->validate();
 
         if ($validation->fails()) {
-            throw new \WappointmentValidationException("Cannot save Service", 1, null, $validation->errors()->toArray());
+            throw new \WappointmentValidationException(Translations::get('error_saving'), 1, null, $validation->errors()->toArray());
             return $validation->errors()->toArray();
         }
 
@@ -79,7 +80,7 @@ class Services implements ServiceInterface
             $serviceDB = static::getModel()::findOrFail($serviceData['id']);
         } else {
             if (!static::getModel()::canCreate()) {
-                throw new \WappointmentValidationException("Cannot save Services");
+                throw new \WappointmentValidationException(Translations::get('error_saving'));
             }
         }
         $serviceData = static::savePrices($serviceData);
@@ -148,7 +149,7 @@ class Services implements ServiceInterface
             $serviceDB = static::getModel()::findOrFail($service_id);
         }
         if (empty($serviceDB)) {
-            throw new \WappointmentException("Error patching service (service suite)", 1);
+            throw new \WappointmentException(Translations::get('error_updating'), 1);
         }
         $options = array_merge($serviceDB->options, $data['options']);
         $serviceDB->update(['options' => $options]);

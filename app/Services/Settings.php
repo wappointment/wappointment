@@ -5,6 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\ClassConnect\RakitValidator;
+use Wappointment\Helpers\Translations;
 
 class Settings
 {
@@ -95,10 +96,10 @@ class Settings
                 'wpmail_html' => false,
                 'attachments_off' => false
             ],
-            'reschedule_link' => 'Reschedule',
-            'cancellation_link' => 'Cancel',
-            'save_appointment_text_link' => 'Save to calendar',
-            'new_booking_link' => 'Book a new appointment',
+            'reschedule_link' => __('Reschedule', 'wappointment'),
+            'cancellation_link' => __('Cancel', 'wappointment'),
+            'save_appointment_text_link' => __('Save to calendar', 'wappointment'),
+            'new_booking_link' => __('Book a new appointment', 'wappointment'),
             'booking_page' => 0,
             'show_welcome' => false,
             'force_ugly_permalinks' => false,
@@ -236,7 +237,7 @@ class Settings
         $updatedValues = static::prepareSave($setting_key, $value);
         if ($updatedValues !== false) {
             WPHelpers::setOption(static::$key_option, $updatedValues, true);
-            return ['message' => 'Setting saved'];
+            return ['message' => Translations::get('element_saved')];
         }
     }
 
@@ -246,7 +247,7 @@ class Settings
             $updatedValues = static::prepareSave($key, $value);
         }
         WPHelpers::setOption(static::$key_option, $updatedValues, true);
-        return ['message' => 'Settings saved'];
+        return ['message' => Translations::get('element_saved')];
     }
 
     public static function delete()
@@ -300,7 +301,7 @@ class Settings
                 static::$methodAfterSaved($staff_id);
             }
 
-            return ['message' => empty(static::$msg) ? 'Setting saved' : static::$msg];
+            return ['message' => empty(static::$msg) ? Translations::get('element_saved') : static::$msg];
         }
     }
 

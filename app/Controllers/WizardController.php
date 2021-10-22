@@ -11,6 +11,9 @@ class WizardController extends RestController
 {
     private $last_step = 4;
 
+    /**
+     * Legacy TODO remove
+     */
     public function later(Request $request)
     {
         WPHelpers::setOption('wizard_step', -1);
@@ -33,7 +36,7 @@ class WizardController extends RestController
             if (!empty($request->input('booking_page_id'))) {
                 Settings::save('booking_page', (int) $request->input('booking_page_id'));
             }
-            return ['message' => 'Done with the setup. Let\'s get booked!'];
+            return ['message' => __('Done with the setup. Let\'s fill this agenda of yours!', 'wappointment')];
         }
 
         return true;

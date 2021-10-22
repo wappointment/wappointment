@@ -6,7 +6,7 @@ class Widget extends WidgetAbstract
 {
     public function __construct()
     {
-        parent::__construct('wappointment', 'Wappointment Booking');
+        parent::__construct('wappointment', __('Wappointment Booking', 'wappointment'));
     }
 
     public static function canShow()
@@ -27,7 +27,7 @@ class Widget extends WidgetAbstract
                 $htmlAttributes .= ' data-' . str_replace('_', '-', strtolower($attr)) . '="' . esc_attr($val) . '"';
             }
         }
-        $button_title = !empty($instance['button_title']) ? esc_html($instance['button_title']) : 'Book now!';
+        $button_title = !empty($instance['button_title']) ? esc_html($instance['button_title']) : __('Book now!', 'wappointment');
         return '<button class="wappointment_widget" style="display:none"' . $htmlAttributes . '>' . $button_title . '</button>';
     }
 
@@ -35,14 +35,14 @@ class Widget extends WidgetAbstract
     protected static function formDefinition()
     {
         $definition = [
-            'title' => ['type' => 'text', 'label' => 'Title', 'default' => 'Book an appointment'],
+            'title' => ['type' => 'text', 'label' => 'Title', 'default' => __('Book an appointment', 'wappointment')],
             'button_title' => [
-                'type' => 'text', 'label' => 'Button text',
+                'type' => 'text', 'label' => __('Button text', 'wappointment'),
                 'default' => (new \Wappointment\Services\WidgetSettings)->get()['button']['title']
             ],
             'brc_floats' => [
                 'type' => 'checkbox',
-                'label' => 'Floats in the bottom right corner', 'default' => false
+                'label' => __("Floats in the screen's bottom right corner", 'wappointment'), 'default' => false
             ],
         ];
 

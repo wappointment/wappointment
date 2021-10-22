@@ -15,7 +15,7 @@ class AdminLegacy
             $client = MClient::find($client_id);
         } else {
             if (is_array($booking->get('email'))) {
-                throw new \WappointmentException("Malformed parameter", 1);
+                throw new \WappointmentException(__('Malformed parameter', 'wappointment'), 1);
             }
             $client = MClient::where('email', $booking->get('email'))->first();
         }

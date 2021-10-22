@@ -34,7 +34,7 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
         $this->date_string = $this->tomorrowCarbon()->format(Settings::get('date_format'));
 
 
-        $this->subject = 'Daily summary for ' . $this->date_string;
+        $this->subject = sprintf(__('Daily summary for %s', 'wappointment'), $this->date_string);
         $this->sections = new Sections($this->tomorrowCarbon()->timestamp, $this->tomorrowCarbon()->timestamp + 86400, $this->staff, $this->isLegacy());
     }
 
@@ -51,19 +51,19 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
 
 
         $lines = [
-            'Hi ' .  $this->staff->getFirstName() . ', ',
-            'Here is a summary of your appointments for ' . $this->date_string
+            sprintf(__('Hi %s,', 'wappointment'), $this->staff->getFirstName()),
+            sprintf(__('Here is a summary of your appointments for %s', 'wappointment'), $this->date_string)
         ];
 
         if (!empty($coverage)) {
             $newlines = [
-                'New Appointments: ' . count($this->sections->appointments),
-                'Available Slots: ' . $this->sections->getFreeSlots($serviceDurationInSeconds) . ' (duration ' . Service::get()['duration'] . 'min)',
-                'Coverage: ' . $coverage
+                sprintf(__('New Appointments: %s', 'wappointment'), count($this->sections->appointments)),
+                sprintf(__('Available slots: %1$s (duration %2%s min', 'wappointment'), $this->sections->getFreeSlots($serviceDurationInSeconds), Service::get()['duration']),
+                sprintf(__('Coverage: %s', 'wappointment'), $coverage),
             ];
         } else {
             $newlines = [
-                'No availabilities for ' . $this->date_string
+                sprintf(__('No availabilities for %s', 'wappointment'), $this->date_string),
             ];
         }
 
@@ -71,7 +71,7 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
 
         if ($this->sections->getFreeSlots($serviceDurationInSeconds) == 0) {
             $this->addButton(
-                'Open new slots',
+                __('Open new slots', 'wappointment'),
                 WPHelpers::adminUrl('wappointment_calendar'),
                 false
             );
@@ -80,9 +80,9 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
         $this->getAppointmentsList();
 
         $this->addLines([
-            'Have a great day!',
+            __('Have a great day!', 'wappointment'),
             '',
-            'Ps: An .ics file with all your appointments is attached'
+            __('Ps: An .ics file with all your appointments is attached', 'wappointment')
         ]);
 
         $this->attachIcs($this->sections->appointments, 'daily_appointments', true);

@@ -60,15 +60,15 @@ class EmailHelper
         }
 
         if ($order->tax_amount > 0) {
-            $rows[] = ['Tax', Payment::formatPrice(round($order->tax_amount / 100, 2))];
+            $rows[] = [__('Tax', 'wappointment'), Payment::formatPrice(round($order->tax_amount / 100, 2))];
         }
 
         $rows[] = [
-            'cells' => ['Total', Payment::formatPrice(($order->total + $order->tax_amount) / 100)],
+            'cells' => [__('Total', 'wappointment'), Payment::formatPrice(($order->total + $order->tax_amount) / 100)],
             'class' => 'bold lineb linet'
         ];
         $rows[] = [
-            'cells' => ['Status', $order['payment_label'] . ' - ' . $order['status_label']],
+            'cells' => [__('Status', 'wappointment'), $order['payment_label'] . ' - ' . $order['status_label']],
             'class' => 'small'
         ];
 

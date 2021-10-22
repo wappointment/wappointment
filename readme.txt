@@ -80,7 +80,7 @@ Quickly define when and how many of them do they receive (1 day before appointme
 * Customize and personalize your confirmations and reminders sent to your clients
 
 = Advanced options for edge use-cases =
-* Limit/Maximun active bookings per client
+* Limit/Maximum active bookings per client
 * Force user account's email for logged in users
 * Open new slots in new day at a specific time e.g." new slots everyday at 11pm"
 
