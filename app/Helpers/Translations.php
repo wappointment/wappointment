@@ -19,4 +19,13 @@ class Translations
 
         return is_array($params) && !empty($params) ? vsprintf($translation, $params) : $translation;
     }
+
+    public static function fetchTranslations()
+    {
+        static $translations = false;
+        if ($translations === false) {
+            $translations = Get::list('translations');
+        }
+        return $translations;
+    }
 }
