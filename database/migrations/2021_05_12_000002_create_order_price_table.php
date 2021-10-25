@@ -16,21 +16,23 @@ class CreateOrderPriceTable extends Wappointment\Installation\Migrate
         $foreignNameOrder = $this->getFKOrders();
         $foreignNamePrice = $this->getFKPrices();
         $foreignNameAppointments = $this->getFKAppointments();
-        if (!Capsule::schema()->hasTable(Database::$prefix_self . '_order_price')) {
-            Capsule::schema()->create(Database::$prefix_self . '_order_price', function ($table) use ($foreignNameOrder, $foreignNamePrice, $foreignNameAppointments) {
-                $table->increments('id');
-                $table->unsignedInteger('order_id');
-                $table->unsignedInteger('price_id');
-                $table->string('item_name');
-                $table->unsignedMediumInteger('price_value');
-                $table->unsignedInteger('appointment_id')->nullable()->default(null);
-                $table->foreign('order_id', $foreignNameOrder)->references('id')->on(Database::$prefix_self . '_orders');
-                $table->foreign('price_id', $foreignNamePrice)->references('id')->on(Database::$prefix_self . '_prices');
-                $table->foreign('appointment_id', $foreignNameAppointments)->references('id')->on(Database::$prefix_self . '_appointments');
-                $table->softDeletes();
-                $table->timestamps();
-            });
+
+        if (Capsule::schema()->hasTable(Database::$prefix_self . '_order_price')) {
+            $this->down(false);
         }
+        Capsule::schema()->create(Database::$prefix_self . '_order_price', function ($table) use ($foreignNameOrder, $foreignNamePrice, $foreignNameAppointments) {
+            $table->increments('id');
+            $table->unsignedInteger('order_id');
+            $table->unsignedInteger('price_id');
+            $table->string('item_name');
+            $table->unsignedMediumInteger('price_value');
+            $table->unsignedInteger('appointment_id')->nullable()->default(null);
+            $table->foreign('order_id', $foreignNameOrder)->references('id')->on(Database::$prefix_self . '_orders');
+            $table->foreign('price_id', $foreignNamePrice)->references('id')->on(Database::$prefix_self . '_prices');
+            $table->foreign('appointment_id', $foreignNameAppointments)->references('id')->on(Database::$prefix_self . '_appointments');
+            $table->softDeletes();
+            $table->timestamps();
+        });
     }
 
 
@@ -54,16 +56,19 @@ class CreateOrderPriceTable extends Wappointment\Installation\Migrate
      *
      * @return void
      */
-    public function down()
+    public function down($fk = true)
     {
         $foreignNameOrder = $this->getFKOrders();
         $foreignNamePrice = $this->getFKPrices();
         $foreignNameAppointments = $this->getFKAppointments();
-        Capsule::schema()->table(Database::$prefix_self . '_order_price', function ($table) use ($foreignNameOrder, $foreignNamePrice, $foreignNameAppointments) {
-            $table->dropForeign($foreignNameOrder);
-            $table->dropForeign($foreignNamePrice);
-            $table->dropForeign($foreignNameAppointments);
-        });
+        if ($fk) {
+            Capsule::schema()->table(Database::$prefix_self . '_order_price', function ($table) use ($foreignNameOrder, $foreignNamePrice, $foreignNameAppointments) {
+                $table->dropForeign($foreignNameOrder);
+                $table->dropForeign($foreignNamePrice);
+                $table->dropForeign($foreignNameAppointments);
+            });
+        }
+
         Capsule::schema()->dropIfExists(Database::$prefix_self . '_order_price');
     }
 }
