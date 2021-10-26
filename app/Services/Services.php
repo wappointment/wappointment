@@ -38,7 +38,7 @@ class Services implements ServiceInterface
             'options' => '',
             'options.durations' => 'required|array',
             'options.durations.*.duration' => 'required|numeric',
-            'locations_id' => 'required|array',
+            'locations_id' => 'required',
         ];
 
         $validationRules = apply_filters('wappointment_service_validation_rules', $validationRules);

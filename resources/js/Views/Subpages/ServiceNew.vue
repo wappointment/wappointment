@@ -1,6 +1,6 @@
 <template>
     <div>
-        <WAPFormGenerator ref="fgaddservice" :buttons="buttons" :schema="schemaParsed" :data="modelHolder" 
+        <WAPFormGenerator ref="fgaddservice" :buttons="buttons" :schema="schemaParsed()" :data="modelHolder" 
         @submit="save" @back="$emit('back')" @ready="isReady" :errors="errorsPassed" :key="formKey" 
         labelButton="Save" v-bind="extraOptions" :minimal="minimal" />
     </div>
@@ -118,8 +118,12 @@ export default {
   },
   computed: {
 
-    schemaParsed(){
-      return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schema), this.params)
+    getParamsPassed(){
+      let params = this.params
+      if(this.dataPassed.options.slots !== undefined){
+        params.isGroup = true
+      }
+      return params;
     },
 
     errorsPassed(){
@@ -127,6 +131,9 @@ export default {
     }
   },
   methods: {
+    schemaParsed(){
+      return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schema), this.getParamsPassed)
+    },
     generatePriceField(){
       return {
           type: 'input',
