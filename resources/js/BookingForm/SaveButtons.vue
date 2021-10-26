@@ -59,7 +59,7 @@ export default {
         },
 
         eventDescription(html = false){
-             let pwd_link = apiWappointment.signature
+             let pwd_link = !html ? apiWappointment.signature:apiWappointment.signature.replace('https://wappointment.com','<a href="https://wappointment.com?utm_source=plugin&utm_medium=ics&utm_campaign=appointment">Wappointment</a>')
              return this.getAppointmentDetails(html) + this.getLinks(html) + lnb + this.getLineSeparator('_', pwd_link.length/2) +
              lnb + lnb + pwd_link
         },
