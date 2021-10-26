@@ -253,7 +253,6 @@ export default {
                     appointmentKey: result.data.appointment.edit_key, 
                     loading: false
                 }
-                console.log('data',data)
                 this.$emit('confirmed', 
                 this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
                 data

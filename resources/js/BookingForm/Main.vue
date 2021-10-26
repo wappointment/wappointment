@@ -777,7 +777,6 @@ export default {
             if(!this.isLegacyOrNotServiceSuite){
                 componentsList = this.updateComponentList(componentsList)
                 if(window.apiWappointment.methods !== undefined && window.apiWappointment.methods.length > 0){
-                    console.log('set payment step')
                     componentsList = this.setPaymentStep(componentsList)
                 }
             }

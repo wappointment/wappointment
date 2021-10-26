@@ -171,7 +171,7 @@ class IcsGenerator
 
         if ($appointment->isZoom()) {
             $description .= "\n\n" . __('Appointment is a Video meeting', 'wappointment');
-            $description .= "\n" . __('Meeting will be accessible from the link below:') .
+            $description .= "\n" . __('Meeting will be accessible from the link below:', 'wappointment') .
                 "\n " . $appointment->getLinkViewEvent();
         }
 
@@ -180,9 +180,9 @@ class IcsGenerator
         if ($canCanCelOrRescheduleOrBoth) {
             $description .= "\n\n" . __('Need to modify this event?', 'wappointment') . "\n\n";
             /* translators: %1$s - date %2$s rescheule link. */
-            $description .= Settings::get('allow_rescheduling') ? sprintf(__("Reschedule (until %1$s): \n %2$s \n\n", 'wappointment'), $appointment->rescheduleLimit(), $appointment->getLinkRescheduleEvent())  : '';
+            $description .= Settings::get('allow_rescheduling') ? sprintf(__('Reschedule (until %1$s): &#10; %2$s', 'wappointment') . "\n\n", $appointment->rescheduleLimit(), $appointment->getLinkRescheduleEvent())  : '';
             /* translators: %1$s - date %2$s cancel link. */
-            $description .= Settings::get('allow_cancellation') ? sprintf(__("Cancel (until %1$s): \n %2$s \n\n", 'wappointment'), $appointment->cancelLimit(), $appointment->getLinkCancelEvent()) : '';
+            $description .= Settings::get('allow_cancellation') ? sprintf(__('Cancel (until %1$s): &#10; %2$s', 'wappointment') . "\n\n", $appointment->cancelLimit(), $appointment->getLinkCancelEvent()) : '';
         }
         $description .= "\n-----------------------------------";
 

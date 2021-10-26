@@ -74,7 +74,13 @@ class WidgetSettings
 
     public function get()
     {
-        return $this->merged_settings;
+        return $this->mergeTranslations($this->merged_settings);
+    }
+
+    protected function mergeTranslations($settings)
+    {
+        $settings['i18n'] = Get::list('widget_translations');
+        return $settings;
     }
 
     public function getSetting($settingName)

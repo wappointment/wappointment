@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-10-25T09:22:07+00:00\n"
+"POT-Creation-Date: 2021-10-26T10:22:13+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wappointment\n"
@@ -779,6 +779,7 @@ msgid "Too late to cancel"
 msgstr ""
 
 #: app/Lists/widget_settings.php:113
+#: app/Lists/widget_translations.php:12
 #: app/Services/Settings.php:100
 msgid "Cancel"
 msgstr ""
@@ -792,6 +793,7 @@ msgid "Too late to reschedule"
 msgstr ""
 
 #: app/Lists/widget_settings.php:120
+#: app/Lists/widget_translations.php:11
 #: app/Services/Settings.php:99
 msgid "Reschedule"
 msgstr ""
@@ -850,6 +852,39 @@ msgstr ""
 
 #: app/Lists/widget_steps.php:37
 msgid "Confirmation"
+msgstr ""
+
+#: app/Lists/widget_translations.php:3
+#: app/Services/IcsGenerator.php:173
+msgid "Appointment is a Video meeting"
+msgstr ""
+
+#: app/Lists/widget_translations.php:4
+#: app/Services/IcsGenerator.php:174
+msgid "Meeting will be accessible from the link below:"
+msgstr ""
+
+#: app/Lists/widget_translations.php:5
+msgid "Appointment over the phone."
+msgstr ""
+
+#. translators: %s - is a phone number or a skype account username.
+#: app/Lists/widget_translations.php:7
+msgid "We will call you on %s"
+msgstr ""
+
+#. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
+#: app/Lists/widget_translations.php:8
+#: app/Messages/AdminGeneratesDefault.php:43
+msgid "Begin meeting"
+msgstr ""
+
+#: app/Lists/widget_translations.php:9
+msgid "Appointment on Skype"
+msgstr ""
+
+#: app/Lists/widget_translations.php:10
+msgid "Appointment is taking place at this address"
 msgstr ""
 
 #: app/Messages/AdminCanceledAppointmentEmail.php:11
@@ -974,11 +1009,6 @@ msgstr ""
 #. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
 #: app/Messages/AdminGeneratesDefault.php:43
 msgid "Video meeting: %s"
-msgstr ""
-
-#. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
-#: app/Messages/AdminGeneratesDefault.php:43
-msgid "Begin the meeting"
 msgstr ""
 
 #: app/Messages/AdminNewAppointmentEmail.php:11
@@ -1170,12 +1200,18 @@ msgstr ""
 msgid "Calendar already connected"
 msgstr ""
 
-#: app/Services/IcsGenerator.php:173
-msgid "Appointment is a Video meeting"
-msgstr ""
-
 #: app/Services/IcsGenerator.php:181
 msgid "Need to modify this event?"
+msgstr ""
+
+#. translators: %1$s - date %2$s rescheule link.
+#: app/Services/IcsGenerator.php:183
+msgid "Reschedule (until %1$s): &#10; %2$s"
+msgstr ""
+
+#. translators: %1$s - date %2$s cancel link.
+#: app/Services/IcsGenerator.php:185
+msgid "Cancel (until %1$s): &#10; %2$s"
 msgstr ""
 
 #. translators: %s is replaced with https://wappointment.com

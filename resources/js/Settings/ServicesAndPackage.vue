@@ -65,7 +65,6 @@ export default {
     },
     methods: {
         dataUp(data){
-            console.log('data',data)
             this.tax = data.tax
         },
         saveTax(){
