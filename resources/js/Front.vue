@@ -85,8 +85,8 @@ export default {
       attributesElProcess(){
         let attributesEl = Object.assign({},this.attributesEl)
          if(this.getParameterByName('staff')){
-            attributesEl.staffSelection = this.getParameterByName('staff')
-          }
+          attributesEl.staffSelection = this.getParameterByName('staff')
+        }
           
         return this.castAttributes(attributesEl)
       },
@@ -178,11 +178,22 @@ export default {
         }
     },
     methods: {
+        serviceSelectionAttribute(){
+          this.attributesEl.serviceSelection.indexOf(',')
+          let arrayids= this.attributesEl.serviceSelection.indexOf(',') !== -1? this.attributesEl.serviceSelection.split(','):[].push(parseInt(this.attributesEl.serviceSelection))
+          for (let i = 0; i < arrayids.length; i++) {
+            arrayids[i] = parseInt(arrayids[i])
+          }
+          return arrayids
+        },
         castAttributes(attributes){
-          for (const el of ['staffSelection', 'serviceSelection']) {
+          for (const el of ['staffSelection']) {
             if(attributes[el]){
               attributes[el] = parseInt(attributes[el])
             }
+          }
+          if(attributes['serviceSelection'] !== undefined){
+            attributes['serviceSelection'] = this.serviceSelectionAttribute()
           }
           return attributes
         },
