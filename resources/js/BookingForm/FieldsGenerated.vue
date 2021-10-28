@@ -106,7 +106,12 @@ export default {
     },
     computed: {
         getServiceFields(){
-            return this.isLegacy ? this.legacyGetServiceFields:this.service.options.fields
+            let arrayInit = []
+            if(this.service.options.slots !== undefined){
+                arrayInit.push('options.slots')
+            }
+
+            return this.isLegacy ? this.legacyGetServiceFields:arrayInit.concat(this.service.options.fields)
         },
         legacyGetServiceFields(){
             let fields = ['name', 'email']
@@ -307,7 +312,6 @@ export default {
                         this.bookingFormExtended[key] = this.data[key]
                     }
                 }
-            
             }
         },
         getCFOptions(fieldName){
@@ -369,6 +373,7 @@ export default {
                     }
                 }
             }
+            
         },
 
         reorderFields(sourceFields){

@@ -1,5 +1,5 @@
 <template>
-    <div class="w-100">
+    <div :class="className">
         <label class="pl-2"v-if="[undefined,''].indexOf(label) === -1">
             {{ label}}
         </label>
@@ -50,6 +50,9 @@ export default {
     computed:{
         formatedValue(){
             return this.tempVal + ' ' + (this.definition.unit !== undefined ? this.definition.unit:'')
+        },
+        className(){
+            return this.definition.class !== undefined ? this.definition.class:'w-100'
         }
     },
     watch:{

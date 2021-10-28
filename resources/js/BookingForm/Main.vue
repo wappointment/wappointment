@@ -652,7 +652,7 @@ export default {
                     throw "Service "+lockToServiceID+" not available for staff"
                 }
             }else{
-                if(this.services.length < 2){
+                if(this.services.length == 1){ //there is just one service we auto set
                     this.service = this.services[0]
                 }
             }
