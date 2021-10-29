@@ -8,7 +8,7 @@ export default {
             return this.canChangeAnything && this.service.options.durations !== undefined && this.service.options.durations.length > 1 && !this.appointmentSaved
         },
         canChangeService(){
-            return this.canChangeAnything && this.services.length > 1 && !this.appointmentSaved && !this.serviceLocked
+            return this.canChangeAnything && this.services.length > 1 && !this.appointmentSaved
         },
         canChangeLocation(){
             return this.canChangeAnything && this.service.locations !== undefined && this.service.locations.length > 1 && !this.appointmentSaved

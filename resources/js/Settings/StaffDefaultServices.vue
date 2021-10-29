@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p class="h4">Set the default availability that will be used for new staff</p>
+        <p class="h4">Set the default services that will be assigned to new staff</p>
         <div>
             <label class="form-check-label" for="Assign all services available to new staff">
                 <div class="d-flex align-items-center">

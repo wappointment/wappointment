@@ -38,10 +38,10 @@
                                         <small>{{ calendar.timezone }}</small>
                                     </div>
                                 </div>
-                                <div class="wlist-actions text-muted" v-if="isUserAdministrator">
-                                    <span data-tt="Sort" v-if="searchterm=='' && elements.calendars.length > 1"><span class="dashicons dashicons-move"></span></span>
+                                <div class="wlist-actions text-muted" v-if="isUserAdministrator || canCalEdit">
+                                    <span data-tt="Sort" v-if="isUserAdministrator && searchterm=='' && elements.calendars.length > 1" ><span class="dashicons dashicons-move"></span></span>
                                     <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
-                                    <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
+                                    <span data-tt="Delete" v-if="isUserAdministrator"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
                                     <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
                                     <span data-tt="Set Permissions" v-if="isStaffCalendar(calendar)"><span class="dashicons dashicons-unlock" @click.prevent.stop="editPermission(calendar)"></span></span>
                                     <span data-tt="Set Custom Field" v-if="elements.allowStaffCf" ><span class="dashicons dashicons-editor-code" @click.prevent.stop="setCustomFields(calendar)"></span></span>
@@ -200,9 +200,6 @@ export default {
         calendarRegav(){
             return this.currentView == 'regav'
         },
-        onlyOneCalendarEditable(){
-            return this.elements.calendars.length === 1
-        },
         canCalEditServices(){
             return this.canCalendarEdit('wappo_self_services')
         },
@@ -221,13 +218,16 @@ export default {
         canCalUnpublish(){
             return this.canCalendarEdit('wappo_self_unpublish')
         },
+        canCalEdit(){
+            return this.canCalendarEdit('wappo_self_man')
+        },
         calendarsUsed(){
             return this.searchable.map(e => e.wp_uid)
         }
     },
     methods: {
         canCalendarEdit(something){
-            return this.isUserAdministrator || (this.onlyOneCalendarEditable && this.hasPermission(something))
+            return this.isUserAdministrator || this.hasPermission(something)
         },
         isStaffCalendar(calendar){
             return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1 && calendar.roles.indexOf('wappointment_staff') === -1

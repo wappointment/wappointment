@@ -49,7 +49,11 @@ class CalendarsController extends RestController
 
     public function getCalendarsStaff()
     {
-        return CurrentUser::isAdmin() ? (new CalendarsBack)->get() : (new CalendarsBack)->query();
+        $calendars = (new CalendarsBack)->get();
+
+        return CurrentUser::isAdmin() ? $calendars : array_values(\WappointmentLv::collect($calendars)->filter(function ($e) {
+            return $e['wp_uid'] == CurrentUser::id();
+        })->toArray());
     }
 
     public function getAvatar(Request $request)
