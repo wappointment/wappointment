@@ -96,7 +96,7 @@ class CalendarsController extends RestController
 
         $this->refreshRepository();
 
-        return ['message' => __('Custom field saved', 'wappointment')];
+        return ['message' => Translations::get('element_saved')];
     }
 
     protected function refreshRepository()
