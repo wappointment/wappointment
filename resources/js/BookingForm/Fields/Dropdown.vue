@@ -1,5 +1,5 @@
 <template>
-    <div :class="getClasses">
+    <div :class="getClasses" v-if="options.hide !== true">
         
         <label :for="options.namekey">{{ getLabel }}</label>
          <select :id="options.namekey" v-model="updateValue">

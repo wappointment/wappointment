@@ -6,8 +6,6 @@
             </BookingAddress>
         </div>
         <div v-if="customFields.length > 0" v-for="fieldObject in customFields" class="wap-field">
-            <TextInput v-if="showOnlyIfEmailOrText(fieldObject)" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
             <div class="field-required"  v-if="fieldObject.type == 'phone'" :class="hasError(fieldObject.namekey)">
                 <label :for="phoneId">{{getFieldObject(fieldObject).name}}</label>
                 <PhoneInput 
@@ -18,37 +16,29 @@
                 @getId="getId"
                 />
             </div>
-            <DateInput v-if="'date' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="fieldObject" v-model="bookingFormExtended[fieldObject.namekey]" />
-            <Checkboxes v-if="'checkboxes' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
-            <Radios v-if="'radios' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
-            <Checkbox v-if="'checkbox' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
-            <Dropdown v-if="'select' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
-             <TextArea v-if="'textarea' == fieldObject.type" :name="fieldObject.namekey" 
-            :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
+            <template v-else>
+                <component :is="getComponentType(fieldObject.type)" :name="fieldObject.namekey" 
+                :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
+            </template>
         </div>
     </div>
 </template>
 
 <script>
 
-import TextInput from './Fields/TextInput.vue'
-import Checkboxes from './Fields/Checkboxes.vue'
-import DateInput from '../BookingForm/Fields/DateInput.vue'
-import Radios from './Fields/Radios.vue'
-import Checkbox from './Fields/Checkbox.vue'
-import Dropdown from './Fields/Dropdown.vue'
-import TextArea from './Fields/TextArea.vue'
+import TextInput from './Fields/TextInput'
+import Checkboxes from './Fields/Checkboxes'
+import DateInput from './Fields/DateInput'
+import Radios from './Fields/Radios'
+import Checkbox from './Fields/Checkbox'
+import Dropdown from './Fields/Dropdown'
+import TextArea from './Fields/TextArea'
 import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
 import MixinLegacy from './MixinLegacy'
 import IsDemo from '../Mixins/IsDemo'
 export default {
-    components: {
+    components: window.wappointmentExtends.filter('bookingFormComponents', {
         TextInput,
         Checkboxes, 
         Radios,
@@ -58,7 +48,7 @@ export default {
         BookingAddress,
         PhoneInput,
         DateInput
-    },
+    }) ,
     props:['duration', 'location', 'custom_fields', 'data', 'options', 'service', 'validators', 'disabledEmail'],
     mixins: [MixinLegacy, IsDemo],
     data: () => ({
@@ -138,14 +128,34 @@ export default {
         forceEmail(){
             return window.apiWappointment.wp_user !== undefined && window.apiWappointment.wp_user.forceemail
         },
+        componentMatches(){
+            return window.wappointmentExtends.filter('bookingFormComponentsMatches', {
+                'email':'TextInput',
+                'input':'TextInput',
+                'checkboxes':'Checkboxes',
+                'radios':'Radios',
+                'checkbox':'Checkbox',
+                'select':'Dropdown',
+                'textarea':'TextArea',
+            })
+        }
     },
     methods: {
-
+        getComponentType(type){
+            return this.componentMatches[type]
+        },
         getFieldObject(fieldObject){
             let namekey = fieldObject.namekey=='name' ? 'fullname':fieldObject.namekey
             if(this.isDemo && this.options.form[namekey] !== undefined){
                 fieldObject.name = this.options.form[namekey]
             }
+
+            fieldObject = window.wappointmentExtends.filter('bookingFormFieldObject', fieldObject, this.service, this.options.form[namekey])
+            
+            if(fieldObject.passedInitValue) {
+                this.bookingFormExtended[namekey] = fieldObject.passedInitValue
+            }
+
             return fieldObject
         },
         initForm(){
