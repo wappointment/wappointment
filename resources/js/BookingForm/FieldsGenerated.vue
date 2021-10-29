@@ -78,10 +78,9 @@ export default {
         bookingFormExtended: {
             handler: function(newValue) {
                 this.errorsOnFields = {}
-
                 for (const key in newValue) {
                     if (newValue.hasOwnProperty(key)) {
-                        let result = this.isFieldValid(key, newValue[key])
+                        let result = this.isFieldValid(key, String(newValue[key]))
                         if(result !== true){
                             this.errorsOnFields[key] = result
                         }
@@ -336,8 +335,10 @@ export default {
                             case 'email':
                             case 'phone':
                             case 'skype':
+                            default:
                                 customF.name = customF.updated === true ?customF.name:this.options.form[customF.namekey]
                                 return customF
+
                         }
                         
                     }
@@ -360,30 +361,33 @@ export default {
             }
         },
         filterCustomFields(){
+            
             let fields_src = {'src1': this.reorderFields(this.getServiceFields)}
             if(!this.isLegacy){
                 this.insertCustomFields()
                 fields_src.src2 = this.reorderFields(this.locationObj.options.fields) 
             }
+            console.log('fields_src',fields_src)
+            let customFields = []
             for (const key in fields_src) {
                 if (fields_src.hasOwnProperty(key) && fields_src[key] !== undefined) {
                     for (let i = 0; i < fields_src[key].length; i++) {
                         let cfieldslist = []
-                        for (let j = 0; j < this.customFields.length; j++) {
-                            cfieldslist.push(this.customFields[j]['namekey'])
+                        for (let j = 0; j < customFields.length; j++) {
+                            cfieldslist.push(customFields[j]['namekey'])
                         }
                         
                         if(cfieldslist.indexOf(fields_src[key][i]) === -1){
                             let cf_found = this.getCFOptions(fields_src[key][i])
                             if(cf_found!== undefined){
-                                this.customFields.push(cf_found)
+                                customFields.push(cf_found)
                             }
                         } 
                          
                     }
                 }
             }
-            
+            this.customFields = customFields[0].sorting !== undefined ? customFields.sort((a,b) => a.sorting > b.sorting):customFields
         },
 
         reorderFields(sourceFields){

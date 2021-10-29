@@ -3,7 +3,7 @@
         
         <label :for="options.namekey">{{ getLabel }}</label>
          <select :id="options.namekey" v-model="updateValue">
-            <option disabled value="">Please make a selection</option>
+            <option v-if="options.nodefault === undefined" disabled value="">Please make a selection</option>
             <option v-for="valuef in options.values" :value="valuef.value">{{ valuef.label }}</option>
         </select> 
     </div>
