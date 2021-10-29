@@ -28,7 +28,7 @@ class AbstractProcess
 
             //once we ran the installation test and the instalation process we check that all is fine
             if (!empty($this->errors)) {
-                throw new \WappointmentValidationException(__('Installation interrupted', 'wappointment'), 1, null, $this->errors);
+                throw new \WappointmentValidationException('Installation interrupted', 1, null, $this->errors);
             }
         }
     }

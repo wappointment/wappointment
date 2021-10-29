@@ -63,7 +63,7 @@ return [
     [
         'model' => 'staff',
         'key' => 'name',
-        'label' => __('Staff Name', 'wappointment'),
+        'label' => __('Staff\'s Name', 'wappointment'),
         'sanitize' => true,
         'getMethod' => 'getStaffName',
         'modelCall' => 'appointment'

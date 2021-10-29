@@ -26,9 +26,16 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
         $this->addRoundedSquare(
             [
                 '<u>' . __('Former appointment', 'wappointment') . '</u>',
-                'Date: ' . $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('date_format')),
-                'Time: ' . $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('time_format'))
-                    . ' - ' . $this->params['oldAppointment']->end_at->setTimezone($tz)->format(Settings::get('time_format')),
+                sprintf(
+                    __('Date: %s', 'wappointment'),
+                    $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('date_format'))
+                ),
+                sprintf(
+                    __('Time: %1$s - %2$s', 'wappointment'),
+                    $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('time_format')),
+                    $this->params['oldAppointment']->end_at->setTimezone($tz)->format(Settings::get('time_format'))
+                ),
+
             ]
         );
         $this->addLines([

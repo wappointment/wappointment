@@ -134,7 +134,7 @@ class EventsController extends RestController
     {
         $appointment = $this->getAppointmentModel()::find((int)$id);
         if (!CurrentUser::isAdmin() && CurrentUser::calendarId() !== (int) $appointment->staff_id) {
-            throw new \WappointmentException(__('Cannot modify an appointment which doesnt belong to you', 'wappointment'), 1);
+            throw new \WappointmentException(__('Cannot modify an appointment which doesn\'t belong to you', 'wappointment'), 1);
         }
         return $appointment;
     }

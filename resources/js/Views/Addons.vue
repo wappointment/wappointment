@@ -17,7 +17,7 @@
         <button class="btn btn-secondary" @click="openModal">
           <div class="d-flex align-items-center">
             <div><span class="dashicons dashicons-admin-network"></span></div>
-            <div class="ml-2">{{ __('Enter licence key', 'wappointment')}}</div>
+            <div class="ml-2">Enter licence key</div>
           </div>
         </button>
       </div>
@@ -84,7 +84,6 @@ import BundlePreview from '../Components/Bundle'
 let services_install = window.wappointmentExtends.filter('AddonsServiceInstall', {})
 import WPScreenOptions from '../WP/ScreenOptions'
 import RequestMaker from '../Modules/RequestMaker'
-const { __, _x, _n, _nx } = wp.i18n
 export default {
     extends: abstractView,
     mixins: [RequestMaker],
