@@ -17,6 +17,7 @@ class CreateOrderPriceTable extends Wappointment\Installation\Migrate
         $foreignNamePrice = $this->getFKPrices();
         $foreignNameAppointments = $this->getFKAppointments();
 
+        //this is for people who had an issue running the initial migrations with long foreign key names
         if (Capsule::schema()->hasTable(Database::$prefix_self . '_order_price')) {
             $this->down(false);
         }
