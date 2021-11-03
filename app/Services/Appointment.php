@@ -9,7 +9,7 @@ use Wappointment\Managers\Central;
 use Wappointment\WP\Helpers as WPHelpers;
 
 /**
- * LEGACY
+ * LEGACY DO NOT EDIT
  */
 class Appointment
 {

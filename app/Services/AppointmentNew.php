@@ -31,23 +31,23 @@ class AppointmentNew
         $start_at = static::unixToDb($start_at);
         $end_at = static::unixToDb($end_at);
         $location = Location::where('id', $client->bookingRequest->get('location'))->first();
-
-        $appointmentData = [
+        $status = $forceConfirmed ? AppointmentModel::STATUS_CONFIRMED : static::getDefaultStatus($service);
+        $appointmentData = apply_filters('wappointment_process_book', [
             'start_at' => $start_at,
             'end_at' => $end_at,
             'type' => $location->type > 3 ? $location->type : $location->type - 1,
             'client_id' => $client->id,
-            'edit_key' => md5($client->id . $start_at),
-            'status' => $forceConfirmed ? AppointmentModel::STATUS_CONFIRMED : static::getDefaultStatus($service),
+            'edit_key' => $client->generateEditKey($start_at),
+            'status' => $status,
             'service_id' => $client->bookingRequest->get('service'),
             'location_id' => $location->id,
             'duration' => $client->bookingRequest->get('duration'),
             'staff_id' => empty($staff_id) ? 0 : static::getStaffId($staff_id),
             'package_id' => $client->bookingRequest->get('package_id'),
             'package_price_id' => $client->bookingRequest->get('package_price_id'),
-        ];
+        ], $client, $start_at, $service);
 
-        return static::book($appointmentData, $client, $forceConfirmed);
+        return static::book($appointmentData, $client, $forceConfirmed, $status);
     }
 
     protected static function getStaffId($staff_id)
@@ -315,14 +315,18 @@ class AppointmentNew
         throw new \WappointmentException('Slot not available', 1);
     }
 
-    protected static function book($data, Client $client, $is_admin = false)
+    protected static function book($data, Client $client, $is_admin = false, $status = 0)
     {
         $dataReturn = static::create($data, $client);
 
-        if ($dataReturn['appointment']->status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION) {
-            Events::dispatch('AppointmentBookedEvent', $dataReturn);
+        if (empty($client->bookingRequest->get('slots'))) {
+            if ($dataReturn['appointment']->status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION) {
+                Events::dispatch('AppointmentBookedEvent', $dataReturn);
+            } else {
+                Events::dispatch('AppointmentConfirmedEvent', $dataReturn);
+            }
         } else {
-            Events::dispatch('AppointmentConfirmedEvent', $dataReturn);
+            do_action('wappointment_appointment_action_booked', $dataReturn, $client, $status);
         }
 
         //if availability has not been refreshed for a while we refresh it now otherwise we queue a job for it

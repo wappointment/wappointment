@@ -80,7 +80,7 @@ export default {
                 this.errorsOnFields = {}
                 for (const key in newValue) {
                     if (newValue.hasOwnProperty(key)) {
-                        let result = this.isFieldValid(key, String(newValue[key]))
+                        let result = this.isFieldValid(key, newValue[key])
                         if(result !== true){
                             this.errorsOnFields[key] = result
                         }
@@ -97,7 +97,7 @@ export default {
         getServiceFields(){
             let arrayInit = []
             if(this.service.options.slots !== undefined){
-                arrayInit.push('options.slots')
+                arrayInit.push('slots')
             }
 
             return this.isLegacy ? this.legacyGetServiceFields:arrayInit.concat(this.service.options.fields)
@@ -150,8 +150,7 @@ export default {
             }
 
             fieldObject = window.wappointmentExtends.filter('bookingFormFieldObject', fieldObject, this.service, this.options.form[namekey])
-            
-            if(fieldObject.passedInitValue) {
+            if(fieldObject.passedInitValue && this.isEmpty(String(this.bookingFormExtended[namekey]))) {
                 this.bookingFormExtended[namekey] = fieldObject.passedInitValue
             }
 
@@ -269,7 +268,7 @@ export default {
                 case 'textarea':
                 case 'radios':
                 case 'select':
-                    if(this.isEmpty(value)){
+                    if(this.isEmpty(String(value))){
                         return field_required
                     }
                     break;
@@ -367,8 +366,8 @@ export default {
                 this.insertCustomFields()
                 fields_src.src2 = this.reorderFields(this.locationObj.options.fields) 
             }
-            console.log('fields_src',fields_src)
             let customFields = []
+            console.log('fields_src',fields_src)
             for (const key in fields_src) {
                 if (fields_src.hasOwnProperty(key) && fields_src[key] !== undefined) {
                     for (let i = 0; i < fields_src[key].length; i++) {

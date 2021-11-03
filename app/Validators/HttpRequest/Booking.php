@@ -48,25 +48,24 @@ class Booking extends LegacyBooking
             'duration' => 'required|min:5',
             'staff_id' => '',
             'package_id' => '',
-            'package_price_id' => ''
+            'package_price_id' => '',
+            'slots' => ''
         ];
         if (!$this->forceEmail()) {
             $this->validationRulesArray['email'] = 'required|email';
         }
 
         $custom_fields = Central::get('CustomFields')::get();
-        foreach ($this->service->options['fields'] as $key => $field) {
-            foreach ($custom_fields as $key => $cfield) {
-                if ($cfield['namekey'] == $field && empty($this->validationRulesArray[$field])) {
-                    $this->validationRulesArray[$field] = !empty($cfield['validations']) ? $cfield['validations'] : '';
-                    if ($this->validationRulesArray[$field] == '') {
-                        $this->validationRulesArray[$field]  = !empty($cfield['required']) ? 'required' : '';
-                    }
-                }
-            }
-        }
-        foreach ($this->location->options['fields'] as $key => $field) {
-            foreach ($custom_fields as $key => $cfield) {
+        $this->addCustomValidations($this->service, $custom_fields);
+        $this->addCustomValidations($this->location, $custom_fields);
+
+        $this->validationRulesArray = apply_filters('wappointment_booking_validation_rules', $this->validationRulesArray, $this->service);
+    }
+
+    protected function addCustomValidations($model, $custom_fields)
+    {
+        foreach ($model->options['fields'] as $field) {
+            foreach ($custom_fields as $cfield) {
                 if ($cfield['namekey'] == $field && empty($this->validationRulesArray[$field])) {
                     $this->validationRulesArray[$field] = !empty($cfield['validations']) ? $cfield['validations'] : '';
                     if ($this->validationRulesArray[$field] == '') {

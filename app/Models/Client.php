@@ -39,6 +39,11 @@ class Client extends Model
         return sanitize_email($value);
     }
 
+    public function generateEditKey($start_at)
+    {
+        return md5($this->id . $start_at);
+    }
+
     public function getFirstName()
     {
         return (strpos($this->name, ' ')) !== false ? substr($this->name, 0, strpos($this->name, ' ')) : $this->name;

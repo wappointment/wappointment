@@ -70,7 +70,6 @@ export default {
         this.activeMethod = methodKey
       },
       cancel(){
-        console.log('cancel')
       },
       confirm(alreadyConfirmed = false){
         if(alreadyConfirmed !== false){
