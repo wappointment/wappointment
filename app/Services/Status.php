@@ -47,6 +47,14 @@ class Status
                 'name' => 'WP HTML Mail',
             ];
         }
+
+        if (defined('FLUENTMAIL_PLUGIN_VERSION')) {
+            return [
+                'config' => 'options-general.php?page=fluent-mail',
+                'icon' => 'fluent-smtp/assets/images/logo.svg',
+                'name' => 'Fluent SMTP',
+            ];
+        }
         return false;
     }
 
