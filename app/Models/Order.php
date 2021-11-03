@@ -238,7 +238,6 @@ class Order extends Model
 
     public function confirmAppointments()
     {
-
         foreach ($this->prices as $charge) {
             AppointmentNew::confirm($charge->appointment_id, true);
         }

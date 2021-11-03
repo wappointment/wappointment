@@ -17,48 +17,9 @@
                         </tr>
                     </thead>
                     <draggable @change="orderChanged" v-model="elements" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.length > 0">
-
-                        <tr  class="row-click" v-for="(service, idx) in filteredSearchable">
-                            <td>
-                                <div>{{ idx + 1 }}</div> 
-                            </td>
-                            <td>
-                                <div>
-                                    <div class="d-flex align-items-center">
-                                        <WapImage v-if="serviceHasIcon(service)" :element="service" :config="{mauto:false}" :desc="service.name" size="lg" /> 
-                                        <div class="ml-2">
-                                            <div>{{ service.name }}</div>
-                                            <div class="small">
-                                                <div v-if="isSellable(service)" class="text-success">Selling</div>
-                                                <div v-else class="text-info">Free</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="wlist-actions text-muted">
-                                    <span data-tt="Sort" v-if="searchterm == '' && elements.length > 1" ><span class="dashicons dashicons-move"></span></span>
-                                    <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(service.id)"></span></span>
-                                    <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editElement(service)"></span></span>
-                                    <span data-tt="Delete"  ><span class="dashicons dashicons-trash" @click.prevent.stop="deleteService(service.id)"></span></span>
-                                    <span>(id: {{ service.id }})</span>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex">
-                                    <WCell class="duration-cell" v-for="(durationObj,dkey) in getDurations(service)" :key="dkey">
-                                        <span>{{durationObj.duration}}min</span><span v-if="isSellable(service) && soldDuration(durationObj)">{{ getDurationPrice(durationObj) }}</span>
-                                    </WCell>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex">
-                                    <div v-for="locationObj in getLocations(service)" class="location d-flex align-items-center" :data-tt="locationObj.name">
-                                        <WapImage :element="locationObj" :desc="locationObj.name" size="md" />
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-
+                        <ServiceRow v-for="(service, idx) in filteredSearchable" :key="'row-service-'+idx"
+                        :service="service" :idx="idx" :can_move="searchterm == '' && elements.length > 1" 
+                        @edit="editElement" @delete="deleteService" @shortcode="getShortCode" />
                     </draggable>
                      <tbody v-else>
                          <tr>
@@ -85,23 +46,22 @@
 
 import WappoServiceService from '../Services/V1/Services'
 import ServicesAddEdit from './ServicesAddEdit'
+import ServiceRow from './ServiceRow'
 import ServicesEditLegacy from '../Views/Subpages/Service'
 import AbstractListing from '../Views/AbstractListing'
-import WCell from '../WComp/WCell'
 import ShortcodeDesigner from './ShortcodeDesigner'
 import isSearchable from '../Mixins/isSearchable'
 import HasPopup from '../Mixins/HasPopup'
-import CanFormatPrice from '../Mixins/CanFormatPrice'
 import CanResetValues from '../Mixins/CanResetValues'
 
 export default {
     extends: AbstractListing,
-    mixins: window.wappointmentExtends.filter('ServicesManageMixins', [isSearchable, HasPopup, CanFormatPrice, CanResetValues]),
+    mixins: window.wappointmentExtends.filter('ServicesManageMixins', [isSearchable, HasPopup, CanResetValues]),
     components:{
-        WCell,
         ServicesAddEdit,
         ServicesEditLegacy,
         ShortcodeDesigner,
+        ServiceRow
     },
     data: () => ({
         currentView: 'listing',
@@ -145,15 +105,6 @@ export default {
         afterLoaded(response){
             this.$emit('dataUp', response.data)
         },
-        soldDuration(durationObj){
-            return ['',undefined,false].indexOf(durationObj.woo_price) === -1
-        },
-        getDurationPrice(durationObj){
-            return this.formatPrice(durationObj.woo_price)
-        },
-        isSellable(service){
-            return service.options.woo_sellable
-        },
         hideElementsPopup(){
             this.showShortcode = false
             this.showCurrency = false
@@ -163,34 +114,11 @@ export default {
             this.showShortcode = service_id
             this.openPopup('Get Booking Widget Shortcode')
         },
-        hideShortcode(){
-            this.showShortcode = false
-        },
+        // hideShortcode(){
+        //     this.showShortcode = false
+        // },
         goToDelivery(){
             this.$router.push({name:'modalities'})
-        },
-        serviceHasIcon(service){
-            return service.options.icon != ''
-        },
-        isLegacy(service){
-            return service.type !== undefined
-        },
-        getDurations(service){
-            return this.isLegacy(service) ? [{duration: service.duration}]:service.options.durations
-        },
-        getLocations(service){
-            if(!this.isLegacy(service)){
-                return service.locations
-            }
-            let newTypes = []
-            for (let i = 0; i < service.type.length; i++) {
-                newTypes.push({
-                    name: service.type[i],
-                    type: service.type[i],
-                    options:{}
-                })
-            }
-            return newTypes
         },
 
         orderChanged(val){
@@ -260,21 +188,3 @@ export default {
     }
 }   
 </script>
-<style>
-.location {
-    margin: .2rem;
-    color: #717171;
-}
-.wcell.duration-cell{
-    padding: 0;
-}
-.wcell.duration-cell span{
-    display: inline-block;
-    padding: .3em;
-}
-
-.wcell.duration-cell span:nth-child(2) {
-    background: #fbfbfb;
-    border-left:1px solid #ccc;
-}
-</style>
