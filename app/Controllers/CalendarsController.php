@@ -27,10 +27,12 @@ class CalendarsController extends RestController
         $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
 
         $calendars = $db_update_required ? $this->getStafflegacy() : $this->getCalendarsStaff();
+
+        $services = (new Services)->get();
         $data = [
             'db_required' => $db_update_required,
             'timezones_list' => DateTime::tz(),
-            'calendars' => empty($calendars) ? [] : $calendars,
+            'calendars' => empty($calendars) ? [] : $this->filterCalendarServices($calendars, $services),
             'staffs' => StaffServices::getWP(CurrentUser::isAdmin() ? false : CurrentUser::id()),
             'staffDefault' => Settings::staffDefaults(),
             'permissions' => (new Permissions)->getCaps(),
@@ -38,11 +40,39 @@ class CalendarsController extends RestController
         ];
 
         if (!$db_update_required) {
-            $data['services'] = (new Services)->get();
+            $data['services'] = $services;
             $data['servicesDefault'] = Settings::get('servicesDefault');
             $data['limit_reached'] = Central::get('CalendarModel')::canCreate() ? false : 'To add more calendars, get the "Calendars & Staff" addon';
         }
         return $data;
+    }
+
+    private function getServiceIDs($services)
+    {
+        $service_ids = [];
+        foreach ($services as $service) {
+            $service_ids[] = $service['id'];
+        }
+        return $service_ids;
+    }
+
+    /**
+     * get rid of deleted services
+     *
+     * @return void
+     */
+    private function filterCalendarServices($calendars, $services)
+    {
+        $service_ids = $this->getServiceIDs($services);
+        foreach ($calendars as $key => $calendar) {
+            foreach ($calendar['services'] as $keyid => $service_id) {
+                if (!in_array($service_id, $service_ids)) {
+                    unset($calendars[$key]['services'][$keyid]);
+                }
+            }
+            $calendars[$key]['services'] = array_values($calendars[$key]['services']);
+        }
+        return $calendars;
     }
 
     public function getCalendarsStaff()
