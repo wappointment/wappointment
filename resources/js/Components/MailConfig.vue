@@ -497,6 +497,7 @@ export default {
 .img-height-logo{
     max-height: 70px;
     filter: grayscale(1);
+    max-width: 140px;
 }
 .d-flex.align-items-center:hover .img-height-logo{
     filter: none;

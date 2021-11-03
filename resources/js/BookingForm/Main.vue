@@ -152,7 +152,8 @@ export default {
         checkCacheIntervalid: false,
         order:false,
         selectedVariation:false,
-        selectedPackage: false
+        selectedPackage: false,
+        lockToServiceIDs:[]
     }),
 
     mounted () {
@@ -247,8 +248,14 @@ export default {
        filterStaffByService(){
             let staffs = this.getStaffs
             if(this.serviceLocked){
-                let serviceSelected = parseInt(this.attributesEl.serviceSelection)
-                staffs = staffs.filter(e  => e.services.indexOf(serviceSelected) !== -1)
+                let servicesSelected = this.attributesEl.serviceSelection
+                staffs = staffs.filter(function (staff) {
+                    for (let i = 0; i < staff.services.length; i++) {
+                        if(servicesSelected.indexOf(staff.services[i]) !== -1){
+                            return true;
+                        }
+                    }
+                })
             }
             return staffs
         },
@@ -315,8 +322,15 @@ export default {
         },
         autoSelectingOptions(){
             this.autoSelService()
+            this.filterServices()
             this.autoSelectDuration() 
             this.autoSelectModality()
+        },
+        filterServices(){
+            if(this.lockToServiceIDs.length > 0){
+                let locked_sids = this.lockToServiceIDs
+                this.services = this.services.filter(service => locked_sids.indexOf(service.id) !== -1)
+            }
         },
         changeStaff(newStaff){
             this.service = false
@@ -644,10 +658,16 @@ export default {
         testLockedService(){
             if(this.attributesEl !== undefined && 
                 this.attributesEl.serviceSelection !== undefined){
-                let lockToServiceID = this.attributesEl.serviceSelection
-                if([undefined,false,''].indexOf(lockToServiceID) === -1){
-                    this.service = this.services.find(e => parseInt(e.id) == lockToServiceID)
+                let lockToServiceIDs = this.attributesEl.serviceSelection
+                if(Array.isArray( lockToServiceIDs)){
+                    this.lockToServiceIDs = lockToServiceIDs
+                    if( lockToServiceIDs.length === 1){
+                        this.service = this.services.find(e => parseInt(e.id) == parseInt(lockToServiceID[0]))
+                    }else if(this.services.length === 1){
+                        this.service = this.services[0]
+                    }
                 }
+                
                 if(this.service === undefined){
                     throw "Service "+lockToServiceID+" not available for staff"
                 }
