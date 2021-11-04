@@ -10,7 +10,7 @@ class Events
         try {
             $eventInstance = self::getEventInstance($eventClassName, $args);
             $eventInstance->callWPAction();
-            return self::getDispatcherInstance()->dispatch($eventInstance::NAME, $eventInstance);
+            return self::getDispatcherInstance()->dispatch($eventInstance, $eventInstance::NAME);
         } catch (\WappointmentException $e) {
             return false;
         }

@@ -1,7 +1,7 @@
 <?php
 
-namespace Wappointment\ClassConnect;
+// namespace Wappointment\ClassConnect;
 
-class EmailValidator extends \Egulias\EmailValidator\EmailValidator
-{
-}
+// class EmailValidator extends \Egulias\EmailValidator\EmailValidator
+// {
+// }

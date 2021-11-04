@@ -6,7 +6,7 @@ class HasValues extends \Rakit\Validation\Rule
 {
     protected $message = ':attribute :value has been used';
 
-    public function fillParameters(array $params)
+    public function fillParameters(array $params): \Rakit\Validation\Rule
     {
         if (count($params) == 1 and is_array($params[0])) {
             $params = $params[0];
@@ -15,7 +15,7 @@ class HasValues extends \Rakit\Validation\Rule
         return $this;
     }
 
-    public function check($values)
+    public function check($values): bool
     {
         $this->requireParameters(['allowed_values']);
 

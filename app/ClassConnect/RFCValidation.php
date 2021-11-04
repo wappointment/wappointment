@@ -1,7 +1,7 @@
 <?php
 
-namespace Wappointment\ClassConnect;
+// namespace Wappointment\ClassConnect;
 
-class RFCValidation extends \Egulias\EmailValidator\Validation\RFCValidation
-{
-}
+// class RFCValidation extends \Egulias\EmailValidator\Validation\RFCValidation
+// {
+// }
