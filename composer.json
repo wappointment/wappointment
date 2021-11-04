@@ -8,6 +8,7 @@
         "illuminate/support": "7.30.*",
         "illuminate/http": "7.30.*",
         "symfony/event-dispatcher": "5.3.*",
+        "egulias/email-validator": "^3.1",
         "symfony/debug": "4.4.*",
         "guzzlehttp/guzzle": "^7.4",
         "rakit/validation": "^1.4",
