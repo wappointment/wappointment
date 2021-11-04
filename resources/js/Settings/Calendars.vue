@@ -52,10 +52,16 @@
                                 <CalendarsRegav :canEdit="canCalEditWeekly" @edit="editAvailability" :calendar="calendar" />
                             </td>
                             <td v-if="!elements.db_required" class="cell-services">
-                                <div class="d-flex flex-wrap" role="button" v-if="calendar.services.length>0">
-                                    <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid, elements.services) }} </ValueCard>
-                                </div>
-                                <button v-if="canCalEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
+                                <template v-if="calendar.services.length>0">
+                                    <div class="d-flex flex-wrap" role="button" >
+                                        <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid, elements.services) }} </ValueCard>
+                                    </div>
+                                    <button v-if="canCalEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
+                                </template>
+                                <template v-else>
+                                    <div class="text-danger small">Missing service</div>
+                                    <button v-if="canCalEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Add service</button>
+                                </template>
                             </td>
                             <td>
                                <Connections :connections="calendar.connected.services === undefined ? []:calendar.connected.services"/>
