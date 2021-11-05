@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-10-26T11:08:18+00:00\n"
+"POT-Creation-Date: 2021-11-05T08:27:04+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wappointment\n"
@@ -55,23 +55,19 @@ msgstr ""
 msgid "Appointment recorded"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:69
+#: app/Controllers/CalendarsController.php:73
 msgid "Forbidden action"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:99
-msgid "Custom field saved"
-msgstr ""
-
-#: app/Controllers/CalendarsController.php:150
+#: app/Controllers/CalendarsController.php:154
 msgid "Services assigned"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:160
+#: app/Controllers/CalendarsController.php:164
 msgid "Permissions saved"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:238
+#: app/Controllers/CalendarsController.php:242
 #: app/Services/AdminLegacy.php:18
 #: app/Services/Appointment.php:78
 #: app/Services/Appointment.php:259
@@ -80,27 +76,27 @@ msgstr ""
 msgid "Malformed parameter"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:259
+#: app/Controllers/CalendarsController.php:263
 msgid "Connected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:262
+#: app/Controllers/CalendarsController.php:266
 msgid "Error connecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:276
+#: app/Controllers/CalendarsController.php:280
 msgid "Disconnected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:279
+#: app/Controllers/CalendarsController.php:283
 msgid "Error disconnecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:293
+#: app/Controllers/CalendarsController.php:297
 msgid "Refreshed"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:296
+#: app/Controllers/CalendarsController.php:300
 msgid "Error refreshing"
 msgstr ""
 
@@ -121,7 +117,7 @@ msgid "Error deleting appointment"
 msgstr ""
 
 #: app/Controllers/EventsController.php:137
-msgid "Cannot modify an appointment which doesnt belong to you"
+msgid "Cannot modify an appointment which doesn't belong to you"
 msgstr ""
 
 #: app/Controllers/EventsController.php:147
@@ -203,22 +199,6 @@ msgstr ""
 #. translators: %s - number of minutes
 #: app/Helpers/Translations.php:13
 msgid "If the order is not completed within %s minutes, the slot will be made available again automatically."
-msgstr ""
-
-#: app/Installation/AbstractProcess.php:31
-msgid "Installation interrupted"
-msgstr ""
-
-#: app/Installation/Checks/Database.php:14
-msgid "Wappointment requires the php extension \"pdo\" to work."
-msgstr ""
-
-#: app/Installation/Checks/Database.php:24
-msgid "Wappointment requires the php extension \"pdo_mysql\" to work."
-msgstr ""
-
-#: app/Installation/Checks/DatabasePrivileges.php:25
-msgid "It seems impossible to CONNECT to your Database."
 msgstr ""
 
 #: app/Installation/Steps/SeedData.php:18
@@ -365,7 +345,7 @@ msgid "Appointment's date and time"
 msgstr ""
 
 #: app/Lists/email_tags.php:66
-msgid "Staff Name"
+msgid "Staff's Name"
 msgstr ""
 
 #: app/Lists/email_tags.php:74
@@ -908,13 +888,13 @@ msgstr ""
 #: app/Messages/AdminDailySummaryEmail.php:89
 #: app/Messages/AdminNewAppointmentEmail.php:25
 #: app/Messages/AdminPendingAppointmentEmail.php:56
-#: app/Messages/AdminRescheduledAppointmentEmail.php:35
+#: app/Messages/AdminRescheduledAppointmentEmail.php:42
 msgid "Have a great day!"
 msgstr ""
 
 #: app/Messages/AdminCanceledAppointmentEmail.php:30
 #: app/Messages/AdminNewAppointmentEmail.php:31
-#: app/Messages/AdminRescheduledAppointmentEmail.php:41
+#: app/Messages/AdminRescheduledAppointmentEmail.php:48
 msgid "Ps: An .ics file with the appointment's details is attached"
 msgstr ""
 
@@ -936,7 +916,6 @@ msgstr ""
 
 #. translators: %1$s - numbers of slots, %2$s slots duration.
 #: app/Messages/AdminDailySummaryEmail.php:65
-#: app/Messages/AdminWeeklySummaryEmail.php:61
 msgid "Available slots: %1$s (duration %2%s min"
 msgstr ""
 
@@ -963,11 +942,13 @@ msgstr ""
 
 #. translators: %s is replaced with the date the appointment startt at
 #: app/Messages/AdminGeneratesDefault.php:18
+#: app/Messages/AdminRescheduledAppointmentEmail.php:30
 msgid "Date: %s"
 msgstr ""
 
 #. translators: %1$s is replaced with the start time, %2$s is replaced with the end time
 #: app/Messages/AdminGeneratesDefault.php:20
+#: app/Messages/AdminRescheduledAppointmentEmail.php:34
 msgid "Time: %1$s - %2$s"
 msgstr ""
 
@@ -1060,6 +1041,11 @@ msgstr ""
 #. translators: %1$s - start of the week's date %2$s end of the week's date.
 #: app/Messages/AdminWeeklySummaryEmail.php:53
 msgid "Here is a summary of your appointments for this week: %1$s - %2$s"
+msgstr ""
+
+#. translators: %1$s - numbers of slots, %2$s slots duration.
+#: app/Messages/AdminWeeklySummaryEmail.php:61
+msgid "Available slots: %1$s (duration %2$s min"
 msgstr ""
 
 #: app/Messages/AdminWeeklySummaryEmail.php:67
@@ -1186,6 +1172,11 @@ msgstr ""
 
 #: app/Services/Client.php:16
 msgid "Max active bookings reached! Cancel one of your appointments in order to book a new one."
+msgstr ""
+
+#. translators: %s - email of the account.
+#: app/Services/CurrentUser.php:27
+msgid "No Wappointment calendar is connected to your WordPress account %s"
 msgstr ""
 
 #: app/Services/ExternalCalendar.php:37
