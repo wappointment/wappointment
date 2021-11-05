@@ -172,6 +172,36 @@ if (!function_exists("dds")) {
 
             return $contents;
         },
+        function (string $filePath, string $prefix, string $contents): string {
+            if (strpos($filePath, '/vendor/symfony/polyfill-php80/bootstrap.php') !== false) {
+                $contents = str_replace([
+                    'namespace WappoVendor;',
+                    'WappoVendor\\',
+                ], [
+                    '',
+                    ''
+
+                ], $contents);
+            }
+
+            return $contents;
+        },
+        function (string $filePath, string $prefix, string $contents): string {
+            if (strpos($filePath, '/vendor/illuminate/database/Migrations/DatabaseMigrationRepository.php') !== false) {
+                $contents = str_replace([
+                    '$this->table()->orderBy(\'batch\', \'asc\')->orderBy(\'migration\', \'asc\')->pluck(\'migration\')->all();',
+
+                ], [
+                    '$this->table()->orderBy(\'batch\', \'asc\')->orderBy(\'migration\', \'asc\')->get()->pluck(\'migration\')->all();',
+
+
+                ], $contents);
+            }
+
+            return $contents;
+        }
+
+
     ],
 
     // PHP-Scoper's goal is to make sure that all code for a project lies in a distinct PHP namespace. However, you
