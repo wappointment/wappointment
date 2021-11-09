@@ -8,4 +8,5 @@ return [
   'wappointment_stripe' => ['min' => '1.0.0', 'name' => 'Stripe Payments'],
   'wappointment_paypal' => ['min' => '1.0.0', 'name' => 'Paypal Payments'],
   'wappointment_packages' => ['min' => '1.0.0', 'name' => 'Packages'],
+  'wappointment_group' => ['min' => '1.0.0', 'name' => 'Group'],
 ];
