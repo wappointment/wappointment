@@ -25,7 +25,7 @@ import momenttz from '../appMoment'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 const lnb = "\\n"
 export default {
-    props: ['service', 'staff', 'currentTz', 'physicalSelected','appointment', 'showResult'],
+    props: ['service', 'staff', 'currentTz', 'physicalSelected','appointment', 'showResult', 'options'],
 
     methods: {
         goToUrl(url){
@@ -43,23 +43,23 @@ export default {
         getAppointmentDetails(html = false){
             switch (this.appointment.type) {
                 case 'phone':
-                    return this.getTitle('Appointment over the phone.', html)+
-                    lnb + "We will call you on " + this.getClientPhone
+                    return this.getTitle(this.options.i18n.a_is_phone, html)+
+                    lnb + this.options.i18n.a_with_phone.replace('%s',this.getClientPhone)
                 case 'zoom':
-                    return this.getTitle('Appointment is a Video meeting.', html)+
-                    lnb + "Meeting will be accessible from the link below:" +
-                    lnb + this.generateLink('view-event', html, 'Begin Meeting')
+                    return this.getTitle(this.options.i18n.a_is_video, html)+
+                    lnb + this.options.i18n.a_with_videolink +
+                    lnb + this.generateLink('view-event', html, this.options.i18n.begin_meeting)
                 case 'skype':
-                    return this.getTitle('Appointment on Skype.', html)+
-                    lnb + "We will call you on " + this.getSkypeUsername
+                    return this.getTitle(this.options.i18n.a_is_skype, html)+
+                    lnb + this.options.i18n.a_with_phone.replace('%s',this.getSkypeUsername) 
                 case 'physical':
-                    return lnb + this.getTitle('Appointment is taking place at this address', html)+ 
+                    return lnb + this.getTitle(this.options.i18n.a_is_address, html)+ 
                     lnb + this.eventLocation
             }
         },
 
         eventDescription(html = false){
-             let pwd_link = apiWappointment.signature
+             let pwd_link = !html ? apiWappointment.signature:apiWappointment.signature.replace('https://wappointment.com','<a href="https://wappointment.com?utm_source=plugin&utm_medium=ics&utm_campaign=appointment">Wappointment</a>')
              return this.getAppointmentDetails(html) + this.getLinks(html) + lnb + this.getLineSeparator('_', pwd_link.length/2) +
              lnb + lnb + pwd_link
         },
@@ -82,12 +82,12 @@ export default {
         },
          getLinks(html = false){
             if(html){
-                return lnb + lnb +  (this.canReschedule? this.generateLink('reschedule-event', html, 'Reschedule'):'') + 
+                return lnb + lnb +  (this.canReschedule? this.generateLink('reschedule-event', html, this.options.i18n.reschedule):'') + 
                 ((this.canCancel && this.canReschedule) ?' - ':'') 
-                + (this.canCancel ? this.generateLink('cancel-event', html, 'Cancel'):'')
+                + (this.canCancel ? this.generateLink('cancel-event', html, this.options.i18n.cancel):'')
             }
-            return (this.canReschedule? lnb + lnb + "Reschedule: " + lnb +  this.generateLink('reschedule-event'):'') +
-            (this.canCancel ? lnb + lnb + "Cancel: " + lnb + this.generateLink('cancel-event'):'')
+            return (this.canReschedule? lnb + lnb + this.options.i18n.reschedule+" " + lnb +  this.generateLink('reschedule-event'):'') +
+            (this.canCancel ? lnb + lnb + this.options.i18n.cancel+" " + lnb + this.generateLink('cancel-event'):'')
         },
         getUnixNow(){
             return momenttz().unix()

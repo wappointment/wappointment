@@ -3,6 +3,7 @@
 namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
+use Wappointment\Helpers\Translations;
 use Wappointment\Services\Status;
 
 class StatusController extends RestController
@@ -12,14 +13,14 @@ class StatusController extends RestController
 
         if ($request->input('type') == 'free') {
             if (Status::free($request->input('start'), $request->input('end'), $request->input('timezone'), $request, $request->input('staff_id'))) {
-                return ['message' => 'Extra free time added'];
+                return ['message' => __('Extra free time added', 'wappointment')];
             }
         } elseif ($request->input('type') == 'busy') {
             if (Status::busy($request->input('start'), $request->input('end'), $request->input('timezone'), $request->input('staff_id'))) {
-                return ['message' => 'Busy time added'];
+                return ['message' => __('Busy time added', 'wappointment')];
             }
         }
-        throw new \WappointmentException("Cannot create block", 1);
+        throw new \WappointmentException(Translations::get('error_creating'), 1);
     }
 
     public function delete(Request $request)
@@ -27,8 +28,8 @@ class StatusController extends RestController
         $event = Status::delete($request->input('id'));
 
         if ($event) {
-            return ['message' => !empty($event->source) ? 'Event muted' : 'Event deleted'];
+            return ['message' => !empty($event->source) ? __('Muted successfully', 'wappointment') : Translations::get('element_deleted')];
         }
-        throw new \WappointmentException('Error while deleting element', 1);
+        throw new \WappointmentException(Translations::get('error_deleting'), 1);
     }
 }

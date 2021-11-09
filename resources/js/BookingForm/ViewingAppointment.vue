@@ -24,7 +24,7 @@
                     <div>
                         <p>{{options.confirmation.savetocal}}</p>
                         <SaveButtons :selectedSlot="selectedSlot" :service="service" :appointment="appointment"
-                        :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected" />
+                        :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected" :options="options"/>
                     </div>
                 </div>
                 <div v-else>

@@ -23,6 +23,6 @@ class DebugController extends RestController
     public function refreshCache()
     {
         Reset::refreshCache();
-        return ['message' => 'Cache has been reseted'];
+        return ['message' => __('Cache has been reseted', 'wappointment')];
     }
 }

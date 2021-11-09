@@ -24,7 +24,7 @@ class AppointmentController extends RestController
             ->first();
 
         if (empty($appointment)) {
-            throw new \WappointmentException("Can't find appointment", 1);
+            throw new \WappointmentException(__('Can\'t find appointment', 'wappointment'), 1);
         }
         $appointmentData = $appointment->toArraySpecial();
         $appointmentData['edit_key'] = $request->input('appointmentkey');
@@ -53,7 +53,7 @@ class AppointmentController extends RestController
         $result = Appointment::tryCancel($request->input('appointmentkey'));
 
         if ($result) {
-            return ['message' => 'Appointment has been canceled'];
+            return ['message' => __('Appointment has been canceled', 'wappointment')];
         }
         throw new \WappointmentException("Error Cancelling appointment", 1);
     }

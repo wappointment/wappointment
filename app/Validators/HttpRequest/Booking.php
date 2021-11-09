@@ -22,10 +22,10 @@ class Booking extends LegacyBooking
     protected function validationMessages()
     {
         return [
-            'is_phone' => 'Your phone number is not valid',
-            'email' => 'Your email is not valid',
-            'skype:regex' => 'Your skype username is not valid',
-            static::$startKey => 'The selected time is not valid',
+            'is_phone' => __('Your phone number is not valid', 'wappointment'),
+            'email' => __('Your email is not valid', 'wappointment'),
+            'skype:regex' => __('Your skype username is not valid', 'wappointment'),
+            static::$startKey => __('The selected time is not valid', 'wappointment'),
         ];
     }
     public function getUserEmail()

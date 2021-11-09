@@ -2,6 +2,7 @@
 
 namespace Wappointment\Controllers;
 
+use Wappointment\Helpers\Translations;
 use Wappointment\Services\Wappointment\EmailList;
 use Wappointment\Services\Wappointment\Contact;
 use Wappointment\Services\Wappointment\BookingTest as BookingTestAPI;
@@ -39,12 +40,15 @@ class WappointmentController extends RestController
         if ($result) {
             return [
                 'result' => $result,
-                'message' => 'Great your message has been sent, we\'ll get back to you soon'
+                'message' => __('Great your message has been sent, we\'ll get back to you soon', 'wappointment')
             ];
         }
-        throw new \WappointmentException("Couldn't send your message.", 1);
+        throw new \WappointmentException(Translations::get('error_sending'), 1);
     }
 
+    /**
+     * Legacy TODO remove
+     */
     public function sendTestBooking($request)
     {
         (new BookingTestAPI)->record($request);
@@ -64,6 +68,9 @@ class WappointmentController extends RestController
         ];
     }
 
+    /**
+     * Legacy TODO remove
+     */
     public function sendIgnoreBooking()
     {
 

@@ -10,7 +10,7 @@ class AppointmentHistory
     public static function render($atts)
     {
         $email =  wp_get_current_user()->user_email;
-        $empty = __('No past appointments found ...', 'wappointment');
+        $empty = __('No appointments found.', 'wappointment');
         if (empty($email)) {
             return $empty;
         }

@@ -165,7 +165,7 @@ class Addons extends API
             throw new \Exception($status['errorMessage']);
         }
         return [
-            'message' => 'Success installing addon'
+            'message' => __('Success installing addon', 'wappointment')
         ];
     }
 

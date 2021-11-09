@@ -43,7 +43,7 @@
         <div class="wdescription my-2 text-center">
             <transition name="slide-fade">
                 <SaveButtons v-if="showSaveButtons" :service="service" :showResult="showResult" :appointment="appointment"
-                :staff="staff" :currentTz="timeprops.currentTz" :physicalSelected="physicalSelected"></SaveButtons>
+                :staff="staff" :currentTz="timeprops.currentTz" :physicalSelected="physicalSelected" :options="options"/>
                 <span v-else class="wbtn-primary-light wbtn d-flex align-items-center d-flex-inline" @click="showSaveButtons=true">
                     <WapImage :faIcon="'calendar-alt'" size="md" /> <span class="ml-2">{{options.confirmation.savetocal}}</span>
                 </span>

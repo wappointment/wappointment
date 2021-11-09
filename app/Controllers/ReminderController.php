@@ -3,6 +3,7 @@
 namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
+use Wappointment\Helpers\Translations;
 use Wappointment\Services\Reminder;
 use Wappointment\Models\Reminder as MReminder;
 use Wappointment\Services\Settings;
@@ -25,9 +26,9 @@ class ReminderController extends RestController
         $requested['published'] = true;
         $this->saveImage($request);
         if ($this->isTrueOrFail(Reminder::save($requested))) {
-            return ['message' => 'Reminder saved'];
+            return ['message' => Translations::get('element_saved')];
         }
-        throw new \WappointmentException('Couldn\'t save preview', 1);
+        throw new \WappointmentException(Translations::get('error_saving'), 1);
     }
 
     protected function saveImage(Request $request)
@@ -45,25 +46,25 @@ class ReminderController extends RestController
     {
         $this->saveImage($request);
         if ($this->isTrueOrFail(Reminder::save($request->except(['rest_route', 'locked', 'email_logo', 'label'])))) {
-            return ['message' => 'Reminder updated'];
+            return ['message' => Translations::get('element_updated')];
         }
-        throw new \WappointmentException('Couldn\'t update reminder', 1);
+        throw new \WappointmentException(Translations::get('error_updating'), 1);
     }
 
     public function preview(Request $request)
     {
         if ($this->isTrueOrFail(Reminder::preview($request->input('reminder'), $request->input('recipient')))) {
-            return ['message' => 'Reminder preview sent'];
+            return ['message' => __('Reminder preview sent', 'wappointment')];
         }
-        throw new \WappointmentException('Couldn\'t send preview', 1);
+        throw new \WappointmentException(__('Error sending', 'wappointment'), 1);
     }
 
     public function delete(Request $request)
     {
         if (Reminder::delete($request->input('id'))) {
-            return ['message' => 'Reminder deleted'];
+            return ['message' => Translations::get('element_deleted')];
         }
-        throw new \WappointmentException('Impossible to delete reminder', 1);
+        throw new \WappointmentException(Translations::get('error_deleting'), 1);
     }
 
     public function get()

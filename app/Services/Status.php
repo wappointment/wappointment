@@ -4,6 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\Models\Status as MStatus;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Helpers\Translations;
 
 class Status
 {
@@ -79,7 +80,7 @@ class Status
         if (CurrentUser::canCreateFreeBlock()) {
             return self::create($start, $end, $timezone, MStatus::TYPE_FREE, $request, static::getAllowedStaffId($staff_id));
         }
-        throw new \WappointmentException("Cannot create free block", 1);
+        throw new \WappointmentException(Translations::get('error_saving'), 1);
     }
 
     public static function busy($start, $end, $timezone, $staff_id = null)
@@ -87,7 +88,7 @@ class Status
         if (CurrentUser::canCreateBusyBlock()) {
             return self::create($start, $end, $timezone, MStatus::TYPE_BUSY, null, static::getAllowedStaffId($staff_id));
         }
-        throw new \WappointmentException("Cannot create busy block", 1);
+        throw new \WappointmentException(Translations::get('error_saving'), 1);
     }
 
     protected static function create($start, $end, $timezone, $type, $request = null, $staff_id = null)

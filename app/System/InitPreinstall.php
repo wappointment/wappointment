@@ -51,9 +51,9 @@ class InitPreinstall
         if (strpos($file, $this->plugin_file) !== false) {
             $buttonInit = '<a href="' .
                 WPHelpers::adminUrl('wappointment_calendar') .
-                '" class="button button-primary button-large" >Setup</a>';
+                '" class="button button-primary button-large" >' . __('Setup', 'wappointment') . '</a>';
             $htmlWrap = '<div class="notice inline notice-info">
-            <p>Thanks for activating me! Now set me up in only few seconds ' . $buttonInit . '
+            <p>' . __('Thanks for activating me! Now set me up in only few seconds', 'wappointment') . ' ' . $buttonInit . '
             </p></div>';
             $links = [
                 'initial_setup' => $htmlWrap
@@ -66,7 +66,7 @@ class InitPreinstall
 
     public function customPluginLinks($links)
     {
-        $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_calendar')) . '" >Start Setup</a>';
+        $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_calendar')) . '" >' . __('Start Setup', 'wappointment') . '</a>';
         return $links;
     }
 }

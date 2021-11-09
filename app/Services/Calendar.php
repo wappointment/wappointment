@@ -56,13 +56,13 @@ class Calendar
         // Only headers are downloaded here.
 
         if ($responseQuery->getStatusCode() != 200) {
-            throw new \WappointmentException('Cannot connect to the calendar');
+            throw new \WappointmentException(__('Cannot connect to the calendar', 'wappointment'));
         }
 
         $body = $responseQuery->getBody();
 
         if (strpos($responseQuery->getHeaderLine('content-type'), 'text/calendar') === false) {
-            throw new \WappointmentException('Cannot recognise a calendar file ');
+            throw new \WappointmentException('Invalid calendar');
         }
         $original_content = $body->getContents();
         $body_string = $this->cleanContent($original_content);

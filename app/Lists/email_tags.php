@@ -3,33 +3,33 @@ return [
     [
         'model' => 'client',
         'key' => 'name',
-        'label' => 'Client\'s name',
+        'label' => __('Client\'s name', 'wappointment'),
         'sanitize' => true
     ],
     [
         'model' => 'client',
         'key' => 'email',
-        'label' => 'Client\'s email',
+        'label' => __('Client\'s email', 'wappointment'),
         'sanitize' => true
     ],
     [
         'model' => 'client',
         'key' => 'phone',
-        'label' => 'Client\'s phone',
+        'label' => __('Client\'s phone', 'wappointment'),
         'getMethod' => 'getPhone',
         'sanitize' => true
     ],
     [
         'model' => 'client',
         'key' => 'skype',
-        'label' => 'Client\'s skype',
+        'label' => __('Client\'s skype', 'wappointment'),
         'getMethod' => 'getSkype',
         'sanitize' => true
     ],
     [
         'model' => 'service',
         'key' => 'name',
-        'label' => 'Service name',
+        'label' => __('Service name', 'wappointment'),
         'getMethod' => 'getServiceName',
         'sanitize' => true,
         'modelCall' => 'appointment'
@@ -37,7 +37,7 @@ return [
     [
         'model' => 'service',
         'key' => 'address',
-        'label' => 'Service address',
+        'label' => __('Service address', 'wappointment'),
         'getMethod' => 'getServiceAddress',
         'sanitize' => true,
         'modelCall' => 'appointment'
@@ -45,25 +45,25 @@ return [
     [
         'model' => 'appointment',
         'key' => 'duration',
-        'label' => 'Appointment\'s duration',
+        'label' => __('Appointment\'s duration', 'wappointment'),
         'getMethod' => 'getDuration'
     ],
     [
         'model' => 'appointment',
         'key' => 'location',
-        'label' => 'Appointment\'s location',
+        'label' => __('Appointment\'s location', 'wappointment'),
         'getMethod' => 'getLocation'
     ],
     [
         'model' => 'appointment',
         'key' => 'starts',
-        'label' => 'Appointment\'s date and time',
+        'label' => __('Appointment\'s date and time', 'wappointment'),
         'getMethod' => 'getStartsDayAndTime'
     ],
     [
         'model' => 'staff',
         'key' => 'name',
-        'label' => 'Staff Name',
+        'label' => __('Staff\'s Name', 'wappointment'),
         'sanitize' => true,
         'getMethod' => 'getStaffName',
         'modelCall' => 'appointment'
@@ -71,7 +71,7 @@ return [
     [
         'model' => 'order',
         'key' => 'summary',
-        'label' => 'Order summary acting as a bill',
+        'label' => __('Order summary acting as a bill', 'wappointment'),
         'getMethod' => 'getOrderTable',
         'modelCall' => 'email_helper',
         'requiresParams' => true

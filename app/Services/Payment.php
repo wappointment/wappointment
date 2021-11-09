@@ -63,15 +63,15 @@ class Payment
         $methods = [
             [
                 'key' => 'onsite',
-                'name' => 'On Site',
-                'description' => 'Customers pay you in person at your business\' address or wherever you deliver the service',
+                'name' => __('On Site', 'wappointment'),
+                'description' => __('Customers pay you in person at your business\' address or wherever you deliver the service', 'wappointment'),
                 'installed' => true,
                 'active' => Settings::get('onsite_enabled'),
             ],
             [
                 'key' => 'stripe',
                 'name' => 'Stripe',
-                'description' => 'Customers pay online with their VISA, Mastercard, Amex etc ... in 44 countries and 135 currencies',
+                'description' => __('Customers pay online with their VISA, Mastercard, Amex etc ... in 44 countries and 135 currencies', 'wappointment'),
                 'installed' => false,
                 'hideLabel' => true,
                 'active' => false,
@@ -80,7 +80,7 @@ class Payment
             [
                 'key' => 'paypal',
                 'name' => 'Paypal',
-                'description' => 'Customers pay online with their Paypal Account, VISA, Mastercard, Amex etc ... in 25 currencies and 200 countries',
+                'description' => __('Customers pay online with their Paypal Account, VISA, Mastercard, Amex etc ... in 25 currencies and 200 countries', 'wappointment'),
                 'installed' => false,
                 'hideLabel' => true,
                 'active' => false,
@@ -89,7 +89,7 @@ class Payment
             [
                 'key' => 'woocommerce',
                 'name' => 'WooCommerce',
-                'description' => 'WooCommerce is the most popular ecommerce plugin for WordPress. Already familiar with WooCommerce? Then selling your time with Wappointment and WooCommerce will be real easy.',
+                'description' => __('WooCommerce is the most popular ecommerce plugin for WordPress. Already familiar with WooCommerce? Then selling your time with Wappointment and WooCommerce will be really easy.', 'wappointment'),
                 'installed' => false,
                 'hideLabel' => true,
                 'active' => false,

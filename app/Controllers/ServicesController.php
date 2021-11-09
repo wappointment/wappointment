@@ -4,6 +4,8 @@ namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
 use Wappointment\Controllers\RestController;
+use Wappointment\Helpers\Get;
+use Wappointment\Helpers\Translations;
 use Wappointment\Services\Services;
 use Wappointment\Services\VersionDB;
 use Wappointment\Managers\Service;
@@ -27,7 +29,7 @@ class ServicesController extends RestController
         ];
 
         if (!$db_update_required) {
-            $data['limit_reached'] = $serviceModel::canCreate() ? false : 'To add more services, get the "Services Suite" addon';
+            $data['limit_reached'] = $serviceModel::canCreate() ? false : Translations::get('add_calendars_addon', [Get::list('addons')['wappointment_services']['name']]);
         }
         return $data;
     }
@@ -51,7 +53,7 @@ class ServicesController extends RestController
         }
 
         $this->refreshRepository();
-        return ['message' => 'Service saved! Next, assign it to your staff in Wappointment > Settings > Calendars & Staff', 'result' => $result];
+        return ['message' => Translations::get('element_saved') . __('Next, assign it to your staff in Wappointment > Settings > Calendars & Staff', 'wappointment'), 'result' => $result];
     }
 
     protected function refreshRepository()
@@ -65,7 +67,7 @@ class ServicesController extends RestController
 
         $result = Services::reorder($data['id'], $data['new_sorting']);
         $this->refreshRepository();
-        return ['message' => 'Service has been reordered', 'result' => $result];
+        return ['message' => Translations::get('element_reordered'), 'result' => $result];
     }
 
 
@@ -74,6 +76,6 @@ class ServicesController extends RestController
         Services::delete($request->input('id'));
         $this->refreshRepository();
         // clean order
-        return ['message' => 'Service deleted', 'result' => true];
+        return ['message' => Translations::get('element_deleted'), 'result' => true];
     }
 }

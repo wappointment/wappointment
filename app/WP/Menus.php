@@ -23,12 +23,12 @@ class Menus
          */
         if (Status::wizardComplete()) {
             if (!Payment::isWooActive()) {
-                $this->sub_menus['orders'] = ['label' => 'Orders', 'cap' => $this->getClientCap()];
+                $this->sub_menus['orders'] = ['label' => __('Orders', 'wappointment'), 'cap' => $this->getClientCap()];
             }
-            $this->sub_menus['clients'] = ['label' => 'Clients', 'cap' => $this->getClientCap()];
-            $this->sub_menus['settings'] = ['label' => 'Settings', 'cap' => $this->getSettingsCap()];
+            $this->sub_menus['clients'] = ['label' => __('Clients', 'wappointment'), 'cap' => $this->getClientCap()];
+            $this->sub_menus['settings'] = ['label' => __('Settings', 'wappointment'), 'cap' => $this->getSettingsCap()];
             $this->sub_menus['addons'] = ['label' => 'Addons', 'cap' => 'administrator'];
-            $this->sub_menus['help'] = ['label' => 'Help', 'cap' => 'administrator'];
+            $this->sub_menus['help'] = ['label' => __('Help', 'wappointment'), 'cap' => 'administrator'];
         }
         add_menu_page(
             WAPPOINTMENT_NAME,

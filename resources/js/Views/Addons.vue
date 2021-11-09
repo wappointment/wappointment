@@ -84,7 +84,6 @@ import BundlePreview from '../Components/Bundle'
 let services_install = window.wappointmentExtends.filter('AddonsServiceInstall', {})
 import WPScreenOptions from '../WP/ScreenOptions'
 import RequestMaker from '../Modules/RequestMaker'
-
 export default {
     extends: abstractView,
     mixins: [RequestMaker],

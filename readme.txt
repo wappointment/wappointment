@@ -1,4 +1,4 @@
-=== Appointment Bookings for Zoom GoogleMeet and more - Wappointment  ===
+=== Appointment Scheduling for Zoom GoogleMeet and more - Wappointment  ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
 Requires at least: 4.7
@@ -8,9 +8,9 @@ Stable tag: 2.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Get clients to quickly book a meeting with you over Zoom , GoogleMeet , the phone or at your office
+Get clients to quickly book a meeting with you by Zoom, GoogleMeet, phone or at your office
 
-== Appointment scheduling made easy ==
+== Booking plugin for WordPress ==
 
 **Appointment booking calendar** for personal coaches, teachers, therapists and service professionals of all kind.
 Get booked 24/7 with the most **intuitive booking form**.
@@ -21,14 +21,18 @@ The perfect Calendly alternative designed for WordPress.
 
 https://www.youtube.com/watch?v=jUkiyejbuzg
 
-== Get booked simply ==
+[Try the demo](https://demo.wappointment.com)
+
+== Scheduling system headache free ==
 
 = Provide your appointments the way you like =
-* as a video Meeting over Zoom , GoogleMeet or Skype
+* as a video Meeting over Zoom, GoogleMeet or Skype
 * over the Phone
 * or at your office
 
-= Sync new bookings automatically in your Google Calendar =
+= Sync bookings with Google Calendar =
+* Setup a 2-way sync quickly with Google Calendar
+* 1-way sync is available with any .ICS Calendar, Microsoft Outlook, Apple Ical, etc ...
 
 = Avoid Double Bookings =
 Keep your availability updated using our powerful centralized system. 
@@ -49,7 +53,7 @@ Quickly define when and how many of them do they receive (1 day before appointme
 == Make it simple for your customers ==
 * Clients book you within seconds, from their mobile phone, tablet or desktop computer
 * The available booking slots are displayed in your client's timezone, no more confusion for your international clients
-* Client receive a confirmation and as many reminders as you've setup
+* Clients receive a confirmation and as many reminders as you wish
 * Clients can easily save your appointment to their personal calendar
 
 == Manage your schedule simply ==
@@ -62,7 +66,7 @@ Quickly define when and how many of them do they receive (1 day before appointme
 * Select the timezone from which you operate
 
 = Appointments Settings =
-* Set the duration of your appointment 5 min, 10 min, 15 min , 60 min etc ...
+* Set the duration of your meeting 5 min, 10 min, 15 min , 60 min etc ...
 * Set the appointments' approval mode: automatic or manual 
 * Set how far in advance an appointment can be booked 
 * Allow clients to cancel and reschedule appointments
@@ -80,7 +84,7 @@ Quickly define when and how many of them do they receive (1 day before appointme
 * Customize and personalize your confirmations and reminders sent to your clients
 
 = Advanced options for edge use-cases =
-* Limit/Maximun active bookings per client
+* Limit/Maximum active bookings per client
 * Force user account's email for logged in users
 * Open new slots in new day at a specific time e.g." new slots everyday at 11pm"
 
@@ -90,7 +94,7 @@ And for any question or doubt, you can reach us:
 
 * Straight from the plugin in *Wappointment > Help*
 * Here on the [WordPress' forum](https://wordpress.org/support/plugin/wappointment/) 
-* From our contact page on [wappointment.com](https://wappointment.com/support?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
+* From [our contact page](https://wappointment.com/support?utm_source=wp-repo&utm_medium=link&utm_campaign=readme).
 
 == Frequently Asked Questions ==
 

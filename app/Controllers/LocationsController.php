@@ -4,6 +4,7 @@ namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
 use Wappointment\Controllers\RestController;
+use Wappointment\Helpers\Translations;
 use Wappointment\Models\Location;
 use Wappointment\Services\Location as LocationService;
 
@@ -33,14 +34,14 @@ class LocationsController extends RestController
     public function save(Request $request)
     {
         $result = LocationService::save($request->only(['id', 'name', 'type', 'options']));
-        return ['message' => 'Modality has been saved', 'result' => $result, 'locations' => $this->get($request)];
+        return ['message' => Translations::get('element_saved'), 'result' => $result, 'locations' => $this->get($request)];
     }
 
     public function delete(Request $request)
     {
         if ((int)$request->input('id') < 5) {
-            throw new \WappointmentException("Can't delete core modality", 1);
+            throw new \WappointmentException(Translations::get('error_deleting'), 1);
         }
-        return ['message' => 'Modality deleted', 'result' => Location::destroy($request->input('id')), 'deleted' => $request->input('id')];
+        return ['message' => Translations::get('element_deleted'), 'result' => Location::destroy($request->input('id')), 'deleted' => $request->input('id')];
     }
 }

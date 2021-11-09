@@ -141,6 +141,7 @@ if (!function_exists("dds")) {
                     '\WappoVendor\Plugin_Upgrader',
                     '\WappoVendor\WP_Filesystem_Base',
                     '\WappoVendor\WappoSwift_',
+                    '\WappoVendor\__',
                 ], [
                     '\WappointmentValidationException',
                     '\WappointmentException',
@@ -151,6 +152,7 @@ if (!function_exists("dds")) {
                     '\Plugin_Upgrader',
                     '\WP_Filesystem_Base',
                     '\WappoSwift_',
+                    '__',
 
                 ], $contents);
             }

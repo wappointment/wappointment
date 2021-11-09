@@ -38,7 +38,7 @@ class TestMail
             if ($mailerConfig['method'] && !empty($mailerConfig['wpmail_html'])) {
                 $result = (new MailService($mailerConfig))->sendFast(
                     "Wappointment's test email",
-                    '<h2>Yay! Emails are working!</h2>',
+                    '<h2>' . __('Yay! Emails are working!', 'wappointment') . '</h2>',
                     sanitize_email($recipient),
                     [sanitize_email($mailerConfig['from_address']) => sanitize_text_field($mailerConfig['from_name'])],
                     'text/html'
@@ -46,7 +46,7 @@ class TestMail
             } else {
                 $result = (new MailService($mailerConfig))->sendFast(
                     "Wappointment's test email",
-                    'Yay! Emails are working!',
+                    __('Yay! Emails are working!', 'wappointment'),
                     sanitize_email($recipient),
                     [sanitize_email($mailerConfig['from_address']) => sanitize_text_field($mailerConfig['from_name'])]
                 );

@@ -10,34 +10,42 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
 
     public function loadContent()
     {
-        $this->subject = 'Rescheduled appointment';
+        $this->subject = __('Rescheduled appointment', 'wappointment');
         $this->addLogo();
         $this->addBr();
         $tz = $this->getStaffTz($this->params['appointment']);
 
         $this->addLines([
-            'Hi ' . $this->params['appointment']->getStaff()->getFirstName() . ', ',
-            'A client rescheduled his appointment, find the details below.',
+            /* translators: %s - client's first name. */
+            sprintf(__('Hi %s,', 'wappointment'), $this->params['appointment']->getStaff()->getFirstName()),
+            __('A client rescheduled his appointment, find the details below.', 'wappointment'),
         ]);
 
         $this->addRoundedSquare($this->getEmailContent($this->params['client'], $this->params['appointment']));
 
         $this->addRoundedSquare(
             [
-                '<u>Former appointment</u>',
-                'Date: ' . $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('date_format')),
-                'Time: ' . $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('time_format'))
-                    . ' - ' . $this->params['oldAppointment']->end_at->setTimezone($tz)->format(Settings::get('time_format')),
+                '<u>' . __('Former appointment', 'wappointment') . '</u>',
+                sprintf(
+                    __('Date: %s', 'wappointment'),
+                    $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('date_format'))
+                ),
+                sprintf(
+                    __('Time: %1$s - %2$s', 'wappointment'),
+                    $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('time_format')),
+                    $this->params['oldAppointment']->end_at->setTimezone($tz)->format(Settings::get('time_format'))
+                ),
+
             ]
         );
         $this->addLines([
-            'Have a great day!',
+            __('Have a great day!', 'wappointment'),
             '',
         ]);
 
         if (!$this->areAttachmentsDisabled()) {
             $this->addLines([
-                'Ps: An .ics file with the appointment\'s details is attached'
+                __('Ps: An .ics file with the appointment\'s details is attached', 'wappointment')
             ]);
         }
         $this->attachIcs([$this->params['appointment']], 'appointment', true);

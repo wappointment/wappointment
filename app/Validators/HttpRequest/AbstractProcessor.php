@@ -4,6 +4,7 @@ namespace Wappointment\Validators\HttpRequest;
 
 use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\ClassConnect\Request;
+use Wappointment\Helpers\Translations;
 
 abstract class AbstractProcessor implements InterfaceProcessor
 {
@@ -18,7 +19,7 @@ abstract class AbstractProcessor implements InterfaceProcessor
         $this->request = $request;
         $this->validate();
         if ($this->autoResponse === true && $this->hasErrors()) {
-            throw new \WappointmentValidationException('Review your fields', 1, null, $this->getErrors());
+            throw new \WappointmentValidationException(Translations::get('review_fields'), 1, null, $this->getErrors());
         }
     }
 
