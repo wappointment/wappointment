@@ -15,6 +15,7 @@ class AppointmentReminderListener extends AbstractJobAppointmentListener
         $params = [
             'appointment' => $event->getAppointment(),
             'client' => $event->getClient(),
+            'args' => $event->getAdditional(),
         ];
         if (!empty($event->getClient()['options']) && !empty($event->getClient()['options']['test_appointment'])) {
             return;

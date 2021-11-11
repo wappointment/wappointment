@@ -335,6 +335,29 @@ class Settings
         throw new \WappointmentException('Tax is not valid');
     }
 
+    public static function save_appointment_text_linkValid($value)
+    {
+        return static::isEmpty($value);
+    }
+
+    public static function reschedule_linkValid($value)
+    {
+        return static::isEmpty($value);
+    }
+
+    public static function cancellation_linkValid($value)
+    {
+        return static::isEmpty($value);
+    }
+
+    public static function isEmpty($value)
+    {
+        if (!empty($value)) {
+            return true;
+        }
+        throw new \WappointmentException('Setting cannot be empty');
+    }
+
     protected static function weekly_summary_dayValid($value)
     {
         if (self::between($value, 0, 6)) {

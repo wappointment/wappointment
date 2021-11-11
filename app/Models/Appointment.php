@@ -34,6 +34,18 @@ class Appointment extends Model
 
     protected $appends = ['duration_sec', 'location_label', 'can_cancel_until', 'can_reschedule_until'];
     protected $services = [];
+    private $shared_client = null;
+    private $additional_params = null;
+
+    public function setSharedClient($client)
+    {
+        $this->shared_client = $client;
+    }
+
+    public function getClientModel()
+    {
+        return !empty($this->shared_client) ? $this->shared_client : $this->client;
+    }
 
     public function service()
     {
@@ -95,7 +107,12 @@ class Appointment extends Model
 
     public function getTitle($includes_buffer = true)
     {
-        return $this->getStatusTag() . $this->getServiceName() . ' ' . $this->getDuration() . ($includes_buffer ? $this->getBuffer() : '') . ' - ' . $this->client->name;
+        return $this->getStatusTag() .
+            $this->getServiceName() . ' ' .
+            $this->getDuration() .
+            ($includes_buffer ?
+                $this->getBuffer() :
+                '') . ' - ' . $this->getClientModel()->name;
     }
 
     public function getStatusTag()
@@ -147,7 +164,7 @@ class Appointment extends Model
         $array['start_at'] = $this->start_at->timestamp;
         $array['end_at'] = $this->end_at->timestamp;
         $array['type'] = $this->getLocationSlug();
-        $array['client'] = $this->client; //important for save to calendar button
+        $array['client'] = $this->getClientModel(); //important for save to calendar button
         $array['video_meeting'] = $this->videoAppointmentHasLink();
         $staff = $this->getStaff();
         $array['ics_organizer'] = 'ORGANIZER;CN=' . $staff->staff_data['name'] . ':mailto:' . $staff->emailAddress();
@@ -291,9 +308,19 @@ class Appointment extends Model
         return !empty($this->start_at) ? DateTime::i18nDateTime($this->start_at->timestamp, $timezone) : '';
     }
 
+    public function setAdditionalLinkParams($added_params)
+    {
+        $this->additional_params .= $added_params;
+    }
+    public function additionalLinkParams()
+    {
+        return $this->additional_params;
+    }
+
     private function getPageLink($view = 'reschedule-event')
     {
-        return (new EmailHelper)->getLinkEvent($view) . (empty($this->edit_key) ? '' : '&appointmentkey=' . $this->edit_key);
+        $editKey = $this->edit_key;
+        return (new EmailHelper)->getLinkEvent($view) . (empty($editKey) ? '' : '&appointmentkey=' . $editKey) . $this->additionalLinkParams();
     }
 
     public function getServiceName()
@@ -408,13 +435,13 @@ class Appointment extends Model
     public function cancelLimit()
     {
         return Carbon::createFromTimestamp($this->canCancelUntilTimestamp())
-            ->setTimezone($this->client->getTimezone())->format($this->longFormat());
+            ->setTimezone($this->getClientModel()->getTimezone())->format($this->longFormat());
     }
 
     public function rescheduleLimit()
     {
         return Carbon::createFromTimestamp($this->canRescheduleUntilTimestamp())
-            ->setTimezone($this->client->getTimezone())->format($this->longFormat());
+            ->setTimezone($this->getClientModel()->getTimezone())->format($this->longFormat());
     }
 
     protected function longFormat()
@@ -442,7 +469,7 @@ class Appointment extends Model
             'location' => $this->type == 0 ? $this->getServiceAddress() : $this->getLocation(),
             'timezone' => $timezone,
             'emails' => [
-                $this->client->email
+                $this->getClientModel()->email
             ],
             'cancellink' => $this->getLinkCancelEvent(),
             'reschedulelink' => $this->getLinkRescheduleEvent(),
@@ -451,10 +478,10 @@ class Appointment extends Model
             $toDotcom['viewlink']  = $this->getLinkViewEvent();
         }
         if ($this->isPhone()) {
-            $toDotcom['phone']  = $this->client->getPhone();
+            $toDotcom['phone']  = $this->getClientModel()->getPhone();
         }
         if ($this->isSkype()) {
-            $toDotcom['skype']  = $this->client->getSkype();
+            $toDotcom['skype']  = $this->getClientModel()->getSkype();
         }
         return $toDotcom;
     }

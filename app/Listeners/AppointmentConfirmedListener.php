@@ -16,6 +16,7 @@ class AppointmentConfirmedListener extends AbstractJobAppointmentListener
         $params = [
             'appointment' => $event->getAppointment(),
             'client' => $event->getClient(),
+            'args' => $event->getAdditional(),
         ];
 
         foreach ($event->getReminders() as $reminder) {

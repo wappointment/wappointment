@@ -12,7 +12,10 @@ export default {
             .catch(this.appointmentLoadingError)
         },
         async loadAppointmentRequest() {
-            return await this.serviceAppointment.call('get', {appointmentkey: this.appointmentkey})
+            return await this.serviceAppointment.call(
+                'get', 
+                window.wappointmentExtends.filter('loadAppointmentParams', {appointmentkey: this.appointmentkey}, this.getParameterByName)
+                )
         }, 
         appointmentLoadingError(e){
             this.loading = false

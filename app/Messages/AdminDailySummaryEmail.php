@@ -112,8 +112,8 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
     {
         return '<hr/>' .
             $appointment->start_at->setTimezone($this->tz)->format(Settings::get('time_format')) .
-            ' ' . $appointment->client->name . ' / '
-            . $appointment->getDuration() . ' - ' . $appointment->getLocation() . '<br>' . $appointment->client->email;
+            ' ' . $appointment->getClientModel()->name . ' / '
+            . $appointment->getDuration() . ' - ' . $appointment->getLocation() . '<br>' . $appointment->getClientModel()->email;
     }
 
     protected function tomorrowCarbon()

@@ -104,6 +104,7 @@ class Appointment
     {
         (new Availability())->regenerate();
 
+        //sends a rescheduled event to client and admin
         Events::dispatch(
             'AppointmentRescheduledEvent',
             [

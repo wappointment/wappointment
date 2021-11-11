@@ -17,6 +17,7 @@ class BookingController extends RestController
     {
         return WPHelpers::restError(__('Review your fields', 'wappointment'), 500, $booking->getErrors());
     }
+
     protected function bookingFailed()
     {
         return __('Booking failed', 'wappointment');

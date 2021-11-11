@@ -14,9 +14,11 @@ class AppointmentBookedEvent extends AbstractEvent
     protected $client;
     protected $oldAppointment;
     protected $reminders;
+    protected $bagArgs;
 
     public function __construct($args)
     {
+        $this->bagArgs = $args;
         $this->appointment = $args['appointment'];
         $this->client = $args['client'];
         if (!empty($args['oldAppointment'])) {
@@ -68,5 +70,14 @@ class AppointmentBookedEvent extends AbstractEvent
     public function getReminders()
     {
         return $this->reminders;
+    }
+    public function getArgs()
+    {
+        return $this->bagArgs;
+    }
+
+    public function getAdditional()
+    {
+        return apply_filters('wappointment_appointment_job_requires_args', false, $this);
     }
 }

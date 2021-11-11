@@ -22,6 +22,7 @@ abstract class AbstractJobAppointmentListener extends AbstractJobRecordListener
             [
                 'appointment' => $event->getAppointment(),
                 'client' => $event->getClient(),
+                'args' => $event->getAdditional(),
             ],
             'client',
             $this->is_reminder ? $event->getAppointment()->id : null

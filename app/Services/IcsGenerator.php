@@ -58,11 +58,11 @@ class IcsGenerator
         foreach ($appointments as $appointment) {
             $appointment = $this->fillClient($appointment);
 
-            if ($appointment instanceof Appointment && $appointment->client instanceof Client) { //ignore mssing data
+            if ($appointment instanceof Appointment && $appointment->getClientModel() instanceof Client) { //ignore mssing data
                 if ($cancelled) {
-                    $this->cancelled($appointment, $appointment->client);
+                    $this->cancelled($appointment, $appointment->getClientModel());
                 } else {
-                    $this->event($appointment, $appointment->client);
+                    $this->event($appointment, $appointment->getClientModel());
                 }
             }
         }
@@ -151,7 +151,7 @@ class IcsGenerator
     protected function getTitle(Appointment $appointment, $staff)
     {
         $title = $appointment->getServiceName() . ' ';
-        $title .= $this->admin ? $appointment->client->name . '(' . $appointment->client->email . ')' :  $staff->getUserDisplayName();
+        $title .= $this->admin ? $appointment->getClientModel()->name . '(' . $appointment->getClientModel()->email . ')' :  $staff->getUserDisplayName();
 
         return $title;
     }
@@ -160,9 +160,9 @@ class IcsGenerator
     {
         $description = '';
         foreach (['name', 'tz', 'email', 'phone', 'skype'] as $key) {
-            if (!empty($appointment->client->options[$key])) {
+            if (!empty($appointment->getClientModel()->options[$key])) {
                 $description .= "\n" . $key . ' : ';
-                $description .= $appointment->client->options[$key];
+                $description .= $appointment->getClientModel()->options[$key];
             }
         }
 

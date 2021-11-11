@@ -28,6 +28,7 @@ abstract class AbstractAppointmentEmailJob extends AbstractEmailJob
             'client' => $this->client,
             'appointment' => $this->appointment,
         ];
+
         if ($this->reminder_id) {
             $data['reminder_id'] = $this->reminder_id;
         }

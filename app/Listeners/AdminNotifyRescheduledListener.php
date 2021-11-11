@@ -12,6 +12,7 @@ class AdminNotifyRescheduledListener extends AbstractJobRecordListener
             'appointment' => $event->getAppointment(),
             'client' => $event->getClient(),
             'oldAppointment' => $event->getOldAppointment(),
+            'args' => $event->getAdditional(),
         ];
         parent::addToJobs($event);
     }

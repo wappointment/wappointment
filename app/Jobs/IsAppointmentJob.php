@@ -22,7 +22,8 @@ trait IsAppointmentJob
         if (!empty($params['appointment']['options'])) {
             $params['appointment']['options'] = json_encode($params['appointment']['options']);
         }
-        $this->appointment = (new Appointment)->newFromBuilder($params['appointment']);
+        $this->appointment = apply_filters('wappointment_appointment_job_params_parse', (new Appointment)->newFromBuilder($params['appointment']), $params);
+
         try {
             $this->appointment->refresh();
         } catch (\Throwable $th) {

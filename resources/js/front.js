@@ -6,6 +6,9 @@ import VueService from './Plugins/vue-service'
 import WLoader from './Components/Loaders/BigCalendar'
 import VueWapModal from './Plugins/vue-wap-modal'
 import __get from 'lodash/get'
+import UrlParam from './Modules/UrlParam'
+import WTrigger from './Mixins/WTrigger'
+
 
 const WapImage = () => import(/* webpackChunkName: "WapImage" */ './Components/WapImage')
 
@@ -21,27 +24,8 @@ Vue.component('v-style', {
     }
 });
 
-Vue.mixin({
-    methods: {
-
-        triggerWEvent(eventName, eventData){
-            let event = null
-            if(typeof(Event) === 'function') {
-                event = new Event(eventName)
-            }else{
-                event = document.createEvent('Event')
-                event.initEvent(eventName, true, true)
-            }
-            
-            event.wdata = eventData
-            document.dispatchEvent(event)
-        },
-        cleanString: function (string) {
-            let doc = new DOMParser().parseFromString(string, 'text/html')
-            return doc.body.textContent || ''
-        },
-    }
-});
+Vue.mixin(WTrigger)
+Vue.mixin(UrlParam)
 
 
 const vuesInstances = [];

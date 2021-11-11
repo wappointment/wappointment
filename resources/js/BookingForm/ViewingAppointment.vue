@@ -284,10 +284,10 @@ export default {
             return this.getUnixNow() < this.appointment.can_cancel_until
         },
         isReschedulePage(){
-            return this.viewData == 'reschedule-event'
+            return this.viewData.indexOf('reschedule-event') !== -1
         },
         isCancelPage(){
-            return this.viewData == 'cancel-event'
+            return this.viewData.indexOf('cancel-event') !== -1 
         },
         isSaveEventPage(){
             return this.viewData == 'add-event-to-calendar'
