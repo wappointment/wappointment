@@ -187,8 +187,15 @@ class Helpers
         return false;
     }
 
-    public static function requestCapture()
+    public static function requestCapture($is_installed)
     {
+        if (!$is_installed && !extension_loaded('mbstring')) {
+            static::restError('Wappointment requires the PHP module "mbstring" to work.');
+            global $wappo_mb_missing;
+            $wappo_mb_missing = true;
+            return true;
+        }
+
         self::$request = \Wappointment\ClassConnect\Request::capture();
     }
 

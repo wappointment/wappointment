@@ -185,11 +185,20 @@ class Services implements ServiceInterface
 
     public static function hasZoom($service)
     {
-        foreach ($service->locations as $location) {
-            if ((int)$location->type === LocationModel::TYPE_ZOOM) {
-                return true;
+        if (is_array($service)) {
+            foreach ($service['locations'] as $location) {
+                if ((int)$location['type'] === LocationModel::TYPE_ZOOM) {
+                    return true;
+                }
+            }
+        } else {
+            foreach ($service->locations as $location) {
+                if ((int)$location->type === LocationModel::TYPE_ZOOM) {
+                    return true;
+                }
             }
         }
+
 
         return false;
     }

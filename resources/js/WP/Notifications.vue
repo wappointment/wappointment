@@ -11,7 +11,9 @@
                     <div class="h3" v-if="title">{{ title }}</div>
                     <a v-if="!showDetails" href="javascript:;" @click="showDetails=true">Show details</a> 
                     <ul class="list-message" v-else>
-                      <li v-for="message in messages">{{ message }}</li>
+                      <li v-for="message in messages">
+                        <ProcessMessage :message="message" />
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -26,9 +28,10 @@
 </template>
 
 <script>
+import ProcessMessage from '../Wappointment/ProcessMessage'
 import ContactButton from '../Wappointment/ContactButton'
 export default {
-  components: {ContactButton},
+  components: {ContactButton, ProcessMessage},
     props: {
         type: {
             type: String,
