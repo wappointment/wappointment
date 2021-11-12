@@ -73,7 +73,7 @@ export default {
 
       // this method is called after response wrong from request make by execute method
       serviceError(error) {
-        if(error.response !== undefined){
+        if(error.response !== undefined){ 
           if(error.response.data.data.errors!==undefined && this.lengthGreaterThan(error.response.data.data.errors, 0)){
 
             if(this.lengthGreaterThan(error.response.data.data.errors, 1)){
@@ -81,12 +81,11 @@ export default {
 
             }else{
 
-              return this.$WapModal().notifyError( this.firstError(error.response.data.data.errors) )
+              return this.$WapModal().notifyError( this.firstError(error.response.data.data.errors))
             }
             
           }
-
-          if(error.response.data.message !== undefined)  return this.$WapModal().notifyError( error.response.data.message)
+          if(error.response.data.message !== undefined)  return this.$WapModal().notifyError( error.response.data.message, this.validationToArray(error.response.data.data.errors) )
         }
         
         if(error.message!== undefined) {
@@ -109,7 +108,18 @@ export default {
             return arrayOrObject[key][0]
           }
         }
-      },      
+      }, 
+      validationToArray(arrayOrObject){
+        let arrayReturn = []
+        if(arrayOrObject.validations !== undefined){
+          for (const key in arrayOrObject.validations) {
+            if (arrayOrObject.validations.hasOwnProperty(key)) {
+              arrayReturn.push(arrayOrObject.validations[key][0]) 
+            }
+          }
+        }
+        return arrayReturn
+      },     
     }
 }
 </script>

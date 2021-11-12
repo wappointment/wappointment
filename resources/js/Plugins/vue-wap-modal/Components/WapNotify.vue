@@ -5,6 +5,7 @@
             <div class="content">
               <span class="close" @click="dismiss(notification)"></span>
               {{ notification.title }}
+              <div v-if="hasSlot" class="small"><slot></slot></div>
             </div>
         </div>
     </transition>
@@ -33,6 +34,7 @@ export default {
       this.timer = new Timer(this.setExpired.bind(false, this.notification.id), this.getDuration * 1000)
   },
   computed:{
+      
       getDuration(){
         return this.notification.duration === undefined ? this.duration: this.notification.duration
       },
@@ -42,6 +44,9 @@ export default {
       }
   },
   methods: {
+    hasSlot (name = 'default') {
+          return !!this.$slots[ name ] || !!this.$scopedSlots[ name ];
+      },
       dismiss() {
         this.removeInstance()
       },

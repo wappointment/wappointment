@@ -367,7 +367,6 @@ export default {
                 fields_src.src2 = this.reorderFields(this.locationObj.options.fields) 
             }
             let customFields = []
-            console.log('fields_src',fields_src)
             for (const key in fields_src) {
                 if (fields_src.hasOwnProperty(key) && fields_src[key] !== undefined) {
                     for (let i = 0; i < fields_src[key].length; i++) {
