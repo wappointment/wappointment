@@ -10,7 +10,8 @@ class AdminNotifyNewListener extends AbstractJobRecordListener
     {
         $this->data_job = [
             'appointment' => $event->getAppointment(),
-            'client' => $event->getClient()
+            'client' => $event->getClient(),
+            'args' => $event->getAdditional(),
         ];
         parent::addToJobs($event);
     }

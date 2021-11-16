@@ -245,22 +245,25 @@ export default {
 
         appointmentBooked(result){
             if(result.data.result !== undefined){
-                let data ={
-                    appointmentSavedData: result.data.appointment,
-                    order: result.data.order,
-                    isApprovalManual: result.data.status == 0, 
-                    appointmentSaved: true, 
-                    appointmentKey: result.data.appointment.edit_key, 
-                    loading: false
-                }
                 this.$emit('confirmed', 
-                this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
-                data
+                    this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
+                    this.appointmentBookedDataFilter({
+                        appointmentSavedData: result.data.appointment,
+                        order: result.data.order,
+                        isApprovalManual: result.data.status == 0, 
+                        appointmentSaved: true, 
+                        appointmentKey: result.data.appointment.edit_key, 
+                        loading: false
+                    }, result)
                 )
             }else{
                 this.$emit('loading', {loading:false})
                 this.appointmentBookingError({message: 'Error in booking request response'})
             }
+        },
+
+        appointmentBookedDataFilter(data, result){
+            return window.wappointmentExtends.filter('AppointmentBookedData', data, result)
         },
 
         getAddonNextScreen(result){

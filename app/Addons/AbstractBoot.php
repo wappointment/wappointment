@@ -36,6 +36,14 @@ abstract class AbstractBoot implements Boot
         }
         //only triggerred once the plugin is ready to be used
         static::installedFilters();
+        static::checkIfUpdateDbRequired();
+    }
+
+    private static function checkIfUpdateDbRequired()
+    {
+        if (static::isValid() && static::isInstalled() && is_admin() && !empty(static::$addon_db_version_required)) {
+            static::requiresUpdateCheck();
+        }
     }
 
     public static function addToListOfDbUpdates($addons_require_db_update)
