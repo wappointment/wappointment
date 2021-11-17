@@ -176,6 +176,9 @@ export default {
             
         },
         showGroupService(){
+            if(this.dataResponse.limit_reached !== false){
+                return this.requiresAddon('services', this.elements.limit_reached)
+            }
             if(this.showGroupServiceRun !== undefined){
                 return this.showGroupServiceRun()
             }

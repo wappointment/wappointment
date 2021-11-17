@@ -5,7 +5,7 @@ namespace Wappointment\Controllers;
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Services\Settings;
-use Wappointment\Services\AppointmentNew as Appointment;
+use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Service;
 use Wappointment\Services\VersionDB;
 use Wappointment\Managers\Central;
@@ -44,7 +44,7 @@ class AppointmentController extends RestController
 
     public function cancel(Request $request)
     {
-        $result = Appointment::tryCancel($request);
+        $result = AppointmentNew::tryCancel($request);
 
         if ($result) {
             return ['message' => __('Appointment has been canceled', 'wappointment')];

@@ -118,14 +118,14 @@ export default {
         return this.getBuffer(event) > 0 ?`<div class="buffer">Buffer: ${this.getBuffer(event)}min</div>`:''
       },
 
-      getClientAvatarSize(event, size = 30, float = false){
-        return `<img class="${this.getClassAvatar(float)}" src="${event.extendedProps.client.avatar.replace('s=30', 's='+size)}">`
+      getClientAvatarSize(url, size = 30, float = false){
+        return `<img class="${this.getClassAvatar(float)}" src="${url.replace('s=30', 's='+size)}">`
       },
       getClassAvatar(float){
-        return 'rounded-circle' + (float ? ' float-left mr-2 mt-2':'')
+        return 'rounded-circle img-fluid img-max ' + (float ? ' float-left mr-2 mt-2':'')
       },
       getAppointmentPicture(event, float = false){
-        return event.extendedProps.client === null ? event.extendedProps.wimage:this.getClientAvatarSize(event, 30, float)
+        return  this.getClientAvatarSize(event.extendedProps.client === null ?event.extendedProps.wimage:event.extendedProps.client.avatar, 30, float)
       },
       getShortAppointmentHtml(event){
         return this.$sanitize(`<div class="d-flex">
@@ -217,5 +217,8 @@ export default {
 }
 .fc-event.hover .img-bw{
   filter: none;
+}
+.rounded-circle.img-fluid.img-max {
+    max-width: 40px;
 }
 </style>

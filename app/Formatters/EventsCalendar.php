@@ -123,7 +123,7 @@ class EventsCalendar
             'owes' => $owes,
             'display' => [
                 'short' => [
-                    'title' => !empty($preparedClient) ? $preparedClient->name : __('Unknown client', 'wappointmentw'),
+                    'title' => !empty($preparedClient) ? $preparedClient->name : __('Unknown client', 'wappointment'),
                     'service' => sprintf(__('%1$s - %2$smin', 'wappointment'), $event->service->name, $event->getDurationInSec() / 60),
                     'time' => $this->formatAppointmentTime($event->start_at, $this->timeFormat)
                         . ' - ' .

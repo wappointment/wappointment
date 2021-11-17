@@ -370,7 +370,6 @@ class AppointmentNew
         }
 
         return $dataReturn;
-        //return $appointment;
     }
 
     public static function tryCancel($request)
@@ -437,21 +436,28 @@ class AppointmentNew
         }
     }
 
-    public static function clearCharges($appointment_ids = [], $charge_ids = [])
+    public static function clearCharges($appointment_ids = [], $charge_ids = [], $delete = false)
     {
-        if (!empty($charge_ids)) {
-            return OrderPrice::destroy($charge_ids);
+        if (empty($charge_ids)) {
+            $charge_ids = OrderPrice::select('id')->whereIn('appointment_id', $appointment_ids)->get()->map(function ($e) {
+                return $e->id;
+            })->toArray();
         }
-        $prim_ids = OrderPrice::select('id')->whereIn('appointment_id', $appointment_ids)->get()->map(function ($e) {
-            return $e->id;
-        })->toArray();
-        OrderPrice::destroy($prim_ids);
+
+        if (!empty($charge_ids)) {
+            $query = OrderPrice::whereIn('id', $charge_ids);
+            if ($delete) {
+                $query->destroy(); //when silent cancelling we delete the previous recorded charge because we just want one appointment per order
+            } else {
+                $query->update(['appointment_id' => null]); // otherwise when we cancel an appointment we keep the old charge, we just set the appointment to null
+            }
+        }
     }
+
 
     public static function silentCancel($appointment_ids = [], $charge_ids = [])
     {
-
-        static::clearCharges($appointment_ids, $charge_ids);
+        static::clearCharges($appointment_ids, $charge_ids, true);
         $appointments = AppointmentModel::whereIn('id', $appointment_ids)->get();
         foreach ($appointments as $appointment) {
             static::destroy($appointment);
