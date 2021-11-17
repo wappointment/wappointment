@@ -69,36 +69,6 @@ class EventsCalendar
         }
     }
 
-    private function TESTprocessAvail($avails)
-    {
-        foreach ($avails as &$avail) {
-            $avail[0] = Carbon::createFromTimestamp($avail[0]);
-            $avail[1] = Carbon::createFromTimestamp($avail[1]);
-        }
-        return $avails;
-    }
-
-    private function debugAvailability()
-    {
-        if (VersionDB::canServices()) {
-            $staffs = Calendars::all();
-            $availability = $staffs->firstWhere('id', $this->request->input('staff_id'))->availability;
-        } else {
-            $availability = WPHelpers::getStaffOption('availability');
-        }
-
-        $times = $this->TESTprocessAvail($availability);
-        $bg_events = [];
-        foreach ($times as $timeslot) {
-            $bg_events[] = $this->setBgEvent($timeslot[0], $timeslot[1], 'debugging');
-        }
-
-        return [
-            'availability' => $availability,
-            'events' => $bg_events,
-            'now' => (new Carbon())->setTimezone($this->timezone)->format('Y-m-d\TH:i:00')
-        ];
-    }
 
     private function prepareClient($client)
     {
@@ -246,41 +216,46 @@ class EventsCalendar
 
         $statusEvents = $statusEvents->concat($punctualEvent);
         foreach ($statusEvents as $event) {
-            $addedEvent = [
-                'start' => $event->start_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
-                'end' => $event->end_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
-                'id' => $event->recur > MStatus::RECUR_NOT ? time() : $event->id,
-                'delId' => $event->id,
-                'recur' => $event->recur,
-                'source' => empty($event->source) ? '' : $event->source,
-                'onlyDelete' => true,
-                'rendering' => 'background',
-                'options' =>  $event->options
-            ];
-
-            if ($event->type == Mstatus::TYPE_FREE) {
-                $addedEvent['className'] = 'opening extra';
-                $addedEvent['type'] = 'free';
-            } else {
-                if (empty($event->source)) {
-                    $addedEvent['className'] = 'busy';
-                    $addedEvent['type'] = 'busy';
-                    if ($this->request->input('view') == 'month') {
-                        $addedEvent['allDay'] = true;
-                    }
-                } else {
-                    if ($event->recur > 0) {
-                        $addedEvent['className'] = 'calendar recurrent';
-                        $addedEvent['type'] = 'calendar';
-                    } else {
-                        $addedEvent['className'] = 'calendar';
-                        $addedEvent['type'] = 'calendar';
-                    }
-                }
-            }
-            $events[] = $addedEvent;
+            $events[] = $this->generateStatusEvent($event);
         }
         return $events;
+    }
+
+    protected function generateStatusEvent($event)
+    {
+        $addedEvent = [
+            'start' => $event->start_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
+            'end' => $event->end_at->setTimezone($this->timezone)->format('Y-m-d\TH:i:00'),
+            'id' => $event->recur > MStatus::RECUR_NOT ? time() : $event->id,
+            'delId' => $event->id,
+            'recur' => $event->recur,
+            'source' => empty($event->source) ? '' : $event->source,
+            'onlyDelete' => true,
+            'rendering' => 'background',
+            'options' =>  $event->options
+        ];
+
+        if ($event->type == Mstatus::TYPE_FREE) {
+            $addedEvent['className'] = 'opening extra';
+            $addedEvent['type'] = 'free';
+        } else {
+            if (empty($event->source)) {
+                $addedEvent['className'] = 'busy';
+                $addedEvent['type'] = 'busy';
+                if ($this->request->input('view') == 'month') {
+                    $addedEvent['allDay'] = true;
+                }
+            } else {
+                if ($event->recur > 0) {
+                    $addedEvent['className'] = 'calendar recurrent';
+                    $addedEvent['type'] = 'calendar';
+                } else {
+                    $addedEvent['className'] = 'calendar';
+                    $addedEvent['type'] = 'calendar';
+                }
+            }
+        }
+        return $addedEvent;
     }
 
     private function regavToBgEvent($regav, $regavTimezone)
@@ -319,6 +294,37 @@ class EventsCalendar
             'rendering' => 'background',
             'className' => $className,
             'type' => 'ra'
+        ];
+    }
+
+    private function TESTprocessAvail($avails)
+    {
+        foreach ($avails as &$avail) {
+            $avail[0] = Carbon::createFromTimestamp($avail[0]);
+            $avail[1] = Carbon::createFromTimestamp($avail[1]);
+        }
+        return $avails;
+    }
+
+    private function debugAvailability()
+    {
+        if (VersionDB::canServices()) {
+            $staffs = Calendars::all();
+            $availability = $staffs->firstWhere('id', $this->request->input('staff_id'))->availability;
+        } else {
+            $availability = WPHelpers::getStaffOption('availability');
+        }
+
+        $times = $this->TESTprocessAvail($availability);
+        $bg_events = [];
+        foreach ($times as $timeslot) {
+            $bg_events[] = $this->setBgEvent($timeslot[0], $timeslot[1], 'debugging');
+        }
+
+        return [
+            'availability' => $availability,
+            'events' => $bg_events,
+            'now' => (new Carbon())->setTimezone($this->timezone)->format('Y-m-d\TH:i:00')
         ];
     }
 }
