@@ -2,8 +2,8 @@
     <div >
         <div v-if="serviceListing">
             <div class="d-flex align-items-center">
-                <button @click="showService" class="btn btn-outline-primary btn my-2 btn-sm">Add 1on1 service</button>
-                <button @click="showGroupService" class="btn btn-outline-primary btn my-2 btn-sm ml-2">Add Group service</button>
+                <button @click="showService" class="btn btn-outline-primary btn my-2 btn-sm">Add 1-to-1 service</button>
+                <button @click="showGroupService" class="btn btn-outline-primary btn my-2 btn-sm ml-2"><span class="dashicons dashicons-buddicons-buddypress-logo"></span> Add Group service</button>
                 <InputPh v-if="elements && elements.length > 10" class="max-200 ml-2 mb-0" type="text" v-model="searchterm" ph="Search name" />
             </div>
             <div class="table-hover" v-if="elements">

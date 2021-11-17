@@ -182,7 +182,11 @@ class Booking extends LegacyBooking
                 case 'ctz':
                     $dataClient['options']['tz'] = $this->get('ctz');
                     break;
-
+                case 'slots':
+                case 'package_id':
+                case 'package_price_id':
+                case 'staff_id':
+                    break;
                 default:
                     $dataClient['options'][$cfield] = $this->get($cfield);
                     break;

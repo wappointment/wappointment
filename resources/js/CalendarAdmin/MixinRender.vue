@@ -21,7 +21,7 @@ export default {
           element.addClass('past-event')
           
           if(this.isAppointmentEvent(event.rendering)){
-              element.find('.fc-time').html(this.getAppointmentHtml(event,element))
+              element.find('.fc-time').html(this.getShortAppointmentHtml(event,element))
               element.append('<div class="fc-bg"></div>'+this.getBufferHtml(event))
               element.click(this.cancelClick)
               element.mouseenter(this.EOver)
@@ -40,7 +40,7 @@ export default {
             element.mouseleave(this.bgEOut)
           }else{
             if(this.isAppointmentEvent(event.rendering)){
-              element.find('.fc-time').html(this.getAppointmentHtml(event,element))
+              element.find('.fc-time').html(this.getShortAppointmentHtml(event,element))
               element.append('<div class="fc-bg"></div>'+this.getBufferHtml(event))
               element.click(this.cancelClick)
               element.mouseenter(this.EOver)
