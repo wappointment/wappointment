@@ -30,15 +30,23 @@ class AppointmentController extends RestController
         $appointmentData['edit_key'] = $request->input('appointmentkey');
 
         $isLegacy = !VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES);
+        $service = $isLegacy ? Service::get() : Central::get('ServiceModel')::find((int)$appointment->service_id);
+        $client = $appointment->client()->select(['name', 'email', 'options'])->first();
+
         return apply_filters('wappointment_appointment_load', [
             'appointment' => $appointmentData,
-            'client' => $appointment->client()->select(['name', 'email', 'options'])->first(),
-            'service' => $isLegacy ? Service::get() : Central::get('ServiceModel')::find((int)$appointment->service_id),
+            'client' => $client,
+            'service' => $service,
             'staff' => $isLegacy ? (new \Wappointment\WP\StaffLegacy($appointment->getStaffId()))->toArray() : (new \Wappointment\WP\Staff($appointment->getStaffId()))->toArray(),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'zoom_browser' => Settings::get('zoom_browser'),
+            'display' => [
+                '[h2]getText(title)[/h2]',
+                empty($client) ? '' : sprintf(__('%1$s - %2$s', 'wappointment'), '[b]' . $client->name . '[/b]', $client->email),
+                sprintf(__('%1$s - %2$s', 'wappointment'), '[b]' . $service->name . '[/b]', $appointment->getDuration())
+            ],
         ], $appointment, $request);
     }
 
