@@ -2,7 +2,7 @@
     <div>
         <div v-if="isSaveEventPage">
             <p>{{options.confirmation.savetocal}}</p>
-            <SaveButtons :selectedSlot="selectedSlot" :service="service" :appointment="appointment"
+            <SaveButtons :selectedSlot="selectedSlot.start" :service="service" :appointment="appointment"
             :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected" :options="options"/>
         </div>
         <div v-else>

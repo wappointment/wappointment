@@ -436,7 +436,7 @@ export default {
                 }
             }
             
-            let dayIntervals = this.currentIntervals.get(start, until)
+            let dayIntervals = this.currentIntervals.get(start, until, this.service.id)
             return this.prepareDayInterval(dayIntervals, start,until)
         },
 

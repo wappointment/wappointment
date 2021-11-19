@@ -49,7 +49,8 @@ class Booking extends LegacyBooking
             'staff_id' => '',
             'package_id' => '',
             'package_price_id' => '',
-            'slots' => ''
+            'slots' => '',
+            'appointment_key' => ''
         ];
         if (!$this->forceEmail()) {
             $this->validationRulesArray['email'] = 'required|email';

@@ -146,13 +146,13 @@ export default {
             this.loadedAppointment = true
             this.loading = false
             this.autoRedirect()
-            this.initCountDown(this.selectedSlot, this.options.view.timeleft)
+            this.initCountDown(this.appointmentStarts, this.options.view.timeleft)
         },
         
     },
     computed: {
         isStarted(){
-            return this.selectedSlot < Math.round(Date.now()/1000)
+            return this.appointmentStarts < Math.round(Date.now()/1000)
         },
         isOver(){
             return this.appointment.end_at < Math.round(Date.now()/1000)
@@ -171,14 +171,14 @@ export default {
         },
 
         startDatei18n(){
-            return this.appointment.converted !== undefined ? this.appointment.converted :this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
+            return this.appointment.converted !== undefined ? this.appointment.converted :this.getMoment(this.appointmentStarts, this.currentTz).format(this.fullDateFormat)
         },
         
         fullDateFormat(){
            return this.date_format + '[' + this.date_time_union + ']' + this.time_format
         },
         
-        selectedSlot(){
+        appointmentStarts(){
             return this.appointment.start_at
         },
 

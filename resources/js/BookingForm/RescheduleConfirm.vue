@@ -3,7 +3,7 @@
         <div v-if="isCompactHeader" class="mb-2">
             <div class="wselected wclosable wmy-4 d-flex align-items-center d-flex-inline">
                 <WapImage :faIcon="['far','clock']" size="auto" />
-                <span class="welementname wml-2">{{ getMoment(selectedSlot, timeprops.currentTz).format(timeprops.fullDateFormat) }}</span>
+                <span class="welementname wml-2">{{ getMoment(selectedSlot.start, timeprops.currentTz).format(timeprops.fullDateFormat) }}</span>
             </div>
         </div>
         <div class="d-flex wbtn-confirm my-2">
@@ -33,7 +33,7 @@ export default {
         confirm(){
             let data = {
                 appointmentkey: this.timeprops.appointmentkey,
-                time: this.selectedSlot,
+                time: this.selectedSlot.start,
                 ctz: this.timeprops.ctz,
             }
             this.$emit('loading', {loading:true, dataSent: data})
@@ -48,7 +48,7 @@ export default {
         appointmentRescheduled(result){
             let data = result.data
             data.appointmentkey = this.timeprops.appointmentkey
-            data.time = this.selectedSlot
+            data.time = this.selectedSlot.start
             data.ctz = this.timeprops.ctz
             data.client = this.rescheduleData.client
             this.$emit('confirmed', this.relations.next, {

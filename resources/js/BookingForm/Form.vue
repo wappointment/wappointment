@@ -220,7 +220,10 @@ export default {
                 return
             }
             let data = this.bookingFormExtended
-            data.time = this.selectedSlot
+            data.time = this.selectedSlot.start
+            if(this.selectedSlot.edit_key !== undefined){
+                data.appointment_key = this.selectedSlot.edit_key
+            }
             data.ctz = this.timeprops.ctz
             data.service = this.service.id
             data.location = this.location.id

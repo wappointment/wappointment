@@ -13,6 +13,13 @@ trait CanBook
     public function book($bookingRequest, $forceConfirmed = false)
     {
         $this->bookingRequest = $bookingRequest;
+
+        if (!empty($this->bookingRequest->get('appointment_key'))) {
+            $result =  apply_filters('wappointment_book_external', false, $bookingRequest);
+            if ($result === false) {
+                throw new \WappointmentException(__('Error cannot book at this time', 'wappointment'), 1);
+            }
+        }
         $start_at = $bookingRequest->get('time');
 
         if ($bookingRequest->get('service')) {

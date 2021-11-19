@@ -206,7 +206,7 @@ export default {
             return this.isLegacyOrNotServiceSuite || this.location !== false
         },
         slotSelected(){
-            return this.selectedSlot !== false && this.selectedSlot > 0
+            return this.selectedSlot !== false && this.selectedSlot.start > 0
         },
         serviceIsNotFree(){
             return this.service !== false && this.service.options.woo_sellable === true
@@ -590,10 +590,10 @@ export default {
                 if(this.viewData.site_lang!== 'en' && browserLang().substr(0,2)!=='en'){ // if the browser is not english we fetch for a localized date
                     this.convertDateRequest({
                         timezone: this.timeprops.currentTz,
-                        timestamp: this.selectedSlot
+                        timestamp: this.selectedSlot.start
                     }).then(this.convertedDate) 
                 }else{
-                    this.converted = this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
+                    this.converted = this.getMoment(this.selectedSlot.start, this.currentTz).format(this.fullDateFormat)
                 }
             }
             

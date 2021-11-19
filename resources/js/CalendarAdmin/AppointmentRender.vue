@@ -119,7 +119,7 @@ export default {
       },
 
       getClientAvatarSize(url, size = 30, float = false){
-        return `<img class="${this.getClassAvatar(float)}" src="${url.replace('s=30', 's='+size)}">`
+        return url === undefined? '' :`<img class="${this.getClassAvatar(float)}" src="${url.replace('s=30', 's='+size)}">`
       },
       getClassAvatar(float){
         return 'rounded-circle img-fluid img-max ' + (float ? ' float-left mr-2 mt-2':'')

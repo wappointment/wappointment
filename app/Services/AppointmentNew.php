@@ -5,7 +5,6 @@ namespace Wappointment\Services;
 use Wappointment\Models\Client;
 use Wappointment\Models\Location;
 use Wappointment\Models\Appointment as AppointmentModel;
-use Wappointment\Helpers\Events;
 use Wappointment\Managers\Central;
 use Wappointment\Models\OrderPrice;
 use Wappointment\WP\Helpers as WPHelpers;
@@ -171,18 +170,12 @@ class AppointmentNew
             if ($result) {
                 //send confirm email to client and admin
                 $clientModel = empty($client) ? Client::find($appointment->client_id) : $client;
-                Events::dispatch(
-                    'AppointmentConfirmedEvent',
-                    static::prepareData(
-                        [
-                            'appointment' => $appointment,
-                            'client' => $clientModel,
-                            'oldAppointment' => $oldAppointment
-                        ],
-                        $clientModel,
-                        static::getAppointmentModel()::STATUS_CONFIRMED
-                    )
-                );
+
+                JobHelper::dispatch('AppointmentConfirmedEvent', [
+                    'appointment' => $appointment,
+                    'client' => $clientModel,
+                    'oldAppointment' => $oldAppointment
+                ], $clientModel, static::getAppointmentModel()::STATUS_CONFIRMED);
             }
             return $result;
         }
@@ -203,13 +196,17 @@ class AppointmentNew
 
     public static function reschedule($edit_key, $start_at)
     {
-        if (!(bool) Settings::get('allow_rescheduling')) {
+        $allowrescheduling = (bool) Settings::get('allow_rescheduling');
+        if (!$allowrescheduling) {
             throw new \WappointmentException('Appointment rescheduling is not allowed', 1);
         }
         if (is_array($edit_key)) {
             throw new \WappointmentException(__("Malformed parameter", 'wappointment'), 1);
         }
         $appointment = static::getAppointmentModel()::where('edit_key', $edit_key)->first();
+        if (!apply_filters('wappointment_reschedule_allowed', $allowrescheduling, ['appointment' => $appointment])) {
+            throw new \WappointmentException('Appointment rescheduling is not allowed', 1);
+        }
         $oldAppointment = $appointment->replicate();
         if (empty($appointment)) {
             throw new \WappointmentException(__("Can't find appointment", 'wappointment'), 1);
@@ -238,14 +235,11 @@ class AppointmentNew
         //send rescheduled email to client and admin
         $clientModel = $appointment->getClientModel();
 
-        Events::dispatch(
-            'AppointmentRescheduledEvent',
-            static::prepareData([
-                'appointment' => $appointment,
-                'client' => $clientModel,
-                'oldAppointment' => $oldAppointment
-            ], $clientModel)
-        );
+        JobHelper::dispatch('AppointmentRescheduledEvent', [
+            'appointment' => $appointment,
+            'client' => $clientModel,
+            'oldAppointment' => $oldAppointment
+        ], $clientModel);
     }
 
     public static function unixToDb($unixTS)
@@ -329,23 +323,16 @@ class AppointmentNew
         throw new \WappointmentException(__('Slot not available', 'wappointment'), 1);
     }
 
-    public static function prepareData($data, Client $client, $status = 0)
-    {
-        return apply_filters('wappointment_appointment_prepare_data', $data, $client, $status);
-    }
-
     protected static function book($data, Client $client, $is_admin = false, $status = 0)
     {
         $dataReturn = static::create($data, $client);
 
-        $dataReturn = static::prepareData($dataReturn, $client, $status);
-
         if ($dataReturn['appointment']->status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION) {
             //send pending email to client and admin
-            Events::dispatch('AppointmentBookedEvent', $dataReturn);
+            JobHelper::dispatch('AppointmentBookedEvent', $dataReturn, $client, $status);
         } else {
             //send confirm email to client and admin
-            Events::dispatch('AppointmentConfirmedEvent', $dataReturn);
+            JobHelper::dispatch('AppointmentBookedEvent', $dataReturn, $client, $status);
         }
 
         //if availability has not been refreshed for a while we refresh it now otherwise we queue a job for it
@@ -412,16 +399,10 @@ class AppointmentNew
         static::destroy($appointment);
 
         //trigger cancelled email to user and cancelled notification to admin
-        Events::dispatch(
-            'AppointmentCanceledEvent',
-            static::prepareData(
-                [
-                    'appointment' => $appointment,
-                    'client' => $client
-                ],
-                $client
-            )
-        );
+        JobHelper::dispatch('AppointmentCanceledEvent', [
+            'appointment' => $appointment,
+            'client' => $client
+        ], $client);
 
         return true;
     }
