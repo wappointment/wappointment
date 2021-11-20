@@ -17,9 +17,9 @@ class Order
     public function processing()
     {
         $this->order->confirmAppointments();
-
         $this->order->setProcessing();
         $this->order->save();
+        apply_filters('wappointment_order_confirm', $this->order);
     }
 
     public static function refund($order_id)

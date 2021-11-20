@@ -47,7 +47,7 @@ class AppointmentNew
             'package_price_id' => $client->bookingRequest->get('package_price_id'),
         ], $client, $start_at, $service);
 
-        return static::book($appointmentData, $client, $forceConfirmed, $status);
+        return static::bookCreate($appointmentData, $client, $forceConfirmed, $status);
     }
 
     protected static function getStaffId($staff_id)
@@ -132,6 +132,11 @@ class AppointmentNew
     public static function create($data, Client $client)
     {
         $appointment = static::createAppointment($data);
+        return static::generateOrder($client, $appointment);
+    }
+
+    public static function generateOrder($client, $appointment)
+    {
         $order = null;
         if ($client->bookingRequest->getService()->isSold() && !Payment::isWooActive()) {
             $appointment->hydrateService($client->bookingRequest->getService());
@@ -171,14 +176,19 @@ class AppointmentNew
                 //send confirm email to client and admin
                 $clientModel = empty($client) ? Client::find($appointment->client_id) : $client;
 
-                JobHelper::dispatch('AppointmentConfirmedEvent', [
-                    'appointment' => $appointment,
-                    'client' => $clientModel,
-                    'oldAppointment' => $oldAppointment
-                ], $clientModel, static::getAppointmentModel()::STATUS_CONFIRMED);
+                static::sendConfirmationEvent($appointment, $clientModel, $oldAppointment);
             }
             return $result;
         }
+    }
+
+    public static function sendConfirmationEvent($appointment, $client, $oldAppointment)
+    {
+        JobHelper::dispatch('AppointmentConfirmedEvent', [
+            'appointment' => $appointment,
+            'client' => $client,
+            'oldAppointment' => $oldAppointment
+        ], $client, static::getAppointmentModel()::STATUS_CONFIRMED);
     }
 
     public static function patch($id, $data)
@@ -323,24 +333,32 @@ class AppointmentNew
         throw new \WappointmentException(__('Slot not available', 'wappointment'), 1);
     }
 
-    protected static function book($data, Client $client, $is_admin = false, $status = 0)
+    protected static function bookCreate($data, Client $client, $is_admin = false, $status = 0)
     {
-        $dataReturn = static::create($data, $client);
+        $dataReturned = static::create($data, $client);
 
-        if ($dataReturn['appointment']->status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION) {
-            //send pending email to client and admin
-            JobHelper::dispatch('AppointmentBookedEvent', $dataReturn, $client, $status);
-        } else {
-            //send confirm email to client and admin
-            JobHelper::dispatch('AppointmentBookedEvent', $dataReturn, $client, $status);
-        }
+        static::afterBookEvents($dataReturned, $client, $data['staff_id'], $is_admin, $status);
 
+        return $dataReturned;
+    }
+
+    public static function afterBookEvents($dataReturned, $client, $staff_id, $is_admin = false, $status = 0)
+    {
+        $dispatching = $status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION ? 'AppointmentBookedEvent' : 'AppointmentConfirmedEvent';
+        //send pending email to client and admin
+        JobHelper::dispatch($dispatching, $dataReturned, $client, $status);
+
+        static::availabilityRefreshTrigger($staff_id, $is_admin);
+    }
+
+    public static function availabilityRefreshTrigger($staff_id, $is_admin = false)
+    {
         //if availability has not been refreshed for a while we refresh it now otherwise we queue a job for it
         if (!defined('DISABLE_WP_CRON') || $is_admin === true) {
             //when web cron is disabled we need an immediate refresh of availability
-            (new Availability($data['staff_id']))->regenerate();
+            (new Availability($staff_id))->regenerate();
         } else {
-            $availability = new Availability($data['staff_id']);
+            $availability = new Availability($staff_id);
             if ($availability->getLastRefresh() > 2) {
                 $availability->regenerate();
             } else {
@@ -348,15 +366,13 @@ class AppointmentNew
 
                 \Wappointment\Services\Queue::tryPush(
                     'Wappointment\Jobs\AvailabilityRegenerate',
-                    ['staff_id' => $data['staff_id']],
+                    ['staff_id' => $staff_id],
                     'availability'
                 );
             }
             //we immediately spawn a process to trigger availability regenerate in the back
             WPHelpers::cronTrigger();
         }
-
-        return $dataReturn;
     }
 
     public static function tryCancel($request)
@@ -428,7 +444,7 @@ class AppointmentNew
         if (!empty($charge_ids)) {
             $query = OrderPrice::whereIn('id', $charge_ids);
             if ($delete) {
-                $query->destroy(); //when silent cancelling we delete the previous recorded charge because we just want one appointment per order
+                $query->delete(); //when silent cancelling we delete the previous recorded charge because we just want one appointment per order
             } else {
                 $query->update(['appointment_id' => null]); // otherwise when we cancel an appointment we keep the old charge, we just set the appointment to null
             }
@@ -445,7 +461,7 @@ class AppointmentNew
         }
     }
 
-    protected static function getDefaultStatus($service)
+    public static function getDefaultStatus($service)
     {
         if ($service->isSold()) {
             return static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;

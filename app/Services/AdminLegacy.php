@@ -68,7 +68,7 @@ class AdminLegacy
         //test that this is bookable
         $hasBeenBooked = Appointment::adminBook($client, $start, $end, $type, $service);
         if (!$hasBeenBooked) {
-            throw new \WappointmentException('Error cannot book at this time', 1);
+            throw new \WappointmentException(__('Error while booking', 'wappointment') . '(5)', 1);
         }
         return $hasBeenBooked;
     }

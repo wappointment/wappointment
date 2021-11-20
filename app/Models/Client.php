@@ -79,7 +79,6 @@ class Client extends Model
         return empty($tag) || empty($this->options[$tag['key']]) ? '' : $this->options[$tag['key']];
     }
 
-
     protected function getRealDuration($service)
     {
         return ((int) $service['duration'] + (int) Settings::get('buffer_time')) * 60;
