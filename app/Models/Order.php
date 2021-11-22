@@ -178,7 +178,7 @@ class Order extends Model
         AppointmentNew::silentCancel($appointment_ids, $charge_ids);
     }
 
-    public function add(Appointment $appointment)
+    public function add(Appointment $appointment, $slots = 1)
     {
 
         //clear all prices by cancelling previously placed appointment silently
@@ -191,20 +191,20 @@ class Order extends Model
         }
 
         foreach ($prices as $price) {
-            $this->recordItem($price->id, $price->price, $appointment->id, $price->generateItemName($appointment));
+            $this->recordItem($price->id, $price->price, $appointment->id, $price->generateItemName($appointment), $slots);
         }
     }
 
     public function getDescription()
     {
-        $description = "";
+        $description = '';
         foreach ($this->prices as $price) {
             $description .= "\n" . $price->item_name;
         }
         return $description;
     }
 
-    public function recordItem($price_id, $price_value, $appointment_id, $item_name)
+    public function recordItem($price_id, $price_value, $appointment_id, $item_name, $quantity = 1)
     {
         OrderPrice::create([
             'order_id' => $this->id,
@@ -212,6 +212,7 @@ class Order extends Model
             'item_name' => $item_name,
             'price_value' => $price_value,
             'appointment_id' => $appointment_id,
+            'quantity' => $quantity,
         ]);
     }
 
@@ -220,7 +221,7 @@ class Order extends Model
         $prices = OrderPrice::where('order_id', $this->id)->with('price')->get();
         $total = 0;
         foreach ($prices as $price) {
-            $total += $price->price_value;
+            $total += $price->price_value * ($this->getOrderPriceQuantity($price));
         }
         $this->update(
             [
@@ -228,6 +229,11 @@ class Order extends Model
                 'tax_amount' => $this->calculateTax($total)
             ]
         );
+    }
+
+    public function getOrderPriceQuantity($orderPrice)
+    {
+        return !empty($orderPrice->quantity) ? $orderPrice->quantity : 1;
     }
 
     public function calculateTax($amount)

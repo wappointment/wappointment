@@ -8,7 +8,9 @@ import VueWapModal from './Plugins/vue-wap-modal'
 import __get from 'lodash/get'
 import UrlParam from './Modules/UrlParam'
 import WTrigger from './Mixins/WTrigger'
+import RequestMaker from './Modules/RequestMaker'
 
+window.wappointmentExtends.store('commons', {RequestMaker})
 
 const WapImage = () => import(/* webpackChunkName: "WapImage" */ './Components/WapImage')
 

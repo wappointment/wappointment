@@ -168,6 +168,7 @@ class Appointment extends Model
         $array['video_meeting'] = $this->videoAppointmentHasLink();
         $staff = $this->getStaff();
         $array['ics_organizer'] = 'ORGANIZER;CN=' . $staff->staff_data['name'] . ':mailto:' . $staff->emailAddress();
+        $array['edit_key_original'] = $array['edit_key'];
         if (!empty($array['options']['providers'])) {
             unset($array['options']['providers']);
         }

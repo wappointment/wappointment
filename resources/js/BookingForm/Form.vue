@@ -256,7 +256,8 @@ export default {
                         isApprovalManual: result.data.status == 0, 
                         appointmentSaved: true, 
                         appointmentKey: result.data.appointment.edit_key, 
-                        loading: false
+                        loading: false,
+                        resultBooking: result.data
                     }, result)
                 )
             }else{

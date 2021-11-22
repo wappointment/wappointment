@@ -132,6 +132,7 @@ export default {
         time_format: '',
         date_format: '',
         appointmentSavedData: false,
+        resultBooking: false,
         appointmentSaved: false,
         appointmentKey: false,
         dataloaded: false,
@@ -787,6 +788,8 @@ export default {
                         staff:"selectedStaff", 
                         appointment_starts_at: 'appointmentStartsAt',
                         rescheduling: 'rescheduling',
+                        resultBooking:"resultBooking",
+                        viewData:'viewData',
                     },
                     listeners: {
                         loading: 'childChangedData',

@@ -43,8 +43,8 @@ export default {
             'params':params, 
             'finalCallback':finalCallback, 
             'staff':staff, 
-            'successCallback':successCallback , 
-            'failureCallback':failureCallback
+            'successCallback':successCallback === false?this.serviceSuccess:successCallback , 
+            'failureCallback':failureCallback === false?this.serviceError:failureCallback
         }
         this.enqueueRequest(requestObject)
         this.queueExecuteOne()

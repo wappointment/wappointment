@@ -14,13 +14,22 @@ export default {
     computed: {
       messageParsed(){
         let lookForLink = 'https://'
-        if(this.message.indexOf(lookForLink) === -1 ){
-          return this.message
-        }else{
-          let split = this.message.split(lookForLink)
-          this.linkFound = lookForLink + split[1]
-          return split[0]
+        console.log('this.message',typeof this.message)
+        if(typeof this.message == 'object'){
+          return this.message.message
         }
+        if(typeof this.message == 'string'){
+          if(this.message.indexOf(lookForLink) === -1 ){
+            return this.message
+          }else{
+            let split = this.message.split(lookForLink)
+            this.linkFound = lookForLink + split[1]
+            return split[0]
+          }
+        }else{
+          return this.message
+        }
+        
       }
     },
     

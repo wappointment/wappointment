@@ -132,15 +132,15 @@ class AppointmentNew
     public static function create($data, Client $client)
     {
         $appointment = static::createAppointment($data);
-        return static::generateOrder($client, $appointment);
+        return static::generateOrder($client, $appointment, $client->bookingRequest->get('slots'));
     }
 
-    public static function generateOrder($client, $appointment)
+    public static function generateOrder($client, $appointment, $slots = 1)
     {
         $order = null;
         if ($client->bookingRequest->getService()->isSold() && !Payment::isWooActive()) {
             $appointment->hydrateService($client->bookingRequest->getService());
-            $order = $client->generateOrder($appointment);
+            $order = $client->generateOrder($appointment, $slots);
         }
         return ['appointment' => $appointment, 'client' => $client, 'order' => $order];
     }

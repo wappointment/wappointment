@@ -156,7 +156,7 @@ class EventsCalendar
             case 'owes':
                 return __('Owes', 'wappointment');
             default:
-                $label = $this->customFieldsKeyLabel[$keyOption];
+                $label = isset($this->customFieldsKeyLabel[$keyOption]) ? $this->customFieldsKeyLabel[$keyOption] : $keyOption;
                 return strpos($label, ':') !== false ? str_replace(':', '', $label) : $label;
         }
     }
