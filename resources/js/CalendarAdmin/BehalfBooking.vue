@@ -81,7 +81,7 @@
                         </div>
                         <div :class="[hasErrorEmail?'hide-cf':'']">
                             <FieldsGenerated @changed="changedBF" :disabledEmail="true"
-                            :validators="validators" :custom_fields="viewData.custom_fields" 
+                            :custom_fields="viewData.custom_fields" 
                             :service="service" :location="location" :data="bookingForm" 
                             :options="viewData.widget" />
 
@@ -112,12 +112,11 @@ import StyleGenerator from '../Components/StyleGenerator'
 import ServiceSelection from '../BookingForm/ServiceSelection'
 import DurationSelection from '../BookingForm/DurationSelection'
 import LocationSelection from '../BookingForm/LocationSelection'
-import FieldsGenerated from '../BookingForm/FieldsGenerated'
 import WappoServiceBooking from '../Services/V1/BookingN'
 export default {
     props: ['viewData','startTime', "endTime", "realEndTime", 'activeStaff'],
     mixins: window.wappointmentExtends.filter('WappointmentBehalfBookingMixins', [RequestMaker]) ,
-    components: {AppointmentTypeSelection, PhoneInput, FormInputs, StyleGenerator, ServiceSelection, DurationSelection, LocationSelection, FieldsGenerated},
+    components: {AppointmentTypeSelection, PhoneInput, FormInputs, StyleGenerator, ServiceSelection, DurationSelection, LocationSelection},
     data: () => ({
         clientSearching:false,
         clientsResults: [],
@@ -192,13 +191,6 @@ export default {
             return this.selectedAppointmentType == 'skype'
         },
 
-        validators(){
-            return {
-                'isEmail': isEmail,
-                'isEmpty': isEmpty,
-            }
-        },
-
         hasMoreThanOneService(){
             return this.services.length > 1
         },
@@ -219,7 +211,7 @@ export default {
             return this.allSelected && (
                 this.requiresClient === false ||
                 (this.bookingForm.clientid !== undefined && [false,undefined].indexOf(this.bookingForm.clientid) === -1)  || 
-                (Object.keys(this.errorsOnFields).length < 1 && this.validators['isEmail'](this.bookingForm.email))
+                (Object.keys(this.errorsOnFields).length < 1 && this.isEmail(this.bookingForm.email))
             )
         },
 
@@ -370,7 +362,6 @@ export default {
                 this.duration = this.setDuration(data.duration)
             }
             this.changeLocation()
-            console.log('this.serviceSelectedExtended',this.serviceSelectedExtended)
             if(this.serviceSelectedExtended !== undefined){
                 this.serviceSelectedExtended()
             }

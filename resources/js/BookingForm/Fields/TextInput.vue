@@ -5,6 +5,7 @@
             <input class="form-control" :id="name" type="text" v-model="updateValue" 
             :required="isRequired">
         </div>
+        <div v-if="hasError" class="has-error"> {{ this.error }}</div>
     </div>
 </template>
 

@@ -87,9 +87,7 @@ export default {
         },
 
         insertSlotToDayPart(segment, section){
-            console.log('segment, section',segment, section)
             if(this.dayParts[section] === undefined ) {
-                console.log('define', section)
                 this.dayParts[section] = []
             }
             this.dayParts[section].push(segment)

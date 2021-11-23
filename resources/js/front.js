@@ -9,6 +9,7 @@ import __get from 'lodash/get'
 import UrlParam from './Modules/UrlParam'
 import WTrigger from './Mixins/WTrigger'
 import RequestMaker from './Modules/RequestMaker'
+import FieldsGenerated from './BookingForm/FieldsGenerated'
 
 window.wappointmentExtends.store('commons', {RequestMaker})
 
@@ -25,6 +26,7 @@ Vue.component('v-style', {
         return createElement('style', this.$slots.default)
     }
 });
+Vue.component('FieldsGenerated', FieldsGenerated)
 
 Vue.mixin(WTrigger)
 Vue.mixin(UrlParam)

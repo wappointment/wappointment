@@ -25,9 +25,9 @@
             <transition name="slide-fade">
                 <div v-if="showFormInputs">
                     <FieldsGenerated @changed="changedBF" @dataDemoChanged="dataDemoChanged" 
-                    :validators="validators" :custom_fields="custom_fields" 
-                    :service="service" :location="location" :data="data" 
-                    :options="options" />
+                    :custom_fields="custom_fields" 
+                    :service="service" :location="location" 
+                    :options="options" :selectedSlot="selectedSlot" />
                 
                     <div v-if="termsIsOn" class="wap-terms" v-html="getTerms"></div>
                 </div>
@@ -46,11 +46,9 @@
 
 import AppointmentTypeSelection from './AppointmentTypeSelection'
 import AbstractFront from './AbstractFront'
-import {isEmail, isEmpty} from 'validator'
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
 import MixinTypeSelected from './MixinTypeSelected'
 import WappoServiceBooking from '../Services/V1/BookingN'
-import FieldsGenerated from './FieldsGenerated'
 import FormMixinLegacy from './FormMixinLegacy'
 import MixinLegacy from './MixinLegacy'
 import BookingAddress from './Address'
@@ -68,7 +66,6 @@ export default {
         BookingAddress,
         PhoneInput,
         CountryStyle,
-        FieldsGenerated,
         AppointmentTypeSelection
     }, 
     data: () => ({
@@ -124,12 +121,6 @@ export default {
                 }
             }
             return true
-        },
-        validators(){
-            return {
-                'isEmail': isEmail,
-                'isEmpty': isEmpty,
-            }
         },
         canSubmit(){
             return  Object.keys(this.errorsOnFields).length < 1

@@ -28,7 +28,7 @@ import routerQueryRedirect from './Standalone/routerQueryRedirect'
 import getRoutePush from './Standalone/getRoutePush'
 import ServicesDelivery from './Settings/ServicesDelivery'
 import VueSanitize from 'vue-sanitize'
-
+import FieldsGenerated from './BookingForm/FieldsGenerated'
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
 Vue.use(VueSanitize, {
@@ -41,6 +41,7 @@ Vue.use(VueSanitize, {
 })
 
 Vue.component('WapImage', WapImage)
+Vue.component('FieldsGenerated', FieldsGenerated)
 Vue.component('v-style', {
   render: function (createElement) {
       return createElement('style', this.$slots.default)

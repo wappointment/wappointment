@@ -37,6 +37,7 @@ import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
 import MixinLegacy from './MixinLegacy'
 import IsDemo from '../Mixins/IsDemo'
+import {isEmail, isEmpty} from 'validator'
 export default {
     components: window.wappointmentExtends.filter('bookingFormComponents', {
         TextInput,
@@ -49,7 +50,7 @@ export default {
         PhoneInput,
         DateInput
     }) ,
-    props:['duration', 'location', 'custom_fields', 'data', 'options', 'service', 'validators', 'disabledEmail'],
+    props:['duration', 'location', 'custom_fields', 'data', 'options', 'service', 'disabledEmail', 'selectedSlot', 'schema'],
     mixins: [MixinLegacy, IsDemo],
     data: () => ({
         customFields: [],
@@ -149,19 +150,29 @@ export default {
                 fieldObject.name = this.options.form[namekey]
             }
 
-            fieldObject = window.wappointmentExtends.filter('bookingFormFieldObject', fieldObject, this.service, this.options.form[namekey])
+            fieldObject = window.wappointmentExtends.filter('bookingFormFieldObject', fieldObject, {
+                service:this.service, 
+                namekey:this.options.form[namekey], 
+                selectedSlot:this.selectedSlot})
             if(fieldObject.passedInitValue && this.isEmpty(String(this.bookingFormExtended[namekey]))) {
                 this.bookingFormExtended[namekey] = fieldObject.passedInitValue
             }
-
+            
             return fieldObject
         },
         initForm(){
             this.locationObj = Object.assign({},this.convertLocationLegacy(this.location))
 
-            this.filterCustomFields()
+            this.prepareSchema()
             this.initBookingForm()
             this.tryPrefill()
+        },
+        prepareSchema(){
+            if(this.schema){
+                this.customFields = [].concat(this.schema)
+            }else{
+                this.filterCustomFields()
+            }
         },
         convertLocationLegacy(location){
             if(typeof location =='string'){
@@ -215,10 +226,10 @@ export default {
         },
 
         isEmail(field){
-            return this.validators['isEmail'](field)
+            return isEmail(field)
         },
         isEmpty(field){
-            return this.validators['isEmpty'](field)
+            return isEmpty(field)
         },
         isRegex(field, validationString){
             //strip the regex: prefix and strip the wrapping /
@@ -240,7 +251,6 @@ export default {
         },
         isFieldValid(fieldKey, value){
             let fieldObject = this.getCFOptions(fieldKey)
-
             let validations = []
             if(fieldObject.validations !== undefined){
                 validations = fieldObject.validations.split('|')
@@ -293,8 +303,7 @@ export default {
                 return fieldObject.errors['email']
             }
 
-            for (let i = 0; i < validations.length; i++) {
-                const validationString = validations[i]
+            for (const validationString of validations) {
                 if(validationString.indexOf('regex:') !== -1 && !this.isRegex(value, validationString)){
                     return fieldObject.errors['regex']
                 }
@@ -302,19 +311,25 @@ export default {
                 if(validationString.indexOf('max:') !== -1 && !this.isMax(value, validationString)){
                     return fieldObject.errors['max']
                 }
-                
             }
 
             return true
         },
         initBookingForm(){
             let bf = {}
-            for (let i = 0; i < this.customFields.length; i++) {
-                bf[this.customFields[i].namekey] = ''
+            for (const iterator of this.customFields) {
+                bf[iterator.namekey] = ''
             }
             
             this.bookingFormExtended = Object.assign({}, bf)
-            if(Object.keys(this.data).length > 1){
+            this.legacyFill()
+        },
+
+        /**
+         * check whether this is still needed
+         */
+        legacyFill(){
+            if(this.data !== undefined && Object.keys(this.data).length > 1){
                 for (const key in this.bookingFormExtended) {
                     if (this.bookingFormExtended.hasOwnProperty(key) && this.data[key]!== undefined) {
                         this.bookingFormExtended[key] = this.data[key]
@@ -322,10 +337,9 @@ export default {
                 }
             }
         },
-        getCFOptions(fieldName){
-            for (let i = 0; i < this.custom_fields.length; i++) {
-                if(this.custom_fields[i].namekey == fieldName) {
-                    let customF = this.custom_fields[i]
+        getCFOptions(namekey){
+            for (const customF of this.custom_fields) {
+                if(customF.namekey == namekey) {
                     if(customF.core !== undefined){
                         switch (customF.namekey) {
                             case 'name':
@@ -369,20 +383,20 @@ export default {
             let customFields = []
             for (const key in fields_src) {
                 if (fields_src.hasOwnProperty(key) && fields_src[key] !== undefined) {
-                    for (let i = 0; i < fields_src[key].length; i++) {
+                    for (const iterator of fields_src[key]) {
                         let cfieldslist = []
-                        for (let j = 0; j < customFields.length; j++) {
-                            cfieldslist.push(customFields[j]['namekey'])
+                        for (const cfield of customFields) {
+                            cfieldslist.push(cfield['namekey'])
                         }
                         
-                        if(cfieldslist.indexOf(fields_src[key][i]) === -1){
-                            let cf_found = this.getCFOptions(fields_src[key][i])
+                        if(cfieldslist.indexOf(iterator) === -1){
+                            let cf_found = this.getCFOptions(iterator)
                             if(cf_found!== undefined){
                                 customFields.push(cf_found)
                             }
                         } 
-                         
                     }
+      
                 }
             }
             this.customFields = customFields[0].sorting !== undefined ? customFields.sort((a,b) => a.sorting > b.sorting):customFields
@@ -406,3 +420,9 @@ export default {
 
 }
 </script>
+<style >
+.wap-booking-fields .field-required .has-error {
+    color: var(--wappo-error-tx);
+    font-size: .6em;
+}
+</style>
