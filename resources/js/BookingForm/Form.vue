@@ -239,17 +239,18 @@ export default {
 
         appointmentBooked(result){
             if(result.data.result !== undefined){
-                this.$emit('confirmed', 
-                    this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
-                    this.appointmentBookedDataFilter({
+                let data ={
                         appointmentSavedData: result.data.appointment,
                         order: result.data.order,
-                        isApprovalManual: result.data.status == 0, 
+                        isApprovalManual: result.data.appointment.status == 0, 
                         appointmentSaved: true, 
                         appointmentKey: result.data.appointment.edit_key, 
                         loading: false,
                         resultBooking: result.data
-                    }, result)
+                    }
+                this.$emit('confirmed', 
+                    this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
+                    this.appointmentBookedDataFilter(data, result)
                 )
             }else{
                 this.$emit('loading', {loading:false})
