@@ -4,7 +4,6 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\SoftDeletes;
-use Wappointment\Managers\Central;
 
 class Price extends Model
 {

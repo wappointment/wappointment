@@ -129,6 +129,9 @@ export default {
             this.$emit('loaded', response)
         },
         displayModality(appointments, id){
+            if(appointments.length == 0){
+                return ''
+            }
             let appointmentData = appointments.find(e => e.id == id)
             return appointmentData.location_label
         },

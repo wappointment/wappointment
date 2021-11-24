@@ -131,29 +131,29 @@ class AppointmentNew
 
     public static function create($data, Client $client)
     {
-        $appointment = static::createAppointment($data);
+        $appointment = static::createAppointment($data, $client->bookingRequest->get('slots'));
         return static::generateOrder($client, $appointment, $client->bookingRequest->get('slots'));
     }
 
-    public static function generateOrder($client, $appointment, $slots = 1)
+    public static function generateOrder($client, $appointment, $slots = 1, $service = false)
     {
         $order = null;
-        if ($client->bookingRequest->getService()->isSold() && !Payment::isWooActive()) {
-            $appointment->hydrateService($client->bookingRequest->getService());
+        $service = $service ? $service : $client->bookingRequest->getService();
+        if ($service->isSold() && !Payment::isWooActive()) {
+            $appointment->hydrateService($service);
             $order = $client->generateOrder($appointment, $slots);
         }
         return ['appointment' => $appointment, 'client' => $client, 'order' => $order];
     }
 
-    protected static function createAppointment($data)
+    protected static function createAppointment($data, $slots = false)
     {
         if (empty($data['options']) || !is_array($data['options'])) {
             $data['options'] = [];
         }
-        if (!empty($data['package_id'])) {
-            $data['options']['buying_package'] = true;
-            $data['options']['package_id'] = $data['package_id'];
-            $data['options']['package_price_id'] = $data['package_price_id'];
+
+        if (!$slots) {
+            $data = apply_filters('wappointment_set_appointment_options', $data);
         }
 
         $data['options']['buffer_time'] = (int) Settings::get('buffer_time');
@@ -335,7 +335,7 @@ class AppointmentNew
 
     protected static function bookCreate($data, Client $client, $is_admin = false, $status = 0)
     {
-        $dataReturned = static::create($data, $client);
+        $dataReturned = apply_filters('wappointment_created_new_appointment', static::create($data, $client), $client, $status);
 
         static::afterBookEvents($dataReturned, $client, $data['staff_id'], $is_admin, $status);
 
@@ -400,14 +400,14 @@ class AppointmentNew
         return $already_cancelled !== false ? $already_cancelled : static::cancel($appointment);
     }
 
-    public static function cancel(AppointmentModel $appointment)
+    public static function cancel(AppointmentModel $appointment, $client = null)
     {
         //used for credit return in addons
         apply_filters('wappointment_cancelled_appointment', $appointment);
 
         \Wappointment\Models\Log::canceledAppointment($appointment);
 
-        $client = $appointment->getClientModel();
+        $client = is_null($client) ? $appointment->getClientModel() : $client;
 
         //clearing charges for that appointment clearing order prices
         static::clearCharges([$appointment->id]);

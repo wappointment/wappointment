@@ -11,5 +11,9 @@ class OrderController extends RestController
     {
         $orderService = new ServicesOrder($request->input('transaction_id'));
         $orderService->processing();
+        $orderService->order->appointments[0]->refresh();
+        return [
+            'appointment' => $orderService->order->appointments[0]
+        ];
     }
 }

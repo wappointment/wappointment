@@ -19,7 +19,7 @@
             </div>
             
         </div>
-        <div class="wdescription" v-if="isApprovalManual">{{options.confirmation.pending}}</div>
+        <div class="wdescription" v-if="isApprovalManual && appointmentIsPending">{{options.confirmation.pending}}</div>
         <div v-if="physicalSelected">
             <div class="wdescription">{{options.confirmation.physical}} </div>
             <div class="address-service">
@@ -113,7 +113,9 @@ export default {
         }
     },
     computed: {
-
+        appointmentIsPending(){
+            return this.appointment.status == 0
+        },
         demoDuration(){
             return this.service.duration !== undefined ? this.service.duration:this.service.options.durations[0].duration
         },

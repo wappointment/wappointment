@@ -141,7 +141,7 @@ class Order extends Model
         foreach ($this->prices as $charge) {
             //cancel appointment
             if ($charge->appointment_id > 0) {
-                AppointmentNew::cancel($charge->appointment);
+                AppointmentNew::cancel($charge->appointment, $this->client);
             }
         }
     }
