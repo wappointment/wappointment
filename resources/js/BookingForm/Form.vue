@@ -248,7 +248,7 @@ export default {
                 let data ={
                     appointmentSavedData: result.data.appointment,
                     order: result.data.order,
-                    isApprovalManual: result.data.status == 0, 
+                    isApprovalManual: result.data.appointment.status == 0, 
                     appointmentSaved: true, 
                     appointmentKey: result.data.appointment.edit_key, 
                     loading: false

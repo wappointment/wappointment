@@ -52,7 +52,7 @@ export default {
             
             this.$emit('confirmed', relationnext , {
                 appointmentSavedData:result.data.appointment, 
-                isApprovalManual:(result.data.status == 0), 
+                isApprovalManual:(result.data.appointment.status == 0), 
                 appointmentSaved: true, 
                 appointmentKey: result.data.appointment.edit_key, 
                 loading: false
