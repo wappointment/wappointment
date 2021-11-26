@@ -178,20 +178,20 @@ class Order extends Model
         AppointmentNew::silentCancel($appointment_ids, $charge_ids);
     }
 
-    public function add(Appointment $appointment, $slots = 1)
+    public function add(TicketAbstract $ticket, $slots = false)
     {
 
         //clear all prices by cancelling previously placed appointment silently
         $this->clearLastAdded();
 
-        if ($appointment->paidWithPackage()) {
-            $prices = $appointment->getPackagePrices();
+        if ($ticket->paidWithPackage()) {
+            $prices = $ticket->getPackagePrices();
         } else {
-            $prices = $appointment->getServicesPrices();
+            $prices = $ticket->getServicesPrices();
         }
 
         foreach ($prices as $price) {
-            $this->recordItem($price->id, $price->price, $appointment->id, $price->generateItemName($appointment), $slots);
+            $this->recordItem($price->id, $price->price, $ticket->getAppointment()->id, $price->generateItemName($ticket), $slots);
         }
     }
 
@@ -204,7 +204,7 @@ class Order extends Model
         return $description;
     }
 
-    public function recordItem($price_id, $price_value, $appointment_id, $item_name, $quantity = 1)
+    public function recordItem($price_id, $price_value, $appointment_id, $item_name, $quantity = false)
     {
         OrderPrice::create([
             'order_id' => $this->id,
@@ -212,7 +212,7 @@ class Order extends Model
             'item_name' => $item_name,
             'price_value' => $price_value,
             'appointment_id' => $appointment_id,
-            'quantity' => $quantity,
+            'quantity' => $quantity === false ? 1 : $quantity,
         ]);
     }
 

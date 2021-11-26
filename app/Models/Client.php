@@ -108,7 +108,7 @@ class Client extends Model
         return !empty($this->client->options['tax_percent']) ? $this->client->options['tax_percent'] : Settings::get('tax');
     }
 
-    public function generateOrder(Appointment $appointment, $slots = 1)
+    public function generateOrder($ticket, $slots = 1)
     {
         if (!$this->generatingOrder) {
             return null;
@@ -116,8 +116,8 @@ class Client extends Model
         //if pending order already exist, just get that one
         $pendingOrder = $this->getOrder();
 
-        $pendingOrder->add($appointment, $slots);
-        $appointment->recordOrderReference($pendingOrder);
+        $pendingOrder->add($ticket, $slots);
+        $ticket->recordOrderReference($pendingOrder);
         $pendingOrder->refreshTotal();
         $pendingOrder->load('prices');
         return $pendingOrder;

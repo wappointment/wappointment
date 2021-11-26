@@ -18,7 +18,7 @@ class AppointmentController extends RestController
             throw new \WappointmentException("Malformed parameter", 1);
         }
 
-        $appointment = AppointmentModel::select(['id', 'start_at', 'status', 'end_at', 'type', 'client_id', 'options', 'staff_id', 'service_id', 'location_id'])
+        $appointment = AppointmentModel::select(['id', 'start_at', 'edit_key', 'status', 'end_at', 'type', 'client_id', 'options', 'staff_id', 'service_id', 'location_id'])
             ->where('status', '>=', AppointmentModel::STATUS_AWAITING_CONFIRMATION)
             ->where('edit_key', $request->input('appointmentkey'))
             ->first();
@@ -26,15 +26,13 @@ class AppointmentController extends RestController
         if (empty($appointment)) {
             throw new \WappointmentException(__('Can\'t find appointment', 'wappointment'), 1);
         }
-        $appointmentData = $appointment->toArraySpecial();
-        $appointmentData['edit_key'] = $request->input('appointmentkey');
 
         $isLegacy = !VersionDB::atLeast(VersionDB::CAN_CREATE_SERVICES);
         $service = $isLegacy ? Service::get() : Central::get('ServiceModel')::find((int)$appointment->service_id);
         $client = $appointment->client()->select(['name', 'email', 'options'])->first();
 
         return apply_filters('wappointment_appointment_load', [
-            'appointment' => $appointmentData,
+            'appointment' => $appointment->toArraySpecial(),
             'client' => $client,
             'service' => $service,
             'staff' => $isLegacy ? (new \Wappointment\WP\StaffLegacy($appointment->getStaffId()))->toArray() : (new \Wappointment\WP\Staff($appointment->getStaffId()))->toArray(),

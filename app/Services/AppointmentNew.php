@@ -7,6 +7,7 @@ use Wappointment\Models\Location;
 use Wappointment\Models\Appointment as AppointmentModel;
 use Wappointment\Managers\Central;
 use Wappointment\Models\OrderPrice;
+use Wappointment\Models\TicketAbstract;
 use Wappointment\WP\Helpers as WPHelpers;
 
 class AppointmentNew
@@ -129,21 +130,28 @@ class AppointmentNew
         return Central::get('AppointmentModel');
     }
 
-    public static function create($data, Client $client)
+    /**
+     * we go through here each time we create a new appointment
+     * whether it's free or paid
+     */
+    public static function create($data, Client $client, $status)
     {
         $appointment = static::createAppointment($data, $client->bookingRequest->get('slots'));
-        return static::generateOrder($client, $appointment, $client->bookingRequest->get('slots'));
+        $ticket = apply_filters('wappointment_create_appointment_ticket', $appointment, $client, $status);
+        return static::generateOrder($client, $ticket, $client->bookingRequest->get('slots'));
     }
 
-    public static function generateOrder($client, $appointment, $slots = 1, $service = false)
+    public static function generateOrder($client, TicketAbstract $ticket, $slots = false, $service = false)
     {
         $order = null;
         $service = $service ? $service : $client->bookingRequest->getService();
         if ($service->isSold() && !Payment::isWooActive()) {
-            $appointment->hydrateService($service);
-            $order = $client->generateOrder($appointment, $slots);
+            $ticket->hydrateService($service);
+            $order = $client->generateOrder($ticket, $slots);
         }
-        return ['appointment' => $appointment, 'client' => $client, 'order' => $order];
+        $appointment = $ticket->getAppointment();
+        $appointment->hydrateService($service);
+        return ['appointment' => $appointment, 'client' => $client, 'order' => $order, 'ticket' => $ticket];
     }
 
     protected static function createAppointment($data, $slots = false)
@@ -152,8 +160,8 @@ class AppointmentNew
             $data['options'] = [];
         }
 
-        if (!$slots) {
-            $data = apply_filters('wappointment_set_appointment_options', $data);
+        if ($slots === false) {
+            $data = apply_filters('wappointment_set_ticket_options', $data, $slots);
         }
 
         $data['options']['buffer_time'] = (int) Settings::get('buffer_time');
@@ -335,8 +343,8 @@ class AppointmentNew
 
     protected static function bookCreate($data, Client $client, $is_admin = false, $status = 0)
     {
-        $dataReturned = apply_filters('wappointment_created_new_appointment', static::create($data, $client), $client, $status);
 
+        $dataReturned = static::create($data, $client, $status);
         static::afterBookEvents($dataReturned, $client, $data['staff_id'], $is_admin, $status);
 
         return $dataReturned;

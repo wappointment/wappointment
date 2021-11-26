@@ -41,19 +41,24 @@ class Price extends Model
         return $this->isServiceItem() ? $this->getService() : $this->getPackage();
     }
 
-    public function generateItemName(Appointment $appointment)
+    public function generateItemName(TicketAbstract $ticket)
     {
-        if ($appointment->boughtWithPackage()) {
-            $reference = $this->getReference();
-            $package_price_id = $appointment->packageVariation();
-
-            foreach ($reference->options['variations'] as $variation) {
-                if ($variation['price_id'] == $package_price_id) {
-                    return $reference->options['name'] . ' - ' . $variation['credits'] . ' ' . $reference->type_label;
-                }
-            }
+        if ($ticket->boughtWithPackage()) {
+            return $this->generatePackageItemName($ticket);
         } else {
-            return $appointment->getServiceName() . ' - ' . $appointment->getDuration();
+            return $ticket->getAppointment()->getServiceName() . ' - ' . $ticket->getAppointment()->getDuration();
+        }
+    }
+
+    protected function generatePackageItemName(TicketAbstract $ticket)
+    {
+        $reference = $this->getReference();
+        $package_price_id = $ticket->packageVariation();
+
+        foreach ($reference->options['variations'] as $variation) {
+            if ($variation['price_id'] == $package_price_id) {
+                return $reference->options['name'] . ' - ' . $variation['credits'] . ' ' . $reference->type_label;
+            }
         }
     }
 
@@ -61,6 +66,7 @@ class Price extends Model
     {
         return \WappointmentAddonPackages\Models\Package::find($this->reference_id);
     }
+
     public function getService()
     {
         return Service::find($this->reference_id);

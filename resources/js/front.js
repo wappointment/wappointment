@@ -8,6 +8,7 @@ import VueWapModal from './Plugins/vue-wap-modal'
 import __get from 'lodash/get'
 import UrlParam from './Modules/UrlParam'
 import WTrigger from './Mixins/WTrigger'
+import DeepDefined from './Mixins/DeepDefined'
 import RequestMaker from './Modules/RequestMaker'
 import FieldsGenerated from './BookingForm/FieldsGenerated'
 
@@ -27,17 +28,16 @@ Vue.component('v-style', {
     }
 });
 Vue.component('FieldsGenerated', FieldsGenerated)
-
 Vue.mixin(WTrigger)
 Vue.mixin(UrlParam)
+Vue.mixin(DeepDefined)
 
 
-const vuesInstances = [];
-const wappoInstances = document.querySelectorAll(".wappointment_page, .wappointment_widget");
-const footerContainer = getFooterContainer();
+const vuesInstances = []
+const wappoInstances = document.querySelectorAll(".wappointment_page, .wappointment_widget")
+const footerContainer = getFooterContainer()
 
 for (const el of wappoInstances) {
-
     if([undefined,null].indexOf(el.getAttribute('data-brc-floats')) === -1){
         footerContainer.appendChild(el)
     }
