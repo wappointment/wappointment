@@ -29,11 +29,11 @@ trait CanBook
         }
 
         if (!empty($this->bookingRequest->get('appointment_key'))) {
-            $booked_externally =  apply_filters('wappointment_book_external', false, $this, $service);
-            if ($booked_externally === false) {
+            $dataReturned =  apply_filters('wappointment_book_existing_appointment', false, $this, $service);
+            if ($dataReturned === false) {
                 throw new \WappointmentException(__('Error while booking', 'wappointment') . '(1)', 1);
             }
-            return $booked_externally; //contains the returned data
+            return $dataReturned; //contains the returned data
         }
         $start_at = $bookingRequest->get('time');
 
@@ -43,16 +43,16 @@ trait CanBook
 
         $staff = !empty($bookingRequest->staff) ? $bookingRequest->staff : $bookingRequest->get('staff');
         if ($forceConfirmed) {
-            $hasBeenBooked = AppointmentService::adminBook($this, $start_at, $end_at, false, $service, $staff);
+            $dataReturned = AppointmentService::adminBook($this, $start_at, $end_at, false, $service, $staff);
         } else {
-            $hasBeenBooked = AppointmentService::tryBook($this, $start_at, $end_at, false, $service, $staff);
+            $dataReturned = AppointmentService::tryBook($this, $start_at, $end_at, false, $service, $staff);
         }
 
         //test that this is bookable
-        if (!$hasBeenBooked) {
+        if (!$dataReturned) {
             throw new \WappointmentException(__('Error while booking', 'wappointment') . '(2)', 1);
         }
-        return $hasBeenBooked;
+        return $dataReturned;
     }
 
     public function bookAsAdmin($booking)
@@ -61,11 +61,11 @@ trait CanBook
         $end = $booking->get('end');
 
         //test that this is bookable
-        $hasBeenBooked = AppointmentService::adminBook($this, $booking->get('start'), $end, 'unused', $booking->getService(), $booking->staff);
-        if (!$hasBeenBooked) {
+        $dataReturned = AppointmentService::adminBook($this, $booking->get('start'), $end, 'unused', $booking->getService(), $booking->staff);
+        if (!$dataReturned) {
             throw new \WappointmentException(__('Error while booking', 'wappointment') . '(3)', 1);
         }
-        return $hasBeenBooked;
+        return $dataReturned;
     }
 
     public function bookNoOrder()

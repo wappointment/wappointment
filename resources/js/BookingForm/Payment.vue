@@ -70,7 +70,7 @@ export default {
       },
       confirm(alreadyConfirmed = false){
         if(alreadyConfirmed !== false){
-          return this.confirmSuccess({data:{appointment:this.appointmentData}})
+          return this.confirmSuccess(alreadyConfirmed)
         }
         this.$emit('loading', {loading:true})
         this.confirmRequest().then(this.confirmSuccess).catch(this.confirmFailure)
@@ -87,7 +87,9 @@ export default {
       },
 
       confirmSuccess(response){
-        this.$emit('confirmedPayment', this.relations.next, {appointmentSaved:true,loading:false, appointmentSavedData:response.data.appointment})
+        let appointment_data = response.data.appointment !== undefined ? response.data.appointment:response.data.orderCompleted.appointments[0]
+        console.log('confirm succes',response.data, appointment_data.status)
+        this.$emit('confirmedPayment', this.relations.next, {appointmentSaved:true,loading:false, appointmentSavedData:appointment_data})
       },
 
     }

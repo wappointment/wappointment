@@ -178,7 +178,7 @@ class Order extends Model
         AppointmentNew::silentCancel($appointment_ids, $charge_ids);
     }
 
-    public function add(TicketAbstract $ticket, $slots = false)
+    public function add(TicketAbstract $ticket, $quantity = false)
     {
 
         //clear all prices by cancelling previously placed appointment silently
@@ -186,12 +186,13 @@ class Order extends Model
 
         if ($ticket->paidWithPackage()) {
             $prices = $ticket->getPackagePrices();
+            $quantity = false; //we don't buy many package at once, but just one
         } else {
             $prices = $ticket->getServicesPrices();
         }
 
         foreach ($prices as $price) {
-            $this->recordItem($price->id, $price->price, $ticket->getAppointment()->id, $price->generateItemName($ticket), $slots);
+            $this->recordItem($price->id, $price->price, $ticket->getAppointment()->id, $price->generateItemName($ticket), $quantity);
         }
     }
 
@@ -262,6 +263,7 @@ class Order extends Model
         }
 
         do_action('wappointment_order_completed', $this);
+        $this->load('appointments'); //making sure the status of the appointment is correct
         return $this;
     }
 

@@ -131,7 +131,7 @@ class AppointmentNew
     }
 
     /**
-     * we go through here each time we create a new appointment
+     * we go through here each time we CREATE a new appointment
      * whether it's free or paid
      */
     public static function create($data, Client $client, $status)
@@ -404,7 +404,6 @@ class AppointmentNew
         }
 
         $already_cancelled = apply_filters('wappointment_external_cancel', false, $appointment, $request);
-
         return $already_cancelled !== false ? $already_cancelled : static::cancel($appointment);
     }
 
