@@ -251,8 +251,8 @@ export default {
             if(this.serviceLocked){
                 let servicesSelected = this.attributesEl.serviceSelection
                 staffs = staffs.filter(function (staff) {
-                    for (let i = 0; i < staff.services.length; i++) {
-                        if(servicesSelected.indexOf(staff.services[i]) !== -1){
+                    for (const staff_service of staff.services) {
+                        if(servicesSelected.indexOf(staff_service) !== -1){
                             return true;
                         }
                     }
@@ -395,9 +395,20 @@ export default {
             if(typeof dataChanged == 'object' && Object.keys(dataChanged).length > 0) {
                 this.childChangedData(dataChanged)
             }
+            this.eventProcesses(newStep)
             this.currentStep = newStep
             setTimeout(this.loadStep.bind(null,newStep), 100)
             this.$emit('changedStep',newStep)
+        },
+        eventProcesses(newStep){
+            switch (newStep) {
+                case 'BookingServiceSelection':
+                    this.refreshAvail() //avoid issue with wrong availability collection when switching services
+                    break;
+            
+                default:
+                    break;
+            }
         },
 
         selectedLocation(location){
@@ -425,9 +436,9 @@ export default {
                         if(element.indexOf('.')!==-1){
                             let splited_name = element.split('.')
                             let temp = Object.assign({},this)
-
-                            for (let i = 0; i < splited_name.length; i++) {
-                                temp = temp[splited_name[i]]
+                            
+                            for (const iterator of splited_name) {
+                                temp = temp[iterator]
                             }
                             nprops[key] = temp
                             
@@ -466,8 +477,7 @@ export default {
             let conditions = this.componentsList[component_name].conditions !== undefined ? this.componentsList[component_name].conditions : false
             if(conditions !== false) {
                 let conditionKeys = Object.keys(conditions)
-                for (let i = 0; i < conditionKeys.length; i++) {
-                    const keyCondition = conditionKeys[i]
+                for (const keyCondition of conditionKeys) {
                     if(this.bfdemo !== true && this[keyCondition] !== conditions[keyCondition]) {
                         if(this.componentsList[component_name].skip !== undefined){
                             if(this.conditionSkipPass(component_name)){
@@ -482,8 +492,7 @@ export default {
         },
         conditionSkipPass(component_name){
             let skipConditions = Object.keys(this.componentsList[component_name].skip)
-            for (let j = 0; j < skipConditions.length; j++) {
-                const keyConditionSkip = skipConditions[j]
+            for (const keyConditionSkip of skipConditions) {
                 if(this[keyConditionSkip] !== this.componentsList[component_name].skip[keyConditionSkip]) {
                     return false
                 }
@@ -649,10 +658,10 @@ export default {
         testLockedStaff(){
             if(this.attributesEl !== undefined && 
             this.attributesEl.staffSelection !== undefined){
-                for (let i = 0; i < this.viewData.staffs.length; i++) {
-                    if(parseInt(this.attributesEl.staffSelection) === parseInt(this.viewData.staffs[i].id)){
-                        return this.setStaff(this.viewData.staffs[i])
-                    }
+                for (const staff of this.viewData.staffs) {
+                   if(parseInt(this.attributesEl.staffSelection) === parseInt(staff.id)){
+                        return this.setStaff(staff)
+                    } 
                 }
             }
         },

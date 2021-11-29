@@ -44,11 +44,13 @@ export default {
         object_days: {},
         weekHeader: []
     }),
-
+    created(){
+        this.intervalsCollection = this.filteredServices()
+    },
     mounted(){
         this.time_format = this.timeprops.time_format
         this.currentTz = this.timeprops.currentTz
-        this.intervalsCollection = this.initIntervalsCollection
+        
         
         this.setMonth(this.todayYear, this.todayMonth - 1, false)
         this.resetIntervals()
@@ -60,7 +62,7 @@ export default {
         this.setWeekHeader()
     },
     updated: function () {
-        if(this.isDemo && this.demoSelected.init == false && this.demoSelected.day !== false){
+        if(this.isDemo && this.demoSelected.init === false && this.demoSelected.day !== false){
             this.$nextTick(function () {
                 this.daySelected(this.demoSelected.day, this.demoSelected.week)
                 this.demoSelected.init = true
@@ -69,7 +71,7 @@ export default {
     },
 
     computed: {   
-
+        
         isDemo(){
             return this.options.demoData !== undefined
         }, 
@@ -136,8 +138,8 @@ export default {
 
                 if(nextWeek!== undefined) {
                     if(endWeekDays[0] === 0){
-                        for (let index = 0; index < endWeekDays.length; index++) {
-                            if(endWeekDays[index]!== 0){
+                        for (const iterator of endWeekDays) {
+                            if(iterator!== 0){
                                 //insert new week
                                 while (endWeekDays.length < this.weekLength) {
                                     endWeekDays.splice(0,0,0)
@@ -146,6 +148,7 @@ export default {
                                 break;
                             }
                         }
+
                     }
                     let nendWeekDays = nextWeek.slice(0,this.startDay)
                     week = startWeekDays.concat(nendWeekDays)
@@ -173,6 +176,12 @@ export default {
         },
     },
     methods: {
+        filteredServices(){
+            let serviceSelected = this.service.id
+            let object = this.initIntervalsCollection
+            object.intervals = object.intervals.filter(interval => [undefined,serviceSelected].indexOf(interval.service)!==-1)
+            return object
+        },
         timezoneDisplay(timezoneString){
             return this.getTzString.replace('[timezone]', timezoneString + ' [' + this.now.format('Z') + ']')
         },
@@ -215,8 +224,7 @@ export default {
         selectFirstDayAvail(){
             for (let i = 0; i < this.reorganiseDays.length; i++) {
                 const week = this.reorganiseDays[i]
-                for (let j = 0; j < week.length; j++) {
-                    const day = week[j]
+                for (const day of week) {
                     if(day>0){
                         let daySlots = this.hasAvailability(day)
                         if(daySlots !== undefined && daySlots > 0){
