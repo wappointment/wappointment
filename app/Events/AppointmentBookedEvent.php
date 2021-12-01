@@ -15,6 +15,7 @@ class AppointmentBookedEvent extends AbstractEvent
     protected $oldAppointment;
     protected $reminders;
     protected $bagArgs;
+    protected $order;
 
     public function __construct($args)
     {
@@ -24,7 +25,9 @@ class AppointmentBookedEvent extends AbstractEvent
         if (!empty($args['oldAppointment'])) {
             $this->oldAppointment = $args['oldAppointment'];
         }
-
+        if (!empty($args['order'])) {
+            $this->order = $args['order'];
+        }
         $this->triggerAPI();
         $this->reminders = Reminder::select('id', 'event', 'type', 'options')
             ->where('published', 1)
@@ -71,6 +74,12 @@ class AppointmentBookedEvent extends AbstractEvent
     {
         return $this->reminders;
     }
+
+    public function getOrder()
+    {
+        return $this->order;
+    }
+
     public function getArgs()
     {
         return $this->bagArgs;

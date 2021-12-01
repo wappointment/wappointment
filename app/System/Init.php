@@ -52,6 +52,7 @@ class Init
         (new \Wappointment\WP\CustomPage())->boot();
         add_filter('wappointment_package_save', ['\\Wappointment\\Services\\AdminPackage', 'dataSave'], 10, 2);
         add_filter('wappointment_package_delete', ['\\Wappointment\\Services\\AdminPackage', 'delete']);
+        add_action('wappointment_cancel_ticket', ['\\Wappointment\\Services\\Ticket', 'cancel'], 10, 1);
     }
 
     public function initInstalled()

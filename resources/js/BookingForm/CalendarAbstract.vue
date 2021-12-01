@@ -71,7 +71,9 @@ export default {
     },
 
     computed: {   
-        
+        minTodayHour(){
+            return parseInt(this.viewData.min_bookable)
+        },
         isDemo(){
             return this.options.demoData !== undefined
         }, 
@@ -225,7 +227,7 @@ export default {
             for (let i = 0; i < this.reorganiseDays.length; i++) {
                 const week = this.reorganiseDays[i]
                 for (const day of week) {
-                    if(day>0){
+                    if(day > 0){
                         let daySlots = this.hasAvailability(day)
                         if(daySlots !== undefined && daySlots > 0){
                             return this.selectDay(day, i, false)
@@ -321,7 +323,7 @@ export default {
         },
         
         nowNextHour(){
-            return this.now.clone().add(1,'h').startOf('hour')
+            return this.now.clone().add(this.minTodayHour,'h').startOf('hour')
         },
         
         resetIntervals(){
@@ -393,7 +395,7 @@ export default {
             let dayIntervals = this.getDayIntervals(daynumber)
 
             this.cachedSlots[daynumber] = dayIntervals.splits(this.realSlotDuration()).totalSlots()
-            if(this.isDemo && this.demoSelected.day == false && this.cachedSlots[daynumber] > 0){
+            if(this.isDemo && this.demoSelected.day === false && this.cachedSlots[daynumber] > 0){
                 this.demoSelected.day = daynumber
                 this.disabledButtons = true
             }
@@ -405,7 +407,7 @@ export default {
             return idweek === this.selectedWeek
         },
         getTodayStart(){
-            let nowmin = momenttz.tz(this.now.clone(), this.currentTz).add(parseInt(this.viewData.min_bookable),'hours')
+            let nowmin = momenttz.tz(this.now.clone(), this.currentTz).add(this.minTodayHour,'hours')
             let nowcopy = nowmin.clone().startOf('hour')
             let i=0
             while (nowcopy.unix() < nowmin.unix() && i <20) {
@@ -414,38 +416,43 @@ export default {
             }
             return nowcopy
         },
-        getDayIntervals(daynumber){
-            let start = null
-            let until = null
-            let min_start = this.getTodayStart()
-            if(this.isCurrentMonth && daynumber === this.todayDay) {
-                
-                start = this.getTodayStart()
+        getTodayInterval(){
+            let start = this.getTodayStart()
     
-                if(start.day() != this.now.day()){ //exception when today changes to tomorrow with the adition of min_bookable
-                    //that means that's the end of the day and there is nothing new
-                    start = momenttz.tz(this.now.clone(), this.currentTz)
-                }
-                until = start.clone().add(1, 'day').startOf('day')
-
-            }else {
-                let prefixDay = ''
-                let prefixMonth = ''
-                if( daynumber < 10 ) prefixDay = '0' //otherwise invalid moment
-                if( this.realMonthNumber < 10 ) prefixMonth = '0'
-                start = momenttz.tz(this.yearNumber + '-' + prefixMonth + this.realMonthNumber + '-' + prefixDay+daynumber, this.currentTz).startOf('day')
-                until = start.clone().add(1, 'day')
+            if(start.day() != this.now.day()){ //exception when today changes to tomorrow with the adition of min_bookable
+                //that means that's the end of the day and there is nothing new
+                start = momenttz.tz(this.now.clone(), this.currentTz)
             }
-            if(min_start.unix() >= until.unix()) {
+            return {start:start, end:start.clone().add(1, 'day').startOf('day')}
+        },
+        getNotTodayInterval(daynumber){
+            let prefixDay = daynumber < 10 ?'0':''
+            let prefixMonth = this.realMonthNumber < 10 ? '0':''
+            let formattedDayString = this.yearNumber + '-' + prefixMonth + this.realMonthNumber + '-' + prefixDay + daynumber
+            let start = momenttz.tz(formattedDayString, this.currentTz).startOf('day')
+
+            return {
+                start: start, 
+                end: start.clone().add(1, 'day')
+            }
+        },
+        getDayIntervals(daynumber){
+            let intervalsObject = this.isCurrentMonth && daynumber === this.todayDay ? this.getTodayInterval():this.getNotTodayInterval(daynumber)
+            
+            return this.formatDayInterval(intervalsObject)
+        },
+
+        formatDayInterval(intervalsObject){
+
+            let min_start = this.getTodayStart()
+            if(min_start.unix() >= intervalsObject.end.unix()) {
                 return this.currentIntervals.get(false) // we skip returnin an empty interval
-            } else{
-                if(min_start.unix() > start.unix()) {
-                    start = min_start.clone()
-                }
+            } else if(min_start.unix() > intervalsObject.start.unix()){
+                intervalsObject.start = min_start.clone()
             }
             
-            let dayIntervals = this.currentIntervals.get(start, until, this.service.id)
-            return this.prepareDayInterval(dayIntervals, start,until)
+            let dayIntervals = this.currentIntervals.get(intervalsObject.start, intervalsObject.end, this.service.id)
+            return this.prepareDayInterval(dayIntervals, intervalsObject.start, intervalsObject.end)
         },
 
         /** used to filter more when overidding from an addon */

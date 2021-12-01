@@ -38,6 +38,11 @@ class Appointment extends TicketAbstract
     protected $appends = ['duration_sec', 'location_label', 'can_cancel_until', 'can_reschedule_until'];
     private $shared_client = null;
 
+    public function order()
+    {
+        return $this->belongsToMany(Order::class, 'wappo_order_price', 'appointment_id', 'order_id');
+    }
+
     public function setSharedClient($client)
     {
         $this->shared_client = $client;
@@ -61,11 +66,6 @@ class Appointment extends TicketAbstract
     public function client()
     {
         return $this->belongsTo(Client::class, 'client_id');
-    }
-
-    public function order()
-    {
-        return $this->belongsToMany(Order::class, 'wappo_order_price', 'appointment_id', 'order_id');
     }
 
     public function getTitle($includes_buffer = true)

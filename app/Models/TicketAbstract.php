@@ -9,6 +9,7 @@ abstract class TicketAbstract extends Model
 
     protected $services = [];
     private $stored_appointment = null;
+    public $is_participant = false;
 
     public function hydrateService($services)
     {

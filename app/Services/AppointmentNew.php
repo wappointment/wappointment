@@ -168,7 +168,7 @@ class AppointmentNew
         return static::getAppointmentModel()::create($data);
     }
 
-    public static function confirm($id, $soft = false, $client = null)
+    public static function confirm($id, $soft = false, $client = null, $order = null)
     {
 
         $oldAppointment = $appointment = static::getAppointmentModel()::where('id', (int)$id)
@@ -184,18 +184,19 @@ class AppointmentNew
                 //send confirm email to client and admin
                 $clientModel = empty($client) ? Client::find($appointment->client_id) : $client;
 
-                static::sendConfirmationEvent($appointment, $clientModel, $oldAppointment);
+                static::sendConfirmationEvent($appointment, $clientModel, $oldAppointment, $order);
             }
             return $result;
         }
     }
 
-    public static function sendConfirmationEvent($appointment, $client, $oldAppointment)
+    public static function sendConfirmationEvent($appointment, $client, $oldAppointment, $order = null)
     {
         JobHelper::dispatch('AppointmentConfirmedEvent', [
             'appointment' => $appointment,
             'client' => $client,
-            'oldAppointment' => $oldAppointment
+            'oldAppointment' => $oldAppointment,
+            'order' => $order
         ], $client, static::getAppointmentModel()::STATUS_CONFIRMED);
     }
 
@@ -404,6 +405,7 @@ class AppointmentNew
         }
 
         $already_cancelled = apply_filters('wappointment_external_cancel', false, $appointment, $request);
+
         return $already_cancelled !== false ? $already_cancelled : static::cancel($appointment);
     }
 
@@ -433,7 +435,7 @@ class AppointmentNew
     public static function destroy($appointment)
     {
         // not all appointments need to be destroyed
-        if (apply_filters('wappointment_can_destroy_appointment', true, $appointment)) {
+        if (!apply_filters('wappointment_appointment_is_group', false, $appointment)) {
             $appointment->incrementSequence();
             $appointment->destroy($appointment->id);
             (new Availability($appointment->getStaffId()))->regenerate();
