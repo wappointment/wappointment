@@ -6,7 +6,7 @@ use Wappointment\WP\Helpers as WPHelpers;
 
 class Licences extends API
 {
-    private function hasLicenceInstalled()
+    public function hasLicenceInstalled()
     {
         return !empty($this->getSiteKey()) && !empty(WPHelpers::getOption('site_details'));
     }
