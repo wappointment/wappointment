@@ -249,7 +249,7 @@ export default {
        filterStaffByService(){
             let staffs = this.getStaffs
             if(this.serviceLocked){
-                let servicesSelected = this.attributesEl.serviceSelection
+                let servicesSelected = typeof this.attributesEl.serviceSelection == 'number'?[this.attributesEl.serviceSelection]:this.attributesEl.serviceSelection
                 staffs = staffs.filter(function (staff) {
                     for (const staff_service of staff.services) {
                         if(servicesSelected.indexOf(staff_service) !== -1){
@@ -676,6 +676,9 @@ export default {
                     }else if(this.services.length === 1){
                         this.service = this.services[0]
                     }
+                }else{
+                    let service_id = this.attributesEl.serviceSelection
+                     this.service = this.services.find(e => parseInt(e.id) == parseInt(service_id))
                 }
                 
                 if(this.service === undefined){
