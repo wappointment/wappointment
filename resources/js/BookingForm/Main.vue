@@ -248,14 +248,16 @@ export default {
        filterStaffByService(){
             let staffs = this.getStaffs
             if(this.serviceLocked){
-                let servicesSelected = this.attributesEl.serviceSelection
+                let servicesSelected = typeof this.attributesEl.serviceSelection == 'number'?[this.attributesEl.serviceSelection]:this.attributesEl.serviceSelection
+                console.log('servicesSelected',servicesSelected)
                 staffs = staffs.filter(function (staff) {
-                    for (let i = 0; i < staff.services.length; i++) {
-                        if(servicesSelected.indexOf(staff.services[i]) !== -1){
+                    for (const staffService of staff.services) {
+                        if(servicesSelected.indexOf(staffService) !== -1){
                             return true;
                         }
                     }
                 })
+                console.log('staffs',staffs)
             }
             return staffs
         },
@@ -666,6 +668,9 @@ export default {
                     }else if(this.services.length === 1){
                         this.service = this.services[0]
                     }
+                }else{
+                    let service_id = this.attributesEl.serviceSelection
+                     this.service = this.services.find(e => parseInt(e.id) == parseInt(service_id))
                 }
                 
                 if(this.service === undefined){
