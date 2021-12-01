@@ -171,6 +171,7 @@ class AppointmentNew
     public static function confirm($id, $soft = false, $client = null, $order = null)
     {
 
+        //dd('confirm trye', $id);
         $oldAppointment = $appointment = static::getAppointmentModel()::where('id', (int)$id)
             ->where('status', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)->first();
         if (empty($appointment)) {
@@ -179,6 +180,7 @@ class AppointmentNew
             }
             throw new \WappointmentException("Can't find appointment", 1);
         } else {
+            //dd('confirmed appointment');
             $result = $appointment->update(['status' => static::getAppointmentModel()::STATUS_CONFIRMED]);
             if ($result) {
                 //send confirm email to client and admin

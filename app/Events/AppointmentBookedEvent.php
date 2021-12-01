@@ -39,6 +39,7 @@ class AppointmentBookedEvent extends AbstractEvent
     {
         $acs_id = Settings::get('activeStaffId');
         $staff_id = empty($this->appointment->staff_id) ? $acs_id : (int)$this->appointment->staff_id;
+        $this->appointment->setSharedClient($this->client);
         $dotcomapi = new DotCom;
         $dotcomapi->setStaff($staff_id);
 
