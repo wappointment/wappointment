@@ -246,10 +246,19 @@ class DotCom extends API
     {
 
         $tz = $this->isLegacy ? Settings::getStaff('timezone', $this->staff_id) : $this->staff->getTimezone();
+
         return [
-            'appointment' => $appointment->toDotcom($tz),
+            'appointment' => $this->wrapAppointment($appointment->toDotcom($tz)),
             'account_key' => $this->account_key
         ];
+    }
+
+    public function wrapAppointment($appointment)
+    {
+        if ((new Licences)->hasLicenceInstalled() && has_filter('wappointment_ics_signature')) {
+            $appointment['no_sign'] = true;
+        }
+        return $appointment;
     }
 
     private function getAccountKeyLegacy()
