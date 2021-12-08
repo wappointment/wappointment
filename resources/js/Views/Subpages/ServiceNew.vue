@@ -123,7 +123,7 @@ export default {
       if(this.dataPassed.options.slots !== undefined){
         params.isGroup = true
       }
-      return params;
+      return params
     },
 
     errorsPassed(){
@@ -132,6 +132,7 @@ export default {
   },
   methods: {
     schemaParsed(){
+      console.log('schema parsed')
       return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schema), this.getParamsPassed)
     },
     generatePriceField(){

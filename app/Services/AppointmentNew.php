@@ -22,11 +22,18 @@ class AppointmentNew
     public static function adminBook(Client $client, $start_at, $end_at, $type, $service, $staff_id = null)
     {
         if (static::canBook($start_at, $end_at, true, $staff_id)) {
+            return static::processBook($client, $start_at, $end_at, $type, $service, true, $staff_id, true);
+        }
+    }
+
+    public static function confirmedBook(Client $client, $start_at, $end_at, $type, $service, $staff_id = null)
+    {
+        if (static::canBook($start_at, $end_at, true, $staff_id)) {
             return static::processBook($client, $start_at, $end_at, $type, $service, true, $staff_id);
         }
     }
 
-    protected static function processBook(Client $client, $start_at, $end_at, $type, $service, $forceConfirmed = false, $staff_id = null)
+    protected static function processBook(Client $client, $start_at, $end_at, $type, $service, $forceConfirmed = false, $staff_id = null, $adminBooked = false)
     {
         $start_at = static::unixToDb($start_at);
         $end_at = static::unixToDb($end_at);
@@ -46,7 +53,7 @@ class AppointmentNew
             'staff_id' => $staff_id_value,
             'package_id' => $client->bookingRequest->get('package_id'),
             'package_price_id' => $client->bookingRequest->get('package_price_id'),
-        ], $client, $start_at, $service);
+        ], $client, $start_at, $service, $adminBooked);
 
         return static::bookCreate($appointmentData, $client, $forceConfirmed, $status);
     }
@@ -145,9 +152,14 @@ class AppointmentNew
     {
         $order = null;
         $service = $service ? $service : $client->bookingRequest->getService();
-        if ($service->isSold() && !Payment::isWooActive()) {
+        // no order if a package code is used
+        if (!$client->bookingRequest->get('package_code') && $service->isSold()) {
             $ticket->hydrateService($service);
-            $order = $client->generateOrder($ticket, $slots);
+            if (Payment::isWooActive()) {
+                $order = apply_filters('wappointment_woocommerce_generate_order', $order, $client, $ticket, $service, $slots);
+            } else {
+                $order = $client->generateOrder($ticket, $slots);
+            }
         }
         $appointment = $ticket->getAppointment();
         $appointment->hydrateService($service);
@@ -411,7 +423,7 @@ class AppointmentNew
         return $already_cancelled !== false ? $already_cancelled : static::cancel($appointment);
     }
 
-    public static function cancel(AppointmentModel $appointment, $client = null)
+    public static function cancel(AppointmentModel $appointment, $client = null, $force = false)
     {
         //used for credit return in addons
         apply_filters('wappointment_cancelled_appointment', $appointment);
@@ -421,9 +433,11 @@ class AppointmentNew
         $client = is_null($client) ? $appointment->getClientModel() : $client;
 
         //clearing charges for that appointment clearing order prices
-        static::clearCharges([$appointment->id]);
+        if (!Payment::isWooActive()) {
+            static::clearCharges([$appointment->id]);
+        }
 
-        static::destroy($appointment);
+        static::destroy($appointment, $force);
 
         //trigger cancelled email to user and cancelled notification to admin
         JobHelper::dispatch('AppointmentCanceledEvent', [
@@ -434,13 +448,31 @@ class AppointmentNew
         return true;
     }
 
-    public static function destroy($appointment)
+    public static function destroy($appointment, $force = false)
     {
         // not all appointments need to be destroyed
         if (!apply_filters('wappointment_appointment_is_group', false, $appointment)) {
-            $appointment->incrementSequence();
-            $appointment->destroy($appointment->id);
-            (new Availability($appointment->getStaffId()))->regenerate();
+            static::hardDestroy($appointment, $force);
+        }
+    }
+
+    /**
+     * Should not be called all over the place
+     *
+     * @param [type] $appointment
+     * @return void
+     */
+    public static function hardDestroy($appointment, $force = false)
+    {
+        apply_filters('wappointment_cancelled_appointment', $appointment);
+        $appointment->tryDestroy($force);
+    }
+
+    public static function findAndDestroy($appointment_ids = [])
+    {
+        $appointments = AppointmentModel::whereIn('id', $appointment_ids)->get();
+        foreach ($appointments as $appointment) {
+            static::destroy($appointment);
         }
     }
 
@@ -465,21 +497,20 @@ class AppointmentNew
 
     public static function silentCancel($appointment_ids = [], $charge_ids = [])
     {
-        static::clearCharges($appointment_ids, $charge_ids, true);
-        $appointments = AppointmentModel::whereIn('id', $appointment_ids)->get();
-        foreach ($appointments as $appointment) {
-            static::destroy($appointment);
+        if (!Payment::isWooActive()) {
+            static::clearCharges($appointment_ids, $charge_ids, true);
         }
+        static::findAndDestroy($appointment_ids);
     }
 
     public static function getDefaultStatus($service)
     {
         if ($service->isSold()) {
-            return static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
+            $default_status = static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
+        } else {
+            $default_status = ((int) Settings::get('approval_mode') === 1) ?
+                static::getAppointmentModel()::STATUS_CONFIRMED : static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
         }
-
-        $default_status = ((int) Settings::get('approval_mode') === 1) ?
-            static::getAppointmentModel()::STATUS_CONFIRMED : static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
 
         return apply_filters('wappointment_appointment_default_status', $default_status, $service);
     }

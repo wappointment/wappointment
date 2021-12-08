@@ -11,10 +11,12 @@ use Wappointment\Models\Appointment\ManipulateLocation;
 use Wappointment\Models\Appointment\ManipulateService;
 use Wappointment\Models\Appointment\ManipulateStaff;
 use Wappointment\Models\Appointment\ManipulateType;
+use Wappointment\Models\CanLock;
+use Wappointment\Services\Availability;
 
 class Appointment extends TicketAbstract
 {
-    use ManipulateIcs, ManipulateType, ManipulateLinks, ManipulateStaff, ManipulateDotcom, ManipulateService, ManipulateDuration, ManipulateLocation, ManipulateCancelReschedule;
+    use CanLock, ManipulateIcs, ManipulateType, ManipulateLinks, ManipulateStaff, ManipulateDotcom, ManipulateService, ManipulateDuration, ManipulateLocation, ManipulateCancelReschedule;
     protected $table = 'wappo_appointments';
 
     protected $fillable = [
@@ -76,6 +78,15 @@ class Appointment extends TicketAbstract
             ($includes_buffer ?
                 $this->getBuffer() :
                 '') . ' - ' . $this->getClientModel()->name;
+    }
+
+    public function tryDestroy($force = false)
+    {
+        if ($force || !$this->isLocked()) {
+            $this->incrementSequence();
+            $this->destroy($this->id);
+            (new Availability($this->getStaffId()))->regenerate();
+        }
     }
 
     public function getStatusTag()

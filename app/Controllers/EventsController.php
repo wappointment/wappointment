@@ -34,7 +34,7 @@ class EventsController extends RestController
     {
         $appointment = $this->canEditAppointment($request->input('id'));
 
-        if (AppointmentNew::cancel($appointment)) {
+        if (AppointmentNew::cancel($appointment, null, true)) {
             return ['message' => __('Appointment cancelled', 'wappointment')];
         }
         throw new \WappointmentException(__('Error deleting appointment', 'wappointment'), 1);

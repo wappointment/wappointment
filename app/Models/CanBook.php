@@ -43,7 +43,7 @@ trait CanBook
 
         $staff = !empty($bookingRequest->staff) ? $bookingRequest->staff : $bookingRequest->get('staff');
         if ($forceConfirmed) {
-            $dataReturned = AppointmentService::adminBook($this, $start_at, $end_at, false, $service, $staff);
+            $dataReturned = AppointmentService::confirmedBook($this, $start_at, $end_at, false, $service, $staff);
         } else {
             $dataReturned = AppointmentService::tryBook($this, $start_at, $end_at, false, $service, $staff);
         }

@@ -36,8 +36,7 @@
         </div>
         <div v-if="serviceAdd">
             <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
-            <ServicesEditLegacy v-if="currentView=='editLegacy'" :legacy="true" :element="elementPassed" @saved="hasBeenSavedDeleted"/>
-            <ServicesAddEdit v-else :element="elementPassed" :params="paramsPassed" :legacy="false" @saved="hasBeenSaved"/>
+            <ServicesAddEdit :element="elementPassed" :params="paramsPassed" :legacy="false" @saved="hasBeenSaved"/>
         </div>
     </div>
 </template>
@@ -47,7 +46,6 @@
 import WappoServiceService from '../Services/V1/Services'
 import ServicesAddEdit from './ServicesAddEdit'
 import ServiceRow from './ServiceRow'
-import ServicesEditLegacy from '../Views/Subpages/Service'
 import AbstractListing from '../Views/AbstractListing'
 import ShortcodeDesigner from './ShortcodeDesigner'
 import isSearchable from '../Mixins/isSearchable'
@@ -59,7 +57,6 @@ export default {
     mixins: window.wappointmentExtends.filter('ServicesManageMixins', [isSearchable, HasPopup, CanResetValues]),
     components:{
         ServicesAddEdit,
-        ServicesEditLegacy,
         ShortcodeDesigner,
         ServiceRow
     },
@@ -161,7 +158,7 @@ export default {
         },
         editElement(element){
             this.currentView = this.requiresDBUpgrade ? 'editLegacy':'edit'
-            this.elementPassed = element
+            this.elementPassed = Object.assign({},element)
         },
         showService(){
             if(this.requiresDBUpgrade){
