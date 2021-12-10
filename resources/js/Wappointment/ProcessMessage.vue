@@ -14,7 +14,6 @@ export default {
     computed: {
       messageParsed(){
         let lookForLink = 'https://'
-        console.log('this.message',typeof this.message)
         if(typeof this.message == 'object'){
           return this.message.message
         }

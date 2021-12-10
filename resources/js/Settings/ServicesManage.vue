@@ -111,9 +111,7 @@ export default {
             this.showShortcode = service_id
             this.openPopup('Get Booking Widget Shortcode')
         },
-        // hideShortcode(){
-        //     this.showShortcode = false
-        // },
+
         goToDelivery(){
             this.$router.push({name:'modalities'})
         },
@@ -157,7 +155,8 @@ export default {
            return await this.mainService.call('delete',params)
         },
         editElement(element){
-            this.currentView = this.requiresDBUpgrade ? 'editLegacy':'edit'
+            this.paramsPassed = window.wappointmentExtends.filter('ServiceEditParams', this.paramsPassed, element)
+            this.currentView = 'edit'
             this.elementPassed = Object.assign({},element)
         },
         showService(){

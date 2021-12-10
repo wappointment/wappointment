@@ -83,10 +83,17 @@ class Appointment extends TicketAbstract
     public function tryDestroy($force = false)
     {
         if ($force || !$this->isLocked()) {
+            //make sure there is no remaining charge connected
+            $this->clearConnectedCharges();
             $this->incrementSequence();
             $this->destroy($this->id);
             (new Availability($this->getStaffId()))->regenerate();
         }
+    }
+
+    private function clearConnectedCharges()
+    {
+        OrderPrice::where('appointment_id', $this->id)->update(['appointment_id' => null]);
     }
 
     public function getStatusTag()

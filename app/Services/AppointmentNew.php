@@ -14,7 +14,7 @@ class AppointmentNew
 {
     public static function tryBook(Client $client, $start_at, $end_at, $type, $service, $staff_id = null)
     {
-        if (static::canBook($start_at, $end_at, false, $staff_id)) {
+        if (static::canBook($start_at, $end_at, false, $staff_id, $service)) {
             return static::processBook($client, $start_at, $end_at, $type, $service, false, $staff_id);
         }
     }
@@ -183,7 +183,6 @@ class AppointmentNew
     public static function confirm($id, $soft = false, $client = null, $order = null)
     {
 
-        //dd('confirm trye', $id);
         $oldAppointment = $appointment = static::getAppointmentModel()::where('id', (int)$id)
             ->where('status', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)->first();
         if (empty($appointment)) {
@@ -287,10 +286,17 @@ class AppointmentNew
         return VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
     }
 
-    protected static function canBook($start_at, $end_at, $is_admin = false, $staff_id = null)
+    protected static function canBook($start_at, $end_at, $is_admin = false, $staff_id = null, $service = false)
     {
         if ($is_admin === true) {
             return true;
+        }
+
+        if ($service !== false) {
+            $can_book = apply_filters('wappointment_can_guest_book_service', true, $service);
+            if (!$can_book) {
+                throw new \WappointmentException(__('Not allowed to book', 'wappointment'), 1);
+            }
         }
 
         //test that this is not a double booking scenario
@@ -368,8 +374,11 @@ class AppointmentNew
     public static function afterBookEvents($dataReturned, $client, $staff_id, $is_admin = false, $status = 0)
     {
         $dispatching = $status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION ? 'AppointmentBookedEvent' : 'AppointmentConfirmedEvent';
-        //send pending email to client and admin
-        JobHelper::dispatch($dispatching, $dataReturned, $client, $status);
+
+        if (empty($dataReturned['appointment']->options['slots'])) { // avoid double notifications
+            //send pending email to client and admin
+            JobHelper::dispatch($dispatching, $dataReturned, $client, $status);
+        }
 
         static::availabilityRefreshTrigger($staff_id, $is_admin);
     }

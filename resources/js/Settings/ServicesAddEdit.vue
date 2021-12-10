@@ -46,7 +46,6 @@ export default {
             this.model.options.fields.push('name')
         }
     },
-
     methods: {
         initMethod(){
         },

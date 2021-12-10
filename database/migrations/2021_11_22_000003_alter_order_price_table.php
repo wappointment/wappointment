@@ -2,9 +2,6 @@
 
 use Wappointment\ClassConnect\Capsule;
 use Wappointment\Config\Database;
-use Wappointment\Models\Appointment;
-use Wappointment\System\Status;
-use Wappointment\Services\Services;
 
 class AlterOrderPriceTable extends Wappointment\Installation\MigrateHasServices
 {

@@ -4,6 +4,7 @@ export default class Intervals {
         if(intervalsPassed === false){
             this.intervals = []
             let sortedIntervals = intervals.sort((a, b) => { return a[0] > b[0] } )
+            
             for (const element of sortedIntervals) {
                 if(element.length > 2){
                     this.intervals.push( { start: element[0], end: element[1], left:parseInt(element[2]),service:element[3], edit_key:element[4] } )
@@ -27,6 +28,7 @@ export default class Intervals {
             if(serviceid !== false && element.service !== undefined && element.service !== serviceid){ //avoid slots that are service specific
                 continue;
             }
+            
             //if there is an intersection before or after in between two days
             let DummyInterval = {start: from.unix(), end: until.unix()}
             if(this.intersecting(DummyInterval, element)) {

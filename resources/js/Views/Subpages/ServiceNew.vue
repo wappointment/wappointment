@@ -118,22 +118,13 @@ export default {
   },
   computed: {
 
-    getParamsPassed(){
-      let params = this.params
-      if(this.dataPassed.options.slots !== undefined){
-        params.isGroup = true
-      }
-      return params
-    },
-
     errorsPassed(){
       return this.errors
     }
   },
   methods: {
     schemaParsed(){
-      console.log('schema parsed')
-      return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schema), this.getParamsPassed)
+      return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schema), this.params)
     },
     generatePriceField(){
       return {

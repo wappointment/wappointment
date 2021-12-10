@@ -126,22 +126,39 @@ class Order extends Model
     public function setCancelled()
     {
         $this->status = static::STATUS_CANCELLED;
-
-        do_action('wappointment_order_cancelled', $this);
+        do_action('wappointment_order_refunded', $this);
         $this->cancelAllConnected();
         $this->decrementOwes();
+    }
+
+    public function refund()
+    {
+
+        if (!$this->isOnSite()) {
+            //refund from the actual payment's platform
+            do_action('wappointment_order_refund', $this);
+        }
+        do_action('wappointment_order_refunded', $this);
+        $this->cancelAllConnected();
+
+        $this->setRefund();
+        $this->save();
     }
 
     /*
     cancel all products related to that order
     */
-    private function cancelAllConnected()
+    public function cancelAllConnected()
     {
-
         foreach ($this->prices as $charge) {
             //cancel appointment
-            if ($charge->appointment_id > 0) {
-                AppointmentNew::cancel($charge->appointment, $this->client);
+            if ($charge->appointment_id > 0 && !is_null($charge->appointment)) {
+                //avoid issue with foreign key
+                $appointment = $charge->appointment;
+                $charge->appointment_id = null;
+                $charge->save();
+
+                do_action('wappointment_cancel_ticket', apply_filters('wappointment_appointment_get_ticket', $appointment, $this->client_id), $charge->quantity);
             }
         }
     }
@@ -184,6 +201,8 @@ class Order extends Model
         //clear all prices by cancelling previously placed appointment silently
         $this->clearLastAdded();
 
+        $this->setReservation($ticket->getAppointment()->id, $quantity);
+
         if ($ticket->paidWithPackage()) {
             $prices = $ticket->getPackagePrices();
             $quantity = false; //we don't buy many package at once, but just one
@@ -191,9 +210,23 @@ class Order extends Model
             $prices = $ticket->getServicesPrices();
         }
 
+
+
         foreach ($prices as $price) {
             $this->recordItem($price->id, $price->price, $ticket->getAppointment()->id, $price->generateItemName($ticket), $quantity);
         }
+    }
+
+    public function setReservation($appointment_id, $slots)
+    {
+        $options = $this->options;
+        $options['reservations'] = empty($options['reservations']) ? [] : $options['reservations'];
+        $options['reservations'][] = [
+            'appointment_id' => $appointment_id,
+            'slots' => $slots
+        ];
+        $this->options = $options;
+        $this->save();
     }
 
     public function getDescription()
@@ -280,18 +313,5 @@ class Order extends Model
             $this->client->options = $options;
             $this->client->save();
         }
-    }
-
-    public function refund()
-    {
-        if (!$this->isOnSite()) {
-            //refund
-            do_action('wappointment_order_refund', $this);
-        }
-        do_action('wappointment_order_refunded', $this);
-        $this->cancelAllConnected();
-
-        $this->setRefund();
-        $this->save();
     }
 }

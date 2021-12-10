@@ -81,14 +81,12 @@ export default {
       },
 
       confirmFailure(e){
-        console.log('confirm failure', e)
         this.serviceError({message:'Error confirming order'})
         this.$emit('loading', {loading:false})
       },
 
       confirmSuccess(response){
         let appointment_data = response.data.appointment !== undefined ? response.data.appointment:response.data.orderCompleted.appointments[0]
-        console.log('confirm succes',response.data, appointment_data.status)
         this.$emit('confirmedPayment', this.relations.next, {appointmentSaved:true,loading:false, appointmentSavedData:appointment_data})
       },
 

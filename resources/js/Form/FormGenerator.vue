@@ -24,7 +24,6 @@
                     @loaded="loadedField(keydi)" :errors="getErrors(element)" :minimal="minimal"
                     v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :definition="element"/>
                     </div>
-                    
                 </div>
             </template>
             <slot />
@@ -225,7 +224,10 @@ export default {
         },
         getRowEachClass(row, sube){
             let classStr = row.classEach!== undefined ? row.classEach: ''
-            classStr += row.equal_width && row.fields.length == 2? ' w-50':'w-100'
+            if(row.equal_width){
+                classStr += row.fields.length == 2? ' w-50':' w-100'
+            }
+            
             return classStr
         },
         getElementDefinition(model){
