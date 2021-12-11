@@ -64,15 +64,21 @@ class Order extends Model
         }
     }
 
+    public function isPending()
+    {
+        return $this->status == self::STATUS_PENDING;
+    }
 
     public function isOnSite()
     {
         return $this->payment == self::PAYMENT_ONSITE;
     }
+
     public function isStripe()
     {
         return $this->payment == self::PAYMENT_STRIPE;
     }
+
     public function isPaypal()
     {
         return $this->payment == self::PAYMENT_PAYPAL;
@@ -93,7 +99,7 @@ class Order extends Model
         return $query->where('status', 0);
     }
 
-    public function setProcessing()
+    public function setAwaitingPayment()
     {
         $this->status = static::STATUS_AWAITING;
         if ($this->isOnSite()) {

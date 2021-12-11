@@ -25,7 +25,14 @@ class Reset
         'db_version_created',
         'db_version',
         'appointments_must_refresh',
-        'appointments_update'
+        'appointments_update',
+        'staff_settings',
+        'addons_db_version',
+        'group_settings',
+        'packages_settings',
+        'stripe_settings',
+        'paypal_settings',
+        'woocommerce_settings',
     ];
 
     private $user_options = [
@@ -39,17 +46,22 @@ class Reset
     ];
 
     private $db_drop = [
+        'appointments_clients_packages',
+        'appointments_clients_participants',
+        'appointments_packages_services',
+        'appointments_packages',
+        'calendar_service',
         'appointments',
         'calendars',
-        'calendar_service',
+        'custom_fields',
         'clients',
         'failed_jobs',
         'jobs',
         'locations',
         'logs',
         'migrations',
-        'orders',
         'order_price',
+        'orders',
         'prices',
         'reminders',
         'services',

@@ -100,7 +100,7 @@ class CalendarsController extends RestController
     public function testIsAllowedToRunQuery($idName, Request $request)
     {
         if (!CurrentUser::isAdmin() && (int)CurrentUser::calendarId() !== (int)$request->input($idName)) {
-            throw new \WappointmentException(__('Forbidden action', 'wappointment'), 1);
+            throw new \WappointmentException(Translations::get('forbidden'), 1);
         }
     }
 

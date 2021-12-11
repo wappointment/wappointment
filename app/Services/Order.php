@@ -2,6 +2,7 @@
 
 namespace Wappointment\Services;
 
+use Wappointment\Helpers\Translations;
 use Wappointment\Models\Order as ModelOrder;
 
 class Order
@@ -14,12 +15,21 @@ class Order
             ->firstOrFail();
     }
 
-    public function processing()
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function awaitPayment()
     {
-        $this->order->confirmAppointments();
-        $this->order->setProcessing();
-        $this->order->save();
-        apply_filters('wappointment_order_confirm', $this->order);
+        if ($this->order->isOnSite() && $this->order->isPending()) {
+            $this->order->confirmAppointments();
+            $this->order->setAwaitingPayment();
+            $this->order->save();
+            apply_filters('wappointment_order_confirm', $this->order);
+        } else {
+            throw new \WappointmentException(Translations::get('forbidden'), 1);
+        }
     }
 
     public static function refund($order_id)

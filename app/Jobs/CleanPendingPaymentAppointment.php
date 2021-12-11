@@ -6,10 +6,10 @@ use Wappointment\ClassConnect\Carbon;
 use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Settings;
 use Wappointment\Jobs\JobInterface;
-use Wappointment\Models\Client;
 use Wappointment\Services\Queue;
 use Wappointment\Models\Job;
 use Wappointment\Models\Order;
+use Wappointment\Models\Appointment;
 use Wappointment\Services\Payment;
 
 class CleanPendingPaymentAppointment implements JobInterface
@@ -25,18 +25,34 @@ class CleanPendingPaymentAppointment implements JobInterface
                 }
             } else {
                 foreach ($data['orders'] as $orderData) {
-                    foreach ($orderData['reservations'] as $reservation) {
-                        if (!empty($reservation['appointment_id']) && (int)$reservation['appointment_id'] === (int)$appointment->id) {
-                            $ticket = apply_filters('wappointment_appointment_get_ticket', $appointment, $orderData['client_id']);
-                            if (!is_null($ticket) && $ticket->is_participant) {
-                                do_action('wappointment_cancel_ticket', $ticket, !empty($reservation['slots']) ? $reservation['slots'] : false);
-                            }
-                        }
-                    }
+                    static::cancelReservations($orderData, $appointment);
                 }
             }
         }
         static::registerJob(true);
+    }
+
+    public static function cancelReservations($orderData, $appointment = null)
+    {
+        if (is_null($appointment)) {
+            $look_for_appointment = true;
+        }
+
+        foreach ($orderData['reservations'] as $reservation) {
+            if (!empty($reservation['appointment_id'])) {
+                if ($look_for_appointment && (is_null($appointment) || $appointment->id !== (int)$reservation['appointment_id'])) {
+                    $appointment = Appointment::find((int)$reservation['appointment_id']);
+                }
+                if ((int)$reservation['appointment_id'] === (int)$appointment->id) {
+                    $ticket = apply_filters('wappointment_appointment_get_ticket', $appointment, $orderData['client_id']);
+                    if (!is_null($ticket) && $ticket->is_participant) {
+                        do_action('wappointment_cancel_ticket', $ticket, !empty($reservation['slots']) ? $reservation['slots'] : false);
+                    } else {
+                        do_action('wappointment_cancel_appointment', $ticket);
+                    }
+                }
+            }
+        }
     }
 
     public function appointmentsToProcess()

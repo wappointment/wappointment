@@ -23,7 +23,7 @@ class AdminPackage
                     static::deletePrice($price_id);
                 }
             } else {
-                if (!empty($price)) {
+                if (!empty($price) && !empty($packData['id'])) {
                     $pack_options_db['variations'][$key]['price_id'] = static::recordPrice($packData['id'], $price, $price_id, 'Credits : ' . $variationObj['credits']);
                 }
             }
@@ -58,5 +58,6 @@ class AdminPackage
                 static::deletePrice($variationObj['price_id']);
             }
         }
+        return $old_package;
     }
 }
