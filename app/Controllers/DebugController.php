@@ -9,7 +9,7 @@ class DebugController extends RestController
 {
     public function freshInstall()
     {
-        new Reset;
+        (new Reset)->proceed();
 
         return ['message' => 'Plugin has been fully reseted.'];
     }

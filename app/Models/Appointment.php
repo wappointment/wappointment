@@ -55,6 +55,15 @@ class Appointment extends TicketAbstract
         return !empty($this->shared_client) ? $this->shared_client : $this->client;
     }
 
+    public function getClientMethodOrEmpty($key)
+    {
+        $cmodel = $this->getClientModel();
+        if ($cmodel && !is_null($cmodel) && in_array($key, [])) {
+            return call_user_func([$cmodel, $key]);
+        }
+        return '';
+    }
+
     public function service()
     {
         return $this->belongsTo(Service::class, 'service_id');
@@ -77,7 +86,7 @@ class Appointment extends TicketAbstract
             $this->getDuration() .
             ($includes_buffer ?
                 $this->getBuffer() :
-                '') . ' - ' . $this->getClientModel()->name;
+                '') . ' - ' . $this->getClientMethodOrEmpty('getNameForDotcom');
     }
 
     public function tryDestroy($force = false)

@@ -33,11 +33,13 @@ class EventsController extends RestController
     public function delete(Request $request)
     {
         $appointment = $this->canEditAppointment($request->input('id'));
-
-        if (AppointmentNew::cancel($appointment, null, true)) {
-            return ['message' => __('Appointment cancelled', 'wappointment')];
+        try {
+            if (AppointmentNew::cancel($appointment, null, true)) {
+                return ['message' => __('Appointment cancelled', 'wappointment')];
+            }
+        } catch (\Throwable $th) {
+            throw new \WappointmentException(__('Error deleting appointment', 'wappointment'), 1);
         }
-        throw new \WappointmentException(__('Error deleting appointment', 'wappointment'), 1);
     }
 
     public function recordDotcom(Request $request)
@@ -46,7 +48,7 @@ class EventsController extends RestController
         $staff_id = empty($appointment->staff_id) ? Settings::get('activeStaffId') : (int)$appointment->staff_id;
         $dotcomapi = new DotCom;
         $dotcomapi->setStaff($staff_id);
-        if (!empty($appointment->client) && empty($appointment->options['providers']) && $dotcomapi->isConnected()) {
+        if (empty($appointment->options['providers']) && $dotcomapi->isConnected()) {
             $dotcomapi->create($appointment);
 
             $options = $appointment->options;

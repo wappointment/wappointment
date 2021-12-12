@@ -59,6 +59,15 @@ class Client extends Model
         return (strpos($this->name, ' ')) !== false ? substr($this->name, strpos($this->name, ' ')) : '';
     }
 
+    public function getEmailForDotcom()
+    {
+        return $this->email;
+    }
+    public function getNameForDotcom()
+    {
+        return $this->name;
+    }
+
     public function getPhone()
     {
         return empty($this->options['phone']) ? '' : $this->options['phone'];

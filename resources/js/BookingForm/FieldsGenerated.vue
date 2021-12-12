@@ -96,12 +96,7 @@ export default {
     },
     computed: {
         getServiceFields(){
-            let arrayInit = []
-            if(this.service.options.slots !== undefined){
-                arrayInit.push('slots')
-            }
-
-            return this.isLegacy ? this.legacyGetServiceFields:arrayInit.concat(this.service.options.fields)
+            return this.isLegacy ? this.legacyGetServiceFields:this.service.options.fields
         },
         legacyGetServiceFields(){
             let fields = ['name', 'email']
@@ -359,7 +354,7 @@ export default {
                 }
             }
         },
-        insertCustomFields(){
+        prepareLocationCF(){
             if(this.locationObj.options === undefined){
                 return false
             }
@@ -373,31 +368,27 @@ export default {
                 this.locationObj.options.fields.unshift('skype') //inser skype to the beginning
             }
         },
+        fieldsRequired(){
+            this.prepareLocationCF()
+            return window.wappointmentExtends.filter(
+                'BookingFormFieldsRequired', 
+                this.reorderFields(this.getServiceFields).concat(this.reorderFields(this.locationObj.options.fields)),
+                this.service)
+        },
         filterCustomFields(){
-            
-            let fields_src = {'src1': this.reorderFields(this.getServiceFields)}
-            if(!this.isLegacy){
-                this.insertCustomFields()
-                fields_src.src2 = this.reorderFields(this.locationObj.options.fields) 
-            }
-            let customFields = []
-            for (const key in fields_src) {
-                if (fields_src.hasOwnProperty(key) && fields_src[key] !== undefined) {
-                    for (const iterator of fields_src[key]) {
-                        let cfieldslist = []
-                        for (const cfield of customFields) {
-                            cfieldslist.push(cfield['namekey'])
-                        }
-                        
-                        if(cfieldslist.indexOf(iterator) === -1){
-                            let cf_found = this.getCFOptions(iterator)
-                            if(cf_found!== undefined){
-                                customFields.push(cf_found)
-                            }
-                        } 
-                    }
-      
+            let customFields = [];
+            for (const iterator of this.fieldsRequired()) {
+                let cfieldslist = []
+                for (const cfield of customFields) {
+                    cfieldslist.push(cfield['namekey'])
                 }
+                
+                if(cfieldslist.indexOf(iterator) === -1){
+                    let cf_found = this.getCFOptions(iterator)
+                    if(cf_found!== undefined){
+                        customFields.push(cf_found)
+                    }
+                } 
             }
             this.customFields = customFields[0].sorting !== undefined ? customFields.sort((a,b) => a.sorting > b.sorting):customFields
         },

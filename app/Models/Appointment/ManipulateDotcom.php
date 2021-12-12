@@ -24,7 +24,7 @@ trait ManipulateDotcom
             'location' => $this->type == 0 ? $this->getServiceAddress() : $this->getLocation(),
             'timezone' => $timezone,
             'emails' => [
-                $this->getClientModel()->email
+                $this->getClientMethodOrEmpty('getEmailForDotcom')
             ],
             'cancellink' => $this->getLinkCancelEvent(),
             'reschedulelink' => $this->getLinkRescheduleEvent(),
@@ -33,10 +33,10 @@ trait ManipulateDotcom
             $toDotcom['viewlink']  = $this->getLinkViewEvent();
         }
         if ($this->isPhone()) {
-            $toDotcom['phone']  = $this->getClientModel()->getPhone();
+            $toDotcom['phone']  = $this->getClientMethodOrEmpty('getPhone');
         }
         if ($this->isSkype()) {
-            $toDotcom['skype']  = $this->getClientModel()->getSkype();
+            $toDotcom['skype']  = $this->getClientMethodOrEmpty('getSkype');
         }
         return $toDotcom;
     }

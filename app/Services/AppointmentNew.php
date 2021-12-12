@@ -279,8 +279,6 @@ class AppointmentNew
         return \Wappointment\ClassConnect\Carbon::createFromTimestamp($unixTS)->toDateTimeString();
     }
 
-
-
     public static function isLegacy()
     {
         return VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
@@ -366,8 +364,10 @@ class AppointmentNew
     {
 
         $dataReturned = static::create($data, $client, $status);
-        static::afterBookEvents($dataReturned, $client, $data['staff_id'], $is_admin, $status);
 
+        JobHelper::dcCreate($dataReturned['appointment']);
+
+        static::afterBookEvents($dataReturned, $client, $data['staff_id'], $is_admin, $status);
         return $dataReturned;
     }
 
@@ -474,6 +474,7 @@ class AppointmentNew
     public static function hardDestroy($appointment, $force = false)
     {
         apply_filters('wappointment_cancelled_appointment', $appointment);
+        JobHelper::dcCancel($appointment);
         $appointment->tryDestroy($force);
     }
 

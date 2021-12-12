@@ -9,6 +9,7 @@ use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Admin;
 use Wappointment\Services\AppointmentNew as Appointment;
 use Wappointment\ClassConnect\Request;
+use Wappointment\Formatters\BookingResult;
 use Wappointment\Services\DateTime;
 
 class BookingController extends RestController
@@ -35,8 +36,8 @@ class BookingController extends RestController
             return WPHelpers::restError($this->bookingFailed(), 500, $result['appointment']['errors']);
         }
         $result['result'] = true;
-        $result['appointment'] = (new \Wappointment\ClassConnect\Collection($result['appointment']->toArraySpecial()))->except(['id', 'client_id']);
-        return $result;
+
+        return BookingResult::format($result);
     }
 
     public function adminBook(BookingAdmin $booking)

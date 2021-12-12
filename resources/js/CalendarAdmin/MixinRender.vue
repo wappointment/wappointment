@@ -191,7 +191,7 @@ export default {
           return ''
         }
         if(isAppointmentEvent) {
-          return '<button class="btn btn-xs btn-light cancelAppointment" data-tt="Cancel appointment" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-dismiss"></span></button>'
+          return el.hasClass('cannot-delete')?'':'<button class="btn btn-xs btn-light cancelAppointment" data-tt="Cancel appointment" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-dismiss"></span></button>'
         }else{
           let labelDelete = el.hasClass('calendar') ? 'Mute Event': 'Delete event'
           let spanIcon = el.hasClass('calendar') ? '<span class="dashicons dashicons-controls-volumeoff"></span> ': '<span class="dashicons dashicons-trash"></span>'

@@ -130,6 +130,7 @@ export default {
         },
         getZoomWithLink(){
             let url = apiWappointment.frontPage + (apiWappointment.frontPage.indexOf('?') === -1 ? '?':'&' )+'view=view-event&appointmentkey=' + this.appointment.edit_key
+            url = window.wappointmentExtends.filter('urlAppointmentKey', url, {appointment: this.appointment, ticket:this.resultBooking.ticket})
             return this.options.confirmation.zoom
             .replace('[meeting_link]', '<a href="'+url+'" target="_blank">')
             .replace('[/meeting_link]', '</a>')

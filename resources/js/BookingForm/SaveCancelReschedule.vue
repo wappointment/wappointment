@@ -2,7 +2,7 @@
     <div>
         <div v-if="isSaveEventPage">
             <p>{{options.confirmation.savetocal}}</p>
-            <SaveButtons :selectedSlot="selectedSlot.start" :service="service" :appointment="appointment"
+            <SaveButtons :selectedSlot="selectedSlot.start" :service="dataLoaded.service" :appointment="appointment"
             :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected" :options="options"/>
         </div>
         <div v-else>
@@ -53,9 +53,16 @@ export default {
         appointmentCanceled: false,
         loading:false,
         buttonClicked: false,
-        showReschedule: false
+        showReschedule: false,
+        appointment:false,
+        service:false,
+        staff: false
     }),
-
+    created(){
+        this.service = Object.assign({},this.dataLoaded.service)
+        this.appointment = Object.assign({},this.dataLoaded.appointment)
+        this.staff = Object.assign({},this.dataLoaded.staff)
+    },
     methods: {
         changedRescheduleStep(rescheduleStep){
             if(rescheduleStep == 'BookingFormConfirmation'){

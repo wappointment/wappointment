@@ -69,16 +69,12 @@ class Reset
         'statuses',
     ];
 
-    public function __construct()
+    public function proceed()
     {
-
-        do_action('wappointment_reset');
-        sleep(2); //giving time for revert on addons
         static::eraseCache();
         $this->dotComInforms();
-
-        $this->removeStaffSettings();
         $this->dropTables();
+        $this->removeStaffSettings();
         $this->removeCoreSettings();
 
         WPScheduler::clearScheduler();

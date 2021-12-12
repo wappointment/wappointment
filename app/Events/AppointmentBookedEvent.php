@@ -20,40 +20,20 @@ class AppointmentBookedEvent extends AbstractEvent
     public function __construct($args)
     {
         $this->bagArgs = $args;
-        $this->appointment = $args['appointment'];
         $this->client = $args['client'];
+        $this->appointment = $args['appointment'];
+        $this->appointment->setSharedClient($this->client);
+
         if (!empty($args['oldAppointment'])) {
             $this->oldAppointment = $args['oldAppointment'];
         }
         if (!empty($args['order'])) {
             $this->order = $args['order'];
         }
-        $this->triggerAPI();
         $this->reminders = Reminder::select('id', 'event', 'type', 'options')
             ->where('published', 1)
             ->whereIn('type', Reminder::getTypes('code'))
             ->get();
-    }
-
-    public function triggerAPI()
-    {
-        $acs_id = Settings::get('activeStaffId');
-        $staff_id = empty($this->appointment->staff_id) ? $acs_id : (int)$this->appointment->staff_id;
-        $this->appointment->setSharedClient($this->client);
-        $dotcomapi = new DotCom;
-        $dotcomapi->setStaff($staff_id);
-
-        if ($dotcomapi->isConnected()) {
-            if (static::NAME == 'appointment.canceled') {
-                $dotcomapi->delete($this->appointment);
-            } else {
-                if (!empty($this->oldAppointment)) {
-                    $dotcomapi->update($this->appointment);
-                } else {
-                    $dotcomapi->create($this->appointment);
-                }
-            }
-        }
     }
 
     public function getClient()

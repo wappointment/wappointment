@@ -35,6 +35,7 @@ class DotCom extends API
 
     public function checkForUpdates()
     {
+
         // 0 - only check if site connected
         if (!empty($this->site_key) && (bool)WPHelpers::getOption('appointments_must_refresh') === true) {
             // 1 - retrieve appointments data
@@ -193,7 +194,7 @@ class DotCom extends API
 
     public function create($appointment)
     {
-
+        //dd($this->getParams($this->getAppointmentDetails($appointment)));
         $response = $this->client->request('POST', $this->call('/api/appointment/create'), [
             'form_params' => $this->getParams($this->getAppointmentDetails($appointment))
         ]);

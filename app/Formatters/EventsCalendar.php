@@ -119,7 +119,7 @@ class EventsCalendar
             'type' => 'appointment',
             'onlyDelete' => true,
             'rendering' => (bool) $event->status ? 'appointment-confirmed' : 'appointment-pending',
-            'className' => ($owes > 0 ? 'appointment-owes ' : '') . ((bool) $event->status ? 'appointment-confirmed' : 'appointment-pending'),
+            'className' => apply_filters('wappointment_calendar_appointment_class', $this->baseClassAppointment($owes, $event), $event),
             'owes' => $owes,
             'display' => [
                 'short' => [
@@ -133,6 +133,11 @@ class EventsCalendar
                 'long' => $this->getClientOptions($preparedClient)
             ]
         ];
+    }
+
+    public function baseClassAppointment($owes, $event)
+    {
+        return ($owes > 0 ? 'appointment-owes ' : '') . ((bool) $event->status ? 'appointment-confirmed' : 'appointment-pending');
     }
 
     protected function getClientOptions($preparedClient)

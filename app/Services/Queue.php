@@ -53,6 +53,15 @@ class Queue
         return Job::insert($jobsObject);
     }
 
+    /**
+     * Only ot use for certain jobs
+     *
+     * @param [type] $job
+     * @param [type] $params
+     * @param string $queue
+     * @param integer $available_at
+     * @return void
+     */
     public static function tryPush($job, $params, $queue = 'availability', $available_at = 0)
     {
         $query = Job::where('queue', $queue)->where('reserved_at', 0);

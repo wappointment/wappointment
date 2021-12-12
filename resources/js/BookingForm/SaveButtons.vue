@@ -74,7 +74,9 @@ export default {
         
         generateLink(typeLink = 'view-event', html = false, label = ''){
             let url = apiWappointment.frontPage + '&view='+typeLink+'&appointmentkey=' + this.appointment.edit_key
-            return this.getLink(url, html , label )
+            return this.getLink(
+                window.wappointmentExtends.filter('urlAppointmentKey', url, this.appointment, this.resultBooking.ticket),
+                 html , label )
         },
 
         getLink(url, html = false, label = ''){
@@ -153,7 +155,7 @@ export default {
         },
 
         eventLocation(){
-            return this.physicalSelected ? this.service.address:this.appointment.type
+            return this.physicalSelected ? this.service.address:this.appointment.location_label
         },
         
         saveToIcal() {
