@@ -66,7 +66,7 @@ export default {
       serviceSuccess(result) {
         if(result.data.message!==undefined) {
           if(this.afterSuccess !== undefined) this.afterSuccess(result) 
-          if(result.data.result!== undefined && result.data.result == false) return this.$WapModal().notifyError(result.data.message)
+          if(result.data.result!== undefined && result.data.result === false) return this.$WapModal().notifyError(result.data.message)
           return this.$WapModal().notifySuccess(result.data.message)
         }
       },

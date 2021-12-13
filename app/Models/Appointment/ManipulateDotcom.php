@@ -14,6 +14,7 @@ trait ManipulateDotcom
 
     public function toDotcom($timezone)
     {
+        $attendees = $this->getAttendees();
         $toDotcom = [
             'title' => $this->getTitle(false),
             'type' => $this->type,
@@ -23,12 +24,14 @@ trait ManipulateDotcom
             'duration' => $this->getFullDurationInSec(),
             'location' => $this->type == 0 ? $this->getServiceAddress() : $this->getLocation(),
             'timezone' => $timezone,
-            'emails' => [
-                $this->getClientMethodOrEmpty('getEmailForDotcom')
-            ],
-            'cancellink' => $this->getLinkCancelEvent(),
-            'reschedulelink' => $this->getLinkRescheduleEvent(),
+            'attendees' => $attendees,
+            'emails' => $this->getEmailAttendees($attendees),
         ];
+
+        if (empty($this->options['slots'])) {
+            $toDotcom['cancellink'] = $this->getLinkCancelEvent();
+            $toDotcom['reschedulelink'] = $this->getLinkRescheduleEvent();
+        }
         if ($this->isZoom()) {
             $toDotcom['viewlink']  = $this->getLinkViewEvent();
         }
@@ -39,5 +42,26 @@ trait ManipulateDotcom
             $toDotcom['skype']  = $this->getClientMethodOrEmpty('getSkype');
         }
         return $toDotcom;
+    }
+
+    public function getEmailAttendees($attendees)
+    {
+        $emails = [];
+
+        foreach ($attendees as $attendee) {
+            $emails[] = $attendee['email'];
+        }
+
+        return $emails;
+    }
+
+    public function getAttendees()
+    {
+        return apply_filters('wappointment_appointment_get_attendees', [
+            [
+                'email' => $this->getClientMethodOrEmpty('getEmailForDotcom'),
+                'name' => $this->getClientMethodOrEmpty('getEmailForDotcom'),
+            ]
+        ], $this);
     }
 }

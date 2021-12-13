@@ -15,5 +15,5 @@ return [
     'error_sending' => __('Error while sending', 'wappointment'),
     /* translators: %s - addon's name. */
     'add_services_addon' => __('Add more services with the "%s" addon', 'wappointment'),
-    'forbidden' => __('Forbidden action', 'wappointment')
+    'forbidden' => __('Forbidden action', 'wappointment'),
 ];

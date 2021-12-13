@@ -47,9 +47,11 @@ class Reset
 
     private $db_drop = [
         'appointments_clients_packages',
+        'clients_packages',
+        'appointments_participants',
         'appointments_clients_participants',
-        'appointments_packages_services',
-        'appointments_packages',
+        'packages_services',
+        'packages',
         'calendar_service',
         'appointments',
         'calendars',
@@ -74,6 +76,7 @@ class Reset
         static::eraseCache();
         $this->dotComInforms();
         $this->dropTables();
+
         $this->removeStaffSettings();
         $this->removeCoreSettings();
 
@@ -100,18 +103,21 @@ class Reset
 
     public function dropTables()
     {
-        Capsule::schema()->disableForeignKeyConstraints();
+        //Capsule::schema()->disableForeignKeyConstraints();
         $db_list = [];
         foreach ($this->db_drop as $table_name) {
             $db_list[] = Database::$prefix_self . '_' . $table_name;
         }
+        global $wpdb;
 
+        $wpdb->query("SET FOREIGN_KEY_CHECKS=0;");
         foreach (apply_filters('wappointment_db_drop', $db_list) as $table_name) {
             $full_table = Database::getWpSitePrefix() . $table_name;
-            global $wpdb;
-            $wpdb->query("DROP TABLE IF EXISTS $full_table");
+
+            $wpdb->query("DROP TABLE IF EXISTS $full_table;");
         }
-        Capsule::schema()->enableForeignKeyConstraints();
+        $wpdb->query("SET FOREIGN_KEY_CHECKS=1;");
+        //Capsule::schema()->enableForeignKeyConstraints();
     }
 
     private function removeCoreSettings()

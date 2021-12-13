@@ -5,18 +5,19 @@ namespace Wappointment\Controllers;
 use Wappointment\Services\Client;
 use Wappointment\Validators\HttpRequest\Booking;
 use Wappointment\Validators\HttpRequest\BookingAdmin;
-use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Admin;
 use Wappointment\Services\AppointmentNew as Appointment;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Formatters\BookingResult;
+use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Helpers\Translations;
 use Wappointment\Services\DateTime;
 
 class BookingController extends RestController
 {
     protected function fieldsError($booking)
     {
-        return WPHelpers::restError(__('Review your fields', 'wappointment'), 500, $booking->getErrors());
+        return WPHelpers::restError(Translations::get('review_fields'), 500, $booking->getErrors());
     }
 
     protected function bookingFailed()

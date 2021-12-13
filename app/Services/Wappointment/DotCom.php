@@ -48,7 +48,6 @@ class DotCom extends API
 
             $appointments_update = WPHelpers::getOption('appointments_update');
             // 2 - check if there are changes since last check
-
             if ($this->hasPendingChanges($appointments, $appointments_update)) {
                 // 3 - loop through each appointment and prepare for update if needs be
                 $appointment_collect = \WappointmentLv::collect($appointments_update);
@@ -76,13 +75,14 @@ class DotCom extends API
                 }
                 WPHelpers::setOption('appointments_update', $appointments);
             }
+            $this->clearMustRefresh();
         }
-        $this->clearMustRefresh();
     }
 
     public function clearMustRefresh()
     {
         WPHelpers::setOption('appointments_must_refresh', false);
+        WPHelpers::setOption('appointments_update', false);
     }
 
     public function setMustRefresh()
@@ -194,7 +194,6 @@ class DotCom extends API
 
     public function create($appointment)
     {
-        //dd($this->getParams($this->getAppointmentDetails($appointment)));
         $response = $this->client->request('POST', $this->call('/api/appointment/create'), [
             'form_params' => $this->getParams($this->getAppointmentDetails($appointment))
         ]);
@@ -211,7 +210,8 @@ class DotCom extends API
 
     public function update($appointment)
     {
-
+        // echo '<pre>';
+        // dd($this->getParams($this->getAppointmentDetails($appointment)));
         $response = $this->client->request('POST', $this->call('/api/appointment/update'), [
             'form_params' => $this->getParams($this->getAppointmentDetails($appointment))
         ]);

@@ -58,7 +58,7 @@ class Appointment extends TicketAbstract
     public function getClientMethodOrEmpty($key)
     {
         $cmodel = $this->getClientModel();
-        if ($cmodel && !is_null($cmodel) && in_array($key, [])) {
+        if ($cmodel && !is_null($cmodel) && in_array($key, ['getPhone', 'getSkype', 'getNameForDotcom', 'getEmailForDotcom'])) {
             return call_user_func([$cmodel, $key]);
         }
         return '';

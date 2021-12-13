@@ -194,7 +194,7 @@ class Reminder
             'zoom' => [
                 ['p' => __('It will take place by video online.', 'wappointment')],
                 /* translators: %s - a "here" link is added. */
-                ['h3' => sprintf(__('Click %s to begin the meeting', 'wappointment'), '[ label="' . __('here', 'wappointment') . '" link="linkNew"]')]
+                ['h3' => sprintf(__('Click %s to begin the meeting', 'wappointment'), '[ label="' . __('here', 'wappointment') . '" link="linkView"]')]
             ]
         ];
         if (!is_array($types)) {

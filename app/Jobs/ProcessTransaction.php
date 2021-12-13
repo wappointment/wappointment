@@ -44,9 +44,13 @@ class ProcessTransaction implements JobInterface
 
     private function setAppointment($appointmentArray)
     {
-        if (!empty($appointmentArray['options'])) {
-            $appointmentArray['options'] = json_encode($appointmentArray['options']);
+        if ($this->event == 'cancel') {
+            if (!empty($appointmentArray['options'])) {
+                $appointmentArray['options'] = json_encode($appointmentArray['options']);
+            }
+            $this->appointment = (new Appointment)->newFromBuilder($appointmentArray);
+        } else {
+            $this->appointment = Appointment::find($appointmentArray['id']);
         }
-        $this->appointment = (new Appointment)->newFromBuilder($appointmentArray);
     }
 }

@@ -375,10 +375,11 @@ class AppointmentNew
     {
         $dispatching = $status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION ? 'AppointmentBookedEvent' : 'AppointmentConfirmedEvent';
 
-        if (empty($dataReturned['appointment']->options['slots'])) { // avoid double notifications
-            //send pending email to client and admin
-            JobHelper::dispatch($dispatching, $dataReturned, $client, $status);
-        }
+        JobHelper::dispatch($dispatching, $dataReturned, $client, $status);
+        // if (empty($dataReturned['appointment']->options['slots'])) { // avoid double notifications
+        //     //send pending email to client and admin
+
+        // }
 
         static::availabilityRefreshTrigger($staff_id, $is_admin);
     }
