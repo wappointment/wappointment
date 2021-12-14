@@ -36,8 +36,9 @@ class DotCom extends API
     public function checkForUpdates()
     {
 
+        $must_refresh = WPHelpers::getOption('appointments_must_refresh');
         // 0 - only check if site connected
-        if (!empty($this->site_key) && (bool)WPHelpers::getOption('appointments_must_refresh') === true) {
+        if (!empty($this->site_key) && (bool)$must_refresh === true && $must_refresh < time()) {
             // 1 - retrieve appointments data
             $appointments = $this->getAppointments();
 
@@ -82,12 +83,11 @@ class DotCom extends API
     public function clearMustRefresh()
     {
         WPHelpers::setOption('appointments_must_refresh', false);
-        WPHelpers::setOption('appointments_update', false);
     }
 
     public function setMustRefresh()
     {
-        WPHelpers::setOption('appointments_must_refresh', true);
+        WPHelpers::setOption('appointments_must_refresh', time() + 60);
     }
 
     public function notifyReset()

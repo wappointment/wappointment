@@ -8,7 +8,7 @@
             :service="staff" 
             :options="options" 
             @selectService="selectStaff" >
-            <FirstAvailabilities :options="options" :timeprops="timeprops" :initIntervalsCollection="getIntervalsCollection(staff)"
+            <FirstAvailabilities :options="options" :service="getFirstService(staff)" :timeprops="timeprops" :initIntervalsCollection="getIntervalsCollection(staff)"
             :duration="60" :viewData="viewData" />
         </ServiceButton>
       </div>
@@ -17,7 +17,8 @@
 
 <script>
 import ServiceButton from './ServiceButton'
-import FirstAvailabilities from './FirstAvailabilities'
+//import FirstAvailabilities from './FirstAvailabilities'
+import FirstAvailabilities from './FirstAvailabilitiesNew'
 import Intervals from '../Standalone/intervals'
 import MixinChange from './MixinChange'
 import IsDemo from '../Mixins/IsDemo'
@@ -38,6 +39,13 @@ export default {
         },
     },
     methods:{
+        getFirstService(staff){
+            let serviceid = staff.services[0]
+            return this.viewData.services.find(e => e.id == serviceid)
+        },
+        getFirstServiceDuration(staff){
+            return this.getFirstService(staff).options.durations[0].duration
+        },
         getIntervalsCollection(staff){
             return new Intervals(staff.availability)
         },
