@@ -60,7 +60,7 @@ trait ManipulateDotcom
         return apply_filters('wappointment_appointment_get_attendees', [
             [
                 'email' => $this->getClientMethodOrEmpty('getEmailForDotcom'),
-                'name' => $this->getClientMethodOrEmpty('getEmailForDotcom'),
+                'name' => $this->getClientMethodOrEmpty('getNameForDotcom'),
             ]
         ], $this);
     }

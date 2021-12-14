@@ -8,8 +8,9 @@
             :service="staff" 
             :options="options" 
             @selectService="selectStaff" >
-            <FirstAvailabilities :options="options" :service="getFirstService(staff)" :timeprops="timeprops" :initIntervalsCollection="getIntervalsCollection(staff)"
-            :duration="60" :viewData="viewData" />
+            <FirstAvailabilities :options="options" :timeprops="timeprops" :duration="60" :viewData="viewData"
+            :service="advancedStaff[idx].service"
+            :initIntervalsCollection="advancedStaff[idx].initIntervalsCollection" />
         </ServiceButton>
       </div>
     </div>
@@ -26,19 +27,30 @@ export default {
     mixins: [ window.wappointmentExtends.filter('MixinChange', MixinChange), IsDemo],
     props:['calendars','options', 'timeprops','viewData', 'attributesEl'],
     data: () => ({
-        search:''
+        search:'',
+        advancedStaff: []
     }),
     components:{FirstAvailabilities, ServiceButton},
     computed:{
         filteredStaff(){
             let searchterm = this.search.toLowerCase()
-            
             return this.calendars.map(e => Object.assign(
                 {name:e.n, options:{icon:{src:e.a.replace('?s=46','?s=80'),wp_id:true}}}, e)
                 ).filter(e => e.name.toLowerCase().indexOf(searchterm) !== -1)
         },
     },
+    created(){
+        this.setAdvancedStaff()
+    },
     methods:{
+        setAdvancedStaff(){
+            for (let i = 0; i < this.calendars.length; i++) {
+                this.advancedStaff[i] = {
+                    service: this.getFirstService(this.calendars[i]),
+                    initIntervalsCollection: this.getIntervalsCollection(this.calendars[i])
+                } 
+            }
+        },
         getFirstService(staff){
             let serviceid = staff.services[0]
             return this.viewData.services.find(e => e.id == serviceid)

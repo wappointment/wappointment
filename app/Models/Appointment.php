@@ -13,6 +13,7 @@ use Wappointment\Models\Appointment\ManipulateStaff;
 use Wappointment\Models\Appointment\ManipulateType;
 use Wappointment\Models\CanLock;
 use Wappointment\Services\Availability;
+use Wappointment\Services\JobHelper;
 
 class Appointment extends TicketAbstract
 {
@@ -95,6 +96,7 @@ class Appointment extends TicketAbstract
             //make sure there is no remaining charge connected
             $this->clearConnectedCharges();
             $this->incrementSequence();
+            JobHelper::dcCancel($this);
             $this->destroy($this->id);
             (new Availability($this->getStaffId()))->regenerate();
         }

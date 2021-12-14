@@ -475,7 +475,7 @@ class AppointmentNew
     public static function hardDestroy($appointment, $force = false)
     {
         apply_filters('wappointment_cancelled_appointment', $appointment);
-        JobHelper::dcCancel($appointment);
+
         $appointment->tryDestroy($force);
     }
 
