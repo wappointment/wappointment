@@ -4,7 +4,6 @@ export default class Intervals {
         if(intervalsPassed === false){
             this.intervals = []
             let sortedIntervals = intervals.sort((a, b) => { return a[0] > b[0] } )
-            
             for (const element of sortedIntervals) {
                 if(element.length > 2){
                     this.intervals.push( { start: element[0], end: element[1], left:parseInt(element[2]),service:element[3], edit_key:element[4] } )
@@ -12,7 +11,6 @@ export default class Intervals {
                     this.intervals.push( { start: element[0], end: element[1]} )
                 }
             }
-
         }else{
             this.intervals = intervals 
         }

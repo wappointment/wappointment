@@ -58,8 +58,7 @@ return [
     ],
     'staff_selection' => [
         'pickstaff' => __('Select staff', 'wappointment'),
-        /* translators: %s - formatted date. */
-        'firstavail' => sprintf(__('First available slots: %s', 'wappointment'), '[formatted_date]'),
+        'availabilityfor' => __('Availability for', 'wappointment')
     ],
     'selection' => [
         'check_viewweek' => false,

@@ -179,9 +179,9 @@ export default {
     },
     methods: {
         filteredServices(){
-            let serviceSelected = this.service.id
+            //let serviceSelected = this.service.id
             let intervalsCollection = this.initIntervalsCollection
-            intervalsCollection.intervals = intervalsCollection.intervals.filter(interval => [undefined,serviceSelected].indexOf(interval.service)!==-1)
+            //intervalsCollection.intervals = intervalsCollection.intervals.filter(interval => [undefined,serviceSelected].indexOf(interval.service)!==-1)
             // filter used within group
             return window.wappointmentExtends.filter('CalendarAbstractFilterIntervals', intervalsCollection, this.service, this.conditionMatches)
         },
