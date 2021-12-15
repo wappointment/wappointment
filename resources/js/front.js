@@ -10,24 +10,26 @@ import UrlParam from './Modules/UrlParam'
 import WTrigger from './Mixins/WTrigger'
 import DeepDefined from './Mixins/DeepDefined'
 import RequestMaker from './Modules/RequestMaker'
-import FieldsGenerated from './BookingForm/FieldsGenerated'
 
 window.wappointmentExtends.store('commons', {RequestMaker})
 
 const WapImage = () => import(/* webpackChunkName: "WapImage" */ './Components/WapImage')
+const FieldsGenerated = () => import(/* webpackChunkName: "FieldsGenerated" */ './BookingForm/FieldsGenerated')
 
 Vue.use(VueWapModal)
 
 Vue.use(VueService, {base:apiWappointment.root})
 
 Vue.component('WapImage', WapImage)
+Vue.component('FieldsGenerated', FieldsGenerated)
+
 Vue.component('WLoader', WLoader)
 Vue.component('v-style', {
     render: function (createElement) {
         return createElement('style', this.$slots.default)
     }
 });
-Vue.component('FieldsGenerated', FieldsGenerated)
+
 Vue.mixin(WTrigger)
 Vue.mixin(UrlParam)
 Vue.mixin(DeepDefined)
