@@ -651,14 +651,16 @@ export default {
             this.testLockedStaff()
             if(!this.errorShortcode){ //if there was an error autosetting the locked staff we stop
                 this.testLockedService() // we lock to certain service if any lock specified
-
-                if(!this.selectedStaff){ // if so far no staff has been set, we just auto set it
-                    this.selectedStaff = this.getDefaultStaff()
-                    this.refreshAvail()
+                if(!this.errorShortcode){
+                    if(!this.selectedStaff){ // if so far no staff has been set, we just auto set it
+                        this.selectedStaff = this.getDefaultStaff()
+                        this.refreshAvail()
+                    }
+                    this.setAvailableServices()
+                    this.autoSelectingOptions()
+                    this.demoAutoSelect()
                 }
-                this.setAvailableServices()
-                this.autoSelectingOptions()
-                this.demoAutoSelect() 
+                 
             }
             
         },
@@ -670,7 +672,7 @@ export default {
                         return this.setStaff(staff)
                     } 
                 }
-                this.errorShortcode = "Staff "+this.attributesEl.staffSelection+" doesnt exist"
+                this.errorShortcode = "Staff "+this.attributesEl.staffSelection+" does not exist"
             }
         },
         testLockedService(){
@@ -681,6 +683,10 @@ export default {
                     this.lockToServiceIDs = lockToServiceIDs
                 }else{
                     this.lockToServiceIDs.push(parseInt(this.attributesEl.serviceSelection))
+                }
+                let hasServices = this.viewData.services.filter((s) => lockToServiceIDs.indexOf(s.id) !== -1)
+                if(hasServices.length < 1){
+                    this.errorShortcode = "Service "+(this.attributesEl.serviceSelection.join(','))+" does not exist"
                 }
             }
         },
