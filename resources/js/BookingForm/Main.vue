@@ -1,6 +1,6 @@
 <template>
     <div class="wap-bf" :class="{show: canBeBooked, 'has-scroll':requiresScroll}">
-        <template v-if="canBeBooked">
+        <template v-if="canBeBooked && !errorShortcode">
             <BookingFormHeader v-if="showHeader && noStaffSelectionNeeded" 
             :isStepSlotSelection="isStepSlotSelection"
             :options="options"
@@ -62,7 +62,8 @@
         </template>
         <div v-else>
             <div v-if="dataloaded" class="wappointment-errors">
-                <div>{{options.general.noappointments}}</div>
+                <div v-if="errorShortcode"> {{ errorShortcode }} </div>
+                <div v-else>{{options.general.noappointments}}</div>
             </div>
             <template v-else>
                 <div class="wappointment-errors" v-if="errorMessages.length > 0">
@@ -154,7 +155,8 @@ export default {
         order:false,
         selectedVariation:false,
         selectedPackage: false,
-        lockToServiceIDs:[]
+        lockToServiceIDs:[],
+        errorShortcode:false
     }),
 
     mounted () {
@@ -249,11 +251,11 @@ export default {
        filterStaffByService(){
             let staffs = this.getStaffs
             if(this.serviceLocked){
-                let servicesSelected = typeof this.attributesEl.serviceSelection == 'number'?[this.attributesEl.serviceSelection]:this.attributesEl.serviceSelection
+                let servicesLocked = this.attributesEl.serviceSelection
                 staffs = staffs.filter(function (staff) {
                     for (const staff_service of staff.services) {
-                        if(servicesSelected.indexOf(staff_service) !== -1){
-                            return true;
+                        if(servicesLocked.indexOf(staff_service) !== -1){
+                            return true
                         }
                     }
                 })
@@ -536,12 +538,9 @@ export default {
                 this.dataloaded = true
                 return
             }
-
+            this.setMomentLocale()
             this.dataloaded = true
             if(!this.mustSelectStaff || this.mustSelectStaff && this.getStaffs.length == 1){
-                this.selectedStaff = this.getDefaultStaff()
-                this.refreshAvail()
-                this.setMomentLocale()
                 this.initServiceStaffDurationLocation()
             }
     
@@ -619,10 +618,8 @@ export default {
             
         },
         autoSelService(){
-            if(this.isLegacyOrNotServiceSuite){
-                this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
-            }else{
-                this.testLockedService()
+            if(this.services.length == 1){ //there is just one service we auto set
+                this.service = this.services[0]
             }
         },
         demoAutoSelect(){
@@ -650,10 +647,20 @@ export default {
             }
         },
         initServiceStaffDurationLocation(){
-            this.setAvailableServices()
+
             this.testLockedStaff()
-            this.autoSelectingOptions()
-            this.demoAutoSelect() 
+            if(!this.errorShortcode){ //if there was an error autosetting the locked staff we stop
+                this.testLockedService() // we lock to certain service if any lock specified
+
+                if(!this.selectedStaff){ // if so far no staff has been set, we just auto set it
+                    this.selectedStaff = this.getDefaultStaff()
+                    this.refreshAvail()
+                }
+                this.setAvailableServices()
+                this.autoSelectingOptions()
+                this.demoAutoSelect() 
+            }
+            
         },
         testLockedStaff(){
             if(this.attributesEl !== undefined && 
@@ -663,6 +670,7 @@ export default {
                         return this.setStaff(staff)
                     } 
                 }
+                this.errorShortcode = "Staff "+this.attributesEl.staffSelection+" doesnt exist"
             }
         },
         testLockedService(){
@@ -671,22 +679,8 @@ export default {
                 let lockToServiceIDs = this.attributesEl.serviceSelection
                 if(Array.isArray( lockToServiceIDs)){
                     this.lockToServiceIDs = lockToServiceIDs
-                    if( lockToServiceIDs.length === 1){
-                        this.service = this.services.find(e => parseInt(e.id) == parseInt(lockToServiceID[0]))
-                    }else if(this.services.length === 1){
-                        this.service = this.services[0]
-                    }
                 }else{
-                    let service_id = this.attributesEl.serviceSelection
-                     this.service = this.services.find(e => parseInt(e.id) == parseInt(service_id))
-                }
-                
-                if(this.service === undefined){
-                    throw "Service "+lockToServiceID+" not available for staff"
-                }
-            }else{
-                if(this.services.length == 1){ //there is just one service we auto set
-                    this.service = this.services[0]
+                    this.lockToServiceIDs.push(parseInt(this.attributesEl.serviceSelection))
                 }
             }
         },
@@ -1303,12 +1297,6 @@ export default {
 .wap-wid.wclosable > .wclose:hover::before, 
 .wap-wid.wclosable > .wclose:hover::after {
     background-color: var(--wappo-header-tx);
-}
-
-.wap-front .wappointment-errors{
-    border-radius:.25em;
-    padding: .3em;
-    margin: .5em 0;
 }
 
 

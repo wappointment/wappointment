@@ -179,8 +179,8 @@ export default {
     },
     methods: {
         serviceSelectionAttribute(){
-          this.attributesEl.serviceSelection.indexOf(',')
-          let arrayids= this.attributesEl.serviceSelection.indexOf(',') !== -1? this.attributesEl.serviceSelection.split(','):[].push(parseInt(this.attributesEl.serviceSelection))
+          let arrayids = this.attributesEl.serviceSelection.indexOf(',') !== -1 ? this.attributesEl.serviceSelection.split(','):[this.attributesEl.serviceSelection]
+
           for (let i = 0; i < arrayids.length; i++) {
             arrayids[i] = parseInt(arrayids[i])
           }
@@ -478,10 +478,17 @@ export default {
 
 .wap-front .wappointment-errors{
     background-color:var(--wappo-error-tx);    
+    border-radius:.25em;
+    padding: .3em;
+    margin: .5em 0;
+}
+
+.wap-front div.wappointment-errors div{
+    color: var(--wappo-pri-tx);
 }
 
 .wap-front .wrap-calendar div.wappointment-errors{
-    color: #fff;
+    color: var(--wappo-pri-tx);
     font-size: .9em;
 }
 .phone-field-wrap .dpselect .selection::after,
