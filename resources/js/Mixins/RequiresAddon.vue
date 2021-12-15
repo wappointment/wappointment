@@ -27,7 +27,7 @@ export default {
                     label: 'Paypal payments',
                 },
                 group:{
-                    label: 'Group Appointments',
+                    label: 'Group Events',
                 },
             },
         };

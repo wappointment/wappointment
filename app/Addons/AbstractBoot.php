@@ -4,6 +4,7 @@ namespace Wappointment\Addons;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Helpers\Get;
+use Wappointment\Services\CurrentUser;
 use Wappointment\Services\Wappointment\Addons;
 
 abstract class AbstractBoot implements Boot
@@ -41,7 +42,7 @@ abstract class AbstractBoot implements Boot
 
     private static function checkIfUpdateDbRequired()
     {
-        if (static::isValid() && static::isInstalled() && is_admin() && !empty(static::$addon_db_version_required)) {
+        if (static::isValid() && static::isInstalled() && CurrentUser::isAdmin() && !empty(static::$addon_db_version_required)) {
             static::requiresUpdateCheck();
         }
     }
@@ -160,7 +161,7 @@ abstract class AbstractBoot implements Boot
 
     public static function requiresUpdateCheck()
     {
-        if ((is_admin() || strpos($_SERVER['REQUEST_URI'], 'wappointment/v1/app/migrate') !== false) && static::requiresDbUpdate()) {
+        if (CurrentUser::isAdmin() && static::requiresDbUpdate()) {
             add_filter('wappointment_addons_requires_update', [static::$name_space . 'Boot', 'addToListOfDbUpdates']);
         }
     }
