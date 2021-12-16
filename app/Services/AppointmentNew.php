@@ -176,6 +176,10 @@ class AppointmentNew
             $data = apply_filters('wappointment_set_ticket_options', $data, $slots);
         }
 
+        if (!apply_filters('wappointment_ticket_data_is_valid', true, $data, $slots, null)) {
+            throw new \WappointmentException('Cannot book, data is invalid', 1);
+        }
+
         $data['options']['buffer_time'] = (int) Settings::get('buffer_time');
         return static::getAppointmentModel()::create($data);
     }

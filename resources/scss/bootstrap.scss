@@ -161,7 +161,16 @@
     color: #737373;
     border-top: none;
 }
-
+.booking-widget-editor{
+    .nav-tabs .nav-link{
+        border-color: #e1e1e1 #e1e1e1 #e6dfdf;
+    }
+    .nav-tabs .nav-link:focus, 
+    .nav-tabs .nav-link:hover{
+        border-color: #e9ecef #e9ecef #dee2e6 !important;
+        background-color: #f9f9f9;
+    }
+}
 
 .wappointment-wrap {
     .btn.disabled {
