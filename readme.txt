@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.8
 Requires PHP: 7.0
-Stable tag: 2.3.0
+Stable tag: 2.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,21 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.4.0 - 2021-12-16 =
+* Added compatibility with fluent SMTP plugin
+* Added default availability and default assign services for new staff
+* Added option to open Zoom meeting straight in the browser without the app
+* Added mark as paid and cancel button in orders listing
+* Added option to differentiate free event from Outlook
+* Added cancel, reschedule and join meeting links to [wap_history] page
+* Added allow to cancel 30 minutes before appointments take place
+* Added pending appointment admin notification
+* Added many translatable strings
+* Fixed cache issue, staff listing in Settings > Calendars & Staff was dissappearing
+* Improved, plugin is lighter
+* Improved installation issue detection
+* Lot of improvements and refactoring
 
 = 2.3.0 - 2021-09-19 =
 * added ability to sell services on site
