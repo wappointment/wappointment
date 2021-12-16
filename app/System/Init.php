@@ -4,18 +4,18 @@ namespace Wappointment\System;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Config\Database;
-use Wappointment\Services\IcsGenerator;
 use Wappointment\Services\Settings;
 use Wappointment\Services\VersionDB;
 
 class Init
 {
     private $is_installed = false;
+    private $runs_php8 = false;
 
     public function __construct()
     {
-        $this->is_installed = Status::isInstalled();
-
+        $this->runs_php8 = Status::runningPHP8();
+        $this->is_installed =  Status::isInstalled();
         WPHelpers::requestCapture($this->is_installed);
         if (defined('WAPPOINTMENT_PDO_FAIL')) {
             //Database::capsule();
@@ -38,6 +38,7 @@ class Init
             new InitBackend($this->is_installed);
         }
     }
+
 
     public function initNotInstalled()
     {
@@ -153,6 +154,9 @@ class Init
         }
         if (defined('WP_DEBUG')) {
             $variables['debug'] = true;
+        }
+        if ($this->runs_php8) {
+            $variables['error_php8'] = $this->runs_php8;
         }
         if (is_admin()) {
             $parsed = parse_url(WPHelpers::adminUrl('admin.php'));

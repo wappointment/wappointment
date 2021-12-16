@@ -1,25 +1,28 @@
 <template>
     <transition name="fade" mode="out-in">
       <div class="wappointment-wrap" >
-          <PendingDBUpdate v-if="db_update"/>
-          <template v-else>
-              <AddonsRequireUpdate v-if="addonsRequiringUpdate.length > 0" :addonsRequiringUpdate="addonsRequiringUpdate" />
-              <UpdatePage v-else />
+          <Php8 v-if="php8"/>
+          <template>
+            <PendingDBUpdate v-if="db_update"/>
+            <template v-else>
+                <AddonsRequireUpdate v-if="addonsRequiringUpdate.length > 0" :addonsRequiringUpdate="addonsRequiringUpdate" />
+                <UpdatePage v-else />
+            </template>
+            
+            <template v-if="has_messages">
+                <transition name="fade" mode="out-in">
+                    <WPNotice v-if="fully_loaded">
+                            <p v-for="messageObj in has_messages">
+                                {{ messageObj.message }}
+                                <a v-if=" messageObj.link !== undefined" href="javascript:;" @click="goToLink(messageObj.link)">
+                                    {{ messageObj.link.label }}
+                                </a>
+                            </p>
+                    </WPNotice>
+                </transition >
+            </template>
+            <router-view @fullyLoaded="fullyLoaded" />
           </template>
-          
-          <template v-if="has_messages">
-              <transition name="fade" mode="out-in">
-                <WPNotice v-if="fully_loaded">
-                        <p v-for="messageObj in has_messages">
-                            {{ messageObj.message }}
-                            <a v-if=" messageObj.link !== undefined" href="javascript:;" @click="goToLink(messageObj.link)">
-                                {{ messageObj.link.label }}
-                            </a>
-                        </p>
-                </WPNotice>
-              </transition >
-          </template>
-          <router-view @fullyLoaded="fullyLoaded" />
       </div>
     </transition>
 </template>
@@ -27,17 +30,22 @@
 <script>
 import WPNotice from './WP/Notice'
 import PendingDBUpdate from './Ne/PendingDBUpdate'
+import Php8 from './Ne/Php8'
 import UpdatePage from './UpdatePage'
 import AddonsRequireUpdate from './Ne/AddonsRequireUpdate'
 export default {
-    components: {PendingDBUpdate, UpdatePage, AddonsRequireUpdate, WPNotice},
+    components: {PendingDBUpdate, UpdatePage, AddonsRequireUpdate, WPNotice, Php8},
     data: () => ({
         db_update: false,
+        php8: false,
         has_messages: false,
         fully_loaded: false,
         addonsRequiringUpdate: []
     }),
     created(){
+        if(window.apiWappointment.error_php8 !== undefined){
+            this.php8 = true
+        }
         if(window.wappointmentAdmin.hasPendingUpdates!== undefined ){
             this.db_update = window.wappointmentAdmin.hasPendingUpdates
         }

@@ -63,7 +63,7 @@ export default {
             return this.selectedServiceObject.locations[0]
         },
         servicesAvailable(){
-            let serviceLocked = this.attributesEl.serviceSelection !== undefined ? this.attributesEl.serviceSelection:[]
+            let serviceLocked = this.attributesEl !== undefined && this.attributesEl.serviceSelection !== undefined ? this.attributesEl.serviceSelection:[]
             return serviceLocked.length > 1?this.viewData.services.filter(s => serviceLocked.indexOf(s.id)!==-1):this.viewData.services
         },
         getServiceDuration(){

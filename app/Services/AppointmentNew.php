@@ -156,7 +156,7 @@ class AppointmentNew
         if (!$client->bookingRequest->get('package_code') && $service->isSold()) {
             $ticket->hydrateService($service);
             if (Payment::isWooActive()) {
-                $order = apply_filters('wappointment_woocommerce_generate_order', $order, $client, $ticket, $service, $slots);
+                $order = apply_filters('wappointment_woocommerce_generate_order', $order, $client, $ticket, $service, !$slots ? 1 : $slots);
             } else {
                 $order = $client->generateOrder($ticket, $slots);
             }

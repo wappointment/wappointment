@@ -15,7 +15,19 @@ class Status
 
     public static function isInstalled()
     {
+        if (static::runningPHP8()) {
+            return false;
+        }
         return (bool) self::installationTime();
+    }
+
+    public static function runningPHP8()
+    {
+        $max = '8.0.0';
+        if (version_compare(PHP_VERSION, $max) >= 0) {
+            return 'Wappointment is not yet compatible with PHP 8 yet. You can install our PHP 8 beta version following this guide: https://wappointment.com/docs/installing-php8-version/';
+        }
+        return false;
     }
 
     public static function installationTime()
