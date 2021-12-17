@@ -10,11 +10,9 @@ use Wappointment\Services\VersionDB;
 class Init
 {
     private $is_installed = false;
-    private $runs_php8 = false;
 
     public function __construct()
     {
-        $this->runs_php8 = Status::runningPHP8();
         $this->is_installed =  Status::isInstalled();
         WPHelpers::requestCapture($this->is_installed);
         if (defined('WAPPOINTMENT_PDO_FAIL')) {
