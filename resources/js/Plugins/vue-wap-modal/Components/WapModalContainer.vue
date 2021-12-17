@@ -5,7 +5,9 @@
           <WapNotify 
           v-if="isActive(notification)" 
           :notification="notification" 
-          @expired="notifyHasExpired"></WapNotify>
+          @expired="notifyHasExpired"><template v-if="notification.slots.length > 0">
+            <div v-for="line in notification.slots">{{ line }}</div>
+            </template></WapNotify>
         </template>
       </div>
       <div v-if="isReloading" class="wapmodal wapmodal-show d-flex align-items-center justify-content-center">
@@ -105,16 +107,17 @@ export default {
       this.queueNotification(title, 'success',duration)
     },
 
-    notifyError(title){
-      this.queueNotification(title, 'error')
+    notifyError(title, slots=[]){
+      this.queueNotification(title, 'error', 5, slots)
     },
 
-    queueNotification(title, type = 'success',duration = 5){
+    queueNotification(title, type = 'success', duration = 5, slots=[]){
       this.notifications.push({
         title: title,
         type: type,
         id: makeId(),
-        duration: duration
+        duration: duration,
+        slots: slots
       })
     },
 

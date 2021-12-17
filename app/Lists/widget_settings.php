@@ -58,12 +58,13 @@ return [
     ],
     'staff_selection' => [
         'pickstaff' => __('Select staff', 'wappointment'),
+        'availabilityfor' => __('Availability for', 'wappointment')
     ],
     'selection' => [
         'check_viewweek' => false,
         /* translators: %s - total slot. */
         'title' => sprintf(__('%s free slots', 'wappointment'), '[total_slots]'),
-        /* translators: %s - timezome. */
+        /* translators: %s - timezone. */
         'timezone' => sprintf(__('Timezone: %s', 'wappointment'), '[timezone]'),
         'morning' => __('Morning', 'wappointment'),
         'afternoon' => __('Afternoon', 'wappointment'),

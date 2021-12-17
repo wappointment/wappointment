@@ -35,7 +35,7 @@ export default {
             {
               type: 'row',
               class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
-              classEach: 'mr-2',
+              classEach: 'mr-2 w-100',
               fields: [
                 {
                     type: 'input',

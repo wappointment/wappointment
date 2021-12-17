@@ -47,7 +47,7 @@ trait IsAdminAppointmentJob
     protected function addReplyTo()
     {
         if (!empty($this->appointment)) {
-            $this->transport->reply($this->appointment->client->email, $this->appointment->client->name);
+            $this->transport->reply($this->client->email, $this->client->name);
         }
     }
 

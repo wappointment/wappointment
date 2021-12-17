@@ -4,7 +4,7 @@ export default class AppointmentService extends ApiV1 {
     endpoints() {
         return {
             get: {
-                method: 'get',
+                method: 'post',
                 route: 'appointment'
             },
             cancel: {

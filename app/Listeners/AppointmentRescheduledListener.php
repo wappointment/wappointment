@@ -14,6 +14,7 @@ class AppointmentRescheduledListener extends AppointmentConfirmedListener
     {
         $this->data_job = [
             'oldAppointment' => $event->getAppointment(),
+            'args' => $event->getAdditional(),
         ];
         parent::addToJobs($event);
     }

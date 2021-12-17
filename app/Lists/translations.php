@@ -13,6 +13,8 @@ return [
     'error_deleting' => __('Error while deleting', 'wappointment'),
     'error_updating' => __('Error while updating', 'wappointment'),
     'error_sending' => __('Error while sending', 'wappointment'),
+    'error_saving' => __('Error while saving', 'wappointment'),
     /* translators: %s - addon's name. */
-    'add_services_addon' => __('Add more services with the "%s" addon', 'wappointment')
+    'add_services_addon' => __('Add more services with the "%s" addon', 'wappointment'),
+    'forbidden' => __('Forbidden action', 'wappointment'),
 ];

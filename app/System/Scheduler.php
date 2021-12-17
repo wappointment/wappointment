@@ -89,6 +89,7 @@ class Scheduler
      */
     public static function checkDotCom()
     {
+
         (new \Wappointment\Services\Wappointment\DotCom)->checkForUpdates();
     }
 

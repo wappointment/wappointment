@@ -14,7 +14,7 @@ class Availability extends AbstractRepository
 
     public function query()
     {
-        return [
+        return apply_filters('wappointment_front_availability', [
             'staffs' => Staff::get(),
             'week_starts_on' => Settings::get('week_starts_on'),
             'date_format' => Settings::get('date_format'),
@@ -26,6 +26,6 @@ class Availability extends AbstractRepository
             'services' => ManageService::all(),
             'site_lang' => substr(get_locale(), 0, 2),
             'custom_fields' => Central::get('CustomFields')::get()
-        ];
+        ]);
     }
 }

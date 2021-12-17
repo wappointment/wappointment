@@ -4,11 +4,13 @@ namespace Wappointment\Jobs;
 
 use Wappointment\Models\Client;
 use Wappointment\Models\Appointment;
+use Wappointment\Models\Order;
 
 trait IsAppointmentJob
 {
     protected $client = null;
     protected $appointment = null;
+    protected $order = null;
     protected $reminder_id = false;
 
     protected function parseParams($params)
@@ -22,7 +24,12 @@ trait IsAppointmentJob
         if (!empty($params['appointment']['options'])) {
             $params['appointment']['options'] = json_encode($params['appointment']['options']);
         }
-        $this->appointment = (new Appointment)->newFromBuilder($params['appointment']);
+        $this->appointment = apply_filters('wappointment_appointment_job_params_parse', (new Appointment)->newFromBuilder($params['appointment']), $params);
+
+        if (!empty($params['order'])) {
+            $this->order = $params['order'];
+        }
+
         try {
             $this->appointment->refresh();
         } catch (\Throwable $th) {

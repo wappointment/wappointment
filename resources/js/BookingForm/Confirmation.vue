@@ -19,7 +19,7 @@
             </div>
             
         </div>
-        <div class="wdescription" v-if="isApprovalManual">{{options.confirmation.pending}}</div>
+        <div class="wdescription" v-if="isApprovalManual && appointmentIsPending">{{options.confirmation.pending}}</div>
         <div v-if="physicalSelected">
             <div class="wdescription">{{options.confirmation.physical}} </div>
             <div class="address-service">
@@ -49,6 +49,7 @@
                 </span>
             </transition>
         </div>
+        <OptionalStep :resultBooking="resultBooking" :options="options" :viewData="viewData"/>
     </div>
 </template>
 
@@ -58,11 +59,13 @@ import SaveButtons from './SaveButtons'
 import minText from './minText'
 import MixinTypeSelected from './MixinTypeSelected'
 import MixinLegacy from './MixinLegacy'
-
+import OptionalStepInit from './OptionalStep'
+const OptionalStep = window.wappointmentExtends.filter('ConfirmationOptionalStep', OptionalStepInit)
 export default {
     components: {
         BookingAddress,
         SaveButtons,
+        OptionalStep
     }, 
     mixins: [minText, MixinTypeSelected, MixinLegacy],
     props: [
@@ -74,7 +77,9 @@ export default {
         'staff',
         'options',
         'appointment_starts_at',
-        'rescheduling'
+        'rescheduling',
+        'resultBooking',
+        'viewData'
     ],
     data: () => ({
         showSaveButtons: false,
@@ -88,8 +93,7 @@ export default {
 
         if(this.showResult.location_id !== undefined) this.showResult.location = this.showResult.location_id
         if(this.service.locations !== undefined){
-            for (let i = 0; i < this.service.locations.length; i++) {
-                const element = this.service.locations[i]
+            for (const element of this.service.locations) {
                 if(element.id == this.showResult.location){
                     this.locationObj = element
                 }
@@ -109,7 +113,9 @@ export default {
         }
     },
     computed: {
-
+        appointmentIsPending(){
+            return this.appointment.status == 0
+        },
         demoDuration(){
             return this.service.duration !== undefined ? this.service.duration:this.service.options.durations[0].duration
         },
@@ -124,6 +130,7 @@ export default {
         },
         getZoomWithLink(){
             let url = apiWappointment.frontPage + (apiWappointment.frontPage.indexOf('?') === -1 ? '?':'&' )+'view=view-event&appointmentkey=' + this.appointment.edit_key
+            url = window.wappointmentExtends.filter('urlAppointmentKey', url, {appointment: this.appointment, ticket:this.resultBooking.ticket})
             return this.options.confirmation.zoom
             .replace('[meeting_link]', '<a href="'+url+'" target="_blank">')
             .replace('[/meeting_link]', '</a>')

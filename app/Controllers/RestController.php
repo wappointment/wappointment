@@ -50,11 +50,17 @@ abstract class RestController
 
     public function tryExecute($param)
     {
+        global $wappo_mb_missing;
+
         if (defined('WP_DEBUG') && WP_DEBUG === true) {
             $this->turnDebugOn();
         }
 
         try {
+            if ($wappo_mb_missing === true) {
+                throw new \WappointmentValidationException('Installation interrupted', 1, null, [['The PHP module "mbstring" is required and missing on your server']]);
+            }
+
             $args = $param->get_attributes()['args'];
 
             if (empty($args['wparams']) || empty($args['wparams']['method'])) {

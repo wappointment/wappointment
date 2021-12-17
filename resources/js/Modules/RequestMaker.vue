@@ -43,8 +43,8 @@ export default {
             'params':params, 
             'finalCallback':finalCallback, 
             'staff':staff, 
-            'successCallback':successCallback , 
-            'failureCallback':failureCallback
+            'successCallback':successCallback === false?this.serviceSuccess:successCallback , 
+            'failureCallback':failureCallback === false?this.serviceError:failureCallback
         }
         this.enqueueRequest(requestObject)
         this.queueExecuteOne()
@@ -66,14 +66,14 @@ export default {
       serviceSuccess(result) {
         if(result.data.message!==undefined) {
           if(this.afterSuccess !== undefined) this.afterSuccess(result) 
-          if(result.data.result!== undefined && result.data.result == false) return this.$WapModal().notifyError(result.data.message)
+          if(result.data.result!== undefined && result.data.result === false) return this.$WapModal().notifyError(result.data.message)
           return this.$WapModal().notifySuccess(result.data.message)
         }
       },
 
       // this method is called after response wrong from request make by execute method
       serviceError(error) {
-        if(error.response !== undefined){
+        if(error.response !== undefined){ 
           if(error.response.data.data.errors!==undefined && this.lengthGreaterThan(error.response.data.data.errors, 0)){
 
             if(this.lengthGreaterThan(error.response.data.data.errors, 1)){
@@ -81,12 +81,11 @@ export default {
 
             }else{
 
-              return this.$WapModal().notifyError( this.firstError(error.response.data.data.errors) )
+              return this.$WapModal().notifyError( this.firstError(error.response.data.data.errors))
             }
             
           }
-
-          if(error.response.data.message !== undefined)  return this.$WapModal().notifyError( error.response.data.message)
+          if(error.response.data.message !== undefined)  return this.$WapModal().notifyError( error.response.data.message, this.validationToArray(error.response.data.data.errors) )
         }
         
         if(error.message!== undefined) {
@@ -109,7 +108,18 @@ export default {
             return arrayOrObject[key][0]
           }
         }
-      },      
+      }, 
+      validationToArray(arrayOrObject){
+        let arrayReturn = []
+        if(arrayOrObject.validations !== undefined){
+          for (const key in arrayOrObject.validations) {
+            if (arrayOrObject.validations.hasOwnProperty(key)) {
+              arrayReturn.push(arrayOrObject.validations[key][0]) 
+            }
+          }
+        }
+        return arrayReturn
+      },     
     }
 }
 </script>

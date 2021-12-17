@@ -63,6 +63,6 @@ class CustomFields
 
     public static function get()
     {
-        return self::$core_fields;
+        return apply_filters('wappointment_custom_fields', self::$core_fields);
     }
 }

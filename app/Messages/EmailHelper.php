@@ -3,6 +3,7 @@
 namespace Wappointment\Messages;
 
 use Wappointment\Messages\Templates\Order as OrderMessage;
+use Wappointment\Models\Order;
 use Wappointment\Services\Payment;
 use Wappointment\Services\Settings;
 
@@ -40,35 +41,35 @@ class EmailHelper
 
     protected static function generateOrderTable($params)
     {
-        $params['appointment']->load('order');
-        $order = $params['appointment']->order->first();
-
+        if (!empty($params['order'])) {
+            $order = Order::find($params['order']['id']); //fully hydrated object
+        }
         if (empty($order)) {
             return '';
         }
 
         $rows = [
             [
-                'cells' => [__('Service', 'wappointment'), __('Price', 'wappointment')],
+                'cells' => [__('Service', 'wappointment'), __('Price', 'wappointment'), __('Quantity', 'wappointment')],
                 'class' => 'lineb',
                 'cellClass' => 'muted'
             ],
         ];
 
         foreach ($order->prices as $price) {
-            $rows[] = [$price->price->name, Payment::formatPrice($price->price->price / 100)];
+            $rows[] = [$price->price->name, Payment::formatPrice($price->price->price / 100), $price->quantity];
         }
 
         if ($order->tax_amount > 0) {
-            $rows[] = [__('Tax', 'wappointment'), Payment::formatPrice(round($order->tax_amount / 100, 2))];
+            $rows[] = [__('Tax', 'wappointment'), Payment::formatPrice(round($order->tax_amount / 100, 2)), ''];
         }
 
         $rows[] = [
-            'cells' => [__('Total', 'wappointment'), Payment::formatPrice(($order->total + $order->tax_amount) / 100)],
+            'cells' => [__('Total', 'wappointment'), Payment::formatPrice(($order->total + $order->tax_amount) / 100), ''],
             'class' => 'bold lineb linet'
         ];
         $rows[] = [
-            'cells' => [__('Status', 'wappointment'), $order['payment_label'] . ' - ' . $order['status_label']],
+            'cells' => [__('Status', 'wappointment'), $order['payment_label'] . ' - ' . $order['status_label'], ''],
             'class' => 'small'
         ];
 

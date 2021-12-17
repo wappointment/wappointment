@@ -1,6 +1,6 @@
 <template>
     <div>
-        <WAPFormGenerator ref="fgaddservice" :buttons="buttons" :schema="schemaParsed" :data="modelHolder" 
+        <WAPFormGenerator ref="fgaddservice" :buttons="buttons" :schema="schemaParsed()" :data="modelHolder" 
         @submit="save" @back="$emit('back')" @ready="isReady" :errors="errorsPassed" :key="formKey" 
         labelButton="Save" v-bind="extraOptions" :minimal="minimal" />
     </div>
@@ -13,7 +13,7 @@ import CanFormatPrice from '../../Mixins/CanFormatPrice'
 export default {
   extends: abstractView,
   mixins:[CanFormatPrice],
-  props:['dataPassed', 'servicesService', 'extraOptions', 'buttons', 'minimal'],
+  props:['dataPassed', 'servicesService', 'extraOptions', 'buttons', 'minimal', 'params'],
   data() {
       return {
           serviceService: null,
@@ -90,7 +90,7 @@ export default {
             },
             {
               type: 'opt-customfields',
-              label: 'When client select this service, display following fields',
+              label: 'When client select this service, display the following fields',
               model: 'options.fields',
               bus: true,
               listenBus: true,
@@ -106,9 +106,8 @@ export default {
                 { model:'options.fields', values: ['phone'] },
               ],
               validation: ['required']
-          },
+            },
           ]
-
       } 
   },
   created(){
@@ -119,16 +118,14 @@ export default {
   },
   computed: {
 
-    schemaParsed(){
-      return this.addPriceField(this.schema)
-      //return  window.wappointmentExtends.filter('serviceFormSchema', this.schema, this.modelHolder )
-    },
-
     errorsPassed(){
       return this.errors
     }
   },
   methods: {
+    schemaParsed(){
+      return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schema), this.params)
+    },
     generatePriceField(){
       return {
           type: 'input',

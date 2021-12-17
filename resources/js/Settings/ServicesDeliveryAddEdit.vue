@@ -103,7 +103,7 @@ export default {
             },
             {
               type: 'opt-customfields',
-              label: 'When client select this modality, display following fields',
+              label: 'When client select this modality, display the following fields',
               model: 'options.fields',
               bus: true,
               listenBus: true,

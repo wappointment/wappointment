@@ -15,12 +15,12 @@ class Main extends AbstractRoutes
                     'controller' => 'AvailabilityController',
                     'method' => 'get',
                 ],
+            ],
+            'POST' => [
                 '/appointment' => [
                     'controller' => 'AppointmentController',
                     'method' => 'get',
                 ],
-            ],
-            'POST' => [
                 '/convertdate' => [
                     'controller' => 'BookingController',
                     'method' => 'convertDate',

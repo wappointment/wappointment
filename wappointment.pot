@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-11-04T23:51:14+00:00\n"
+"POT-Creation-Date: 2021-12-15T11:27:25+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.4.0\n"
 "X-Domain: wappointment\n"
@@ -30,73 +30,69 @@ msgstr ""
 
 #: app/Controllers/AppointmentController.php:27
 #: app/Services/Appointment.php:83
-#: app/Services/Appointment.php:265
-#: app/Services/AppointmentNew.php:203
-#: app/Services/AppointmentNew.php:364
+#: app/Services/Appointment.php:266
+#: app/Services/AppointmentNew.php:244
+#: app/Services/AppointmentNew.php:425
 msgid "Can't find appointment"
+msgstr ""
+
+#: app/Controllers/AppointmentController.php:45
+#: app/Controllers/AppointmentController.php:46
+msgid "%1$s - %2$s"
 msgstr ""
 
 #: app/Controllers/AppointmentController.php:56
 msgid "Appointment has been canceled"
 msgstr ""
 
-#: app/Controllers/BookingController.php:18
-#: app/Lists/translations.php:11
-msgid "Review your fields"
-msgstr ""
-
-#: app/Controllers/BookingController.php:22
+#: app/Controllers/BookingController.php:25
 #: app/Lists/translations.php:10
 msgid "Booking failed"
 msgstr ""
 
-#: app/Controllers/BookingController.php:52
+#: app/Controllers/BookingController.php:55
 #: app/Controllers/ClientController.php:31
 msgid "Appointment recorded"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:73
-msgid "Forbidden action"
-msgstr ""
-
-#: app/Controllers/CalendarsController.php:154
+#: app/Controllers/CalendarsController.php:184
 msgid "Services assigned"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:164
+#: app/Controllers/CalendarsController.php:194
 msgid "Permissions saved"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:242
+#: app/Controllers/CalendarsController.php:272
 #: app/Services/AdminLegacy.php:18
 #: app/Services/Appointment.php:78
-#: app/Services/Appointment.php:259
-#: app/Services/AppointmentNew.php:198
-#: app/Services/AppointmentNew.php:358
+#: app/Services/Appointment.php:260
+#: app/Services/AppointmentNew.php:236
+#: app/Services/AppointmentNew.php:419
 msgid "Malformed parameter"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:263
+#: app/Controllers/CalendarsController.php:293
 msgid "Connected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:266
+#: app/Controllers/CalendarsController.php:296
 msgid "Error connecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:280
+#: app/Controllers/CalendarsController.php:310
 msgid "Disconnected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:283
+#: app/Controllers/CalendarsController.php:313
 msgid "Error disconnecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:297
+#: app/Controllers/CalendarsController.php:327
 msgid "Refreshed"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:300
+#: app/Controllers/CalendarsController.php:330
 msgid "Error refreshing"
 msgstr ""
 
@@ -108,23 +104,23 @@ msgstr ""
 msgid "Cache has been reseted"
 msgstr ""
 
-#: app/Controllers/EventsController.php:110
-msgid "Appointment cancelled"
-msgstr ""
-
-#: app/Controllers/EventsController.php:112
-msgid "Error deleting appointment"
-msgstr ""
-
-#: app/Controllers/EventsController.php:137
+#: app/Controllers/EventsController.php:28
 msgid "Cannot modify an appointment which doesn't belong to you"
 msgstr ""
 
-#: app/Controllers/EventsController.php:147
+#: app/Controllers/EventsController.php:38
+msgid "Appointment cancelled"
+msgstr ""
+
+#: app/Controllers/EventsController.php:41
+msgid "Error deleting appointment"
+msgstr ""
+
+#: app/Controllers/EventsController.php:68
 msgid "Appointment confirmed"
 msgstr ""
 
-#: app/Controllers/EventsController.php:149
+#: app/Controllers/EventsController.php:70
 msgid "Error confirming appointment"
 msgstr ""
 
@@ -186,6 +182,30 @@ msgstr ""
 
 #: app/Controllers/WizardController.php:39
 msgid "Done with the setup. Let's fill this agenda of yours!"
+msgstr ""
+
+#: app/Formatters/EventsCalendar.php:126
+msgid "Unknown client"
+msgstr ""
+
+#: app/Formatters/EventsCalendar.php:127
+msgid "%1$s - %2$smin"
+msgstr ""
+
+#: app/Formatters/EventsCalendar.php:147
+msgid "Email: %s"
+msgstr ""
+
+#: app/Formatters/EventsCalendar.php:149
+msgid "%1$s: %2$s"
+msgstr ""
+
+#: app/Formatters/EventsCalendar.php:160
+msgid "Timezone"
+msgstr ""
+
+#: app/Formatters/EventsCalendar.php:162
+msgid "Owes"
 msgstr ""
 
 #: app/Helpers/Translations.php:10
@@ -377,6 +397,10 @@ msgstr ""
 msgid "Refreshed successfully!"
 msgstr ""
 
+#: app/Lists/translations.php:11
+msgid "Review your fields"
+msgstr ""
+
 #: app/Lists/translations.php:12
 msgid "Error while creating"
 msgstr ""
@@ -393,9 +417,17 @@ msgstr ""
 msgid "Error while sending"
 msgstr ""
 
+#: app/Lists/translations.php:16
+msgid "Error while saving"
+msgstr ""
+
 #. translators: %s - addon's name.
-#: app/Lists/translations.php:17
+#: app/Lists/translations.php:18
 msgid "Add more services with the \"%s\" addon"
+msgstr ""
+
+#: app/Lists/translations.php:19
+msgid "Forbidden action"
 msgstr ""
 
 #: app/Lists/widget_fields.php:5
@@ -569,7 +601,7 @@ msgid "When"
 msgstr ""
 
 #: app/Lists/widget_settings.php:47
-#: app/Messages/EmailHelper.php:52
+#: app/Messages/EmailHelper.php:53
 #: app/WP/AppointmentHistory.php:32
 msgid "Service"
 msgstr ""
@@ -583,8 +615,8 @@ msgid "Package"
 msgstr ""
 
 #: app/Lists/widget_settings.php:50
-#: app/Models/Appointment.php:275
-#: app/Models/Appointment.php:286
+#: app/Models/Appointment/ManipulateDuration.php:26
+#: app/Models/Appointment/ManipulateDuration.php:37
 msgid "min"
 msgstr ""
 
@@ -602,199 +634,204 @@ msgstr ""
 msgid "Select staff"
 msgstr ""
 
+#. translators: %s - formatted date.
+#: app/Lists/widget_settings.php:62
+msgid "First available slots: %s"
+msgstr ""
+
 #. translators: %s - total slot.
-#: app/Lists/widget_settings.php:65
+#: app/Lists/widget_settings.php:67
 msgid "%s free slots"
 msgstr ""
 
-#. translators: %s - timezome.
-#: app/Lists/widget_settings.php:67
+#. translators: %s - timezone.
+#: app/Lists/widget_settings.php:69
 msgid "Timezone: %s"
 msgstr ""
 
-#: app/Lists/widget_settings.php:68
+#: app/Lists/widget_settings.php:70
 msgid "Morning"
 msgstr ""
 
-#: app/Lists/widget_settings.php:69
+#: app/Lists/widget_settings.php:71
 msgid "Afternoon"
 msgstr ""
 
-#: app/Lists/widget_settings.php:70
+#: app/Lists/widget_settings.php:72
 msgid "Evening"
 msgstr ""
 
-#: app/Lists/widget_settings.php:73
+#: app/Lists/widget_settings.php:75
 msgid "By Skype"
 msgstr ""
 
-#: app/Lists/widget_settings.php:74
+#: app/Lists/widget_settings.php:76
 msgid "By Phone"
 msgstr ""
 
-#: app/Lists/widget_settings.php:75
+#: app/Lists/widget_settings.php:77
 msgid "Video meeting"
 msgstr ""
 
-#: app/Lists/widget_settings.php:76
+#: app/Lists/widget_settings.php:78
 msgid "At a Location"
 msgstr ""
 
-#: app/Lists/widget_settings.php:77
+#: app/Lists/widget_settings.php:79
 msgid "Full Name:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:78
+#: app/Lists/widget_settings.php:80
 msgid "Email:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:79
+#: app/Lists/widget_settings.php:81
 msgid "Phone:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:80
+#: app/Lists/widget_settings.php:82
 msgid "Skype username:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:81
+#: app/Lists/widget_settings.php:83
 msgid "Back"
 msgstr ""
 
-#: app/Lists/widget_settings.php:82
-#: app/Lists/widget_settings.php:114
-#: app/Lists/widget_settings.php:121
-#: app/Lists/widget_settings.php:137
+#: app/Lists/widget_settings.php:84
+#: app/Lists/widget_settings.php:116
+#: app/Lists/widget_settings.php:123
+#: app/Lists/widget_settings.php:139
 msgid "Confirm"
 msgstr ""
 
 #. translators: %s - a "we process your data" link is added.
-#: app/Lists/widget_settings.php:85
+#: app/Lists/widget_settings.php:87
 msgid "See how %s"
 msgstr ""
 
 #. translators: %s - a "we process your data" link is added.
-#: app/Lists/widget_settings.php:85
+#: app/Lists/widget_settings.php:87
 msgid "we process your data"
 msgstr ""
 
-#: app/Lists/widget_settings.php:89
+#: app/Lists/widget_settings.php:91
 msgid "Appointment Booked"
 msgstr ""
 
-#: app/Lists/widget_settings.php:90
+#: app/Lists/widget_settings.php:92
 msgid "When:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:91
+#: app/Lists/widget_settings.php:93
 msgid "Service:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:92
+#: app/Lists/widget_settings.php:94
 msgid "Duration:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:93
+#: app/Lists/widget_settings.php:95
 msgid "The appointment is pending and should be quickly confirmed"
 msgstr ""
 
-#: app/Lists/widget_settings.php:94
+#: app/Lists/widget_settings.php:96
 msgid "The appointment will take place on Skype, we will call you on this account:"
 msgstr ""
 
 #. translators: %s - a "here" link is added.
-#: app/Lists/widget_settings.php:96
+#: app/Lists/widget_settings.php:98
 msgid "The appointment will take place by Video meeting online, the link will show %s."
 msgstr ""
 
 #. translators: %s - a "here" link is added.
-#: app/Lists/widget_settings.php:96
+#: app/Lists/widget_settings.php:98
 #: app/Services/Reminder.php:197
 msgid "here"
 msgstr ""
 
-#: app/Lists/widget_settings.php:97
+#: app/Lists/widget_settings.php:99
 msgid "The appointment will take place over the phone, we will call you on this number:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:98
+#: app/Lists/widget_settings.php:100
 msgid "The appointment will take place at this address:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:99
+#: app/Lists/widget_settings.php:101
 msgid "Save it to your calendar"
 msgstr ""
 
-#: app/Lists/widget_settings.php:102
+#: app/Lists/widget_settings.php:104
 msgid "Join Meeting"
 msgstr ""
 
-#: app/Lists/widget_settings.php:103
+#: app/Lists/widget_settings.php:105
 msgid "The meeting room link will appear once it is time to start."
 msgstr ""
 
 #. translators: %1$s - number of days, %2$s - number of hours, %3$s - number of minutes, %4$s - number of seconds
-#: app/Lists/widget_settings.php:105
+#: app/Lists/widget_settings.php:107
 msgid "(%1$sd %2$sh %3$sm %4$ss)"
 msgstr ""
 
-#: app/Lists/widget_settings.php:108
+#: app/Lists/widget_settings.php:110
 msgid "Cancel Appointment"
 msgstr ""
 
-#: app/Lists/widget_settings.php:109
-#: app/Lists/widget_settings.php:118
+#: app/Lists/widget_settings.php:111
+#: app/Lists/widget_settings.php:120
 msgid "Appointment details"
 msgstr ""
 
-#: app/Lists/widget_settings.php:110
+#: app/Lists/widget_settings.php:112
 msgid "Appointment has been cancelled!"
 msgstr ""
 
-#: app/Lists/widget_settings.php:111
+#: app/Lists/widget_settings.php:113
 msgid "Are you sure you want to cancel your appointment?"
 msgstr ""
 
-#: app/Lists/widget_settings.php:112
+#: app/Lists/widget_settings.php:114
 msgid "Too late to cancel"
 msgstr ""
 
-#: app/Lists/widget_settings.php:113
+#: app/Lists/widget_settings.php:115
 #: app/Lists/widget_translations.php:12
 #: app/Services/Settings.php:100
 msgid "Cancel"
 msgstr ""
 
-#: app/Lists/widget_settings.php:117
+#: app/Lists/widget_settings.php:119
 msgid "Reschedule Appointment"
 msgstr ""
 
-#: app/Lists/widget_settings.php:119
+#: app/Lists/widget_settings.php:121
 msgid "Too late to reschedule"
 msgstr ""
 
-#: app/Lists/widget_settings.php:120
+#: app/Lists/widget_settings.php:122
 #: app/Lists/widget_translations.php:11
 #: app/Services/Settings.php:99
 msgid "Reschedule"
 msgstr ""
 
-#: app/Lists/widget_settings.php:124
+#: app/Lists/widget_settings.php:126
 msgid "Pick a service"
 msgstr ""
 
-#: app/Lists/widget_settings.php:128
+#: app/Lists/widget_settings.php:130
 msgid "How long will be the session?"
 msgstr ""
 
-#: app/Lists/widget_settings.php:131
+#: app/Lists/widget_settings.php:133
 msgid "How should we meet?"
 msgstr ""
 
-#: app/Lists/widget_settings.php:135
+#: app/Lists/widget_settings.php:137
 msgid "Pay later"
 msgstr ""
 
-#: app/Lists/widget_settings.php:136
+#: app/Lists/widget_settings.php:138
 msgid "You will pay on the day of your appointment"
 msgstr ""
 
@@ -1060,19 +1097,23 @@ msgstr ""
 msgid "No appointments for that day"
 msgstr ""
 
-#: app/Messages/EmailHelper.php:52
+#: app/Messages/EmailHelper.php:53
 msgid "Price"
 msgstr ""
 
-#: app/Messages/EmailHelper.php:63
+#: app/Messages/EmailHelper.php:53
+msgid "Quantity"
+msgstr ""
+
+#: app/Messages/EmailHelper.php:64
 msgid "Tax"
 msgstr ""
 
-#: app/Messages/EmailHelper.php:67
+#: app/Messages/EmailHelper.php:68
 msgid "Total"
 msgstr ""
 
-#: app/Messages/EmailHelper.php:71
+#: app/Messages/EmailHelper.php:72
 msgid "Status"
 msgstr ""
 
@@ -1081,13 +1122,16 @@ msgstr ""
 msgid "Staff Custom Field - %s"
 msgstr ""
 
-#: app/Models/CanBook.php:21
+#: app/Models/CanBook.php:17
 msgid "Error cannot load the service"
 msgstr ""
 
-#: app/Models/CanBook.php:39
-#: app/Models/CanBook.php:52
-msgid "Error cannot book at this time"
+#: app/Models/CanBook.php:34
+#: app/Models/CanBook.php:53
+#: app/Models/CanBook.php:66
+#: app/Models/CanBookLegacy.php:44
+#: app/Services/AdminLegacy.php:71
+msgid "Error while booking"
 msgstr ""
 
 #: app/Models/Order.php:43
@@ -1145,20 +1189,24 @@ msgid "Appointment rescheduling is not allowed"
 msgstr ""
 
 #: app/Services/Appointment.php:86
-#: app/Services/AppointmentNew.php:206
+#: app/Services/AppointmentNew.php:247
 msgid "Can't reschedule appointment anymore"
 msgstr ""
 
-#: app/Services/Appointment.php:268
-#: app/Services/AppointmentNew.php:367
+#: app/Services/Appointment.php:269
+#: app/Services/AppointmentNew.php:428
 msgid "Can't cancel appointment anymore"
 msgstr ""
 
-#: app/Services/AppointmentNew.php:308
+#: app/Services/AppointmentNew.php:296
+msgid "Not allowed to book"
+msgstr ""
+
+#: app/Services/AppointmentNew.php:353
 msgid "Slot already booked"
 msgstr ""
 
-#: app/Services/AppointmentNew.php:315
+#: app/Services/AppointmentNew.php:360
 msgid "Slot not available"
 msgstr ""
 

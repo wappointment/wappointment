@@ -16,7 +16,7 @@ trait HasAppointmentFooterLinks
     private function rescheduleAndCancelLinks()
     {
         $links = '';
-        if (Settings::get('allow_rescheduling')) {
+        if (apply_filters('wappointment_reschedule_allowed', Settings::get('allow_rescheduling'), $this->params)) {
             $links .= '<a href="[appointment:linkRescheduleEvent]">' . Settings::get('reschedule_link') . '</a>';
         }
 
@@ -26,10 +26,8 @@ trait HasAppointmentFooterLinks
             }
             $links .= '<a href="[appointment:linkCancelEvent]">' . Settings::get('cancellation_link') . '</a></p>';
         }
-        if (empty($links)) {
-            return '';
-        }
-        return  $links;
+
+        return empty($links) ? '' : $links;
     }
 
     protected function footerLinks()

@@ -26,6 +26,9 @@ export default {
                 paypal:{
                     label: 'Paypal payments',
                 },
+                group:{
+                    label: 'Group Events',
+                },
             },
         };
     },

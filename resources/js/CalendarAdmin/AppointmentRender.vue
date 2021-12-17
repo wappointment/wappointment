@@ -3,31 +3,12 @@ import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
   mixins: [CanFormatPrice],
     methods:{
-      getClientAppointment(appointment){
+      getClientAppointment(event){
         return`<div>
-                <div>${this.getClientAvatarName(appointment)} </div>
-                <div>Email: ${appointment.extendedProps.client.email} </div>
-                ${this.getService(appointment)}
-                ${this.getAllAppointmentOptions(appointment)}
+                ${this.getAppointmentPicture(event, true)}
+                ${this.longDescription(event)}
                 </div>`
 
-      },
-      getAllAppointmentOptions(appointment){
-        let clientoptions = '';
-        for (const key in appointment.extendedProps.client.options) {
-          if (appointment.extendedProps.client.options.hasOwnProperty(key)) {
-            const element = appointment.extendedProps.client.options[key];
-            if(appointment.extendedProps.client.options[key]!= '' && key !== 'staff_id') {
-              if(key == 'owes'){
-                clientoptions += `<div> ${this.getFieldLabel(key)}: <span class="bg-warning p-1 rounded text-white">${this.formatPrice(appointment.extendedProps.client.options[key], true)}</span> </div>`
-              }else{
-                clientoptions += `<div> ${this.getFieldLabel(key)}: ${this.getValueLabel(key,appointment.extendedProps.client.options[key])} </div>`
-              }
-              
-            }
-          }
-        }
-        return clientoptions
       },
       getFieldLabel(namekey){
            if(namekey == 'tz') {
@@ -101,7 +82,7 @@ export default {
             let oldStart = this.toMoment(appointment.start).clone().add(dms, 'ms').add(daysdelta, 'd')
             let oldEnd = this.toMoment(appointment.end).clone().add(dms, 'ms').add(daysdelta, 'd')
             return `
-                <div>${this.getClientAppointment(appointment, 'm-auto')}<hr></div>
+                <div class="d-flex justify-content-center">${this.getClientAppointment(appointment, 'm-auto')}<hr></div>
                 <div class="d-sm-flex justify-content-around align-items-center my-2">
                     <div class="bg-light rounded p-2">
                     <div> Old schedule </div>
@@ -137,28 +118,31 @@ export default {
         return this.getBuffer(event) > 0 ?`<div class="buffer">Buffer: ${this.getBuffer(event)}min</div>`:''
       },
 
-      getClientAvatarSize(appointment, size = 30){
-        return `<img class="rounded-circle" src="${appointment.extendedProps.client.avatar.replace('s=30', 's='+size)}">`
+      getClientAvatarSize(url, size = 30, float = false){
+        return url === undefined? '' :`<img class="${this.getClassAvatar(float)}" src="${url.replace('s=30', 's='+size)}">`
       },
-      getClientAvatarName(appointment){
-        return `${this.getClientAvatarSize(appointment, 60)} ${this.cleanString(appointment.extendedProps.client.name)}`
+      getClassAvatar(float){
+        return 'rounded-circle img-fluid img-max ' + (float ? ' float-left mr-2 mt-2':'')
       },
-
-      getAppointmentHtml(event, element){
-        if(event.extendedProps.client === null ) return ''
-
-        let startM = this.toMoment(event.start)
-        let endM = this.toMoment(event.end)
-
+      getAppointmentPicture(event, float = false){
+        return  this.getClientAvatarSize(event.extendedProps.client === null ?event.extendedProps.wimage:event.extendedProps.client.avatar, 30, float)
+      },
+      getShortAppointmentHtml(event){
         return this.$sanitize(`<div class="d-flex">
-                  <div> ${this.getClientAvatarSize(event)} </div>
+                  <div> ${this.getAppointmentPicture(event)} </div>
                   <div class="ml-1">
-                  <div class="client-name"> ${this.cleanString(event.extendedProps.client.name)} </div> 
-                  ${this.getService(event)}
-                  <div class="time"> ${this.formatTime(startM)}  -  ${this.formatTime(endM)}</div>
-                  ${this.getLocation(event)}
+                    ${ this.shortDescription(event)}
                   </div>
                 </div>`)
+      },
+      longDescription(event){
+        return this.shortDescription(event) + this.loopThroughItems(event.extendedProps.display.long)
+      },
+      shortDescription(event){
+        return this.loopThroughItems(event.extendedProps.display.short)
+      },
+      loopThroughItems(object){
+        return Object.values(object).map(line => `<div>${line}</div>`).join('')
       },
       getLocation(event){
         return `<div>${this.getIconClass(event)} ${this.getLocationName(event)} </div>`
@@ -233,5 +217,8 @@ export default {
 }
 .fc-event.hover .img-bw{
   filter: none;
+}
+.rounded-circle.img-fluid.img-max {
+    max-width: 40px;
 }
 </style>

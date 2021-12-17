@@ -81,17 +81,17 @@ class CustomPage
 
     public function isAddEventToCalendarPage()
     {
-        return WPHelpers::requestGet()->input('view') == 'add-event-to-calendar';
+        return strpos(WPHelpers::requestGet()->input('view'), 'add-event-to-calendar') !== false;
     }
 
     public function isReschedulePage()
     {
-        return WPHelpers::requestGet()->input('view') == 'reschedule-event';
+        return strpos(WPHelpers::requestGet()->input('view'), 'reschedule-event') !== false;
     }
 
     public function isCancelPage()
     {
-        return WPHelpers::requestGet()->input('view') == 'cancel-event';
+        return strpos(WPHelpers::requestGet()->input('view'), 'cancel-event') !== false;
     }
 
     public function isNewAppointmentPage()

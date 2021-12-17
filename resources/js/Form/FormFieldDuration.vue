@@ -1,6 +1,6 @@
 <template>
-    <div class="w-100">
-        <label class="pl-2"v-if="[undefined,''].indexOf(label) === -1">
+    <div :class="className">
+        <label class="pl-2" v-if="[undefined,''].indexOf(label) === -1">
             {{ label}}
         </label>
         <div class="d-flex" :class="getClassWrapper">
@@ -17,7 +17,9 @@
             </range-slider> 
             <small v-if="!editableInput" data-tt="Click to edit" @click="editableInput=true">{{ formatedValue }}</small>
             <input v-else @keyup.enter.prevent.stop="updateValueInput" @focusout.prevent="updateValueInput" v-model="tempVal" type="number" size="2"/>
-            <small id="emailHelp" v-if="tip" class="form-text text-muted">{{ tip }}</small>
+            <span v-if="tip" :data-tt="tip" >
+                <span class="dashicons dashicons-info text-primary"></span>
+            </span>
         </div>
     </div>
 </template>
@@ -50,6 +52,9 @@ export default {
     computed:{
         formatedValue(){
             return this.tempVal + ' ' + (this.definition.unit !== undefined ? this.definition.unit:'')
+        },
+        className(){
+            return this.definition.class !== undefined ? this.definition.class:'w-100'
         }
     },
     watch:{

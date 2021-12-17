@@ -45,6 +45,9 @@ export default {
   },
   methods: {
       saveSettings(){
+          if(this.value==''){
+              return false
+          }
           this.settingSave(this.fieldKey, this.value)
           this.showInput = false
       },

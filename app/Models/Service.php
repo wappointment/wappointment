@@ -11,12 +11,13 @@ class Service extends Model
     protected $dates = ['deleted_at'];
     protected $table = 'wappo_services';
     protected $with = ['locations'];
-    protected $visible = ['id', 'name', 'options', 'locations', 'sorting'];
+    protected $visible = ['id', 'name', 'options', 'locations', 'sorting', 'labels'];
     protected $hidden = ['pivot'];
     protected $fillable = ['name', 'options', 'sorting'];
     protected $casts = [
         'options' => 'array',
     ];
+    protected $appends = ['labels'];
 
     public function __construct(array $attributes = [])
     {
@@ -25,6 +26,17 @@ class Service extends Model
         $this->limited = 3;
     }
 
+    public function getLabelsAttribute()
+    {
+        $labels = [];
+        if ($this->isSold()) {
+            $labels[] = ['class' => 'text-success', 'text' => 'Selling'];
+        } else {
+            $labels[] = ['class' => 'text-info', 'text' => 'Free'];
+        }
+
+        return apply_filters('wappointment_service_labels', $labels, $this);
+    }
 
     public function locations()
     {
@@ -36,10 +48,9 @@ class Service extends Model
         return !empty($this->options['woo_sellable']);
     }
 
-
     public function hasDuration($duration)
     {
-        foreach ($this->options['durations'] as $key => $duration_row) {
+        foreach ($this->options['durations'] as $duration_row) {
             if ($duration_row['duration'] == $duration) {
                 return $duration;
             }

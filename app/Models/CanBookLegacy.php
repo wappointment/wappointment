@@ -41,7 +41,7 @@ trait CanBookLegacy
 
 
         if (!$hasBeenBooked) {
-            throw new \WappointmentException('Error cannot book at this time', 1);
+            throw new \WappointmentException(__('Error while booking', 'wappointment'), 1) . '(4)';
         }
         return $hasBeenBooked;
     }

@@ -24,7 +24,6 @@
                     @loaded="loadedField(keydi)" :errors="getErrors(element)" :minimal="minimal"
                     v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :definition="element"/>
                     </div>
-                    
                 </div>
             </template>
             <slot />
@@ -197,13 +196,7 @@ export default {
             }
             return false
         },
-        getRowClass(row){
-            if(row.conditions !== undefined && !this.isVisible(row)) {
-                this.hideChildrenFields(row)
-                return 'd-none'
-            }
-            return row.class!== undefined ? row.class: 'd-flex justify-content-between flex-wrap flex-sm-wrap'
-        },
+        
         hideChildrenFields(row){
             for (let i = 0; i < row.fields.length; i++) {
                 const eldef = row.fields[i]
@@ -222,9 +215,19 @@ export default {
                 this.visibles.splice(idx, 1)
             }
         },
+        getRowClass(row){
+            if(row.conditions !== undefined && !this.isVisible(row)) {
+                this.hideChildrenFields(row)
+                return 'd-none'
+            }
+            return row.class!== undefined ? row.class: 'd-flex justify-content-between flex-wrap flex-sm-wrap'
+        },
         getRowEachClass(row, sube){
             let classStr = row.classEach!== undefined ? row.classEach: ''
-            classStr += sube!== undefined && sube.class!== undefined ? ' '+sube.class: ''
+            if(row.equal_width){
+                classStr += row.fields.length == 2? ' w-50':' w-100'
+            }
+            
             return classStr
         },
         getElementDefinition(model){

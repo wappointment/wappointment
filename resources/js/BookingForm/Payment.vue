@@ -49,9 +49,6 @@ export default {
         return this.activeMethods.find(e => e.key == activeMethod)
         
       },
-      getAppointmentReservedString(){
-        //return this.options.woo_payment.slot_reserved.replace('[minutes]', this.reserved_for) 
-      },
       serviceDuration(){
         return (this.appointmentData.end_at - this.appointmentData.start_at) / 60
       },
@@ -70,27 +67,27 @@ export default {
         this.activeMethod = methodKey
       },
       cancel(){
-        console.log('cancel')
       },
       confirm(alreadyConfirmed = false){
         if(alreadyConfirmed !== false){
-          return this.confirmSuccess()
+          return this.confirmSuccess(alreadyConfirmed)
         }
         this.$emit('loading', {loading:true})
-        this.confirmRequest().then(this.confirmFailure).catch(this.confirmSuccess)
+        this.confirmRequest().then(this.confirmSuccess).catch(this.confirmFailure)
       },
       
       async confirmRequest() {
-            return await this.servicesOrder.call('confirm', {'transaction_id':this.order.transaction_id}) 
+        return await this.servicesOrder.call('confirm', {'transaction_id':this.order.transaction_id}) 
       },
 
-      confirmFailure(){
+      confirmFailure(e){
         this.serviceError({message:'Error confirming order'})
         this.$emit('loading', {loading:false})
       },
 
-      confirmSuccess(re){
-        this.$emit('confirmedPayment', this.relations.next, {appointmentSaved:true,loading:false})
+      confirmSuccess(response){
+        let appointment_data = response.data.appointment !== undefined ? response.data.appointment:response.data.orderCompleted.appointments[0]
+        this.$emit('confirmedPayment', this.relations.next, {appointmentSaved:true,loading:false, appointmentSavedData:appointment_data})
       },
 
     }

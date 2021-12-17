@@ -24,7 +24,6 @@ class ViewsData
         return apply_filters('wappointment_viewdata_' . $key, $values);
     }
 
-
     private function getCalendarsStaff()
     {
         $calendars = Central::get('CalendarModel')::orderBy('sorting')->fetch();
@@ -34,7 +33,6 @@ class ViewsData
         }
         return $staffs;
     }
-
 
     private function regav()
     {
@@ -313,8 +311,6 @@ class ViewsData
         ];
     }
 
-
-
     private function settingsmailer()
     {
         return [
@@ -333,10 +329,8 @@ class ViewsData
         return $avails;
     }
 
-
-
     private function front_availability()
     {
-        return apply_filters('wappointment_front_availability', (new Availability)->get());
+        return (new Availability)->get();
     }
 }

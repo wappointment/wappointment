@@ -9,7 +9,7 @@ use Wappointment\Managers\Central;
 use Wappointment\WP\Helpers as WPHelpers;
 
 /**
- * LEGACY
+ * LEGACY DO NOT EDIT
  */
 class Appointment
 {
@@ -104,6 +104,7 @@ class Appointment
     {
         (new Availability())->regenerate();
 
+        //sends a rescheduled event to client and admin
         Events::dispatch(
             'AppointmentRescheduledEvent',
             [
