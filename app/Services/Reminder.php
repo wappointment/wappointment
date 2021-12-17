@@ -206,7 +206,7 @@ class Reminder
         }
 
 
-        $email_confirmed[] = ['p' => '[order:summary]'];
+        $email_confirmed[] = ['p' => ' [order:summary] '];
 
         foreach ($footer as $footerRow) {
             $email_confirmed[] = $footerRow;
