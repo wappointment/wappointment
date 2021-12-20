@@ -62,7 +62,7 @@ class AdminDailySummaryEmail extends AbstractAdminEmail
                 /* translators: %s - number of appointments. */
                 sprintf(__('New Appointments: %s', 'wappointment'), count($this->sections->appointments)),
                 /* translators: %1$s - numbers of slots, %2$s slots duration. */
-                sprintf(__('Available slots: %1$s (duration %2%s min', 'wappointment'), $this->sections->getFreeSlots($serviceDurationInSeconds), Service::get()['duration']),
+                sprintf(__('Available slots: %1$s (duration %2$s min)', 'wappointment'), $this->sections->getFreeSlots($serviceDurationInSeconds), Service::get()['duration']),
                 /* translators: %s - percentage. */
                 sprintf(__('Coverage: %s', 'wappointment'), $coverage),
             ];
