@@ -6,7 +6,7 @@
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
                 <span>V2.4.0</span>   
-                <span class="ml-2">Improvements and Group Events Aaddon</span>
+                <span class="ml-2">Improvements and Group Events addon</span>
               </h3>
               <div class="d-flex flex-align-items-center">
                   <div class="ml-3">
