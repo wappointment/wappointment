@@ -11,7 +11,7 @@
         </div>
         <SearchDropdown v-if="assignAll !== true" v-model="defaultServices" hasMulti ph="Pick default services staff" :elements="services" 
                 idKey="id" labelSearchKey="name" />
-        <button class="btn btn-primary mt-2" @click="saveDefaultServices">Save</button>
+        <button class="btn btn-primary mt-2" @click="saveDefaultServices">{{get_i18n('save', 'common') }}</button>
     </div>
 </template>
 

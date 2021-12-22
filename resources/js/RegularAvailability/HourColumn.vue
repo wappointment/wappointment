@@ -1,6 +1,6 @@
 <template> 
     <div class="hours-col text-center"  @mouseover="editTimes" @mouseout="cancelEditTimes">
-        <strong class="columnTitle ">Hours</strong>
+        <strong class="columnTitle ">{{ get_i18n( 'regav_hours', 'common') }}</strong>
         
         <div class="d-flex justify-content-center commands-hours commands-top">
             <button data-tt="Show less hours" class="btn btn-secondary btn-xs" @click="removeMin">-</button>
@@ -62,7 +62,7 @@ export default {
             this.$emit('changedPrecision', duration)
         },
         funcDisplay(element){
-            return element + 'min'
+            return this.sprintf_i18n('regav_min', 'common', element)
         },
         editTimes(){
             this.edittime = true;

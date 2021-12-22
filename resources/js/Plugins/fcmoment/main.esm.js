@@ -7,7 +7,7 @@ Docs & License: https://fullcalendar.io/
 //import * as momentNs from 'moment';
 import momentNs from '../../appMoment'
 import { createPlugin, Calendar } from '@fullcalendar/core';
-
+import browserLang from '../../Standalone/browserLang'
 var moment = momentNs; // the directly callable function
 function toMoment(date, calendar) {
     if (!(calendar instanceof Calendar)) {
@@ -52,7 +52,8 @@ function convertToMoment(input, timeZone, timeZoneOffset, locale) {
             mom.utcOffset(timeZoneOffset);
         }
     }
-    mom.locale(locale);
+
+    mom.locale(browserLang().substr(0,2));
     return mom;
 }
 function parseCmdStr(cmdStr) {

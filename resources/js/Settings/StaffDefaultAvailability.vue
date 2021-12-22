@@ -4,7 +4,7 @@
         <RegularAvailability :initValue="getRegav" :minimal="true" :viewData="defaultSettings"
              @updatedDays="updatedRA" />
         <div class="save-floating-button button-absolute" v-if="regavUpdated">
-            <button class="btn btn-primary" @click="saveDefaultRegav">Save</button>
+            <button class="btn btn-primary" @click="saveDefaultRegav">{{get_i18n('save', 'common') }}</button>
         </div>
     </div>
 </template>

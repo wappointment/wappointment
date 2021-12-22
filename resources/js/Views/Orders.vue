@@ -3,7 +3,7 @@
         <WPListingHelp @perPage="perPage" v-if="per_page" :per_page="per_page">
           <div>
             <div class="d-flex mb-2 align-items-center">
-                <label for="per_page" class="col-sm-3">Tax</label>
+                <label for="per_page" class="col-sm-3">{{get_i18n('tax', 'orders')}}</label>
                   <div class="col-sm-4">
                       <input type="text" v-model="tax" size="2" @change="saveTax"> %
                   </div>
@@ -12,7 +12,7 @@
           </div>
         </WPListingHelp>
         <div class="d-flex align-items-center">
-          <h1 class="my-3 mr-3" @click="reloadListing">Orders</h1>
+          <h1 class="my-3 mr-3" @click="reloadListing">{{ get_i18n('title', 'orders') }}</h1>
         </div>
         
         <component ref="listing" is="ordersListing" @loaded="loadedResult"/>

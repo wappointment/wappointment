@@ -2,14 +2,14 @@
 <template>
     <div class="d-flex align-items-center justify-content-between">
         <div class="commands-div">
-            <div data-tt="Booking button's title"><label><InputPh v-model="titleGiven" ph="Button title"/></label></div>
-            <div data-tt="Opens in a full screen popup"><label><input type="checkbox" v-model="popup"> Opens in a full screen popup</label></div>
-            <div data-tt="Center the widget within the container"><label><input type="checkbox" v-model="center" :disabled="popup"> Center</label></div>
-            <div data-tt="Opens the calendar's step automatically"><label><input type="checkbox" v-model="open"> Auto-open Calendar</label></div>
-            <div data-tt="Calendar will expand to the container's width"><label><input type="checkbox" v-model="large" :disabled="popup"> Full width Calendar</label></div>
-            <div data-tt="Show a week view instead of the full month"><label><input type="checkbox" v-model="week"> Week view</label></div>
+            <div data-tt="Booking button's title"><label><InputPh v-model="titleGiven" :ph="get_i18n( 'bwe_widget_button_title', 'common')"/></label></div>
+            <div data-tt="Opens in a full screen popup"><label><input type="checkbox" v-model="popup"> {{ get_i18n( 'bwe_widget_ck_fs_popup', 'common') }}</label></div>
+            <div data-tt="Center the widget within the container"><label><input type="checkbox" v-model="center" :disabled="popup"> {{ get_i18n( 'bwe_widget_ck_center', 'common') }}</label></div>
+            <div data-tt="Opens the calendar's step automatically"><label><input type="checkbox" v-model="open"> {{ get_i18n( 'bwe_widget_ck_open', 'common') }}</label></div>
+            <div data-tt="Calendar will expand to the container's width"><label><input type="checkbox" v-model="large" :disabled="popup"> {{ get_i18n( 'bwe_widget_ck_full', 'common') }}</label></div>
+            <div data-tt="Show a week view instead of the full month"><label><input type="checkbox" v-model="week"> {{ get_i18n( 'bwe_widget_ck_week', 'common') }}</label></div>
             <div data-tt="The first screen in your booking form will be a staff selection page(if you have more than one staff)">
-                <label :class="{'text-muted':staffSelected}"><input :disabled="staffSelected" type="checkbox" v-model="staffpage"> Select staff first</label></div>
+                <label :class="{'text-muted':staffSelected}"><input :disabled="staffSelected" type="checkbox" v-model="staffpage"> {{ get_i18n( 'bwe_widget_ck_staff', 'common') }}</label></div>
             <template v-if="!simple">
                 <div v-if="filteredCalendars" >
                     <SearchDropdown v-model="active_staff_id" ph="Lock Calendar/Staff" :elements="filteredCalendars" labelSearchKey="name"/>

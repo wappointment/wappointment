@@ -9,7 +9,7 @@
                 :canLockService="canLockService" />
             </div>
             <div id="shortcode_block">
-                <p class="m-0">Your shortcode: </p>
+                <p class="m-0">{{ get_i18n( 'bwe_your_sh', 'common') }}</p>
                 <ClickCopy :value="shortcode" @clicked="clicked=true"/>
                 <transition name="fade" >
                     <div v-if="clicked">
@@ -21,11 +21,9 @@
             </div>
         </div>
         <div class="mt-4" v-if="showingTip">
-            <h4>How can I use this shortcode?</h4>
-            <p>Use the shortcode in your page(s) or post(s) </p>
             <VideoIframe src="https://www.youtube.com/embed/VMi2Ry-JrGA" />
         </div>
-        <a v-else href="javascript:;" @click="showingTip=true">How can I use this shortcode?</a>
+        <a v-else href="javascript:;" @click="showingTip=true">{{ get_i18n( 'bwe_how_use_sh', 'common') }}</a>
     </div>
 </template>
 

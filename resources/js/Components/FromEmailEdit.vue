@@ -2,7 +2,7 @@
     <span>
         <span v-if="showInput" class="d-flex">
             <input class="form-control mr-2" type="text" v-model="value" @keyup.enter.prevent="saveSettings">
-            <button @click.prevent="saveSettings">Save</button>
+            <button @click.prevent="saveSettings">{{get_i18n('save', 'common') }}</button>
         </span>
         <span v-else>
             <a href="javascript:;" 

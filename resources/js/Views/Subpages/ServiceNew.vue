@@ -2,7 +2,7 @@
     <div>
         <WAPFormGenerator ref="fgaddservice" :buttons="buttons" :schema="schemaParsed()" :data="modelHolder" 
         @submit="save" @back="$emit('back')" @ready="isReady" :errors="errorsPassed" :key="formKey" 
-        labelButton="Save" v-bind="extraOptions" :minimal="minimal" />
+         v-bind="extraOptions" :minimal="minimal" />
     </div>
 </template>
 
@@ -30,7 +30,21 @@ export default {
           },
           errors:{},
           formKey: 'form',
-          schema: [
+      } 
+  },
+  created(){
+    if(this.dataPassed!== undefined){
+       this.modelHolder = Object.assign({}, this.dataPassed)
+    }
+    
+  },
+  computed: {
+
+    errorsPassed(){
+      return this.errors
+    },
+    schemai18n(){
+      return [
             {
               type: 'row',
               class: 'd-flex flex-wrap flex-sm-nowrap align-items-top fieldthumb',
@@ -43,7 +57,7 @@ export default {
                 },
                 {
                     type: 'input',
-                    label: 'Service',
+                    label: this.get_i18n('service_f_name','settings'),
                     model: 'name',
                     cast: String,
                     class: 'input-360'
@@ -52,21 +66,21 @@ export default {
             },
             {
                 type: 'checkbox',
-                label: "Sell service",
+                label: this.get_i18n('service_f_sell','settings'),
                 model: "options.woo_sellable",
                 cast: Boolean,
                 default: false,
             },
             {
               type: 'address',
-              label: 'Short Description',
+              label: this.get_i18n('service_f_sdecs','settings'),
               model: 'options.description',
               address: false,
               cast: String,
             },
             {
                 type: 'opt-multidurations',
-                label: 'Service duration(s)',
+                label: this.get_i18n('service_f_duration','settings'),
                 model: 'options.durations',
                 cast: String,
                 class: 'w-100',
@@ -83,14 +97,14 @@ export default {
             },
             {
                 type: 'opt-modality',
-                label: 'Delivery modality',
+                label: this.get_i18n('service_f_modality','settings'),
                 model: 'locations_id',
                 cast: Array,
                 checklistOptions: { value:'id'}
             },
             {
               type: 'opt-customfields',
-              label: 'When client select this service, display the following fields',
+              label: this.get_i18n('service_f_cfield','settings'),
               model: 'options.fields',
               bus: true,
               listenBus: true,
@@ -99,7 +113,7 @@ export default {
             },
             {
               type: 'countryselector',
-              label: 'Phone field accepted countries',
+              label: this.get_i18n('service_f_countries','settings'),
               model: 'options.countries',
               cast: Array,
               conditions: [
@@ -108,28 +122,16 @@ export default {
               validation: ['required']
             },
           ]
-      } 
-  },
-  created(){
-    if(this.dataPassed!== undefined){
-       this.modelHolder = Object.assign({}, this.dataPassed)
-    }
-    
-  },
-  computed: {
-
-    errorsPassed(){
-      return this.errors
     }
   },
   methods: {
     schemaParsed(){
-      return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schema), this.params)
+      return window.wappointmentExtends.filter('ServiceFormSchema', this.addPriceField(this.schemai18n), this.params)
     },
     generatePriceField(){
       return {
           type: 'input',
-          label: "Price" +' (' +this.currencyText+') ',
+          label: this.sprintf_i18n('service_f_price','settings',this.currencyText),
           model: "options.woo_price",
           cast: String,
           conditions: [

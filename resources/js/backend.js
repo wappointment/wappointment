@@ -29,6 +29,9 @@ import getRoutePush from './Standalone/getRoutePush'
 import ServicesDelivery from './Settings/ServicesDelivery'
 import VueSanitize from 'vue-sanitize'
 import FieldsGenerated from './BookingForm/FieldsGenerated'
+
+import i18n from './Mixins/i18n'
+
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
 Vue.use(VueSanitize, {
@@ -39,7 +42,7 @@ Vue.use(VueSanitize, {
     'span': ['class'],
   }
 })
-
+Vue.mixin(i18n)
 Vue.component('WapImage', WapImage)
 Vue.component('FieldsGenerated', FieldsGenerated)
 Vue.component('v-style', {

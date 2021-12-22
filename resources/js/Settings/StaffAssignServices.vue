@@ -2,7 +2,7 @@
     <StaffModalWrapper :user="user" nosave>
         <SearchDropdown v-model="value" hasMulti ph="Pick services provided by staff" :elements="services" 
                 idKey="id" labelSearchKey="name" />
-        <button class="btn btn-primary mt-2" @click="$emit('save', value)">Save</button>
+        <button class="btn btn-primary mt-2" @click="$emit('save', value)">{{get_i18n('save', 'common') }}</button>
     </StaffModalWrapper>
 </template>
 

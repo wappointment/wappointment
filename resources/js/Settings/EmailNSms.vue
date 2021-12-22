@@ -28,9 +28,9 @@
               <div class="mt-2">
                 <div v-if="!addingReminder">
                   <button class="btn btn-outline-primary my-2" @click="addingReminderStep2">
-                    <span v-if="!hasTwilio" class="mr-2 dashicons dashicons-email-alt"></span>{{ hasTwilio ? 'Add Reminder':'Add Email reminder' }}</button>
+                    <span v-if="!hasTwilio" class="mr-2 dashicons dashicons-email-alt"></span>{{ hasTwilio ? get_i18n('add_reminder', 'settings'):get_i18n('add_emailreminder', 'settings') }}</button>
                   <button v-if="!hasTwilio" class="btn btn-outline-primary my-2" @click="addingReminderSMS">
-                    <span class="mr-2 dashicons dashicons-smartphone"></span>Add SMS reminder</button>
+                    <span class="mr-2 dashicons dashicons-smartphone"></span>{{ get_i18n('add_smsreminder', 'settings') }}</button>
                 </div>
                 <div v-else>
                   <button v-for="label in labels.types" class="btn btn-secondary m-2 align-items-center d-flex" @click="addReminder(label.name)" > 
@@ -40,7 +40,7 @@
           </div>
           <div v-else >
             <div class="card" v-if="!loading">
-              <p class="h6 m-0">You don't have any reminders <button class="btn btn-secondary btn-sm" @click="addReminder('email')">Add one</button></p>
+              <p class="h6 m-0">{{ get_i18n('noreminder', 'settings') }} <button class="btn btn-secondary btn-sm" @click="addReminder('email')">{{ get_i18n('create', 'common') }} </button></p>
             </div>
           </div>
 

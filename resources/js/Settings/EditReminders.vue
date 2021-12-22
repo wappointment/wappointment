@@ -2,12 +2,12 @@
     <div class="reduced" v-if="viewData!== null">
         <WAPFormGenerator ref="mcformgenerator" :schema="schema" :data="model" :errors="errors"
         @submit="save" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
-        labelButton="Save" @ready="readytosubmit">
+         @ready="readytosubmit">
         </WAPFormGenerator>
 
         <div class="d-flex align-items-center">
           <button class="btn btn-primary" :class="{disabled: !canSend}" 
-                    :disabled="!canSend" @click="$refs.mcformgenerator.submitTrigger()">Save</button>
+                    :disabled="!canSend" @click="$refs.mcformgenerator.submitTrigger()">{{ get_i18n('save', 'common') }}</button>
           
           <component v-if="model.id !== undefined" :is="'preview-'+typeLabel(model.type, viewData.labels.types)" 
            :recipient="recipient" :viewData="viewData" @sendPreview="sendPreview"></component>
@@ -33,75 +33,7 @@ export default {
           errorMessages: [],
           errors:{},
           formKey: 'formmailconfig',
-          schema: [
-              {
-                  type: 'label',
-              },
-              {
-                  type: 'label',
-                  model: 'event',
-                  conditions: [
-                  { model:'event', values: ["9999"] }
-                ],
-              },  
-              {
-                type: 'row',
-                class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
-                classEach: 'mr-2',
-                conditions: [
-                  { model:'event', values: [1] }
-                ],
-                fields: [
-                  
-                  {
-                      type: 'duration',
-                      label: 'When is the reminder sent? (before the appointment)',
-                      model: 'options.when_number',
-                      cast: String,
-                      class: 'w-100',
-                      default: 1,
-                      min: 1,
-                      max: 60,
-                      step: 1,
-                      int: true,
-                      validation: ['required'],
-                  },
-                  {
-                    type: "select",
-                    labelDefault: 'Select unit',
-                    model: "options.when_unit",
-                    default:1,
-                    elements: [
-                      { id: 1, name: "minutes" },
-                      { id: 2, name: "hours" },
-                      { id: 3, name: "days" } 
-                    ],
-                    labelKey: 'name',
-                    validation: ['required'],
-                },
-
-                ]
-              },
-              {
-                  type: "input",
-                  label: "Subject",
-                  model: "subject",
-                  required: true,
-                  cast: String,
-                  validation: ['required'],
-              },
-              {
-                  label: "Header image",
-                  type: 'opt-imageselect',
-                  model: "email_logo",
-                  size: 'full',
-                  preview:{
-                    width:'',
-                  },
-                  required: true,
-              },
-              
-          ]
+          schema: []
           
       }
     },
@@ -109,6 +41,7 @@ export default {
       this.recipient = this.passedViewData.recipient
       this.model = Object.assign({},this.reminder)
       this.viewData = Object.assign({},this.passedViewData)
+      this.schema = this.schemai18n
       this.schema[0].label = this.model.label
       if(this.model.type == 1){
         this.schema.push({
@@ -146,6 +79,77 @@ export default {
         canSend(){
             return this.formready
         },
+        schemai18n(){
+          return [
+              {
+                  type: 'label',
+              },
+              {
+                  type: 'label',
+                  model: 'event',
+                  conditions: [
+                  { model:'event', values: ["9999"] }
+                ],
+              },  
+              {
+                type: 'row',
+                class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
+                classEach: 'mr-2',
+                conditions: [
+                  { model:'event', values: [1] }
+                ],
+                fields: [
+                  
+                  {
+                      type: 'duration',
+                      label: this.get_i18n('when_reminder_sent','settings'),
+                      model: 'options.when_number',
+                      cast: String,
+                      class: 'w-100',
+                      default: 1,
+                      min: 1,
+                      max: 60,
+                      step: 1,
+                      int: true,
+                      validation: ['required'],
+                  },
+                  {
+                    type: "select",
+                    labelDefault: this.get_i18n('select_unit','settings'),
+                    model: "options.when_unit",
+                    default:1,
+                    elements: [
+                      { id: 1, name: "minutes" },
+                      { id: 2, name: "hours" },
+                      { id: 3, name: "days" } 
+                    ],
+                    labelKey: 'name',
+                    validation: ['required'],
+                },
+
+                ]
+              },
+              {
+                  type: "input",
+                  label: this.get_i18n('subject','settings'),
+                  model: "subject",
+                  required: true,
+                  cast: String,
+                  validation: ['required'],
+              },
+              {
+                  label: this.get_i18n('header_image','settings'),
+                  type: 'opt-imageselect',
+                  model: "email_logo",
+                  size: 'full',
+                  preview:{
+                    width:'',
+                  },
+                  required: true,
+              },
+              
+          ]
+        }
     },
 
 

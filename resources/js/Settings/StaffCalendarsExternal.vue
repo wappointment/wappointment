@@ -1,6 +1,6 @@
 <template>
     <StaffModalWrapper nosave :user="user">
-        <p class="h6 text-muted">Connect your external calendars, to automatically lock times when you're already busy</p>
+        <p class="h6 text-muted">{{get_i18n('cals_connect_external_desc', 'settings') }}</p>
         <div id="buttons-block">
             <div>
                 <label for="calurl">Paste your calendar URL</label>
@@ -8,7 +8,7 @@
                     
                     <input type="text" id="calurl" v-model="calurl" class="form-control" placeholder="http://" @keyup.enter.prevent="saveCal" >
                     <div class="input-group-append">
-                        <button @click="saveCal" class="btn btn-primary btn-sm" type="button">Save Calendar</button>
+                        <button @click="saveCal" class="btn btn-primary btn-sm" type="button">{{get_i18n('save', 'common')}}</button>
                     </div>
                 </div>
                 <p class="small text-right">See how to get the URL of your calendar : 

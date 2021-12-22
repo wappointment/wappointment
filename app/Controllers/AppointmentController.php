@@ -42,6 +42,7 @@ class AppointmentController extends RestController
             'zoom_browser' => Settings::get('zoom_browser'),
             'display' => [
                 '[h2]getText(title)[/h2]',
+                /* translators: %1$s is service name, %2$s is the duration  */
                 empty($client) ? '' : sprintf(__('%1$s - %2$s', 'wappointment'), '[b]' . $client->name . '[/b]', $client->email),
                 sprintf(__('%1$s - %2$s', 'wappointment'), '[b]' . $service->name . '[/b]', $appointment->getDuration())
             ],

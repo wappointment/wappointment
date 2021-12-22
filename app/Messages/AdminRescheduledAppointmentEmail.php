@@ -31,6 +31,7 @@ class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
                     $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('date_format'))
                 ),
                 sprintf(
+                    /* translators: %1$s is replaced with the start time, %2$s is replaced with the end time  */
                     __('Time: %1$s - %2$s', 'wappointment'),
                     $this->params['oldAppointment']->start_at->setTimezone($tz)->format(Settings::get('time_format')),
                     $this->params['oldAppointment']->end_at->setTimezone($tz)->format(Settings::get('time_format'))

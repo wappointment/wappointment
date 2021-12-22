@@ -8,7 +8,7 @@
                 </div>
             </div>
         </div>
-        <a v-if="canEdit" class="small" href="javascript:;" @click="$emit('edit', calendar)">edit</a>
+        <a v-if="canEdit" class="small" href="javascript:;" @click="$emit('edit', calendar)">{{get_i18n('edit', 'common') }}</a>
     </div>
 </template>
 

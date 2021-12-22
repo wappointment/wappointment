@@ -3,10 +3,10 @@
         <template v-if="clientDataToSave === null">
             <WPListingHelp @perPage="perPage" v-if="per_page" :per_page="per_page"/>
             <div class="d-flex align-items-center">
-              <h1 class="my-3 mr-3" @click="reloadListing">Clients</h1>
+              <h1 class="my-3 mr-3" @click="reloadListing">{{ get_i18n('title', 'clients') }}</h1>
 
               <button v-if="isUserAdministrator" type="button" class="btn btn-outline-primary d-flex align-items-center" @click.prevent.stop="addCustomField">
-                <span class="dashicons dashicons-id text-primary mr-2" ></span> Add/Edit Custom Fields
+                <span class="dashicons dashicons-id text-primary mr-2" ></span> {{ get_i18n('add_cf', 'clients') }}
               </button>
             </div>
             <div v-if="Object.keys(clientListing).length > 1" class="d-flex align-items-center">
@@ -16,7 +16,7 @@
             <component ref="listing" :is="view" @editClient="editClient" @deleteClient="deleteClient" @loaded="loadedResult"/>
         </template>
         <template v-else>
-          <button class="btn btn-link btn-xs mb-2" @click="back"> < Back</button>
+          <button class="btn btn-link btn-xs mb-2" @click="back"> < {{ get_i18n('save', 'common') }}</button>
           <WAPFormGenerator ref="formgenerator" :schema="schema" classWrapper="clientage-form" :data="clientDataToSave" @submit="saveClient" />
         </template>
   </div>

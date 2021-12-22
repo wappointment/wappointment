@@ -7,15 +7,15 @@
             <div  class="ml-4">
                 <div>
                     <label v-if="!forceCreation">
-                        <input type="checkbox" v-model="bookingpage"> Create a booking page
+                        <input type="checkbox" v-model="bookingpage"> {{ get_i18n( 'wizard_4_create', 'wizard') }}
                     </label>
                     <div v-if="bookingpage || forceCreation">
                         <div class="d-flex">
-                            <InputPh v-model="page.title" ph="Page title"/>
-                            <div role="button" v-if="!editpagedetails" class="btn btn-link btn-xs" @click="editpagedetails=true">Edit page</div>
+                            <InputPh v-model="page.title" :ph="get_i18n('bwe_page_edit', 'common')"/>
+                            <div role="button" v-if="!editpagedetails" class="btn btn-link btn-xs" @click="editpagedetails=true">{{ get_i18n( 'bwe_page_edit', 'common') }}</div>
                         </div>
                         <div v-if="editpagedetails">
-                            <InputPh v-model="page.slug" ph="Page slug"/>
+                            <InputPh v-model="page.slug" :ph="get_i18n('bwe_page_slug', 'common')"/>
                             <div>
                                 <input type="radio" id="publish" v-model="page.status" value="publish">
                                 <label for="male">Publish</label>
@@ -23,11 +23,11 @@
                                 <label for="female">Draft</label>
                             </div>
                         </div>
-                        <div class="my-2">Widget's settings</div>
+                        <div class="my-2">{{ get_i18n( 'bwe_widget_settings', 'common') }}</div>
                         <div v-if="bookingpage || forceCreation" class="pl-4 small" >
                             <ShortcodeGenerator @change="updateShortCode" title="Book now" :preview="false" :simple="true"/>
                         </div>
-                        <button v-if="save" class="btn btn-primary btn-lg btn-block" @click="createPage">Create Page</button>
+                        <button v-if="save" class="btn btn-primary btn-lg btn-block" @click="createPage">{{ get_i18n( 'bwe_create_bp', 'common') }}</button>
                     </div>
                 </div>
                 
@@ -35,12 +35,12 @@
         
         </div>
         <div v-else>
-            <h5 class="text-primary">Your booking page exists already!</h5>
+            <h5 class="text-primary">{{ get_i18n( 'bwe_page_bp_exist_already', 'common') }}</h5>
             <a :href="'post.php?post='+booking_page_id+'&action=edit'" target="_blank" class="btn btn-secondary"> 
-                <span class="dashicons dashicons-edit"></span> Edit page
+                <span class="dashicons dashicons-edit"></span> {{ get_i18n( 'bwe_page_edit', 'common') }}
             </a>
             <a :href="page_link" target="_blank" class="btn btn-secondary"> 
-                <span class="dashicons dashicons-calendar-alt"></span> View Booking page
+                <span class="dashicons dashicons-calendar-alt"></span> {{ get_i18n( 'bwe_page_view', 'common') }}
             </a>
         </div>
     </div>

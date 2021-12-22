@@ -4,12 +4,12 @@
             <div class="d-flex flex-wrap">
                 <div class="progress align-self-center">
                     <div class="progress-bar progress-bar-striped bg-info" role="progressbar" :style="'width:'+((pstep/total)*100)+'%'">
-                        Wizard {{ step }} / {{ total }}
+                        {{ get_i18n( 'wizard_wizard', 'wizard') }} {{ step }} / {{ total }}
                     </div>
                 </div>
                 <div class="buttons align-self-center">
-                    <button class="btn btn-secondary btn-xs" @click="emitBack">Back</button>
-                    <button class="btn btn-primary btn-xs" :class="{'disabled':!nextEn}" :disabled="!nextEn" @click="emitNext">Next</button>
+                    <button class="btn btn-secondary btn-xs" @click="emitBack">{{ get_i18n( 'wizard_back', 'wizard') }}</button>
+                    <button class="btn btn-primary btn-xs" :class="{'disabled':!nextEn}" :disabled="!nextEn" @click="emitNext">{{ get_i18n( 'wizard_next', 'wizard') }}</button>
                 </div>
             </div>
         </div>
@@ -17,12 +17,12 @@
             <div class=" d-flex flex-wrap">
                 <div class="progress align-self-center">
                     <div class="progress-bar progress-bar-striped bg-info" role="progressbar" :style="'width:'+((pstep/total)*100)+'%'">
-                        Wizard {{ step }} / {{ total }}
+                        {{ get_i18n( 'wizard_wizard', 'wizard') }} {{ step }} / {{ total }}
                     </div>
                 </div>
                 <div class="buttons align-self-center">
-                    <button class="btn btn-secondary btn-xl" @click="emitBack">Back</button>
-                    <button  class="btn btn-primary btn-xl" :class="{'disabled':!nextEn}" :disabled="!nextEn" @click="emitNext">Next</button>
+                    <button class="btn btn-secondary btn-xl" @click="emitBack">{{ get_i18n( 'wizard_back', 'wizard') }}</button>
+                    <button  class="btn btn-primary btn-xl" :class="{'disabled':!nextEn}" :disabled="!nextEn" @click="emitNext">{{ get_i18n( 'wizard_next', 'wizard') }}</button>
                 </div>
                 <ContactButton subject="Installation Wizard" buttonClass="btn btn-secondary btn-sm" buttonLabel="Help" />
             </div>

@@ -1,15 +1,15 @@
 <template>
     <div id="buttons-block">
-        <div class="text-muted mt-4">Insert the booking form in a new page, within an existing page or within a widget area</div>
+        <div class="text-muted mt-4">{{ get_i18n( 'bwe_description', 'common') }}</div>
         <div class="d-flex my-4" >
             <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2" :class="{selected: showPage}" @click="showArea('page')">
-                <span class="dashicons dashicons-welcome-add-page mr-1"></span> Create a new page
+                <span class="dashicons dashicons-welcome-add-page mr-1"></span> {{ get_i18n( 'bwe_create_bp', 'common') }}
             </button>
             <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2" :class="{selected: showPost}" @click="showArea('post')">
-                <span class="dashicons dashicons-shortcode mr-1"></span> Using a Shortcode
+                <span class="dashicons dashicons-shortcode mr-1"></span> {{ get_i18n( 'bwe_using_sh', 'common') }} 
             </button>
             <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2" :class="{selected: showWidget}" @click="showArea('widget')">
-                <span class="dashicons dashicons-welcome-widgets-menus mr-1"></span> Using our Widget
+                <span class="dashicons dashicons-welcome-widgets-menus mr-1"></span> {{ get_i18n( 'bwe_using_wdg', 'common') }} 
             </button>
         </div>
         <div v-if="showPage">

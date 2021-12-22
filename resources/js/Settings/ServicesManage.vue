@@ -2,8 +2,9 @@
     <div >
         <div v-if="serviceListing">
             <div class="d-flex align-items-center">
-                <button @click="showService" class="btn btn-outline-primary btn my-2 btn-sm">Add 1-to-1 service</button>
-                <button @click="showGroupService" class="btn btn-outline-primary btn my-2 btn-sm ml-2"><span class="dashicons dashicons-buddicons-buddypress-logo"></span> Add Group service</button>
+                <button @click="showService" class="btn btn-outline-primary btn my-2 btn-sm">{{get_i18n('service_add1_to_1', 'settings')}}</button>
+                <button @click="showGroupService" class="btn btn-outline-primary btn my-2 btn-sm ml-2">
+                    <span class="dashicons dashicons-buddicons-buddypress-logo"></span> {{get_i18n('service_addgroup', 'settings')}}</button>
                 <InputPh v-if="elements && elements.length > 10" class="max-200 ml-2 mb-0" type="text" v-model="searchterm" ph="Search name" />
             </div>
             <div class="table-hover" v-if="elements">
@@ -11,9 +12,9 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Service</th>
-                            <th scope="col">Durations</th>
-                            <th scope="col">Delivery Modalities <a href="javascript:;" v-if="!requiresDBUpgrade" @click="goToDelivery">Manage</a></th>
+                            <th scope="col">{{get_i18n('cals_name', 'settings')}}</th>
+                            <th scope="col">{{get_i18n('service_duration', 'settings')}}</th>
+                            <th scope="col">{{get_i18n('service_delivery', 'settings')}} <a href="javascript:;" v-if="!requiresDBUpgrade" @click="goToDelivery">{{get_i18n('service_delivery_manage', 'settings')}}</a></th>
                         </tr>
                     </thead>
                     <draggable @change="orderChanged" v-model="elements" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.length > 0">
@@ -23,7 +24,7 @@
                     </draggable>
                      <tbody v-else>
                          <tr>
-                            You don't have any services yet
+                            {{get_i18n('empty_listing', 'common')}}
                         </tr>
                      </tbody>
                 </table>
@@ -35,7 +36,7 @@
             </WapModal>
         </div>
         <div v-if="serviceAdd">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('save', 'common') }}</button>
             <ServicesAddEdit :element="elementPassed" :params="paramsPassed" :legacy="false" @saved="hasBeenSaved"/>
         </div>
     </div>

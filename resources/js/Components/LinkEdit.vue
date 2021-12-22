@@ -2,7 +2,7 @@
     <div :class="getClass">
         <input v-if="showInput" type="text" class="form-control" :placeholder="fieldValue" v-model="value">
         <div v-if="showInput" class="input-group-append">
-            <button class="btn btn-outline-secondary" v-if="showInput" @click.prevent="saveSettings">Save</button>
+            <button class="btn btn-outline-primary" v-if="showInput" @click.prevent="saveSettings">{{ get_i18n('save', 'common') }}</button>
         </div>
         <a v-else href="javascript:;" :data-tt="editLabel"
             :title="editLabel" @click="showInput=!showInput">{{ value }}</a>

@@ -20,27 +20,27 @@
 
             <div id="editor-bar" class="align-self-start" v-if="editingMode">
                 <div class="mb-2" >
-                    <button class="btn btn-primary" :class="{disabled: !canSave}" @click="saveChanges"><FontAwesomeIcon :icon="['fas', 'save']" size="lg"/> Save changes</button>
+                    <button class="btn btn-primary" :class="{disabled: !canSave}" @click="saveChanges"><FontAwesomeIcon :icon="['fas', 'save']" size="lg"/> {{ get_i18n('save', 'common') }}</button>
                 </div>
                 
                 <div class="widget-fields-wrapper" >
                     <div >
                         <div>
                             <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2 btn-switch-edit" :class="{'selected' : !colorEdit}" @click="toggleColor">
-                                <span><FontAwesomeIcon :icon="['fas', 'edit']" size="lg" /> Edit Text</span>
+                                <span><FontAwesomeIcon :icon="['fas', 'edit']" size="lg" /> {{ get_i18n('bwe_edit_text', 'common') }}</span>
                             </button>
                             <button class="btn btn-secondary btn-cell btn-xs ml-0 mr-2 btn-switch-edit" :class="{'selected' : colorEdit}" @click="toggleColor">
-                                <span><FontAwesomeIcon :icon="['fas', 'palette']" size="lg" /> Edit Color</span>
+                                <span><FontAwesomeIcon :icon="['fas', 'palette']" size="lg" /> {{ get_i18n('bwe_edit_color', 'common') }}</span>
                             </button>
                         </div>
                         <div class="d-flex align-items-center my-2">
                             <div class="d-flex flex-wrap align-items-center" v-if="!colorEdit"> 
                                 <button v-if="widgetFields.general !== undefined" class="btn btn-link btn-xs mr-1 tt-below" 
-                                :class="{'selected': (step == 'general')}" @click="setStep('general', 'General')" data-tt="General"> General</button>
+                                :class="{'selected': (step == 'general')}" @click="setStep('general', 'General')" data-tt="General"> {{ get_i18n('bwe_general', 'common') }}</button>
                                 <span class="small text-muted mr-1">></span>
                                 <template v-for="(stepObj,idx) in editionsSteps">
                                      <button class="btn btn-link btn-xs mr-1 tt-below" 
-                                    :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key, getLabelForStep(stepObj.key))" :data-tt="stepObj.label"> Step {{ idx + 1 }}</button>
+                                    :class="{'selected': (step == stepObj.key)}" @click="setStep(stepObj.key, getLabelForStep(stepObj.key))" :data-tt="stepObj.label"> {{ get_i18n('bwe_step', 'common') }} {{ idx + 1 }}</button>
                                     <span v-if="idx !== editionsSteps.length-1" class="small text-muted mr-1">></span>
                                 </template>
                                
@@ -64,7 +64,7 @@
                                             allowReset></component>
                                     </div>
                                 </fieldset>
-                                <a class="my-2 small" href="javascript:;" v-if="!showAdvancedColors" @click="showAdvancedColors=true">Edit more colors</a>
+                                <a class="my-2 small" href="javascript:;" v-if="!showAdvancedColors" @click="showAdvancedColors=true">{{ get_i18n('bwe_edit_more_colors', 'common') }} </a>
                             </div>
                         </transition>
                     </div>
