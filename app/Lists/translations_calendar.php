@@ -16,4 +16,6 @@ return [
     'calendar_popup_you_cal_sel' => __('Your calendar selection:'),
     'calendar_popup_confirm_free' => __('Confirm that you are free'),
     'calendar_popup_confirm_busy' => __('Confirm that you are busy'),
+    'free_slots' => __('%s free slots', 'wappointment'),
+    'show_free_slots' => __('Show free times', 'wappointment'),
 ];

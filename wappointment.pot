@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-12-22T17:07:08+00:00\n"
+"POT-Creation-Date: 2021-12-22T17:18:46+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: wappointment\n"
@@ -482,6 +482,16 @@ msgstr ""
 msgid "Prevent new bookings"
 msgstr ""
 
+#. translators: %s - total slot.
+#: app/Lists/translations_calendar.php:19
+#: app/Lists/widget_settings.php:66
+msgid "%s free slots"
+msgstr ""
+
+#: app/Lists/translations_calendar.php:20
+msgid "Show free times"
+msgstr ""
+
 #: app/Lists/translations_clients.php:3
 #: app/WP/Menus.php:28
 msgid "Clients"
@@ -642,7 +652,7 @@ msgid "Create"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:39
-#: app/Lists/translations_js_common.php:61
+#: app/Lists/translations_js_common.php:65
 msgid "Save"
 msgstr ""
 
@@ -684,76 +694,92 @@ msgstr ""
 msgid "No results found"
 msgstr ""
 
+#: app/Lists/translations_js_common.php:48
+msgid "Clear"
+msgstr ""
+
 #: app/Lists/translations_js_common.php:49
+msgid "Search"
+msgstr ""
+
+#: app/Lists/translations_js_common.php:50
+msgid "Close"
+msgstr ""
+
+#: app/Lists/translations_js_common.php:51
+msgid "Add"
+msgstr ""
+
+#: app/Lists/translations_js_common.php:53
 msgid "Hours"
 msgstr ""
 
 #. translators: %s - minutes
-#: app/Lists/translations_js_common.php:51
+#: app/Lists/translations_js_common.php:55
 msgid "%smin"
 msgstr ""
 
 #. translators: %s - hours
-#: app/Lists/translations_js_common.php:53
+#: app/Lists/translations_js_common.php:57
 msgid "%sh"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:54
+#: app/Lists/translations_js_common.php:58
 msgid "Account Selection"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:55
+#: app/Lists/translations_js_common.php:59
 msgid "Select an account or enter an email to create a new one"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:56
+#: app/Lists/translations_js_common.php:60
 #: app/Lists/translations_settings.php:4
 msgid "Name"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:57
+#: app/Lists/translations_js_common.php:61
 msgid "Select account or enter email"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:58
+#: app/Lists/translations_js_common.php:62
 msgid "Set a timezone"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:59
+#: app/Lists/translations_js_common.php:63
 msgid "Set a standard weekly schedule"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:60
+#: app/Lists/translations_js_common.php:64
 msgid "Available Booking Days"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:62
+#: app/Lists/translations_js_common.php:66
 msgid "Send Preview"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:64
+#: app/Lists/translations_js_common.php:68
 msgid "Unlock this feature"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:65
+#: app/Lists/translations_js_common.php:69
 msgid "Unlock premium feature with our addon \"%s\""
 msgstr ""
 
-#: app/Lists/translations_js_common.php:66
+#: app/Lists/translations_js_common.php:70
 msgid "Get the Addon"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:67
+#: app/Lists/translations_js_common.php:71
 msgid "Remember"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:68
+#: app/Lists/translations_js_common.php:72
 #: app/System/InitBackend.php:176
 #: app/WP/Menus.php:29
 msgid "Settings"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:69
+#: app/Lists/translations_js_common.php:73
 msgid "Created at"
 msgstr ""
 
@@ -1067,22 +1093,6 @@ msgid "Subject"
 msgstr ""
 
 #: app/Lists/translations_settings.php:88
-msgid "Clear"
-msgstr ""
-
-#: app/Lists/translations_settings.php:89
-msgid "Search"
-msgstr ""
-
-#: app/Lists/translations_settings.php:90
-msgid "Close"
-msgstr ""
-
-#: app/Lists/translations_settings.php:91
-msgid "Add"
-msgstr ""
-
-#: app/Lists/translations_settings.php:92
 msgid "Select an image"
 msgstr ""
 
@@ -1410,11 +1420,6 @@ msgstr ""
 
 #: app/Lists/widget_settings.php:61
 msgid "Availability for"
-msgstr ""
-
-#. translators: %s - total slot.
-#: app/Lists/widget_settings.php:66
-msgid "%s free slots"
 msgstr ""
 
 #. translators: %s - timezone.
