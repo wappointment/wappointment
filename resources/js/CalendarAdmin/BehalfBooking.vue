@@ -225,6 +225,9 @@ export default {
     },
     
     methods:{
+        isEmail(field){
+            return isEmail(field)
+        },
         changedFormValue(newValue) {
             this.errorsOnFields = {}
             if(newValue.email!== undefined && newValue.email.length > 4 
