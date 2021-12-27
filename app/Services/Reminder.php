@@ -161,7 +161,7 @@ class Reminder
     {
         $footer = [
             ['p' => ''],
-            ['p' => 'Best,'],
+            ['p' => __('Best,', 'wappointment')],
             ['p' => \WappointmentLv::blogname()]
         ];
         $email_confirmed = [

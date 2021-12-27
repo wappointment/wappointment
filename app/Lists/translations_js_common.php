@@ -8,6 +8,7 @@ return [
     'countries_selector_select' => __('Select countries', 'wappointment'),
     'countries_selector_clear' => __('Clear selection', 'wappointment'),
 
+    'bwe_page_view' => __('View', 'wappointment'),
     'bwe_page_title' => __('Title', 'wappointment'),
     'bwe_page_edit' => __('Edit', 'wappointment'),
     'bwe_page_slug' => __('Slug', 'wappointment'),
