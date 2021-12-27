@@ -177,27 +177,25 @@ class EventsCalendar
 
     public function getLabelFromValues($keyOption, $optionValues)
     {
-        switch ($keyOption) {
-            case 'owes':
-                return Payment::formatPrice($optionValues / 100);
-            default:
-                $valuesLabelsDefinition = $this->customFieldsKeyValues[$keyOption] ? $this->customFieldsKeyValues[$keyOption] : $optionValues;
-                if (is_array($valuesLabelsDefinition)) {
-                    $valuesForHumans = [];
-                    $optionValues = !is_array($optionValues) ? [$optionValues] : $optionValues;
-                    foreach ($optionValues as $valueKey) {
-                        foreach ($valuesLabelsDefinition as $valueLabelDefined) {
-                            if ($valueLabelDefined['value'] == $valueKey) {
-                                $valuesForHumans[] = $valueLabelDefined['label'];
-                            }
-                        }
-                    }
-                    return implode(',', $valuesForHumans);
-                } else {
-                    return $optionValues;
-                }
+        if ($keyOption == 'owes') {
+            return Payment::formatPrice($optionValues / 100);
         }
-        return $optionValues;
+
+        $valuesLabelsDefinition = $this->customFieldsKeyValues[$keyOption] ? $this->customFieldsKeyValues[$keyOption] : $optionValues;
+        if (is_array($valuesLabelsDefinition)) {
+            $valuesForHumans = [];
+            $optionValues = !is_array($optionValues) ? [$optionValues] : $optionValues;
+            foreach ($optionValues as $valueKey) {
+                foreach ($valuesLabelsDefinition as $valueLabelDefined) {
+                    if ($valueLabelDefined['value'] == $valueKey) {
+                        $valuesForHumans[] = $valueLabelDefined['label'];
+                    }
+                }
+            }
+            return implode(',', $valuesForHumans);
+        } else {
+            return $optionValues;
+        }
     }
 
     private function events($staff_id = null)
