@@ -19,8 +19,20 @@ class CustomFields
     {
         $keyLabels = [];
         $source = static::get();
+
         foreach ($source as $customField) {
             $keyLabels[$customField['namekey']] = $customField['name'];
+        }
+        return $keyLabels;
+    }
+
+    public static function keyValues()
+    {
+        $keyLabels = [];
+        $source = static::get();
+
+        foreach ($source as $customField) {
+            $keyLabels[$customField['namekey']] = !empty($customField['values']) ? $customField['values'] : false;
         }
         return $keyLabels;
     }
