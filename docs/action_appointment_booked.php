@@ -18,6 +18,12 @@
 function my_function_wappointment_appointment_booked($eventObject)
 {
     // reached when appointment is booked and is pending
+    $client = $eventObject->getClient();
+    $appointment = $eventObject->getAppointment();
+    $phoneNumber = $client->getPhone();
+    $serviceName = $appointment->getServiceName();
+    $duration = $appointment->getDuration();
+    $startAndDayTime = $appointment->getStartsDayAndTime();
 }
 add_action('wappointment_appointment_booked', 'my_function_wappointment_appointment_booked', 10, 1);
 
