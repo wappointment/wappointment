@@ -1,4 +1,4 @@
-# Copyright (C) 2021 Wappointment
+# Copyright (C) 2022 Wappointment
 # This file is distributed under the same license as the Wappointment plugin.
 msgid ""
 msgstr ""
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2021-12-26T16:39:57+00:00\n"
+"POT-Creation-Date: 2022-01-02T18:17:29+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: wappointment\n"
@@ -185,30 +185,29 @@ msgstr ""
 msgid "Done with the setup. Let's fill this agenda of yours!"
 msgstr ""
 
-#: app/Formatters/EventsCalendar.php:126
+#: app/Formatters/EventsCalendar.php:129
 msgid "Unknown client"
 msgstr ""
 
 #. translators: %1$s is service name, %2$s is the duration
-#: app/Formatters/EventsCalendar.php:128
+#: app/Formatters/EventsCalendar.php:131
 msgid "%1$s - %2$smin"
 msgstr ""
 
 #. translators: %s - email address.
-#: app/Formatters/EventsCalendar.php:149
+#: app/Formatters/EventsCalendar.php:152
 msgid "Email: %s"
 msgstr ""
 
-#. translators: %1$s is label %2$s is value
-#: app/Formatters/EventsCalendar.php:152
+#: app/Formatters/EventsCalendar.php:158
 msgid "%1$s: %2$s"
 msgstr ""
 
-#: app/Formatters/EventsCalendar.php:163
+#: app/Formatters/EventsCalendar.php:169
 msgid "Timezone"
 msgstr ""
 
-#: app/Formatters/EventsCalendar.php:165
+#: app/Formatters/EventsCalendar.php:171
 msgid "Owes"
 msgstr ""
 
@@ -256,6 +255,7 @@ msgstr ""
 
 #: app/Installation/Steps/SeedData.php:29
 #: app/Services/Reminder.php:106
+#: app/Services/Reminder.php:164
 msgid "Best,"
 msgstr ""
 
@@ -543,128 +543,132 @@ msgid "Clear selection"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:11
-msgid "Title"
+msgid "View"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:12
-#: app/Lists/translations_js_common.php:40
-msgid "Edit"
+msgid "Title"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:13
-msgid "Slug"
+#: app/Lists/translations_js_common.php:41
+msgid "Edit"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:14
-msgid "Widget's settings"
+msgid "Slug"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:15
-msgid "Button Title"
+msgid "Widget's settings"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:16
-msgid "Opens in a full screen popup"
+msgid "Button Title"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:17
-msgid "Center"
+msgid "Opens in a full screen popup"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:18
-msgid "Auto-open Calendar"
+msgid "Center"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:19
-msgid "Full-width Calendar"
+msgid "Auto-open Calendar"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:20
-msgid "Week view"
+msgid "Full-width Calendar"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:21
-msgid "Select staff first"
+msgid "Week view"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:22
-msgid "Preview"
+msgid "Select staff first"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:23
-msgid "Your booking page exists already!"
+msgid "Preview"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:24
-msgid "Insert the booking form in a new page, within an existing page or within a widget area"
+msgid "Your booking page exists already!"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:25
-msgid "Create a new page"
+msgid "Insert the booking form in a new page, within an existing page or within a widget area"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:26
-msgid "Using a Shortcode"
+msgid "Create a new page"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:27
-msgid "Using our Widget"
+msgid "Using a Shortcode"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:28
-msgid "Your shortcode:"
+msgid "Using our Widget"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:29
-msgid "How can I use this shortcode?"
+msgid "Your shortcode:"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:30
-msgid "Customize"
+msgid "How can I use this shortcode?"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:31
-msgid "Insert"
+msgid "Customize"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:32
-msgid "Edit Text"
+msgid "Insert"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:33
-msgid "Edit Color"
+msgid "Edit Text"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:34
-msgid "General"
+msgid "Edit Color"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:35
-msgid "Step"
+msgid "General"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:36
+msgid "Step"
+msgstr ""
+
+#: app/Lists/translations_js_common.php:37
 msgid "Edit more colors"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:38
+#: app/Lists/translations_js_common.php:39
 msgid "Create"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:39
-#: app/Lists/translations_js_common.php:65
+#: app/Lists/translations_js_common.php:40
+#: app/Lists/translations_js_common.php:66
 msgid "Save"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:41
+#: app/Lists/translations_js_common.php:42
 msgid "Delete"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:42
+#: app/Lists/translations_js_common.php:43
 msgid "Sort"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:43
+#: app/Lists/translations_js_common.php:44
 #: app/Lists/translations_orders.php:6
 #: app/Lists/widget_settings.php:114
 #: app/Lists/widget_translations.php:12
@@ -672,7 +676,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:44
+#: app/Lists/translations_js_common.php:45
 #: app/Lists/widget_settings.php:83
 #: app/Lists/widget_settings.php:115
 #: app/Lists/widget_settings.php:122
@@ -680,106 +684,106 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:45
+#: app/Lists/translations_js_common.php:46
 msgid "Get Shortcode"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:46
+#: app/Lists/translations_js_common.php:47
 #: app/Lists/translations_wizard.php:3
 #: app/Lists/widget_settings.php:82
 msgid "Back"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:47
+#: app/Lists/translations_js_common.php:48
 msgid "No results found"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:48
+#: app/Lists/translations_js_common.php:49
 msgid "Clear"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:49
+#: app/Lists/translations_js_common.php:50
 msgid "Search"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:50
+#: app/Lists/translations_js_common.php:51
 msgid "Close"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:51
+#: app/Lists/translations_js_common.php:52
 msgid "Add"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:53
+#: app/Lists/translations_js_common.php:54
 msgid "Hours"
 msgstr ""
 
 #. translators: %s - minutes
-#: app/Lists/translations_js_common.php:55
+#: app/Lists/translations_js_common.php:56
 msgid "%smin"
 msgstr ""
 
 #. translators: %s - hours
-#: app/Lists/translations_js_common.php:57
+#: app/Lists/translations_js_common.php:58
 msgid "%sh"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:58
+#: app/Lists/translations_js_common.php:59
 msgid "Account Selection"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:59
+#: app/Lists/translations_js_common.php:60
 msgid "Select an account or enter an email to create a new one"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:60
+#: app/Lists/translations_js_common.php:61
 #: app/Lists/translations_settings.php:4
 msgid "Name"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:61
+#: app/Lists/translations_js_common.php:62
 msgid "Select account or enter email"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:62
+#: app/Lists/translations_js_common.php:63
 msgid "Set a timezone"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:63
+#: app/Lists/translations_js_common.php:64
 msgid "Set a standard weekly schedule"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:64
+#: app/Lists/translations_js_common.php:65
 msgid "Available Booking Days"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:66
+#: app/Lists/translations_js_common.php:67
 msgid "Send Preview"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:68
+#: app/Lists/translations_js_common.php:69
 msgid "Unlock this feature"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:69
+#: app/Lists/translations_js_common.php:70
 msgid "Unlock premium feature with our addon \"%s\""
 msgstr ""
 
-#: app/Lists/translations_js_common.php:70
+#: app/Lists/translations_js_common.php:71
 msgid "Get the Addon"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:71
+#: app/Lists/translations_js_common.php:72
 msgid "Remember"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:72
+#: app/Lists/translations_js_common.php:73
 #: app/System/InitBackend.php:176
 #: app/WP/Menus.php:29
 msgid "Settings"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:73
+#: app/Lists/translations_js_common.php:74
 msgid "Created at"
 msgstr ""
 
