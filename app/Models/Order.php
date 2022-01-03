@@ -111,6 +111,16 @@ class Order extends Model
             $options['owes'] += $this->total;
             $this->client->options = $options;
             $this->client->save();
+            $this->storeClient();
+        }
+    }
+
+    public function storeClient()
+    {
+        $options = $this->options;
+        if (empty($options['client'])) {
+            $options['client'] = $this->client;
+            $this->options = $options;
         }
     }
 
@@ -119,7 +129,9 @@ class Order extends Model
         $this->currency = Payment::currencyCode();
         $this->status = static::STATUS_PAID;
         $this->paid_at = date('Y-m-d H:i:s');
+        $this->storeClient();
     }
+
     public function setPaypal()
     {
         $this->payment = static::PAYMENT_PAYPAL;
@@ -215,8 +227,6 @@ class Order extends Model
         } else {
             $prices = $ticket->getServicesPrices();
         }
-
-
 
         foreach ($prices as $price) {
             $this->recordItem($price->id, $price->price, $ticket->getAppointment()->id, $price->generateItemName($ticket), $quantity);

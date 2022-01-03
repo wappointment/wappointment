@@ -3,7 +3,7 @@
     <div class="d-flex align-items-center justify-content-between">
         <div class="commands-div">
             <div data-tt="Booking button's title"><label><InputPh v-model="titleGiven" :ph="get_i18n( 'bwe_widget_button_title', 'common')"/></label></div>
-            <div data-tt="Opens in a full screen popup"><label><input type="checkbox" v-model="popup"> {{ get_i18n( 'bwe_widget_ck_fs_popup', 'common') }}</label></div>
+            <div data-tt="Opens in a full screen popup (avoid CSS conflicts overlays)"><label><input type="checkbox" v-model="popup"> {{ get_i18n( 'bwe_widget_ck_fs_popup', 'common') }}</label></div>
             <div data-tt="Center the widget within the container"><label><input type="checkbox" v-model="center" :disabled="popup"> {{ get_i18n( 'bwe_widget_ck_center', 'common') }}</label></div>
             <div data-tt="Opens the calendar's step automatically"><label><input type="checkbox" v-model="open"> {{ get_i18n( 'bwe_widget_ck_open', 'common') }}</label></div>
             <div data-tt="Calendar will expand to the container's width"><label><input type="checkbox" v-model="large" :disabled="popup"> {{ get_i18n( 'bwe_widget_ck_full', 'common') }}</label></div>
@@ -65,6 +65,9 @@ export default {
         canLockService: {
             default: false
         },
+        popupInit: {
+            default: false
+        },
     },
     data: () => ({
         large:false,
@@ -86,7 +89,7 @@ export default {
         this.active_staff_id = this.calendar_id
         this.active_service_id = this.service_id
         this.calendarsService = this.$vueService(new ServiceCalendar)
-        
+        this.popup = this.popupInit
         if(!this.services || !this.calendars){
             this.loadCalendars()
         }else{

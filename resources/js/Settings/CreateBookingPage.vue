@@ -25,7 +25,7 @@
                         </div>
                         <div class="my-2">{{ get_i18n( 'bwe_widget_settings', 'common') }}</div>
                         <div v-if="bookingpage || forceCreation" class="pl-4 small" >
-                            <ShortcodeGenerator @change="updateShortCode" title="Book now" :preview="false" :simple="true"/>
+                            <ShortcodeGenerator @change="updateShortCode" title="Book now" :preview="false" :simple="true" :popupInit="true"/>
                         </div>
                         <button v-if="save" class="btn btn-primary btn-lg btn-block" @click="createPage">{{ get_i18n( 'bwe_create_bp', 'common') }}</button>
                     </div>
@@ -81,7 +81,8 @@ export default {
                 largeVersion:false,
                 week:false,
                 demoAs:true,
-                center:false
+                center:false,
+                popup:true
             },
             editpagedetails:false,
             booking_page_id: 0,

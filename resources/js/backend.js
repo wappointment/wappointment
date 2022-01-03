@@ -31,6 +31,7 @@ import VueSanitize from 'vue-sanitize'
 import FieldsGenerated from './BookingForm/FieldsGenerated'
 
 import i18n from './Mixins/i18n'
+import helpers from './Mixins/helpers'
 
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
@@ -42,6 +43,7 @@ Vue.use(VueSanitize, {
     'span': ['class'],
   }
 })
+Vue.mixin(helpers)
 Vue.mixin(i18n)
 Vue.component('WapImage', WapImage)
 Vue.component('FieldsGenerated', FieldsGenerated)

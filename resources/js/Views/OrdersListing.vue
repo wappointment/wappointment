@@ -18,14 +18,17 @@
                             <div>{{ idx + 1 }} <span>(id :{{ order.id}})</span> </div> 
                         </td>
                         <td>
-                            <div class="d-flex align-items-center">
-                                <div v-if="order.client.avatar !== ''">
-                                    <img :src="order.client.avatar" :alt="order.client.name" class="border border-secondary wrounded mr-2">
+                            <div class="d-flex align-items-center" v-if="getClient(order) !== false">
+                                <div v-if="wIsEmpty(getClient(order, 'avatar'))">
+                                    <img :src="getClient(order, 'avatar')" :alt="getClient(order, 'name')" class="border border-secondary wrounded mr-2">
                                 </div>
                                 <div>
-                                    <div>{{ order.client.name }}</div>
-                                    <div>{{ order.client.email }}</div>
+                                    <div>{{ getClient(order, 'name') }}</div>
+                                    <div>{{ getClient(order, 'email') }}</div>
                                 </div>
+                            </div>
+                            <div v-else>
+                                Client data missing
                             </div>
                         </td>
                          <td>
@@ -88,6 +91,16 @@ export default {
                 }
             })
             
+        },
+        getClient(order, attribute){
+            let client = this.getStoredClientObject(order)
+            return !this.wIsEmpty(client) ? client[attribute]:false
+        },
+        getStoredClientObject(order){
+            return !this.wIsEmpty(order.options.client) ? order.options.client : this.getClientObject(order) 
+        },
+        getClientObject(order){
+            return !this.wIsEmpty(order.client)? order.client:false
         },
         async refundOrderRequest(order){
             return await this.mainService.call('refund',{order_id:order.id})
