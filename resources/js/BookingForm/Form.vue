@@ -28,8 +28,8 @@
                     :custom_fields="custom_fields" 
                     :service="service" :location="location" 
                     :options="options" :selectedSlot="selectedSlot" />
-                
-                    <div v-if="termsIsOn" class="wap-terms" v-html="getTerms"></div>
+
+                    <Terms :options="options" />
                 </div>
             </transition>
             <div class="d-flex wbtn-confirm">
@@ -56,6 +56,7 @@ import PhoneInput from './PhoneInput'
 import IsDemo from '../Mixins/IsDemo'
 import HasPaidService from '../Mixins/HasPaidService'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
+import Terms from './Terms'
 export default {
     extends: AbstractFront,
     mixins: [ MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, CanFormatPrice, HasPaidService],
@@ -66,7 +67,8 @@ export default {
         BookingAddress,
         PhoneInput,
         CountryStyle,
-        AppointmentTypeSelection
+        AppointmentTypeSelection,
+        Terms
     }, 
     data: () => ({
         phoneId:'',
@@ -98,12 +100,6 @@ export default {
     computed: {
         isCompactHeader(){
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
-        },
-        getTerms(){
-            return this.cleanString(this.options.form.terms).replace('[link]', '<a href="'+this.cleanString(this.options.form.terms_link)+'" target="_blank">').replace('[/link]', '</a>')
-        },
-        termsIsOn(){
-            return this.options.form.check_terms === true
         },
         
         requirePhoneInput(){

@@ -181,7 +181,7 @@ class EventsCalendar
             return Payment::formatPrice($optionValues / 100);
         }
 
-        $valuesLabelsDefinition = $this->customFieldsKeyValues[$keyOption] ? $this->customFieldsKeyValues[$keyOption] : $optionValues;
+        $valuesLabelsDefinition = isset($this->customFieldsKeyValues[$keyOption]) ? $this->customFieldsKeyValues[$keyOption] : $optionValues;
         if (is_array($valuesLabelsDefinition)) {
             $valuesForHumans = [];
             $optionValues = !is_array($optionValues) ? [$optionValues] : $optionValues;

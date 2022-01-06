@@ -249,7 +249,7 @@ class Order extends Model
     {
         $description = '';
         foreach ($this->prices as $price) {
-            $description .= "\n" . $price->item_name;
+            $description .= $price->appointment->getStaffName() . ' - ' . $price->item_name . ' - ' . $price->appointment->getStartsDayAndTime($price->appointment->getStaffTZ()) . " | ";
         }
         return $description;
     }

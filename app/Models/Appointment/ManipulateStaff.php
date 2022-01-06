@@ -26,6 +26,11 @@ trait ManipulateStaff
         return $this->getStaff()->staff_data['name'];
     }
 
+    public function getStaffTZ()
+    {
+        return $this->getStaff()->timezone;
+    }
+
     public function getStaffId()
     {
         return VersionDB::canServices() ? $this->staff_id : Settings::get('activeStaffId');

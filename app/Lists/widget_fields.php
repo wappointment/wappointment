@@ -195,8 +195,18 @@ return [
                     'onsite_tab' => false,
                     'onsite_desc' => false,
                     'onsite_confirm' => false,
-
                 ]
+            ],
+            [
+                'label' => __('Advanced', 'wappointment'),
+                'key' => 'avanced',
+                'fields' => [
+                    'check_tos' => ['label' => __('Add TOS and privacy links', 'wappointment'), 'tip' => __('Privacy link is in previous step', 'wappointment')],
+                    'tos_text' => ['label' => __('https://', 'wappointment'), 'conditions' => [['key' => 'swift_payment.check_tos', 'val' => true]]],
+                    'tos_link' => ['conditions' => [['key' => 'swift_payment.check_tos', 'val' => true]]],
+                ],
+                'last' => true,
+                'nodrag' => true
             ],
         ],
         'categories_draggable' => true

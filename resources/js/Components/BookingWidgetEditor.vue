@@ -77,10 +77,10 @@
                                         <draggable v-if="widgetFields[stepObj.key].categories_draggable !== undefined" 
                                             class="nav nav-tabs ml-2" 
                                             v-model="categoriesOrder" @change="changeCategoriesOrder" draggable=".candrg" >
-                                            <div v-for="(cat_object, catid) in categoriesOrder" class="nav-item d-flex candrg mr-2" 
+                                            <div v-for="(cat_object, catid) in categoriesOrder" class="nav-item d-flex mr-2" :class="{'candrg':cat_object.nodrag === undefined}" 
                                               role="button" @click="showCategory = cat_object.label">
                                                 <a class="nav-link" :class="{'active':showCategory ==  cat_object.label}">
-                                                    <span class="dashicons dashicons-move"></span>
+                                                    <span v-if="cat_object.nodrag === undefined" class="dashicons dashicons-move"></span>
                                                     {{ cat_object.label }}
                                                 </a>
                                             </div>
@@ -271,7 +271,7 @@ export default {
 
         this.stepChanged('general')
 
-        this.categoriesOrder = this.widgetFields.swift_payment.categories
+        this.categoriesOrder = this.widgetFields.swift_payment.categories.sort((a,b) => a.nodrag !== undefined ?1:0 )
 
     },
 

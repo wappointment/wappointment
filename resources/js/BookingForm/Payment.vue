@@ -5,6 +5,7 @@
         <div class="wfooter">
           <component :is="activeMethod" :order="order" :options="options" :method="selectedMethod" 
           @loading="loadingTransfer" @confirm="confirm" @cancel="cancel" />
+          <Terms :options="options" :tos="true"/>
         </div>
       </div>
     </div>
@@ -22,12 +23,13 @@ import CanLoadScriptAsync from '../Mixins/CanLoadScriptAsync'
 import onsite from './PayOnSite'
 import ElementSelected from './ElementSelected'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
+import Terms from './Terms'
 
 export default {
     extends: AbstractFront,
     mixins:[IsDemo, HasPaidService, GetImage],
     props: ['options', 'relations', 'appointmentKey', 'appointmentData', 'service', 'order'],
-    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage, onsite, ElementSelected }, {asyncLoad: CanLoadScriptAsync, GetImage:GetImage, CanFormatPrice:CanFormatPrice} ),
+    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage, onsite, ElementSelected, Terms}, {asyncLoad: CanLoadScriptAsync, GetImage:GetImage, CanFormatPrice:CanFormatPrice} ),
      data: () => ({
         servicesOrder: null,
         activeMethod: '',
