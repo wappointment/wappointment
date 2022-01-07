@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.8
 Requires PHP: 7.0
-Stable tag: 2.4.2
+Stable tag: 2.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -148,7 +148,18 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.4.2 - 2021-12-18 =
+= 2.4.3 - 2022-01-07 =
+* added TOS and privacy policy link in payment step
+* added storing user details per order
+* added extended data to email receipt
+* added translatable strings
+* fixed force user email issues
+* fixed issue behalf booking
+* fixed issue add to calendar button in booking confirmation
+* fixed custom fields issue display in calendar and emails
+* fixed issue "no idn encoder found" while sending email
+
+= 2.4.2 - 2021-12-20 =
 * Remove SQL modes to avoid issue on certain servers
 
 = 2.4.1 - 2021-12-18 =
