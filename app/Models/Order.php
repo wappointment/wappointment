@@ -251,7 +251,7 @@ class Order extends Model
         foreach ($this->prices as $price) {
             $description .= $price->appointment->getStaffName() . ' - ' . $price->item_name . ' - ' . $price->appointment->getStartsDayAndTime($price->appointment->getStaffTZ()) . " | ";
         }
-        return $description;
+        return esc_html($description);
     }
 
     public function recordItem($price_id, $price_value, $appointment_id, $item_name, $quantity = false)

@@ -27,7 +27,7 @@
                     <FieldsGenerated @changed="changedBF" @dataDemoChanged="dataDemoChanged" 
                     :custom_fields="custom_fields" 
                     :service="service" :location="location" 
-                    :options="options" :selectedSlot="selectedSlot" />
+                    :options="options" :selectedSlot="selectedSlot" :wpauth="wpauth"/>
 
                     <Terms :options="options" />
                 </div>
@@ -62,7 +62,7 @@ export default {
     mixins: [ MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, CanFormatPrice, HasPaidService],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
     'timeprops', 'relations', 'appointment_starts_at',
-    'duration', 'location', 'custom_fields', 'staffs','selectedStaff','selectedPackage','selectedVariation'],
+    'duration', 'location', 'custom_fields', 'staffs','selectedStaff','selectedPackage','selectedVariation', 'wpauth'],
     components: {
         BookingAddress,
         PhoneInput,
@@ -138,14 +138,7 @@ export default {
         getId(id){
             this.phoneId = id
         },
-
-        tryPrefill(){
-            if(window.apiWappointment.wp_user !== undefined && window.apiWappointment.wp_user.autofill){
-                this.bookingForm.email = window.apiWappointment.wp_user.email
-                this.bookingForm.name = window.apiWappointment.wp_user.name
-            }
-        },
-    
+        
         selectDefaultType(){
             this.selection = this.service.type[0]
         },

@@ -292,6 +292,11 @@ class ViewsData
             'clean_pending_every' => Settings::get('clean_pending_every'),
             'payment_active' => Payment::active(),
             'zoom_browser' => Settings::get('zoom_browser'),
+            'invoice' => Settings::get('invoice'),
+            'invoice_seller' => Settings::get('invoice_seller'),
+            'invoice_num' => Settings::get('invoice_num'),
+            'invoice_client' => Settings::get('invoice_client'),
+            'custom_fields' => Central::get('CustomFields')::get()
         ];
     }
 
@@ -331,6 +336,8 @@ class ViewsData
 
     private function front_availability()
     {
-        return (new Availability)->get();
+        $availability = (new Availability)->get();
+        $availability['wpauth'] = WPHelpers::wpUserData();
+        return $availability;
     }
 }

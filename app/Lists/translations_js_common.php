@@ -67,6 +67,7 @@ return [
     'send_preview' => __('Send Preview', 'wappointment'),
 
     'unlock' => __('Unlock this feature', 'wappointment'),
+    /* translators: %s is the addon name */
     'unlock_with_addon' => __('Unlock premium feature with our addon "%s"', 'wappointment'),
     'get_addon' => __('Get the Addon', 'wappointment'),
     'remember' => __('Remember', 'wappointment'),

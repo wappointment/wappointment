@@ -139,8 +139,9 @@ return [
 
 
         'check_tos' => false,
-        /* translators: %1$s - "the terms of sale" %2$s - "privacy policy" */
+
         'tos_text' => sprintf(
+            /* translators: %1$s - "the terms of sale" %2$s - "privacy policy" */
             __('You agree to %1$s and %2$s', 'wappointment'),
             '[linktos]' . __('the terms of sale', 'wappointment') . '[/linktos]',
             '[link]' . __('the privacy policy', 'wappointment') . '[/link]'

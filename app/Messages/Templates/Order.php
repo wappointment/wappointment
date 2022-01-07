@@ -13,6 +13,11 @@ class Order
     .bold .ordercell{
       font-weight: bold;
     }
+    .linesep{
+      border-bottom: 4px solid #cccccc;
+      padding-bottom:6px;
+      margin-bottom:6px;
+    }
     .lineb{
       border-bottom: 1px solid #cccccc;
     }

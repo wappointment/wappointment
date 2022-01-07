@@ -151,10 +151,11 @@ class EventsCalendar
             /* translators: %s - email address. */
             $data[] = sprintf(__('Email: %s', 'wappointment'), $preparedClient->email);
             foreach ($preparedClient->options as $keyOption => $optionValue) {
-                /* translators: %1$s is label %2$s is value */
+
                 if ($keyOption == 'appointment_key') {
                     continue;
                 }
+                /* translators: %1$s is label %2$s is value */
                 $data[] = sprintf(__('%1$s: %2$s', 'wappointment'), $this->getLabelFromKey($keyOption), $this->getLabelFromValues($keyOption, $optionValue));
             }
         }

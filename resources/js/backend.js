@@ -53,11 +53,17 @@ Vue.component('v-style', {
   }
 });
 Vue.mixin({
+  computed:{
+    wooIsActive(){
+      return window.wappointment_woocommerce !== undefined
+    },
+  },
   methods: {
     cleanString: function (string) {
       let doc = new DOMParser().parseFromString(string, 'text/html')
       return doc.body.textContent || ''
     },
+    
   },
 })
 

@@ -40,7 +40,7 @@ class Booking extends LegacyBooking
 
     public function isLogged()
     {
-        return Helpers::userId() > 0;
+        return Helpers::auth();
     }
 
     public function generateValidation($inputs)

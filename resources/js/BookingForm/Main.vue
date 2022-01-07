@@ -769,7 +769,8 @@ export default {
                         relatedComps: 'relatedComps', 
                         appointment_starts_at: 'appointmentStartsAt',
                         custom_fields: 'viewData.custom_fields',
-                        staffs:  'filterStaffByService'
+                        staffs:  'filterStaffByService',
+                        wpauth: 'viewData.wpauth',
                     },
                     listeners: {
                         back:'childChangedStep',
