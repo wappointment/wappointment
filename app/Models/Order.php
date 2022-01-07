@@ -4,6 +4,7 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
+use Wappointment\Formatters\BookingResult;
 use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Payment;
 
@@ -313,7 +314,11 @@ class Order extends Model
 
         do_action('wappointment_order_completed', $this);
         $this->load('appointments'); //making sure the status of the appointment is correct
-        return $this;
+
+        $arrayResult = $this->toArray();
+
+        $arrayResult['appointments'] = BookingResult::formatAppointments($this->appointments);
+        return $arrayResult;
     }
 
     public function decrementOwes()
