@@ -11,10 +11,10 @@ use Wappointment\Services\Reset;
 class InitBackend
 {
     public $menus;
-
+    public $isInstalledAndUpdated = false;
     public function __construct($isInstalledAndUpdated)
     {
-
+        $this->$isInstalledAndUpdated = $isInstalledAndUpdated;
         add_action('admin_init', [$this, 'enqueueMin']);
         add_action('admin_menu', [$this, 'registerMenuRoot']);
         if ($isInstalledAndUpdated) {
@@ -120,7 +120,7 @@ class InitBackend
                 $varJs['hasPendingUpdates'] = true;
             }
 
-            if (Status::hasMessages()) {
+            if ($this->isInstalledAndUpdated && Status::hasMessages()) {
                 $varJs['hasMessages'] = Status::hasMessages();
             }
 
