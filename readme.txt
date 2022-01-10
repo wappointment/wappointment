@@ -148,7 +148,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.4.3 - 2022-01-07 =
+= 2.4.3 - 2022-01-10 =
 * added TOS and privacy policy link in payment step
 * added storing user details per order
 * added extended data to email receipt

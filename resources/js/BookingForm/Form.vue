@@ -212,6 +212,7 @@ export default {
             if(this.selectedPackage){
                 data.package_id = this.selectedPackage.id
                 data.package_price_id = this.selectedVariation.price_id
+                data.woo_pack_variation_id = this.selectedVariation.woo_pack_variation_id
             }
             
             //turns loading mode on in parent
