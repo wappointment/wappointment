@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
       <WAPFormGenerator ref="fgaddlocation" :schema="schemaLocation" :data="modelHolder" 
-        @submit="saveLocation" :errors="errorsPassed" :key="'formKey'" labelButton="Save" :backbutton="true" backbuttonLabel="Cancel" />
+        @submit="saveLocation" :errors="errorsPassed" :key="'formKey'"  :backbutton="true" backbuttonLabel="Cancel" />
     </div>
 </template>
 

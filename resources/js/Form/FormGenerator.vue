@@ -29,7 +29,7 @@
             <slot />
             <div v-if="buttons">
                 <button v-if="backbutton" class="btn btn-secondary" type="button" @click.prevent="$emit('back')">{{ backbuttonLabel }}</button>
-                <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent.stop="submitTrigger">{{ buttonLabel }}</button>
+                <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent.stop="submitTrigger">{{ buttonLabel!=''? buttonLabel:get_i18n('save', 'common') }}</button>
             </div>
         </div>
     </form>
@@ -59,11 +59,11 @@ export default {
         }, 
         create: {
             type: String,
-            default: 'Save'
+            default: ''
         }, 
         modify: {
             type: String,
-            default: 'Save'
+            default: ''
         },
         creating: {
             type: Boolean,
@@ -391,7 +391,7 @@ export default {
          getErrorMsg(type){
              switch (type) {
                  case 'required':
-                     return 'Element is required'
+                     return this.get_i18n('form_input_required', 'common')
              }
          },
 

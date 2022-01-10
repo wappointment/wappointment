@@ -208,6 +208,28 @@
                 </label>
             </div>
           </div>
+
+          <div class="mb-2" v-if="!wooIsActive">
+            <label class="form-check-label" for="allow-invoice">
+              <div class="d-flex align-items-center" data-tt="More data will be added to the receipt sent in the confirmation email">
+                <input type="checkbox" v-model="viewData.invoice" id="allow-invoice" @change="changedVD('invoice')">
+                Enable Invoice data
+              </div>
+            </label>
+            <div v-if="viewData.invoice" class="ml-4 mt-2">
+              Seller's data
+              <textarea class="form-control"  v-model="viewData.invoice_seller" @change="changedVD('invoice_seller')" rows="2"></textarea>
+            </div>
+            <div v-if="viewData.invoice" class="ml-4 mt-2">
+              Order nº
+              <input id="hrs-before-allowed" v-model="viewData.invoice_num" @change="changedVD('invoice_num')" size="2" type="text">
+            </div>
+            <div v-if="viewData.invoice" class="ml-4 mt-2">
+              Client's data to appear on invoice
+              <FormFieldSelect :multi="true" :horizontal="true" v-model="viewData.invoice_client" :elements="viewData.custom_fields" 
+            idKey="namekey" labelSearchKey="name" ph="Select data to appear on bill" @change="changedInvoiceCfield" />
+            </div>
+          </div>
           
           <div class="mb-2">
               <label class="form-check-label" for="allow-refreshavb" data-tt="Your staff availability gets a new open day after that time">
@@ -305,7 +327,6 @@
           </button>
         </div>
     </div>
-
 
   </div>
 </template>
@@ -485,6 +506,9 @@ export default {
     },
     changedRoles(values){
       this.changed(values, 'calendar_roles')
+    },
+    changedInvoiceCfield(values){
+      this.changed(values, 'invoice_client')
     },
     changedVD(key){
       this.changed(this.viewData[key], key)

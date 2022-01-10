@@ -17,8 +17,9 @@
                 />
             </div>
             <template v-else>
-                <component :is="getComponentType(fieldObject.type)" :name="fieldObject.namekey" 
-                :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" v-model="bookingFormExtended[fieldObject.namekey]" />
+                <component v-if="canShowField(fieldObject)" :is="getComponentType(fieldObject.type)" :name="fieldObject.namekey" 
+                :error="getError(fieldObject.namekey)" :options="getFieldObject(fieldObject)" 
+                v-model="bookingFormExtended[fieldObject.namekey]" />
             </template>
         </div>
     </div>
@@ -50,7 +51,7 @@ export default {
         PhoneInput,
         DateInput
     }) ,
-    props:['duration', 'location', 'custom_fields', 'data', 'options', 'service', 'disabledEmail', 'selectedSlot', 'schema'],
+    props:['duration', 'location', 'custom_fields', 'data', 'options', 'service', 'disabledEmail', 'selectedSlot', 'schema', 'wpauth'],
     mixins: [MixinLegacy, IsDemo],
     data: () => ({
         customFields: [],
@@ -121,7 +122,7 @@ export default {
             return this.phoneSelected ? this.locationObj.options.countries:this.service.options.countries
         },
         forceEmail(){
-            return window.apiWappointment.wp_user !== undefined && window.apiWappointment.wp_user.forceemail
+            return this.wpauth !== false && this.wpauth.forceemail
         },
         componentMatches(){
             return window.wappointmentExtends.filter('bookingFormComponentsMatches', {
@@ -133,7 +134,10 @@ export default {
                 'select':'Dropdown',
                 'textarea':'TextArea',
             })
-        }
+        },
+        canShowEmail(){
+            return !(this.disabledEmail !== undefined || this.forceEmail)
+        },
     },
     methods: {
         getComponentType(type){
@@ -207,16 +211,24 @@ export default {
             this.phoneId = id
         },
         tryPrefill(){
-            if(window.apiWappointment.wp_user !== undefined && window.apiWappointment.wp_user.autofill){
-                this.bookingFormExtended.email = window.apiWappointment.wp_user.email
+            if(this.wpauth !== undefined && this.wpauth.autofill){
+                this.bookingFormExtended.email = this.wpauth.email
                 if(this.bookingFormExtended.name !== undefined){
-                    this.bookingFormExtended.name = window.apiWappointment.wp_user.name
+                    this.bookingFormExtended.name = this.wpauth.name
                 }
             }
         },
         showOnlyIfEmailOrText(fieldObject){
             if(['input','email'].indexOf(fieldObject.type) === -1) return false
-            if(fieldObject.type == 'email' && (this.disabledEmail !== undefined || this.forceEmail)) return false
+            
+            if(fieldObject.type == 'email' && this.canShowEmail) return false
+            return true
+        },
+
+        canShowField(fieldObject){
+            if(fieldObject.type == 'email'){
+                return this.canShowEmail
+            }
             return true
         },
 

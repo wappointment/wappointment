@@ -61,7 +61,7 @@
                   >H{{ n }}</a>
                 </div>
               </div>
-              <div class="dropdown" data-tt="Insert custom data dynamycally replaced when email is sent">
+              <div class="dropdown" :data-tt="get_i18n('dynamicdata', 'settings')">
                 <button
                   class="btn btn-secondary dropdown-toggle"
                   type="button"
@@ -69,7 +69,7 @@
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
-                >Fields</button>
+                >{{ get_i18n('fields', 'settings') }}</button>
                 <div
                   class="dropdown-menu"
                   :class="{'show':ddpf}"
@@ -82,7 +82,7 @@
                   >{{ etag.label }}</a>
                 </div>
               </div>
-              <div class="dropdown" :data-tt="selectionIsOn ? 'Link selection to a Wappointment page':'Select text to enable'">
+              <div class="dropdown" :data-tt="selectionIsOn ? get_i18n('linkselection', 'settings'):get_i18n('selectenable', 'settings')">
                 <button
                   class="btn btn-secondary dropdown-toggle"
                   :class="{'disabled':!selectionIsOn}"
@@ -92,7 +92,7 @@
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
-                >Links</button>
+                >{{ get_i18n('links', 'settings') }}</button>
                 <div
                   class="dropdown-menu"
                   :class="{'show':ddpl}"
@@ -105,7 +105,7 @@
                   >{{ elink.label }}</a>
                 </div>
               </div>
-              <div class="dropdown" v-if="definition.multiple_service_type" :data-tt="selectionIsOn ? 'Show selection only when condition is met':'Select text to enable'">
+              <div class="dropdown" v-if="definition.multiple_service_type" :data-tt="selectionIsOn ? get_i18n('showonlywhen', 'settings'):get_i18n('selectenable', 'settings')">
                 <button
                   class="btn btn-secondary dropdown-toggle"
                    :class="{'disabled':!selectionIsOn, 'active': (nodes.cblockphysical.active()|| nodes.cblockskype.active() || nodes.cblockphone.active() || nodes.cblockzoom.active())}"
@@ -114,7 +114,7 @@
                   data-toggle="dropdown"
                   aria-haspopup="true"
                   aria-expanded="false"
-                >Shows when</button>
+                >{{ get_i18n('showhen', 'settings') }}</button>
                 <div
                   class="dropdown-menu"
                   :class="{'show':ddpc}"
@@ -124,22 +124,22 @@
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockphone.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockphone')"
-                  >Phone appointments</a>
+                  >{{ get_i18n('phonesession', 'settings') }}</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockskype.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockskype')"
-                  >Skype appointments</a>
+                  >{{ get_i18n('skypesession', 'settings') }}</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockzoom.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockzoom')"
-                  >Video appointments</a>
+                  >{{ get_i18n('videosession', 'settings') }}</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': nodes.cblockphysical.active() }"
                     @click.prevent="conditionalBlock(nodes, 'cblockphysical')"
-                  >Appointment at an address</a>
+                  >{{ get_i18n('physicalsession', 'settings') }}</a>
                 </div>
               </div>
             </div>
@@ -515,7 +515,7 @@ export default {
 </script>
 <style>
 .dropdown[data-tt]{
-  z-index: 99999999999;
+  z-index: 9999;
 }
 .is-active {
   background-color: #ccc !important;

@@ -1,14 +1,14 @@
 <template>
     <div>
         <div v-if="deliveryListing">
-            <div><button class="btn btn-link btn-xs mb-2" @click="backToServices"> < Back to services</button></div>
-            <button @click="addElement" class="btn btn-outline-primary btn my-2">Add modality</button>
+            <div><button class="btn btn-link btn-xs mb-2" @click="backToServices"> < {{ get_i18n('back', 'common') }}</button></div>
+            <button @click="addElement" class="btn btn-outline-primary btn my-2">{{ get_i18n('create', 'common') }}</button>
             <div class="table-hover">
                 <table class="table">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Name</th>
+                            <th scope="col">{{ get_i18n('name', 'common') }}</th>
                         </tr>
                     </thead>
                     <draggable @change="orderChanged" v-model="elements" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.length > 0">
@@ -37,7 +37,7 @@
                     </draggable>
                      <tbody v-else>
                          <tr>
-                            You don't have any delivery modalities yet
+                            {{get_i18n('empty_listing', 'common')}}
                         </tr>
                      </tbody>
                 </table>
@@ -45,7 +45,7 @@
 
         </div>
         <div v-if="deliveryAdd">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back to modalities</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('back', 'common') }}</button>
             <ServicesDeliveryAddEdit :element="elementPassed" @saved="hasBeenSavedDeleted"/>
         </div>
     </div>

@@ -49,7 +49,7 @@
                 </div>
               </transition>
             
-              <button class="btn btn-primary" @click="saveChanges">Save</button>
+              <button class="btn btn-primary" @click="saveChanges">{{get_i18n('save', 'common') }}</button>
             </div>
           </div>
       </div>

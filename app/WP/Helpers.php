@@ -63,6 +63,11 @@ class Helpers
         return delete_option(self::$option_prefix . '_' . strtolower($option_name));
     }
 
+    public static function auth()
+    {
+        return is_user_logged_in();
+    }
+
     public static function currentUser()
     {
         if (\WappointmentLv::function_exists('wp_get_current_user')) {
@@ -75,17 +80,22 @@ class Helpers
     {
         return get_bloginfo('name');
     }
-    public static function wpUserData()
+    public static function wpUserData($permission = false)
     {
+        if (!static::auth()) {
+            return false;
+        }
         $wp_user = self::currentUser();
-
-        return [
+        $data = [
             'email' => $wp_user->user_email,
             'name' => $wp_user->display_name,
-            'permissions' => array_keys($wp_user->allcaps),
             'autofill' => Settings::get('autofill'),
             'forceemail' => Settings::get('forceemail')
         ];
+        if ($permission) {
+            $data['permissions'] = array_keys($wp_user->allcaps);
+        }
+        return $data;
     }
 
     public static function getUserBy($field, $value)

@@ -5,11 +5,11 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Client</th>
-                        <th scope="col">Total</th>
-                        <th scope="col">Order</th>
-                        <th scope="col">Paid at</th>
-                        <th scope="col">Created at</th>
+                        <th scope="col">{{get_i18n('client', 'orders') }}</th>
+                        <th scope="col">{{get_i18n('total', 'orders') }}</th>
+                        <th scope="col">{{get_i18n('order', 'orders') }}</th>
+                        <th scope="col">{{get_i18n('paid_at', 'orders') }}</th>
+                        <th scope="col">{{get_i18n('created_at', 'common') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -18,25 +18,28 @@
                             <div>{{ idx + 1 }} <span>(id :{{ order.id}})</span> </div> 
                         </td>
                         <td>
-                            <div class="d-flex align-items-center">
-                                <div v-if="order.client.avatar !== ''">
-                                    <img :src="order.client.avatar" :alt="order.client.name" class="border border-secondary wrounded mr-2">
+                            <div class="d-flex align-items-center" v-if="getClient(order) !== false">
+                                <div v-if="wIsEmpty(getClient(order, 'avatar'))">
+                                    <img :src="getClient(order, 'avatar')" :alt="getClient(order, 'name')" class="border border-secondary wrounded mr-2">
                                 </div>
                                 <div>
-                                    <div>{{ order.client.name }}</div>
-                                    <div>{{ order.client.email }}</div>
+                                    <div>{{ getClient(order, 'name') }}</div>
+                                    <div>{{ getClient(order, 'email') }}</div>
                                 </div>
+                            </div>
+                            <div v-else>
+                                Client data missing
                             </div>
                         </td>
                          <td>
-                            <div>{{ formatPrice(order.charge, true) }} <span class="text-muted small ml-2" v-if="order.tax_amount>0"> (Tax {{ formatPrice(order.tax_amount, true) }})</span></div>
+                            <div>{{ formatPrice(order.charge, true) }} <span class="text-muted small ml-2" v-if="order.tax_amount>0"> ({{get_i18n('tax', 'orders') }} {{ formatPrice(order.tax_amount, true) }})</span></div>
                             <div :class="getStatusClass(order.status)" >
                                 {{ order.status_label }}
                             </div>
-                            <a v-if="order.status==2" href="javascript:;" class="btn btn-secondary btn-sm" @click="refund(order)">Refund</a>
+                            <a v-if="order.status==2" href="javascript:;" class="btn btn-secondary btn-sm" @click="refund(order)">{{get_i18n('refund', 'orders') }}</a>
                             <span v-if="order.status==1">
-                                <a href="javascript:;" class="btn btn-secondary btn-sm" @click="markAsPaid(order)">Mark as paid</a>
-                                <a href="javascript:;" class="btn btn-secondary btn-sm" @click="cancelOrder(order)">Cancel</a>
+                                <a href="javascript:;" class="btn btn-secondary btn-sm" @click="markAsPaid(order)">{{get_i18n('markpaid', 'orders') }}</a>
+                                <a href="javascript:;" class="btn btn-secondary btn-sm" @click="cancelOrder(order)">{{get_i18n('cancel', 'orders') }}</a>
                             </span>
                             <div class="text-muted small">{{ order.payment_label}}</div>
                         </td>
@@ -54,7 +57,7 @@
                        
                     </tr>
                     <tr v-else>
-                        You don't have any orders yet
+                        {{get_i18n('empty_listing', 'common')}}
                     </tr>
                 </tbody>
             </table>
@@ -88,6 +91,16 @@ export default {
                 }
             })
             
+        },
+        getClient(order, attribute){
+            let client = this.getStoredClientObject(order)
+            return !this.wIsEmpty(client) ? client[attribute]:false
+        },
+        getStoredClientObject(order){
+            return !this.wIsEmpty(order.options.client) ? order.options.client : this.getClientObject(order) 
+        },
+        getClientObject(order){
+            return !this.wIsEmpty(order.client)? order.client:false
         },
         async refundOrderRequest(order){
             return await this.mainService.call('refund',{order_id:order.id})

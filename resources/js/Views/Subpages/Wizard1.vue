@@ -1,9 +1,9 @@
 <template>
   <div class="container m-4">
-    <h1>Welcome to Wappointment</h1>
+    <h1>{{ get_i18n( 'wizard_1_title', 'wizard') }}</h1>
     <div class="d-flex align-items-center welcome-wrapper">
       <div class="mr-4">
-        <h3>Let's start with a quick setup</h3>
+        <h3>{{ get_i18n( 'wizard_1_lets', 'wizard') }}</h3>
         <div v-if="suggest_ugly_links" class="bg-danger p-4 rounded">
           <div class="h5 text-white">Your site has permalinks "ON" but your server is not properly configured to handle them. </div>
           <div class="h6 text-white">You should configure either your server or switch to ugly permalinks. <a href="https://wordpress.org/support/article/using-permalinks/" target="_blank">Read about permalinks</a></div>
@@ -15,15 +15,15 @@
         </div>
         <div v-else>
             <p class="mt-4">
-            <button class="btn btn-primary btn-lg btn-block" @click="wizardStep1">Start setup</button>
+            <button class="btn btn-primary btn-lg btn-block" @click="wizardStep1">{{ get_i18n( 'wizard_1_start', 'wizard') }}</button>
           </p>
           <div class="small">
-            <div>Please, contact us if a problem occurs during the installation.</div>
-            <div>You can reach us at <a href="https://wappointment.com/support" target="_blank">https://wappointment.com/support</a></div>
+            <div>{{ get_i18n( 'wizard_1_ask_help1', 'wizard') }}</div>
+            <div>{{ get_i18n( 'wizard_1_ask_help2', 'wizard') }}<a href="https://wappointment.com/support" target="_blank">https://wappointment.com/support</a></div>
           </div>
         </div>
       </div>
-      <img :src="getWelcomeImg" class="img-fluid" alt="Welcome to wappointment">
+      <img :src="getWelcomeImg" class="img-fluid" :alt="get_i18n( 'wizard_1_title', 'wizard')">
     </div>
     <Notifications v-if="installationErrors.length > 0" :messages="installationErrors" :title="mainInstallationError"></Notifications>
     
@@ -35,7 +35,6 @@
 import AppService from '../../Services/V1/App' // your service
 import abstractview from '../Abstract'
 const Notifications = () => import(/* webpackChunkName: "wappo-notif" */ '../../WP/Notifications')
-//import Notifications from '../../WP/Notifications'
 
 export default {
   extends: abstractview,

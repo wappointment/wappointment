@@ -3,19 +3,21 @@
     <div class="d-flex items-align-center sm-text">
         <a v-if="!viewingFreeSlot" @click="$emit('getFreeSlots')" 
         class="tt-below d-none d-md-block ml-2 align-self-center" 
-        data-tt="Show free times" href="javascript:;">{{ totalSlots }} Free slots</a>
-        <a v-else class="tt-below align-self-center" href="javascript:;" @click="$emit('getEdition')">Back to edition</a>
+        :data-tt="get_i18n('show_free_slots','calendar')" href="javascript:;">
+        {{ sprintf_i18n('free_slots','calendar', totalSlots)}}</a>
+        <a v-else class="tt-below align-self-center" href="javascript:;" @click="$emit('getEdition')">{{ sprintf_i18n('back','common', totalSlots)}}</a>
         <div class="dropdown ml-2 d-flex align-self-center" :class="{'show': toggle}" v-if="durations.length > 1">
             <button class="btn btn-secondary btn-light dropdown-toggle btn-xs" type="button" @click="toggle=!toggle">
-                {{selectedDuration}}min 
+                {{ sprintf_i18n('regav_min','common', selectedDuration)}} 
             </button>
             <div class="dropdown-menu" :class="{'show': toggle}">
-                <a class="dropdown-item" href="javascript:;" v-for="durationI in durations" @click="selectDuration(durationI)"> {{durationI}}min </a>
+                <a class="dropdown-item" href="javascript:;" v-for="durationI in durations" @click="selectDuration(durationI)"> 
+                    {{ sprintf_i18n('regav_min','common', durationI)}}</a>
             </div>
             
         </div>
         <div v-else class="ml-2 align-self-center text-muted">
-            {{selectedDuration}}min 
+            {{ sprintf_i18n('regav_min','common', selectedDuration)}} 
         </div>
     </div>
 </template>

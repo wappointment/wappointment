@@ -5,9 +5,9 @@
                 <thead>
                     <tr>
                         <th scope="col">#</th>
-                        <th scope="col">Client</th>
-                        <th scope="col">Phone</th>
-                        <th scope="col">Skype</th>
+                        <th scope="col">{{ get_i18n('client', 'clients') }}</th>
+                        <th scope="col">{{ get_i18n('phone', 'clients') }}</th>
+                        <th scope="col">{{ get_i18n('skype', 'clients') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -21,15 +21,15 @@
                                     <img :src="client.avatar" :alt="client.name" class="border border-secondary wrounded mr-2">
                                 </div>
                                 <div>
-                                    <div>{{ client.name }} <span v-if="owes(client)"class="owes bg-warning p-1 rounded text-white">Owes: {{owes(client)}}</span></div>
+                                    <div>{{ client.name }} <span v-if="owes(client)"class="owes bg-warning p-1 rounded text-white">{{ get_i18n('owes', 'clients') }} {{owes(client)}}</span></div>
                                     <div>{{ client.email }} </div>
                                 </div>
                             </div>
                             <div class="wlist-actions text-muted">
-                                <span data-tt="Edit" v-if="canEditClient">
+                                <span :data-tt="get_i18n('edit', 'common')" v-if="canEditClient">
                                     <span class="dashicons dashicons-edit" @click.prevent.stop="$emit('editClient', client)"></span>
                                 </span>
-                                <span data-tt="Delete" v-if="canDeleteClient">
+                                <span :data-tt="get_i18n('delete', 'common')" v-if="canDeleteClient">
                                     <span class="dashicons dashicons-trash" @click.prevent.stop="$emit('deleteClient', client.id)"></span>
                                 </span>
                             </div>
@@ -43,7 +43,7 @@
                         </td>
                     </tr>
                     <tr v-else>
-                        You don't have any clients yet
+                        {{get_i18n('empty_listing', 'common')}}
                     </tr>
                 </tbody>
             </table>

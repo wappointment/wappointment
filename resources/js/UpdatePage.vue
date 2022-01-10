@@ -5,38 +5,41 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.0</span>   
-                <span class="ml-2">Improvements and Group Events Aaddon</span>
+                <span>V2.4.3</span>   
+                <span class="ml-2">Bug fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
                   <div class="ml-3">
-                    <p>Our latest release comes with the release of a new addon too "Group Events". It will let you create events for which multiple participants will be able to attend.</p>
+                    
+                    <p>Changelog:</p>
+                    <ol>
+                        <li>added TOS and privacy policy link in payment step</li>
+                        <li>added storing user details per order</li>
+                        <li>added extended data to email receipt</li>
+                        <li>added translatable strings</li>
+                        <li>fixed force user email issues</li>
+                        <li>fixed issue behalf booking</li>
+                        <li>fixed issue add to calendar button in booking confirmation</li>
+                        <li>fixed custom fields issue display in calendar and emails</li>
+                        <li>fixed issue "no idn encoder found" while sending email</li>
+                    </ol>
+                    
+                  </div>
+              </div>
+
+            <div class="wprevious-version" >
+                <a href="javascript:;" @click="showPrevious">View previous version 2.4.0</a>
+                <div v-if="previous">
+                    <div>
+                        <p>Our latest release comes with the release of a new addon too "Group Events". It will let you create events for which multiple participants will be able to attend.</p>
                     <div class="d-flex">
                         <img :src="wappoVersionImage('240', 'group_event.png')" alt="Group Event" class="imgv240 img-fluid img-update" title="Group Event"/>
                         <img :src="wappoVersionImage('240', 'group_event_slots_selection.png')" alt="Slot selection" class="imgv240 img-fluid img-update" title="Slot selection"/>
                     </div>
-                    <p>Changelog:</p>
-                    <ol>
-                        <li>Added default settings for availability and assigned services for new staff</li>
-                        <li>Added option to open Zoom meeting straight in the browser without the app</li>
-                        <li>Added mark as paid and cancel button in orders listing</li>
-                        <li>Added option to differentiate free event from Outlook</li>
-                        <li>Added cancel, reschedule and join meeting links to [wap_history] page</li>
-                        <li>Added allow to cancel 30 minutes before appointments take place</li>
-                        <li>Added pending appointment admin notification</li>
-                        <li>Added many translatable strings</li>
-                        <li>Added compatibility with fluent SMTP plugin</li>
-                        <li>Fixed cache issue, staff listing in <strong>Settings > Calendars & Staff</strong> was dissappearing</li>
-                        <li>Improved, plugin is lighter</li>
-                        <li>Improved installation issue detection</li>
-                        <li>Many improvements and refactoring</li>
-                    </ol>
-                  </div>
-              </div>
-
-            <div class="p-4 ml-4"  v-if="false">
-                <h5>Changelog 2.4.0</h5>
-                <ol>
+                    </div>
+                    <div class="text-muted">
+                        <h5 class="text-muted">Changelog 2.4.0</h5>
+                        <ol>
                     <li>Added default settings for availability and assigned services for new staff</li>
                     <li>Added option to open Zoom meeting straight in the browser without the app</li>
                     <li>Added mark as paid and cancel button in orders listing</li>
@@ -51,31 +54,6 @@
                     <li>Improved installation issue detection</li>
                     <li>Many improvements and refactoring</li>
                 </ol>
-            </div>
-            <div class="wprevious-version" v-if="false">
-                <a href="javascript:;" @click="showPrevious">Click to reveal 2.2.0 Changelog</a>
-                <div v-if="previous">
-                    <div>
-                        <span class="h5 text-muted">Below is how your staff selection page looks like now.</span>
-                        <img :src="wappoVersionImage('220', 'staff_page.gif')" alt="staff page" class="img-fluid img-update" title="staff page"/>
-                    </div>
-                    <div class="text-muted">
-                        <h5 class="text-muted">Changelog 2.2.0</h5>
-                        <ol>
-                            <li>Added compatibility with fluent SMTP plugin</li>
-                            <li>Added default availability and default assign services for new staff</li>
-                            <li>Added option to open Zoom meeting straight in the browser without the app</li>
-                            <li>Added mark as paid and cancel button in orders listing</li>
-                            <li>Added option to differentiate free event from Outlook</li>
-                            <li>Added cancel, reschedule and join meeting links to [wap_history] page</li>
-                            <li>Added allow to cancel 30 minutes before appointments take place</li>
-                            <li>Added pending appointment admin notification</li>
-                            <li>Added many translatable strings</li>
-                            <li>Fixed cache issue, staff listing in Settings > Calendars & Staff was dissappearing</li>
-                            <li>Improved, plugin is lighter</li>
-                            <li>Improved installation issue detection</li>
-                            <li>Lot of improvements and refactoring</li>
-                        </ol>
                     </div>
                 </div>
             </div>

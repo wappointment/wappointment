@@ -4,13 +4,13 @@
             <div>
                 <p class="h6 text-muted">
                     <span class="bullet-wap">1</span> 
-                    <span class="bullet-title">Account Selection</span>
+                    <span class="bullet-title">{{ get_i18n( 'regav_step1', 'common') }}</span>
                 </p>
-                <small class="text-muted mr-6" >Select an account or enter an email to create a new one</small>
+                <small class="text-muted mr-6" >{{ get_i18n( 'regav_select_an', 'common') }}</small>
                 <div  class="d-flex align-items-top mb-2">
                     <StaffPicture v-if="calendarSelected.name!=''" :src="calendarSelected.avatar" :gravatar="calendarSelected.gravatar" @changed="changedPicture" />
                     <div v-if="calendarSelected.name!=''" class="mr-2 changename">
-                        <InputPh v-model="calendarSelected.name" ph="Name" @updatedValue="updateStaffName" />
+                        <InputPh v-model="calendarSelected.name" :ph="get_i18n( 'name', 'common')" @updatedValue="updateStaffName" />
                     </div>
                     <div class="account-selector">
                         <StaffSelector :staffs="onlyUnusedStaff" :activeStaffId="calendarSelected.wp_uid" @updateStaff="updateStaff"></StaffSelector>
@@ -21,11 +21,12 @@
             <div v-if="staffSelected">
                 <p class="h6 text-muted">
                     <span class="bullet-wap">2</span> 
-                    <span class="bullet-title"> Set a timezone</span>
+                    <span class="bullet-title"> {{ get_i18n( 'regav_step2', 'common') }}</span>
                 </p>
                 <div class="cal-edit-margin">
                     <TimeZones classW="d-flex" :timezones="timezones_list" 
-                :defaultTimezone="calendarSelected.timezone" @updateTimezone="updateTimezone" typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control" />
+                :defaultTimezone="calendarSelected.timezone" @updateTimezone="updateTimezone" 
+                typeClass="small text-muted container-values d-flex justify-content-between align-items-center form-control" />
                 </div>
                 
                 <hr>
@@ -34,7 +35,7 @@
             <div v-if="staffSelected">
                 <p  class="h6 text-muted">
                     <span class="bullet-wap">3</span> 
-                    <span class="bullet-title"> Set standard weekly schedule</span>
+                    <span class="bullet-title"> {{ get_i18n( 'regav_step3', 'common') }}</span>
                 </p>
 
                 <div class="cal-edit-margin">
@@ -46,7 +47,7 @@
             
         </div>
         <div v-if="requireSave" class="save-floating-button">
-            <button class="btn btn-primary" @click="saveCalendar">Save</button>
+            <button class="btn btn-primary" @click="saveCalendar">{{ get_i18n( 'regav_save', 'common') }}</button>
         </div>
     </div>
 </template>

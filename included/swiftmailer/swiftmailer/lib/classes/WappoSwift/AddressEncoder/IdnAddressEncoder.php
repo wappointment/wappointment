@@ -56,8 +56,8 @@ class WappoSwift_AddressEncoder_IdnAddressEncoder implements WappoSwift_AddressE
             return idn_to_ascii($string, 0, $idnaVariant);
         }
 
-        if (class_exists('TrueBV\Punycode')) {
-            $punycode = new \TrueBV\Punycode();
+        if (class_exists('\Wappointment\ClassConnect\Punycode')) {
+            $punycode = new \Wappointment\ClassConnect\Punycode();
 
             return $punycode->encode($string);
         }

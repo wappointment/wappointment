@@ -45,7 +45,7 @@
             </div>
             
             <button type="button" @click.prevent.stop="hidePref" class="btn btn-secondary btn-sm">Close</button> 
-            <button type="button" @click.prevent.stop="savePreferences" class="btn btn-outline-primary btn-sm">Save</button>
+            <button type="button" @click.prevent.stop="savePreferences" class="btn btn-outline-primary btn-sm">{{get_i18n('save', 'common') }}</button>
         </div>
         <div v-else class="btn btn-link btn-xs" role="button" @click="showPref"><span class="dashicons dashicons-admin-settings"></span> <span v-if="showText">Edit preferences</span></div>
             <v-style >

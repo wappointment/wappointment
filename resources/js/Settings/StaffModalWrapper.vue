@@ -5,7 +5,7 @@
             <div class="ml-2">{{ user.name }}</div>
         </h3>
         <slot />
-        <button v-if="nosave === false" class="btn btn-primary" @click="$emit('save')">Save</button>
+        <button v-if="nosave === false" class="btn btn-primary" @click="$emit('save')">{{get_i18n('save', 'common') }}</button>
     </div>
 </template>
 

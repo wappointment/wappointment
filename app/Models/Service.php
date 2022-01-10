@@ -30,9 +30,9 @@ class Service extends Model
     {
         $labels = [];
         if ($this->isSold()) {
-            $labels[] = ['class' => 'text-success', 'text' => 'Selling'];
+            $labels[] = ['class' => 'text-success', 'text' => __('Selling', 'wappointment')];
         } else {
-            $labels[] = ['class' => 'text-info', 'text' => 'Free'];
+            $labels[] = ['class' => 'text-info', 'text' => __('Free', 'wappointment')];
         }
 
         return apply_filters('wappointment_service_labels', $labels, $this);

@@ -27,9 +27,9 @@
                     <FieldsGenerated @changed="changedBF" @dataDemoChanged="dataDemoChanged" 
                     :custom_fields="custom_fields" 
                     :service="service" :location="location" 
-                    :options="options" :selectedSlot="selectedSlot" />
-                
-                    <div v-if="termsIsOn" class="wap-terms" v-html="getTerms"></div>
+                    :options="options" :selectedSlot="selectedSlot" :wpauth="wpauth"/>
+
+                    <Terms :options="options" />
                 </div>
             </transition>
             <div class="d-flex wbtn-confirm">
@@ -56,17 +56,19 @@ import PhoneInput from './PhoneInput'
 import IsDemo from '../Mixins/IsDemo'
 import HasPaidService from '../Mixins/HasPaidService'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
+import Terms from './Terms'
 export default {
     extends: AbstractFront,
     mixins: [ MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, CanFormatPrice, HasPaidService],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
     'timeprops', 'relations', 'appointment_starts_at',
-    'duration', 'location', 'custom_fields', 'staffs','selectedStaff','selectedPackage','selectedVariation'],
+    'duration', 'location', 'custom_fields', 'staffs','selectedStaff','selectedPackage','selectedVariation', 'wpauth'],
     components: {
         BookingAddress,
         PhoneInput,
         CountryStyle,
-        AppointmentTypeSelection
+        AppointmentTypeSelection,
+        Terms
     }, 
     data: () => ({
         phoneId:'',
@@ -98,12 +100,6 @@ export default {
     computed: {
         isCompactHeader(){
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
-        },
-        getTerms(){
-            return this.cleanString(this.options.form.terms).replace('[link]', '<a href="'+this.cleanString(this.options.form.terms_link)+'" target="_blank">').replace('[/link]', '</a>')
-        },
-        termsIsOn(){
-            return this.options.form.check_terms === true
         },
         
         requirePhoneInput(){
@@ -142,14 +138,7 @@ export default {
         getId(id){
             this.phoneId = id
         },
-
-        tryPrefill(){
-            if(window.apiWappointment.wp_user !== undefined && window.apiWappointment.wp_user.autofill){
-                this.bookingForm.email = window.apiWappointment.wp_user.email
-                this.bookingForm.name = window.apiWappointment.wp_user.name
-            }
-        },
-    
+        
         selectDefaultType(){
             this.selection = this.service.type[0]
         },
@@ -223,6 +212,7 @@ export default {
             if(this.selectedPackage){
                 data.package_id = this.selectedPackage.id
                 data.package_price_id = this.selectedVariation.price_id
+                data.woo_pack_variation_id = this.selectedVariation.woo_pack_variation_id
             }
             
             //turns loading mode on in parent

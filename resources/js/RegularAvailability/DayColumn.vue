@@ -86,7 +86,7 @@ export default {
     },
     methods: {
     convertMinutesToTime(min){
-        return ( Math.floor(min/60))+'h'+(min%60== 0 ? '':min%60)
+        return this.get_i18n( 'regav_h', 'common').replace('%s',( Math.floor(min/60)))+(min%60== 0 ? '':min%60)
     },
       activeDay(){
           this.active = true
@@ -164,7 +164,7 @@ export default {
       openingTimes(){
         let opening_times = []
         for (let index = this.minHour; index < this.maxHour; index++) {
-          opening_times.push(index+'h') 
+            opening_times.push(this.sprintf_i18n('regav_h', 'common', index))
         }
         return opening_times
       },

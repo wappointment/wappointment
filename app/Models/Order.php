@@ -4,6 +4,7 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
+use Wappointment\Formatters\BookingResult;
 use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Payment;
 
@@ -111,6 +112,16 @@ class Order extends Model
             $options['owes'] += $this->total;
             $this->client->options = $options;
             $this->client->save();
+            $this->storeClient();
+        }
+    }
+
+    public function storeClient()
+    {
+        $options = $this->options;
+        if (empty($options['client'])) {
+            $options['client'] = $this->client;
+            $this->options = $options;
         }
     }
 
@@ -119,7 +130,9 @@ class Order extends Model
         $this->currency = Payment::currencyCode();
         $this->status = static::STATUS_PAID;
         $this->paid_at = date('Y-m-d H:i:s');
+        $this->storeClient();
     }
+
     public function setPaypal()
     {
         $this->payment = static::PAYMENT_PAYPAL;
@@ -216,8 +229,6 @@ class Order extends Model
             $prices = $ticket->getServicesPrices();
         }
 
-
-
         foreach ($prices as $price) {
             $this->recordItem($price->id, $price->price, $ticket->getAppointment()->id, $price->generateItemName($ticket), $quantity);
         }
@@ -239,9 +250,9 @@ class Order extends Model
     {
         $description = '';
         foreach ($this->prices as $price) {
-            $description .= "\n" . $price->item_name;
+            $description .= $price->appointment->getStaffName() . ' - ' . $price->item_name . ' - ' . $price->appointment->getStartsDayAndTime($price->appointment->getStaffTZ()) . " | ";
         }
-        return $description;
+        return esc_html($description);
     }
 
     public function recordItem($price_id, $price_value, $appointment_id, $item_name, $quantity = false)
@@ -303,7 +314,11 @@ class Order extends Model
 
         do_action('wappointment_order_completed', $this);
         $this->load('appointments'); //making sure the status of the appointment is correct
-        return $this;
+
+        $arrayResult = $this->toArray();
+
+        $arrayResult['appointments'] = BookingResult::formatAppointments($this->appointments);
+        return $arrayResult;
     }
 
     public function decrementOwes()

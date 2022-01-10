@@ -25,7 +25,7 @@ import momenttz from '../appMoment'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 const lnb = "\\n"
 export default {
-    props: ['service', 'staff', 'currentTz', 'physicalSelected','appointment', 'showResult', 'options'],
+    props: ['service', 'staff', 'currentTz', 'physicalSelected','appointment', 'showResult', 'options', 'ticket'],
 
     methods: {
         goToUrl(url){
@@ -75,7 +75,7 @@ export default {
         generateLink(typeLink = 'view-event', html = false, label = ''){
             let url = apiWappointment.frontPage + '&view='+typeLink+'&appointmentkey=' + this.appointment.edit_key
             return this.getLink(
-                window.wappointmentExtends.filter('urlAppointmentKey', url, this.appointment, this.resultBooking.ticket),
+                window.wappointmentExtends.filter('urlAppointmentKey', url, this.appointment, this.ticket),
                  html , label )
         },
 

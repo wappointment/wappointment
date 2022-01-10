@@ -13,17 +13,17 @@
                             <div v-for="label in service.labels" class="mr-2" :class="label.class">{{ label.text }}</div>
                         </div>
                         <div v-else class="small">
-                            <div v-if="isSellable(service)" class="text-success">Selling</div>
-                            <div v-else class="text-info">Free</div>
+                            <div v-if="isSellable(service)" class="text-success">{{ get_i18n( 'selling', 'orders') }}</div>
+                            <div v-else class="text-info">{{ get_i18n( 'free', 'orders') }}</div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="wlist-actions text-muted">
-                <span data-tt="Sort" v-if="can_move" ><span class="dashicons dashicons-move"></span></span>
-                <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="$emit('shortcode', service.id)"></span></span>
-                <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="$emit('edit', service)"></span></span>
-                <span data-tt="Delete"  ><span class="dashicons dashicons-trash" @click.prevent.stop="$emit('delete', service.id)"></span></span>
+                <span :data-tt="get_i18n( 'sort', 'common')" v-if="can_move" ><span class="dashicons dashicons-move"></span></span>
+                <span :data-tt="get_i18n( 'getshort', 'common')"><span class="dashicons dashicons-shortcode" @click.prevent.stop="$emit('shortcode', service.id)"></span></span>
+                <span :data-tt="get_i18n( 'edit', 'common')"><span class="dashicons dashicons-edit" @click.prevent.stop="$emit('edit', service)"></span></span>
+                <span :data-tt="get_i18n( 'delete', 'common')"  ><span class="dashicons dashicons-trash" @click.prevent.stop="$emit('delete', service.id)"></span></span>
                 <span>(id: {{ service.id }})</span>
             </div>
         </td>

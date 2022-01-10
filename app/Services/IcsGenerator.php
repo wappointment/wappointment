@@ -153,7 +153,7 @@ class IcsGenerator
         $title = $appointment->getServiceName() . ' ';
         $title .= $this->admin ? $appointment->getClientModel()->name . '(' . $appointment->getClientModel()->email . ')' :  $staff->getUserDisplayName();
 
-        return $title;
+        return esc_html($title);
     }
 
     protected function getDescription(Appointment $appointment)
@@ -162,7 +162,7 @@ class IcsGenerator
         foreach (['name', 'tz', 'email', 'phone', 'skype'] as $key) {
             if (!empty($appointment->getClientModel()->options[$key])) {
                 $description .= "\n" . $key . ' : ';
-                $description .= $appointment->getClientModel()->options[$key];
+                $description .= esc_html($appointment->getClientModel()->options[$key]);
             }
         }
 

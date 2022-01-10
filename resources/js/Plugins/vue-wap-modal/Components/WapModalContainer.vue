@@ -137,7 +137,7 @@ export default {
         
         this.showModal(title, content, screenshot)
         this.options = {classes:['premium']}
-        this.options.premiumGetDiscount = 'Get the Addon'
+        this.options.premiumGetDiscount = this.get_i18n( 'get_addon', 'common')
 
         return new Promise(this.promiseCallback)
     },

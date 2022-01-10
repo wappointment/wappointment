@@ -25,7 +25,8 @@
         "doctrine/annotations": "^1.13",
         "doctrine/cache": "^2.1",
         "doctrine/collections": "^1.6",
-        "illuminate/pagination": "7.30.*"
+        "illuminate/pagination": "7.30.*",
+        "true/punycode": "^2.1"
     },
     "autoload": {
         "psr-4": {

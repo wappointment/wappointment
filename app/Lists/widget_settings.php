@@ -83,7 +83,7 @@ return [
         'confirm' => __('Confirm', 'wappointment'),
         'check_terms' => false,
         /* translators: %s - a "we process your data" link is added. */
-        'terms' => sprintf(__('See how %s', 'wappointment'), '[link]' . __('we process your data', 'wappointment') . '[/link]'),
+        'terms' => sprintf(__('View %s', 'wappointment'), '[link]' . __('the privacy policy', 'wappointment') . '[/link]'),
         'terms_link' => '',
     ],
     'confirmation' => [
@@ -136,5 +136,16 @@ return [
         'onsite_tab' => __('Pay later', 'wappointment'),
         'onsite_desc' => __('You will pay on the day of your appointment', 'wappointment'),
         'onsite_confirm' => __('Confirm', 'wappointment'),
+
+
+        'check_tos' => false,
+
+        'tos_text' => sprintf(
+            /* translators: %1$s - "the terms of sale" %2$s - "privacy policy" */
+            __('You agree to %1$s and %2$s', 'wappointment'),
+            '[linktos]' . __('the terms of sale', 'wappointment') . '[/linktos]',
+            '[link]' . __('the privacy policy', 'wappointment') . '[/link]'
+        ),
+        'tos_link' => 'http://',
     ],
 ];

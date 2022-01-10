@@ -42,7 +42,7 @@ abstract class AbstractBoot implements Boot
 
     private static function checkIfUpdateDbRequired()
     {
-        if (static::isValid() && static::isInstalled() && CurrentUser::isAdmin() && !empty(static::$addon_db_version_required)) {
+        if (!empty(static::$addon_db_version_required) && static::isValid() && static::isInstalled() && CurrentUser::isAdmin()) {
             static::requiresUpdateCheck();
         }
     }

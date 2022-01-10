@@ -25,7 +25,7 @@ class Availability extends AbstractRepository
             'buffer_time' => Settings::get('buffer_time'),
             'services' => ManageService::all(),
             'site_lang' => substr(get_locale(), 0, 2),
-            'custom_fields' => Central::get('CustomFields')::get()
+            'custom_fields' => Central::get('CustomFields')::get(),
         ]);
     }
 }

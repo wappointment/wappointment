@@ -5,9 +5,9 @@
         <div class="col-12">
           <div>
               <div class="d-flex">
-                  <h1>Weekly Availability</h1>
+                  <h1>{{ get_i18n( 'wizard_2_title', 'wizard') }}</h1>
               </div>
-              <p class="h6 text-muted">This is you recurring availability, you can change it anytime</p>
+              <p class="h6 text-muted">{{ get_i18n( 'wizard_2_subtitle', 'wizard') }}</p>
               <hr>
           </div>
           <CalendarsAddEdit v-if="dataLoaded" ref="caledit" :calendar="viewData.calendar" 

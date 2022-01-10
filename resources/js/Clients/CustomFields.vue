@@ -32,7 +32,7 @@
             <transition name="fade">
                 <div v-if="items.length == 0 || showControls" @click="addCF" class="btn btn-secondary btn-cell add-CF" >
                     <span class="wicon plus-alt text-primary" ></span>
-                    <div>Add Custom Field</div>
+                    <div>{{ get_i18n('add_cf', 'settings') }}</div>
                 </div>
             </transition>
         </div>
@@ -43,9 +43,9 @@
         </div>
         <WapModal v-if="showAddCF" :show="showAddCF" @hide="hideAddCF" large>
             <h4 slot="title" class="modal-title" v-if="editedItem">Edit Custom Field</h4>
-            <h4 slot="title" class="modal-title" v-else>Add Custom Field</h4>
+            <h4 slot="title" class="modal-title" v-else>{{ get_i18n('add_cf', 'settings') }}</h4>
             <WAPFormGenerator ref="fg-addCF" :schema="schemaCF" :data="modelHolder" 
-        @submit="saveCF" @back="back" :errors="errorsPassed" :key="'formKey'" labelButton="Save" :backbutton="true" backbuttonLabel="Cancel" />
+        @submit="saveCF" @back="back" :errors="errorsPassed" :key="'formKey'" :labelButton="get_i18n( 'save', 'common')" :backbutton="true" backbuttonLabel="Cancel" />
         </WapModal>
     </div>
 </template>

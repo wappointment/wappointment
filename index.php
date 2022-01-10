@@ -6,7 +6,11 @@ if (!defined('ABSPATH')) {
 
 /**
  * Plugin Name: Wappointment
+<<<<<<< HEAD
  * Version: 2.5.0-beta
+=======
+ * Version: 2.4.3
+>>>>>>> ef8a9680dff3cbeb9e6f0cd0903a1d8e1b16b2dc
  * Plugin URI: https://wappointment.com
  * Description: Clients quickly book a meeting with you on Zoom , GoogleMeet , the phone or at your office
  * Author: Wappointment
@@ -32,7 +36,7 @@ if (!defined('ABSPATH')) {
  * GNU General Public License for more details.
  */
 
-define('WAPPOINTMENT_VERSION', '2.4.0');
+define('WAPPOINTMENT_VERSION', '2.4.3');
 define('WAPPOINTMENT_PHP_MIN', '7.0.0');
 define('WAPPOINTMENT_NAME', 'Wappointment');
 define('WAPPOINTMENT_SLUG', strtolower(WAPPOINTMENT_NAME));

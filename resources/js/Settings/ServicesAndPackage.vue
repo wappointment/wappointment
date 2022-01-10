@@ -1,26 +1,26 @@
 <template>
     <div >
         <div class="d-flex bg-secondary p-2 rounded" v-if="!isIsolated" @mouseenter="showSettingsNow" @mouseleave="delayRemove">
-            <button @click="manageServices" class="btn btn-light mr-2">Manage services</button>
-            <button @click="managePackages" class="btn btn-light mr-2 active">Sell packages</button>
+            <button @click="manageServices" class="btn btn-light mr-2">{{ get_i18n('services_manage', 'settings') }}</button>
+            <button @click="managePackages" class="btn btn-light mr-2 active">{{ get_i18n('sell_pack', 'settings') }}</button>
             <transition name="fade" mode="out-in">
                 <div class="d-flex">
                     <div  v-if="showSettings">
                         <div class="d-flex align-items-center">
                             <div class="text-muted small">
-                                Currency: <span v-if="wooAddonActive" data-tt="Configure it in WooCommerce" class="text-dark tt-danger">{{ currencyText }}</span>
+                                {{ get_i18n('currency', 'settings') }} <span v-if="wooAddonActive" data-tt="Configure it in WooCommerce" class="text-dark tt-danger">{{ currencyText }}</span>
                                 <a v-else href="javascript:;" @click="setCurrency">{{ currencyText }}</a>
                             </div>
                             <div v-if="!wooAddonActive" class="text-muted small ml-2">
-                                Tax: <a v-if="!canEditTax" href="javascript:;" @click="editTax">{{ tax }}%</a>
+                                {{ get_i18n('tax', 'settings') }} <a v-if="!canEditTax" href="javascript:;" @click="editTax">{{ tax }}%</a>
                                 <span v-else>
                                     <input type="text" v-model="tax" size="2" @keyup.enter.prevent="saveTax" >% 
-                                    <button class="btn btn-outline-primary btn-sm" @click="saveTax">Save</button>
+                                    <button class="btn btn-outline-primary btn-sm" @click="saveTax">{{ get_i18n('save', 'common') }}</button>
                                 </span>
                             </div>
                         </div>
                         <div class="d-flex align-items-center">
-                            <div class="text-muted small">Payments accepted:</div> 
+                            <div class="text-muted small">{{ get_i18n('services_payments', 'settings') }}</div> 
                             <PaymentAllowed @clicked="clicked" @opened="opened" @closed="closed" />
                         </div>
                     </div>

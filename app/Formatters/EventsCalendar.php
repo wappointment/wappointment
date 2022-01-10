@@ -13,12 +13,14 @@ use Wappointment\Services\VersionDB;
 use Wappointment\Services\Calendars;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\AppointmentNew;
+use Wappointment\Services\Payment;
 
 class EventsCalendar
 {
     private $isLegacy = false;
     private $timezone = '';
     private $customFieldsKeyLabel = [];
+    private $customFieldsKeyValues = [];
     private $timeFormat = '';
     private $ends_at_carbon = null;
     private $start_at_string = '';
@@ -31,6 +33,7 @@ class EventsCalendar
         $this->request = $request;
         $this->timezone = $this->request->input('timezone');
         $this->customFieldsKeyLabel = CustomFields::keyLabels();
+        $this->customFieldsKeyValues = CustomFields::keyValues();
         $this->timeFormat = Settings::get('time_format');
         $this->ends_at_carbon = DateTime::timeZToUtc($this->request->input('end'))->setTimezone('UTC');
         $this->start_at_string = DateTime::timeZToUtc($this->request->input('start'))->setTimezone('UTC')->format(WAPPOINTMENT_DB_FORMAT);
@@ -124,6 +127,7 @@ class EventsCalendar
             'display' => [
                 'short' => [
                     'title' => !empty($preparedClient) ? $preparedClient->name : __('Unknown client', 'wappointment'),
+                    /* translators: %1$s is service name, %2$s is the duration  */
                     'service' => sprintf(__('%1$s - %2$smin', 'wappointment'), $event->service->name, $event->getDurationInSec() / 60),
                     'time' => $this->formatAppointmentTime($event->start_at, $this->timeFormat)
                         . ' - ' .
@@ -144,9 +148,15 @@ class EventsCalendar
     {
         $data = [];
         if (!empty($preparedClient)) {
+            /* translators: %s - email address. */
             $data[] = sprintf(__('Email: %s', 'wappointment'), $preparedClient->email);
             foreach ($preparedClient->options as $keyOption => $optionValue) {
-                $data[] = sprintf(__('%1$s: %2$s', 'wappointment'), $this->getLabelFromKey($keyOption), $optionValue);
+
+                if ($keyOption == 'appointment_key') {
+                    continue;
+                }
+                /* translators: %1$s is label %2$s is value */
+                $data[] = sprintf(__('%1$s: %2$s', 'wappointment'), $this->getLabelFromKey($keyOption), $this->getLabelFromValues($keyOption, $optionValue));
             }
         }
 
@@ -163,6 +173,29 @@ class EventsCalendar
             default:
                 $label = isset($this->customFieldsKeyLabel[$keyOption]) ? $this->customFieldsKeyLabel[$keyOption] : $keyOption;
                 return strpos($label, ':') !== false ? str_replace(':', '', $label) : $label;
+        }
+    }
+
+    public function getLabelFromValues($keyOption, $optionValues)
+    {
+        if ($keyOption == 'owes') {
+            return Payment::formatPrice($optionValues / 100);
+        }
+
+        $valuesLabelsDefinition = isset($this->customFieldsKeyValues[$keyOption]) ? $this->customFieldsKeyValues[$keyOption] : $optionValues;
+        if (is_array($valuesLabelsDefinition)) {
+            $valuesForHumans = [];
+            $optionValues = !is_array($optionValues) ? [$optionValues] : $optionValues;
+            foreach ($optionValues as $valueKey) {
+                foreach ($valuesLabelsDefinition as $valueLabelDefined) {
+                    if ($valueLabelDefined['value'] == $valueKey) {
+                        $valuesForHumans[] = $valueLabelDefined['label'];
+                    }
+                }
+            }
+            return implode(',', $valuesForHumans);
+        } else {
+            return $optionValues;
         }
     }
 

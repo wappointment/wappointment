@@ -2,7 +2,7 @@
     <div v-if="selectedCurrency">
         <SearchDropdown v-model="selectedCurrency" ph="Select a currency" :elements="modifiedCurrencies" 
                 idKey="code" labelSearchKey="name" />
-        <button class="btn btn-primary mt-2" @click="save">Save</button>
+        <button class="btn btn-primary mt-2" @click="save">{{get_i18n('save', 'common') }}</button>
     </div>
 </template>
 

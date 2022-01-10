@@ -30,12 +30,17 @@ class Booking extends LegacyBooking
     }
     public function getUserEmail()
     {
-        return $this->forceEmail() ? Helpers::currentUserEmail() : $this->get('email');
+        return $this->forceEmail() && $this->isLogged() ? Helpers::currentUserEmail() : $this->get('email');
     }
 
     protected function forceEmail()
     {
         return Settings::get('forceemail');
+    }
+
+    public function isLogged()
+    {
+        return Helpers::auth();
     }
 
     public function generateValidation($inputs)
@@ -52,7 +57,8 @@ class Booking extends LegacyBooking
             'slots' => '',
             'appointment_key' => ''
         ];
-        if (!$this->forceEmail()) {
+
+        if (!$this->forceEmail() || !$this->isLogged()) {
             $this->validationRulesArray['email'] = 'required|email';
         }
 
@@ -169,13 +175,13 @@ class Booking extends LegacyBooking
     {
         $custom_fields = $this->getFields();
         $dataClient = ['options' => []];
-        foreach ($custom_fields as $key => $cfield) {
+        foreach ($custom_fields as $cfield) {
             if (in_array($cfield, ['location', 'duration', 'service', 'time', 'start', 'clientid', 'end'])) {
                 continue;
             }
             switch ($cfield) {
                 case 'email':
-                    $dataClient['email'] = $this->forceEmail() ? Helpers::currentUserEmail() : $this->get('email');
+                    $dataClient['email'] = $this->getUserEmail();
                     break;
                 case 'name':
                     $dataClient['name'] = $this->get('name');

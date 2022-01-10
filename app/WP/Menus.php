@@ -15,7 +15,7 @@ class Menus
     {
         $this->parent_slug = strtolower(WAPPOINTMENT_NAME) . '_calendar';
         $this->sub_menus = [
-            'calendar' => ['label' => 'Calendar', 'cap' => $this->getCalendarCap()],
+            'calendar' => ['label' => __('Calendar', 'wappointment'), 'cap' => $this->getCalendarCap()],
         ];
 
         /**

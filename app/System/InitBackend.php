@@ -2,6 +2,7 @@
 
 namespace Wappointment\System;
 
+use Wappointment\Helpers\Get;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Settings;
 use Wappointment\Services\Addons;
@@ -127,6 +128,14 @@ class InitBackend
         }
 
         wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', 'wappointmentAdmin', $varJs);
+        wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', 'wappointment_i18n', [
+            'wizard' => Get::list('translations_wizard'),
+            'common' => Get::list('translations_js_common'),
+            'calendar' => Get::list('translations_calendar'),
+            'settings' => Get::list('translations_settings'),
+            'clients' => Get::list('translations_clients'),
+            'orders' => Get::list('translations_orders'),
+        ]);
 
         wp_enqueue_script(WAPPOINTMENT_SLUG . '_backend_menu');
         wp_enqueue_script(WAPPOINTMENT_SLUG . '_backend.back.js');

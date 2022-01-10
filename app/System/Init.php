@@ -148,7 +148,6 @@ class Init
 
         if (is_user_logged_in()) {
             $variables['nonce'] = wp_create_nonce('wp_rest');
-            $variables['wp_user'] = WPHelpers::wpUserData();
         }
         if (defined('WP_DEBUG')) {
             $variables['debug'] = true;
@@ -157,6 +156,7 @@ class Init
         if (is_admin()) {
             $parsed = parse_url(WPHelpers::adminUrl('admin.php'));
             $variables['base_admin'] = !empty($parsed['path']) ? $parsed['path'] : '/wp-admin/admin.php';
+            $variables['wp_user'] = WPHelpers::wpUserData(true);
         }
         $return = '<script type="text/javascript">' . "\n";
         $return .= '/* Wappointment globals */ ' . "\n";

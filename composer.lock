@@ -4,7 +4,11 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
+<<<<<<< HEAD
     "content-hash": "5e47a84ceeab35d03c52a31b5bd5ba40",
+=======
+    "content-hash": "e97660ed7c50bb13508002c85c41ce8d",
+>>>>>>> ef8a9680dff3cbeb9e6f0cd0903a1d8e1b16b2dc
     "packages": [
         {
             "name": "doctrine/annotations",
@@ -4326,6 +4330,7 @@
             ],
             "description": "Provides mechanisms for walking through any arbitrary PHP variable",
             "homepage": "https://symfony.com",
+<<<<<<< HEAD
             "keywords": [
                 "debug",
                 "dump"
@@ -4371,11 +4376,40 @@
             },
             "suggest": {
                 "ext-intl": "Use Intl for transliterator_transliterate() support"
+=======
+            "time": "2020-03-16T08:31:04+00:00"
+        },
+        {
+            "name": "true/punycode",
+            "version": "v2.1.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/true/php-punycode.git",
+                "reference": "a4d0c11a36dd7f4e7cd7096076cab6d3378a071e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/true/php-punycode/zipball/a4d0c11a36dd7f4e7cd7096076cab6d3378a071e",
+                "reference": "a4d0c11a36dd7f4e7cd7096076cab6d3378a071e",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0",
+                "symfony/polyfill-mbstring": "^1.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.7",
+                "squizlabs/php_codesniffer": "~2.0"
+>>>>>>> ef8a9680dff3cbeb9e6f0cd0903a1d8e1b16b2dc
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
+<<<<<<< HEAD
                     "voku\\": "src/voku/"
+=======
+                    "TrueBV\\": "src/"
+>>>>>>> ef8a9680dff3cbeb9e6f0cd0903a1d8e1b16b2dc
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -4384,6 +4418,7 @@
             ],
             "authors": [
                 {
+<<<<<<< HEAD
                     "name": "Lars Moelleken",
                     "homepage": "http://www.moelleken.org/"
                 }
@@ -4422,6 +4457,23 @@
                 }
             ],
             "time": "2020-11-12T00:07:28+00:00"
+=======
+                    "name": "Renan Gonçalves",
+                    "email": "renan.saddam@gmail.com"
+                }
+            ],
+            "description": "A Bootstring encoding of Unicode for Internationalized Domain Names in Applications (IDNA)",
+            "homepage": "https://github.com/true/php-punycode",
+            "keywords": [
+                "idna",
+                "punycode"
+            ],
+            "support": {
+                "issues": "https://github.com/true/php-punycode/issues",
+                "source": "https://github.com/true/php-punycode/tree/master"
+            },
+            "time": "2016-11-16T10:37:54+00:00"
+>>>>>>> ef8a9680dff3cbeb9e6f0cd0903a1d8e1b16b2dc
         }
     ],
     "packages-dev": [

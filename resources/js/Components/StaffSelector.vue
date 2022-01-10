@@ -1,6 +1,6 @@
 <template>
     <div>
-        <SearchStaff v-if="staffLoaded" v-model="staffId" :ph="labelDefault" :elements="staffsPassed" 
+        <SearchStaff v-if="staffLoaded" v-model="staffId" :ph="defaulLabel" :elements="staffsPassed" 
             idKey="ID" labelSearchKey="display_name" groupKey="role" @searching="searching" :displayElement="displayElementFunc" />
         <div v-if="isEmailWithNoValue && isUserAdministrator" class="bg-secondary p-2 rounded mt-2 border border-primary">
             <h4 v-if="accountCreated === false">Create a new account? </h4>
@@ -30,10 +30,7 @@ export default {
     props: {
         staffs: null,
         activeStaffId: false,
-        labelDefault: {
-            type: String,
-            default: 'Select account or Enter email'
-        },
+        labelDefault: '',
         autoselect: true,
     },
     data() {
@@ -43,7 +40,8 @@ export default {
             search_term:'',
             accountCreated: false,
             staffsPassed: [],
-            serviceWPUser: null
+            serviceWPUser: null,
+            defaultLabel: ''
         }
     },
     created(){
@@ -52,6 +50,7 @@ export default {
         }else{
             this.staffId = this.autoselect ? this.staffs[0].ID:false
         }
+        this.defaulLabel = this.labelDefault != '' ? this.get_i18n('regav_step1_email','common'):this.labelDefault
         this.serviceWPUser = this.$vueService(new WPUsersService)
         this.staffsPassed = [].concat(this.staffs)
     },
