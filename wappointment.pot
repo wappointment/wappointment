@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Wappointment plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wappointment 2.4.3\n"
+"Project-Id-Version: Wappointment 2.5.0-beta\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wappointment-plugin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-01-10T11:27:14+00:00\n"
+"POT-Creation-Date: 2022-01-10T12:50:43+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: wappointment\n"
@@ -854,7 +854,7 @@ msgid "Integrations"
 msgstr ""
 
 #: app/Lists/translations_settings.php:9
-#: app/System/Status.php:101
+#: app/System/Status.php:89
 msgid "Connect Account"
 msgstr ""
 
@@ -2235,11 +2235,11 @@ msgstr ""
 msgid "Start Setup"
 msgstr ""
 
-#: app/System/Status.php:99
+#: app/System/Status.php:87
 msgid "Hey! You are using Video meetings, great for you!"
 msgstr ""
 
-#: app/System/Status.php:99
+#: app/System/Status.php:87
 msgid "Generate meetings automatically with Zoom, GoogleMeet etc... by connecting these services"
 msgstr ""
 
