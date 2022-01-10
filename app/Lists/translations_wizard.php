@@ -14,7 +14,7 @@ return [
     'wizard_2_subtitle' =>  __('This is your recurring availability, you can change it again at anytime', 'wappointment'),
 
     'wizard_3_title' => __('Service Setup', 'wappointment'),
-    'wizard_3_subtitle' => __('Set the first service you will provide to your clients', 'wappointment'),
+    'wizard_3_subtitle' => __('Set your first service', 'wappointment'),
     'wizard_3_servicename' => __('Service name', 'wappointment'),
     'wizard_3_duration' => __('Duration', 'wappointment'),
     'wizard_3_delivery' => __('Service Delivery', 'wappointment'),

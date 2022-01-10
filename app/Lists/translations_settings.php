@@ -79,7 +79,7 @@ return [
 
     'appearance_title' => __('Appearance', 'wappointment'),
 
-    'advanced_title' => __('Avancé', 'wappointment'),
+    'advanced_title' => __('Advanced', 'wappointment'),
 
     'when_reminder_sent' => __('When is the reminder sent? (before the appointment)', 'wappointment'),
     'select_unit' => __('Select unit', 'wappointment'),
