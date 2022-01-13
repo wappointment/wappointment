@@ -122,7 +122,7 @@ export default {
             return this.phoneSelected ? this.locationObj.options.countries:this.service.options.countries
         },
         forceEmail(){
-            return this.wpauth !== false && this.wpauth.forceemail
+            return [undefined,false].indexOf(this.wpauth) === -1 && this.wpauth.forceemail
         },
         componentMatches(){
             return window.wappointmentExtends.filter('bookingFormComponentsMatches', {
