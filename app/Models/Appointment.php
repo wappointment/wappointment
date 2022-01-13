@@ -92,7 +92,7 @@ class Appointment extends TicketAbstract
 
     public function getIdentifier()
     {
-        return preg_replace('/[^\da-z]/i', '-', $this->getStaffName() . '-' . $this->getTitle());
+        return preg_replace('/[^\da-z]/i', '', md5(get_site_url()) . $this->start_at->timestamp . $this->getStaffName() . '-' . $this->getTitle());
     }
 
     public function tryDestroy($force = false)
