@@ -124,7 +124,8 @@ export default {
 
       appointmentHasZoomUrl(eventId){
         let appointment = this.findAppointmentById(eventId)
-        return appointment.extendedProps.options.providers !== undefined && [undefined,false].indexOf(appointment.extendedProps.options.providers.zoom) === -1
+        return appointment.extendedProps.options.providers !== undefined && 
+        [undefined,false].indexOf(appointment.extendedProps.options.providers.zoom) === -1
       },
 
       appointmentHasGoogleUrl(eventId){
@@ -134,6 +135,12 @@ export default {
         && appointment.extendedProps.options.providers.google.google_meet_url !== undefined 
       },
 
+
+      appointmentHasJitsiUrl(eventId){
+        let appointment = this.findAppointmentById(eventId)
+        return appointment.extendedProps.options.providers !== undefined 
+        && appointment.extendedProps.options.providers.jitsi.join_url !== undefined 
+      },
       getZoomMeetingUrl(eventId){
         let appointment = this.findAppointmentById(eventId)
         return appointment.extendedProps.options.providers.zoom.join_url
@@ -142,6 +149,10 @@ export default {
       getGoogleMeetingUrl(eventId){
         let appointment = this.findAppointmentById(eventId)
         return appointment.extendedProps.options.providers.google.google_meet_url
+      },
+      getJitsiMeetingUrl(eventId){
+        let appointment = this.findAppointmentById(eventId)
+        return appointment.extendedProps.options.providers.jitsi.join_url
       },
       isBackgroundEvent(el){
         return el.attr('data-rendering')!== undefined && el.attr('data-rendering')=='background'
@@ -181,9 +192,17 @@ export default {
           return '<div data-href="'+this.getZoomMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Zoom meeting" >'+
           '<img src="'+window.apiWappointment.resourcesUrl+'images/zoom.png'+'" /></div>'
         }
-          
-        return this.appointmentHasGoogleUrl(el.attr('data-id'))? '<div data-href="'+this.getGoogleMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Google meeting" >'+
-                '<img src="'+window.apiWappointment.resourcesUrl+'images/google-meet.png'+'" /></div>': ''
+
+        if(this.appointmentHasGoogleUrl(el.attr('data-id'))){
+          return '<div data-href="'+this.getGoogleMeetingUrl(el.attr('data-id'))+'" class="gotozoom" data-tt="Go to Google meeting" >'+
+                '<img src="'+window.apiWappointment.resourcesUrl+'images/google-meet.png'+'" /></div>'
+        }
+
+          if(this.appointmentHasJitsiUrl(el.attr('data-id'))){
+            return '<div data-href="'+this.getJitsiMeetingUrl(el.attr('data-id'))+'" class="gotojitsi" data-tt="Go to Jitsi" >'+
+            '<img src="'+window.apiWappointment.resourcesUrl+'images/jitsi.png'+'" /></div>'
+          }
+         return ''
       },
 
       getCancelOrMuteButton(el, isAppointmentEvent){

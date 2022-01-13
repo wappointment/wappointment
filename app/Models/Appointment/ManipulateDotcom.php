@@ -7,7 +7,10 @@ trait ManipulateDotcom
     public function sentToDotCom()
     {
         $options = $this->options;
-        $options['providers'] = [];
+        if (!isset($options['providers'])) {
+            $options['providers'] = [];
+        }
+
         $this->options = $options;
         $this->save();
     }
