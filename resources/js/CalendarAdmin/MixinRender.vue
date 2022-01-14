@@ -114,7 +114,6 @@ export default {
         return [undefined, null].indexOf(appointment.extendedProps.options) === -1  && appointment.extendedProps.options.providers === undefined && this.hasDotcom()
       },
 
-      
       appointmentIsZoom(eventId){
         let appointment = this.findAppointmentById(eventId)
         return (this.viewData.legacy && appointment.extendedProps.location == 'zoom')
@@ -135,12 +134,13 @@ export default {
         && appointment.extendedProps.options.providers.google.google_meet_url !== undefined 
       },
 
-
       appointmentHasJitsiUrl(eventId){
         let appointment = this.findAppointmentById(eventId)
         return appointment.extendedProps.options.providers !== undefined 
+        && appointment.extendedProps.options.providers.jitsi !== undefined 
         && appointment.extendedProps.options.providers.jitsi.join_url !== undefined 
       },
+
       getZoomMeetingUrl(eventId){
         let appointment = this.findAppointmentById(eventId)
         return appointment.extendedProps.options.providers.zoom.join_url
@@ -150,13 +150,16 @@ export default {
         let appointment = this.findAppointmentById(eventId)
         return appointment.extendedProps.options.providers.google.google_meet_url
       },
+
       getJitsiMeetingUrl(eventId){
         let appointment = this.findAppointmentById(eventId)
         return appointment.extendedProps.options.providers.jitsi.join_url
       },
+
       isBackgroundEvent(el){
         return el.attr('data-rendering')!== undefined && el.attr('data-rendering')=='background'
       },
+
       getCrib(el){
         if(!this.isBackgroundEvent(el)){
           return '<div class="crib yel">Appointment</div>'
@@ -184,6 +187,7 @@ export default {
       isAppointmentVideoUpcoming(el){
         return !el.hasClass('past-event') && this.hasDotcom() && this.appointmentIsZoom(el.attr('data-id'))
       },
+      
       getZoomGoogleMeetButton(el){
         if(!this.isAppointmentVideoUpcoming(el) ) {
           return ''

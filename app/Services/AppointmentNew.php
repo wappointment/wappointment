@@ -377,13 +377,9 @@ class AppointmentNew
 
     public static function afterBookEvents($dataReturned, $client, $staff_id, $is_admin = false, $status = 0)
     {
-        $dispatching = $status == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION ? 'AppointmentBookedEvent' : 'AppointmentConfirmedEvent';
+        $dispatching = apply_filters('wappointment_status_ticket', $status, $dataReturned) == static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION ? 'AppointmentBookedEvent' : 'AppointmentConfirmedEvent';
 
         JobHelper::dispatch($dispatching, $dataReturned, $client, $status);
-        // if (empty($dataReturned['appointment']->options['slots'])) { // avoid double notifications
-        //     //send pending email to client and admin
-
-        // }
 
         static::availabilityRefreshTrigger($staff_id, $is_admin);
     }
@@ -521,12 +517,12 @@ class AppointmentNew
     public static function getDefaultStatus($service)
     {
         if ($service->isSold()) {
-            $default_status = static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
+            return static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
         } else {
-            $default_status = ((int) Settings::get('approval_mode') === 1) ?
+            return ((int) Settings::get('approval_mode') === 1) ?
                 static::getAppointmentModel()::STATUS_CONFIRMED : static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
         }
 
-        return apply_filters('wappointment_appointment_default_status', $default_status, $service);
+        //return apply_filters('wappointment_appointment_default_status', $default_status, $service);
     }
 }
