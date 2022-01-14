@@ -34,13 +34,11 @@ class CleanPendingPaymentAppointment implements JobInterface
 
     public static function cancelReservations($orderData, $appointment = null)
     {
-        if (is_null($appointment)) {
-            $look_for_appointment = true;
-        }
+        $look_for_appointment = is_null($appointment);
 
         foreach ($orderData['reservations'] as $reservation) {
             if (!empty($reservation['appointment_id'])) {
-                if ($look_for_appointment && (is_null($appointment) || $appointment->id !== (int)$reservation['appointment_id'])) {
+                if (($look_for_appointment || $appointment->id !== (int)$reservation['appointment_id'])) {
                     $appointment = Appointment::find((int)$reservation['appointment_id']);
                 }
                 if ((int)$reservation['appointment_id'] === (int)$appointment->id) {
@@ -53,6 +51,8 @@ class CleanPendingPaymentAppointment implements JobInterface
                 }
             }
         }
+        //woo state that we already cancelled
+        do_action('wappointment_woo_cancelled_order', $orderData);
     }
 
     public function appointmentsToProcess()

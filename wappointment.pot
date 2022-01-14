@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-01-10T11:27:14+00:00\n"
+"POT-Creation-Date: 2022-01-14T12:03:53+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: wappointment\n"
@@ -32,7 +32,7 @@ msgstr ""
 #: app/Services/Appointment.php:83
 #: app/Services/Appointment.php:266
 #: app/Services/AppointmentNew.php:248
-#: app/Services/AppointmentNew.php:429
+#: app/Services/AppointmentNew.php:425
 msgid "Can't find appointment"
 msgstr ""
 
@@ -69,7 +69,7 @@ msgstr ""
 #: app/Services/Appointment.php:78
 #: app/Services/Appointment.php:260
 #: app/Services/AppointmentNew.php:240
-#: app/Services/AppointmentNew.php:423
+#: app/Services/AppointmentNew.php:419
 msgid "Malformed parameter"
 msgstr ""
 
@@ -1080,7 +1080,8 @@ msgid "Appearance"
 msgstr ""
 
 #: app/Lists/translations_settings.php:82
-msgid "Avancé"
+#: app/Lists/widget_fields.php:201
+msgid "Advanced"
 msgstr ""
 
 #: app/Lists/translations_settings.php:84
@@ -1140,7 +1141,7 @@ msgid "Service Setup"
 msgstr ""
 
 #: app/Lists/translations_wizard.php:17
-msgid "Set the first service you will provide to your clients"
+msgid "Set your first service"
 msgstr ""
 
 #: app/Lists/translations_wizard.php:19
@@ -1391,10 +1392,6 @@ msgstr ""
 
 #: app/Lists/widget_fields.php:192
 msgid "On Site Payment"
-msgstr ""
-
-#: app/Lists/widget_fields.php:201
-msgid "Advanced"
 msgstr ""
 
 #: app/Lists/widget_fields.php:204
@@ -1960,7 +1957,7 @@ msgid "Can't reschedule appointment anymore"
 msgstr ""
 
 #: app/Services/Appointment.php:269
-#: app/Services/AppointmentNew.php:432
+#: app/Services/AppointmentNew.php:428
 msgid "Can't cancel appointment anymore"
 msgstr ""
 
