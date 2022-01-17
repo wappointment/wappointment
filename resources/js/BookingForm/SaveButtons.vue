@@ -74,9 +74,8 @@ export default {
         
         generateLink(typeLink = 'view-event', html = false, label = ''){
             let url = apiWappointment.frontPage + '&view='+typeLink+'&appointmentkey=' + this.appointment.edit_key
-            return this.getLink(
-                window.wappointmentExtends.filter('urlAppointmentKey', url, this.appointment, this.ticket),
-                 html , label )
+            return this.getLink(window.wappointmentExtends.filter('urlAppointmentKey', url, {appointment:this.appointment, ticket:this.ticket})
+            , html , label )
         },
 
         getLink(url, html = false, label = ''){

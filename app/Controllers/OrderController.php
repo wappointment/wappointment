@@ -3,7 +3,6 @@
 namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
-use Wappointment\Formatters\BookingResult;
 use Wappointment\Services\Order as ServicesOrder;
 
 class OrderController extends RestController
@@ -13,8 +12,6 @@ class OrderController extends RestController
         $orderService = new ServicesOrder($request->input('transaction_id'));
         $orderService->awaitPayment();
         $orderService->order->appointments[0]->refresh();
-        return BookingResult::format([
-            'appointment' => $orderService->order->appointments[0]
-        ]);
+        return $orderService->order->arrayResult();
     }
 }

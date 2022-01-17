@@ -327,6 +327,11 @@ class Order extends Model
         do_action('wappointment_order_completed', $this);
         $this->load('appointments'); //making sure the status of the appointment is correct
 
+        return $this->arrayResult();
+    }
+
+    public function arrayResult()
+    {
         $arrayResult = $this->toArray();
 
         $arrayResult['appointments'] = BookingResult::formatAppointments($this->appointments);
