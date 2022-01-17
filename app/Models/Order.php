@@ -39,7 +39,7 @@ class Order extends Model
     }
     public function getDescriptionAttribute()
     {
-        return Helpers::siteName() . ' - ' . $this->getDescription();
+        return Helpers::siteName() . ' - ' . (!empty($this)) ? $this->getDescription() : '';
     }
 
     public function getStatusLabelAttribute()
@@ -255,7 +255,14 @@ class Order extends Model
     {
         $description = '';
         foreach ($this->prices as $price) {
-            $description .= $price->appointment->getStaffName() . ' - ' . $price->item_name . ' - ' . $price->appointment->getStartsDayAndTime($price->appointment->getStaffTZ()) . " | ";
+            if (!is_null($price->appointment)) {
+                $description .= $price->appointment->getStaffName();
+            }
+            $description .=  ' - ' . $price->item_name . ' - ';
+            if (!is_null($price->appointment)) {
+                $description .= $price->appointment->getStartsDayAndTime($price->appointment->getStaffTZ());
+            }
+            $description .= " | ";
         }
         return esc_html($description);
     }
