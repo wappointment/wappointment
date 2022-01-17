@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <h1 class="px-2">Settings</h1>
+    <h1 class="px-2">{{get_i18n('settings', 'common') }}</h1>
     
     <ul class="nav nav-tabs row px-4" id="myTab" role="tablist" v-if="isUserAdministrator">
         <li v-for="(tab, key) in tabs" class="nav-item">
@@ -44,23 +44,7 @@ export default {
   mixins: [hasPermissions],
     data: () => ({
         service: null,
-        tabs:{
-            calendars:{
-                label: 'Calendars & Staff'
-            },
-            services:{
-                label: 'Services'
-            },
-            emailsnsms:{
-                label: 'Email & SMS'
-            },
-            appearance:{
-                label: 'Appearance'
-            },
-            advanced:{
-                label: 'Advanced'
-            },
-        },
+        tabs: []
     }),
 
     components: {
@@ -79,6 +63,25 @@ export default {
             return this.convertedName.indexOf('_') === -1 ? this.convertedName : this.convertedName.split('_')[0]
         }
     },
+    created(){
+        this.tabs = {
+            calendars:{
+                label: this.get_i18n('cals_title', 'settings'),
+            },
+            services:{
+                label: this.get_i18n('service_title', 'settings'),
+            },
+            emailsnsms:{
+                label: this.get_i18n('emails_title', 'settings'),
+            },
+            appearance:{
+                label: this.get_i18n('appearance_title', 'settings'),
+            },
+            advanced:{
+                label: this.get_i18n('advanced_title', 'settings'),
+            },
+        }
+    },  
     methods: {
          addonsWithSettings(){
             let addonsWithSettings = {}

@@ -11,11 +11,23 @@ class Status
 {
     public static $version = WAPPOINTMENT_VERSION;
     private static $last_step = 4;
-    private static $db_version_required = '2.3.0';
+    private static $db_version_required = '2.4.0';
 
     public static function isInstalled()
     {
+        if (static::runningPHP8()) {
+            return false;
+        }
         return (bool) self::installationTime();
+    }
+
+    public static function runningPHP8()
+    {
+        $max = '8.0.0';
+        if (version_compare(PHP_VERSION, $max) >= 0) {
+            return 'Wappointment is not yet compatible with PHP 8 yet. You can install our PHP 8 beta version following this guide: https://wappointment.com/docs/installing-php8-version/';
+        }
+        return false;
     }
 
     public static function installationTime()
@@ -84,9 +96,9 @@ class Status
             foreach ($services as $service) {
                 if (\Wappointment\Managers\Service::hasZoom($service)) {
                     $messages[] = [
-                        'message' => 'Hey! You are using Video meetings, great for you! Generate meetings automatically with Zoom, Google meet etc ... by connecting these services',
+                        'message' => __('Hey! You are using Video meetings, great for you!', 'wappointment') . __('Generate meetings automatically with Zoom, GoogleMeet etc... by connecting these services', 'wappointment'),
                         'link' => [
-                            'label' => 'Connect Account',
+                            'label' => __('Connect Account', 'wappointment'),
                             'address' => '[goto_calendars_zoom_account]'
                         ]
                     ];

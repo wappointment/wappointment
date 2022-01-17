@@ -85,8 +85,8 @@ export default {
       attributesElProcess(){
         let attributesEl = Object.assign({},this.attributesEl)
          if(this.getParameterByName('staff')){
-            attributesEl.staffSelection = this.getParameterByName('staff')
-          }
+          attributesEl.staffSelection = this.getParameterByName('staff')
+        }
           
         return this.castAttributes(attributesEl)
       },
@@ -178,11 +178,22 @@ export default {
         }
     },
     methods: {
+        serviceSelectionAttribute(){
+          let arrayids = this.attributesEl.serviceSelection.indexOf(',') !== -1 ? this.attributesEl.serviceSelection.split(','):[this.attributesEl.serviceSelection]
+
+          for (let i = 0; i < arrayids.length; i++) {
+            arrayids[i] = parseInt(arrayids[i])
+          }
+          return arrayids
+        },
         castAttributes(attributes){
-          for (const el of ['staffSelection', 'serviceSelection']) {
+          for (const el of ['staffSelection']) {
             if(attributes[el]){
               attributes[el] = parseInt(attributes[el])
             }
+          }
+          if(attributes['serviceSelection'] !== undefined){
+            attributes['serviceSelection'] = this.serviceSelectionAttribute()
           }
           return attributes
         },
@@ -198,16 +209,21 @@ export default {
           if(this.hasAttributesToProcess){
             this.buttonTitle = this.attributesEl.buttonTitle !== undefined ? this.attributesEl.buttonTitle:this.buttonTitle
             this.brFixed = this.attributesEl.brcFloats !== undefined
-            this.popup = this.attributesEl.popup !== undefined
             this.demoAs = this.attributesEl.demoAs !== undefined
             this.largeVersion = [undefined,false].indexOf(this.attributesEl.largeVersion) === -1
             this.opts.selection.check_viewweek = [undefined,false].indexOf(this.attributesEl.week) === -1
             this.autoPop = [undefined,false].indexOf(this.attributesEl.popOff) !== -1
+            this.popup = this.attributeIsEmpty('popup') && !this.demoAs
 
             this.opts.attributesEl = Object.assign({},this.attributesEl)
 
           }
         },
+
+        attributeIsEmpty(attributestring){
+          return [false,undefined].indexOf(this.attributesEl[attributestring]) === -1
+        },
+
         translateAttributesEl(){
           let attributes = {}
           for (const key in this.attributesEl) {
@@ -443,6 +459,10 @@ export default {
     margin: .5em 0;
 }
 
+.wap-booking-fields input,
+.wap-booking-fields textarea{
+  color: var(--wappo-body-tx) !important;
+}
 
 .wap-booking-fields .isInvalid input[type="text"], 
 .wap-booking-fields .isInvalid input[type="email"], 
@@ -458,10 +478,17 @@ export default {
 
 .wap-front .wappointment-errors{
     background-color:var(--wappo-error-tx);    
+    border-radius:.25em;
+    padding: .3em;
+    margin: .5em 0;
+}
+
+.wap-front div.wappointment-errors div{
+    color: var(--wappo-pri-tx);
 }
 
 .wap-front .wrap-calendar div.wappointment-errors{
-    color: #fff;
+    color: var(--wappo-pri-tx);
     font-size: .9em;
 }
 .phone-field-wrap .dpselect .selection::after,

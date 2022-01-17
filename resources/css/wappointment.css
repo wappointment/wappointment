@@ -122,6 +122,17 @@ animation-name: updatesreview;
     animation: spin .8s ease-in-out infinite;
     margin: 0 auto;
   }
+
+  .notice-warning .w-major-update-warning__separator {
+    border: 1px solid #6664cb;
+}
+.w-major-update-warning__separator {
+    margin: 15px -12px;
+}
+
+.w-major-update-warning + p {
+    display: none;
+}
   
   @keyframes spin {
     0% { transform: rotate(0deg); }

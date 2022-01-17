@@ -58,11 +58,11 @@ class IcsGenerator
         foreach ($appointments as $appointment) {
             $appointment = $this->fillClient($appointment);
 
-            if ($appointment instanceof Appointment && $appointment->client instanceof Client) { //ignore mssing data
+            if ($appointment instanceof Appointment && $appointment->getClientModel() instanceof Client) { //ignore mssing data
                 if ($cancelled) {
-                    $this->cancelled($appointment, $appointment->client);
+                    $this->cancelled($appointment, $appointment->getClientModel());
                 } else {
-                    $this->event($appointment, $appointment->client);
+                    $this->event($appointment, $appointment->getClientModel());
                 }
             }
         }
@@ -151,18 +151,18 @@ class IcsGenerator
     protected function getTitle(Appointment $appointment, $staff)
     {
         $title = $appointment->getServiceName() . ' ';
-        $title .= $this->admin ? $appointment->client->name . '(' . $appointment->client->email . ')' :  $staff->getUserDisplayName();
+        $title .= $this->admin ? $appointment->getClientModel()->name . '(' . $appointment->getClientModel()->email . ')' :  $staff->getUserDisplayName();
 
-        return $title;
+        return esc_html($title);
     }
 
     protected function getDescription(Appointment $appointment)
     {
         $description = '';
         foreach (['name', 'tz', 'email', 'phone', 'skype'] as $key) {
-            if (!empty($appointment->client->options[$key])) {
+            if (!empty($appointment->getClientModel()->options[$key])) {
                 $description .= "\n" . $key . ' : ';
-                $description .= $appointment->client->options[$key];
+                $description .= esc_html($appointment->getClientModel()->options[$key]);
             }
         }
 
@@ -170,17 +170,19 @@ class IcsGenerator
         $description = apply_filters('wappointment_ics_description', $description, $appointment);
 
         if ($appointment->isZoom()) {
-            $description .= "\n\nAppointment is a Video meeting";
-            $description .= "\nMeeting will be accessible from the link below: " .
+            $description .= "\n\n" . __('Appointment is a Video meeting', 'wappointment');
+            $description .= "\n" . __('Meeting will be accessible from the link below:', 'wappointment') .
                 "\n " . $appointment->getLinkViewEvent();
         }
 
         $canCanCelOrRescheduleOrBoth = Settings::get('allow_rescheduling') ? true : (Settings::get('allow_cancellation') ? true : false);
 
         if ($canCanCelOrRescheduleOrBoth) {
-            $description .= "\n\nNeed to modify this event?\n\n";
-            $description .= Settings::get('allow_rescheduling') ? "Reschedule (until " . $appointment->rescheduleLimit() . ") : \n" . $appointment->getLinkRescheduleEvent() . "\n\n" : '';
-            $description .= Settings::get('allow_cancellation') ? "Cancel (until " . $appointment->cancelLimit() . ") : \n" . $appointment->getLinkCancelEvent() . "\n\n" : '';
+            $description .= "\n\n" . __('Need to modify this event?', 'wappointment') . "\n\n";
+            /* translators: %1$s - date %2$s rescheule link. */
+            $description .= Settings::get('allow_rescheduling') ? sprintf(__('Reschedule (until %1$s): &#10; %2$s', 'wappointment') . "\n\n", $appointment->rescheduleLimit(), $appointment->getLinkRescheduleEvent())  : '';
+            /* translators: %1$s - date %2$s cancel link. */
+            $description .= Settings::get('allow_cancellation') ? sprintf(__('Cancel (until %1$s): &#10; %2$s', 'wappointment') . "\n\n", $appointment->cancelLimit(), $appointment->getLinkCancelEvent()) : '';
         }
         $description .= "\n-----------------------------------";
 
@@ -189,7 +191,9 @@ class IcsGenerator
 
     public static function getIcsSignature()
     {
-        $ics_signature = "\nBooked with https://wappointment.com";
+        /* translators: %s is replaced with https://wappointment.com */
+        $ics_signature = "\n" . sprintf(__('Booked with %s', 'wappointment'), 'https://wappointment.com');
+
         return !empty(\Wappointment\WP\Helpers::getOption('site_details')) ? apply_filters('wappointment_ics_signature', $ics_signature) : $ics_signature;
     }
 

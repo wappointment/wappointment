@@ -1,43 +1,88 @@
 <?php
 
-namespace  Wappointment\Jobs;
+namespace Wappointment\Jobs;
 
 use Wappointment\ClassConnect\Carbon;
-use Wappointment\Services\AppointmentNew as AppointmentService;
+use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Settings;
 use Wappointment\Jobs\JobInterface;
 use Wappointment\Services\Queue;
 use Wappointment\Models\Job;
 use Wappointment\Models\Order;
+use Wappointment\Models\Appointment;
 use Wappointment\Services\Payment;
 
 class CleanPendingPaymentAppointment implements JobInterface
 {
     public function handle()
     {
-        if (Payment::isWooActive()) { //there is already an auto clean job for woocommerce
-            return false;
+        $data = !Payment::isWooActive() ? $this->appointmentsToProcess() : \WappointmentAddonWoocommerce\Jobs\CleanPendingPaymentAppointment::getAppointmentsToReview();
+
+        foreach ($data['appointments'] as $appointment) {
+            if (empty($appointment->options['slots'])) {
+                if ($appointment->isPending()) {
+                    AppointmentNew::cancel($appointment);
+                }
+            } else {
+                foreach ($data['orders'] as $orderData) {
+                    static::cancelReservations($orderData, $appointment);
+                }
+            }
         }
+        static::registerJob(true);
+    }
+
+    public static function cancelReservations($orderData, $appointment = null)
+    {
+        $look_for_appointment = is_null($appointment);
+
+        foreach ($orderData['reservations'] as $reservation) {
+            if (!empty($reservation['appointment_id'])) {
+                if ($look_for_appointment || $appointment->id !== (int)$reservation['appointment_id']) {
+                    $appointment = Appointment::find((int)$reservation['appointment_id']);
+                }
+                if ((int)$reservation['appointment_id'] === (int)$appointment->id) {
+
+                    $ticket = apply_filters('wappointment_appointment_get_ticket', $appointment, $orderData['client_id']);
+                    if (!is_null($ticket) && $ticket->is_participant) {
+                        do_action('wappointment_cancel_ticket', $ticket, !empty($reservation['slots']) ? $reservation['slots'] : false);
+                    } else {
+                        do_action('wappointment_cancel_appointment', $ticket);
+                    }
+                }
+            }
+        }
+        //woo state that we already cancelled
+        do_action('wappointment_woo_cancelled_order', $orderData);
+        $orderData['orderObj']->setAutoCancelled();
+    }
+
+    public function appointmentsToProcess()
+    {
         // 1 - get orders that are pending for more than  the last X minutes
 
         $orders = Order::pending()->where('updated_at', '<', Carbon::now()->subSeconds(
             static::getDelayInSeconds()
         )->format('Y-m-d H:i'))->get();
 
+        $appointments = [];
+        $ordersData = [];
 
         // 3 - delete the connected appointments
         if (!empty($orders)) {
             foreach ($orders as $order) {
-                foreach ($order->appointments as $appointment) {
-                    if ($appointment->isPending()) {
-                        AppointmentService::cancel($appointment);
-                    }
+                $ordersData[] = ['client_id' => $order->client_id, 'reservations' => $order->options['reservations'], 'orderObj' => $order];
+                foreach ($order->prices as $charge) {
+                    $appointments[] = $charge->appointment;
                 }
-                $order->setAutoCancelled();
+                //
             }
         }
 
-        static::registerJob(true);
+        return [
+            'appointments' => $appointments,
+            'orders' => $ordersData
+        ];
     }
 
     public static function registerJob($skipCheck = false)

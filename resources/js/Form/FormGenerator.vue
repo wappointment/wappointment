@@ -24,13 +24,12 @@
                     @loaded="loadedField(keydi)" :errors="getErrors(element)" :minimal="minimal"
                     v-bind="allowBind(element)" @change="changedValue" @activated="wasActive(element)" :definition="element"/>
                     </div>
-                    
                 </div>
             </template>
             <slot />
             <div v-if="buttons">
                 <button v-if="backbutton" class="btn btn-secondary" type="button" @click.prevent="$emit('back')">{{ backbuttonLabel }}</button>
-                <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent.stop="submitTrigger">{{ buttonLabel }}</button>
+                <button class="btn btn-primary" :class="{'btn-disabled':!isValid}" :disabled="!isValid" type="button" @click.prevent.stop="submitTrigger">{{ buttonLabel!=''? buttonLabel:get_i18n('save', 'common') }}</button>
             </div>
         </div>
     </form>
@@ -60,11 +59,11 @@ export default {
         }, 
         create: {
             type: String,
-            default: 'Save'
+            default: ''
         }, 
         modify: {
             type: String,
-            default: 'Save'
+            default: ''
         },
         creating: {
             type: Boolean,
@@ -197,13 +196,7 @@ export default {
             }
             return false
         },
-        getRowClass(row){
-            if(row.conditions !== undefined && !this.isVisible(row)) {
-                this.hideChildrenFields(row)
-                return 'd-none'
-            }
-            return row.class!== undefined ? row.class: 'd-flex justify-content-between flex-wrap flex-sm-wrap'
-        },
+        
         hideChildrenFields(row){
             for (let i = 0; i < row.fields.length; i++) {
                 const eldef = row.fields[i]
@@ -222,9 +215,19 @@ export default {
                 this.visibles.splice(idx, 1)
             }
         },
+        getRowClass(row){
+            if(row.conditions !== undefined && !this.isVisible(row)) {
+                this.hideChildrenFields(row)
+                return 'd-none'
+            }
+            return row.class!== undefined ? row.class: 'd-flex justify-content-between flex-wrap flex-sm-wrap'
+        },
         getRowEachClass(row, sube){
             let classStr = row.classEach!== undefined ? row.classEach: ''
-            classStr += sube!== undefined && sube.class!== undefined ? ' '+sube.class: ''
+            if(row.equal_width){
+                classStr += row.fields.length == 2? ' w-50':' w-100'
+            }
+            
             return classStr
         },
         getElementDefinition(model){
@@ -388,7 +391,7 @@ export default {
          getErrorMsg(type){
              switch (type) {
                  case 'required':
-                     return 'Element is required'
+                     return this.get_i18n('form_input_required', 'common')
              }
          },
 

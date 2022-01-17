@@ -1,6 +1,6 @@
 <template>
     <div class="wap-bf" :class="{show: canBeBooked, 'has-scroll':requiresScroll}">
-        <template v-if="canBeBooked">
+        <template v-if="canBeBooked && !errorShortcode">
             <BookingFormHeader v-if="showHeader && noStaffSelectionNeeded" 
             :isStepSlotSelection="isStepSlotSelection"
             :options="options"
@@ -62,7 +62,8 @@
         </template>
         <div v-else>
             <div v-if="dataloaded" class="wappointment-errors">
-                <div>{{options.general.noappointments}}</div>
+                <div v-if="errorShortcode"> {{ errorShortcode }} </div>
+                <div v-else>{{options.general.noappointments}}</div>
             </div>
             <template v-else>
                 <div class="wappointment-errors" v-if="errorMessages.length > 0">
@@ -132,6 +133,7 @@ export default {
         time_format: '',
         date_format: '',
         appointmentSavedData: false,
+        resultBooking: false,
         appointmentSaved: false,
         appointmentKey: false,
         dataloaded: false,
@@ -152,7 +154,9 @@ export default {
         checkCacheIntervalid: false,
         order:false,
         selectedVariation:false,
-        selectedPackage: false
+        selectedPackage: false,
+        lockToServiceIDs:[],
+        errorShortcode:false
     }),
 
     mounted () {
@@ -205,7 +209,7 @@ export default {
             return this.isLegacyOrNotServiceSuite || this.location !== false
         },
         slotSelected(){
-            return this.selectedSlot !== false && this.selectedSlot > 0
+            return this.selectedSlot !== false && this.selectedSlot.start > 0
         },
         serviceIsNotFree(){
             return this.service !== false && this.service.options.woo_sellable === true
@@ -247,8 +251,14 @@ export default {
        filterStaffByService(){
             let staffs = this.getStaffs
             if(this.serviceLocked){
-                let serviceSelected = parseInt(this.attributesEl.serviceSelection)
-                staffs = staffs.filter(e  => e.services.indexOf(serviceSelected) !== -1)
+                let servicesLocked = this.attributesEl.serviceSelection
+                staffs = staffs.filter(function (staff) {
+                    for (const staff_service of staff.services) {
+                        if(servicesLocked.indexOf(staff_service) !== -1){
+                            return true
+                        }
+                    }
+                })
             }
             return staffs
         },
@@ -315,8 +325,15 @@ export default {
         },
         autoSelectingOptions(){
             this.autoSelService()
+            this.filterServices()
             this.autoSelectDuration() 
             this.autoSelectModality()
+        },
+        filterServices(){
+            if(this.lockToServiceIDs.length > 0){
+                let locked_sids = this.lockToServiceIDs
+                this.services = this.services.filter(service => locked_sids.indexOf(service.id) !== -1)
+            }
         },
         changeStaff(newStaff){
             this.service = false
@@ -380,9 +397,20 @@ export default {
             if(typeof dataChanged == 'object' && Object.keys(dataChanged).length > 0) {
                 this.childChangedData(dataChanged)
             }
+            this.eventProcesses(newStep)
             this.currentStep = newStep
             setTimeout(this.loadStep.bind(null,newStep), 100)
             this.$emit('changedStep',newStep)
+        },
+        eventProcesses(newStep){
+            switch (newStep) {
+                case 'BookingServiceSelection':
+                    this.refreshAvail() //avoid issue with wrong availability collection when switching services
+                    break;
+            
+                default:
+                    break;
+            }
         },
 
         selectedLocation(location){
@@ -410,9 +438,9 @@ export default {
                         if(element.indexOf('.')!==-1){
                             let splited_name = element.split('.')
                             let temp = Object.assign({},this)
-
-                            for (let i = 0; i < splited_name.length; i++) {
-                                temp = temp[splited_name[i]]
+                            
+                            for (const iterator of splited_name) {
+                                temp = temp[iterator]
                             }
                             nprops[key] = temp
                             
@@ -451,8 +479,7 @@ export default {
             let conditions = this.componentsList[component_name].conditions !== undefined ? this.componentsList[component_name].conditions : false
             if(conditions !== false) {
                 let conditionKeys = Object.keys(conditions)
-                for (let i = 0; i < conditionKeys.length; i++) {
-                    const keyCondition = conditionKeys[i]
+                for (const keyCondition of conditionKeys) {
                     if(this.bfdemo !== true && this[keyCondition] !== conditions[keyCondition]) {
                         if(this.componentsList[component_name].skip !== undefined){
                             if(this.conditionSkipPass(component_name)){
@@ -467,8 +494,7 @@ export default {
         },
         conditionSkipPass(component_name){
             let skipConditions = Object.keys(this.componentsList[component_name].skip)
-            for (let j = 0; j < skipConditions.length; j++) {
-                const keyConditionSkip = skipConditions[j]
+            for (const keyConditionSkip of skipConditions) {
                 if(this[keyConditionSkip] !== this.componentsList[component_name].skip[keyConditionSkip]) {
                     return false
                 }
@@ -512,12 +538,9 @@ export default {
                 this.dataloaded = true
                 return
             }
-
+            this.setMomentLocale()
             this.dataloaded = true
             if(!this.mustSelectStaff || this.mustSelectStaff && this.getStaffs.length == 1){
-                this.selectedStaff = this.getDefaultStaff()
-                this.refreshAvail()
-                this.setMomentLocale()
                 this.initServiceStaffDurationLocation()
             }
     
@@ -576,10 +599,10 @@ export default {
                 if(this.viewData.site_lang!== 'en' && browserLang().substr(0,2)!=='en'){ // if the browser is not english we fetch for a localized date
                     this.convertDateRequest({
                         timezone: this.timeprops.currentTz,
-                        timestamp: this.selectedSlot
+                        timestamp: this.selectedSlot.start
                     }).then(this.convertedDate) 
                 }else{
-                    this.converted = this.getMoment(this.selectedSlot, this.currentTz).format(this.fullDateFormat)
+                    this.converted = this.getMoment(this.selectedSlot.start, this.currentTz).format(this.fullDateFormat)
                 }
             }
             
@@ -595,10 +618,8 @@ export default {
             
         },
         autoSelService(){
-            if(this.isLegacyOrNotServiceSuite){
-                this.service = window.wappointmentExtends.filter('serviceDefault', this.getDefaultService(), {services: this.services})
-            }else{
-                this.testLockedService()
+            if(this.services.length == 1){ //there is just one service we auto set
+                this.service = this.services[0]
             }
         },
         demoAutoSelect(){
@@ -626,34 +647,46 @@ export default {
             }
         },
         initServiceStaffDurationLocation(){
-            this.setAvailableServices()
+
             this.testLockedStaff()
-            this.autoSelectingOptions()
-            this.demoAutoSelect() 
+            if(!this.errorShortcode){ //if there was an error autosetting the locked staff we stop
+                this.testLockedService() // we lock to certain service if any lock specified
+                if(!this.errorShortcode){
+                    if(!this.selectedStaff){ // if so far no staff has been set, we just auto set it
+                        this.selectedStaff = this.getDefaultStaff()
+                        this.refreshAvail()
+                    }
+                    this.setAvailableServices()
+                    this.autoSelectingOptions()
+                    this.demoAutoSelect()
+                }
+                 
+            }
+            
         },
         testLockedStaff(){
             if(this.attributesEl !== undefined && 
             this.attributesEl.staffSelection !== undefined){
-                for (let i = 0; i < this.viewData.staffs.length; i++) {
-                    if(parseInt(this.attributesEl.staffSelection) === parseInt(this.viewData.staffs[i].id)){
-                        return this.setStaff(this.viewData.staffs[i])
-                    }
+                for (const staff of this.viewData.staffs) {
+                   if(parseInt(this.attributesEl.staffSelection) === parseInt(staff.id)){
+                        return this.setStaff(staff)
+                    } 
                 }
+                this.errorShortcode = "Staff "+this.attributesEl.staffSelection+" does not exist"
             }
         },
         testLockedService(){
             if(this.attributesEl !== undefined && 
                 this.attributesEl.serviceSelection !== undefined){
-                let lockToServiceID = this.attributesEl.serviceSelection
-                if([undefined,false,''].indexOf(lockToServiceID) === -1){
-                    this.service = this.services.find(e => parseInt(e.id) == lockToServiceID)
+                let lockToServiceIDs = this.attributesEl.serviceSelection
+                if(Array.isArray( lockToServiceIDs)){
+                    this.lockToServiceIDs = lockToServiceIDs
+                }else{
+                    this.lockToServiceIDs.push(parseInt(this.attributesEl.serviceSelection))
                 }
-                if(this.service === undefined){
-                    throw "Service "+lockToServiceID+" not available for staff"
-                }
-            }else{
-                if(this.services.length < 2){
-                    this.service = this.services[0]
+                let hasServices = this.viewData.services.filter((s) => lockToServiceIDs.indexOf(s.id) !== -1)
+                if(hasServices.length < 1){
+                    this.errorShortcode = "Service "+(this.attributesEl.serviceSelection.join(','))+" does not exist"
                 }
             }
         },
@@ -736,7 +769,8 @@ export default {
                         relatedComps: 'relatedComps', 
                         appointment_starts_at: 'appointmentStartsAt',
                         custom_fields: 'viewData.custom_fields',
-                        staffs:  'filterStaffByService'
+                        staffs:  'filterStaffByService',
+                        wpauth: 'viewData.wpauth',
                     },
                     listeners: {
                         back:'childChangedStep',
@@ -767,6 +801,8 @@ export default {
                         staff:"selectedStaff", 
                         appointment_starts_at: 'appointmentStartsAt',
                         rescheduling: 'rescheduling',
+                        resultBooking:"resultBooking",
+                        viewData:'viewData',
                     },
                     listeners: {
                         loading: 'childChangedData',
@@ -777,7 +813,6 @@ export default {
             if(!this.isLegacyOrNotServiceSuite){
                 componentsList = this.updateComponentList(componentsList)
                 if(window.apiWappointment.methods !== undefined && window.apiWappointment.methods.length > 0){
-                    console.log('set payment step')
                     componentsList = this.setPaymentStep(componentsList)
                 }
             }
@@ -1269,12 +1304,6 @@ export default {
 .wap-wid.wclosable > .wclose:hover::before, 
 .wap-wid.wclosable > .wclose:hover::after {
     background-color: var(--wappo-header-tx);
-}
-
-.wap-front .wappointment-errors{
-    border-radius:.25em;
-    padding: .3em;
-    margin: .5em 0;
 }
 
 

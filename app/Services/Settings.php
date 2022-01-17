@@ -5,6 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\ClassConnect\RakitValidator;
+use Wappointment\Helpers\Translations;
 
 class Settings
 {
@@ -77,6 +78,7 @@ class Settings
             'daily_summary' => false,
             'daily_summary_time' => 10,
             'notify_new_appointments' => true,
+            'notify_pending_appointments' => true,
             'notify_canceled_appointments' => true,
             'notify_rescheduled_appointments' => true,
             'email_notifications' => '',
@@ -94,10 +96,10 @@ class Settings
                 'wpmail_html' => false,
                 'attachments_off' => false
             ],
-            'reschedule_link' => 'Reschedule',
-            'cancellation_link' => 'Cancel',
-            'save_appointment_text_link' => 'Save to calendar',
-            'new_booking_link' => 'Book a new appointment',
+            'reschedule_link' => __('Reschedule', 'wappointment'),
+            'cancellation_link' => __('Cancel', 'wappointment'),
+            'save_appointment_text_link' => __('Save to calendar', 'wappointment'),
+            'new_booking_link' => __('Book a new appointment', 'wappointment'),
             'booking_page' => 0,
             'show_welcome' => false,
             'force_ugly_permalinks' => false,
@@ -128,7 +130,15 @@ class Settings
                 'sunday' => [],
                 'precise' => true
             ],
-            'servicesDefault' => true
+            'servicesDefault' => true,
+            'calendar_handles_free' => false,
+            'calendar_ignores_free' => false,
+            'zoom_browser' => false,
+            'invoice' => false,
+            'invoice_seller' => '',
+            'invoice_num' => __('Order nº', 'wappointment'),
+            'invoice_client' => ['name'],
+
         ];
     }
 
@@ -232,7 +242,7 @@ class Settings
         $updatedValues = static::prepareSave($setting_key, $value);
         if ($updatedValues !== false) {
             WPHelpers::setOption(static::$key_option, $updatedValues, true);
-            return ['message' => 'Setting saved'];
+            return ['message' => Translations::get('element_saved')];
         }
     }
 
@@ -242,7 +252,7 @@ class Settings
             $updatedValues = static::prepareSave($key, $value);
         }
         WPHelpers::setOption(static::$key_option, $updatedValues, true);
-        return ['message' => 'Settings saved'];
+        return ['message' => Translations::get('element_saved')];
     }
 
     public static function delete()
@@ -296,7 +306,7 @@ class Settings
                 static::$methodAfterSaved($staff_id);
             }
 
-            return ['message' => empty(static::$msg) ? 'Setting saved' : static::$msg];
+            return ['message' => empty(static::$msg) ? Translations::get('element_saved') : static::$msg];
         }
     }
 
@@ -328,6 +338,29 @@ class Settings
             return true;
         }
         throw new \WappointmentException('Tax is not valid');
+    }
+
+    public static function save_appointment_text_linkValid($value)
+    {
+        return static::isEmpty($value);
+    }
+
+    public static function reschedule_linkValid($value)
+    {
+        return static::isEmpty($value);
+    }
+
+    public static function cancellation_linkValid($value)
+    {
+        return static::isEmpty($value);
+    }
+
+    public static function isEmpty($value)
+    {
+        if (!empty($value)) {
+            return true;
+        }
+        throw new \WappointmentException('Setting cannot be empty');
     }
 
     protected static function weekly_summary_dayValid($value)

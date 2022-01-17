@@ -8,25 +8,26 @@ class AdminCanceledAppointmentEmail extends AbstractAdminEmail
 
     public function loadContent()
     {
-        $this->subject = 'Cancelled appointment';
+        $this->subject = __('Cancelled appointment', 'wappointment');
         $this->addLogo();
         $this->addBr();
 
         $this->addLines([
-            'Hi ' . $this->params['appointment']->getStaff()->getFirstName() . ', ',
-            'Unfortunately a client cancelled his appointment.'
+            /* translators: %s - client's first name. */
+            sprintf(__('Hi %s,', 'wappointment'), $this->params['appointment']->getStaff()->getFirstName()),
+            __('Unfortunately a client cancelled his appointment.', 'wappointment')
         ]);
 
         $this->addRoundedSquare($this->getEmailContent($this->params['client'], $this->params['appointment']));
 
         $this->addLines([
-            'Have a great day!',
+            __('Have a great day!', 'wappointment'),
             '',
         ]);
 
         if (!$this->areAttachmentsDisabled()) {
             $this->addLines([
-                'Ps: An .ics file with the appointment\'s details is attached'
+                __('Ps: An .ics file with the appointment\'s details is attached', 'wappointment')
             ]);
         }
 

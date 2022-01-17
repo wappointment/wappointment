@@ -35,8 +35,10 @@ class DotCom extends API
 
     public function checkForUpdates()
     {
+
+        $must_refresh = WPHelpers::getOption('appointments_must_refresh');
         // 0 - only check if site connected
-        if (!empty($this->site_key) && (bool)WPHelpers::getOption('appointments_must_refresh') === true) {
+        if (!empty($this->site_key) && (bool)$must_refresh === true && $must_refresh < time()) {
             // 1 - retrieve appointments data
             $appointments = $this->getAppointments();
 
@@ -47,7 +49,6 @@ class DotCom extends API
 
             $appointments_update = WPHelpers::getOption('appointments_update');
             // 2 - check if there are changes since last check
-
             if ($this->hasPendingChanges($appointments, $appointments_update)) {
                 // 3 - loop through each appointment and prepare for update if needs be
                 $appointment_collect = \WappointmentLv::collect($appointments_update);
@@ -75,8 +76,8 @@ class DotCom extends API
                 }
                 WPHelpers::setOption('appointments_update', $appointments);
             }
+            $this->clearMustRefresh();
         }
-        $this->clearMustRefresh();
     }
 
     public function clearMustRefresh()
@@ -86,7 +87,7 @@ class DotCom extends API
 
     public function setMustRefresh()
     {
-        WPHelpers::setOption('appointments_must_refresh', true);
+        WPHelpers::setOption('appointments_must_refresh', time() + 60);
     }
 
     public function notifyReset()
@@ -193,7 +194,6 @@ class DotCom extends API
 
     public function create($appointment)
     {
-
         $response = $this->client->request('POST', $this->call('/api/appointment/create'), [
             'form_params' => $this->getParams($this->getAppointmentDetails($appointment))
         ]);
@@ -210,7 +210,8 @@ class DotCom extends API
 
     public function update($appointment)
     {
-
+        // echo '<pre>';
+        // dd($this->getParams($this->getAppointmentDetails($appointment)));
         $response = $this->client->request('POST', $this->call('/api/appointment/update'), [
             'form_params' => $this->getParams($this->getAppointmentDetails($appointment))
         ]);
@@ -246,10 +247,19 @@ class DotCom extends API
     {
 
         $tz = $this->isLegacy ? Settings::getStaff('timezone', $this->staff_id) : $this->staff->getTimezone();
+
         return [
-            'appointment' => $appointment->toDotcom($tz),
+            'appointment' => $this->wrapAppointment($appointment->toDotcom($tz)),
             'account_key' => $this->account_key
         ];
+    }
+
+    public function wrapAppointment($appointment)
+    {
+        if ((new Licences)->hasLicenceInstalled() && has_filter('wappointment_ics_signature')) {
+            $appointment['no_sign'] = true;
+        }
+        return $appointment;
     }
 
     private function getAccountKeyLegacy()

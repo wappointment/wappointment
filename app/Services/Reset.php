@@ -25,7 +25,14 @@ class Reset
         'db_version_created',
         'db_version',
         'appointments_must_refresh',
-        'appointments_update'
+        'appointments_update',
+        'staff_settings',
+        'addons_db_version',
+        'group_settings',
+        'packages_settings',
+        'stripe_settings',
+        'paypal_settings',
+        'woocommerce_settings',
     ];
 
     private $user_options = [
@@ -38,16 +45,39 @@ class Reset
         'since_last_refresh',
     ];
 
-    public function __construct()
-    {
+    private $db_drop = [
+        'appointments_clients_packages',
+        'clients_packages',
+        'appointments_participants',
+        'appointments_clients_participants',
+        'packages_services',
+        'packages',
+        'calendar_service',
+        'appointments',
+        'calendars',
+        'custom_fields',
+        'clients',
+        'failed_jobs',
+        'jobs',
+        'locations',
+        'logs',
+        'migrations',
+        'order_price',
+        'orders',
+        'prices',
+        'reminders',
+        'services',
+        'service_location',
+        'statuses',
+    ];
 
-        do_action('wappointment_reset');
-        sleep(2); //giving time for revert on addons
+    public function proceed()
+    {
         static::eraseCache();
         $this->dotComInforms();
+        $this->dropTables();
 
         $this->removeStaffSettings();
-        $this->dropTables();
         $this->removeCoreSettings();
 
         WPScheduler::clearScheduler();
@@ -71,15 +101,23 @@ class Reset
     }
 
 
-    private function dropTables()
+    public function dropTables()
     {
-        $migrate = new \Wappointment\Installation\Migrate();
-        $migrate->rollback();
-
-        Capsule::schema()->dropIfExists(Database::$prefix_self . '_migrations');
-        if (Capsule::schema()->hasTable(Database::$prefix_self . '_migrations')) {
-            throw new \WappointmentException("Error while DROPPING DB tables", 1);
+        //Capsule::schema()->disableForeignKeyConstraints();
+        $db_list = [];
+        foreach ($this->db_drop as $table_name) {
+            $db_list[] = Database::$prefix_self . '_' . $table_name;
         }
+        global $wpdb;
+
+        $wpdb->query("SET FOREIGN_KEY_CHECKS=0;");
+        foreach (apply_filters('wappointment_db_drop', $db_list) as $table_name) {
+            $full_table = Database::getWpSitePrefix() . $table_name;
+
+            $wpdb->query("DROP TABLE IF EXISTS $full_table;");
+        }
+        $wpdb->query("SET FOREIGN_KEY_CHECKS=1;");
+        //Capsule::schema()->enableForeignKeyConstraints();
     }
 
     private function removeCoreSettings()

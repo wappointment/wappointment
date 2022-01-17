@@ -1,7 +1,7 @@
 <template>
     <div class="container-fluid">
       <WAPFormGenerator ref="fgaddlocation" :schema="schemaLocation" :data="modelHolder" 
-        @submit="saveLocation" :errors="errorsPassed" :key="'formKey'" labelButton="Save" :backbutton="true" backbuttonLabel="Cancel" />
+        @submit="saveLocation" :errors="errorsPassed" :key="'formKey'"  :backbutton="true" backbuttonLabel="Cancel" />
     </div>
 </template>
 
@@ -77,6 +77,7 @@ export default {
                 images: [
                   { value:'zoom', name:'Zoom', icon: 'zoom.png', icontype: 'img' , realsize: true},
                   { value:'googlemeet', name:'Google Meet', icon: 'google-meet.png', icontype: 'img' , realsize: true},
+                  { value:'jitsi', name:'Jitsi', icon: 'jitsi.png', icontype: 'img' , realsize: true},
                 ],
                 conditions: [
                   { model:'type', values: [5] }
@@ -103,7 +104,7 @@ export default {
             },
             {
               type: 'opt-customfields',
-              label: 'When client select this modality, display following fields',
+              label: 'When client select this modality, display the following fields',
               model: 'options.fields',
               bus: true,
               listenBus: true,

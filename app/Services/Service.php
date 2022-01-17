@@ -3,6 +3,7 @@
 namespace Wappointment\Services;
 
 use Wappointment\ClassConnect\RakitValidator;
+use Wappointment\Helpers\Translations;
 use Wappointment\Models\Location;
 
 class Service implements ServiceInterface
@@ -12,8 +13,8 @@ class Service implements ServiceInterface
 
         $validator = new RakitValidator;
         $validation_messages = [
-            'type' => 'Please select how do you perform the service',
-            'options.countries' => 'You need to select countries you will call for the phone service',
+            'type' => __('Please select how do you perform the service', 'wappointment'),
+            'options.countries' => __('You need to select countries you will cover for the phone service', 'wappointment'),
         ];
         $validator->setMessages(apply_filters('wappointment_service_validation_messages', $validation_messages));
 
@@ -32,7 +33,7 @@ class Service implements ServiceInterface
 
         if ($validation->fails()) {
             throw new \WappointmentValidationException(
-                "Cannot save Service",
+                Translations::get('error_saving'),
                 1,
                 null,
                 $validation->errors()->toArray()

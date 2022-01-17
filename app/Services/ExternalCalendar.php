@@ -3,6 +3,7 @@
 namespace Wappointment\Services;
 
 use Wappointment\ClassConnect\RakitValidator;
+use Wappointment\Helpers\Translations;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Models\Calendar;
 
@@ -33,7 +34,7 @@ class ExternalCalendar
         $this->saveUrls($calurls);
         $this->updateCalendarLogs($calendar_key);
         $this->refreshCalendars(true);
-        return ['message' => 'Calendar has been disconnected'];
+        return ['message' => __('Calendar has been disconnected', 'wappointment')];
     }
 
     protected function updateCalendarLogs($calendar_key)
@@ -73,7 +74,7 @@ class ExternalCalendar
         (new Availability($this->staff))->syncAndRegen($force);
 
         return [
-            'message' => 'Calendars refreshed',
+            'message' => Translations::get('element_refreshed'),
         ];
     }
 
@@ -81,13 +82,13 @@ class ExternalCalendar
     {
 
         if (!$this->calurlValid($calurl)) {
-            throw new \WappointmentException('Cannot save calendar verify it respects the Ical ics format');
+            throw new \WappointmentException(__('Cannot save calendar verify it respects the Ical ics format', 'wappointment'));
         }
 
         $calurls = $this->getCalUrls();
 
         if (isset($calurls[md5($calurl)])) {
-            throw new \WappointmentException('Calendar already connected');
+            throw new \WappointmentException(__('Calendar already connected', 'wappointment'));
         }
         if (count($calurls) > 2) {
             throw new \WappointmentException('Cannot connect more than 3 calendars');
@@ -97,7 +98,7 @@ class ExternalCalendar
 
         $statusSaved = $this->saveUrls($calurls);
         $this->refreshCalendars(true);
-        return ['message' => 'Calendar has been recorded', 'status' => $statusSaved];
+        return ['message' => Translations::get('element_saved'), 'status' => $statusSaved];
     }
 
     protected function saveUrls($calurls)

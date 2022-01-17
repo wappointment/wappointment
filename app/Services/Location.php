@@ -4,6 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\Models\Location as LocationModel;
 use Wappointment\ClassConnect\RakitValidator;
+use Wappointment\Helpers\Translations;
 use Wappointment\Managers\Service as ServiceManager;
 
 class Location
@@ -13,10 +14,10 @@ class Location
     {
         $validator = new RakitValidator;
         $validation_messages = [
-            'type' => 'Please select the modality type',
-            'options.address' => 'Enter an address',
-            'options.countries' => 'Select countries which are callable',
-            'options.video' => 'Select video provider',
+            'type' => __('Select the modality type', 'wappointment'),
+            'options.address' => __('Enter an address', 'wappointment'),
+            'options.countries' => __('Select countries that you cover', 'wappointment'),
+            'options.video' => __('Select video provider', 'wappointment'),
         ];
         $validator->setMessages($validation_messages);
 
@@ -34,7 +35,7 @@ class Location
         $validation->validate();
 
         if ($validation->fails()) {
-            throw new \WappointmentValidationException("Cannot save Modality", 1, null, $validation->errors()->toArray());
+            throw new \WappointmentValidationException(Translations::get('error_saving'), 1, null, $validation->errors()->toArray());
         }
 
         return static::saveLocation($locationData);
@@ -48,7 +49,7 @@ class Location
             $serviceDB = LocationModel::findOrFail($locationData['id']);
         } else {
             if (!ServiceManager::model()::canCreate()) {
-                throw new \WappointmentValidationException("Cannot save Modality");
+                throw new \WappointmentValidationException(Translations::get('error_saving'));
             }
         }
 

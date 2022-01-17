@@ -2,7 +2,7 @@
     <div class="reduced" v-if="viewData!== null">
         <WAPFormGenerator ref="mcformgenerator" :schema="schema" :data="sendconfig" 
             @submit="sendTestEmail" @back="$emit('back')" :buttons="false" @changedValue="changedValue" :key="formKey" 
-            labelButton="Save" :validStart="true" @ready="readytosubmit" :autocomplete="false">
+    :validStart="true" @ready="readytosubmit" :autocomplete="false">
         </WAPFormGenerator>
         <!-- Ports links -->
         <div v-if="showSmtpPorts" class="form-group valid col-md-12 field-radios">
@@ -497,6 +497,7 @@ export default {
 .img-height-logo{
     max-height: 70px;
     filter: grayscale(1);
+    max-width: 140px;
 }
 .d-flex.align-items-center:hover .img-height-logo{
     filter: none;

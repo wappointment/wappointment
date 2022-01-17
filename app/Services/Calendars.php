@@ -4,6 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\Managers\Central;
 use Wappointment\ClassConnect\RakitValidator;
+use Wappointment\Helpers\Translations;
 
 class Calendars
 {
@@ -54,7 +55,7 @@ class Calendars
                 $query->where('id', '!=', (int) $calendarData['id']);
             }
             if ($query->first()) {
-                throw new \WappointmentException("Select another WordPress account this one is already used for another calendar", 1);
+                throw new \WappointmentException(__("Select another account this one is already used for another calendar", 'wappointment'), 1);
             }
         }
 
@@ -64,7 +65,7 @@ class Calendars
         $validation->validate();
 
         if ($validation->fails()) {
-            throw new \WappointmentValidationException("Cannot save Calendar", 1, null, $validation->errors()->toArray());
+            throw new \WappointmentValidationException(Translations::get('error_saving'), 1, null, $validation->errors()->toArray());
             return $validation->errors()->toArray();
         }
 
@@ -79,7 +80,7 @@ class Calendars
             $calendarDB = static::getModel()::findOrFail($calendarData['id']);
         } else {
             if (!Central::get('CalendarModel')::canCreate()) {
-                throw new \WappointmentValidationException("Cannot save Calendar .");
+                throw new \WappointmentValidationException(Translations::get('error_saving'));
             }
         }
 

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <p class="h4">Set the default availability that will be used for new staff</p>
+        <p class="h4">Set the default services that will be assigned to new staff</p>
         <div>
             <label class="form-check-label" for="Assign all services available to new staff">
                 <div class="d-flex align-items-center">
@@ -11,7 +11,7 @@
         </div>
         <SearchDropdown v-if="assignAll !== true" v-model="defaultServices" hasMulti ph="Pick default services staff" :elements="services" 
                 idKey="id" labelSearchKey="name" />
-        <button class="btn btn-primary mt-2" @click="saveDefaultServices">Save</button>
+        <button class="btn btn-primary mt-2" @click="saveDefaultServices">{{get_i18n('save', 'common') }}</button>
     </div>
 </template>
 

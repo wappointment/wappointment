@@ -3,11 +3,9 @@
     <topPane :nextEnabled="true" @next="nextStep" @back="prevStep" :step="currentStep" :total="totalStep"></topPane>
     <div class="container-fluid" v-if="viewData">
         <div class="col-12">
-            <h1 class="wp-heading-inline">Booking Widget Setup</h1>
-            <p class="text-muted"><small>You can edit the style and content of the booking widget later from 
-                <strong>Wappointment > Settings > General</strong></small>
+            <h1 class="wp-heading-inline">{{ get_i18n( 'wizard_4_title', 'wizard') }}</h1>
+            <p class="text-muted"><small>{{ get_i18n( 'wizard_4_subtitle', 'wizard') }} <strong>Wappointment > Settings > General</strong></small>
             </p>
-            
             <CreateBookingPage ref="createpage" :widgetDefault="widgetDefault" :page_id="booking_page_id" 
             @canSave="canSaveTriggered" @saved="saveStepToNext"/>
         </div>

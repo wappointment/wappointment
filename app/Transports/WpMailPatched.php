@@ -345,6 +345,7 @@ trait WpMailPatched
         // Set custom headers
         if (!empty($headers)) {
             foreach ((array) $headers as $name => $content) {
+                /* translators: %1$s is label %2$s is value */
                 $phpmailer->AddCustomHeader(sprintf('%1$s: %2$s', $name, $content));
             }
         }

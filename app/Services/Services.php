@@ -5,6 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\Managers\Service as ServiceCentral;
 use Wappointment\Services\ServiceInterface;
 use Wappointment\ClassConnect\RakitValidator;
+use Wappointment\Helpers\Translations;
 use Wappointment\Validators\RequiredIfFields;
 use Wappointment\Models\Location as LocationModel;
 use Wappointment\Models\Price as ModelsPrice;
@@ -21,14 +22,14 @@ class Services implements ServiceInterface
         $services = static::getModel()::orderBy('sorting')->fetch();
         return $services->filter(function ($service, $key) {
             return count($service->locations) > 0;
-        })->all();
+        })->toArray();
     }
 
     public static function save($serviceData)
     {
         $validator = new RakitValidator;
         $validation_messages = [
-            'locations_id' => 'Please select how do you deliver the service',
+            'locations_id' => __('Please select how do you deliver the service', 'wappointment'),
         ];
         $validator->setMessages(apply_filters('wappointment_service_validation_messages', $validation_messages));
         $validator->addValidator('required_if_fields', new RequiredIfFields);
@@ -38,7 +39,7 @@ class Services implements ServiceInterface
             'options' => '',
             'options.durations' => 'required|array',
             'options.durations.*.duration' => 'required|numeric',
-            'locations_id' => 'required|array',
+            'locations_id' => 'required',
         ];
 
         $validationRules = apply_filters('wappointment_service_validation_rules', $validationRules);
@@ -51,7 +52,7 @@ class Services implements ServiceInterface
         $validation->validate();
 
         if ($validation->fails()) {
-            throw new \WappointmentValidationException("Cannot save Service", 1, null, $validation->errors()->toArray());
+            throw new \WappointmentValidationException(Translations::get('error_saving'), 1, null, $validation->errors()->toArray());
             return $validation->errors()->toArray();
         }
 
@@ -79,7 +80,7 @@ class Services implements ServiceInterface
             $serviceDB = static::getModel()::findOrFail($serviceData['id']);
         } else {
             if (!static::getModel()::canCreate()) {
-                throw new \WappointmentValidationException("Cannot save Services");
+                throw new \WappointmentValidationException(Translations::get('error_saving'));
             }
         }
         $serviceData = static::savePrices($serviceData);
@@ -148,7 +149,7 @@ class Services implements ServiceInterface
             $serviceDB = static::getModel()::findOrFail($service_id);
         }
         if (empty($serviceDB)) {
-            throw new \WappointmentException("Error patching service (service suite)", 1);
+            throw new \WappointmentException(Translations::get('error_updating'), 1);
         }
         $options = array_merge($serviceDB->options, $data['options']);
         $serviceDB->update(['options' => $options]);
@@ -184,11 +185,20 @@ class Services implements ServiceInterface
 
     public static function hasZoom($service)
     {
-        foreach ($service->locations as $location) {
-            if ((int)$location->type === LocationModel::TYPE_ZOOM) {
-                return true;
+        if (is_array($service)) {
+            foreach ($service['locations'] as $location) {
+                if ((int)$location['type'] === LocationModel::TYPE_ZOOM) {
+                    return true;
+                }
+            }
+        } else {
+            foreach ($service->locations as $location) {
+                if ((int)$location->type === LocationModel::TYPE_ZOOM) {
+                    return true;
+                }
             }
         }
+
 
         return false;
     }

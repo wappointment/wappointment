@@ -32,7 +32,7 @@ export default {
 
     computed: {
         discounted(){
-            return (this.price /100 ) *this.renewAt
+            return (this.price /100 ) * this.renewAt
         },
         licenceKey(){
             return window.licence_key

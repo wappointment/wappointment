@@ -2,7 +2,7 @@
     <div>
         <WAPFormGenerator ref="formgenerator" :buttons="buttons" :schema="schemaParsed" :data="modelHolder" 
         @submit="save" @back="$emit('back')" @ready="isReady" :errors="errorsPassed" :key="formKey" 
-        labelButton="Save" v-bind="extraOptions">
+         v-bind="extraOptions">
         </WAPFormGenerator>
     </div>
 
@@ -31,15 +31,24 @@ export default {
           },
           errors:{},
           formKey: 'form',
-          schema: [
+      } 
+  },
+  created(){
+    if(this.dataPassed!== undefined){
+       this.modelHolder = Object.assign({}, this.dataPassed)
+    }
+  },
+  computed: {
+    schemai18n(){
+      return [
             {
               type: 'row',
               class: 'd-flex flex-wrap flex-sm-nowrap align-items-center',
-              classEach: 'mr-2',
+              classEach: 'mr-2 w-100',
               fields: [
                 {
                     type: 'input',
-                    label: 'Service Name',
+                    label: this.get_i18n('wizard_3_servicename', 'wizard'),
                     model: 'name',
                     cast: String,
                     styles: {'max-width':'200px'},
@@ -47,7 +56,7 @@ export default {
                 },
                 {
                     type: 'duration',
-                    label: 'Duration',
+                    label: this.get_i18n('wizard_3_duration', 'wizard'),
                     model: 'duration',
                     cast: String,
                     class: 'w-100',
@@ -63,21 +72,22 @@ export default {
             },
             {
                 type: 'checkimages',
-                label: 'Service Delivery',
+                label: this.get_i18n('wizard_3_delivery', 'wizard'),
                 model: 'type',
                 cast: Array,
                 images: [
-                  { value:'zoom', name:'Video meeting', subname:'(Zoom, Google meet, ...)', icon: ['fas', 'video']},
-                  { value:'physical', name:'At an address', icon: 'map-marked-alt'},
-                  { value:'phone', name:'By Phone', icon: 'phone'},
-                  { value:'skype', name:'By Skype', icon: ['fab', 'skype']}
+                  { value:'zoom', name:this.get_i18n('wizard_3_delivery_video', 'wizard'), 
+                  subname:'(Zoom, Google meet, ...)', icon: ['fas', 'video']},
+                  { value:'physical', name:this.get_i18n('wizard_3_delivery_address', 'wizard'), icon: 'map-marked-alt'},
+                  { value:'phone', name:this.get_i18n('wizard_3_delivery_byphone', 'wizard'), icon: 'phone'},
+                  { value:'skype', name:this.get_i18n('wizard_3_delivery_byskype', 'wizard'), icon: ['fab', 'skype']}
                 ],
                 validation: ['required']
             },
 
             {
                 type: 'checkimages',
-                label: 'Select your video meeting app',
+                label: this.get_i18n('wizard_3_select_video', 'wizard'),
                 radioMode: true,
                 model: 'options.video',
                 cast: Array,
@@ -92,7 +102,7 @@ export default {
             },
             {
                 type: 'address',
-                label: 'Address',
+                label: this.get_i18n('wizard_3_address', 'wizard'),
                 model: 'address',
                 cast: String,
                 conditions: [
@@ -102,13 +112,13 @@ export default {
             },
              {
                 type: 'checkbox',
-                label: "Clients must provide a phone number when booking",
+                label: this.get_i18n('wizard_3_delivery_phone_require', 'wizard'),
                 model: 'options.phone_required',
                 cast: Boolean,
             },
             {
                 type: 'countryselector',
-                label: 'Accepted countries for phone field',
+                label: this.get_i18n('wizard_3_accepted_countries', 'wizard'),
                 model: 'options.countries',
                 cast: Array,
                 conditions: [
@@ -123,19 +133,9 @@ export default {
             
 
         ]
-
-      } 
-  },
-  created(){
-    if(this.dataPassed!== undefined){
-       this.modelHolder = Object.assign({}, this.dataPassed)
-    }
-    
-  },
-  computed: {
-
+    },
     schemaParsed(){
-      return  window.wappointmentExtends.filter('serviceFormSchema', this.schema, this.modelHolder )
+      return  window.wappointmentExtends.filter('serviceFormSchema', this.schemai18n, this.modelHolder )
     },
 
     errorsPassed(){

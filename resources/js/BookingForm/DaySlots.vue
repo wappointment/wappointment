@@ -3,11 +3,13 @@
         <div class="d-flex" v-if="ready">
             <div v-for="(slots, part) in dayParts" :class="'hello '+getSectionClass">
                 <small class="day-part">{{getLabel(part)}}</small>
+                <template v-for="(slot, slid) in slots" >
                 <BookingButton @click="$emit('selected', slot)" 
-                v-for="(slot, slid) in slots" 
-                className="wbtn wbtn-primary wbtn-slot" :key="slot" :options="options" >
-                    {{ getMoment(slot, currentTz).format(time_format) }}
+                className="wbtn wbtn-primary wbtn-slot" :key="'button-'+slot.start" :options="options" >
+                    <span>{{ getMoment(slot.start, currentTz).format(time_format) }}</span>
+                    <span v-if="slot.left" class="sleft">{{ slot.left }} left</span>
                 </BookingButton>
+                </template>
             </div>
         </div>
     </div>
@@ -60,31 +62,35 @@ export default {
             return Date.now() /1000
         },
         convertIntervalsToSlots(){
-            for (let i = 0; i < this.intervals.length; i++) {
-                const segment = this.intervals[i]
+            for (const segment of this.intervals) {
+                if(segment.left !== undefined){
+                    this.identifySlot(segment)
+                    continue;
+                }
                 let end = segment.end - this.duration
                 let slotStart = segment.start
                 while (end >= slotStart) {
-                    this.identifySlot(slotStart)
+                    this.identifySlot({start:slotStart})
                     slotStart += this.duration
                 }
-            
             }
         },
-        identifySlot(slotStart){
-            let hour = this.getMoment(slotStart, this.currentTz).hour()
+        identifySlot(segment){
+            let hour = this.getMoment(segment.start, this.currentTz).hour()
             if(hour >= 12 && hour < 18){
-                this.insertSlotToDayPart(slotStart, 'afternoon')
+                this.insertSlotToDayPart(segment, 'afternoon')
             }else if(hour >= 18 && hour <= 23 ){
-                this.insertSlotToDayPart(slotStart, 'evening')
+                this.insertSlotToDayPart(segment, 'evening')
             }else if(hour >=0){
-                this.insertSlotToDayPart(slotStart, 'morning')
+                this.insertSlotToDayPart(segment, 'morning')
             }
         },
 
-        insertSlotToDayPart(slotStart, section){
-            if(this.dayParts[section] === undefined ) this.dayParts[section] = []
-            if(this.dayParts[section].indexOf(slotStart) === -1) this.dayParts[section].push(slotStart)
+        insertSlotToDayPart(segment, section){
+            if(this.dayParts[section] === undefined ) {
+                this.dayParts[section] = []
+            }
+            this.dayParts[section].push(segment)
         },
         
 
@@ -114,6 +120,13 @@ export default {
 }
 .ds-3{
     width: 31%;
+}
+.wbtn span{
+    display:block;
+}
+.wbtn .sleft {
+    color: #f2f2f2;
+    font-size: .7em;
 }
 .wbtn.wbtn-slot {
     width: 100%;

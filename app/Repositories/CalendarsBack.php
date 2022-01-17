@@ -15,9 +15,9 @@ class CalendarsBack extends AbstractRepository
     public function query()
     {
         $calendarsQry = Central::get('CalendarModel')::orderBy('sorting')->with(['services']);
-        if (!CurrentUser::isAdmin()) {
+        /*if (!CurrentUser::isAdmin()) {
             $calendarsQry->where('id', CurrentUser::calendarId());
-        }
+        }*/
 
         $calendars = $calendarsQry->fetch();
         $staffs = [];

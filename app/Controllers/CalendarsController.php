@@ -4,6 +4,8 @@ namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
 use Wappointment\Controllers\RestController;
+use Wappointment\Helpers\Get;
+use Wappointment\Helpers\Translations;
 use Wappointment\Services\VersionDB;
 use Wappointment\WP\StaffLegacy;
 use Wappointment\Services\Staff as StaffServices;
@@ -27,10 +29,12 @@ class CalendarsController extends RestController
         $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
 
         $calendars = $db_update_required ? $this->getStafflegacy() : $this->getCalendarsStaff();
+
+        $services = (new Services)->get();
         $data = [
             'db_required' => $db_update_required,
             'timezones_list' => DateTime::tz(),
-            'calendars' => empty($calendars) ? [] : $calendars,
+            'calendars' => empty($calendars) ? [] : $this->filterCalendarServices($calendars, $services),
             'staffs' => StaffServices::getWP(CurrentUser::isAdmin() ? false : CurrentUser::id()),
             'staffDefault' => Settings::staffDefaults(),
             'permissions' => (new Permissions)->getCaps(),
@@ -38,16 +42,48 @@ class CalendarsController extends RestController
         ];
 
         if (!$db_update_required) {
-            $data['services'] = (new Services)->get();
+            $data['services'] = $services;
             $data['servicesDefault'] = Settings::get('servicesDefault');
-            $data['limit_reached'] = Central::get('CalendarModel')::canCreate() ? false : 'To add more calendars, get the "Calendars & Staff" addon';
+            $data['limit_reached'] = Central::get('CalendarModel')::canCreate() ? false : Translations::get('add_calendars_addon', [Get::list('addons')['wappointment_staff']['name']]);
         }
         return $data;
     }
 
+    private function getServiceIDs($services)
+    {
+        $service_ids = [];
+        foreach ($services as $service) {
+            $service_ids[] = $service['id'];
+        }
+        return $service_ids;
+    }
+
+    /**
+     * get rid of deleted services
+     *
+     * @return void
+     */
+    private function filterCalendarServices($calendars, $services)
+    {
+        $service_ids = $this->getServiceIDs($services);
+        foreach ($calendars as $key => $calendar) {
+            foreach ($calendar['services'] as $keyid => $service_id) {
+                if (!in_array($service_id, $service_ids)) {
+                    unset($calendars[$key]['services'][$keyid]);
+                }
+            }
+            $calendars[$key]['services'] = array_values($calendars[$key]['services']);
+        }
+        return $calendars;
+    }
+
     public function getCalendarsStaff()
     {
-        return CurrentUser::isAdmin() ? (new CalendarsBack)->get() : (new CalendarsBack)->query();
+        $calendars = (new CalendarsBack)->get();
+
+        return CurrentUser::isAdmin() ? $calendars : array_values(\WappointmentLv::collect($calendars)->filter(function ($e) {
+            return $e['wp_uid'] == CurrentUser::id();
+        })->toArray());
     }
 
     public function getAvatar(Request $request)
@@ -64,7 +100,7 @@ class CalendarsController extends RestController
     public function testIsAllowedToRunQuery($idName, Request $request)
     {
         if (!CurrentUser::isAdmin() && (int)CurrentUser::calendarId() !== (int)$request->input($idName)) {
-            throw new \WappointmentException("You are not allowed to run that request", 1);
+            throw new \WappointmentException(Translations::get('forbidden'), 1);
         }
     }
 
@@ -94,7 +130,7 @@ class CalendarsController extends RestController
 
         $this->refreshRepository();
 
-        return ['message' => 'CustomFields saved'];
+        return ['message' => Translations::get('element_saved')];
     }
 
     protected function refreshRepository()
@@ -145,7 +181,7 @@ class CalendarsController extends RestController
         $calendar = Central::get('CalendarModel')::findOrFail($this->getIdAllowedToSave('id', $request));
         $calendar->services()->sync($request->input('services'));
         $this->refreshRepository();
-        return ['message' => 'Services assigned'];
+        return ['message' => __('Services assigned', 'wappointment')];
     }
 
     public function savePermissions(Request $request)
@@ -155,7 +191,7 @@ class CalendarsController extends RestController
         $permissions = new Permissions;
         $permissions->assign($calendar, $request->input('permissions'));
         $this->refreshRepository();
-        return ['message' => 'Permissions saved', $request->all()];
+        return ['message' => __('Permissions saved', 'wappointment'), $request->all()];
     }
 
     public function saveCal(Request $request)
@@ -192,7 +228,7 @@ class CalendarsController extends RestController
 
 
         $this->refreshRepository();
-        return ['message' => 'Calendar has been saved', 'result' => $result];
+        return ['message' => Translations::get('element_saved'), 'result' => $result];
     }
 
     public function reorder(Request $request)
@@ -201,7 +237,7 @@ class CalendarsController extends RestController
 
         $result = Calendars::reorder($data['id'], $data['new_sorting']);
         $this->refreshRepository();
-        return ['message' => 'Calendar has been saved', 'result' => $result];
+        return ['message' => Translations::get('element_reordered'), 'result' => $result];
     }
 
     public function toggle(Request $request)
@@ -209,7 +245,7 @@ class CalendarsController extends RestController
         $this->testIsAllowedToRunQuery('id', $request);
         $result = Calendars::toggle($this->getIdAllowedToSave('id', $request));
         $this->refreshRepository();
-        return ['message' => 'Calendar has been modified', 'result' => $result];
+        return ['message' => Translations::get('element_updated'), 'result' => $result];
     }
 
     public function delete(Request $request)
@@ -218,7 +254,7 @@ class CalendarsController extends RestController
         Calendars::delete($this->getIdAllowedToSave('id', $request));
         $this->refreshRepository();
         // clean order
-        return ['message' => 'Calendar deleted', 'result' => true];
+        return ['message' => Translations::get('element_deleted'), 'result' => true];
     }
 
     public function refreshCalendars(Request $request)
@@ -233,7 +269,7 @@ class CalendarsController extends RestController
     public function disconnectCal(Request $request)
     {
         if (is_array($request->input('calendar_id'))) {
-            throw new \WappointmentException("Malformed parameter", 1);
+            throw new \WappointmentException(__('Malformed parameter', 'wappointment'), 1);
         }
         $this->testIsAllowedToRunQuery('staff_id', $request);
 
@@ -254,10 +290,10 @@ class CalendarsController extends RestController
             $this->refreshRepository();
             return [
                 'data' => $result['dotcom'],
-                'message' => 'Account has been connected'
+                'message' => __('Connected', 'wappointment')
             ];
         }
-        throw new \WappointmentException("Couldn't connect with this key.", 1);
+        throw new \WappointmentException(__('Error connecting', 'wappointment'), 1);
     }
 
     public function disconnect(Request $request)
@@ -271,10 +307,10 @@ class CalendarsController extends RestController
             $this->refreshRepository();
             return [
                 'data' => $result,
-                'message' => 'Account has been disconnected'
+                'message' => __('Disconnected', 'wappointment')
             ];
         }
-        throw new \WappointmentException("Couldn't disconnect account.", 1);
+        throw new \WappointmentException(__('Error disconnecting', 'wappointment'), 1);
     }
 
     public function refresh(Request $request)
@@ -288,9 +324,9 @@ class CalendarsController extends RestController
             $this->refreshRepository();
             return [
                 'data' => $result,
-                'message' => 'Account has been refreshed'
+                'message' => __('Refreshed', 'wappointment')
             ];
         }
-        throw new \WappointmentException("Couldn't refresh account.", 1);
+        throw new \WappointmentException(__('Error refreshing', 'wappointment'), 1);
     }
 }

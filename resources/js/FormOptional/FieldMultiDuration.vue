@@ -36,8 +36,8 @@
             <button class="btn btn-link btn-xs" @click.prevent="review=true">Review items</button>
         </p>
         <transition name="fade">
-            <button type="button" @submit.stop v-if="!minimal && (showControls || hasNoDuration)" class="btn btn-white btn-sm p-0" @click.prevent="addDuration" data-tt="Add duration">
-                <span class="wicon plus-alt text-primary" ></span> Add Duration
+            <button type="button" @submit.stop v-if="!minimal && (showControls || hasNoDuration)" class="btn btn-white btn-sm p-0" @click.prevent="addDuration" :data-tt="get_i18n('add_duration', 'settings')">
+                <span class="wicon plus-alt text-primary" ></span> {{ get_i18n('add_duration', 'settings') }}
             </button>
         </transition>
     </div>

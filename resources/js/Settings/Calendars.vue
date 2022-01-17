@@ -2,7 +2,7 @@
     <div>
         <div v-if="calendarListing">
             <div class="d-flex align-items-center">
-                <button v-if="isUserAdministrator" @click="showCalendar" class="btn btn-outline-primary btn my-2">Add new</button>
+                <button v-if="isUserAdministrator" @click="showCalendar" class="btn btn-outline-primary btn my-2">{{ get_i18n('create', 'common') }}</button>
                 <InputPh class="max-200 ml-2 mb-0" v-if="loadedData && elements.calendars.length > 10" type="text" v-model="searchterm" ph="Search name" />
             </div>
             <div class="table-hover" v-if="loadedData">
@@ -10,15 +10,15 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Name</th>
+                            <th scope="col">{{ get_i18n('cals_name', 'settings') }}</th>
                             <th scope="col">
-                                <div class="headerToggle">Weekly Availability <a href="javascript:;" @click="setDefaultAvailability">set default</a></div>
+                                <div class="headerToggle">{{ get_i18n('cals_regav', 'settings') }} <a href="javascript:;" @click="setDefaultAvailability">{{ get_i18n('cals_set_default', 'settings') }}</a></div>
                             </th>
                             <th scope="col" v-if="!elements.db_required">
-                                <div class="headerToggle">Services <a href="javascript:;" @click="setDefaultServices">set default</a></div>
+                                <div class="headerToggle">{{ get_i18n('service_title', 'settings') }} <a href="javascript:;" @click="setDefaultServices">{{ get_i18n('cals_set_default', 'settings') }}</a></div>
                             </th>
-                            <th scope="col">Integrations</th>
-                            <th scope="col">Connected calendars</th>
+                            <th scope="col">{{ get_i18n('cals_integration', 'settings') }}</th>
+                            <th scope="col">{{ get_i18n('cals_connected_calendar', 'settings') }}</th>
                         </tr>
                     </thead>
                     <draggable @change="orderChanged" v-model="elements.calendars" draggable=".row-click" handle=".dashicons-move" tag="tbody" v-if="elements.calendars.length > 0">
@@ -38,13 +38,13 @@
                                         <small>{{ calendar.timezone }}</small>
                                     </div>
                                 </div>
-                                <div class="wlist-actions text-muted" v-if="isUserAdministrator">
-                                    <span data-tt="Sort" v-if="searchterm=='' && elements.calendars.length > 1"><span class="dashicons dashicons-move"></span></span>
-                                    <span data-tt="Edit"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
-                                    <span data-tt="Delete"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
-                                    <span data-tt="Get Shortcode"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
-                                    <span data-tt="Set Permissions" v-if="isStaffCalendar(calendar)"><span class="dashicons dashicons-unlock" @click.prevent.stop="editPermission(calendar)"></span></span>
-                                    <span data-tt="Set Custom Field" v-if="elements.allowStaffCf" ><span class="dashicons dashicons-editor-code" @click.prevent.stop="setCustomFields(calendar)"></span></span>
+                                <div class="wlist-actions text-muted" v-if="isUserAdministrator || canCalEdit">
+                                    <span :data-tt="get_i18n( 'sort', 'common')" v-if="isUserAdministrator && searchterm=='' && elements.calendars.length > 1" ><span class="dashicons dashicons-move"></span></span>
+                                    <span :data-tt="get_i18n( 'edit', 'common')"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
+                                    <span :data-tt="get_i18n( 'delete', 'common')" v-if="isUserAdministrator"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
+                                    <span :data-tt="get_i18n( 'getshort', 'common')"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
+                                    <span :data-tt="get_i18n( 'cals_permi', 'settings')" v-if="isStaffCalendar(calendar)"><span class="dashicons dashicons-unlock" @click.prevent.stop="editPermission(calendar)"></span></span>
+                                    <span :data-tt="get_i18n( 'cals_setcf', 'settings')" v-if="elements.allowStaffCf" ><span class="dashicons dashicons-editor-code" @click.prevent.stop="setCustomFields(calendar)"></span></span>
                                     <span>(id: {{ calendar.id }})</span>
                                 </div>
                             </td>
@@ -52,16 +52,22 @@
                                 <CalendarsRegav :canEdit="canCalEditWeekly" @edit="editAvailability" :calendar="calendar" />
                             </td>
                             <td v-if="!elements.db_required" class="cell-services">
-                                <div class="d-flex flex-wrap" role="button" v-if="calendar.services.length>0">
-                                    <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid, elements.services) }} </ValueCard>
-                                </div>
-                                <button v-if="canCalEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Edit services</button>
+                                <template v-if="calendar.services.length>0">
+                                    <div class="d-flex flex-wrap" role="button" >
+                                        <ValueCard v-for="serviceid in calendar.services" :key="serviceid" :canDiscard="false">{{ displayServiceName(serviceid, elements.services) }} </ValueCard>
+                                    </div>
+                                    <button v-if="canCalEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">{{ get_i18n( 'cals_assign_service', 'settings') }}</button>
+                                </template>
+                                <template v-else>
+                                    <div class="text-danger small">Missing service</div>
+                                    <button v-if="canCalEditServices" class="btn btn-xs btn-outline-primary" @click="editServices(calendar)">Add service</button>
+                                </template>
                             </td>
                             <td>
                                <Connections :connections="calendar.connected.services === undefined ? []:calendar.connected.services"/>
                                <div v-if="canCalConnectAccount">
-                                   <a v-if="calendar.connected" href="javascript:;" class="small" @click="goToDotCom(calendar)">edit</a>
-                                    <button v-else class="btn btn-xs btn-outline-primary tt-lg mt-2" @click="goToDotCom(calendar)">Connect Account</button>
+                                   <a v-if="calendar.connected" href="javascript:;" class="small" @click="goToDotCom(calendar)">{{ get_i18n( 'edit', 'common') }}</a>
+                                    <button v-else class="btn btn-xs btn-outline-primary tt-lg mt-2" @click="goToDotCom(calendar)">{{ get_i18n( 'cals_account_connect', 'settings') }}</button>
                                </div>
                                
                             </td>
@@ -86,14 +92,14 @@
                                 </div>
                                 <div>
                                     <button class="btn btn-xs btn-outline-primary tt-lg" v-if="canCalAddIcs && !calendarLimitReached(calendar)"
-                                    @click="goToSync(calendar)" data-tt="Make sure clients can't book you when you're busy">Connect external calendar</button>
+                                    @click="goToSync(calendar)" :data-tt="get_i18n( 'cals_connect_external_tip', 'settings')">{{ get_i18n( 'cals_connect_external', 'settings') }}</button>
                                 </div>
                             </td>
                         </tr>
                     </draggable>
                      <tbody v-else>
                          <tr>
-                            You don't have any calendars yet
+                            {{get_i18n('empty_listing', 'common')}}
                         </tr>
                      </tbody>
                 </table>
@@ -101,13 +107,13 @@
 
         </div>
         <div v-if="calendarAdd">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('save', 'common') }}</button>
             <CalendarsAddEdit :calendar="elementPassed" :timezones_list="elements.timezones_list" 
             :staffs="elements.staffs" :services="elements.services" :calendarsUsed="calendarsUsed"
             @saved="hasBeenSavedDeleted"/>
         </div>
         <div v-if="calendarRegav">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < Back</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('save', 'common') }}</button>
             <WeeklyAvailability :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs"/>
         </div>
 
@@ -200,9 +206,6 @@ export default {
         calendarRegav(){
             return this.currentView == 'regav'
         },
-        onlyOneCalendarEditable(){
-            return this.elements.calendars.length === 1
-        },
         canCalEditServices(){
             return this.canCalendarEdit('wappo_self_services')
         },
@@ -221,13 +224,16 @@ export default {
         canCalUnpublish(){
             return this.canCalendarEdit('wappo_self_unpublish')
         },
+        canCalEdit(){
+            return this.canCalendarEdit('wappo_self_man')
+        },
         calendarsUsed(){
             return this.searchable.map(e => e.wp_uid)
         }
     },
     methods: {
         canCalendarEdit(something){
-            return this.isUserAdministrator || (this.onlyOneCalendarEditable && this.hasPermission(something))
+            return this.isUserAdministrator || this.hasPermission(something)
         },
         isStaffCalendar(calendar){
             return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1 && calendar.roles.indexOf('wappointment_manager') === -1 && calendar.roles.indexOf('wappointment_staff') === -1

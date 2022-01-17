@@ -22,20 +22,25 @@ class Booking extends LegacyBooking
     protected function validationMessages()
     {
         return [
-            'is_phone' => 'Your phone number is not valid',
-            'email' => 'Your email is not valid',
-            'skype:regex' => 'Your skype username is not valid',
-            static::$startKey => 'The selected time is not valid',
+            'is_phone' => __('Your phone number is not valid', 'wappointment'),
+            'email' => __('Your email is not valid', 'wappointment'),
+            'skype:regex' => __('Your skype username is not valid', 'wappointment'),
+            static::$startKey => __('The selected time is not valid', 'wappointment'),
         ];
     }
     public function getUserEmail()
     {
-        return $this->forceEmail() ? Helpers::currentUserEmail() : $this->get('email');
+        return $this->forceEmail() && $this->isLogged() ? Helpers::currentUserEmail() : $this->get('email');
     }
 
     protected function forceEmail()
     {
         return Settings::get('forceemail');
+    }
+
+    public function isLogged()
+    {
+        return Helpers::auth();
     }
 
     public function generateValidation($inputs)
@@ -48,25 +53,26 @@ class Booking extends LegacyBooking
             'duration' => 'required|min:5',
             'staff_id' => '',
             'package_id' => '',
-            'package_price_id' => ''
+            'package_price_id' => '',
+            'slots' => '',
+            'appointment_key' => ''
         ];
-        if (!$this->forceEmail()) {
+
+        if (!$this->forceEmail() || !$this->isLogged()) {
             $this->validationRulesArray['email'] = 'required|email';
         }
 
         $custom_fields = Central::get('CustomFields')::get();
-        foreach ($this->service->options['fields'] as $key => $field) {
-            foreach ($custom_fields as $key => $cfield) {
-                if ($cfield['namekey'] == $field && empty($this->validationRulesArray[$field])) {
-                    $this->validationRulesArray[$field] = !empty($cfield['validations']) ? $cfield['validations'] : '';
-                    if ($this->validationRulesArray[$field] == '') {
-                        $this->validationRulesArray[$field]  = !empty($cfield['required']) ? 'required' : '';
-                    }
-                }
-            }
-        }
-        foreach ($this->location->options['fields'] as $key => $field) {
-            foreach ($custom_fields as $key => $cfield) {
+        $this->addCustomValidations($this->service, $custom_fields);
+        $this->addCustomValidations($this->location, $custom_fields);
+
+        $this->validationRulesArray = apply_filters('wappointment_booking_validation_rules', $this->validationRulesArray, $this->service);
+    }
+
+    protected function addCustomValidations($model, $custom_fields)
+    {
+        foreach ($model->options['fields'] as $field) {
+            foreach ($custom_fields as $cfield) {
                 if ($cfield['namekey'] == $field && empty($this->validationRulesArray[$field])) {
                     $this->validationRulesArray[$field] = !empty($cfield['validations']) ? $cfield['validations'] : '';
                     if ($this->validationRulesArray[$field] == '') {
@@ -169,13 +175,13 @@ class Booking extends LegacyBooking
     {
         $custom_fields = $this->getFields();
         $dataClient = ['options' => []];
-        foreach ($custom_fields as $key => $cfield) {
+        foreach ($custom_fields as $cfield) {
             if (in_array($cfield, ['location', 'duration', 'service', 'time', 'start', 'clientid', 'end'])) {
                 continue;
             }
             switch ($cfield) {
                 case 'email':
-                    $dataClient['email'] = $this->forceEmail() ? Helpers::currentUserEmail() : $this->get('email');
+                    $dataClient['email'] = $this->getUserEmail();
                     break;
                 case 'name':
                     $dataClient['name'] = $this->get('name');
@@ -183,7 +189,11 @@ class Booking extends LegacyBooking
                 case 'ctz':
                     $dataClient['options']['tz'] = $this->get('ctz');
                     break;
-
+                case 'slots':
+                case 'package_id':
+                case 'package_price_id':
+                case 'staff_id':
+                    break;
                 default:
                     $dataClient['options'][$cfield] = $this->get($cfield);
                     break;

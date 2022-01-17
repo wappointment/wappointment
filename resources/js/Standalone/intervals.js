@@ -3,50 +3,54 @@ export default class Intervals {
     constructor(intervals, intervalsPassed = false) {
         if(intervalsPassed === false){
             this.intervals = []
-        
-            for (let index = 0; index < intervals.length; index++) {
-                const element = intervals[index]
-                this.intervals.push( { start: element[0], end: element[1] } )
+            let sortedIntervals = intervals.sort((a, b) => { return a[0] > b[0] } )
+            for (const element of sortedIntervals) {
+                if(element.length > 2){
+                    this.intervals.push( { start: element[0], end: element[1], left:parseInt(element[2]),service:element[3], edit_key:element[4] } )
+                }else{
+                    this.intervals.push( { start: element[0], end: element[1]} )
+                }
             }
         }else{
             this.intervals = intervals 
         }
     }  
 
-    get(from, until) {
+    get(from, until, serviceid = false) {
         let newCollection = []
         if(from === false){
             return new Intervals(newCollection, true) //skipping
         }
 
-        for (let index = 0; index < this.intervals.length; index++) {
-             const element = this.intervals[index]
-
-             //if there is an intersection before or after in between two days
-             let DummyInterval = {start: from.unix(), end: until.unix()}
-             if(this.intersecting(DummyInterval, element)) {
-                if(this.aContainsB(DummyInterval,element)){
-                    newCollection.push({start:element.start, end:element.end, duration:(element.end - element.start),llave:'a'})
-                }else{
-                    let newt = {}
-                    if(DummyInterval.start > element.start){
-                        if(DummyInterval.end < element.end){
-                            newt = {start:DummyInterval.start, end:DummyInterval.end, duration:(DummyInterval.end - DummyInterval.start),llave:'b1'}
-                        }else{
-                            newt = {start:DummyInterval.start, end:element.end, duration:(element.end - DummyInterval.start),llave:'b2'}
-                        }
-                    }else{
-                        if(DummyInterval.end <= element.end){
-                            newt = {start:element.start, end:DummyInterval.end, duration:(DummyInterval.end - element.start),llave:'c'}
-                        }else{
-                            newt = {start:element.start, end:element.end, duration:(element.end - element.start),llave:'c'}
-                        }
-                    }
-                    newCollection.push(newt)
-                }
-             }else{
-             }
-
+        for (const element of this.intervals) {
+            if(serviceid !== false && element.service !== undefined && element.service !== serviceid){ //avoid slots that are service specific
+                continue;
+            }
+            
+            //if there is an intersection before or after in between two days
+            let DummyInterval = {start: from.unix(), end: until.unix()}
+            if(this.intersecting(DummyInterval, element)) {
+               if(this.aContainsB(DummyInterval,element)){
+                   let newt1 = Object.assign({},element)
+                   newCollection.push(Object.assign(newt1,{start:element.start, end:element.end, duration:(element.end - element.start),llave:'a'}))
+               }else{
+                   let newt = Object.assign({},element)
+                   if(DummyInterval.start > element.start){
+                       if(DummyInterval.end < element.end){
+                        newt = Object.assign(newt, {start:DummyInterval.start, end:DummyInterval.end, duration:(DummyInterval.end - DummyInterval.start),llave:'b1'})
+                       }else{
+                        newt = Object.assign(newt, {start:DummyInterval.start, end:element.end, duration:(element.end - DummyInterval.start),llave:'b2'})
+                       }
+                   }else{
+                       if(DummyInterval.end <= element.end){
+                        newt = Object.assign(newt, {start:element.start, end:DummyInterval.end, duration:(DummyInterval.end - element.start),llave:'c'})
+                       }else{
+                        newt = Object.assign(newt, {start:element.start, end:element.end, duration:(element.end - element.start),llave:'c'})
+                       }
+                   }
+                   newCollection.push(newt)
+               }
+            }
         }
 
         return new Intervals(newCollection, true)
@@ -56,41 +60,36 @@ export default class Intervals {
         
         for (let i = 0; i < this.intervals.length; i++) {
              const interval = this.intervals[i]
-             if(Array.isArray(interval)){
-             }else{
-
-                for (let j = 0; j < removeIntervals.intervals.length; j++) {
-                    
-                    const removeMe = removeIntervals.intervals[j]
+             if(!Array.isArray(interval)){
+                for (const removeMe of removeIntervals.intervals) {
                     if(this.intersecting(interval,removeMe)){
-                       if(this.aContainsB(interval,removeMe)){
-                           //we get 2 intervals out
-                           this.intervals[i] = this.aMinusBWhenContaining(interval,removeMe)
-                       }else{
-                         
-                           //we get just one interval so we can simply replace it for the next part
-                           this.intervals[i] = this.aMinusBWhenIntersect(interval,removeMe)
-                       }
-                    }else{
+                        if(this.aContainsB(interval,removeMe)){
+                            //we get 2 intervals out
+                            this.intervals[i] = this.aMinusBWhenContaining(interval,removeMe)
+                        }else{
+                        
+                            //we get just one interval so we can simply replace it for the next part
+                            this.intervals[i] = this.aMinusBWhenIntersect(interval,removeMe)
+                        }
                     }
                 }
-             }
+            }
+
         }
 
         let newCollection = []
-        for (let i = 0; i < this.intervals.length; i++) {
-            const interval = this.intervals[i]
+        for (const interval of this.intervals) {
             if(Array.isArray(interval)){
-                for (let j = 0; j < interval.length; j++) {
-                    newCollection.push(interval[j])
+                for (const iterator of interval) {
+                    newCollection.push(iterator)
                 }
             }else{
                 if(interval){
                     newCollection.push(interval)
                 }
-                
             }
-       }
+        }
+
 
        return new Intervals(newCollection, true)
     }
@@ -148,22 +147,21 @@ export default class Intervals {
             
         }
         newCollection.reverse() */
-        for (let index = 0; index < this.intervals.length; index++) {
-             const element = this.intervals[index]
-             element.slots = Math.floor(element.duration / slotsDuration)
+        for (const element of this.intervals) {
+            element.slots = Math.floor(element.duration / slotsDuration)
              newCollection.push(element)
-
         }
+
         return new Intervals(newCollection, true)
     }
 
     totalSlots(){
         let total = 0;
-        for (let index = 0; index < this.intervals.length; index++) {
-            if(this.intervals[index].slots !== undefined) {
-                total += this.intervals[index].slots
+        for (const iterator of this.intervals) {
+            if(iterator.slots !== undefined) {
+                total += iterator.slots
             }
-       }
+        }
        return total;
     }
 

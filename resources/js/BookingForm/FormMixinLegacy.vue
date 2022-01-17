@@ -12,7 +12,7 @@ export default {
               return
             } 
             let data = this.bookingFormExtended
-            data.time = this.selectedSlot
+            data.time = this.selectedSlot.start
             data.ctz = this.timeprops.ctz
             data.service = this.service.id
             data.location = this.location.id
@@ -30,7 +30,7 @@ export default {
               return
             } 
             let data = this.bookingFormExtended
-            data.time = this.selectedSlot
+            data.time = this.selectedSlot.start
             data.type = this.selection
             data.ctz = this.timeprops.ctz
             //turns loading mode on in parent
@@ -52,7 +52,7 @@ export default {
             
             this.$emit('confirmed', relationnext , {
                 appointmentSavedData:result.data.appointment, 
-                isApprovalManual:(result.data.status == 0), 
+                isApprovalManual:(result.data.appointment.status == 0), 
                 appointmentSaved: true, 
                 appointmentKey: result.data.appointment.edit_key, 
                 loading: false

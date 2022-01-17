@@ -4,32 +4,32 @@ return [
     [
         'model' => 'appointment',
         'key' => 'linkAddEventToCalendar',
-        'label' => 'Link to save appointment to calendar',
+        'label' => __('Link to save appointment to calendar', 'wappointment'),
         'getMethod' => 'getLinkAddEventToCalendar'
     ],
     [
         'model' => 'appointment',
         'key' => 'linkRescheduleEvent',
-        'label' => 'Link to reschedule appointment',
+        'label' => __('Link to reschedule appointment', 'wappointment'),
         'getMethod' => 'getLinkRescheduleEvent'
     ],
     [
         'model' => 'appointment',
         'key' => 'linkCancelEvent',
-        'label' => 'Link to cancel appointment',
+        'label' => __('Link to cancel appointment', 'wappointment'),
         'getMethod' => 'getLinkCancelEvent'
     ],
     [
         'model' => 'appointment',
         'key' => 'linkNew',
-        'label' => 'Link to book a new appointment',
+        'label' => __('Link to book a new appointment', 'wappointment'),
         'getMethod' => 'getLinkNewEvent',
         'modelCall' => 'email_helper'
     ],
     [
         'model' => 'appointment',
         'key' => 'linkNewStaff',
-        'label' => 'Link to book a new appointment with the same staff',
+        'label' => __('Link to book a new appointment with the same staff', 'wappointment'),
         'getMethod' => 'getLinkNewEventStaff',
         'modelCall' => 'email_helper',
         'requiresParams' => true
@@ -37,7 +37,7 @@ return [
     [
         'model' => 'appointment',
         'key' => 'linkView',
-        'label' => 'Link to view the appointment details (Meeting room url etc ...)',
+        'label' => __('Link to view the appointment details (Meeting room url etc...)', 'wappointment'),
         'getMethod' => 'getLinkViewEvent'
     ],
 

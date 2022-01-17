@@ -10,11 +10,11 @@
                         <div :style="getImageStyle" class="img-bg d-flex justify-content-center align-items-center"></div>
                     </div>
                     <i v-else class="dashicons dashicons-format-image"></i>
-                    <span class="small text-primary" href="javascript:;">{{ hasImage ? 'edit':'add'}}</span>
+                    <span class="small text-primary" href="javascript:;">{{ hasImage ? get_i18n('edit','common'):get_i18n('add','common')}}</span>
                 </div>
             </div>
             <WapModal :show="edit" @hide="close" large>
-                <h4 slot="title" class="modal-title">Select an Image</h4>
+                <h4 slot="title" class="modal-title">{{ get_i18n('select_image','common') }}</h4>
                 <div>
                     <div v-if="selected_image !== null && selected_image.media_details.sizes !== undefined">
                         <div v-for="(image_size, thumbkey) in getImagesThumb(selected_image.media_details.sizes)"
@@ -33,20 +33,20 @@
                             <img :src="wp_image.src" class="img-fluid rounded" :width="preview.width" />
                         </div>
                         <div>
-                            <a class="btn btn-secondary" href="javascript:;" @click.prevent.stop="clearImage">Clear</a>
-                            <a class="btn btn-primary" href="javascript:;" @click.prevent.stop="confirmSelectedImage">Confirm</a>
+                            <a class="btn btn-secondary" href="javascript:;" @click.prevent.stop="clearImage">{{ get_i18n('clear','common') }}</a>
+                            <a class="btn btn-primary" href="javascript:;" @click.prevent.stop="confirmSelectedImage">{{ get_i18n('confirm','common') }}</a>
                         </div>
                     </div>
                     <div class="gallery" v-if="galleryShow && selected_image === null">
                         <div class="pt-4 px-4">
                             <input type="text" v-model="search_term">
-                            <button class="btn btn-outline-primary" @click.prevent.stop="refreshGallery">Search</button>
+                            <button class="btn btn-outline-primary" @click.prevent.stop="refreshGallery">{{ get_i18n('search','common') }}</button>
                         </div>
                         <hr>
                         <WPMedias v-if="edit" @selected="selectedFromGallery" @confirmed="confirmSelection" 
                         :search="search_term" :per_page="showing_images" :selectedImage="selectedImage"></WPMedias>
                         <div class="bg-white pt-3">
-                            <button class="btn btn-secondary" @click.prevent.stop="close">Close</button>
+                            <button class="btn btn-secondary" @click.prevent.stop="close">{{ get_i18n('close','common') }}</button>
                         </div>
                     </div>
                     

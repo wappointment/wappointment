@@ -10,7 +10,7 @@ class DebugController extends RestController
 {
     public function freshInstall()
     {
-        new Reset;
+        (new Reset)->proceed();
 
         return ['message' => 'Plugin has been fully reseted.'];
     }
@@ -24,7 +24,7 @@ class DebugController extends RestController
     public function refreshCache()
     {
         Reset::refreshCache();
-        return ['message' => 'Cache has been reseted'];
+        return ['message' => __('Cache has been reseted', 'wappointment')];
     }
 
     public function addManagerRole()

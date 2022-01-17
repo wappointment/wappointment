@@ -9,10 +9,10 @@ class LegacyBooking extends AbstractProcessor
     protected function validationMessages()
     {
         return [
-            'is_phone' => 'Your phone number is not valid',
-            'email' => 'Your email is not valid',
-            'skype:regex' => 'Your skype username is not valid',
-            'time' => 'The selected time is not valid',
+            'is_phone' => __('Your phone number is not valid', 'wappointment'),
+            'email' => __('Your email is not valid', 'wappointment'),
+            'skype:regex' => __('Your skype username is not valid', 'wappointment'),
+            'time' => __('The selected time is not valid', 'wappointment'),
         ];
     }
 

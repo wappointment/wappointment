@@ -39,6 +39,11 @@ class Client extends Model
         return sanitize_email($value);
     }
 
+    public function generateEditKey($start_at)
+    {
+        return md5($this->id . $start_at);
+    }
+
     public function getFirstName()
     {
         return (strpos($this->name, ' ')) !== false ? substr($this->name, 0, strpos($this->name, ' ')) : $this->name;
@@ -52,6 +57,15 @@ class Client extends Model
     public function getLastName()
     {
         return (strpos($this->name, ' ')) !== false ? substr($this->name, strpos($this->name, ' ')) : '';
+    }
+
+    public function getEmailForDotcom()
+    {
+        return $this->email;
+    }
+    public function getNameForDotcom()
+    {
+        return $this->name;
     }
 
     public function getPhone()
@@ -73,7 +87,6 @@ class Client extends Model
     {
         return empty($tag) || empty($this->options[$tag['key']]) ? '' : $this->options[$tag['key']];
     }
-
 
     protected function getRealDuration($service)
     {
@@ -104,7 +117,7 @@ class Client extends Model
         return !empty($this->client->options['tax_percent']) ? $this->client->options['tax_percent'] : Settings::get('tax');
     }
 
-    public function generateOrder(Appointment $appointment)
+    public function generateOrder($ticket, $slots = 1)
     {
         if (!$this->generatingOrder) {
             return null;
@@ -112,8 +125,8 @@ class Client extends Model
         //if pending order already exist, just get that one
         $pendingOrder = $this->getOrder();
 
-        $pendingOrder->add($appointment);
-        $appointment->recordOrderReference($pendingOrder);
+        $pendingOrder->add($ticket, $slots);
+        $ticket->recordOrderReference($pendingOrder);
         $pendingOrder->refreshTotal();
         $pendingOrder->load('prices');
         return $pendingOrder;

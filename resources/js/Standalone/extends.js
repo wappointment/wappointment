@@ -1,5 +1,4 @@
 import clone from 'lodash/clone'
-//import externalComponent from '../Standalone/external'
 
 class Extends {
 
@@ -19,8 +18,8 @@ class Extends {
         
         if(this.callbacks[extendName] !== undefined) {
             let paramsNew = cloning? clone(extendParams):extendParams
-            for (let i = 0; i < this.callbacks[extendName].length; i++) {
-                paramsNew = this.callbacks[extendName][i](paramsNew, extraParams)
+            for (const iterator of this.callbacks[extendName]) {
+                paramsNew = iterator.call(null, paramsNew, extraParams)
             }
             return paramsNew
         }else{

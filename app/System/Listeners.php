@@ -12,7 +12,10 @@ class Listeners
         if (Settings::get('mail_status')) {
             //pending confirmation event
             Events::listens('appointment.booked', 'AppointmentBookedListener');
-            Events::listens('appointment.booked', 'AppointmentAdminPendingListener');
+
+            if (Settings::get('notify_pending_appointments')) {
+                Events::listens('appointment.booked', 'AppointmentAdminPendingListener');
+            }
 
             //confirmed event
             Events::listens('appointment.confirmed', 'AppointmentConfirmedListener');

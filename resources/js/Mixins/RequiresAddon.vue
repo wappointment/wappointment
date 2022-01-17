@@ -18,7 +18,7 @@ export default {
                     label: 'Calendars & Staff',
                 },
                 packages:{
-                    label: 'Packages and credits',
+                    label: 'Packages',
                 },
                 stripe:{
                     label: 'Stripe payments',
@@ -26,14 +26,17 @@ export default {
                 paypal:{
                     label: 'Paypal payments',
                 },
+                group:{
+                    label: 'Group Events',
+                },
             },
         };
     },
     methods: {
         requiresAddon(addon_key, message = ''){
             this.$WapModal().showPremium(
-                message !== '' ? message:'Unlock this feature',
-                '<h3>Unlock premium feature with our addon "'+this.addonsDetails[addon_key].label+'"</h3>',
+                message !== '' ? message:this.get_i18n( 'unlock', 'common'),
+                '<h3>'+this.sprintf_i18n( 'unlock_with_addon', 'common',this.addonsDetails[addon_key].label)+'</h3>',
             ).then((result) => {
                 if(result === true){
                     window.open( apiWappointment.apiSite+'/addons', "_blank");

@@ -4,8 +4,10 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
+use Wappointment\Formatters\BookingResult;
 use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Payment;
+use Wappointment\WP\Helpers;
 
 class Order extends Model
 {
@@ -16,7 +18,7 @@ class Order extends Model
     protected $with = ['client', 'prices', 'appointments'];
     protected $dates = ['refunded_at', 'paid_at', 'created_at', 'updated_at'];
     protected $casts = ['options' => 'array'];
-    protected $appends = ['charge', 'payment_label', 'status_label'];
+    protected $appends = ['charge', 'payment_label', 'status_label', 'description'];
 
     const STATUS_PENDING = 0;
     const STATUS_AWAITING = 1;
@@ -34,6 +36,10 @@ class Order extends Model
             Appointment::class,
             'wappo_order_price'
         );
+    }
+    public function getDescriptionAttribute()
+    {
+        return Helpers::siteName() . ' - ' . (!empty($this)) ? $this->getDescription() : '';
     }
 
     public function getStatusLabelAttribute()
@@ -64,15 +70,21 @@ class Order extends Model
         }
     }
 
+    public function isPending()
+    {
+        return $this->status == self::STATUS_PENDING;
+    }
 
     public function isOnSite()
     {
         return $this->payment == self::PAYMENT_ONSITE;
     }
+
     public function isStripe()
     {
         return $this->payment == self::PAYMENT_STRIPE;
     }
+
     public function isPaypal()
     {
         return $this->payment == self::PAYMENT_PAYPAL;
@@ -93,7 +105,7 @@ class Order extends Model
         return $query->where('status', 0);
     }
 
-    public function setProcessing()
+    public function setAwaitingPayment()
     {
         $this->status = static::STATUS_AWAITING;
         if ($this->isOnSite()) {
@@ -105,6 +117,16 @@ class Order extends Model
             $options['owes'] += $this->total;
             $this->client->options = $options;
             $this->client->save();
+            $this->storeClient();
+        }
+    }
+
+    public function storeClient()
+    {
+        $options = $this->options;
+        if (empty($options['client'])) {
+            $options['client'] = $this->client;
+            $this->options = $options;
         }
     }
 
@@ -113,7 +135,9 @@ class Order extends Model
         $this->currency = Payment::currencyCode();
         $this->status = static::STATUS_PAID;
         $this->paid_at = date('Y-m-d H:i:s');
+        $this->storeClient();
     }
+
     public function setPaypal()
     {
         $this->payment = static::PAYMENT_PAYPAL;
@@ -126,6 +150,41 @@ class Order extends Model
     public function setCancelled()
     {
         $this->status = static::STATUS_CANCELLED;
+        do_action('wappointment_order_refunded', $this);
+        $this->cancelAllConnected();
+        $this->decrementOwes();
+    }
+
+    public function refund()
+    {
+
+        if (!$this->isOnSite()) {
+            //refund from the actual payment's platform
+            do_action('wappointment_order_refund', $this);
+        }
+        do_action('wappointment_order_refunded', $this);
+        $this->cancelAllConnected();
+
+        $this->setRefund();
+        $this->save();
+    }
+
+    /*
+    cancel all products related to that order
+    */
+    public function cancelAllConnected()
+    {
+        foreach ($this->prices as $charge) {
+            //cancel appointment
+            if ($charge->appointment_id > 0 && !is_null($charge->appointment)) {
+                //avoid issue with foreign key
+                $appointment = $charge->appointment;
+                $charge->appointment_id = null;
+                $charge->save();
+
+                do_action('wappointment_cancel_ticket', apply_filters('wappointment_appointment_get_ticket', $appointment, $this->client_id), $charge->quantity);
+            }
+        }
     }
 
     public function setAutoCancelled()
@@ -140,6 +199,7 @@ class Order extends Model
     public function setRefund()
     {
         $this->status = static::STATUS_REFUNDED;
+        $this->refunded_at = date('Y-m-d H:i:s');
     }
 
     public function prices()
@@ -159,33 +219,55 @@ class Order extends Model
         AppointmentNew::silentCancel($appointment_ids, $charge_ids);
     }
 
-    public function add(Appointment $appointment)
+    public function add(TicketAbstract $ticket, $quantity = false)
     {
 
         //clear all prices by cancelling previously placed appointment silently
         $this->clearLastAdded();
 
-        if ($appointment->paidWithPackage()) {
-            $prices = $appointment->getPackagePrices();
+        $this->setReservation($ticket->getAppointment()->id, $quantity);
+
+        if ($ticket->paidWithPackage()) {
+            $prices = $ticket->getPackagePrices();
+            $quantity = false; //we don't buy many package at once, but just one
         } else {
-            $prices = $appointment->getServicesPrices();
+            $prices = $ticket->getServicesPrices();
         }
 
         foreach ($prices as $price) {
-            $this->recordItem($price->id, $price->price, $appointment->id, $price->generateItemName($appointment));
+            $this->recordItem($price->id, $price->price, $ticket->getAppointment()->id, $price->generateItemName($ticket), $quantity);
         }
+    }
+
+    public function setReservation($appointment_id, $slots)
+    {
+        $options = $this->options;
+        $options['reservations'] = empty($options['reservations']) ? [] : $options['reservations'];
+        $options['reservations'][] = [
+            'appointment_id' => $appointment_id,
+            'slots' => $slots
+        ];
+        $this->options = $options;
+        $this->save();
     }
 
     public function getDescription()
     {
-        $description = "";
+        $description = '';
         foreach ($this->prices as $price) {
-            $description .= "\n" . $price->item_name;
+            if (!is_null($price->appointment)) {
+                $description .= $price->appointment->getStaffName();
+            }
+            $description .=  ' - ' . $price->item_name . ' - ';
+            if (!is_null($price->appointment)) {
+                $description .= $price->appointment->getStartsDayAndTime($price->appointment->getStaffTZ());
+            }
+            $description .= " | ";
         }
-        return $description;
+        return esc_html($description);
     }
 
-    public function recordItem($price_id, $price_value, $appointment_id, $item_name)
+    public function recordItem($price_id, $price_value, $appointment_id, $item_name, $quantity = false)
     {
         OrderPrice::create([
             'order_id' => $this->id,
@@ -193,6 +275,7 @@ class Order extends Model
             'item_name' => $item_name,
             'price_value' => $price_value,
             'appointment_id' => $appointment_id,
+            'quantity' => $quantity === false ? 1 : $quantity,
         ]);
     }
 
@@ -201,7 +284,7 @@ class Order extends Model
         $prices = OrderPrice::where('order_id', $this->id)->with('price')->get();
         $total = 0;
         foreach ($prices as $price) {
-            $total += $price->price_value;
+            $total += $price->price_value * ($this->getOrderPriceQuantity($price));
         }
         $this->update(
             [
@@ -209,6 +292,11 @@ class Order extends Model
                 'tax_amount' => $this->calculateTax($total)
             ]
         );
+    }
+
+    public function getOrderPriceQuantity($orderPrice)
+    {
+        return !empty($orderPrice->quantity) ? $orderPrice->quantity : 1;
     }
 
     public function calculateTax($amount)
@@ -220,7 +308,7 @@ class Order extends Model
     public function confirmAppointments()
     {
         foreach ($this->prices as $charge) {
-            AppointmentNew::confirm($charge->appointment_id);
+            AppointmentNew::confirm($charge->appointment_id, true, $this->client, $this);
         }
     }
 
@@ -230,22 +318,33 @@ class Order extends Model
 
         $this->setPaid();
 
+        $this->decrementOwes();
+
         if ($save) {
             $this->save();
         }
 
         do_action('wappointment_order_completed', $this);
-        return $this;
+        $this->load('appointments'); //making sure the status of the appointment is correct
+
+        $arrayResult = $this->toArray();
+
+        $arrayResult['appointments'] = BookingResult::formatAppointments($this->appointments);
+        return $arrayResult;
     }
 
-    public function refund()
+    public function decrementOwes()
     {
-        if (!$this->isOnSite()) {
-            //refund
-            do_action('wappointment_order_refund', $this);
-        }
+        if ($this->isOnSite()) {
+            $options = $this->client->options;
 
-        $this->setRefund();
-        $this->save();
+            //set client owing
+            $options['owes'] -= $this->total;
+            if ($options['owes'] < 0) {
+                $options['owes'] = 0;
+            }
+            $this->client->options = $options;
+            $this->client->save();
+        }
     }
 }

@@ -44,8 +44,7 @@ export default {
             let i = 0
             this.selectedWeek = 0
             while(hasAvailability === false && i < 10){
-                 for (let j = 0; j < this.reorganiseDays[this.selectedWeek].length; j++) {
-                    const daynumber = this.reorganiseDays[this.selectedWeek][j]
+                for (const daynumber of this.reorganiseDays[this.selectedWeek]) {
                     if(this.cachedSlots[daynumber]>0){
                         hasAvailability= true
                     }

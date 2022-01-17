@@ -5,6 +5,7 @@
         <div class="wfooter">
           <component :is="activeMethod" :order="order" :options="options" :method="selectedMethod" 
           @loading="loadingTransfer" @confirm="confirm" @cancel="cancel" />
+          <Terms :options="options" :tos="true"/>
         </div>
       </div>
     </div>
@@ -22,12 +23,13 @@ import CanLoadScriptAsync from '../Mixins/CanLoadScriptAsync'
 import onsite from './PayOnSite'
 import ElementSelected from './ElementSelected'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
+import Terms from './Terms'
 
 export default {
     extends: AbstractFront,
     mixins:[IsDemo, HasPaidService, GetImage],
     props: ['options', 'relations', 'appointmentKey', 'appointmentData', 'service', 'order'],
-    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage, onsite, ElementSelected }, {asyncLoad: CanLoadScriptAsync, GetImage:GetImage, CanFormatPrice:CanFormatPrice} ),
+    components: window.wappointmentExtends.filter('PaymentMethods', { WPaymentMethods, WImage, onsite, ElementSelected, Terms}, {asyncLoad: CanLoadScriptAsync, GetImage:GetImage, CanFormatPrice:CanFormatPrice} ),
      data: () => ({
         servicesOrder: null,
         activeMethod: '',
@@ -49,9 +51,6 @@ export default {
         return this.activeMethods.find(e => e.key == activeMethod)
         
       },
-      getAppointmentReservedString(){
-        //return this.options.woo_payment.slot_reserved.replace('[minutes]', this.reserved_for) 
-      },
       serviceDuration(){
         return (this.appointmentData.end_at - this.appointmentData.start_at) / 60
       },
@@ -70,27 +69,27 @@ export default {
         this.activeMethod = methodKey
       },
       cancel(){
-        console.log('cancel')
       },
       confirm(alreadyConfirmed = false){
         if(alreadyConfirmed !== false){
-          return this.confirmSuccess()
+          return this.confirmSuccess(alreadyConfirmed)
         }
         this.$emit('loading', {loading:true})
-        this.confirmRequest().then(this.confirmFailure).catch(this.confirmSuccess)
+        this.confirmRequest().then(this.confirmSuccess).catch(this.confirmFailure)
       },
       
       async confirmRequest() {
-            return await this.servicesOrder.call('confirm', {'transaction_id':this.order.transaction_id}) 
+        return await this.servicesOrder.call('confirm', {'transaction_id':this.order.transaction_id}) 
       },
 
-      confirmFailure(){
+      confirmFailure(e){
         this.serviceError({message:'Error confirming order'})
         this.$emit('loading', {loading:false})
       },
 
-      confirmSuccess(re){
-        this.$emit('confirmedPayment', this.relations.next, {appointmentSaved:true,loading:false})
+      confirmSuccess(response){
+        let appointment_data = response.data.appointment !== undefined ? response.data.appointment:response.data.orderCompleted.appointments[0]
+        this.$emit('confirmedPayment', this.relations.next, {appointmentSaved:true,loading:false, appointmentSavedData:appointment_data})
       },
 
     }
@@ -98,14 +97,14 @@ export default {
 </script>
 <style>
 .wpayment{
-  border: 2px solid var(--wappo-sec-bg);
+  border: 2px solid var(--wappo-payment-border);
   border-radius: 0 .4em .4em .4em;
   position:relative;
   overflow: hidden;
 }
 .witem{
   font-size:.7em;
-  border-bottom: 1px solid var(--wappo-sec-bg);
+  border-bottom: 1px solid var(--wappo-payment-border);
 }
 
 .wcards{

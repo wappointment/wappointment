@@ -139,7 +139,9 @@ export default {
         },
 
         getSlotAvailableForDemo(){
-            return this.intervalsCollection.intervals[0].start
+            return {
+                start: this.intervalsCollection.intervals[0].start
+            }
         }
 
     }

@@ -18,6 +18,7 @@
             --wappo-input-ph: {{ hx_rgb('#aeadad') }};
             --wappo-input-bor: {{ hx_rgb('#ced4da') }};
             --wappo-input-box-s: {{ hx_rgb(opts.colors.primary.bg, .25) }};
+            --wappo-payment-border: {{ hx_rgb(opts.colors.form.payment) }};
         }
         .wap-front .wbtn.wbtn-primary-light,
         .wap-front .wbtn.wbtn-primary-light:not(:disabled):not(.disabled):active, 
@@ -129,8 +130,7 @@
             color: {{ hx_rgb(opts.colors.body.disabled_links) }};
         }
 
-        .wap-front .wap-head,
-        .wap-front .wfooter {
+        .wap-front .wap-head {
             background-color: {{ hx_rgb(opts.colors.header.bg) }};
         }
         .wap-front .wap-head.showall{

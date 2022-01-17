@@ -53,7 +53,7 @@ export default {
     },
     methods: {
         convertMinutesToTime(min){
-            return Math.floor(min/60)+'h'+(min%60)
+            return this.get_i18n( 'regav_h', 'common').replace('%s',( Math.floor(min/60)))+(min%60)
         },
         toggleControls(visible){
             this.showControls = visible

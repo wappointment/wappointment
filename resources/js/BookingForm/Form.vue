@@ -25,11 +25,11 @@
             <transition name="slide-fade">
                 <div v-if="showFormInputs">
                     <FieldsGenerated @changed="changedBF" @dataDemoChanged="dataDemoChanged" 
-                    :validators="validators" :custom_fields="custom_fields" 
-                    :service="service" :location="location" :data="data" 
-                    :options="options" />
-                
-                    <div v-if="termsIsOn" class="wap-terms" v-html="getTerms"></div>
+                    :custom_fields="custom_fields" 
+                    :service="service" :location="location" 
+                    :options="options" :selectedSlot="selectedSlot" :wpauth="wpauth"/>
+
+                    <Terms :options="options" />
                 </div>
             </transition>
             <div class="d-flex wbtn-confirm">
@@ -46,11 +46,9 @@
 
 import AppointmentTypeSelection from './AppointmentTypeSelection'
 import AbstractFront from './AbstractFront'
-import {isEmail, isEmpty} from 'validator'
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
 import MixinTypeSelected from './MixinTypeSelected'
 import WappoServiceBooking from '../Services/V1/BookingN'
-import FieldsGenerated from './FieldsGenerated'
 import FormMixinLegacy from './FormMixinLegacy'
 import MixinLegacy from './MixinLegacy'
 import BookingAddress from './Address'
@@ -58,18 +56,19 @@ import PhoneInput from './PhoneInput'
 import IsDemo from '../Mixins/IsDemo'
 import HasPaidService from '../Mixins/HasPaidService'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
+import Terms from './Terms'
 export default {
     extends: AbstractFront,
     mixins: [ MixinTypeSelected, FormMixinLegacy,MixinLegacy, IsDemo, CanFormatPrice, HasPaidService],
     props: ['service', 'selectedSlot', 'options', 'errors', 'data', 
     'timeprops', 'relations', 'appointment_starts_at',
-    'duration', 'location', 'custom_fields', 'staffs','selectedStaff','selectedPackage','selectedVariation'],
+    'duration', 'location', 'custom_fields', 'staffs','selectedStaff','selectedPackage','selectedVariation', 'wpauth'],
     components: {
         BookingAddress,
         PhoneInput,
         CountryStyle,
-        FieldsGenerated,
-        AppointmentTypeSelection
+        AppointmentTypeSelection,
+        Terms
     }, 
     data: () => ({
         phoneId:'',
@@ -102,12 +101,6 @@ export default {
         isCompactHeader(){
             return this.options.general === undefined || [undefined, false].indexOf(this.options.general.check_header_compact_mode) === -1
         },
-        getTerms(){
-            return this.cleanString(this.options.form.terms).replace('[link]', '<a href="'+this.cleanString(this.options.form.terms_link)+'" target="_blank">').replace('[/link]', '</a>')
-        },
-        termsIsOn(){
-            return this.options.form.check_terms === true
-        },
         
         requirePhoneInput(){
             return this.phoneSelected || [undefined,false,''].indexOf(this.service.options.phone_required) === -1 
@@ -124,12 +117,6 @@ export default {
                 }
             }
             return true
-        },
-        validators(){
-            return {
-                'isEmail': isEmail,
-                'isEmpty': isEmpty,
-            }
         },
         canSubmit(){
             return  Object.keys(this.errorsOnFields).length < 1
@@ -151,14 +138,7 @@ export default {
         getId(id){
             this.phoneId = id
         },
-
-        tryPrefill(){
-            if(window.apiWappointment.wp_user !== undefined && window.apiWappointment.wp_user.autofill){
-                this.bookingForm.email = window.apiWappointment.wp_user.email
-                this.bookingForm.name = window.apiWappointment.wp_user.name
-            }
-        },
-    
+        
         selectDefaultType(){
             this.selection = this.service.type[0]
         },
@@ -220,7 +200,10 @@ export default {
                 return
             }
             let data = this.bookingFormExtended
-            data.time = this.selectedSlot
+            data.time = this.selectedSlot.start
+            if(this.selectedSlot.edit_key !== undefined){
+                data.appointment_key = this.selectedSlot.edit_key
+            }
             data.ctz = this.timeprops.ctz
             data.service = this.service.id
             data.location = this.location.id
@@ -229,6 +212,7 @@ export default {
             if(this.selectedPackage){
                 data.package_id = this.selectedPackage.id
                 data.package_price_id = this.selectedVariation.price_id
+                data.woo_pack_variation_id = this.selectedVariation.woo_pack_variation_id
             }
             
             //turns loading mode on in parent
@@ -246,22 +230,26 @@ export default {
         appointmentBooked(result){
             if(result.data.result !== undefined){
                 let data ={
-                    appointmentSavedData: result.data.appointment,
-                    order: result.data.order,
-                    isApprovalManual: result.data.status == 0, 
-                    appointmentSaved: true, 
-                    appointmentKey: result.data.appointment.edit_key, 
-                    loading: false
-                }
-                console.log('data',data)
+                        appointmentSavedData: result.data.appointment,
+                        order: result.data.order,
+                        isApprovalManual: result.data.appointment.status == 0, 
+                        appointmentSaved: true, 
+                        appointmentKey: result.data.appointment.edit_key, 
+                        loading: false,
+                        resultBooking: result.data
+                    }
                 this.$emit('confirmed', 
-                this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
-                data
+                    this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
+                    this.appointmentBookedDataFilter(data, result)
                 )
             }else{
                 this.$emit('loading', {loading:false})
                 this.appointmentBookingError({message: 'Error in booking request response'})
             }
+        },
+
+        appointmentBookedDataFilter(data, result){
+            return window.wappointmentExtends.filter('AppointmentBookedData', data, result)
         },
 
         getAddonNextScreen(result){

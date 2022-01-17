@@ -30,7 +30,7 @@
                                 <button class="btn btn-primary btn-block btn-lg m-0" @click="confirmed">{{ labelConfirm }}</button>
                                 <div v-if="rememberIsOn" class="form-check form-check-inline small">
                                     <input class="form-check-input" type="checkbox" id="remembersetting" v-model="remember">
-                                    <label class="form-check-label" for="remembersetting">Remember setting</label>
+                                    <label class="form-check-label" for="remembersetting">{{ get_i18n( 'remember', 'common') }}</label>
                                 </div>
                             </div> 
                         </div>
@@ -104,10 +104,10 @@ export default {
           return this.options!== undefined && this.options.classes !== undefined && this.options.classes.indexOf('premium') !== -1
       },
       labelCancel(){
-          return this.options.cancel !== undefined ? this.options.cancel:'Back'
+          return this.options.cancel !== undefined ? this.options.cancel:this.get_i18n( 'back', 'common')
       },
       labelConfirm(){
-          return this.options.confirm !== undefined ? this.options.confirm:'Confirm'
+          return this.options.confirm !== undefined ? this.options.confirm:this.get_i18n( 'confirm', 'common')
       },
       rememberIsOn(){
           return this.options.remember !== undefined

@@ -28,6 +28,10 @@ import routerQueryRedirect from './Standalone/routerQueryRedirect'
 import getRoutePush from './Standalone/getRoutePush'
 import ServicesDelivery from './Settings/ServicesDelivery'
 import VueSanitize from 'vue-sanitize'
+import FieldsGenerated from './BookingForm/FieldsGenerated'
+
+import i18n from './Mixins/i18n'
+import helpers from './Mixins/helpers'
 
 Vue.use(VueWapModal)
 Vue.use(VueService, {base:apiWappointment.root})
@@ -39,19 +43,27 @@ Vue.use(VueSanitize, {
     'span': ['class'],
   }
 })
-
+Vue.mixin(helpers)
+Vue.mixin(i18n)
 Vue.component('WapImage', WapImage)
+Vue.component('FieldsGenerated', FieldsGenerated)
 Vue.component('v-style', {
   render: function (createElement) {
       return createElement('style', this.$slots.default)
   }
 });
 Vue.mixin({
+  computed:{
+    wooIsActive(){
+      return window.wappointment_woocommerce !== undefined
+    },
+  },
   methods: {
     cleanString: function (string) {
       let doc = new DOMParser().parseFromString(string, 'text/html')
       return doc.body.textContent || ''
     },
+    
   },
 })
 

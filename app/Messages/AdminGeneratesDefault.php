@@ -40,7 +40,7 @@ trait AdminGeneratesDefault
 
         if ($appointment->isZoom()) {
             /* translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page */
-            $dataEmail[] =  sprintf(__("Video meeting: %s", 'wappointment'), '<a href="' . $appointment->getLinkViewEvent() . '" >' . __('Begin the meeting', 'wappointment') . '</a>');
+            $dataEmail[] =  sprintf(__("Video meeting: %s", 'wappointment'), '<a href="' . $appointment->getLinkViewEvent() . '" >' . __('Begin meeting', 'wappointment') . '</a>');
         }
 
         return apply_filters('wappointment_admin_email_fields', $dataEmail, $client, $appointment);

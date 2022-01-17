@@ -24,7 +24,6 @@ class ViewsData
         return apply_filters('wappointment_viewdata_' . $key, $values);
     }
 
-
     private function getCalendarsStaff()
     {
         $calendars = Central::get('CalendarModel')::orderBy('sorting')->fetch();
@@ -34,7 +33,6 @@ class ViewsData
         }
         return $staffs;
     }
-
 
     private function regav()
     {
@@ -275,11 +273,14 @@ class ViewsData
             'daily_summary' => Settings::get('daily_summary'),
             'daily_summary_time' => Settings::get('daily_summary_time'),
             'notify_new_appointments' => Settings::get('notify_new_appointments'),
+            'notify_pending_appointments' => Settings::get('notify_pending_appointments'),
             'notify_canceled_appointments' => Settings::get('notify_canceled_appointments'),
             'notify_rescheduled_appointments' => Settings::get('notify_rescheduled_appointments'),
             'email_notifications' => Settings::get('email_notifications'),
             'mail_status' => (bool) Settings::get('mail_status'),
             'allow_staff_cf' => Settings::get('allow_staff_cf'),
+            'calendar_handles_free' => Settings::get('calendar_handles_free'),
+            'calendar_ignores_free' => Settings::get('calendar_ignores_free'),
             'cache' => Settings::get('cache'),
             'calendar_roles' => Settings::get('calendar_roles'),
             'all_roles' => Permissions::getAllWpRoles(),
@@ -291,6 +292,12 @@ class ViewsData
             'refreshavb_at' => Settings::get('refreshavb_at'),
             'clean_pending_every' => Settings::get('clean_pending_every'),
             'payment_active' => Payment::active(),
+            'zoom_browser' => Settings::get('zoom_browser'),
+            'invoice' => Settings::get('invoice'),
+            'invoice_seller' => Settings::get('invoice_seller'),
+            'invoice_num' => Settings::get('invoice_num'),
+            'invoice_client' => Settings::get('invoice_client'),
+            'custom_fields' => Central::get('CustomFields')::get()
         ];
     }
 
@@ -310,8 +317,6 @@ class ViewsData
         ];
     }
 
-
-
     private function settingsmailer()
     {
         return [
@@ -330,10 +335,10 @@ class ViewsData
         return $avails;
     }
 
-
-
     private function front_availability()
     {
-        return apply_filters('wappointment_front_availability', (new Availability)->get());
+        $availability = (new Availability)->get();
+        $availability['wpauth'] = WPHelpers::wpUserData();
+        return $availability;
     }
 }

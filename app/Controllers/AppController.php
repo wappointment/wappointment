@@ -30,13 +30,18 @@ class AppController extends RestController
 
     protected function runUpdatesAddons()
     {
-        foreach (Status::addonRequiresDBUpdate() as $addon_details) {
+        $addonsRequiringUpdate = Status::addonRequiresDBUpdate();
+        if (!$addonsRequiringUpdate) {
+            throw new \WappointmentException("There is no update to run", 1);
+        }
+        foreach ($addonsRequiringUpdate as $addon_details) {
             try {
                 call_user_func($addon_details['namespace'] . '::runDbMigrate');
             } catch (\Throwable $th) {
                 throw new \WappointmentValidationException("Could not update addon db", 1, null, [$th->getMessage()]);
             }
         }
+
 
         return ['message' => 'Database for addons has been updated'];
     }

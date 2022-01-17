@@ -15,12 +15,12 @@ class Main extends AbstractRoutes
                     'controller' => 'AvailabilityController',
                     'method' => 'get',
                 ],
+            ],
+            'POST' => [
                 '/appointment' => [
                     'controller' => 'AppointmentController',
                     'method' => 'get',
                 ],
-            ],
-            'POST' => [
                 '/convertdate' => [
                     'controller' => 'BookingController',
                     'method' => 'convertDate',
@@ -227,6 +227,14 @@ class Main extends AbstractRoutes
                 '/order/refund' => [
                     'controller' => 'OrdersBackController',
                     'method' => 'refund',
+                ],
+                '/order/paid' => [
+                    'controller' => 'OrdersBackController',
+                    'method' => 'markAsPaid',
+                ],
+                '/order/cancel' => [
+                    'controller' => 'OrdersBackController',
+                    'method' => 'cancel',
                 ],
             ],
         ],

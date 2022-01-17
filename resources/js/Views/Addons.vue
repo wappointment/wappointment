@@ -84,7 +84,6 @@ import BundlePreview from '../Components/Bundle'
 let services_install = window.wappointmentExtends.filter('AddonsServiceInstall', {})
 import WPScreenOptions from '../WP/ScreenOptions'
 import RequestMaker from '../Modules/RequestMaker'
-
 export default {
     extends: abstractView,
     mixins: [RequestMaker],
@@ -135,7 +134,6 @@ export default {
       },
 
       runInstallation(addon){
-        
         let solution_key = addon.solutions[0].namekey.replace('-','_')
         if(this.services_install[solution_key] !== undefined){
           this.currentServiceAddon = this.$vueService(this.services_install[solution_key]) 

@@ -5,43 +5,54 @@ namespace Wappointment\Controllers;
 use Wappointment\Services\Client;
 use Wappointment\Validators\HttpRequest\Booking;
 use Wappointment\Validators\HttpRequest\BookingAdmin;
-use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Admin;
 use Wappointment\Services\AppointmentNew as Appointment;
 use Wappointment\ClassConnect\Request;
+use Wappointment\Formatters\BookingResult;
+use Wappointment\WP\Helpers as WPHelpers;
+use Wappointment\Helpers\Translations;
 use Wappointment\Services\DateTime;
 
 class BookingController extends RestController
 {
+    protected function fieldsError($booking)
+    {
+        return WPHelpers::restError(Translations::get('review_fields'), 500, $booking->getErrors());
+    }
+
+    protected function bookingFailed()
+    {
+        return __('Booking failed', 'wappointment');
+    }
 
     public function save(Booking $booking)
     {
 
         if ($booking->hasErrors()) {
-            return WPHelpers::restError('Review your fields', 500, $booking->getErrors());
+            return $this->fieldsError($booking);
         }
 
         $result = Client::book($booking);
         if (isset($result['appointment']['errors'])) {
-            return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['appointment']['errors']);
+            return WPHelpers::restError($this->bookingFailed(), 500, $result['appointment']['errors']);
         }
         $result['result'] = true;
-        $result['appointment'] = (new \Wappointment\ClassConnect\Collection($result['appointment']->toArraySpecial()))->except(['id', 'client_id']);
-        return $result;
+
+        return BookingResult::format($result);
     }
 
     public function adminBook(BookingAdmin $booking)
     {
         if ($booking->hasErrors()) {
-            return WPHelpers::restError('Review your fields', 500, $booking->getErrors());
+            return $this->fieldsError($booking);
         }
 
         $result = Admin::book($booking);
         if (isset($result['errors'])) {
-            return WPHelpers::restError('Impossible to proceed with the booking', 500, $result['errors']);
+            return WPHelpers::restError($this->bookingFailed(), 500, $result['errors']);
         }
 
-        return ['message' => 'Appointment recorded'];
+        return ['message' => __('Appointment recorded', 'wappointment')];
     }
 
     public function reschedule(Request $request)

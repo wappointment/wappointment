@@ -2,17 +2,19 @@
 
 namespace Wappointment\System;
 
+use Wappointment\Helpers\Get;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Settings;
 use Wappointment\Services\Addons;
+use Wappointment\Services\Reset;
 
 class InitBackend
 {
     public $menus;
-
+    public $isInstalledAndUpdated = false;
     public function __construct($isInstalledAndUpdated)
     {
-
+        $this->$isInstalledAndUpdated = $isInstalledAndUpdated;
         add_action('admin_init', [$this, 'enqueueMin']);
         add_action('admin_menu', [$this, 'registerMenuRoot']);
         if ($isInstalledAndUpdated) {
@@ -25,8 +27,20 @@ class InitBackend
             add_action('admin_init', [$this, 'enqueueBackendPlugin']);
             add_action('wp_print_scripts', [$this, 'jsVariables']);
         }
+
+        //when a site is deleted in ms we clean the tables
+        add_action('wp_uninitialize_site', [$this, 'deleteDbTables']);
     }
 
+
+    public function deleteDbTables($blog_data)
+    {
+
+        switch_to_blog($blog_data->blog_id);
+        $reset = new Reset;
+        $reset->dropTables();
+        restore_current_blog();
+    }
 
     public function addDisplayPostStates($post_states, $post)
     {
@@ -106,14 +120,22 @@ class InitBackend
                 $varJs['hasPendingUpdates'] = true;
             }
 
-            if (Status::hasMessages()) {
+            if ($this->isInstalledAndUpdated && Status::hasMessages()) {
                 $varJs['hasMessages'] = Status::hasMessages();
             }
 
             $varJs['canSeeUpdate'] = Status::canSeeUpdatePage();
         }
 
-        wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', WAPPOINTMENT_SLUG . 'Admin', $varJs);
+        wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', 'wappointmentAdmin', $varJs);
+        wp_localize_script(WAPPOINTMENT_SLUG . '_backend_menu', 'wappointment_i18n', [
+            'wizard' => Get::list('translations_wizard'),
+            'common' => Get::list('translations_js_common'),
+            'calendar' => Get::list('translations_calendar'),
+            'settings' => Get::list('translations_settings'),
+            'clients' => Get::list('translations_clients'),
+            'orders' => Get::list('translations_orders'),
+        ]);
 
         wp_enqueue_script(WAPPOINTMENT_SLUG . '_backend_menu');
         wp_enqueue_script(WAPPOINTMENT_SLUG . '_backend.back.js');
@@ -151,30 +173,12 @@ class InitBackend
 
     public function customPluginLinks($links)
     {
-        $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_settings')) . '" >Settings</a>';
+        $links[] = '<a href="' . esc_url(WPHelpers::adminUrl('wappointment_settings')) . '" >' . __('Settings', 'wappointment') . '</a>';
 
         if (Status::canSeeUpdatePage()) {
-            $links[] = '<a class="wappo_whatsnew" href="' . esc_url(WPHelpers::adminUrl('wappointment_calendar#see_whats_new')) . '" >See Improvements in v' . WAPPOINTMENT_VERSION . '</a>';
+            /* translators: %s - version number */
+            $links[] = '<a class="wappo_whatsnew" href="' . esc_url(WPHelpers::adminUrl('wappointment_calendar#see_whats_new')) . '" >' . sprintf(__('See Improvements in %s', 'wappointment'), 'v' . WAPPOINTMENT_VERSION) . '</a>';
         }
-        /* if (Status::installedForXDays() > 30) {
-            $links[] = '<a href="https://wordpress.org/support/plugin/wappointment/reviews/#new-post" target="_blank" class="btn btn-outline-secondary text-dark ml-2">
-                Support us with stars
-                <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span> <span class="dashicons dashicons-star-filled"></span>
-            </a> <style>.plugins .plugin-title .dashicons.dashicons-star-filled::before {
-                padding: 0px;
-                background-color: transparent;
-                box-shadow: none;
-                font-size: 17px;
-                color: #ffb900;
-            }
-            .plugins .plugin-title .dashicons, .plugins .plugin-title img {
-                float: none;
-                width: auto;
-                height: auto;
-                padding: 0;
-            }
-            </style>';
-        } */
 
         return $links;
     }

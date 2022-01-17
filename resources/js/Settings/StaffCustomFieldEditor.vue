@@ -7,7 +7,7 @@
         <div class="p-2 rounded bg-secondary">
             <div v-if="adding">
                 <InputPh v-model="field_name" ph="Field name" />
-                <button class="btn btn-primary" :class="{'disabled':!isValidField}" @click="saveField">Save field</button>
+                <button class="btn btn-primary" :class="{'disabled':!isValidField}" @click="saveField">{{get_i18n('save', 'common') }}</button>
             </div>
             <div v-else>
                 <button class="btn btn-secondary btn-sm mb-2" @click="newField"><span class="dashicons dashicons-insert"></span> Add Custom Field</button>

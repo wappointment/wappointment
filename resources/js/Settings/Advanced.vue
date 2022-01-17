@@ -193,6 +193,45 @@
               </label>
           </div>
           <div class="mb-2">
+            <label class="form-check-label" for="allow-calendar_handles_free">
+              <div class="d-flex align-items-center" data-tt="Certain calendar app such as Outlook live allow you to set a time where you are free, with that option, we will set open your availability whenever we spot those.">
+                <input type="checkbox" v-model="viewData.calendar_handles_free" id="allow-calendar_handles_free" @change="changedVD('calendar_handles_free')">
+                Recognize FREE status in .ICS import
+              </div>
+            </label>
+            <div v-if="viewData.calendar_handles_free" class="ml-4 mt-2">
+                <label class="form-check-label" for="allow-calendar_ignores_free">
+                  <div class="d-flex align-items-center" data-tt="When a FREE event is spotted, we just ignore it">
+                    <input type="checkbox" v-model="viewData.calendar_ignores_free" id="allow-calendar_ignores_free" @change="changedVD('calendar_ignores_free')">
+                    Ignore FREE events
+                  </div>
+                </label>
+            </div>
+          </div>
+
+          <div class="mb-2" v-if="!wooIsActive">
+            <label class="form-check-label" for="allow-invoice">
+              <div class="d-flex align-items-center" data-tt="More data will be added to the receipt sent in the confirmation email">
+                <input type="checkbox" v-model="viewData.invoice" id="allow-invoice" @change="changedVD('invoice')">
+                Enable Invoice data
+              </div>
+            </label>
+            <div v-if="viewData.invoice" class="ml-4 mt-2">
+              Seller's data
+              <textarea class="form-control"  v-model="viewData.invoice_seller" @change="changedVD('invoice_seller')" rows="2"></textarea>
+            </div>
+            <div v-if="viewData.invoice" class="ml-4 mt-2">
+              Order nº
+              <input id="hrs-before-allowed" v-model="viewData.invoice_num" @change="changedVD('invoice_num')" size="2" type="text">
+            </div>
+            <div v-if="viewData.invoice" class="ml-4 mt-2">
+              Client's data to appear on invoice
+              <FormFieldSelect :multi="true" :horizontal="true" v-model="viewData.invoice_client" :elements="viewData.custom_fields" 
+            idKey="namekey" labelSearchKey="name" ph="Select data to appear on bill" @change="changedInvoiceCfield" />
+            </div>
+          </div>
+          
+          <div class="mb-2">
               <label class="form-check-label" for="allow-refreshavb" data-tt="Your staff availability gets a new open day after that time">
                   <div class="d-flex align-items-center">
                     <input type="checkbox" v-model="viewData.allow_refreshavb" id="allow-refreshavb" @change="changedVD('allow_refreshavb')">
@@ -204,8 +243,16 @@
                   </div>
               </label>
           </div>
+          <div class="mb-2">
+              <label class="form-check-label" for="zoom-browser" data-tt="Zoom requires an app to be installed; check this option to launch a meeting where the app is not required(easier for your clients)">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.zoom_browser" id="zoom-browser" @change="changedVD('zoom_browser')">
+                    Zoom without app
+                  </div>
+              </label>
+          </div>
           <div>
-            <label for="roles-allowed" class="m-0">Users listed for calendars creation</label>
+            <label for="roles-allowed" class="m-0">WordPress' users listed for calendars creation</label>
             <div class="small text-muted">In Wappointment > Settings > Calendars & Staff</div>
             <FormFieldSelect :multi="true" :horizontal="true" v-model="viewData.calendar_roles" :elements="viewData.all_roles" 
             idKey="key" labelSearchKey="name" ph="Select roles allowed" @change="changedRoles" />
@@ -260,6 +307,12 @@
             </label>
           </div>
           <div class="d-flex align-items-center mt-2">
+            <Checkbox :value="viewData.notify_pending_appointments"  @changed="changedCheck('notify_pending_appointments')"></Checkbox>
+            <label class="form-check-label">
+            Pending Appointments 
+            </label>
+          </div>
+          <div class="d-flex align-items-center mt-2">
             <Checkbox :value="viewData.notify_canceled_appointments"  @changed="changedCheck('notify_canceled_appointments')"></Checkbox>
             <label class="form-check-label">
             Cancelled Appointments 
@@ -283,7 +336,6 @@
           </button>
         </div>
     </div>
-
 
   </div>
 </template>
@@ -481,6 +533,9 @@ export default {
     },
     changedRoles(values){
       this.changed(values, 'calendar_roles')
+    },
+    changedInvoiceCfield(values){
+      this.changed(values, 'invoice_client')
     },
     changedVD(key){
       this.changed(this.viewData[key], key)

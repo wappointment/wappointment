@@ -24,7 +24,7 @@
               <div class="d-flex">
                 <TimeZones v-if="viewData!==null" :timezones="viewData.timezones_list" :staffTimezone="viewData.timezone" classW="align-self-center pr-2" 
                 labelDefault="View in a different timezone" :defaultTimezone="displayTimezone" @updateTimezone="updateTimezone"></TimeZones>
-                <a v-if="!isToday" class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="today">This week</a>
+                <a v-if="!isToday" class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="today">{{ get_i18n('calendar_this_week', 'common') }}</a>
               </div>
           </div>
         </div>
@@ -47,10 +47,10 @@
 
             <div v-if="fcIsReady">
                 <WapModal v-if="bookForAclient" :show="bookForAclient" @hide="hideModal" noscroll>
-                  <h4 slot="title" class="modal-title">Choose an action</h4>
+                  <h4 slot="title" class="modal-title">{{ get_i18n('calendar_popup', 'calendar') }}</h4>
                   <h3 class="mb-4" v-if="selectionSingleDay"> {{ startDayDisplay }} - 
-                    <span class="text-muted">From {{ startTimeDisplay }} until {{ endTimeDisplay }}</span>
-                    <span class="small text-muted" v-if="viewData.buffer_time > 0">includes {{ viewData.buffer_time }}min buffer</span>
+                    <span class="text-muted">{{ sprintf_i18n('calendar_popup_from_until', 'calendar', [startTimeDisplay,endTimeDisplay]) }}</span>
+                    <span class="small text-muted" v-if="viewData.buffer_time > 0">{{ sprintf_i18n('calendar_popup_includes', 'calendar', viewData.buffer_time) }}</span>
                   </h3>
                   <h3 class="mb-4" v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h3>
                   <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!selectedChoice">
@@ -58,24 +58,24 @@
                     <div class="btn btn-secondary mr-md-2  align-items-center" @click="confirmNewBooking" :class="{'fdisabled' :!selectionSingleDay}">
                       <div class="dashicons dashicons-admin-users"></div>
                       <div class="text-center">
-                        <p class="h6 m-0">Book an appointment</p>
-                        <p class="small m-0">On behalf of your client</p>
+                        <p class="h6 m-0">{{ get_i18n('calendar_popup_1', 'calendar') }}</p>
+                        <p class="small m-0">{{ get_i18n('calendar_popup_1_sub', 'calendar') }}</p>
                       </div>
                     </div>
 
                     <div class="btn btn-secondary  mr-md-2 align-items-center" @click="confirmFree" :class="{'fdisabled' :(!selectionSingleDay || isAvailable)}">
                       <div class="dashicons dashicons-unlock txt blue"></div>
                       <div class="text-center">
-                        <p class="h6 m-0">Open this time</p>
-                        <p class="small m-0">Allow new bookings</p>
+                        <p class="h6 m-0">{{ get_i18n('calendar_popup_2', 'calendar') }}</p>
+                        <p class="small m-0">{{ get_i18n('calendar_popup_2_sub', 'calendar') }}</p>
                       </div>
                     </div>
 
                     <div class="btn btn-secondary  align-items-center" @click="confirmBusy" :class="{'fdisabled' : isBusy}">
                       <div class="dashicons dashicons-lock txt red"></div>
                       <div class="text-center">
-                        <p class="h6 m-0">Block this time</p>
-                        <p class="small m-0">Prevent new bookings</p>
+                        <p class="h6 m-0">{{ get_i18n('calendar_popup_3', 'calendar') }}</p>
+                        <p class="small m-0">{{ get_i18n('calendar_popup_3_sub', 'calendar') }}</p>
                       </div>
                     </div>
 

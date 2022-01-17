@@ -16,6 +16,8 @@ class CalendarParser
     protected $statusEvents;
     protected $timezone = false;
     protected $staff_id = 0;
+    protected $handles_free = false;
+    protected $ignores_free = false;
 
     /**
      * Create a new job instance.
@@ -28,6 +30,8 @@ class CalendarParser
         $this->source = md5($this->url);
         $this->content = $content;
         $this->staff_id = $staff_id;
+        $this->handles_free = Settings::get('calendar_handles_free');
+        $this->ignores_free = Settings::get('calendar_ignores_free');
     }
 
     public function handle()
@@ -54,6 +58,9 @@ class CalendarParser
             if ($start > ($start + 60)) {
                 throw new \WappointmentException(" 60s Timeout reached parsing calendar", 1);
             }
+            if ($this->freeSpotted($vevent) && $this->ignores_free) {
+                continue;
+            }
             $until = null;
             $recur = STATUS::RECUR_NOT;
             $carbon_start = $this->vcalDateToCarbon((string) $vevent->DTSTART, $vevent);
@@ -74,7 +81,6 @@ class CalendarParser
                 }
             }
 
-            //$start_at_record = $this->vcalDateToDbFormat((string) $vevent->DTSTART);
             $start_at_record = $this->getFormatedDate($carbon_start);
             $end_at_record = $this->getFormatedDate($carbon_end);
 
@@ -84,7 +90,7 @@ class CalendarParser
                 'end_at' => $end_at_record,
                 'recur' => $recur,
                 'source' => $this->source,
-                'type' => STATUS::TYPE_BUSY,
+                'type' => $this->getStatus($vevent),
                 'eventkey' => md5($this->source . (string) $vevent->UID . (string) $vevent->DTSTART),
                 'options' => $this->getOptions($vevent, $until, $recur),
                 'staff_id' => $this->staff_id
@@ -100,6 +106,20 @@ class CalendarParser
             'inserted' => $this->insertIgnoreOrUpsert($this->statusEvents->toArray()),
             'duration' => round(microtime(true) - $start, 2)
         ];
+    }
+
+    public function isFreeOutlook($vevent)
+    {
+        $column = 'X-MICROSOFT-CDO-BUSYSTATUS';
+        return !empty($vevent->$column) && $vevent->$column->getValue() == 'FREE';
+    }
+    public function freeSpotted($vevent)
+    {
+        return $this->isFreeOutlook($vevent);
+    }
+    public function getStatus($vevent)
+    {
+        return $this->handles_free && $this->freeSpotted($vevent) ? STATUS::TYPE_FREE : STATUS::TYPE_BUSY;
     }
 
     private function insertIgnoreOrUpsert($array)

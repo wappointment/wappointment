@@ -9,7 +9,7 @@ use Wappointment\Managers\Central;
 use Wappointment\WP\Helpers as WPHelpers;
 
 /**
- * LEGACY
+ * LEGACY DO NOT EDIT
  */
 class Appointment
 {
@@ -72,18 +72,18 @@ class Appointment
     public static function reschedule($edit_key, $start_at)
     {
         if (!(bool) Settings::get('allow_rescheduling')) {
-            throw new \WappointmentException('Appointment rescheduling is not allowed', 1);
+            throw new \WappointmentException(__('Appointment rescheduling is not allowed', 'wappointment'), 1);
         }
         if (is_array($edit_key)) {
-            throw new \WappointmentException("Malformed parameter", 1);
+            throw new \WappointmentException(__("Malformed parameter", 'wappointment'), 1);
         }
         $appointment = static::getAppointmentModel()::where('edit_key', $edit_key)->first();
         $oldAppointment = $appointment->replicate();
         if (empty($appointment)) {
-            throw new \WappointmentException("Can't find appointment", 1);
+            throw new \WappointmentException(__("Can't find appointment", 'wappointment'), 1);
         }
         if (!$appointment->canStillReschedule()) {
-            throw new \WappointmentException("Can't reschedule appointment anymore", 1);
+            throw new \WappointmentException(__("Can't reschedule appointment anymore", 'wappointment'), 1);
         }
 
         $result = $appointment->update(
@@ -104,6 +104,7 @@ class Appointment
     {
         (new Availability())->regenerate();
 
+        //sends a rescheduled event to client and admin
         Events::dispatch(
             'AppointmentRescheduledEvent',
             [
@@ -256,16 +257,16 @@ class Appointment
             throw new \WappointmentException('Appointment cancellation is not allowed', 1);
         }
         if (is_array($edit_key)) {
-            throw new \WappointmentException("Malformed parameter", 1);
+            throw new \WappointmentException(__("Malformed parameter", 'wappointment'), 1);
         }
         $appointment = static::getAppointmentModel()::where('edit_key', $edit_key)
             ->where('status', '>=', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)->first();
 
         if (empty($appointment)) {
-            throw new \WappointmentException("Can't find appointment", 1);
+            throw new \WappointmentException(__("Can't find appointment", 'wappointment'), 1);
         }
         if (!$appointment->canStillCancel()) {
-            throw new \WappointmentException("Can't cancel appointment anymore", 1);
+            throw new \WappointmentException(__("Can't cancel appointment anymore", 'wappointment'), 1);
         }
 
         apply_filters('wappointment_cancelled_appointment', $appointment);

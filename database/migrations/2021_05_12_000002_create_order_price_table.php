@@ -16,6 +16,11 @@ class CreateOrderPriceTable extends Wappointment\Installation\Migrate
         $foreignNameOrder = $this->getFKOrders();
         $foreignNamePrice = $this->getFKPrices();
         $foreignNameAppointments = $this->getFKAppointments();
+
+        //this is for people who had an issue running the initial migrations with long foreign key names
+        if (Capsule::schema()->hasTable(Database::$prefix_self . '_order_price')) {
+            $this->down(false);
+        }
         Capsule::schema()->create(Database::$prefix_self . '_order_price', function ($table) use ($foreignNameOrder, $foreignNamePrice, $foreignNameAppointments) {
             $table->increments('id');
             $table->unsignedInteger('order_id');
@@ -34,17 +39,17 @@ class CreateOrderPriceTable extends Wappointment\Installation\Migrate
 
     protected function getFKOrders()
     {
-        return $this->getForeignName(Database::$prefix_self . '_order_price_order_id_foreign');
+        return $this->getForeignName(Database::$prefix_self . '_orderp_oid_foreign');
     }
 
     protected function getFKPrices()
     {
-        return $this->getForeignName(Database::$prefix_self . '_order_price_price_id_foreign');
+        return $this->getForeignName(Database::$prefix_self . '_orderp_pid_foreign');
     }
 
     protected function getFKAppointments()
     {
-        return $this->getForeignName(Database::$prefix_self . '_order_price_appointment_id_foreign');
+        return $this->getForeignName(Database::$prefix_self . '_orderp_aid_foreign');
     }
 
     /**
@@ -52,16 +57,19 @@ class CreateOrderPriceTable extends Wappointment\Installation\Migrate
      *
      * @return void
      */
-    public function down()
+    public function down($fk = true)
     {
         $foreignNameOrder = $this->getFKOrders();
         $foreignNamePrice = $this->getFKPrices();
         $foreignNameAppointments = $this->getFKAppointments();
-        Capsule::schema()->table(Database::$prefix_self . '_order_price', function ($table) use ($foreignNameOrder, $foreignNamePrice, $foreignNameAppointments) {
-            $table->dropForeign($foreignNameOrder);
-            $table->dropForeign($foreignNamePrice);
-            $table->dropForeign($foreignNameAppointments);
-        });
+        if ($fk) {
+            Capsule::schema()->table(Database::$prefix_self . '_order_price', function ($table) use ($foreignNameOrder, $foreignNamePrice, $foreignNameAppointments) {
+                $table->dropForeign($foreignNameOrder);
+                $table->dropForeign($foreignNamePrice);
+                $table->dropForeign($foreignNameAppointments);
+            });
+        }
+
         Capsule::schema()->dropIfExists(Database::$prefix_self . '_order_price');
     }
 }

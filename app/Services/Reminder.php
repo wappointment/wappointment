@@ -6,6 +6,7 @@ use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Models\Reminder as MReminder;
 use Wappointment\Models\Appointment;
 use Wappointment\Helpers\TipTap;
+use Wappointment\Helpers\Translations;
 
 class Reminder
 {
@@ -23,7 +24,7 @@ class Reminder
         ];
 
         $validationMessages = [
-            'type:required' => 'Select a type of reminder',
+            'type:required' => __('Select a type of reminder', 'wappointment'),
         ];
 
         $validation = $validator->make($reminderData, $validationRules);
@@ -32,7 +33,7 @@ class Reminder
 
         if ($validation->fails()) {
             throw new \WappointmentValidationException(
-                "Cannot save Reminder",
+                Translations::get('error_saving'),
                 1,
                 null,
                 $validation->errors()->toArray()
@@ -88,19 +89,21 @@ class Reminder
         $arraySeeds[] = [
             'type' => $email_type,
             'event' => MReminder::APPOINTMENT_PENDING,
-            'subject' => 'Your appointment is pending',
+            'subject' => __('Your appointment is pending', 'wappointment'),
             'published' => 1,
             'locked' => 1,
             'options' => [
                 'body' => TipTap::simpleArrayToTipTap(
                     [
-                        ['p' => 'Dear [client:name],'],
+                        /* translators: %s - client's first name. */
+                        ['p' => sprintf(__('Dear %s,', 'wappointment'), '[client:name]')],
                         ['p' => ''],
                         ['p' =>
-                        'You have booked a [service:name] of [appointment:duration] long on [appointment:starts]'],
-                        ['p' => 'It will be confirmed shortly, you will receive the confirmation by email.'],
+                        /* translators: %1$s is the service name, %2$s is the appointment duration, %3$s is appointment start date */
+                        vsprintf(__('You have booked a %1$s of %2$s long on %3$s', 'wappointment'), ['[service:name]', '[appointment:duration]', '[appointment:starts]'])],
+                        ['p' => __('It will be confirmed shortly, you will receive the confirmation by email.', 'wappointment')],
                         ['p' => ''],
-                        ['p' => 'Best,'],
+                        ['p' => __('Best,', 'wappointment')],
                         ['p' => \WappointmentLv::blogname()],
                     ]
                 )
@@ -109,18 +112,20 @@ class Reminder
         $arraySeeds[] = [
             'type' => $email_type,
             'event' => MReminder::APPOINTMENT_RESCHEDULED,
-            'subject' => 'Your appointment has been rescheduled',
+            'subject' => __('Your appointment has been rescheduled', 'wappointment'),
             'published' => 1,
             'locked' => 1,
             'options' => [
                 'body' => TipTap::simpleArrayToTipTap(
                     [
-                        ['p' => 'Dear [client:name],'],
+                        /* translators: %s - client's first name. */
+                        ['p' => sprintf(__('Dear %s,', 'wappointment'), '[client:name]')],
                         ['p' => ''],
-                        ['p' => 'Your appointment has been rescheduled.'],
-                        ['p' => 'Your new appointment will start on [appointment:starts]'],
+                        ['p' => __('Your appointment has been rescheduled.', 'wappointment')],
+                        /* translators: %s - appointment starts date. */
+                        ['p' => sprintf(__('Your new appointment will start on %s', 'wappointment'), '[appointment:starts]')],
                         ['p' => ''],
-                        ['p' => 'We look forward to seeing you !'],
+                        ['p' => __('We look forward to seeing you!', 'wappointment')],
                         ['p' => \WappointmentLv::blogname()],
                     ]
                 ),
@@ -129,18 +134,21 @@ class Reminder
         $arraySeeds[] = [
             'type' => $email_type,
             'event' => MReminder::APPOINTMENT_CANCELLED,
-            'subject' => 'Your appointment has been cancelled',
+            'subject' => __('Your appointment has been cancelled', 'wappointment'),
             'published' => 1,
             'locked' => 1,
             'options' => [
                 'body' => TipTap::simpleArrayToTipTap(
                     [
-                        ['p' => 'Dear [client:name],'],
+                        /* translators: %s - client's first name. */
+                        ['p' => sprintf(__('Dear %s,', 'wappointment'), '[client:name]')],
                         ['p' => ''],
-                        ['p' => 'Your appointment taking place the [appointment:starts] has been cancelled.'],
-                        ['p' => 'If you want to book a new appointment with us, [ label="click here" link="linkNew"].'],
+                        /* translators: %s - appointment starts date. */
+                        ['p' => sprintf(__('Your appointment taking place the %s has been cancelled.', 'wappointment'), '[appointment:starts]')],
+                        /* translators: %s - a "click here" link will be added. */
+                        ['p' => sprintf(__('If you want to book a new appointment with us, %s.', 'wappointment'), '[ label="' . __('click here', 'wappointment') . '" link="linkNew"]')],
                         ['p' => ''],
-                        ['p' => 'We hope to see you soon!'],
+                        ['p' => __('We hope to see you soon!', 'wappointment')],
                         ['p' => \WappointmentLv::blogname()],
                     ]
                 ),
@@ -153,32 +161,40 @@ class Reminder
     {
         $footer = [
             ['p' => ''],
-            ['p' => 'Best,'],
+            ['p' => __('Best,', 'wappointment')],
             ['p' => \WappointmentLv::blogname()]
         ];
         $email_confirmed = [
-            ['p' => 'Dear [client:name],'],
+            /* translators: %s - client's first name. */
+            ['p' => sprintf(__('Dear %s,', 'wappointment'), '[client:name]')],
             ['p' => ''],
-            ['p' => 'You have booked a [service:name] of [appointment:duration] long on [appointment:starts]'],
+            /* translators: %1$s is the service name, %2$s is the appointment duration, %3$s is appointment start date */
+            ['p' => vsprintf(__('You have booked a %1$s of %2$s long on %3$s', 'wappointment'), ['[service:name]', '[appointment:duration]', '[appointment:starts]'])],
         ];
         $email_reminder = [
-            ['p' => 'Dear [client:name],'],
+            /* translators: %s - client's first name. */
+            ['p' => sprintf(__('Dear %s,', 'wappointment'), '[client:name]')],
             ['p' => ''],
-            ['p' => 'We remind you that you have an appointment on [appointment:starts]'],
+            /* translators: %s - appointment starts date */
+            ['p' => sprintf(__('We remind you that you have an appointment on %s', 'wappointment'), '[appointment:starts]')],
         ];
         $messageService = [
             'physical' => [
-                ['p' => 'It will take place at this address : [service:address]']
+                /* translators: %s - service address */
+                ['p' => sprintf(__('It will take place at this address: %s', 'wappointment'), '[service:address]')]
             ],
             'phone' => [
-                ['p' => 'It will take place over the phone, we will call you on this number : [client:phone]']
+                /* translators: %s - client's phone number */
+                ['p' => sprintf(__('It will take place over the phone, we will call you on this number: %s', 'wappointment'), '[client:phone]')]
             ],
             'skype' => [
-                ['p' => 'It will take place on Skype, we will call you on this account : [client:skype]']
+                /* translators: %s - client's skype username */
+                ['p' => sprintf(__('It will take place on Skype, we will call you on this account: %s', 'wappointment'), '[client:skype]')]
             ],
             'zoom' => [
-                ['p' => 'It will take place by video online.'],
-                ['h3' => 'Click [ label="here" link="linkView"] to begin the meeting']
+                ['p' => __('It will take place by video online.', 'wappointment')],
+                /* translators: %s - a "here" link is added. */
+                ['h3' => sprintf(__('Click %s to begin the meeting', 'wappointment'), '[ label="' . __('here', 'wappointment') . '" link="linkView"]')]
             ]
         ];
         if (!is_array($types)) {
@@ -190,7 +206,7 @@ class Reminder
         }
 
 
-        $email_confirmed[] = ['p' => '[order:summary],'];
+        $email_confirmed[] = ['p' => ' [order:summary] '];
 
         foreach ($footer as $footerRow) {
             $email_confirmed[] = $footerRow;
@@ -201,7 +217,7 @@ class Reminder
             [
                 'type' => $email_type,
                 'event' => MReminder::APPOINTMENT_CONFIRMED,
-                'subject' => 'Your appointment has been confirmed',
+                'subject' => __('Your appointment has been confirmed', 'wappointment'),
                 'locked' => 1,
                 'published' => 1,
                 'options' => [
@@ -213,7 +229,7 @@ class Reminder
                 'event' => MReminder::APPOINTMENT_STARTS,
                 'locked' => 0,
                 'published' => 1,
-                'subject' => 'Don\'t forget your appointment',
+                'subject' => __('Don\'t forget your appointment', 'wappointment'),
                 'options' => [
                     'body' => TipTap::simpleArrayToTipTap($email_reminder),
                     'when_number' => '1',

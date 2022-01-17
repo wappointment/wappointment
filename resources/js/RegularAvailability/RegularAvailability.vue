@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="minimal === false" class="d-flex w100">
-            <div class="columnTitle" data-tt="Open your calendar for bookings for X days in the future">Available Booking Days</div> 
+            <div class="columnTitle" data-tt="Open your calendar for bookings for X days in the future">{{ get_i18n( 'regav_step3_avb', 'common') }}</div> 
             <ClickRevealSlider :alwaysShow="true" 
             :value="viewData.avb" @change="changedCRS" />
         </div>
@@ -89,7 +89,7 @@ export default {
         openingTimes(){
             let opening_times = []
             for (let index = this.minHour; index < this.maxHour; index++) {
-                opening_times.push(index+'h') 
+                opening_times.push(this.sprintf_i18n('regav_h', 'common', index)) 
             }
             return opening_times
         },

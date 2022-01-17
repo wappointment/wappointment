@@ -2,386 +2,15 @@
 
 namespace Wappointment\Services;
 
+use Wappointment\Helpers\Get;
 use Wappointment\WP\Helpers as WPHelpers;
 
 class WidgetSettings
 {
 
-    private $settings = [
-        'colors' => [
-            'primary' => [
-                'bg' => '#855785',
-                'text' => '#ffffff',
-            ],
-
-            'header' => [
-                'bg' => '#F5F4F4',
-                'text' => '#676767',
-                'durationbg' => '#eeeeee',
-            ],
-            'body' => [
-                'bg' => '#ffffff', //calendar_bg
-                'text' => '#505050', //calendar_cotext
-                'disabled_links' => '#cccccc' //calendar_codisabled
-            ],
-            'selected_day' => [
-                'bg' => '#a0a0a0', //back_bg
-                'text' => '#ffffff', //back_color
-            ],
-            'secondary' => [
-                'bg' => '#f7f7f7', //back_bg
-                'bg_selected' => '#949494', //back_sel_bg
-                'text' => '#606060', //back_color
-                'text_selected' => '#ffffff', //back_sel_co
-            ],
-            'form' => [
-                'success' => '#66c677', //success_co
-                'error' => '#ed7575', //error_co
-            ],
-            'address' => [
-                'bg' => '#e6e6e6',
-                'text' => '#606060',
-            ],
-            'confirmation' => [
-                'bg' => '#82ca9c', //header_bg
-                'text' => '#ffffff', //header_co
-            ]
-        ],
-        'general' => [
-            'check_header_compact_mode' => false,
-            'check_hide_staff_name' => false,
-            'when' => 'When',
-            'service' => 'Service',
-            'location' => 'Where',
-            'package' => 'Package',
-            'min' => 'min',
-            'noappointments' => 'No appointments available'
-        ],
-        'button' => [
-            'title' => 'Book now!',
-            'check_full' => false,
-            'check_bold' => false,
-            'slide_size' => 1.3
-        ],
-        'staff_selection' => [
-            'pickstaff' => 'Select staff',
-        ],
-        'selection' => [
-            'check_viewweek' => false,
-            'title' => '[total_slots] free slots',
-            'timezone' => 'Timezone: [timezone]',
-            'morning' => 'Morning',
-            'afternoon' => 'Afternoon',
-            'evening' => 'Evening',
-        ],
-        'form' => [
-            'byskype' => 'By Skype',
-            'byphone' => 'By Phone',
-            'byzoom' => 'Video meeting',
-            'inperson' => 'At a Location',
-            'fullname' => 'Full Name:',
-            'email' => 'E-mail:',
-            'phone' => 'Phone:',
-            'skype' => 'Skype username:',
-            'back' => 'Back',
-            'confirm' => 'Confirm',
-            'check_terms' => false,
-            'terms' => 'See how [link]we process your data[/link]',
-            'terms_link' => '',
-        ],
-        'confirmation' => [
-            'confirmation' => 'Appointment Booked',
-            'when' => 'When:',
-            'service' => 'Service:',
-            'duration' => 'Duration:',
-            'pending' => 'The appointment is pending and should be quickly confirmed',
-            'skype' => 'The appointment will take place on Skype, we will call you on this account:',
-            'zoom' => 'The appointment will take place by Video meeting online, the link will show [meeting_link]here[/meeting_link].',
-            'phone' => 'The appointment will take place over the phone, we will call you on this number:',
-            'physical' => 'The appointment will take place at this address:',
-            'savetocal' => 'Save it to your calendar'
-        ],
-        'view' => [
-            'join' => 'Join Meeting',
-            'missing_url' => 'The meeting room link will appear once it is time to start.',
-            'timeleft' => '([days_left]d [hours_left]h [minutes_left]m [seconds_left]s)',
-        ],
-        'cancel' => [
-            'page_title' => 'Cancel Appointment',
-            'title' => 'Appointment details',
-            'confirmed' => 'Appointment has been cancelled!',
-            'confirmation' => 'Are you sure you want to cancel your appointment?',
-            'toolate' => "Cannot cancel. This is too close to appointment's start",
-            'button' => 'Cancel',
-            'confirm' => 'Confirm',
-        ],
-        'reschedule' => [
-            'page_title' => 'Reschedule Appointment',
-            'title' => 'Appointment details',
-            'toolate' => "Cannot reschedule. This is too close to appointment's start",
-            'button' => 'Reschedule',
-            'confirm' => 'Confirm',
-        ],
-        'service_selection' => [
-            'select_service' => 'Pick a service',
-            'check_full_width' => false
-        ],
-        'service_duration' => [
-            'select_duration' => 'How long will be the session?',
-        ],
-        'service_location' => [
-            'select_location' => 'How should we meet?',
-        ],
-
-        'swift_payment' => [
-            'onsite_tab' => 'Pay later',
-            'onsite_desc' => 'You will pay on the day of your appointment',
-            'onsite_confirm' => 'Confirm',
-        ],
-    ];
-
-    private $fields = [
-        'colors' => [
-            'primary' => [
-                'label' => 'Action Color',
-                'fields' => [
-                    'text' => ['label' => 'Text'],
-                    'bg' => ['label' => 'Background'],
-                ],
-                'main' => true
-            ],
-            'header' => [
-                'label' => 'Header Color',
-                'fields' => [
-                    'text' => ['label' => 'Text'],
-                    'bg' => ['label' => 'Background'],
-                ],
-                'main' => true
-            ],
-            'body' => [
-                'label' => 'Body Colors',
-                'fields' => [
-                    'text' => ['label' => 'Text'],
-                    'bg' => ['label' => 'Background'],
-                    'disabled_links' => ['label' => 'Disabled day'],
-                ],
-                'main' => true
-            ],
-            'selected_day' => [
-                'label' => 'Selected day',
-                'fields' => [
-                    'text' => ['label' => 'Text'],
-                    'bg' => ['label' => 'Background'],
-                ]
-            ],
-            'secondary' => [
-                'label' => 'Secondary Button',
-                'fields' => [
-                    'text' => ['label' => 'Text'],
-                    'bg' => ['label' => 'Background'],
-                    'text_selected' => ['label' => 'Text (selected)'],
-                    'bg_selected' => ['label' => 'Background (selected)'],
-                ]
-            ],
-            'form' => [
-                'label' => 'Form',
-                'fields' => [
-                    'success' => ['label' => 'Success'],
-                    'error' => ['label' => 'Error'],
-                ]
-            ],
-            'address' => [
-                'label' => 'Address',
-                'fields' => [
-                    'text' => ['label' => 'Text'],
-                    'bg' => ['label' => 'Background'],
-                ]
-            ],
-            'confirmation' => [
-                'label' => 'Confirmation Header',
-                'fields' => [
-                    'text' => ['label' => 'Text'],
-                    'bg' => ['label' => 'Background'],
-                ]
-            ]
-        ],
-        'general' => [
-            'fields' => [
-                'check_header_compact_mode' => [
-                    'label' => 'Header Compact mode',
-                    'tip' => 'Appointment details is compacted in the header'
-                ],
-                'check_hide_staff_name' => [
-                    'label' => 'Hide staff name',
-                    'tip' => 'Ideal if you are not having multiple staff'
-                ],
-                'location' => [
-                    'conditions' => [
-                        ['key' => 'general.check_header_compact_mode', 'val' => false]
-                    ],
-                    'tip' => 'Appears in standard summary'
-                ],
-                'when' => [
-                    'conditions' => [
-                        ['key' => 'general.check_header_compact_mode', 'val' => false]
-                    ],
-                    'tip' => 'Appears in standard summary'
-                ],
-                'service' => [
-                    'conditions' => [
-                        ['key' => 'general.check_header_compact_mode', 'val' => false]
-                    ],
-                    'tip' => 'Appears in standard summary'
-                ],
-                'min' => [
-                    'tip' => 'minutes'
-                ],
-                'noappointments' => [
-                    'tip' => 'Show when no appointments are available for that staff'
-                ]
-            ]
-        ],
-
-        'button' => [
-            'fields' => [
-                'check_full' => ['label' => 'Full Width'],
-                'check_bold' => ['label' => 'Bold'],
-                'slide_size' => [
-                    'label' => 'Text Size',
-                    'options' => ['min' => .6, 'max' => 2.6, 'step' => .1, 'unit' => 'em'],
-                ],
-            ]
-
-        ],
-        'selection' => [
-
-            'fields' => [
-                'check_viewweek' => ['label' => 'Week View'],
-            ]
-
-        ],
-
-        'service_selection' => [
-            'fields' => [
-                'check_price_right' => ['label' => 'Price right aligned'],
-                'check_full_width' => ['label' => 'Wide Buttons', 'tip' => 'Format adapted to long description on full width booking widget'],
-            ],
-        ],
-        'service_location' => [
-            'fields' => [
-                'select_location' => false,
-            ],
-            'sub' => 'You can edit modalities names in [url wurl="wappointment_settings#/modalities"]Wappointment > Settings > Services > Modalities[/url]',
-        ],
-        'form' => [
-            'categories' => [
-                [
-                    'label' => 'Appointment Modalities',
-                    'fields' => [
-                        'byzoom' => false,
-                        'inperson' => false,
-                        'byskype' => false,
-                    ]
-                ],
-                [
-                    'label' => 'Booking Form',
-                    'fields' => [
-                        'fullname' => false,
-                        'email' => false,
-                        'phone' => false,
-                        'skype' => false,
-                        'address' => false,
-                        'back' => false,
-                        'confirm' => false,
-                        'check_terms' => ['label' => 'Add data proccessing notice'],
-                        'terms' => ['conditions' => [['key' => 'form.check_terms', 'val' => true]]],
-                        'terms_link' => ['conditions' => [['key' => 'form.check_terms', 'val' => true]]],
-                    ]
-                ],
-            ]
-
-        ],
-        'confirmation' => [
-            'categories' => [
-                [
-                    'label' => 'Appointment Confirmed',
-                    'fields' => [
-                        'confirmation' => false,
-                        'when' => false,
-                        'service' => false,
-                        'duration' => false,
-                        'savetocal' => false
-                    ]
-                ],
-                [
-                    'label' => 'Conditional confirmation',
-                    'fields' => [
-                        'pending' => ['tip' => 'When admin confirmation is required'],
-                        'skype' => ['tip' => 'Skype appointments only'],
-                        'phone' => ['tip' => 'Phone appointments only'],
-                        'physical' => ['tip' => 'Appointments at a location only'],
-                        'zoom' => ['tip' => 'Video appointments only'],
-                    ]
-                ],
-            ]
-        ],
-
-        'swift_payment' => [
-            'categories' => [
-                [
-                    'label' => 'On Site Payment',
-                    'key' => 'onsite',
-                    'fields' => [
-                        'onsite_tab' => false,
-                        'onsite_desc' => false,
-                        'onsite_confirm' => false,
-
-                    ]
-                ],
-            ],
-            'categories_draggable' => true
-
-        ],
-
-    ];
-    private $steps = [
-        [
-            'key' => 'button',
-            'label' => 'Booking button'
-        ],
-        [
-            'key' => 'staff_selection',
-            'label' => 'Staff selection'
-        ],
-        [
-            'key' => 'service_selection',
-            'label' => 'Service selection'
-        ],
-        [
-            'key' => 'service_duration',
-            'label' => 'Duration selection'
-        ],
-        [
-            'key' => 'service_location',
-            'label' => 'Modality selection'
-        ],
-        [
-            'key' => 'selection',
-            'label' => 'Slot selection'
-        ],
-        [
-            'key' => 'form',
-            'label' => 'Form'
-        ],
-        [
-            'key' => 'swift_payment',
-            'label' => 'Payment'
-        ],
-        [
-            'key' => 'confirmation',
-            'label' => 'Confirmation'
-        ],
-    ];
+    private $settings = [];
+    private $fields = [];
+    private $steps = [];
 
     private $db_settings = [];
     private $merged_settings = [];
@@ -389,6 +18,9 @@ class WidgetSettings
 
     public function __construct()
     {
+        $this->settings = Get::list('widget_settings');
+        $this->fields = Get::list('widget_fields');
+        $this->steps = Get::list('widget_steps');
         $ppolicy = get_privacy_policy_url();
 
         $this->settings['form']['terms_link'] = empty($ppolicy) ? 'http://' : $ppolicy;
@@ -442,7 +74,25 @@ class WidgetSettings
 
     public function get()
     {
-        return $this->merged_settings;
+        return $this->mergeTranslations($this->merged_settings);
+    }
+
+    protected function mergeTranslations($settings)
+    {
+        $settings['i18n'] = Get::list('widget_translations');
+        return $settings;
+    }
+
+    public function getSetting($settingName)
+    {
+        $find = explode('.', $settingName);
+        if (empty($this->merged_settings[$find[0]])) {
+            return 'undefined';
+        }
+        if (empty($this->merged_settings[$find[0]][$find[1]])) {
+            return 'undefined';
+        }
+        return $this->merged_settings[$find[0]][$find[1]];
     }
 
     public function adminFieldsInfo()

@@ -14,7 +14,7 @@
             <div v-if="!minimal" @click="addLocation" class="btn btn-secondary btn-cell add-location d-flex align-items-center" >
                 <div>
                     <span class="wicon plus-alt text-primary" ></span>
-                    <div>Add Delivery Modality</div>
+                    <div>{{ get_i18n('add_delivery', 'settings') }}</div>
                 </div>
             </div>
         </div>

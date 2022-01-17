@@ -35,63 +35,64 @@
             </div>
             
             <div v-if="allSelected">
-                <div v-if="clientSelected">
-                    <div class="d-flex align-items-center">
-                        <div class="mr-2">
-                            <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name" />
+                <div v-if="requiresClient">
+                    <div v-if="clientSelected">
+                        <div class="d-flex align-items-center">
+                            <div class="mr-2">
+                                <img class="rounded-circle" :src="clientSelected.avatar" :title="clientSelected.name" />
+                            </div>
+                            <div>
+                                <h6 class="m-0">{{ clientSelected.name }}</h6>
+                                <small>{{ clientSelected.email }}</small>
+                            </div>
                         </div>
-                        <div>
-                            <h6 class="m-0">{{ clientSelected.name }}</h6>
-                            <small>{{ clientSelected.email }}</small>
-                        </div>
+                        <a class="text-primary" href="javascript:;" @click="clearClientSelection">Change client</a>
                     </div>
-                    <a class="text-primary" href="javascript:;" @click="clearClientSelection">Change client</a>
-                </div>
-                <div v-else>
-                    <div class="mb-3">
-                        <div>
-                            <div class="field-required ddd " :class="hasError('email')">
-                                <label for="bookingemail">Email:</label> 
-                                <p class="d-flex">
-                                    <input id="bookingemail" type="text" required="required" class="form-control" 
-                                    v-model="bookingForm.email" @focus="canShowDropdown" @blur="clearDropdownDelay">
-                                </p>
-                            </div> 
-                        </div>
+                    <div v-else>
+                        <div class="mb-3">
+                            <div>
+                                <div class="field-required ddd " :class="hasError('email')">
+                                    <label for="bookingemail">Email:</label> 
+                                    <p class="d-flex">
+                                        <input id="bookingemail" type="text" required="required" class="form-control" 
+                                        v-model="bookingForm.email" @focus="canShowDropdown" @blur="clearDropdownDelay">
+                                    </p>
+                                </div> 
+                            </div>
 
-                        <div>
-                            <div class="dd-search-results" v-if="showDropdown" >
-                                <div v-if="clientsResults.length>0">
-                                    <div class="btn btn-light d-flex align-items-center" v-for="client in clientsResults" @click="selectClient(client)">
-                                        <div class="mr-2">
-                                            <img class="rounded-circle" :src="client.avatar" :title="client.name">
-                                        </div>
-                                        <div>
-                                            <h6 class="m-0 text-left">{{ client.name }}</h6>
-                                            <small>{{ client.email }}</small>
+                            <div>
+                                <div class="dd-search-results" v-if="showDropdown" >
+                                    <div v-if="clientsResults.length>0">
+                                        <div class="btn btn-light d-flex align-items-center" v-for="client in clientsResults" @click="selectClient(client)">
+                                            <div class="mr-2">
+                                                <img class="rounded-circle" :src="client.avatar" :title="client.name">
+                                            </div>
+                                            <div>
+                                                <h6 class="m-0 text-left">{{ client.name }}</h6>
+                                                <small>{{ client.email }}</small>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div v-if="clientSearching">
-                                    Loading ...
-                                </div>
-                            </div>  
+                                    <div v-if="clientSearching">
+                                        Loading ...
+                                    </div>
+                                </div>  
+                            </div>
                         </div>
-                    </div>
-                    <div :class="[hasErrorEmail?'hide-cf':'']">
-                        <FieldsGenerated @changed="changedBF" :disabledEmail="true"
-                        :validators="validators" :custom_fields="viewData.custom_fields" 
-                        :service="service" :location="location" :data="bookingForm" 
-                        :options="viewData.widget" />
+                        <div :class="[hasErrorEmail?'hide-cf':'']">
+                            <FieldsGenerated @changed="changedBF" :disabledEmail="true"
+                            :custom_fields="viewData.custom_fields" 
+                            :service="service" :location="location" :data="bookingForm" 
+                            :options="viewData.widget" />
 
-                        <div v-if="formHasErrors" class="error">
-                            <div v-for="(error,namekeyidx) in errorsOnFields">
-                                {{ getFieldLabel(namekeyidx) }} : {{ error }}
+                            <div v-if="formHasErrors" class="error">
+                                <div v-for="(error,namekeyidx) in errorsOnFields">
+                                    {{ getFieldLabel(namekeyidx) }} : {{ error }}
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
         <div>
@@ -111,12 +112,11 @@ import StyleGenerator from '../Components/StyleGenerator'
 import ServiceSelection from '../BookingForm/ServiceSelection'
 import DurationSelection from '../BookingForm/DurationSelection'
 import LocationSelection from '../BookingForm/LocationSelection'
-import FieldsGenerated from '../BookingForm/FieldsGenerated'
 import WappoServiceBooking from '../Services/V1/BookingN'
 export default {
     props: ['viewData','startTime', "endTime", "realEndTime", 'activeStaff'],
-    mixins:[RequestMaker],
-    components: {AppointmentTypeSelection, PhoneInput, FormInputs, StyleGenerator, ServiceSelection, DurationSelection, LocationSelection, FieldsGenerated},
+    mixins: window.wappointmentExtends.filter('WappointmentBehalfBookingMixins', [RequestMaker]) ,
+    components: {AppointmentTypeSelection, PhoneInput, FormInputs, StyleGenerator, ServiceSelection, DurationSelection, LocationSelection},
     data: () => ({
         clientSearching:false,
         clientsResults: [],
@@ -141,6 +141,7 @@ export default {
         services: [],
         serviceBooking: null,
         endTimeParam: false,
+        requiresClient:true
     }),
     created(){
         this.serviceClient = this.$vueService(new ClientService)
@@ -190,13 +191,6 @@ export default {
             return this.selectedAppointmentType == 'skype'
         },
 
-        validators(){
-            return {
-                'isEmail': isEmail,
-                'isEmpty': isEmpty,
-            }
-        },
-
         hasMoreThanOneService(){
             return this.services.length > 1
         },
@@ -215,8 +209,9 @@ export default {
 
         readyToBook(){
             return this.allSelected && (
+                this.requiresClient === false ||
                 (this.bookingForm.clientid !== undefined && [false,undefined].indexOf(this.bookingForm.clientid) === -1)  || 
-                (Object.keys(this.errorsOnFields).length < 1 && this.validators['isEmail'](this.bookingForm.email))
+                (Object.keys(this.errorsOnFields).length < 1 && this.isEmail(this.bookingForm.email))
             )
         },
 
@@ -230,6 +225,9 @@ export default {
     },
     
     methods:{
+        isEmail(field){
+            return isEmail(field)
+        },
         changedFormValue(newValue) {
             this.errorsOnFields = {}
             if(newValue.email!== undefined && newValue.email.length > 4 
@@ -305,9 +303,8 @@ export default {
         },
 
         getFieldLabel(namekey){
-            for (let i = 0; i < this.viewData.custom_fields.length; i++) {
-                const element = this.viewData.custom_fields[i]
-                if(element['namekey'] == namekey) return element.name
+            for (const iterator of this.viewData.custom_fields) {
+                if(iterator['namekey'] == namekey) return iterator.name
             }
         },
         
@@ -368,6 +365,9 @@ export default {
                 this.duration = this.setDuration(data.duration)
             }
             this.changeLocation()
+            if(this.serviceSelectedExtended !== undefined){
+                this.serviceSelectedExtended()
+            }
         },
          confirmNewBookingRequest(){
             if(this.readyToBook) {

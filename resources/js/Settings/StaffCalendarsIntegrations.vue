@@ -17,26 +17,24 @@
                 </div>
                 <div v-else>
                     <div class="mb-3">
-                    <InputPh v-model="account_key" ph="Enter account code" /> 
+                    <InputPh v-model="account_key" :ph="get_i18n('cals_account_enter_code', 'settings')" /> 
                     </div>
-                    <button class="btn btn-primary btn-block btn-lg mb-2" @click="connectToWappo">Connect Account</button>
-                    <div class="text-muted">Don't have an account yet? <a :href="createAccount" target="_blank">Create your free account</a></div>
+                    <button class="btn btn-primary btn-block btn-lg mb-2" @click="connectToWappo">{{ get_i18n('cals_account_connect', 'settings') }}</button>
+                    <div class="text-muted">{{ get_i18n('cals_account_donthave', 'settings') }} <a :href="createAccount" target="_blank">{{ get_i18n('cals_account_create_free', 'settings') }}</a></div>
                 </div>
             </div>
 
             <div v-if="!calendar.connected" class="create-account ml-xl-4">
-                <h2>Automate your appointments' process</h2>
+                <h2>{{ get_i18n('cals_account_create_title', 'settings') }}</h2>
                 <ul>
-                    <li>Connect your favourite tools in seconds and automatically:</li>
+                    <li>{{ get_i18n('cals_account_connect_fav', 'settings') }}</li>
                     <li>
                     <ol>
-                        <li>Create <strong ><img :src="connectionImage('zoom')" /> Zoom</strong> and <strong ><img :src="connectionImage('googlemeet')" /> Google Meet</strong> meetings</li>
-                        <li>Save appointments in <strong ><img :src="connectionImage('google')" /> Google Calendar</strong></li>
-                        <li>and soon more to come ...</li>
+                        <li>{{ get_i18n('cals_account_connect_fav_1', 'settings') }} <strong ><img :src="connectionImage('zoom')" /> Zoom</strong> & <strong ><img :src="connectionImage('googlemeet')" /> Google Meet</strong></li>
+                        <li>{{ get_i18n('cals_account_connect_fav_2', 'settings') }} <strong ><img :src="connectionImage('google')" /> Google Calendar</strong></li>
+                        <li>{{ get_i18n('cals_account_connect_fav_3', 'settings') }}</li>
                     </ol>
                     </li>
-                    
-                    <li>Simply <a :href="createAccount" target="_blank">create an account</a>, <strong>it's free</strong>! </li>
                 </ul>
             </div>
         </div>

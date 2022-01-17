@@ -2,9 +2,9 @@
     <div v-if="widgetData!==null">
       <div class="d-flex mt-4 ml-4 bwe-tabs" v-if="!wizard">
         <ul class="nav nav-tabs">
-            <li class="nav-item" v-for="(step ,index) in stepsAllowed">
-                <a class="nav-link" :class="{active: shownStep(step) }" href="javascript:;" @click="showStep(step)">
-                    <span class="dashicons" :class="getClassTabIcon(step)"></span> {{ index + 1}} - {{step}}
+            <li class="nav-item" v-for="(stepObject ,index) in stepsReady">
+                <a class="nav-link" :class="{active: shownStep(stepObject.key) }" href="javascript:;" @click="showStep(stepObject.key)">
+                    <span class="dashicons" :class="stepObject.class"></span> {{ index + 1}} - {{ stepObject.label }}
                 </a>
             </li>
         </ul>
@@ -54,15 +54,42 @@ export default {
           viewName: 'widget',
           isWidgetShown: true,
           editing:false,
-          showingStep: ''
+          showingStep: '',
+          stepsReady: []
       } 
   },
 
   components: { BookingWidgetEditor, WidgetInsert },
   created(){
+      for (const stepGiven of this.stepsAllowed) {
+          this.stepsReady.push(this.prepareStep(stepGiven))
+      }
       this.showStep(this.stepsAllowed[0])
   },
   methods: {
+      prepareStep(stepGiven){
+          switch (stepGiven) {
+            case 'Preview':
+                return {
+                    key: stepGiven,
+                    label: this.get_i18n('bwe_page_preview', 'common'),
+                    class: 'dashicons-visibility'
+                }
+            case 'Customize':
+                return {
+                    key: stepGiven,
+                    label: this.get_i18n('bwe_page_customize', 'common'),
+                    class: 'dashicons-edit'
+                }
+            case 'Insert':
+                return {
+                    key: stepGiven,
+                    label: this.get_i18n('bwe_page_insert', 'common'),
+                    class: 'dashicons-layout'
+                }
+          }
+      },
+
       shownStep(step){
           return this.showingStep == step
       },

@@ -4,7 +4,7 @@
         <div @click="changePicture" class="text-center mr-2 preview-avatar">
             <div class="avatar-edit">
                 <img :src="src || gravatar" class="img-fluid wrounded" width="40" alt="avatar" />
-                <span class="small text-primary" href="javascript:;">edit</span>
+                <span class="small text-primary" href="javascript:;">{{get_i18n('edit', 'common') }}</span>
             </div>
         </div>
         <div v-if="edit" class="avatar-selection">
