@@ -53,11 +53,10 @@ class IcsGenerator
         $this->event($appointment, $client, ['STATUS' => 'CANCELLED']);
     }
 
-    public function summary($appointments, $cancelled = false)
+    public function summary($appointments, $cancelled = false, $client = null)
     {
         foreach ($appointments as $appointment) {
-            $appointment = $this->fillClient($appointment);
-
+            $appointment = $this->fillClient($appointment, $client);
             if ($appointment instanceof Appointment && $appointment->getClientModel() instanceof Client) { //ignore mssing data
                 if ($cancelled) {
                     $this->cancelled($appointment, $appointment->getClientModel());
@@ -68,12 +67,16 @@ class IcsGenerator
         }
     }
 
-    public function fillClient($appointment)
+    public function fillClient($appointment, $client)
     {
-        if (is_array($appointment->client)) {
-            $clientObject = new Client;
-            $clientObject->fill($appointment->client);
-            $appointment->client = $clientObject;
+        if (!is_null($client)) { // valid for group events
+            $appointment->client = $client;
+        } else {
+            if (is_array($appointment->client)) {
+                $clientObject = new Client;
+                $clientObject->fill($appointment->client);
+                $appointment->client = $clientObject;
+            }
         }
         return $appointment;
     }

@@ -20,7 +20,7 @@ trait AttachesIcs
         }
         $ics = new IcsGenerator($admin);
 
-        $ics->summary($appointments);
+        $ics->summary($appointments, false, $this->params['client']);
 
         $this->attachData($ics->generate(), $name . '.ics', ['mime' => 'ics', 'as' => $name . '.ics']);
     }
@@ -32,7 +32,7 @@ trait AttachesIcs
         }
         $ics = new IcsGenerator($admin);
 
-        $ics->summary($appointments, true);
+        $ics->summary($appointments, true, $this->params['client']);
 
         $this->attachData($ics->generate(), $name . '.ics', ['mime' => 'ics', 'as' => $name . '.ics']);
     }
