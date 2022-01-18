@@ -5,7 +5,7 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.3</span>   
+                <span>V2.4.4</span>   
                 <span class="ml-2">Bug fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
@@ -13,15 +13,11 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added TOS and privacy policy link in payment step</li>
-                        <li>added storing user details per order</li>
-                        <li>added extended data to email receipt</li>
-                        <li>added translatable strings</li>
-                        <li>fixed force user email issues</li>
-                        <li>fixed issue behalf booking</li>
-                        <li>fixed issue add to calendar button in booking confirmation</li>
-                        <li>fixed custom fields issue display in calendar and emails</li>
-                        <li>fixed issue "no idn encoder found" while sending email</li>
+                        <li>added health panel for scheduled tasks</li>
+                        <li>added Jitsi in video meeting providers</li>
+                        <li>added staff appointments shortcode</li>
+                        <li>fixed bug Zoom Browser with google meet activated</li>
+                        <li>fixed issue ics attachments and save to calendar button fixed issue pay on site</li>
                     </ol>
                     
                   </div>

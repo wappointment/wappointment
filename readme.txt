@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.8
 Requires PHP: 7.0
-Stable tag: 2.4.3
+Stable tag: 2.4.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,13 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.4.4 - 2022-01-18 =
+* added staff appointments shortcode
+* added health panel for scheduled tasks
+* added Jitsi in video meeting providers
+* fixed bug Zoom Browser with google meet activated
+* fixed issue ics attachments and save to calendar button fixed issue pay on site
 
 = 2.4.3 - 2022-01-10 =
 * added TOS and privacy policy link in payment step

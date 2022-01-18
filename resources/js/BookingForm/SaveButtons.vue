@@ -92,7 +92,12 @@ export default {
         },
         getUnixNow(){
             return momenttz().unix()
-        }
+        },
+        getPhysicalAddress(){
+            let location_id = this.appointment.location_id
+            let found = this.service.locations.find(e => e.id == location_id)
+            return found !== undefined ? found.options.address:''
+        },
     },
     computed: {
         canCancel(){
@@ -154,7 +159,7 @@ export default {
         },
 
         eventLocation(){
-            return this.physicalSelected ? this.service.locations[0].options.address:this.appointment.location_label
+            return this.physicalSelected ? this.getPhysicalAddress():this.appointment.location_label
         },
         
         saveToIcal() {
