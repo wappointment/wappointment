@@ -54,7 +54,9 @@ class CleanPendingPaymentAppointment implements JobInterface
         }
         //woo state that we already cancelled
         do_action('wappointment_woo_cancelled_order', $orderData);
-        $orderData['orderObj']->setAutoCancelled();
+        if (!is_null($orderData['orderObj'])) {
+            $orderData['orderObj']->setAutoCancelled();
+        }
     }
 
     public function appointmentsToProcess()
