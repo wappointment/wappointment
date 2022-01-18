@@ -154,7 +154,7 @@ export default {
         },
 
         eventLocation(){
-            return this.physicalSelected ? this.service.address:this.appointment.location_label
+            return this.physicalSelected ? this.service.locations[0].options.address:this.appointment.location_label
         },
         
         saveToIcal() {

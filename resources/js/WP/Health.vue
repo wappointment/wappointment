@@ -1,5 +1,5 @@
 <template>
-    <div class="wappo-health" :class="{'show':hasIssue}">
+    <div class="wappo-health show">
         <template v-if="lang">
             <h5>{{ lang.cron_found_issue }}<a href="javascript:;" @click="checkHealth" ><span class="small dashicons dashicons-image-rotate"></span></a></h5>
             <div class="health-checks">
