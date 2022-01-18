@@ -116,6 +116,10 @@ class Main extends AbstractRoutes
                     'method' => 'index',
                     'paginated' => true
                 ],
+                '/health' => [
+                    'method' => 'health',
+                    'controller' => 'AppController',
+                ],
             ],
             'POST' => [
                 '/addons/clear' => [

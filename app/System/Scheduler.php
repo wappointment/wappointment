@@ -67,7 +67,7 @@ class Scheduler
      */
     public static function processQueue()
     {
-
+        Flag::save('cronLastRun', time());
         if (\WappointmentLv::isTest()) {
             \Wappointment\Services\Queue::process();
         } else {

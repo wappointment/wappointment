@@ -3,6 +3,7 @@
 namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
+use Wappointment\Services\Health;
 use Wappointment\Services\Wappointment\Feedback;
 use Wappointment\System\Status;
 
@@ -15,6 +16,11 @@ class AppController extends RestController
         }
 
         return $this->runUpdatesAddons();
+    }
+
+    public function health()
+    {
+        return (new Health)->get();
     }
 
     protected function runUpdatesCore()
