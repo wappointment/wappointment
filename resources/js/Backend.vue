@@ -58,7 +58,7 @@ export default {
         changing(){ //hack to reset the fullyloaded param every time we change of view
             this.fully_loaded = false
             return this.$route.name
-        }
+        },
     },
     methods: {
         fullyLoaded(){

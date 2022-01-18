@@ -264,6 +264,12 @@
             <button v-else class="btn btn-secondary btn-sm" @click="updatePage" data-tt="Only if you don't like the default page template for cancellation and rescheduling">
                 Make Reschedule/Cancel page editable
             </button>
+            
+          </div>
+          <div class="mt-3">
+            <button class="btn btn-secondary btn-sm" @click="showHealth=true" >
+                Show health
+            </button>
           </div>
           
         </div>
@@ -326,6 +332,7 @@
             <span class="dashicons dashicons-image-rotate"></span> Uninstall
           </button>
         </div>
+        <Health v-if="showHealth" />
     </div>
 
   </div>
@@ -346,7 +353,7 @@ import MailConfig from '../Components/MailConfig'
 import NotificationEmail from '../Notification/Email'
 import InputValueCards from '../Fields/InputValueCards'
 import FormFieldSelect from '../Form/FormFieldSelect'
-
+import Health from '../WP/Health'
 export default {
   extends: abstractView,
   props:['tablabel'],
@@ -361,13 +368,15 @@ export default {
     MailConfig,
     NotificationEmail,
     InputValueCards,
-    FormFieldSelect
+    FormFieldSelect,
+    Health
   },
   mixins: [ hasBreadcrumbs],
   data() {
     return {
       viewName: 'settingsadvanced',
       maxBookings:false,
+      showHealth:false,
       isToggled: {
         date_format : false,
         time_format : false,
