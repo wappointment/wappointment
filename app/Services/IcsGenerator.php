@@ -37,7 +37,7 @@ class IcsGenerator
     {
         $staff = $appointment->getStaff();
         $addparams = [
-            'ORGANIZER' => ['name' => $staff->getUserDisplayName(), 'email' =>  $staff->emailAddress()],
+            'ORGANIZER' => ['name' => $staff->name, 'email' =>  $staff->emailAddress()],
             'ATTENDEE' => ['name' => $client->name, 'email' =>  $client->email],
         ];
 
@@ -154,7 +154,7 @@ class IcsGenerator
     protected function getTitle(Appointment $appointment, $staff)
     {
         $title = $appointment->getServiceName() . ' ';
-        $title .= $this->admin ? $appointment->getClientModel()->name . '(' . $appointment->getClientModel()->email . ')' :  $staff->getUserDisplayName();
+        $title .= $this->admin ? $appointment->getClientModel()->name . '(' . $appointment->getClientModel()->email . ')' :  $staff->name;
 
         return esc_html($title);
     }

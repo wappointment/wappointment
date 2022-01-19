@@ -96,7 +96,7 @@ export default {
         getPhysicalAddress(){
             let location_id = this.appointment.location_id
             let found = this.service.locations.find(e => e.id == location_id)
-            return found !== undefined ? found.options.address:''
+            return found !== undefined ? found.options.address:this.appointment.location_label
         },
     },
     computed: {
@@ -159,7 +159,7 @@ export default {
         },
 
         eventLocation(){
-            return this.physicalSelected ? this.getPhysicalAddress():this.appointment.location_label
+            return this.appointment.type == 'physical' ? this.getPhysicalAddress():this.appointment.location_label
         },
         
         saveToIcal() {

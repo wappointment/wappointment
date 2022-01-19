@@ -23,10 +23,8 @@ class Order
     public function awaitPayment()
     {
         if ($this->order->isOnSite() && $this->order->isPending()) {
-            $this->order->confirmAppointments();
             $this->order->setAwaitingPayment();
             $this->order->save();
-            apply_filters('wappointment_order_confirm', $this->order);
         } else {
             throw new \WappointmentException(Translations::get('forbidden'), 1);
         }

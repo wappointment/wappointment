@@ -314,6 +314,7 @@ class Order extends Model
 
     public function complete($save = true)
     {
+        apply_filters('wappointment_order_confirm', $this);
         $this->confirmAppointments();
 
         $this->setPaid();
