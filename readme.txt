@@ -1,10 +1,10 @@
-=== Appointment Scheduling for Zoom GoogleMeet and more - Wappointment  ===
+=== Appointment Bookings for Zoom GoogleMeet and more - Wappointment  ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
 Requires at least: 4.7
 Tested up to: 5.8
 Requires PHP: 7.0
-Stable tag: 2.4.4
+Stable tag: 2.4.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
