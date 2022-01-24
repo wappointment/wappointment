@@ -24,8 +24,10 @@ class AppointmentHistory
 
         if (!empty($email)) {
             $client = Client::where('email', $email)->first();
-            $this->timezone = $client->getTimezone();
-            $this->appointments = $client->appointments->sortByDesc('id');
+            if (!is_null($client)) {
+                $this->timezone = $client->getTimezone();
+                $this->appointments = $client->appointments->sortByDesc('id');
+            }
         }
     }
 

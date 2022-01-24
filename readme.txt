@@ -17,16 +17,16 @@ Get booked 24/7 with the most **intuitive booking form**.
 
 Convert visitors into customers with a simple call to action.
 
-The perfect Calendly alternative designed for WordPress.
+The perfect [Calendly alternative for WordPress](https://wappointment.com).
 
 https://www.youtube.com/watch?v=jUkiyejbuzg
 
-[Try the demo](https://demo.wappointment.com)
+Try the [demo of the booking calendar](https://demo.wappointment.com)
 
 == Scheduling system headache free ==
 
 = Provide your appointments the way you like =
-* as a video Meeting over Zoom, GoogleMeet or Skype
+* as a video Meeting over Zoom, GoogleMeet, Jitsi or Skype
 * over the Phone
 * or at your office
 
@@ -147,6 +147,9 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.4.5 - 2022-01-24 =
+* corrected fatal error
 
 = 2.4.4 - 2022-01-18 =
 * added staff appointments shortcode
