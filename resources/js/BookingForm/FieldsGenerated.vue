@@ -133,6 +133,7 @@ export default {
                 'checkbox':'Checkbox',
                 'select':'Dropdown',
                 'textarea':'TextArea',
+                'date':'DateInput',
             })
         },
         canShowEmail(){
@@ -388,7 +389,8 @@ export default {
                 this.service)
         },
         filterCustomFields(){
-            let customFields = [];
+            let customFields = []
+            
             for (const iterator of this.fieldsRequired()) {
                 let cfieldslist = []
                 for (const cfield of customFields) {
@@ -402,6 +404,7 @@ export default {
                     }
                 } 
             }
+            
             this.customFields = customFields[0].sorting !== undefined ? customFields.sort((a,b) => a.sorting > b.sorting):customFields
         },
 
