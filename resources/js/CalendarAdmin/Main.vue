@@ -54,31 +54,8 @@
                   </h3>
                   <h3 class="mb-4" v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h3>
                   <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!selectedChoice">
-                    
-                    <div class="btn btn-secondary mr-md-2  align-items-center" @click="confirmNewBooking" :class="{'fdisabled' :!selectionSingleDay}">
-                      <div class="dashicons dashicons-admin-users"></div>
-                      <div class="text-center">
-                        <p class="h6 m-0">{{ get_i18n('calendar_popup_1', 'calendar') }}</p>
-                        <p class="small m-0">{{ get_i18n('calendar_popup_1_sub', 'calendar') }}</p>
-                      </div>
-                    </div>
-
-                    <div class="btn btn-secondary  mr-md-2 align-items-center" @click="confirmFree" :class="{'fdisabled' :(!selectionSingleDay || isAvailable)}">
-                      <div class="dashicons dashicons-unlock txt blue"></div>
-                      <div class="text-center">
-                        <p class="h6 m-0">{{ get_i18n('calendar_popup_2', 'calendar') }}</p>
-                        <p class="small m-0">{{ get_i18n('calendar_popup_2_sub', 'calendar') }}</p>
-                      </div>
-                    </div>
-
-                    <div class="btn btn-secondary  align-items-center" @click="confirmBusy" :class="{'fdisabled' : isBusy}">
-                      <div class="dashicons dashicons-lock txt red"></div>
-                      <div class="text-center">
-                        <p class="h6 m-0">{{ get_i18n('calendar_popup_3', 'calendar') }}</p>
-                        <p class="small m-0">{{ get_i18n('calendar_popup_3_sub', 'calendar') }}</p>
-                      </div>
-                    </div>
-
+                    <ButtonPopup v-for="button in buttons"  @click="showRightSection(button.confirm)"
+                    :key="button.key" :disabled="button.disabled" :classIcon="button.icon" :title="button.title" :subtitle="button.subtitle" />
                   </div>
                   <div v-else>
                     <BehalfBooking v-if="shownAppointmentForm" 
@@ -157,6 +134,7 @@ import FullCalendarWrapper from './FullCalendarWrapper'
 import BehalfBooking from './BehalfBooking'
 import StatusBusyConfirm from './StatusBusyConfirm'
 import StatusFreeConfirm from './StatusFreeConfirm'
+import ButtonPopup from './ButtonPopup'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import momenttz from '../appMoment'
 
@@ -193,7 +171,8 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
       StatusBusyConfirm,
       FreeSlotsSelector,
       WelcomeModal,
-      CalendarSettings
+      CalendarSettings, 
+      ButtonPopup
   })
 
   /**
@@ -205,7 +184,6 @@ export default {
   mixins: mixins_array,
   name: 'calendar',
   components: calendar_components, 
-
   data: () => ({
     momenttz: momenttz,
     selectedDuration: false,
@@ -257,7 +235,7 @@ export default {
     showCalSettings: false,
     lockCalSettings: false,
     activeStaff: null,
-    rolledOverName: ''
+    rolledOverName: '',
   }),
 
   created(){
@@ -280,6 +258,34 @@ export default {
   },
  
  computed: {
+   buttons(){
+     return [
+        {
+            key:'book',
+            title: this.get_i18n('calendar_popup_1', 'calendar'),
+            subtitle: this.get_i18n('calendar_popup_2_sub', 'calendar'),
+            disabled: !this.selectionSingleDay,
+            icon: 'dashicons-admin-users',
+            confirm: 'confirmNewBooking'
+        },
+        {
+            key:'open',
+            title: this.get_i18n('calendar_popup_2', 'calendar'),
+            subtitle: this.get_i18n('calendar_popup_2_sub', 'calendar'),
+            disabled: !this.selectionSingleDay || this.isAvailable,
+            icon: 'dashicons-unlock txt blue',
+            confirm: 'confirmFree'
+        },
+        {
+            key:'block',
+            title: this.get_i18n('calendar_popup_3', 'calendar'),
+            subtitle: this.get_i18n('calendar_popup_3_sub', 'calendar'),
+            disabled: this.isBusy,
+            icon: 'dashicons-lock txt red',
+            confirm: 'confirmBusy'
+        }
+    ]
+   },
    activeAvailability(){
      return this.activeStaff.availability
    },
@@ -361,6 +367,9 @@ export default {
     
  },
   methods: {
+    showRightSection(confirmTrigger){
+      this[confirmTrigger]()
+    },
     async initValueRequest() {
         return await this.serviceViewData.call('calendar')
     },
@@ -1357,15 +1366,6 @@ export default {
   padding-top: .1rem !important;
 }
 
-
-.fdisabled{
-  cursor: not-allowed !important;
-  color: #c8c8c8 !important;  
-}
-
-.fdisabled .dashicons.txt{
-  color:#c8c8c8 !important;
-}
 
 .dd-search-results{
   position: absolute;

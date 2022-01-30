@@ -18,8 +18,7 @@ export default {
       },
       isAvailable(){
         if(this.getThisWeekIntervals!==0) {
-          for (let index = 0; index < this.getThisWeekIntervals.intervals.length; index++) {
-            const element = this.getThisWeekIntervals.intervals[index]
+          for (const element of this.getThisWeekIntervals.intervals) {
             if(this.selectIsWithin(element)){
               return true
             }
@@ -31,9 +30,8 @@ export default {
 
       isBusy(){
         if(this.getThisWeekIntervals!==0) {
-            for (let index = 0; index < this.getThisWeekIntervals.intervals.length; index++) {
-              const element = this.getThisWeekIntervals.intervals[index]
-              if(
+          for (const element of this.getThisWeekIntervals.intervals) {
+            if(
                 this.selectWraps(element) ||
                 this.selectIntersectsLeft(element) ||
                 this.selectIntersectsRight(element) ||
@@ -41,8 +39,7 @@ export default {
               ){
                 return false
               }
-
-            }
+          }
         }
         
         return true
@@ -118,12 +115,12 @@ export default {
       },
 
       findEventById(eventId, type = false){
-        for (let index = 0; index < this.events.length; index++) {
-          if(type === false && this.events[index]['type']=='appointment') {
+        for (const element of this.events) {
+          if(type === false && element['type']=='appointment') {
             continue //we ignore the appointment events
           }
-          if(this.events[index]['dbid']!== undefined && eventId == this.events[index]['dbid']) {
-            return this.events[index]
+          if(element['dbid']!== undefined && eventId == element['dbid']) {
+            return element
           }
         }
       },
@@ -221,13 +218,11 @@ export default {
       },
 
        getEventById(eventId){
-        for (let i = 0; i < this.events.length; i++) {
-          const element = this.events[i]
-
-          if(element.id !== undefined && element.id == eventId) {
+         for (const element of this.events) {
+            if(element.id !== undefined && element.id == eventId) {
             return element
           }
-        }
+         }
       },
 
 
