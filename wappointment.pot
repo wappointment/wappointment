@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-01-26T09:44:45+00:00\n"
+"POT-Creation-Date: 2022-01-31T16:05:51+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: wappointment\n"
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Muted successfully"
 msgstr ""
 
-#: app/Controllers/WappointmentController.php:43
+#: app/Controllers/WappointmentController.php:40
 msgid "Great your message has been sent, we'll get back to you soon"
 msgstr ""
 
@@ -2016,7 +2016,7 @@ msgstr ""
 msgid "Slot not available"
 msgstr ""
 
-#: app/Services/Calendar.php:59
+#: app/Services/Calendar.php:57
 msgid "Cannot connect to the calendar"
 msgstr ""
 
@@ -2254,7 +2254,7 @@ msgstr ""
 msgid "Yay! Emails are working!"
 msgstr ""
 
-#: app/Services/Wappointment/Addons.php:168
+#: app/Services/Wappointment/Addons.php:169
 msgid "Success installing addon"
 msgstr ""
 

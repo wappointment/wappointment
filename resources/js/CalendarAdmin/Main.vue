@@ -46,33 +46,11 @@
             <ControlBar v-if="viewData!==null" :progressWizard="viewData.wizard_step"></ControlBar>
 
             <div v-if="fcIsReady">
-                <WapModal v-if="bookForAclient" :show="bookForAclient" @hide="hideModal" noscroll>
-                  <h4 slot="title" class="modal-title">{{ get_i18n('calendar_popup', 'calendar') }}</h4>
-                  <h3 class="mb-4" v-if="selectionSingleDay"> {{ startDayDisplay }} - 
-                    <span class="text-muted">{{ sprintf_i18n('calendar_popup_from_until', 'calendar', [startTimeDisplay,endTimeDisplay]) }}</span>
-                    <span class="small text-muted" v-if="viewData.buffer_time > 0">{{ sprintf_i18n('calendar_popup_includes', 'calendar', viewData.buffer_time) }}</span>
-                  </h3>
-                  <h3 class="mb-4" v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h3>
-                  <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!selectedChoice">
-                    <ButtonPopup v-for="button in buttons"  @click="showRightSection(button.confirm)"
-                    :key="button.key" :disabled="button.disabled" :classIcon="button.icon" :title="button.title" :subtitle="button.subtitle" />
-                  </div>
-                  <div v-else>
-                    <BehalfBooking v-if="shownAppointmentForm" 
-                    :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :activeStaff="activeStaff"
-                    :viewData="viewData" :timezone="displayTimezone" 
-                    @cancelled="hideModal" @confirmed="confirmedStatus" @updateEndTime="updateEndTime"/>
-
-                    <StatusBusyConfirm v-if="shownBusyConfirm" 
-                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :activeStaff="activeStaff" :viewData="viewData"  
-                    @confirmed="confirmedStatus" @cancelled="hideModal"/>
-
-                    <StatusFreeConfirm v-if="shownFreeConfirm" 
-                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :activeStaff="activeStaff" :viewData="viewData"
-                    @confirmed="confirmedStatus" @cancelled="hideModal"/>
-                  </div>
-
-              </WapModal>
+                
+              <PopupActions v-if="popupActionVisible" @refreshEvents="refreshEvents" @hide="hideModal" 
+              :getThisWeekIntervals="getThisWeekIntervals" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
+              :momenttz="momenttz" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"/>
+              
               <WapModal v-if="showRegularAv" :show="showRegularAv" @hide="hideRegavModal" large>
                 <h4 slot="title" class="modal-title">Modify your Weekly Availability</h4>
 
@@ -131,14 +109,10 @@ import abstractView from '../Views/Abstract'
 import TimeZones from '../Components/TimeZones'
 import ControlBar from './ControlBar'
 import FullCalendarWrapper from './FullCalendarWrapper'
-import BehalfBooking from './BehalfBooking'
-import StatusBusyConfirm from './StatusBusyConfirm'
-import StatusFreeConfirm from './StatusFreeConfirm'
-import ButtonPopup from './ButtonPopup'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import momenttz from '../appMoment'
-
 import WelcomeModal from './WelcomeModal'
+import PopupActions from './PopupActions'
 import AppointmentRender from './AppointmentRender'
 import FreeSlotsSelector from './FreeSlotsSelector'
 import CalendarSettings from './CalendarSettings'
@@ -160,21 +134,6 @@ for (const key in mixins_object) {
   }
 }
 
-let calendar_components = window.wappointmentExtends.filter('BackendCalendarComponents', {
-      SubscribeNewsletter,
-      TimeZones,
-      ControlBar,
-      WeeklyAvailability,
-      FullCalendarWrapper,
-      BehalfBooking,
-      StatusFreeConfirm,
-      StatusBusyConfirm,
-      FreeSlotsSelector,
-      WelcomeModal,
-      CalendarSettings, 
-      ButtonPopup
-  })
-
   /**
  * TODO Review moment usage
  */
@@ -183,7 +142,17 @@ export default {
   extends: abstractView,
   mixins: mixins_array,
   name: 'calendar',
-  components: calendar_components, 
+  components: {
+      SubscribeNewsletter,
+      TimeZones,
+      ControlBar,
+      WeeklyAvailability,
+      FullCalendarWrapper,
+      FreeSlotsSelector,
+      WelcomeModal,
+      CalendarSettings,
+      PopupActions,
+  }, 
   data: () => ({
     momenttz: momenttz,
     selectedDuration: false,
@@ -198,8 +167,6 @@ export default {
     clientSelected: false,
     viewName: 'calendar',
     firstDay: undefined,
-    bookForAclient: false,
-    selectedChoice: false,
     cancelbgOver: false,
     name: 'calendar',
     namekey: 'calendar',
@@ -236,6 +203,7 @@ export default {
     lockCalSettings: false,
     activeStaff: null,
     rolledOverName: '',
+    popupActionVisible:false,
   }),
 
   created(){
@@ -258,34 +226,6 @@ export default {
   },
  
  computed: {
-   buttons(){
-     return [
-        {
-            key:'book',
-            title: this.get_i18n('calendar_popup_1', 'calendar'),
-            subtitle: this.get_i18n('calendar_popup_2_sub', 'calendar'),
-            disabled: !this.selectionSingleDay,
-            icon: 'dashicons-admin-users',
-            confirm: 'confirmNewBooking'
-        },
-        {
-            key:'open',
-            title: this.get_i18n('calendar_popup_2', 'calendar'),
-            subtitle: this.get_i18n('calendar_popup_2_sub', 'calendar'),
-            disabled: !this.selectionSingleDay || this.isAvailable,
-            icon: 'dashicons-unlock txt blue',
-            confirm: 'confirmFree'
-        },
-        {
-            key:'block',
-            title: this.get_i18n('calendar_popup_3', 'calendar'),
-            subtitle: this.get_i18n('calendar_popup_3_sub', 'calendar'),
-            disabled: this.isBusy,
-            icon: 'dashicons-lock txt red',
-            confirm: 'confirmBusy'
-        }
-    ]
-   },
    activeAvailability(){
      return this.activeStaff.availability
    },
@@ -348,28 +288,8 @@ export default {
     displayTimezone() {
       return (this.selectedTimezone !== undefined) ? this.selectedTimezone : this.timezone
     },
-    shortStDayDisplay(){
-      return this.startTime.format(this.shortDayFormat+' '+this.viewData.time_format)
-    },
-    shortEdDayDisplay(){
-      return this.endTime.format(this.shortDayFormat+' '+this.viewData.time_format)
-    },
-    startDayDisplay() {
-      return this.startTime.format(this.viewData.date_format)
-    },
-    startTimeDisplay(){
-      return this.formatTime(this.startTime)
-    },
-    endTimeDisplay(){
-      return this.formatTime(this.endTime)
-    },
-    
-    
  },
   methods: {
-    showRightSection(confirmTrigger){
-      this[confirmTrigger]()
-    },
     async initValueRequest() {
         return await this.serviceViewData.call('calendar')
     },
@@ -446,11 +366,6 @@ export default {
       this.refreshEvents()
     },
     
-    
-    hideModal(){
-        this.bookForAclient = false
-        this.selectedChoice = false
-    },
     hideRegavModal(){
       this.showRegularAv = false
       this.refreshEvents()
@@ -474,9 +389,6 @@ export default {
         return this.getDate().tz(this.selectedTimezone).day(7).hours(this.maxHour)
       }
       return undefined
-    },
-    updateEndTime(newEndTime){
-      this.endTime = newEndTime
     },
       updateTimezone(selectedTimezone,initSave = false){
         this.selectedTimezone = selectedTimezone
@@ -697,9 +609,12 @@ export default {
         return myMoment.format(format)
       },
       
+      hideModal(){
+        this.popupActionVisible = false
+      },
       openCreateModal() {
         this.disableBgEvent = false
-        this.bookForAclient = true
+        this.popupActionVisible = true
       },
 
       setMinAndMax(){
@@ -847,11 +762,6 @@ export default {
         //this.resetFirstDay()
         this.refreshEvents()
         this.writeHistory(true)
-        //  this.$refs.calendar.fireMethod('changeView', 'timeGridWeek')
-        //  this.$refs.calendar.fireMethod('today')
-        //  this.currentView = 'timeGridWeek'
-        //  this.resetFirstDay()
-        //  this.refreshEvents()
          
       },
       monthView(){
@@ -860,10 +770,7 @@ export default {
          this.refreshEvents()
          this.resetFirstDay()
       },
-      confirmedStatus(){
-        this.hideModal()
-        this.refreshEvents()
-      },
+      
       refreshEvents(){
         this.hasBeenSetCalProps = false
         this.$refs.calendar.fireMethod('refetchEvents')
