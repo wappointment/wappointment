@@ -17,6 +17,11 @@ use Wappointment\Services\Settings;
 class ClientController extends RestController
 {
 
+    public function search(Request $request)
+    {
+        return Client::search($request->input('email'));
+    }
+
     public function book(BookingAdmin $booking)
     {
         if ($booking->hasErrors()) {
