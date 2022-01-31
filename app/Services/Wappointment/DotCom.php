@@ -90,22 +90,6 @@ class DotCom extends API
         WPHelpers::setOption('appointments_must_refresh', time() + 60);
     }
 
-    public function notifyReset()
-    {
-        // 0 - only check if site connected
-        if (!empty($this->site_key) && $this->isConnected()) {
-            $response = $this->client->request(
-                'POST',
-                $this->call('/api/reseted'),
-                [
-                    'form_params' => $this->getParams(['account_key' => $this->account_key]),
-                    'connect_timeout' => 5
-                ]
-            );
-            return $this->processResponse($response);
-        }
-    }
-
     public function hasPendingChanges($appointments, $appointments_update)
     {
         return md5(json_encode($appointments)) !== md5(json_encode($appointments_update));
@@ -113,9 +97,10 @@ class DotCom extends API
 
     public function getAppointments()
     {
-
         try {
-            $response = $this->client->request('GET', $this->call('/api/appointment/list/' . $this->site_key), ['connect_timeout' => 5]);
+            $response = $this->client
+                ->setTimeout()
+                ->get($this->call('/api/appointment/list/' . $this->site_key));
         } catch (\Throwable $th) {
             \Wappointment\Models\Log::data([
                 'info' => "Cannot connect to wappointment.com ",
@@ -137,9 +122,9 @@ class DotCom extends API
             throw new \WappointmentException("Account key is invalid", 1);
         }
 
-        $response = $this->client->request('POST', $this->call('/api/connect'), [
-            'form_params' => $this->getParams(['account_key' => $account_key])
-        ]);
+        $response = $this->client
+            ->setForm($this->getParams(['account_key' => $account_key]))
+            ->post($this->call('/api/connect'));
 
         $result = $this->processResponse($response);
 
@@ -157,9 +142,9 @@ class DotCom extends API
             throw new \WappointmentException("Can't retrieve account key", 1);
         }
 
-        $response = $this->client->request('POST', $this->call('/api/disconnect'), [
-            'form_params' => $this->getParams(['account_key' => $this->account_key])
-        ]);
+        $response = $this->client
+            ->setForm($this->getParams(['account_key' => $this->account_key]))
+            ->post($this->call('/api/disconnect'));
 
         $result = $this->processResponse($response);
         if ($result) {
@@ -194,9 +179,9 @@ class DotCom extends API
 
     public function create($appointment)
     {
-        $response = $this->client->request('POST', $this->call('/api/appointment/create'), [
-            'form_params' => $this->getParams($this->getAppointmentDetails($appointment))
-        ]);
+        $response = $this->client
+            ->setForm($this->getParams($this->getAppointmentDetails($appointment)))
+            ->post($this->call('/api/appointment/create'));
 
         $result = $this->processResponse($response);
         if ($result) {
@@ -210,11 +195,10 @@ class DotCom extends API
 
     public function update($appointment)
     {
-        // echo '<pre>';
-        // dd($this->getParams($this->getAppointmentDetails($appointment)));
-        $response = $this->client->request('POST', $this->call('/api/appointment/update'), [
-            'form_params' => $this->getParams($this->getAppointmentDetails($appointment))
-        ]);
+
+        $response = $this->client
+            ->setForm($this->getParams($this->getAppointmentDetails($appointment)))
+            ->post($this->call('/api/appointment/update'));
 
         $result = $this->processResponse($response);
         if ($result) {
@@ -227,12 +211,12 @@ class DotCom extends API
 
     public function delete($appointment)
     {
-        $response = $this->client->request('POST', $this->call('/api/appointment/delete'), [
-            'form_params' => $this->getParams([
+        $response = $this->client
+            ->setForm($this->getParams([
                 'appointment_id' => $appointment->id,
                 'account_key' => $this->account_key
-            ])
-        ]);
+            ]))
+            ->post($this->call('/api/appointment/delete'));
 
         $result = $this->processResponse($response);
         if ($result) {

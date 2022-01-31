@@ -251,6 +251,16 @@
                   </div>
               </label>
           </div>
+          <div class="mb-2">
+              <label class="form-check-label" for="wp-remote" data-tt="When getting errors as such 'cURL error ***'">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.wp_remote" id="wp-remote" @change="changedVD('wp_remote')">
+                    Use native WP remote
+                  </div>
+              </label>
+          </div>
+
+          
           <div>
             <label for="roles-allowed" class="m-0">WordPress' users listed for calendars creation</label>
             <div class="small text-muted">In Wappointment > Settings > Calendars & Staff</div>
