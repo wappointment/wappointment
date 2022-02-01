@@ -1,5 +1,4 @@
 __webpack_public_path__ = apiWappointment.resourcesUrl;
-
 import Vue from './appVue'
 import Front from './Front'
 import VueService from './Plugins/vue-service'

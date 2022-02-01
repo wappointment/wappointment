@@ -1,4 +1,4 @@
-import FieldTipTap from './FieldTipTap'
+const FieldTipTap = () => import(/* webpackChunkName: "FieldTipTap" */ './FieldTipTap')
 import FieldImageSelect from './FieldImageSelect'
 import FieldTimezone from './FieldTimezone'
 import FieldPhone from './FieldPhone'

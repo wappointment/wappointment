@@ -38,7 +38,8 @@ import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
 import MixinLegacy from './MixinLegacy'
 import IsDemo from '../Mixins/IsDemo'
-import {isEmail, isEmpty} from 'validator'
+import isEmail from 'validator/es/lib/isEmail'
+import isEmpty from 'validator/es/lib/isEmpty'
 export default {
     components: window.wappointmentExtends.filter('bookingFormComponents', {
         TextInput,

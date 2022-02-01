@@ -57,6 +57,6 @@ class Request
 
     public function hasHeader($headerName)
     {
-        return $this->client->headerIsEqual($headerName);
+        return $this->client->hasHeader($headerName);
     }
 }

@@ -106,8 +106,8 @@ module.exports = {
     }),
     new VueLoaderPlugin(),
     new webpack.HashedModuleIdsPlugin(),
-    // new BundleAnalyzerPlugin({
-    //   analyzerHost: '192.168.101.10'
-    // })
+    new BundleAnalyzerPlugin({
+      analyzerHost: '192.168.56.56'
+    })
   ], 
 }

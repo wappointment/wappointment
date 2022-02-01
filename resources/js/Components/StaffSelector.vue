@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import {isEmail} from 'validator'
+import isEmail from 'validator/es/lib/isEmail'
 import SearchStaff from '../Fields/SearchDropdown'
 import WPUsersService from '../Services/WP/Users' 
 import RequestMaker from '../Modules/RequestMaker' 
