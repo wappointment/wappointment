@@ -18,12 +18,12 @@ class EmailList extends API
     public function subscribe($email, $list = 'default')
     {
 
-        $response = $this->client->request('POST', $this->call('/api/subscribe/list'), [
-            'form_params' => [
+        $response = $this->client
+            ->setForm([
                 'list' => $list,
                 'email' => $email
-            ]
-        ]);
+            ])
+            ->post($this->call('/api/subscribe/list'));
 
         if ($this->isAlreadySubscribed($email, $list)) {
             return true;

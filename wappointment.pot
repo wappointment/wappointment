@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Wappointment plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wappointment 2.5.0-beta\n"
+"Project-Id-Version: Wappointment 2.4.5\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wappointment-plugin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-01-10T12:50:43+00:00\n"
+"POT-Creation-Date: 2022-01-31T16:05:51+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: wappointment\n"
@@ -32,7 +32,7 @@ msgstr ""
 #: app/Services/Appointment.php:83
 #: app/Services/Appointment.php:266
 #: app/Services/AppointmentNew.php:248
-#: app/Services/AppointmentNew.php:429
+#: app/Services/AppointmentNew.php:425
 msgid "Can't find appointment"
 msgstr ""
 
@@ -69,7 +69,7 @@ msgstr ""
 #: app/Services/Appointment.php:78
 #: app/Services/Appointment.php:260
 #: app/Services/AppointmentNew.php:240
-#: app/Services/AppointmentNew.php:423
+#: app/Services/AppointmentNew.php:419
 msgid "Malformed parameter"
 msgstr ""
 
@@ -177,7 +177,7 @@ msgstr ""
 msgid "Muted successfully"
 msgstr ""
 
-#: app/Controllers/WappointmentController.php:43
+#: app/Controllers/WappointmentController.php:40
 msgid "Great your message has been sent, we'll get back to you soon"
 msgstr ""
 
@@ -505,10 +505,12 @@ msgstr ""
 #: app/Lists/translations_clients.php:5
 #: app/Lists/translations_orders.php:9
 #: app/Messages/EmailHelper.php:49
+#: app/WP/StaffHistory.php:34
 msgid "Client"
 msgstr ""
 
 #: app/Lists/translations_clients.php:6
+#: app/WP/StaffHistory.php:90
 msgid "Phone"
 msgstr ""
 
@@ -522,6 +524,46 @@ msgstr ""
 
 #: app/Lists/translations_clients.php:9
 msgid "You don't have any clients yet"
+msgstr ""
+
+#: app/Lists/translations_health.php:3
+msgid "Scheduled tasks health"
+msgstr ""
+
+#: app/Lists/translations_health.php:4
+msgid "WP Cron disabled?"
+msgstr ""
+
+#: app/Lists/translations_health.php:5
+msgid "Cron process on time?"
+msgstr ""
+
+#: app/Lists/translations_health.php:6
+msgid "Tasks on time?"
+msgstr ""
+
+#: app/Lists/translations_health.php:7
+msgid "Process Manually"
+msgstr ""
+
+#: app/Lists/translations_health.php:8
+msgid "We highly recommend you to setup the process to run automatically"
+msgstr ""
+
+#: app/Lists/translations_health.php:9
+msgid "Old tasks?"
+msgstr ""
+
+#: app/Lists/translations_health.php:10
+msgid "Never ending tasks?"
+msgstr ""
+
+#: app/Lists/translations_health.php:11
+msgid "Read more"
+msgstr ""
+
+#: app/Lists/translations_health.php:12
+msgid "Show all"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:3
@@ -740,6 +782,7 @@ msgstr ""
 
 #: app/Lists/translations_js_common.php:61
 #: app/Lists/translations_settings.php:4
+#: app/WP/StaffHistory.php:80
 msgid "Name"
 msgstr ""
 
@@ -950,7 +993,7 @@ msgstr ""
 #: app/Lists/translations_settings.php:41
 #: app/Lists/widget_settings.php:47
 #: app/Messages/EmailHelper.php:94
-#: app/WP/AppointmentHistory.php:32
+#: app/WP/AppointmentHistory.php:50
 msgid "Service"
 msgstr ""
 
@@ -1080,7 +1123,8 @@ msgid "Appearance"
 msgstr ""
 
 #: app/Lists/translations_settings.php:82
-msgid "Avancé"
+#: app/Lists/widget_fields.php:201
+msgid "Advanced"
 msgstr ""
 
 #: app/Lists/translations_settings.php:84
@@ -1140,11 +1184,11 @@ msgid "Service Setup"
 msgstr ""
 
 #: app/Lists/translations_wizard.php:17
-msgid "Set the first service you will provide to your clients"
+msgid "Set your first service"
 msgstr ""
 
 #: app/Lists/translations_wizard.php:19
-#: app/WP/AppointmentHistory.php:37
+#: app/WP/AppointmentHistory.php:55
 msgid "Duration"
 msgstr ""
 
@@ -1391,10 +1435,6 @@ msgstr ""
 
 #: app/Lists/widget_fields.php:192
 msgid "On Site Payment"
-msgstr ""
-
-#: app/Lists/widget_fields.php:201
-msgid "Advanced"
 msgstr ""
 
 #: app/Lists/widget_fields.php:204
@@ -1650,12 +1690,12 @@ msgid "Confirmation"
 msgstr ""
 
 #: app/Lists/widget_translations.php:3
-#: app/Services/IcsGenerator.php:173
+#: app/Services/IcsGenerator.php:176
 msgid "Appointment is a Video meeting"
 msgstr ""
 
 #: app/Lists/widget_translations.php:4
-#: app/Services/IcsGenerator.php:174
+#: app/Services/IcsGenerator.php:177
 msgid "Meeting will be accessible from the link below:"
 msgstr ""
 
@@ -1900,27 +1940,27 @@ msgstr ""
 msgid "Error while booking"
 msgstr ""
 
-#: app/Models/Order.php:44
+#: app/Models/Order.php:49
 msgid "Pending"
 msgstr ""
 
-#: app/Models/Order.php:46
+#: app/Models/Order.php:51
 msgid "Awaiting payment"
 msgstr ""
 
-#: app/Models/Order.php:48
+#: app/Models/Order.php:53
 msgid "Paid"
 msgstr ""
 
-#: app/Models/Order.php:50
+#: app/Models/Order.php:55
 msgid "Cancelled"
 msgstr ""
 
-#: app/Models/Order.php:52
+#: app/Models/Order.php:57
 msgid "Refunded"
 msgstr ""
 
-#: app/Models/Order.php:60
+#: app/Models/Order.php:65
 msgid "Pay On Site"
 msgstr ""
 
@@ -1960,7 +2000,7 @@ msgid "Can't reschedule appointment anymore"
 msgstr ""
 
 #: app/Services/Appointment.php:269
-#: app/Services/AppointmentNew.php:432
+#: app/Services/AppointmentNew.php:428
 msgid "Can't cancel appointment anymore"
 msgstr ""
 
@@ -1976,7 +2016,7 @@ msgstr ""
 msgid "Slot not available"
 msgstr ""
 
-#: app/Services/Calendar.php:59
+#: app/Services/Calendar.php:57
 msgid "Cannot connect to the calendar"
 msgstr ""
 
@@ -2005,22 +2045,22 @@ msgstr ""
 msgid "Calendar already connected"
 msgstr ""
 
-#: app/Services/IcsGenerator.php:181
+#: app/Services/IcsGenerator.php:184
 msgid "Need to modify this event?"
 msgstr ""
 
 #. translators: %1$s - date %2$s rescheule link.
-#: app/Services/IcsGenerator.php:183
+#: app/Services/IcsGenerator.php:186
 msgid "Reschedule (until %1$s): &#10; %2$s"
 msgstr ""
 
 #. translators: %1$s - date %2$s cancel link.
-#: app/Services/IcsGenerator.php:185
+#: app/Services/IcsGenerator.php:188
 msgid "Cancel (until %1$s): &#10; %2$s"
 msgstr ""
 
 #. translators: %s is replaced with https://wappointment.com
-#: app/Services/IcsGenerator.php:195
+#: app/Services/IcsGenerator.php:198
 msgid "Booked with %s"
 msgstr ""
 
@@ -2214,7 +2254,7 @@ msgstr ""
 msgid "Yay! Emails are working!"
 msgstr ""
 
-#: app/Services/Wappointment/Addons.php:168
+#: app/Services/Wappointment/Addons.php:169
 msgid "Success installing addon"
 msgstr ""
 
@@ -2269,15 +2309,15 @@ msgstr ""
 msgid "The selected time is not valid"
 msgstr ""
 
-#: app/WP/AppointmentHistory.php:13
+#: app/WP/AppointmentHistory.php:37
 msgid "No appointments found."
 msgstr ""
 
-#: app/WP/AppointmentHistory.php:27
+#: app/WP/AppointmentHistory.php:45
 msgid "Date and time"
 msgstr ""
 
-#: app/WP/AppointmentHistory.php:42
+#: app/WP/AppointmentHistory.php:60
 msgid "Staff"
 msgstr ""
 
@@ -2287,6 +2327,14 @@ msgstr ""
 
 #: app/WP/Menus.php:31
 msgid "Help"
+msgstr ""
+
+#: app/WP/StaffHistory.php:39
+msgid "Location"
+msgstr ""
+
+#: app/WP/StaffHistory.php:84
+msgid "Email"
 msgstr ""
 
 #: app/WP/Widget.php:9

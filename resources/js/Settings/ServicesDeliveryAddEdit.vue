@@ -77,6 +77,7 @@ export default {
                 images: [
                   { value:'zoom', name:'Zoom', icon: 'zoom.png', icontype: 'img' , realsize: true},
                   { value:'googlemeet', name:'Google Meet', icon: 'google-meet.png', icontype: 'img' , realsize: true},
+                  { value:'jitsi', name:'Jitsi', icon: 'jitsi.png', icontype: 'img' , realsize: true},
                 ],
                 conditions: [
                   { model:'type', values: [5] }

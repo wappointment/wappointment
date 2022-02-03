@@ -1,11 +1,9 @@
 __webpack_public_path__ = apiWappointment.resourcesUrl;
-
 import Vue from './appVue'
 import Front from './Front'
 import VueService from './Plugins/vue-service'
 import WLoader from './Components/Loaders/BigCalendar'
 import VueWapModal from './Plugins/vue-wap-modal'
-import __get from 'lodash/get'
 import UrlParam from './Modules/UrlParam'
 import WTrigger from './Mixins/WTrigger'
 import DeepDefined from './Mixins/DeepDefined'

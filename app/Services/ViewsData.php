@@ -296,7 +296,8 @@ class ViewsData
             'invoice_seller' => Settings::get('invoice_seller'),
             'invoice_num' => Settings::get('invoice_num'),
             'invoice_client' => Settings::get('invoice_client'),
-            'custom_fields' => Central::get('CustomFields')::get()
+            'custom_fields' => Central::get('CustomFields')::get(),
+            'wp_remote' => Settings::get('wp_remote'),
         ];
     }
 

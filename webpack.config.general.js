@@ -5,13 +5,14 @@ const path = require('path');
 const CleanWebpackPlugin = require('clean-webpack-plugin'); 
 const ManifestPlugin = require('webpack-manifest-plugin');
 const WebpackAssetsManifest = require('webpack-assets-manifest');
-const CopyWebpackPlugin = require('copy-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 
 module.exports = {
   mode: process.env.NODE_ENV,
   entry: {
-    main: ['./resources/js/babelpolyfill.js','./resources/js/backend.js'],
-    front: ['./resources/js/babelpolyfill.js','./resources/js/front.js'],
+    main: ['./resources/js/backend.js'],
+    front: ['./resources/js/front.js'],
   },
   output: {
     filename: '[name].[contenthash].bundle.js',
@@ -89,6 +90,9 @@ module.exports = {
     new WebpackAssetsManifest({}),
     new VueLoaderPlugin(),
     new webpack.HashedModuleIdsPlugin(),
+    // new BundleAnalyzerPlugin({
+    //   analyzerHost: '192.168.56.56'
+    // })
   ], 
 
 }

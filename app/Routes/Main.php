@@ -116,6 +116,10 @@ class Main extends AbstractRoutes
                     'method' => 'index',
                     'paginated' => true
                 ],
+                '/health' => [
+                    'method' => 'health',
+                    'controller' => 'AppController',
+                ],
             ],
             'POST' => [
                 '/addons/clear' => [
@@ -142,10 +146,6 @@ class Main extends AbstractRoutes
                     'method' => 'subscribe',
                     'controller' => 'WappointmentController',
                     'hint' => 'SubscribeAdmin'
-                ],
-                '/wappointment/sendtestbooking' => [
-                    'method' => 'sendTestBooking',
-                    'controller' => 'WappointmentController',
                 ],
                 '/wappointment/sendignore' => [
                     'method' => 'sendIgnoreBooking',

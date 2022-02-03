@@ -7,6 +7,7 @@ use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
 use Wappointment\Formatters\BookingResult;
 use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Payment;
+use Wappointment\WP\Helpers;
 
 class Order extends Model
 {
@@ -17,7 +18,7 @@ class Order extends Model
     protected $with = ['client', 'prices', 'appointments'];
     protected $dates = ['refunded_at', 'paid_at', 'created_at', 'updated_at'];
     protected $casts = ['options' => 'array'];
-    protected $appends = ['charge', 'payment_label', 'status_label'];
+    protected $appends = ['charge', 'payment_label', 'status_label', 'description'];
 
     const STATUS_PENDING = 0;
     const STATUS_AWAITING = 1;
@@ -35,6 +36,10 @@ class Order extends Model
             Appointment::class,
             'wappo_order_price'
         );
+    }
+    public function getDescriptionAttribute()
+    {
+        return Helpers::siteName() . ' - ' . (!empty($this)) ? $this->getDescription() : '';
     }
 
     public function getStatusLabelAttribute()
@@ -250,7 +255,14 @@ class Order extends Model
     {
         $description = '';
         foreach ($this->prices as $price) {
-            $description .= $price->appointment->getStaffName() . ' - ' . $price->item_name . ' - ' . $price->appointment->getStartsDayAndTime($price->appointment->getStaffTZ()) . " | ";
+            if (!is_null($price->appointment)) {
+                $description .= $price->appointment->getStaffName();
+            }
+            $description .=  ' - ' . $price->item_name . ' - ';
+            if (!is_null($price->appointment)) {
+                $description .= $price->appointment->getStartsDayAndTime($price->appointment->getStaffTZ());
+            }
+            $description .= " | ";
         }
         return esc_html($description);
     }
@@ -302,6 +314,7 @@ class Order extends Model
 
     public function complete($save = true)
     {
+        apply_filters('wappointment_order_confirm', $this);
         $this->confirmAppointments();
 
         $this->setPaid();
@@ -315,6 +328,11 @@ class Order extends Model
         do_action('wappointment_order_completed', $this);
         $this->load('appointments'); //making sure the status of the appointment is correct
 
+        return $this->arrayResult();
+    }
+
+    public function arrayResult()
+    {
         $arrayResult = $this->toArray();
 
         $arrayResult['appointments'] = BookingResult::formatAppointments($this->appointments);

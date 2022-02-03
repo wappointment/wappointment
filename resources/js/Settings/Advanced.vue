@@ -251,6 +251,16 @@
                   </div>
               </label>
           </div>
+          <div class="mb-2">
+              <label class="form-check-label" for="wp-remote" data-tt="When getting errors as such 'cURL error ***'">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.wp_remote" id="wp-remote" @change="changedVD('wp_remote')">
+                    Use native WP remote
+                  </div>
+              </label>
+          </div>
+
+          
           <div>
             <label for="roles-allowed" class="m-0">WordPress' users listed for calendars creation</label>
             <div class="small text-muted">In Wappointment > Settings > Calendars & Staff</div>
@@ -263,6 +273,12 @@
             </a>
             <button v-else class="btn btn-secondary btn-sm" @click="updatePage" data-tt="Only if you don't like the default page template for cancellation and rescheduling">
                 Make Reschedule/Cancel page editable
+            </button>
+            
+          </div>
+          <div class="mt-3">
+            <button class="btn btn-secondary btn-sm" @click="showHealth=true" >
+                Show health
             </button>
           </div>
           
@@ -326,6 +342,7 @@
             <span class="dashicons dashicons-image-rotate"></span> Uninstall
           </button>
         </div>
+        <Health v-if="showHealth" />
     </div>
 
   </div>
@@ -346,7 +363,7 @@ import MailConfig from '../Components/MailConfig'
 import NotificationEmail from '../Notification/Email'
 import InputValueCards from '../Fields/InputValueCards'
 import FormFieldSelect from '../Form/FormFieldSelect'
-
+import Health from '../WP/Health'
 export default {
   extends: abstractView,
   props:['tablabel'],
@@ -361,13 +378,15 @@ export default {
     MailConfig,
     NotificationEmail,
     InputValueCards,
-    FormFieldSelect
+    FormFieldSelect,
+    Health
   },
   mixins: [ hasBreadcrumbs],
   data() {
     return {
       viewName: 'settingsadvanced',
       maxBookings:false,
+      showHealth:false,
       isToggled: {
         date_format : false,
         time_format : false,

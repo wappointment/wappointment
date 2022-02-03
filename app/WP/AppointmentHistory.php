@@ -2,74 +2,103 @@
 
 namespace Wappointment\WP;
 
+use Wappointment\Helpers\Get;
 use Wappointment\Models\Client;
 use Wappointment\Services\WidgetSettings;
 
 class AppointmentHistory
 {
-    public static function render($atts)
+    public $atts = [];
+    public $appointments = [];
+    public $timezone = 'UTC';
+
+    public function __construct($atts)
     {
-        $email =  wp_get_current_user()->user_email;
-        $empty = __('No appointments found.', 'wappointment');
-        if (empty($email)) {
-            return $empty;
+        $this->atts = $atts;
+        $this->loadData();
+    }
+
+    public function loadData()
+    {
+        $email = wp_get_current_user()->user_email;
+
+        if (!empty($email)) {
+            $client = Client::where('email', $email)->first();
+            if (!is_null($client)) {
+                $this->timezone = $client->getTimezone();
+                $this->appointments = $client->appointments->sortByDesc('id');
+            }
         }
-        $client = Client::where('email', $email)->first();
-        if (empty($client)) {
-            return $empty;
-        } else {
-            return static::renderAppointmentListing($client, $atts);
+    }
+
+    public function render()
+    {
+        if (empty($this->appointments)) {
+            return __('No appointments found.', 'wappointment');
         }
+
+        return $this->renderAppointmentListing();
     }
 
-    public static function dateLabel($atts)
+    public function dateLabel()
     {
-        return empty($atts['date_label']) ? __('Date and time', 'wappointment') : $atts['date_label'];
+        return empty($this->atts['date_label']) ? __('Date and time', 'wappointment') : $this->atts['date_label'];
     }
 
-    public static function serviceLabel($atts)
+    public function serviceLabel()
     {
-        return empty($atts['service_label']) ? __('Service', 'wappointment') : $atts['service_label'];
+        return empty($this->atts['service_label']) ? __('Service', 'wappointment') : $this->atts['service_label'];
     }
 
-    public static function durationLabel($atts)
+    public function durationLabel()
     {
-        return empty($atts['duration_label']) ? __('Duration', 'wappointment') : $atts['duration_label'];
+        return empty($this->atts['duration_label']) ? __('Duration', 'wappointment') : $this->atts['duration_label'];
     }
 
-    public static function staffLabel($atts)
+    public function staffLabel()
     {
-        return empty($atts['staff_label']) ? __('Staff', 'wappointment') : $atts['staff_label'];
+        return empty($this->atts['staff_label']) ? __('Staff', 'wappointment') : $this->atts['staff_label'];
     }
 
-    public static function renderAppointmentListing($client, $atts)
+    public function renderAppointmentListing()
     {
-        $history = static::getStyle() . '<div id="wappointment-history"><table>';
-        $history .= '<tr>'
-            . '<th>' . static::dateLabel($atts) . '</th>'
-            . '<th>' . static::serviceLabel($atts) . '</th>'
-            . '<th>' . static::durationLabel($atts) . '</th>'
-            . '<th>' . static::staffLabel($atts) . '</th>'
-            . '</tr>';
-        foreach ($client->appointments->sortByDesc('id') as $appointment) {
-            $history .= '<tr>';
-            $history .= '<td>'
-                . '<div>' . $appointment->getStartsDayAndTime($client->getTimezone()) . '</div>'
-                . '<div>' . static::renderCancelRescheduleLink($appointment) . '</div>'
-                . '</td>';
-            $history .= '<td>' . $appointment->getServiceName() . '</td>';
-            $history .= '<td>' . $appointment->getDuration() . '</td>';
-            $history .= '<td>' . $appointment->getStaffName() . '</td>';
-            $history .= '</tr>';
+        $history = Get::style('table_history') . '<div id="wappointment-history"><table>';
+        $history .= $this->renderHeader();
+        foreach ($this->appointments as $appointment) {
+            $history .= $this->renderRow($appointment);
         }
         return $history . '</table></div>';
     }
 
-    public static function renderCancelRescheduleLink($appointment)
+    public function renderHeader()
+    {
+        return '<tr>'
+            . '<th>' . $this->dateLabel() . '</th>'
+            . '<th>' . $this->serviceLabel() . '</th>'
+            . '<th>' . $this->durationLabel() . '</th>'
+            . '<th>' . $this->staffLabel() . '</th>'
+            . '</tr>';
+    }
+
+    public function renderRow($appointment)
+    {
+        $row = '<tr>';
+        $row .= '<td>'
+            . '<div>' . $appointment->getStartsDayAndTime($this->timezone) . '</div>'
+            . '<div>' . $this->renderCancelRescheduleLink($appointment) . '</div>'
+            . '</td>';
+        $row .= '<td>' . $appointment->getServiceName() . '</td>';
+        $row .= '<td>' . $appointment->getDuration() . '</td>';
+        $row .= '<td>' . $appointment->getStaffName() . '</td>';
+        $row .= '</tr>';
+        return $row;
+    }
+
+    public function renderCancelRescheduleLink($appointment)
     {
         $links = '<div class="wlinksWaphistory" >';
         $videoLocation = $appointment->getLocationVideo();
-        $widget = new WidgetSettings();
+        $widget = new WidgetSettings;
         if ($videoLocation && $appointment->canShowLink()) {
             $links .= '<span><a href="' .  $appointment->getLinkViewEvent() . '">' . $widget->getSetting('view.join') . '</a></span>';
         }
@@ -80,35 +109,5 @@ class AppointmentHistory
             $links .= '<span><a href="' .  $appointment->getLinkRescheduleEvent() . '">' . $widget->getSetting('reschedule.button') . '</a></span>';
         }
         return $links . '</div>';
-    }
-
-    public static function getStyle()
-    {
-        return '<style>
-        table {
-          font-family: arial, sans-serif;
-          border-collapse: collapse;
-          width: 100%;
-        }
-        
-        td, th {
-          border: 1px solid #dddddd;
-          text-align: left;
-          padding: 8px;
-        }
-        
-        tr:nth-child(even) {
-          background-color: #dddddd;
-        }
-        .wlinksWaphistory span:before{
-            content: " - ";
-        }
-
-        .wlinksWaphistory span:first-child:before{
-            content: "";
-        }
-
-        
-        </style>';
     }
 }

@@ -90,6 +90,11 @@ class Appointment extends TicketAbstract
                 '') . ' - ' . $this->getClientMethodOrEmpty('getNameForDotcom');
     }
 
+    public function getIdentifier()
+    {
+        return preg_replace('/[^\da-z]/i', '', md5(get_site_url()) . '-' . $this->start_at->timestamp . strtolower($this->getStaffName() . '-' . $this->getTitle()));
+    }
+
     public function tryDestroy($force = false)
     {
         if ($force || !$this->isLocked()) {

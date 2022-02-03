@@ -2,6 +2,7 @@
 
 namespace Wappointment\Services\Wappointment;
 
+use Wappointment\Remote\Request as RequestRemote;
 use Wappointment\WP\Helpers as WPHelpers;
 
 abstract class API
@@ -12,7 +13,7 @@ abstract class API
 
     public function __construct()
     {
-        $this->client = new \GuzzleHttp\Client();
+        $this->client = new RequestRemote;
         $this->site_key = WPHelpers::getOption('site_key');
     }
 
@@ -37,6 +38,8 @@ abstract class API
 
     protected function processResponse($response)
     {
+
+        //WPREMOTE
         if ($response->getStatusCode() < 200  || $response->getStatusCode() > 204) {
             throw new \WappointmentException('Error requesting Wappointment.com');
         }
@@ -44,11 +47,12 @@ abstract class API
             if (method_exists($this, 'handle204Errors')) {
                 return $this->handle204Errors($response);
             }
+
             throw new \WappointmentException(
-                !empty($response->getHeader('reason-reject')[0]) ? $response->getHeader('reason-reject')[0] : 'Cannot connect to Wappointment.com'
+                !empty($response->getHeaderLine('reason-reject')) ? $response->getHeaderLine('reason-reject') : 'Cannot connect to Wappointment.com'
             );
         }
-        return json_decode($response->getBody()->getContents());
+        return json_decode($response->getContent());
     }
 
     protected function getSiteKey()

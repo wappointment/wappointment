@@ -9,12 +9,18 @@ class Shortcodes
     {
         add_shortcode('wap_widget', ['\Wappointment\WP\Shortcodes', 'wapWidgetHandler']);
         add_shortcode('wap_history', ['\Wappointment\WP\Shortcodes', 'wapAppointmentHistory']);
+        add_shortcode('wap_staff_history', ['\Wappointment\WP\Shortcodes', 'wapAppointmentStaffHistory']);
         add_shortcode('wappointment_page', ['\Wappointment\WP\CustomPage', 'getPageContent']);
     }
 
     public static function wapAppointmentHistory($atts)
     {
-        return AppointmentHistory::render($atts);
+        return (new AppointmentHistory($atts))->render();
+    }
+
+    public static function wapAppointmentStaffHistory($atts)
+    {
+        return (new StaffHistory($atts))->render();
     }
 
     public static function wapWidgetHandler($atts)

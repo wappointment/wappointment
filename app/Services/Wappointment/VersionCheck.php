@@ -73,7 +73,7 @@ class VersionCheck extends API
             return $versions_checked[$plugin_slug];
         }
 
-        $response = $this->client->request('GET', $this->call('/api/addon/' . $plugin_slug . '/check'));
+        $response = $this->client->get($this->call('/api/addon/' . $plugin_slug . '/check'));
 
         $data = $this->processResponse($response);
 

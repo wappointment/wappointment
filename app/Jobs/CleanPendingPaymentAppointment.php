@@ -34,16 +34,15 @@ class CleanPendingPaymentAppointment implements JobInterface
 
     public static function cancelReservations($orderData, $appointment = null)
     {
-        if (is_null($appointment)) {
-            $look_for_appointment = true;
-        }
+        $look_for_appointment = is_null($appointment);
 
         foreach ($orderData['reservations'] as $reservation) {
             if (!empty($reservation['appointment_id'])) {
-                if ($look_for_appointment && (is_null($appointment) || $appointment->id !== (int)$reservation['appointment_id'])) {
+                if ($look_for_appointment || $appointment->id !== (int)$reservation['appointment_id']) {
                     $appointment = Appointment::find((int)$reservation['appointment_id']);
                 }
                 if ((int)$reservation['appointment_id'] === (int)$appointment->id) {
+
                     $ticket = apply_filters('wappointment_appointment_get_ticket', $appointment, $orderData['client_id']);
                     if (!is_null($ticket) && $ticket->is_participant) {
                         do_action('wappointment_cancel_ticket', $ticket, !empty($reservation['slots']) ? $reservation['slots'] : false);
@@ -52,6 +51,11 @@ class CleanPendingPaymentAppointment implements JobInterface
                     }
                 }
             }
+        }
+        //woo state that we already cancelled
+        do_action('wappointment_woo_cancelled_order', $orderData);
+        if (!is_null($orderData['orderObj'])) {
+            $orderData['orderObj']->setAutoCancelled();
         }
     }
 
@@ -69,11 +73,11 @@ class CleanPendingPaymentAppointment implements JobInterface
         // 3 - delete the connected appointments
         if (!empty($orders)) {
             foreach ($orders as $order) {
-                $ordersData[] = ['client_id' => $order->client_id, 'reservations' => $order->options['reservations']];
+                $ordersData[] = ['client_id' => $order->client_id, 'reservations' => $order->options['reservations'], 'orderObj' => $order];
                 foreach ($order->prices as $charge) {
                     $appointments[] = $charge->appointment;
                 }
-                $order->setAutoCancelled();
+                //
             }
         }
 

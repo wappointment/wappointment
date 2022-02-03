@@ -1,91 +1,7 @@
 
 <script>
 export default {
-    computed: {
-      shownAppointmentForm(){
-        return this.selectedChoice === 3
-      },
-      shownBusyConfirm(){
-        return this.selectedChoice === 2
-      },
-      shownFreeConfirm(){
-        return this.selectedChoice === 1
-      },
-      selectionSingleDay(){
-        return (this.startTime.day() === this.endTime.day() && 
-          this.startTime.month() === this.endTime.month() && 
-          this.startTime.year() === this.endTime.year())
-      },
-      isAvailable(){
-        if(this.getThisWeekIntervals!==0) {
-          for (let index = 0; index < this.getThisWeekIntervals.intervals.length; index++) {
-            const element = this.getThisWeekIntervals.intervals[index]
-            if(this.selectIsWithin(element)){
-              return true
-            }
-          }
-        }
-        return false
-      },
-      
-
-      isBusy(){
-        if(this.getThisWeekIntervals!==0) {
-            for (let index = 0; index < this.getThisWeekIntervals.intervals.length; index++) {
-              const element = this.getThisWeekIntervals.intervals[index]
-              if(
-                this.selectWraps(element) ||
-                this.selectIntersectsLeft(element) ||
-                this.selectIntersectsRight(element) ||
-                this.selectIsWithin(element)
-              ){
-                return false
-              }
-
-            }
-        }
-        
-        return true
-      },
-    },
     methods:{
-      selectIsWithin(element){
-      let selStart = this.momenttz.tz(this.startTime.format(), this.timezone)
-      let selEnd = this.momenttz.tz(this.endTime.format(), this.timezone)
-      return selStart.unix() >= element.start 
-      && selEnd.unix() <= element.end
-    },
-    selectWraps(element){
-      let selStart = this.momenttz.tz(this.startTime.format(), this.timezone)
-      let selEnd = this.momenttz.tz(this.endTime.format(), this.timezone)
-      return selStart.unix() <= element.start 
-      && selEnd.unix() >= element.end
-    },
-    selectIntersectsLeft(element){
-      return this.startTime.unix() < element.start 
-      && this.endTime.unix() > element.start 
-      && this.endTime.unix() <= element.end
-    },
-    selectIntersectsRight(element){
-      return this.startTime.unix() >= element.start 
-      && this.startTime.unix() < element.end 
-      && this.endTime.unix() > element.end
-    },
-    confirmFree(){
-      if(!this.selectionSingleDay || this.isAvailable) return
-      if(this.selectionSingleDay){
-        this.selectedChoice = 1
-      }
-    },
-    confirmBusy(){
-      if(this.isBusy) return
-      this.selectedChoice = 2
-    },
-    confirmNewBooking(){
-      if(this.selectionSingleDay){
-        this.selectedChoice = 3
-      }
-    },
      mouseEnter(event){
         //this.viewAppointment(event)
         return false
@@ -118,12 +34,12 @@ export default {
       },
 
       findEventById(eventId, type = false){
-        for (let index = 0; index < this.events.length; index++) {
-          if(type === false && this.events[index]['type']=='appointment') {
+        for (const element of this.events) {
+          if(type === false && element['type']=='appointment') {
             continue //we ignore the appointment events
           }
-          if(this.events[index]['dbid']!== undefined && eventId == this.events[index]['dbid']) {
-            return this.events[index]
+          if(element['dbid']!== undefined && eventId == element['dbid']) {
+            return element
           }
         }
       },
@@ -221,13 +137,11 @@ export default {
       },
 
        getEventById(eventId){
-        for (let i = 0; i < this.events.length; i++) {
-          const element = this.events[i]
-
-          if(element.id !== undefined && element.id == eventId) {
+         for (const element of this.events) {
+            if(element.id !== undefined && element.id == eventId) {
             return element
           }
-        }
+         }
       },
 
 

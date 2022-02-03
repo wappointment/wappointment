@@ -3,7 +3,7 @@
         <div v-if="isSaveEventPage">
             <p>{{options.confirmation.savetocal}}</p>
             <SaveButtons :selectedSlot="selectedSlot.start" :service="dataLoaded.service" :appointment="appointment"
-            :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected" :options="options"/>
+            :staff="staff" :currentTz="currentTz" :physicalSelected="physicalSelected" :options="options" :ticket="dataLoaded.ticket"/>
         </div>
         <div v-else>
             <RescheduleForm v-if="showReschedule" 

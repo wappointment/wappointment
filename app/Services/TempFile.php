@@ -2,36 +2,15 @@
 
 namespace Wappointment\Services;
 
-class TempFile
+class TempFile extends AbstractFile
 {
-    protected $file = '';
-    protected $name = '';
-    protected $handler;
-
-    public function __construct($file_name = '')
+    public function initialize()
     {
-        $this->name = empty($file_name) ? uniqid('temp') . '.txt' : $file_name;
-        $this->file = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $this->name;
         $this->setHandler();
     }
 
-    public function getPath()
+    protected function setName($name)
     {
-        return $this->file;
-    }
-
-    public function write($content)
-    {
-        fwrite($this->handler, $content);
-    }
-
-    public function setHandler()
-    {
-        $this->handler = fopen($this->file, 'w+');
-    }
-
-    public function release()
-    {
-        unlink($this->file);
+        return empty($name) ? uniqid('temp') . '.txt' : $name;
     }
 }

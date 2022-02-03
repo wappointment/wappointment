@@ -5,7 +5,7 @@
       <div class="reduced">
         <div class="col-12">
           <div>
-              <h1>{{ get_i18n( 'wizard_2_title', 'wizard') }}</h1>
+              <h1>{{ get_i18n( 'wizard_3_title', 'wizard') }}</h1>
               <div class="mb-2">{{ get_i18n( 'wizard_3_subtitle', 'wizard') }}</div>
           </div>
           <ServicePage v-if="viewData!==null" ref="servicepage" :buttons="false" :minimal="true" 

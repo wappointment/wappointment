@@ -138,6 +138,7 @@ class Settings
             'invoice_seller' => '',
             'invoice_num' => __('Order nº', 'wappointment'),
             'invoice_client' => ['name'],
+            'wp_remote' => false,
 
         ];
     }

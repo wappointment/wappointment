@@ -1,4 +1,5 @@
 __webpack_public_path__ = apiWappointment.resourcesUrl;
+
 import Vue from './appVue'
 import ClickCopy from './Fields/ClickCopy'
 import InputPh from './Fields/InputLabelMaterial'
@@ -301,9 +302,6 @@ let WappoBackroutes = [
       el: '#wappointment_app',
       created: function () {
         routerSetupRedirect(router)
-        // if(routerSetupRedirect(router) === false){
-        //   routerQueryRedirect(router)
-        // }
       },
       components: { Backend },
       render: h => h(Backend)

@@ -11,8 +11,7 @@
                 <div class="tt-below":data-tt="rolledOverName">
                   <div class="d-flex staff-bar" v-if="viewData.staff !== undefined && viewData.legacy !== true" >
                     <div v-for="staff in viewData.staff" class="cal-staff-img" 
-                    :class="{activeStaff:activeStaff.id==staff.id}" @click="changeActiveStaff(staff)" 
-                    >
+                    :class="{activeStaff:activeStaff.id==staff.id}" @click="changeActiveStaff(staff)">
                       <img :src="staff.avatar" @mouseover="rolledOverName=staff.name" @mouseout="rolledOverName=''" class="wstaff-img" :title="staff.name" :alt="staff.name" />
                     </div>
                   </div>
@@ -43,59 +42,14 @@
               </div>
             </div>
 
-            <ControlBar v-if="viewData!==null" :progressWizard="viewData.wizard_step"></ControlBar>
+            <ControlBar v-if="viewData!==null" :progressWizard="viewData.wizard_step" />
 
             <div v-if="fcIsReady">
-                <WapModal v-if="bookForAclient" :show="bookForAclient" @hide="hideModal" noscroll>
-                  <h4 slot="title" class="modal-title">{{ get_i18n('calendar_popup', 'calendar') }}</h4>
-                  <h3 class="mb-4" v-if="selectionSingleDay"> {{ startDayDisplay }} - 
-                    <span class="text-muted">{{ sprintf_i18n('calendar_popup_from_until', 'calendar', [startTimeDisplay,endTimeDisplay]) }}</span>
-                    <span class="small text-muted" v-if="viewData.buffer_time > 0">{{ sprintf_i18n('calendar_popup_includes', 'calendar', viewData.buffer_time) }}</span>
-                  </h3>
-                  <h3 class="mb-4" v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h3>
-                  <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!selectedChoice">
-                    
-                    <div class="btn btn-secondary mr-md-2  align-items-center" @click="confirmNewBooking" :class="{'fdisabled' :!selectionSingleDay}">
-                      <div class="dashicons dashicons-admin-users"></div>
-                      <div class="text-center">
-                        <p class="h6 m-0">{{ get_i18n('calendar_popup_1', 'calendar') }}</p>
-                        <p class="small m-0">{{ get_i18n('calendar_popup_1_sub', 'calendar') }}</p>
-                      </div>
-                    </div>
-
-                    <div class="btn btn-secondary  mr-md-2 align-items-center" @click="confirmFree" :class="{'fdisabled' :(!selectionSingleDay || isAvailable)}">
-                      <div class="dashicons dashicons-unlock txt blue"></div>
-                      <div class="text-center">
-                        <p class="h6 m-0">{{ get_i18n('calendar_popup_2', 'calendar') }}</p>
-                        <p class="small m-0">{{ get_i18n('calendar_popup_2_sub', 'calendar') }}</p>
-                      </div>
-                    </div>
-
-                    <div class="btn btn-secondary  align-items-center" @click="confirmBusy" :class="{'fdisabled' : isBusy}">
-                      <div class="dashicons dashicons-lock txt red"></div>
-                      <div class="text-center">
-                        <p class="h6 m-0">{{ get_i18n('calendar_popup_3', 'calendar') }}</p>
-                        <p class="small m-0">{{ get_i18n('calendar_popup_3_sub', 'calendar') }}</p>
-                      </div>
-                    </div>
-
-                  </div>
-                  <div v-else>
-                    <BehalfBooking v-if="shownAppointmentForm" 
-                    :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :activeStaff="activeStaff"
-                    :viewData="viewData" :timezone="displayTimezone" 
-                    @cancelled="hideModal" @confirmed="confirmedStatus" @updateEndTime="updateEndTime"/>
-
-                    <StatusBusyConfirm v-if="shownBusyConfirm" 
-                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :activeStaff="activeStaff" :viewData="viewData"  
-                    @confirmed="confirmedStatus" @cancelled="hideModal"/>
-
-                    <StatusFreeConfirm v-if="shownFreeConfirm" 
-                    :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :activeStaff="activeStaff" :viewData="viewData"
-                    @confirmed="confirmedStatus" @cancelled="hideModal"/>
-                  </div>
-
-              </WapModal>
+                
+              <PopupActions v-if="popupActionVisible" @refreshEvents="refreshEvents" @hide="hideModal" 
+              :getThisWeekIntervals="getThisWeekIntervals" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
+              :momenttz="momenttz" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"/>
+              
               <WapModal v-if="showRegularAv" :show="showRegularAv" @hide="hideRegavModal" large>
                 <h4 slot="title" class="modal-title">Modify your Weekly Availability</h4>
 
@@ -110,42 +64,7 @@
             </div>
       </div>
     </div>
-    <v-style v-if="viewData!== null">
-            .fc-event-container .fc-event, 
-            .fc-container .fc-event {
-                border-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, 1) }};
-                background-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, 1) }};
-            }
-            .fc-event-container .fc-event.appointment-pending, 
-            .fc-container .fc-event.appointment-pending {
-                background-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, .7) }};
-                background-image: linear-gradient(45deg, transparent 25%, #92aaca 25%, #92aaca 50%, transparent 50%, transparent 75%, #92aaca 75%, #92aaca 100%);
-                background-size: 30px 30px;
-            }
-
-            .fc-event-container .fc-event.appointment-owes, 
-            .fc-container .fc-event.appointment-owes {
-                border: 2px dashed #d7b637 !important;
-            }
-
-            .fc-event.past-event {
-                background-color: {{ hx_rgb(viewData.preferences.cal_appoint_col, 1) }} !important;
-            }
-
-            .fc-bgevent.opening{
-                opacity: 1;
-                border: 2px dashed {{ hx_rgb(viewData.preferences.cal_avail_col, 1) }};
-                background-color:{{ hx_rgb(viewData.preferences.cal_avail_col, 1) }};
-                z-index: 1;
-            }
-                .fc-bgevent.opening.extra {
-                background-color: {{ hx_rgb(viewData.preferences.cal_avail_col, .8) }};
-                border: 2px dashed {{ hx_rgb(viewData.preferences.cal_avail_col, .8) }};
-                opacity: 1;
-                z-index: 2;
-            }
-        
-        </v-style>
+    <MainStyle v-if="fcIsReady" :viewData="viewData"/>
   </div>
 </template>
 <script>
@@ -154,13 +73,10 @@ import abstractView from '../Views/Abstract'
 import TimeZones from '../Components/TimeZones'
 import ControlBar from './ControlBar'
 import FullCalendarWrapper from './FullCalendarWrapper'
-import BehalfBooking from './BehalfBooking'
-import StatusBusyConfirm from './StatusBusyConfirm'
-import StatusFreeConfirm from './StatusFreeConfirm'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import momenttz from '../appMoment'
-
 import WelcomeModal from './WelcomeModal'
+import PopupActions from './PopupActions'
 import AppointmentRender from './AppointmentRender'
 import FreeSlotsSelector from './FreeSlotsSelector'
 import CalendarSettings from './CalendarSettings'
@@ -174,6 +90,8 @@ import StatusService from '../Services/V1/Status'
 import Intervals from '../Standalone/intervals'
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
 import Colors from '../Modules/Colors'
+const MainStyle = () => import(/* webpackChunkName: "MainStyle" */ './MainStyle')
+
 let mixins_object = window.wappointmentExtends.filter('BackendCalendarMixins', {AppointmentRender, MixinRender, MixinBeautify, MixinSelection})
 let mixins_array = [Colors]
 for (const key in mixins_object) {
@@ -181,20 +99,6 @@ for (const key in mixins_object) {
     mixins_array.push(mixins_object[key])
   }
 }
-
-let calendar_components = window.wappointmentExtends.filter('BackendCalendarComponents', {
-      SubscribeNewsletter,
-      TimeZones,
-      ControlBar,
-      WeeklyAvailability,
-      FullCalendarWrapper,
-      BehalfBooking,
-      StatusFreeConfirm,
-      StatusBusyConfirm,
-      FreeSlotsSelector,
-      WelcomeModal,
-      CalendarSettings
-  })
 
   /**
  * TODO Review moment usage
@@ -204,8 +108,18 @@ export default {
   extends: abstractView,
   mixins: mixins_array,
   name: 'calendar',
-  components: calendar_components, 
-
+  components: {
+      SubscribeNewsletter,
+      TimeZones,
+      ControlBar,
+      WeeklyAvailability,
+      FullCalendarWrapper,
+      FreeSlotsSelector,
+      WelcomeModal,
+      CalendarSettings,
+      PopupActions,
+      MainStyle
+  }, 
   data: () => ({
     momenttz: momenttz,
     selectedDuration: false,
@@ -220,8 +134,6 @@ export default {
     clientSelected: false,
     viewName: 'calendar',
     firstDay: undefined,
-    bookForAclient: false,
-    selectedChoice: false,
     cancelbgOver: false,
     name: 'calendar',
     namekey: 'calendar',
@@ -257,7 +169,8 @@ export default {
     showCalSettings: false,
     lockCalSettings: false,
     activeStaff: null,
-    rolledOverName: ''
+    rolledOverName: '',
+    popupActionVisible:false,
   }),
 
   created(){
@@ -342,23 +255,6 @@ export default {
     displayTimezone() {
       return (this.selectedTimezone !== undefined) ? this.selectedTimezone : this.timezone
     },
-    shortStDayDisplay(){
-      return this.startTime.format(this.shortDayFormat+' '+this.viewData.time_format)
-    },
-    shortEdDayDisplay(){
-      return this.endTime.format(this.shortDayFormat+' '+this.viewData.time_format)
-    },
-    startDayDisplay() {
-      return this.startTime.format(this.viewData.date_format)
-    },
-    startTimeDisplay(){
-      return this.formatTime(this.startTime)
-    },
-    endTimeDisplay(){
-      return this.formatTime(this.endTime)
-    },
-    
-    
  },
   methods: {
     async initValueRequest() {
@@ -437,11 +333,6 @@ export default {
       this.refreshEvents()
     },
     
-    
-    hideModal(){
-        this.bookForAclient = false
-        this.selectedChoice = false
-    },
     hideRegavModal(){
       this.showRegularAv = false
       this.refreshEvents()
@@ -465,9 +356,6 @@ export default {
         return this.getDate().tz(this.selectedTimezone).day(7).hours(this.maxHour)
       }
       return undefined
-    },
-    updateEndTime(newEndTime){
-      this.endTime = newEndTime
     },
       updateTimezone(selectedTimezone,initSave = false){
         this.selectedTimezone = selectedTimezone
@@ -573,9 +461,9 @@ export default {
           if (this.openedDays.hasOwnProperty(key)) {
             const daysSlots = this.openedDays[key]
             if(Array.isArray(daysSlots) && daysSlots.length > 0){
-              for (let i = 0; i < daysSlots.length; i++) {
-                min = daysSlots[i][0] < min || min === false ?daysSlots[i][0]:min
-                max = daysSlots[i][1] > max || max === false ?daysSlots[i][1]:max
+              for (const iterator of daysSlots) {
+                min = iterator[0] < min || min === false ? iterator[0]:min
+                max = iterator[1] > max || max === false ? iterator[1]:max
               }
             }
             
@@ -688,32 +576,36 @@ export default {
         return myMoment.format(format)
       },
       
+      hideModal(){
+        this.popupActionVisible = false
+      },
       openCreateModal() {
         this.disableBgEvent = false
-        this.bookForAclient = true
+        this.popupActionVisible = true
       },
 
       setMinAndMax(){
             
             for (var dayname in this.openedDays) {
                 let timeBlocks = this.openedDays[dayname]
-
-                for (let index = 0; index < timeBlocks.length; index++) {
-                    let timeblock = timeBlocks[index]
-                    if(this.minHour === false){
-                       this.minHour = timeblock[0]
-                       this.maxHour = timeblock[1]
-                    }
-                    if(timeblock[0] < this.minHour){
-                        if(timeblock[0]>0) this.minHour = timeblock[0] - 1
-                        else this.minHour = 0
-                    } 
-                    if(timeblock[1] > this.maxHour){
-                        if(timeblock[1]<24) this.maxHour = timeblock[1] + 1
-                        else this.maxHour = 24
-                    }
-  
+                if(Array.isArray(timeBlocks)){
+                    for (const timeblock of timeBlocks) {
+                  
+                      if(this.minHour === false){
+                        this.minHour = timeblock[0]
+                        this.maxHour = timeblock[1]
+                      }
+                      if(timeblock[0] < this.minHour){
+                          if(timeblock[0]>0) this.minHour = timeblock[0] - 1
+                          else this.minHour = 0
+                      } 
+                      if(timeblock[1] > this.maxHour){
+                          if(timeblock[1]<24) this.maxHour = timeblock[1] + 1
+                          else this.maxHour = 24
+                      }
+                  }
                 }
+                
             }
             if( this.minHour > 0 ) this.minHour --
             if( this.maxHour < 24 ) this.maxHour ++
@@ -838,11 +730,6 @@ export default {
         //this.resetFirstDay()
         this.refreshEvents()
         this.writeHistory(true)
-        //  this.$refs.calendar.fireMethod('changeView', 'timeGridWeek')
-        //  this.$refs.calendar.fireMethod('today')
-        //  this.currentView = 'timeGridWeek'
-        //  this.resetFirstDay()
-        //  this.refreshEvents()
          
       },
       monthView(){
@@ -851,10 +738,7 @@ export default {
          this.refreshEvents()
          this.resetFirstDay()
       },
-      confirmedStatus(){
-        this.hideModal()
-        this.refreshEvents()
-      },
+      
       refreshEvents(){
         this.hasBeenSetCalProps = false
         this.$refs.calendar.fireMethod('refetchEvents')
@@ -863,602 +747,3 @@ export default {
     }
 }
 </script>
-<style>
-@import '~@fullcalendar/core/main.css';
-@import '~@fullcalendar/daygrid/main.css';
-@import '~@fullcalendar/timegrid/main.css';
-
-
-.ctrlbar{
-    transition: all .3s ease-in-out;
-    top: 30px;
-    opacity: 0;
-    position: absolute;
-    margin-top: 0 !important;
-    right: 10px;
-    margin: 0 !important;
-    padding: 4px 4px 0 4px;
-  }
-  .fill-event{
-    height: 100%;
-    width:100%;
-  }
-  .fc-event, .fc-bgevent{
-    transition: all .3s ease-in-out;
-  }
-  .cal-title {
-    border-radius: .5rem .5rem 0 0;
-      min-height: 25px;
-  }
-  .fc-bgevent .fill-event{
-    border-radius: .5rem;
-  }
-  .fc-event.past-event .fc-resizer{
-    display: none;
-  }
-  
-  .fc-event .fill-event:hover .ctrlbar, 
-  .fc-bgevent .fill-event:hover .ctrlbar,
-    .fc-event .fill-event.hover .ctrlbar, 
-  .fc-bgevent .fill-event.hover .ctrlbar{
-    top: 0 !important;
-    right:0;
-    opacity: 1 !important;
-  }
-
-  .fc-event-container .fc-event:hover {
-    position: absolute;
-    min-height: 84px;
-    z-index: 3 !important;
-  }
-.fc-header-toolbar{
-    display:none;
-  }
-  .fc-time-grid .fc-event {
-    padding: .5rem;
-  }
-
-  .fc-axis.fc-time.fc-widget-content {
-      background-color: #fff;
-      opacity: 1;
-  }
- .fc-time-grid-container, .fc-time-grid {
-    height: 100% !important;
-  }
-  
-  .fc-time-grid .fc-slats td {
-      height: 3em;
-  }
-  .fc-unthemed th, .fc-unthemed td, .fc-unthemed thead, .fc-unthemed tbody, .fc-unthemed .fc-divider, .fc-unthemed .fc-row, .fc-unthemed .fc-content, .fc-unthemed .fc-popover, .fc-unthemed .fc-list-view, .fc-unthemed .fc-list-heading td{
-    border: 0;
-  }
-  .fc-unthemed .fc-divider, .fc-unthemed .fc-popover .fc-header, .fc-unthemed .fc-list-heading td {
-      background: none;
-  }
-  
-#calendar .fc-event .btn-xs.btn-light {
-  font-size: 1rem;
-  color: #fff ;
-  background-color: transparent;
-  border: none !important;
-}
-
-#calendar .fc-event .btn-xs.btn-light:hover {
-  font-size: 1rem;
-  color: rgb(233, 233, 233) ;
-  background-color: rgba(255,255,255,.4);
-}
-#calendar .fc-time-grid .fc-event{
-  padding: .3rem;
-}
-.preview-pop .swal2-content #swal2-content{
-  width: 70%;
-  text-align: left;
-  margin:0 auto;
-}
-.fc-month-view .fc-day-grid-container.fc-scroller {
-    height: auto!important;
-    overflow-y: auto;
-}
-
-  .fc-bgevent, .fc-event{
-    box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,0);
-  }
-  .fc-event:hover{
-    box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,.3);
-  }
-  .fc-bgevent-skeleton .fc-bgevent,
-  .fc-content-col .fc-bgevent:hover, 
-  .fc-content-col .fc-bgevent.hover, 
-  .fc-content-col .fc-bgevent.opening.extra.hover{
-    box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,.08);
-     border: none;
-    opacity: 1;
-  }
-    .fc-content-col .fc-bgevent:hover, 
-  .fc-content-col .fc-bgevent.hover, 
-  .fc-content-col .fc-bgevent.opening.extra.hover{
-    opacity: .8 !important;
-  }
-
-  
-
-  .fc-bgevent.debugging{
-    opacity: 1;
-    border-radius: .5rem;
-    z-index: 1;
-    background-color: #94d576;
-  }
-
-
-
-
-  .fc-bgevent.busy, .fc-bgevent.calendar {
-      z-index: 4;
-      border-radius: .5rem;
-      background-color:rgb(242, 242, 242);
-      border: 2px dashed #dadada;
-      background-size: auto auto;
-      
-  }
-  .past-event,
-  .fc-bg .fc-day.fc-past,
-  .fc-time-grid .fc-now-indicator-line,
-  .fc-bgevent.busy, .fc-bgevent.calendar,
-  .striped-bg{
-    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='25' height='25' viewBox='0 0 20 20'%3E%3Cg %3E%3Cpolygon fill='%23ffffff' points='20 10 10 0 0 0 20 20'/%3E%3Cpolygon fill='%23ffffff' points='0 10 0 20 10 20'/%3E%3C/g%3E%3C/svg%3E") !important;
-  }
-  .fc-bgevent.calendar {
-      z-index: 3;
-  }
-
-  .skel-past .fc-bgevent.calendar {
-      display:none;
-  }
-  
-
-  .fc-bgevent {
-      opacity: 1;
-  }
-
-  .fc-day-header span, .fc-day-header a{
-    font-weight: normal;
-  }
-  .fc-today span, .fc-today a{
-    color: #6664cb;
-  }
-  .fc-past span,  .fc-past a{
-    color:#ccc !important;
-  }
-
-  .fc-bg .fc-day, .fc-unthemed td.fc-day.fc-today {
-    background-color: #fff;
-    border: 1px solid #eaeaea;
-  }
-  .fc-bg .fc-day.fc-today.fc-past{
-    background-color: #f9f9f9;
-
-  }
-
-  .fc-bg .fc-day.fc-past{
-    border: 2px solid #f3f3f3;
-      z-index: 3;
-      border-radius: .5rem;
-      background-color: #f9f9f9;
-      background-size: auto auto;
-  }
-  .fc-bgevent.past-event{
-    display: none;
-  }
-  .past-event{
-    background-size: auto auto !important;
-    opacity: .6 !important;
-    background-color: rgb(240, 239, 239) !important;
-
-  }
-  .past-event .fc-bg{
-    background-color: transparent !important;
-     
-  }
-  .fc-event.past-event {
-    border-color: transparent !important;
-  }
-  
-  .past-event:hover{
-    opacity: 1 !important;
-  }
-
-  .fc-time-grid .fc-bg table, .fc-time-grid .fc-content-skeleton table {
-    border-collapse: separate;
-    border-spacing: .3rem 0;
-  }
-
-  .fc-axis.fc-time.fc-widget-content {
-      font-size: .8rem;
-  }
-
-  .fc-time-grid-event .fc-content {
-     color:#fff;
-  }
-  .fc-allow-mouse-resize .fc-resizer.fc-end-resizer {
-      width: 100%;
-      height: 20px;
-      left: 0;
-      margin-left: 0;
-      border-radius: 0 0 8px 8px;
-      color: #fff;
-      background-color: rgba(0,0,0,.1);
-      border: none;
-      text-align: center;
-      z-index:10;
-  }
-
-  .fc-time-grid-event.fc-allow-mouse-resize .fc-resizer::before {
-      content: "\f346";
-      font-size: 20px;
-      line-height: 1;
-      font-family: dashicons;
-      font-weight: 400;
-      font-style: normal;
-      text-align: center;
-  }
-  .fc-time-grid-event.fc-allow-mouse-resize .fc-resizer::after {
-      content: "";
-      display: none;
-  }
-
-  .fc-highlight-container .fc-highlight {
-    background-color: transparent;
-    border-color: transparent;
-  }
-
-.fc-event-container.fc-mirror-container .fc-event{
-    background-color: rgba(172, 137, 196, 0.3) !important;
-    border-color: rgba(214, 179, 238, 0.3) !important;
-    font-size: 1.4rem;
-    text-align: center;
-}
-
-.fc-event-container.fc-mirror-container .fc-event{
-    background-color: rgba(172, 137, 196, 0.3);
-    border-color: rgba(214, 179, 238, 0.3);
-    font-size: 1.4rem;
-    text-align: center;
-}
-
-.fc-event-container.fc-mirror-container .fc-event .fc-time{
-    color:#776e6e;
-}
-
-  .fc-event.past-event {
-    cursor:default;
-    background-image: none !important;
-  }
- 
-  .fc-bg .fc-day, .fc-unthemed td.fc-day.fc-today, .fc-bgevent.opening, .fc-time-grid .fc-event, .fc-event{
-    border-radius: 1rem;
-  }
-
-  .fc-not-allowed .fc-event .fc-bg{
-    background-color:#222 ;
-    border:none;
-  }
-  .fc-not-allowed .fc-event{
-    border:none;
-  }
-  .fc-not-allowed .fc-event .dashicons-trash::before {
-    content: "\f153";
-  }
-
-
-  .swal2-popup .swal2-title{
-    padding: 0 1rem;
-  }
-
-.fc-slats table tbody tr .fc-axis.fc-time.fc-widget-content span {
-    position: relative;
-}
-.fc-slats table tbody tr .fc-axis.fc-time.fc-widget-content span::after {
-    content: " ";
-    border-top: 1px solid #a4a4a4;
-    width: .2rem;
-    display: block;
-    position: absolute;
-    top: -16px;
-    right: -14px;
-}
-
-.fc-slats table tbody tr:first-of-type td span::after{
-  display: none !important;
-}
-
-.wrap {
-    display: flex;
-    width: 100%;
-}
-.fc-day-header{
-    text-transform: capitalize;
-}
-
-.fc-content-skeleton .fc-now-indicator-arrow{
-    border-color: #6664cb;
-}
-
-.fc-content-skeleton table .fc-now-indicator-arrow{
-    border: none;
-    border-top-color: #6664cb;
-    border-top-style: dashed;
-    border-top-width: 2px;
-    z-index: 9;
-}
-
-.fc-time-grid .fc-now-indicator-line{
-  border: 2px solid #f3f3f3;
-  border-bottom: 2px dashed #6664cb;
-  z-index: 3;
-  border-radius: .5rem;
-  background-color: #f9f9f9;
-  background-size: auto auto;
-}
-
-.crib{
-  position: absolute;
-  display: inline-block;
-  text-align: center;
-  top:30px;
-  left: 10px;
-  font-size: .7rem;
-  color: #f0f0f0;
-  border-top-left-radius: 1rem;
-  border-bottom-right-radius: 1rem;
-  padding: 0 14px;
-  transition: all .3s ease-in-out;
-  opacity:0;
-  height: 14px;
-  max-width: 50%;
-  padding: .3rem .8rem;
-  box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,.3);
-}
-
-.fc-event .fill-event:hover .crib, 
-.fc-bgevent .fill-event:hover .crib,
-.fc-event .fill-event.hover .crib, 
-.fc-bgevent .fill-event.hover .crib{
-  opacity: 1 !important;
-  top: 0px;
-  left: 0px;
-  overflow: hidden;
-  padding-left: .4rem;
-  padding-right: 1.2rem;
-  color: transparent;
-  width: 0;
-}
-.crib::first-letter{
-  font-size:.9rem;
-  font-weight:bold;
-  color:#fff;
-}
-
-.fc-event .fill-event:hover .crib:hover, 
-.fc-bgevent .fill-event:hover .crib:hover,
-.fc-event .fill-event.hover .crib:hover, 
-.fc-bgevent .fill-event.hover .crib:hover{
-  overflow: none !important;
-  width: 100% !important;
-  color: #fff !important;
-  height: auto !important;
-}
-
-.crib.grey{background: #999;}
-.crib.blue{background: #4481c3;}
-.crib.red{background: #d13f3f;}
-.crib.yel{background: #d1c53f;}
-.crib.orange{background: #d1683f;}
-
-.txt.grey{color: #999;}
-.txt.blue{color: #4481c3;}
-.txt.red{color: #d13f3f;}
-.txt.yel{color: #d1c53f;}
-.txt.orange{color: #d1683f;}
-
-.fc-event .fc-bg {
-    z-index: 1;
-    background: rgba(0, 0, 0, 0.01);
-    opacity: .25;
-    border-radius: 1rem;
-}
-.fc-event:hover .fc-bg {
-    z-index: 6;
-    opacity: 1;
-}
-
-  .calendar-overflow {
-    overflow: auto;
-  }
-  #calendar {
-    min-width: 794px;
-    position: relative;
-  }
-
-  .btn-default {
-      background-color: #f3f3f3;
-  }
-  .btn:hover {
-      text-decoration: none !important;
-  }
-  .appointment-title:hover {
-    text-decoration: underline;
-    cursor: pointer;
-  }
-  .alert.top-right {
-      z-index: 9002;
-  }
-  .calendar-wrap{
-    position: relative;
-    margin: 0 10px 0 0;
-    font-size: 15px;
-  }
-
-
-  h1.h5{
-    margin:0 .8rem;
-  }
-  h1.h2{
-    padding:0 .5rem;
-  }
-  
-  
-
-.btn-link {
-    color: #4481c3;
-}
-
-
-
-.flex-md-row .dashicons{
-  font-size: 2rem;
-  height: 2rem;
-  width: 2rem;
-}
- #event-undefinedundefined .fc-bg {
-  background: #d4d4d4;
-  opacity: .7;
-}
- #event-undefinedundefined  {
-  background: none;
-  border: none;
-}
- #event-undefinedundefined .fc-time  {
-  color: #000;
-  font-size: 1.1rem;
-}
-.nowtime{
-  bottom: 0;
-  color: #6664cb;
-  text-align: center;
-  position: absolute;
-  width: 100%;
-  display: none;
-}
-.nowtime.show{
-  display: block;
-}
-
-
-#calendar .btn-xs .dashicons {
-  width: 1rem;
-  height: 1rem;
-  font-size: 1rem;
-}
-
-#calendar .btn-xs.btn-light {
-  font-size: 1rem;
-  border-radius: 8rem !important;
-  padding-top: .1rem !important;
-}
-
-
-.fdisabled{
-  cursor: not-allowed !important;
-  color: #c8c8c8 !important;  
-}
-
-.fdisabled .dashicons.txt{
-  color:#c8c8c8 !important;
-}
-
-.dd-search-results{
-  position: absolute;
-  background-color: #f8f9fa;
-  padding: 5px;
-  box-shadow: 4px 7px 8px 2px rgba(0,0,0,.1);
-  z-index: 5;
-}
-
-.calendar-wrap .fc-day-header span, .calendar-wrap .fc-day-header a {
-    font-weight: normal;
-    color: #777676;
-}
-.svg-inline--fa {
-    width: 1.125em;
-}
-.buffer{
-  border: 1px dashed rgb(147, 144, 144);
-  background-color: rgb(255, 255, 255);
-  border-radius: 0 0 1rem 1rem;
-  text-align: center;
-  margin-top: .2rem;
-  position: absolute;
-  bottom: -1px;
-  width: 100%;
-  left: -1px;
-  color: #6d6d6d;
-  z-index:2;
-}
-.cal-title{
-  font-size: .8rem;
-  padding: .2rem;
-  padding-left: 2rem;
-  background-color: #d1683f;
-  color: #fff;
-}
-
-
-.calendar-wrap .card {
-  padding: .5em 1em;
-  max-width: 100%;
-  border-radius: 2rem;
-}
-
-.calendar-wrap .dashicons-testimonial{
-  font-size: 5rem;
-  width: 8rem;
-  height: 100%;
-  padding: 3rem 0;
-  border-radius: 1rem;
-  margin: 0 1rem;
-}
-
-.calendar-wrap .welcome-list li{
-  margin-bottom:0;
-}
-
-.calendar-wrap .wbtn.wbtn-secondary.wbtn-cell{
-    margin: .5rem;
-}
-
-.cal-staff-img{
-  border-radius: 50%;
-}
-
-
-.cal-staff-img .wstaff-img{
-  transition: all .3s ease-in-out;
-  background-color:#fff;
-  box-shadow: 0px 8px 10px 0 rgba(0,0,0,.02);
-  margin: 0 .4rem !important;
-}
-
-.cal-staff-img .wstaff-img{
-  filter:grayscale(.9);
-}
-
-.cal-staff-img.activeStaff .wstaff-img{
-  border: 2px solid var(--primary);
-  filter:grayscale(0);
-  transform: scale(1);
-}
-.cal-staff-img .wstaff-img:hover{
-  filter:grayscale(0);
-  border: 1px dashed var(--primary);
-  box-shadow: 0px 8px 10px 0 rgba(0,0,0,.08);
-  transform: scale(1.05);
-}
-
-.staff-bar{
-  max-width:415px;
-  overflow-x: scroll;
-  overflow-y:hidden
-}
-
-</style>

@@ -37,7 +37,7 @@ class IcsGenerator
     {
         $staff = $appointment->getStaff();
         $addparams = [
-            'ORGANIZER' => ['name' => $staff->getUserDisplayName(), 'email' =>  $staff->emailAddress()],
+            'ORGANIZER' => ['name' => $staff->name, 'email' =>  $staff->emailAddress()],
             'ATTENDEE' => ['name' => $client->name, 'email' =>  $client->email],
         ];
 
@@ -53,11 +53,10 @@ class IcsGenerator
         $this->event($appointment, $client, ['STATUS' => 'CANCELLED']);
     }
 
-    public function summary($appointments, $cancelled = false)
+    public function summary($appointments, $cancelled = false, $client = null)
     {
         foreach ($appointments as $appointment) {
-            $appointment = $this->fillClient($appointment);
-
+            $appointment = $this->fillClient($appointment, $client);
             if ($appointment instanceof Appointment && $appointment->getClientModel() instanceof Client) { //ignore mssing data
                 if ($cancelled) {
                     $this->cancelled($appointment, $appointment->getClientModel());
@@ -68,12 +67,16 @@ class IcsGenerator
         }
     }
 
-    public function fillClient($appointment)
+    public function fillClient($appointment, $client)
     {
-        if (is_array($appointment->client)) {
-            $clientObject = new Client;
-            $clientObject->fill($appointment->client);
-            $appointment->client = $clientObject;
+        if (!is_null($client)) { // valid for group events
+            $appointment->client = $client;
+        } else {
+            if (is_array($appointment->client)) {
+                $clientObject = new Client;
+                $clientObject->fill($appointment->client);
+                $appointment->client = $clientObject;
+            }
         }
         return $appointment;
     }
@@ -151,7 +154,7 @@ class IcsGenerator
     protected function getTitle(Appointment $appointment, $staff)
     {
         $title = $appointment->getServiceName() . ' ';
-        $title .= $this->admin ? $appointment->getClientModel()->name . '(' . $appointment->getClientModel()->email . ')' :  $staff->getUserDisplayName();
+        $title .= $this->admin ? $appointment->getClientModel()->name . '(' . $appointment->getClientModel()->email . ')' :  $staff->name;
 
         return esc_html($title);
     }

@@ -3,6 +3,7 @@
 namespace Wappointment\Models\Appointment;
 
 use Wappointment\Messages\EmailHelper;
+use Wappointment\Services\Jitsi;
 use Wappointment\Services\Settings;
 
 trait ManipulateLinks
@@ -51,13 +52,17 @@ trait ManipulateLinks
 
     public function getVideoProvider()
     {
-        return $this->getLocationVideo() == 'zoom' ? 'zoom' : 'google';
+        return $this->getLocationVideo() == 'googlemeet' ? 'google' : $this->getLocationVideo();
     }
 
     public function getMeetingLink()
     {
+
         $video_provider = $this->getVideoProvider();
-        $url_meeting_key = in_array($video_provider, ['zoom']) ? 'join_url' : 'google_meet_url';
+        if ($video_provider == 'jitsi') {
+            return Jitsi::generate($this);
+        }
+        $url_meeting_key = $video_provider == 'google' ? 'google_meet_url' : 'join_url';
 
         return $this->canShowLink() && !empty($video_provider) &&
             !empty($this->options['providers']) &&

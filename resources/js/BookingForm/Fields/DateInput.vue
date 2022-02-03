@@ -12,7 +12,7 @@
 import abstractInput from './abstractInput.vue'
 export default {
     extends: abstractInput,
-    compute: {
+    computed: {
         getMinDate(){
             return ''
         },

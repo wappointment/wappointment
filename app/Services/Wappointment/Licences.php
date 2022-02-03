@@ -14,9 +14,10 @@ class Licences extends API
     public function register($product_key)
     {
 
-        $response = $this->client->request('POST', $this->call('/api/licence/register'), [
-            'form_params' => $this->getParams(['Product-Key' => $product_key])
-        ]);
+        $response = $this->client
+            ->setForm($this->getParams(['Product-Key' => $product_key]))
+            ->post($this->call('/api/licence/register'));
+
         $data = $this->processResponse($response);
         $this->recordSiteKey($data);
         \Wappointment\Services\Wappointment\VersionCheck::retriggerVersionCheck();
@@ -28,9 +29,9 @@ class Licences extends API
         if (!$this->hasLicenceInstalled()) {
             return false;
         }
-        $response = $this->client->request('POST', $this->call('/api/site/check'), [
-            'form_params' => $this->getParams()
-        ]);
+        $response = $this->client
+            ->setForm($this->getParams())
+            ->post($this->call('/api/site/check'));
 
         $data = $this->processResponse($response);
 
@@ -49,7 +50,7 @@ class Licences extends API
         $site_options = json_decode(WPHelpers::getOption('site_details'));
 
         if (!empty($site_options) && count($site_options) > 0) {
-            foreach ($site_options as $key => $option) {
+            foreach ($site_options as $option) {
                 if ($option->namekey == str_replace('_', '-', $addon_name)) {
                     return true;
                 }
@@ -77,14 +78,14 @@ class Licences extends API
 
     protected function handle204Errors($response)
     {
-
-        if (!empty($response->getHeader('reason-reject')[0]) && !empty($response->getHeader('licence-clear')[0])) {
+        if (!empty($response->getHeaderLine('reason-reject')) && !empty($response->getHeaderLine('licence-clear'))) {
             $this->clear();
 
-            throw new \WappointmentException('You have no valid licence for your site' . $response->getHeader('reason-reject')[0]);
+            throw new \WappointmentException('You have no valid licence for your site' . $response->getHeaderLine('reason-reject'));
         }
+
         throw new \WappointmentException(
-            !empty($response->getHeader('reason-reject')[0]) ? $response->getHeader('reason-reject')[0] : 'Cannot connect to Wappointment.com'
+            !empty($response->getHeaderLine('reason-reject')) ? $response->getHeaderLine('reason-reject') : 'Cannot connect to Wappointment.com'
         );
     }
 }
