@@ -8,22 +8,14 @@
         </h3>
         <h3 class="mb-4" v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h3>
         <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!selectedChoice">
-            <ButtonPopup v-for="button in buttons"  @click="showRightSection(button.confirm)"
+            <ButtonPopup v-for="button in buttons"  @click="showRightSection(button)"
             :key="button.key" :disabled="button.disabled" :classIcon="button.icon" :title="button.title" :subtitle="button.subtitle" />
         </div>
         <div v-else>
-            <BehalfBooking v-if="shownAppointmentForm" 
-            :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :activeStaff="activeStaff"
-            :viewData="viewData" :timezone="displayTimezone" 
-            @cancelled="hideModal" @confirmed="confirmedStatus" @updateEndTime="updateEndTime"/>
-
-            <StatusBusyConfirm v-if="shownBusyConfirm" 
-            :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :activeStaff="activeStaff" :viewData="viewData"  
-            @confirmed="confirmedStatus" @cancelled="hideModal"/>
-
-            <StatusFreeConfirm v-if="shownFreeConfirm" 
-            :startTime="startTime" :endTime="endTime" :timezone="displayTimezone" :activeStaff="activeStaff" :viewData="viewData"
-            @confirmed="confirmedStatus" @cancelled="hideModal"/>
+            <component :is="activeComp.name"
+            v-bind="activeComp.props"
+            v-on="activeComp.listeners"
+            />
         </div>
     </WapModal>
 </template>
@@ -46,17 +38,22 @@ export default {
     components:calendar_components,
     data: () =>({
         selectedChoice: false,
+        componentsList: null,
     }),
+    created(){
+        this.setComponentList()
+    },
     computed:{
         buttons(){
-            return [
+            return window.wappointmentExtends.filter('PopupButtons', [
                 {
                     key:'book',
                     title: this.get_i18n('calendar_popup_1', 'calendar'),
                     subtitle: this.get_i18n('calendar_popup_1_sub', 'calendar'),
                     disabled: !this.selectionSingleDay,
                     icon: 'dashicons-admin-users',
-                    confirm: 'confirmNewBooking'
+                    confirm: 'confirmNewBooking', 
+                    shows: 'BehalfBooking',
                 },
                 {
                     key:'open',
@@ -64,7 +61,8 @@ export default {
                     subtitle: this.get_i18n('calendar_popup_2_sub', 'calendar'),
                     disabled: !this.selectionSingleDay || this.isAvailable,
                     icon: 'dashicons-unlock txt blue',
-                    confirm: 'confirmFree'
+                    confirm: 'confirmFree', 
+                    shows: 'StatusFreeConfirm',
                 },
                 {
                     key:'block',
@@ -72,9 +70,10 @@ export default {
                     subtitle: this.get_i18n('calendar_popup_3_sub', 'calendar'),
                     disabled: this.isBusy,
                     icon: 'dashicons-lock txt red',
-                    confirm: 'confirmBusy'
+                    confirm: 'confirmBusy', 
+                    shows: 'StatusBusyConfirm',
                 }
-            ]
+            ])
         },
         startTimeDisplay(){
             return this.formatTime(this.startTime)
@@ -91,15 +90,14 @@ export default {
         startDayDisplay() {
             return this.startTime.format(this.viewData.date_format)
         },
-        shownAppointmentForm(){
-            return this.selectedChoice === 3
+        activeComp(){
+            let name = this.activeCompName
+            return this.componentsList.find(e => e.name == name)
         },
-        shownBusyConfirm(){
-            return this.selectedChoice === 2
+        activeCompName(){
+            return this.selectedChoice
         },
-        shownFreeConfirm(){
-            return this.selectedChoice === 1
-        },
+
         selectionSingleDay(){
             return (this.startTime.day() === this.endTime.day() && 
                 this.startTime.month() === this.endTime.month() && 
@@ -135,11 +133,34 @@ export default {
         },
     },
     methods:{
+        setComponentList(){
+            let default_object = {
+                props: {
+                    startTime: this.startTime,
+                    endTime: this.endTime,
+                    realEndTime: this.realEndTime,
+                    timezone: this.displayTimezone,
+                    activeStaff: this.activeStaff,
+                    viewData: this.viewData,
+                },
+                listeners: {
+                    confirmed: this.confirmedStatus,
+                    cancelled: this.hideModal,
+                    updateEndTime: this.updateEndTime,
+                },
+            }
+            this.componentsList = window.wappointmentExtends.filter('PopupActionsComponents', [
+                Object.assign({name: 'BehalfBooking'}, default_object),
+                Object.assign({name: 'StatusFreeConfirm'}, default_object),
+                Object.assign({name: 'StatusBusyConfirm'}, default_object),
+            ])
+
+        },
         updateEndTime(newEndTime){
             this.endTime = newEndTime
         },
-        showRightSection(confirmTrigger){
-            this[confirmTrigger]()
+        showRightSection(button){
+            this[button.confirm](button)
         },
         formatTime(myMoment, format = false){
             if(format === false) format = this.viewData.time_format
@@ -167,19 +188,19 @@ export default {
             && this.startTime.unix() < element.end 
             && this.endTime.unix() > element.end
         },
-        confirmFree(){
+        confirmFree(button){
             if(!this.selectionSingleDay || this.isAvailable) return
             if(this.selectionSingleDay){
-                this.selectedChoice = 1
+                this.selectedChoice = button.shows
             }
         },
-        confirmBusy(){
+        confirmBusy(button){
             if(this.isBusy) return
-            this.selectedChoice = 2
+            this.selectedChoice = button.shows
         },
-        confirmNewBooking(){
+        confirmNewBooking(button){
             if(this.selectionSingleDay){
-                this.selectedChoice = 3
+                this.selectedChoice = button.shows
             }
         },
         hideModal(){
