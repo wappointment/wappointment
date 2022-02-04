@@ -19,7 +19,7 @@ Convert visitors into customers with a simple call to action.
 
 The perfect [Calendly alternative for WordPress](https://wappointment.com).
 
-https://www.youtube.com/watch?v=jUkiyejbuzg
+[![Watch the video](https://cdn.wappointment.com/images/play-explainer-bg.jpg)](https://www.youtube.com/watch?v=jUkiyejbuzg)
 
 Try the [demo of the booking calendar](https://demo.wappointment.com)
 
