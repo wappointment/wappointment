@@ -1,17 +1,6 @@
 # Appointment Bookings for WordPress
 ![Appointment Bookings WordPress](https://ps.w.org/wappointment/assets/banner-1544x500.gif)
 
-**Contributors:** wappointment, benheu  
-**Tags:** appointment scheduling, appointment booking, appointment booking calendar, appointment booking system, appointments booking calendar  
-**Requires at least:** 4.7  
-**Tested up to:** 5.5 
-**Requires PHP:** 7.0  
-**Stable tag:** 1.6.0 
-**License:** GPLv2 or later  
-**License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
-
-## Booking plugin for WordPress 
-
 **Appointment booking calendar** for personal coaches, teachers, therapists and service professionals of all kind.
 Get booked 24/7 with the most **intuitive booking form**.
 
