@@ -639,6 +639,7 @@ export default {
 
         this.intervalsCollection = null
         this.intervalsCollection = new Intervals(a.data.availability)
+        
         //this.option
         this.callback(this.events)
         this.canLoadEvents = true

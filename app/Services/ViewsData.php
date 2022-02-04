@@ -205,6 +205,29 @@ class ViewsData
             'services' => $services,
             'durations' => ManageService::extractDurations($services),
             'cal_duration' => (new Preferences)->get('cal_duration'),
+            'buttons' => [
+                [
+                    'key' => 'book',
+                    'title' => __('Book an appointment', 'wappointment'),
+                    'subtitle' => __('On behalf of your client', 'wappointment'),
+                    'icon' => 'dashicons-admin-users',
+                    'component' => 'BehalfBooking',
+                ],
+                [
+                    'key' => 'free',
+                    'title' => __('Open this time', 'wappointment'),
+                    'subtitle' => __('Allow new bookings', 'wappointment'),
+                    'icon' => 'dashicons-unlock txt blue',
+                    'component' => 'StatusFreeConfirm',
+                ],
+                [
+                    'key' => 'busy',
+                    'title' => __('Block this time', 'wappointment'),
+                    'subtitle' =>  __('Prevent new bookings', 'wappointment'),
+                    'icon' => 'dashicons-lock txt red',
+                    'component' => 'StatusBusyConfirm',
+                ]
+            ]
         ];
 
         if (VersionDB::canServices()) {
