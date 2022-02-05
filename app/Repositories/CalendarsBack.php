@@ -3,7 +3,6 @@
 namespace Wappointment\Repositories;
 
 use Wappointment\Managers\Central;
-use Wappointment\Services\CurrentUser;
 use Wappointment\WP\Staff;
 
 class CalendarsBack extends AbstractRepository
@@ -15,10 +14,6 @@ class CalendarsBack extends AbstractRepository
     public function query()
     {
         $calendarsQry = Central::get('CalendarModel')::orderBy('sorting')->with(['services']);
-        /*if (!CurrentUser::isAdmin()) {
-            $calendarsQry->where('id', CurrentUser::calendarId());
-        }*/
-
         $calendars = $calendarsQry->fetch();
         $staffs = [];
         foreach ($calendars->toArray() as $calendar) {
@@ -26,5 +21,16 @@ class CalendarsBack extends AbstractRepository
         }
         $this->refreshAvailability();
         return $staffs;
+    }
+
+    public static function findById($id)
+    {
+        static $repository = false;
+        if ($repository === false) {
+            $repository = new static;
+        }
+        return \WappointmentLv::collect($repository->get())->filter(function ($calendar) use ($id) {
+            return (int)$calendar['id'] === (int)$id;
+        })->toArray();
     }
 }

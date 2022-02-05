@@ -12,4 +12,6 @@ return [
     'calendar_popup_confirm_busy' => __('Confirm that you are busy'),
     'free_slots' => __('%s free slots', 'wappointment'),
     'show_free_slots' => __('Show free times', 'wappointment'),
+    'titlege' => __('Group event', 'wappointment'),
+    'subtitlege' =>  __('Event for multiple participants', 'wappointment'),
 ];

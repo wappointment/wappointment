@@ -8,6 +8,7 @@ class VersionDB
 {
     const CAN_DEL_CLIENT = '1.9.3';
     const CAN_CREATE_SERVICES = '2.1.0';
+    const CAN_RECURRENT = '2.4.6';
 
     public static function atLeast($version)
     {
@@ -32,5 +33,9 @@ class VersionDB
     public static function canDelClient()
     {
         return static::atLeast(static::CAN_DEL_CLIENT);
+    }
+    public static function canRecurrent()
+    {
+        return static::atLeast(static::CAN_RECURRENT);
     }
 }

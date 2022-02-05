@@ -10,6 +10,7 @@ use Wappointment\Services\Calendars;
 use Wappointment\Services\Availability;
 use Wappointment\Services\Flag;
 use Wappointment\Jobs\CleanPendingPaymentAppointment;
+use Wappointment\Services\Recurrent;
 
 /**
  * TODO Most of this class is static but it has a constructor, review
@@ -127,6 +128,8 @@ class Scheduler
                 }
                 (new CalendarsBack)->refresh();
             }
+
+            (new Recurrent)->generate();
             // we at least regenerate once a day to avoid empty calendar after aa while without a booking
             self::checkLicence();
         } catch (\Exception $e) {
