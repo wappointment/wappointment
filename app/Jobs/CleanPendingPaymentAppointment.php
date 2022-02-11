@@ -11,6 +11,7 @@ use Wappointment\Models\Job;
 use Wappointment\Models\Order;
 use Wappointment\Models\Appointment;
 use Wappointment\Services\Payment;
+use Wappointment\Services\Ticket;
 
 class CleanPendingPaymentAppointment implements JobInterface
 {
@@ -46,16 +47,19 @@ class CleanPendingPaymentAppointment implements JobInterface
 
                         $ticket = apply_filters('wappointment_appointment_get_ticket', $appointment, $orderData['client_id']);
                         if (!is_null($ticket) && $ticket->is_participant) {
-                            do_action('wappointment_cancel_ticket', $ticket, !empty($reservation['slots']) ? $reservation['slots'] : false);
+                            Ticket::cancelTrigger($ticket, !empty($reservation['slots']) ? $reservation['slots'] : false);
                         } else {
                             do_action('wappointment_cancel_appointment', $ticket);
                         }
                     }
                 }
             }
-            //woo state that we already cancelled
+
+            //woo marker
             do_action('wappointment_woo_cancelled_order', $orderData);
-            if (!is_null($orderData['orderObj'])) {
+
+            //standalone marker
+            if (isset($orderData['orderObj']) && !is_null($orderData['orderObj'])) {
                 $orderData['orderObj']->setAutoCancelled();
             }
         }

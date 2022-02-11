@@ -7,6 +7,7 @@ use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
 use Wappointment\Formatters\BookingResult;
 use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Payment;
+use Wappointment\Services\Ticket;
 use Wappointment\WP\Helpers;
 
 class Order extends Model
@@ -181,8 +182,7 @@ class Order extends Model
                 $appointment = $charge->appointment;
                 $charge->appointment_id = null;
                 $charge->save();
-
-                do_action('wappointment_cancel_ticket', apply_filters('wappointment_appointment_get_ticket', $appointment, $this->client_id), $charge->quantity);
+                Ticket::cancelTrigger(apply_filters('wappointment_appointment_get_ticket', $appointment, $this->client_id), $charge->quantity);
             }
         }
     }
@@ -242,11 +242,21 @@ class Order extends Model
     public function setReservation($appointment_id, $slots)
     {
         $options = $this->options;
-        $options['reservations'] = empty($options['reservations']) ? [] : $options['reservations'];
-        $options['reservations'][] = [
-            'appointment_id' => $appointment_id,
-            'slots' => $slots
-        ];
+        $reservations = empty($options['reservations']) ? [] : $options['reservations'];
+        $requiresNew = true;
+        foreach ($reservations as $keyReservation => $reservation) {
+            if ((int)$reservation['appointment_id'] === (int)$appointment_id) {
+                $reservations[$keyReservation]['slots'] = $slots;
+                $requiresNew = false;
+            }
+        }
+        if ($requiresNew) {
+            $reservations[] = [
+                'appointment_id' => $appointment_id,
+                'slots' => $slots
+            ];
+        }
+        $options['reservations'] = $reservations;
         $this->options = $options;
         $this->save();
     }

@@ -11,4 +11,9 @@ class Ticket
             AppointmentNew::silentCancel([$ticket->id]);
         }
     }
+
+    public static function cancelTrigger($ticket, $slots = false)
+    {
+        do_action('wappointment_cancel_ticket', $ticket, $slots);
+    }
 }
