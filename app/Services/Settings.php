@@ -472,8 +472,8 @@ class Settings
 
     protected static function hours_before_booking_allowedValid($value)
     {
-        if ($value < 1) {
-            throw new \WappointmentException('You need to give at least one hour before the appointment');
+        if ($value < 0) {
+            throw new \WappointmentException('This value must be greateer than 0');
         }
         return  self::hourField($value);
     }
