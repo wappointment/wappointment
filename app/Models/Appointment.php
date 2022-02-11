@@ -11,6 +11,7 @@ use Wappointment\Models\Appointment\ManipulateLocation;
 use Wappointment\Models\Appointment\ManipulateService;
 use Wappointment\Models\Appointment\ManipulateStaff;
 use Wappointment\Models\Appointment\ManipulateType;
+use Wappointment\Models\Appointment\Recurrence;
 use Wappointment\Models\CanLock;
 use Wappointment\Services\Availability;
 use Wappointment\Services\JobHelper;
@@ -124,6 +125,11 @@ class Appointment extends TicketAbstract
         return $this->status == static::STATUS_AWAITING_CONFIRMATION;
     }
 
+    public function isConfirmed()
+    {
+        return $this->status === self::STATUS_CONFIRMED;
+    }
+
     public function toArraySpecial()
     {
         $array = $this->toArray();
@@ -150,5 +156,10 @@ class Appointment extends TicketAbstract
     public function scopeRecurrentControllers($query)
     {
         return $query->where('recurrent', 1)->where('parent', 0);
+    }
+
+    public function getRecurrence()
+    {
+        return new Recurrence($this);
     }
 }

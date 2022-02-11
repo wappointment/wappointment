@@ -36,11 +36,6 @@ trait ManipulateCancelReschedule
         return ($this->canRescheduleUntilTimestamp() - time()) > 0;
     }
 
-    public function isConfirmed()
-    {
-        return $this->status === self::STATUS_CONFIRMED;
-    }
-
     public function canStillCancel()
     {
         return !$this->isConfirmed() || ($this->canCancelUntilTimestamp() - time()) > 0;
