@@ -31,6 +31,6 @@ class CalendarsBack extends AbstractRepository
         }
         return \WappointmentLv::collect($repository->get())->filter(function ($calendar) use ($id) {
             return (int)$calendar['id'] === (int)$id;
-        })->toArray();
+        })->toArray()[0];
     }
 }
