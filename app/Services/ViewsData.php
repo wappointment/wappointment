@@ -11,6 +11,7 @@ use Wappointment\Managers\Service as ManageService;
 use Wappointment\Managers\Central;
 use Wappointment\Models\Service as ModelService;
 use Wappointment\Repositories\Availability;
+use Wappointment\System\Helpers;
 
 class ViewsData
 {
@@ -266,7 +267,7 @@ class ViewsData
         }
 
         return [
-            'debug' => \WappointmentLv::isTest(),
+            'debug' => !Helpers::isProd(),
             'video_link_shows' => Settings::get('video_link_shows'),
             'buffer_time' => Settings::get('buffer_time'),
             'front_page_id' => (int) Settings::get('front_page'),
