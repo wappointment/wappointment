@@ -188,7 +188,7 @@ class EventsCalendar
             $optionValues = !is_array($optionValues) ? [$optionValues] : $optionValues;
             foreach ($optionValues as $valueKey) {
                 foreach ($valuesLabelsDefinition as $valueLabelDefined) {
-                    if ($valueLabelDefined['value'] == $valueKey) {
+                    if (isset($valueLabelDefined['value']) && $valueLabelDefined['value'] == $valueKey) {
                         $valuesForHumans[] = $valueLabelDefined['label'];
                     }
                 }
