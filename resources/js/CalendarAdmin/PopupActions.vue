@@ -74,19 +74,25 @@ export default {
             return this.hasOpenedSlots && this.selectionWithinInterval
         },
         selectionWithinInterval(){
-            for (const interval of this.getThisWeekIntervals.intervals) {
-                if(this.selectIsWithin(interval)){
-                    return true
+            if(this.hasOpenedSlots){
+                for (const interval of this.getThisWeekIntervals.intervals) {
+                    if(this.selectIsWithin(interval)){
+                        return true
+                    }
                 }
             }
+            
             return false
         },
         selectionXInterval(){
-            for (const interval of this.getThisWeekIntervals.intervals) {
-                if(this.selectionTouchesInterval(interval)){
-                    return true
+            if(this.hasOpenedSlots){
+                for (const interval of this.getThisWeekIntervals.intervals) {
+                    if(this.selectionTouchesInterval(interval)){
+                        return true
+                    }
                 }
             }
+            
             return false
         },
 

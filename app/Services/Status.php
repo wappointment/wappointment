@@ -94,8 +94,8 @@ class Status
     protected static function create($start, $end, $timezone, $type, $request = null, $staff_id = null)
     {
         $arrayCreate = [
-            'start_at' => DateTime::converTotUtc($start, $timezone),
-            'end_at' => DateTime::converTotUtc($end, $timezone),
+            'start_at' => static::tryConvertToUTCFormatted($start, $timezone),
+            'end_at' => static::tryConvertToUTCFormatted($end, $timezone),
             'type' => (int) $type,
             'staff_id' => $staff_id
         ];
@@ -108,6 +108,15 @@ class Status
         }
 
         return $resultObject;
+    }
+
+    public static function tryConvertToUTCFormatted($timevalue, $timezone)
+    {
+        if (is_numeric($timevalue)) { //unixtimestamp
+            return Carbon::createFromTimestamp($timevalue)->format(WAPPOINTMENT_DB_FORMAT . ':00');
+        } else {
+            return DateTime::converTotUtc($timevalue, $timezone);
+        }
     }
 
     public static function expand($recurringBusy, $until = false)
