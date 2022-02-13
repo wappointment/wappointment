@@ -322,6 +322,7 @@ class ViewsData
             'invoice_client' => Settings::get('invoice_client'),
             'custom_fields' => Central::get('CustomFields')::get(),
             'wp_remote' => Settings::get('wp_remote'),
+            'jitsi_url' => Settings::get('jitsi_url'),
         ];
     }
 

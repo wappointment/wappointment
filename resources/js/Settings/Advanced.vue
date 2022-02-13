@@ -260,6 +260,17 @@
               </label>
           </div>
 
+          <div class="mb-2">
+              <label class="form-check-label" for="jitsi-url" data-tt="Have your own private Jitsi Server? Set its URL here">
+                  <div class="d-flex align-items-center">
+                    Jitsi private server URL
+                    <input type="text" class="ml-2" v-model="viewData.jitsi_url" id="jitsi-url" 
+                    @keyup.enter.prevent="changedFromModel('jitsi_url')" 
+                    @focusout="changedFromModel('jitsi_url')">
+                  </div>
+              </label>
+          </div>
+
           
           <div>
             <label for="roles-allowed" class="m-0">WordPress' users listed for calendars creation</label>
@@ -534,6 +545,9 @@ export default {
     },
     changed(value, key) {
       this.settingSave(key, value)
+    },
+    changedFromModel(key) {
+      this.settingSave(key, this.viewData[key])
     },
     redirectReset(){
          this.$WapModal()
