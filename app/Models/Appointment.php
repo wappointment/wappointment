@@ -2,6 +2,7 @@
 
 namespace Wappointment\Models;
 
+use DateTime;
 use Wappointment\Models\Appointment\ManipulateCancelReschedule;
 use Wappointment\Models\Appointment\ManipulateDotcom;
 use Wappointment\Models\Appointment\ManipulateDuration;
@@ -14,6 +15,7 @@ use Wappointment\Models\Appointment\ManipulateType;
 use Wappointment\Models\Appointment\Recurrence;
 use Wappointment\Models\CanLock;
 use Wappointment\Services\Availability;
+use Wappointment\Services\DateTime as ServicesDateTime;
 use Wappointment\Services\JobHelper;
 
 class Appointment extends TicketAbstract
@@ -137,6 +139,11 @@ class Appointment extends TicketAbstract
         $array['end_at'] = $this->end_at->timestamp;
         $array['type'] = $this->getLocationSlug();
         $array['client'] = $this->getClientModel(); //important for save to calendar button
+        $array['converted'] = ServicesDateTime::i18nDateTime(
+            $this->start_at->timestamp,
+            $array['client']['options']['tz']
+        );
+
         $array['video_meeting'] = $this->videoAppointmentHasLink();
         $staff = $this->getStaff();
         $array['ics_organizer'] = 'ORGANIZER;CN=' . $staff->staff_data['name'] . ':mailto:' . $staff->emailAddress();
