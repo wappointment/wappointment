@@ -37,11 +37,11 @@ class DotCom extends API
     {
 
         $must_refresh = WPHelpers::getOption('appointments_must_refresh');
+
         // 0 - only check if site connected
         if (!empty($this->site_key) && (bool)$must_refresh === true && $must_refresh < time()) {
             // 1 - retrieve appointments data
             $appointments = $this->getAppointments();
-
             if (empty($appointments)) {
                 $this->clearMustRefresh();
                 return false;

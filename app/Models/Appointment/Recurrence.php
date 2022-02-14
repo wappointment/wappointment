@@ -12,15 +12,17 @@ class Recurrence
     public $start;
     public $end;
     public $master = null;
-    public $checkDays = false;
+    public $check_days = false;
+    public $calendar = false;
 
     public function __construct(Appointment $appointment)
     {
         $this->is_set = isset($appointment->options['recurrence']);
         $this->master = $appointment;
-        $this->setStart($appointment);
-        $this->setEnd($appointment);
-        $this->setRules($appointment);
+        $this->calendar = CalendarsBack::findById($this->master->staff_id);
+        $this->setStart($this->master);
+        $this->setEnd();
+        $this->setRules($this->master);
     }
 
     public function generateChilds()
@@ -36,10 +38,24 @@ class Recurrence
         }
     }
 
+    public function generateEditKey($start_at)
+    {
+        return md5($start_at);
+    }
+
     private function generateForDay(Carbon $start_temp)
     {
         //dayOfWeekIso
         $data_new = $this->master->toArray();
+
+        $copy = Carbon::createFromTimestamp($this->master->start_at->timestamp)->setTimezone($this->calendar['timezone']);
+        //set right starting hour and minute
+        $start_temp->hour = $copy->hour;
+        $start_temp->minute = $copy->minute;
+        $start_temp->second = 0;
+
+        //generate new key 
+        $data_new['edit_key'] = $this->generateEditKey($start_temp->timestamp . $this->master->staff_id);
 
         $data_new['start_at'] = $start_temp->timestamp;
         $data_new['end_at'] = $start_temp->timestamp + $this->master->getFullDurationInSec();
@@ -48,15 +64,20 @@ class Recurrence
             $data_new['options']['slots']['booked'] = 0;
             unset($data_new['options']['providers']);
         }
-        Appointment::create($data_new);
+
+        try {
+            Appointment::create($data_new);
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
+
         $this->recordLastGen($data_new['end_at']); //so that if we run it again we don't generate the same
 
     }
 
     private function needsGeneration(Carbon $start_temp)
     {
-
-        if ($this->checkDays && $this->isDayAllowed($this->checkDays, strtolower($start_temp->englishDayOfWeek))) {
+        if ($this->check_days && $this->isDayAllowed($this->check_days, strtolower($start_temp->englishDayOfWeek))) {
             return true;
         }
         return false;
@@ -73,35 +94,43 @@ class Recurrence
         return false;
     }
 
-    public function dayList()
+    public function dayList(Appointment $appointment)
     {
-        return [
+        $days = [
             'monday' => false,
             'tuesday' => false,
-            'wednesday' => true,
+            'wednesday' => false,
             'thursday' => false,
-            'friday' => true,
+            'friday' => false,
             'saturday' => false,
             'sunday' => false
         ];
+        foreach ($appointment->options['recurrence']['days'] as $dayname) {
+            $days[$dayname] = true;
+        }
+        return $days;
     }
 
     protected function setRules(Appointment $appointment)
     {
 
-        //$this->checkDays = $appointment->options['recurrence']['weekly'];
-        $this->checkDays = $this->dayList();
+        $this->check_days = $this->dayList($appointment);
     }
 
     private function setStart(Appointment $appointment)
     {
-        $this->start = Carbon::createFromTimestamp($this->is_set && isset($appointment->options['recurrence']['last_gen']) ? (int)$appointment->options['recurrence']['last_gen'] : time());
+
+        $this->start = Carbon::createFromTimestamp($this->getStartTS($appointment))->setTimezone($this->calendar['timezone']);
     }
 
-    private function setEnd(Appointment $appointment)
+    protected function getStartTS($appointment)
     {
-        $calendar = CalendarsBack::findById($appointment->staff_id);
-        $this->end = Carbon::now($calendar['timezone'])->addDays($calendar['avb'])->endOfDay();
+        return $this->is_set && isset($appointment->options['recurrence']['last_gen']) ? (int)$appointment->options['recurrence']['last_gen'] : $appointment->start_at->timestamp;
+    }
+
+    private function setEnd()
+    {
+        $this->end = Carbon::now($this->calendar['timezone'])->addDays($this->calendar['avb'])->endOfDay();
     }
 
     private function recordLastGen($lastGen)

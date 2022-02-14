@@ -30,7 +30,7 @@
                                 <button class="btn btn-primary btn-block btn-lg m-0" @click="confirmed">{{ labelConfirm }}</button>
                                 <div v-if="rememberIsOn" class="form-check form-check-inline small">
                                     <input class="form-check-input" type="checkbox" id="remembersetting" v-model="remember">
-                                    <label class="form-check-label" for="remembersetting">{{ get_i18n( 'remember', 'common') }}</label>
+                                    <label class="form-check-label" for="remembersetting">{{ getRememberLabel }}</label>
                                 </div>
                             </div> 
                         </div>
@@ -100,6 +100,9 @@ export default {
       
   },
   computed:{
+      getRememberLabel(){
+          return [undefined,false].indexOf(this.options.rememberLabel) === -1 ? this.options.rememberLabel:this.get_i18n( 'remember', 'common')
+      },
       isPremium(){
           return this.options!== undefined && this.options.classes !== undefined && this.options.classes.indexOf('premium') !== -1
       },
@@ -116,15 +119,15 @@ export default {
         let obj = {}
         let keys = ['marge', 'right', 'noscroll', 'large']
 
-        for (let i = 0; i < keys.length; i++) {
-            if(this[keys[i]] === true){
-                obj[keys[i]] = true
+        for (const namekey of keys) {
+            if(this[namekey] === true){
+                obj[namekey] = true
             }
         }
 
         if(this.options !== undefined && this.options.classes !== undefined && this.options.classes.length > 0){
-            for (let i = 0; i < this.options.classes.length; i++) {
-                obj[this.options.classes[i]] = true
+            for (const classname of this.options.classes) {
+                obj[classname] = true
             }
         }
 

@@ -12,6 +12,7 @@ use Wappointment\Services\Preferences;
 use Wappointment\Services\Wappointment\DotCom;
 use Wappointment\Services\CurrentUser;
 use Wappointment\Managers\Central;
+use Wappointment\Models\Appointment;
 
 class EventsController extends RestController
 {
@@ -33,13 +34,56 @@ class EventsController extends RestController
     public function delete(Request $request)
     {
         $appointment = $this->canEditAppointment($request->input('id'));
-        try {
-            if (AppointmentNew::cancel($appointment, null, true)) {
-                return ['message' => __('Appointment cancelled', 'wappointment')];
+        $failures = [];
+        if ($request->input('sibblings')) {
+            $failures = $this->deleteSiblings($appointment);
+        } else {
+            //cancel just the one here
+            $result = $this->processCancel($appointment);
+            if ($result !== true) {
+                $failures[] = $result;
             }
-        } catch (\Throwable $th) {
+        }
+
+        if (empty($failures)) {
+            return ['message' => __('Appointment cancelled', 'wappointment')];
+        } else {
             throw new \WappointmentException(__('Error deleting appointment', 'wappointment'), 1);
         }
+    }
+
+    public function deleteSiblings(Appointment $appointment)
+    {
+        //cancel all related
+        $appointments = Appointment::where('parent', $appointment->parent > 0 ? $appointment->parent : $appointment->id)
+            ->get();
+        if ($appointment->parent > 0) {
+            $parent = Appointment::find($appointment->parent);
+        } else {
+            $parent = $appointment;
+        }
+        foreach ($appointments as $childAppointment) {
+            $result = $this->processCancel($childAppointment);
+            if ($result !== true) {
+                $failures[] = $result;
+            }
+        }
+
+        $result = $this->processCancel($parent);
+        if ($result !== true) {
+            $failures[] = $result;
+        }
+        return $failures;
+    }
+
+    protected function processCancel($appointment)
+    {
+        try {
+            AppointmentNew::cancel($appointment, null, true);
+        } catch (\Throwable $th) {
+            return $appointment->id;
+        }
+        return true;
     }
 
     public function recordDotcom(Request $request)

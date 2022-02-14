@@ -21,7 +21,12 @@ export default {
       },
       cancelAppointment(event){
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
-        this.cancelRequest(eventId)
+        let appointment = this.findAppointmentById(eventId)
+        if(appointment.extendedProps.recurrent){
+          this.cancelRecurringRequest(eventId)
+        }else{
+          this.cancelRequest(eventId)
+        }
       },
 
       findAppointmentById(eventId){
@@ -104,8 +109,21 @@ export default {
           title: 'Do you really want to cancel this appointment?',
         }).then((result) => {
           if(result === true){
-            this.request(this.cancelEventRequest, eventId,undefined,false,  this.refreshEvents)
+            this.request(this.cancelEventRequest, {id: eventId},undefined,false,  this.refreshEvents)
           } 
+        })
+      },
+
+      cancelRecurringRequest(eventId){
+        this.$WapModal().confirm({
+          title: 'Do you really want to cancel this appointment?',
+          remember: true,
+          rememberLabel:'Delete related appointments too? (child or siblings from a recurrent event)'
+        }).then((result) => {
+          if(result === false){
+              return
+          }
+          this.request(this.cancelEventRequest, {id: eventId, sibblings: result.remember},undefined,false,  this.refreshEvents)
         })
       },
 
@@ -178,8 +196,8 @@ export default {
 
       },
 
-       async cancelEventRequest(eventId) {
-          return await this.serviceEvent.call('delete', {id: eventId})
+       async cancelEventRequest(params) {
+          return await this.serviceEvent.call('delete', params)
       },
       async confirmEventRequest(eventId) {
           return await this.serviceEvent.call('confirm', {id: eventId})

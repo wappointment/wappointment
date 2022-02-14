@@ -8,7 +8,7 @@ class Recurrent
 {
     public function isActive()
     {
-        return VersionDB::canRecurrent();
+        return VersionDB::canRecurrent() && Addons::isActive('wappointment_group');
     }
 
     public function generate()

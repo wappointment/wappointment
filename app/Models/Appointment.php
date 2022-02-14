@@ -140,11 +140,14 @@ class Appointment extends TicketAbstract
         $array['type'] = $this->getLocationSlug();
         $array['client'] = $this->getClientModel(); //important for save to calendar button
 
-        //important for date conversion for i18n dates
-        $array['converted'] = ServicesDateTime::i18nDateTime(
-            $this->start_at->timestamp,
-            $array['client']['options']['tz']
-        );
+        if (!empty($array['client'])) {
+            //important for date conversion for i18n dates
+            $array['converted'] = ServicesDateTime::i18nDateTime(
+                $this->start_at->timestamp,
+                $array['client']['options']['tz']
+            );
+        }
+
 
         $array['video_meeting'] = $this->videoAppointmentHasLink();
         $staff = $this->getStaff();
