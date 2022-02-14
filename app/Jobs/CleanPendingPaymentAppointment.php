@@ -43,14 +43,10 @@ class CleanPendingPaymentAppointment implements JobInterface
                     if ($look_for_appointment || $appointment->id !== (int)$reservation['appointment_id']) {
                         $appointment = Appointment::find((int)$reservation['appointment_id']);
                     }
-                    if ((int)$reservation['appointment_id'] === (int)$appointment->id) {
+                    if (!empty($appointment) && (int)$reservation['appointment_id'] === (int)$appointment->id) {
 
                         $ticket = apply_filters('wappointment_appointment_get_ticket', $appointment, $orderData['client_id']);
-                        if (!is_null($ticket) && $ticket->is_participant) {
-                            Ticket::cancelTrigger($ticket, !empty($reservation['slots']) ? $reservation['slots'] : false);
-                        } else {
-                            do_action('wappointment_cancel_appointment', $ticket);
-                        }
+                        Ticket::cancelTrigger($ticket, !empty($reservation['slots']) ? $reservation['slots'] : false);
                     }
                 }
             }
