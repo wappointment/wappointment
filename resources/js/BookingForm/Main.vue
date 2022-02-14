@@ -962,6 +962,12 @@ export default {
 .wap-front .mx-2{
     margin-right: .4em !important;
 }
+html[dir=rtl] .wap-front .mr-2, 
+html[dir=rtl] .wap-front .mx-2 {
+  margin-right: 0 !important;
+  margin-left: .4em !important;
+}
+
 .wap-front .ml-2,
 .wap-front .mx-2{
     margin-left: .4em !important;

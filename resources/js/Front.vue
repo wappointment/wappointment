@@ -423,6 +423,10 @@ export default {
 .wap-front .wml-2{
     margin-left:.4em;
 }
+html[dir=rtl] .wap-front .wml-2{
+  margin-right: .4em !important;
+  margin-left: 0 !important;
+}
 .wprice{
   font-weight: bold;
 }
@@ -453,11 +457,23 @@ export default {
     min-width: 320px;
 }
 
-
 .wap-booking-fields {
     text-align: left;
     margin: .5em 0;
 }
+
+html[dir=rtl] .wap-front.br-fixed{
+    right: auto;
+    left: 0;
+}
+
+html[dir=rtl] .br-fixed .wap-wid .wbtn-booking {
+  float: left;
+}
+html[dir=rtl] .wap-booking-fields{
+    text-align: right;
+}
+
 
 .wap-booking-fields input,
 .wap-booking-fields textarea{
