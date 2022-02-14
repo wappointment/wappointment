@@ -23,7 +23,7 @@ class Widget extends WidgetAbstract
         $htmlAttributes = '';
 
         foreach ($instance as $attr => $val) {
-            if (!in_array($attr, ['title']) && (!is_bool($val) || (is_bool($val) && $val === true))) {
+            if (!empty($val) && !in_array($attr, ['title']) && (!is_bool($val) || (is_bool($val) && $val === true))) {
                 $htmlAttributes .= ' data-' . str_replace('_', '-', strtolower($attr)) . '="' . esc_attr($val) . '"';
             }
         }
