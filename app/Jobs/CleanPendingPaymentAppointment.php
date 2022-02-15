@@ -37,7 +37,7 @@ class CleanPendingPaymentAppointment implements JobInterface
     {
         $look_for_appointment = is_null($appointment);
 
-        if (!empty($orderData['reservations'])) {
+        if (!empty($orderData['reservations']) && !isset($orderData['already_cancelled'])) {
             foreach ($orderData['reservations'] as $reservation) {
                 if (!empty($reservation['appointment_id'])) {
                     if ($look_for_appointment || $appointment->id !== (int)$reservation['appointment_id']) {
