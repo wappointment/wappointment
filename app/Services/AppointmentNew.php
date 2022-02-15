@@ -288,7 +288,7 @@ class AppointmentNew
         return VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
     }
 
-    protected static function canBook($start_at, $end_at, $is_admin = false, $staff_id = null, $service = false)
+    public static function canBook($start_at, $end_at, $is_admin = false, $staff_id = null, $service = false)
     {
         if ($is_admin === true) {
             return true;
@@ -301,6 +301,17 @@ class AppointmentNew
             }
         }
 
+        static::testExistingEvents($start_at, $end_at, $staff_id);
+
+        if ((new AvailabilityGetter(static::isLegacy() ? null : $staff_id, $start_at, $end_at))->isAvailable()) {
+            return true;
+        }
+
+        throw new \WappointmentException(__('Slot not available', 'wappointment'), 1);
+    }
+
+    public static function testExistingEvents($start_at, $end_at, $staff_id)
+    {
         //test that this is not a double booking scenario
         $start_at_str = static::unixToDb($start_at);
         $end_at_str = static::unixToDb($end_at);
@@ -356,12 +367,7 @@ class AppointmentNew
         ) {
             throw new \WappointmentException(__('Slot already booked', 'wappointment'), 1);
         }
-
-        if ((new AvailabilityGetter(static::isLegacy() ? null : $staff_id, $start_at, $end_at))->isAvailable()) {
-            return true;
-        }
-
-        throw new \WappointmentException(__('Slot not available', 'wappointment'), 1);
+        return true;
     }
 
     protected static function bookCreate($data, Client $client, $is_admin = false, $status = 0)

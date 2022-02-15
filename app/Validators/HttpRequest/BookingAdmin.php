@@ -21,7 +21,8 @@ class BookingAdmin extends Booking
             'staff_id' => '',
             'phone' => '',
             'skype' => '',
-            'recurrent' => ''
+            'recurrent' => '',
+            'page' => ''
         ];
         if ($inputs['email'] !== '') {
             $this->validationRulesArray['email'] = 'email';

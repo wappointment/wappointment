@@ -5,6 +5,7 @@ namespace Wappointment\Models\Appointment;
 use Wappointment\Models\Appointment;
 use Wappointment\Repositories\CalendarsBack;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Services\AppointmentNew;
 
 class Recurrence
 {
@@ -66,7 +67,9 @@ class Recurrence
         }
 
         try {
-            Appointment::create($data_new);
+            if (AppointmentNew::testExistingEvents($data_new['start_at'], $data_new['end_at'], $this->master->staff_id)) {
+                Appointment::create($data_new);
+            }
         } catch (\Throwable $th) {
             //throw $th;
         }

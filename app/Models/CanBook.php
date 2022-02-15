@@ -73,6 +73,10 @@ trait CanBook
             $dataReturned['appointment']->getRecurrence()->generateChilds();
         }
 
+        if (!empty($booking->input('page'))) {
+            //add page when requested
+        }
+
         if (!$dataReturned) {
             throw new \WappointmentException(__('Error while booking', 'wappointment') . '(3)', 1);
         }
