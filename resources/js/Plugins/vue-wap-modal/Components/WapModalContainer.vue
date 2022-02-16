@@ -72,9 +72,7 @@ export default {
 
   },
   created(){
-    for (let i = 0; i < document.body.childNodes.length; i++) {
-      const element = document.body.childNodes[i]
-
+    for (const element of document.body.childNodes) {
       if(element.innerHTML !== undefined && ['style','script'].indexOf(element.nodeName.toLowerCase()) === -1){
         this.list_body_elements.push(element)
       }

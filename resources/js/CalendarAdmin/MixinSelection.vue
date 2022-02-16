@@ -123,7 +123,7 @@ export default {
           if(result === false){
               return
           }
-          this.request(this.cancelEventRequest, {id: eventId, sibblings: result.remember},undefined,false,  this.refreshEvents)
+          this.request(this.cancelEventRequest, {id: eventId, sibblings: result.remember},undefined,false,  this.cancelEventSuccess)
         })
       },
 
@@ -160,6 +160,14 @@ export default {
             return element
           }
          }
+      },
+      cancelEventSuccess(response){
+        this.$WapModal().notifySuccess(response.data['message'])
+        if(Array.isArray(response.data['failures']) && response.data['failures'].length > 0){
+          this.$WapModal().notifyError(response.data['failures'].join("\n"))
+        }
+        
+        this.refreshEvents()
       },
 
 

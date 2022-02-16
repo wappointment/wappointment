@@ -13,6 +13,7 @@ use Wappointment\Services\Wappointment\DotCom;
 use Wappointment\Services\CurrentUser;
 use Wappointment\Managers\Central;
 use Wappointment\Models\Appointment;
+use Wappointment\Repositories\CalendarsBack;
 
 class EventsController extends RestController
 {
@@ -39,17 +40,14 @@ class EventsController extends RestController
             $failures = $this->deleteSiblings($appointment);
         } else {
             //cancel just the one here
-            $result = $this->processCancel($appointment);
-            if ($result !== true) {
-                $failures[] = $result;
+            if ($this->processCancel($appointment)) {
+                return ['message' => __('Appointment cancelled', 'wappointment'), 'failures' => $failures];
+            } else {
+                throw new \WappointmentException(__('Error deleting appointment', 'wappointment'), 1);
             }
         }
 
-        if (empty($failures)) {
-            return ['message' => __('Appointment cancelled', 'wappointment')];
-        } else {
-            throw new \WappointmentException(__('Error deleting appointment', 'wappointment'), 1);
-        }
+        return ['message' => __('Appointment cancelled', 'wappointment'), 'failures' => $failures];
     }
 
     public function deleteSiblings(Appointment $appointment)
@@ -57,6 +55,7 @@ class EventsController extends RestController
         //cancel all related
         $appointments = Appointment::where('parent', $appointment->parent > 0 ? $appointment->parent : $appointment->id)
             ->get();
+        $failures = [];
         if ($appointment->parent > 0) {
             $parent = Appointment::find($appointment->parent);
         } else {
@@ -81,7 +80,8 @@ class EventsController extends RestController
         try {
             AppointmentNew::cancel($appointment, null, true);
         } catch (\Throwable $th) {
-            return $appointment->id;
+            $staff = CalendarsBack::findById($appointment->staff_id);
+            return 'Couldn\'t delete the session starting at ' . $appointment->start_at->setTimezone($staff['timezone'])->format('Y-m-d\TH:i:00');
         }
         return true;
     }
