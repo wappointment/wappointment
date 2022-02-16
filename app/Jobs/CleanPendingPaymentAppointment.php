@@ -21,7 +21,7 @@ class CleanPendingPaymentAppointment implements JobInterface
 
         foreach ($data['appointments'] as $appointment) {
             if (empty($appointment->options['slots'])) {
-                if ($appointment->isPending()) {
+                if (!empty($appointment) && $appointment->isPending()) {
                     AppointmentNew::cancel($appointment);
                 }
             } else {
