@@ -153,7 +153,8 @@ class AppointmentNew
         $order = null;
         $service = $service ? $service : $client->bookingRequest->getService();
         // no order if a package code is used
-        if (!$client->bookingRequest->get('package_code') && $service->isSold()) {
+        $payment_required = !$client->bookingRequest->get('package_code') && $service->isSold() && Payment::atLeastOneMethodIsActive();
+        if ($payment_required) {
             $ticket->hydrateService($service);
             if (Payment::isWooActive()) {
                 $order = apply_filters('wappointment_woocommerce_generate_order', $order, $client, $ticket, $service, !$slots ? 1 : $slots);
@@ -163,7 +164,7 @@ class AppointmentNew
         }
         $appointment = $ticket->getAppointment();
         $appointment->hydrateService($service);
-        return ['appointment' => $appointment, 'client' => $client, 'order' => $order, 'ticket' => $ticket];
+        return ['appointment' => $appointment, 'client' => $client, 'order' => $order, 'ticket' => $ticket, 'payment_required' => $payment_required];
     }
 
     protected static function createAppointment($data, $slots = false)
@@ -522,7 +523,7 @@ class AppointmentNew
 
     public static function getDefaultStatus($service)
     {
-        if ($service->isSold()) {
+        if ($service->isSold() && Payment::atLeastOneMethodIsActive()) {
             return static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
         } else {
             return ((int) Settings::get('approval_mode') === 1) ?

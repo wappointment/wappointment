@@ -222,7 +222,12 @@ export default {
         },
         serviceIsNotFree(){
             return this.service !== false && this.service.options.woo_sellable === true
-            //return this.serviceUNotFree || this.serviceMNotFree
+        },
+        requiredPayment(){
+            return this.resultBooking !== false && this.resultBooking.payment_required === true
+        },
+        canSkipPayment(){
+            return this.serviceIsNotFree === false || (this.serviceIsNotFree && this.requiredPayment === false)
         },
         serviceUNotFree(){
             return this.service !== false && this.service.options.woo_sellable === true && this.service.options.woo_price > 0
@@ -815,7 +820,7 @@ export default {
                     'serviceIsNotFree':true,
                 },
                 skip: {
-                'serviceIsNotFree':false,
+                    'canSkipPayment':true,
                 },
                 props: {
                     options:"options",
