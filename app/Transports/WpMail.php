@@ -4,6 +4,7 @@ namespace Wappointment\Transports;
 
 use WappoSwift_Mime_SimpleMessage;
 use Wappointment\Services\Status;
+use Wappointment\WP\PluginsDetection;
 
 class WpMail extends Transport
 {
@@ -49,7 +50,7 @@ class WpMail extends Transport
     public function sendTheRightWay($to, $message)
     {
         //if wpforms or other smtp plugins is installed
-        if (Status::hasSmtpPlugin() || Status::hasEmailConflict()) {
+        if (PluginsDetection::smtpConfigured() || PluginsDetection::createsEmailConflict()) {
             return $this->sendPluginVersion($to, $message);
         } else {
             return empty($this->configSave['wpmail_html']) ?
@@ -65,7 +66,7 @@ class WpMail extends Transport
 
     public function setHtmlContentType()
     {
-        return Status::hasSmtpPlugin() || Status::hasEmailConflict() ? 'text/html' : 'multipart/alternative';
+        return PluginsDetection::smtpConfigured() || PluginsDetection::createsEmailConflict() ? 'text/html' : 'multipart/alternative';
     }
 
     /**
