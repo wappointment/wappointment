@@ -12,6 +12,7 @@ use Wappointment\Managers\Central;
 use Wappointment\Models\Service as ModelService;
 use Wappointment\Repositories\Availability;
 use Wappointment\System\Helpers;
+use Wappointment\WP\PluginsDetection;
 
 class ViewsData
 {
@@ -346,7 +347,7 @@ class ViewsData
     {
         return [
             'mail_config' => Settings::get('mail_config'),
-            'wp_mail_overidden' => Status::hasSmtpPlugin(),
+            'wp_mail_overidden' => PluginsDetection::smtpConfigured(),
             'recipient' => wp_get_current_user()->user_email,
         ];
     }
