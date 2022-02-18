@@ -100,7 +100,10 @@ class Status
         $next = self::getNext($statusRecurrent, $from, $until, true);
 
         while ($next) {
-            $newEvents[] = $next;
+            if (static::canAdd($next)) {
+                $newEvents[] = $next;
+            }
+
             $from = $next->end_at->timestamp;
             $i++;
             if ($i > 300) {
@@ -115,6 +118,19 @@ class Status
         }
 
         return $newEvents;
+    }
+
+    public static function canAdd($next)
+    {
+        if (isset($next->options['exdate'])) {
+            foreach ($next->options['exdate'] as $exdate) {
+                if (Carbon::createFromTimestamp($exdate)->timestamp === $next->start_at->timestamp) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private static function getPreviousFrom($from, $recur)

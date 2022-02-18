@@ -252,6 +252,10 @@ class CalendarParser
                     $options['interval'] = (int) $vevent->RRULE->getParts()['INTERVAL'];
                 }
 
+                foreach ($vevent->EXDATE as $value) {
+                    $options['exdate'][] = $this->vcalDateToCarbon($value->getParts()[0], $vevent)->timestamp;
+                }
+
                 $options['origin_tz'] = $this->timezone;
                 $options['origin_start'] = $this->vcalDateToCarbon((string) $vevent->DTSTART, $vevent)
                     ->format(WAPPOINTMENT_DB_FORMAT);
