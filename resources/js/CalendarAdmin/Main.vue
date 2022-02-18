@@ -137,7 +137,7 @@ export default {
     cancelbgOver: false,
     name: 'calendar',
     namekey: 'calendar',
-    windowStaff: window.Staffs,
+    windowStaff: window.Staffs, //TODO review and remove
     modifiedEvent: [],
     selectedTimezone: undefined,
     timezone: undefined,
@@ -215,6 +215,7 @@ export default {
     isToday(){
       return this.firstDay!== undefined && this.lastDay !== undefined && this.firstDay.unix() < momenttz().unix() && this.lastDay.unix() > momenttz().unix()
     },
+    //TODO review and remove
     staffExceptOwner() {
       return this.windowStaff.filter((staff) => {
         if(staff.id !== this.modifiedEvent.staff_id) return staff
@@ -613,7 +614,7 @@ export default {
 
       callbackInternal(a){
         this.events = a.data.events
-
+  
         for (const key in this.events) {
           
           if (this.events.hasOwnProperty(key)) {
@@ -626,8 +627,6 @@ export default {
             if( momenttz.tz(this.viewData.now,this.viewData.timezone).unix() > momenttz.tz(this.events[key].end, this.selectedTimezone).unix() ) {
               this.events[key].allowedit = false
               this.events[key].past = true
-              
-
             }else{
               this.events[key].allowedit = true
               this.events[key].past = false
@@ -638,7 +637,9 @@ export default {
         this.$refs.calendar.option('now', a.data.now)
 
         this.intervalsCollection = null
+
         this.intervalsCollection = new Intervals(a.data.availability)
+        
         //this.option
         this.callback(this.events)
         this.canLoadEvents = true

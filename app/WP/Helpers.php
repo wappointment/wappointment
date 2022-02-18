@@ -95,7 +95,7 @@ class Helpers
         if ($permission) {
             $data['permissions'] = array_keys($wp_user->allcaps);
         }
-        return $data;
+        return apply_filters('wappointment_wpauth', $data);
     }
 
     public static function getUserBy($field, $value)

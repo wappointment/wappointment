@@ -7,16 +7,13 @@
             <span class="small text-muted" v-if="viewData.buffer_time > 0">{{ sprintf_i18n('calendar_popup_includes', 'calendar', viewData.buffer_time) }}</span>
         </h3>
         <h3 class="mb-4" v-else> {{ shortStDayDisplay }} - {{ shortEdDayDisplay }}</h3>
-        <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!selectedChoice">
-            <ButtonPopup v-for="button in buttons"  @click="showRightSection(button)"
-            :key="button.key" :disabled="button.disabled" :classIcon="button.icon" :title="button.title" :subtitle="button.subtitle" />
+        <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!activeCompName">
+            <ButtonPopup v-for="button in buttons"  @click="confirmButtonClick(button)"
+            :key="button.key" :disabled="!isButtonEnabled(button.key)" :classIcon="button.icon" :title="button.title" :subtitle="button.subtitle" />
         </div>
-        <div v-else>
-            <component :is="activeComp.name"
+        <component v-else :is="activeComp.name"
             v-bind="activeComp.props"
-            v-on="activeComp.listeners"
-            />
-        </div>
+            v-on="activeComp.listeners" />
     </WapModal>
 </template>
 
@@ -35,9 +32,10 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
 
 export default {
     props:['displayTimezone', 'activeStaff', 'startTime', 'endTime', 'realEndTime', 'viewData', 'getThisWeekIntervals', 'momenttz'],
-    components:calendar_components,
+    mixins: window.wappointmentExtends.filter('PopupActionsMixin', []),
+    components: calendar_components,
     data: () =>({
-        selectedChoice: false,
+        activeCompName: false,
         componentsList: null,
     }),
     created(){
@@ -45,35 +43,7 @@ export default {
     },
     computed:{
         buttons(){
-            return window.wappointmentExtends.filter('PopupButtons', [
-                {
-                    key:'book',
-                    title: this.get_i18n('calendar_popup_1', 'calendar'),
-                    subtitle: this.get_i18n('calendar_popup_1_sub', 'calendar'),
-                    disabled: !this.selectionSingleDay,
-                    icon: 'dashicons-admin-users',
-                    confirm: 'confirmNewBooking', 
-                    shows: 'BehalfBooking',
-                },
-                {
-                    key:'open',
-                    title: this.get_i18n('calendar_popup_2', 'calendar'),
-                    subtitle: this.get_i18n('calendar_popup_2_sub', 'calendar'),
-                    disabled: !this.selectionSingleDay || this.isAvailable,
-                    icon: 'dashicons-unlock txt blue',
-                    confirm: 'confirmFree', 
-                    shows: 'StatusFreeConfirm',
-                },
-                {
-                    key:'block',
-                    title: this.get_i18n('calendar_popup_3', 'calendar'),
-                    subtitle: this.get_i18n('calendar_popup_3_sub', 'calendar'),
-                    disabled: this.isBusy,
-                    icon: 'dashicons-lock txt red',
-                    confirm: 'confirmBusy', 
-                    shows: 'StatusBusyConfirm',
-                }
-            ])
+            return this.viewData.buttons
         },
         startTimeDisplay(){
             return this.formatTime(this.startTime)
@@ -94,45 +64,61 @@ export default {
             let name = this.activeCompName
             return this.componentsList.find(e => e.name == name)
         },
-        activeCompName(){
-            return this.selectedChoice
-        },
 
         selectionSingleDay(){
-            return (this.startTime.day() === this.endTime.day() && 
+            return this.startTime.day() === this.endTime.day() && 
                 this.startTime.month() === this.endTime.month() && 
-                this.startTime.year() === this.endTime.year())
+                this.startTime.year() === this.endTime.year()
         },
         isAvailable(){
-            if(this.getThisWeekIntervals!==0) {
-                for (const element of this.getThisWeekIntervals.intervals) {
-                    if(this.selectIsWithin(element)){
+            return this.hasOpenedSlots && this.selectionWithinInterval
+        },
+        selectionWithinInterval(){
+            if(this.hasOpenedSlots){
+                for (const interval of this.getThisWeekIntervals.intervals) {
+                    if(this.selectIsWithin(interval)){
                         return true
                     }
                 }
             }
+            
+            return false
+        },
+        selectionXInterval(){
+            if(this.hasOpenedSlots){
+                for (const interval of this.getThisWeekIntervals.intervals) {
+                    if(this.selectionTouchesInterval(interval)){
+                        return true
+                    }
+                }
+            }
+            
             return false
         },
 
-
-        isBusy(){
-            if(this.getThisWeekIntervals!==0) {
-                for (const element of this.getThisWeekIntervals.intervals) {
-                    if(
-                        this.selectWraps(element) ||
-                        this.selectIntersectsLeft(element) ||
-                        this.selectIntersectsRight(element) ||
-                        this.selectIsWithin(element)
-                        ){
-                            return false
-                        }
-                }
-            }
-
-            return true
+        canBook(){
+            return this.selectionSingleDay
         },
+        canFree(){
+            return this.selectionSingleDay && !this.isAvailable
+        },
+        canBusy(){
+            return this.hasOpenedSlots && this.selectionXInterval
+        },
+        hasOpenedSlots(){
+            return this.getThisWeekIntervals!==0
+        }
     },
     methods:{
+        confirmButtonClick(button){
+            if(this.isButtonEnabled(button.key)){
+                this.activeCompName = button.component
+            }
+        },
+        isButtonEnabled(buttonKey){
+            return this['can'+this.ucFirst(buttonKey)]
+        },
+
         setComponentList(){
             let default_object = {
                 props: {
@@ -149,22 +135,22 @@ export default {
                     updateEndTime: this.updateEndTime,
                 },
             }
-            this.componentsList = window.wappointmentExtends.filter('PopupActionsComponents', [
-                Object.assign({name: 'BehalfBooking'}, default_object),
-                Object.assign({name: 'StatusFreeConfirm'}, default_object),
-                Object.assign({name: 'StatusBusyConfirm'}, default_object),
-            ])
+            this.componentsList = this.buttons.map(e => Object.assign({name:e.component}, default_object))
 
         },
         updateEndTime(newEndTime){
             this.endTime = newEndTime
         },
-        showRightSection(button){
-            this[button.confirm](button)
-        },
         formatTime(myMoment, format = false){
             if(format === false) format = this.viewData.time_format
             return myMoment.format(format)
+        },
+
+        selectionTouchesInterval(interval){
+            return this.selectWraps(interval) ||
+                        this.selectIntersectsLeft(interval) ||
+                        this.selectIntersectsRight(interval) ||
+                        this.selectIsWithin(interval)
         },
         selectIsWithin(element){
             let selStart = this.momenttz.tz(this.startTime.format(), this.timezone)
@@ -187,21 +173,6 @@ export default {
             return this.startTime.unix() >= element.start 
             && this.startTime.unix() < element.end 
             && this.endTime.unix() > element.end
-        },
-        confirmFree(button){
-            if(!this.selectionSingleDay || this.isAvailable) return
-            if(this.selectionSingleDay){
-                this.selectedChoice = button.shows
-            }
-        },
-        confirmBusy(button){
-            if(this.isBusy) return
-            this.selectedChoice = button.shows
-        },
-        confirmNewBooking(button){
-            if(this.selectionSingleDay){
-                this.selectedChoice = button.shows
-            }
         },
         hideModal(){
             this.$emit('hide')

@@ -5,7 +5,6 @@ namespace Wappointment\System;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Config\Database;
 use Wappointment\Services\Settings;
-use Wappointment\Services\VersionDB;
 
 class Init
 {
@@ -56,30 +55,10 @@ class Init
 
     public function initInstalled()
     {
-        if (\WappointmentLv::isTest() === false) {
-            new Scheduler();
+        if (Helpers::isProd()) {
+            new Scheduler;
         } else {
             Scheduler::processQueue();
-        }
-        $this->checkSMTPValueEncryption();
-    }
-
-    /**
-     * Correcting an update bug for users using the SMTP mail config
-     * from 2.0.0 to 2.0.1 simply defaults to non encrypted smtp
-     * TODO legacy remove once 2.1+ takes over
-     *
-     * @return void
-     */
-    public function checkSMTPValueEncryption()
-    {
-        if (VersionDB::equal(VersionDB::CAN_DEL_CLIENT)) {
-            $mail_config = Settings::get('mail_config');
-            if ($mail_config['method'] == 'smtp' && empty($mail_config['v']) && !empty($mail_config['encryption'])) {
-                $mail_config['v'] = '2.0.1';
-                $mail_config['encryption'] = '';
-                Settings::save('mail_config', $mail_config);
-            }
         }
     }
 
@@ -88,53 +67,10 @@ class Init
         register_widget('Wappointment\WP\Widget');
     }
 
-    protected function getRestUrl()
-    {
-        if (!empty($_GET['wappo_ugly_permalinks'])) {
-            Settings::save('force_ugly_permalinks', true);
-        }
-        return (Settings::get('force_ugly_permalinks') || empty(get_option('permalink_structure'))) ? esc_url_raw($this->getUglyRestRoute()) : esc_url_raw(rest_url());
-    }
-
-    protected function getUglyRestRoute($blog_id = null, $path = '/', $scheme = 'rest')
-    {
-        if (empty($path)) {
-            $path = '/';
-        }
-
-        $path = '/' . ltrim($path, '/');
-
-        $url = trailingslashit(get_home_url($blog_id, '', $scheme));
-        // nginx only allows HTTP/1.0 methods when redirecting from / to /index.php.
-        // To work around this, we manually add index.php to the URL, avoiding the redirect.
-        if ('index.php' !== substr($url, 9)) {
-            $url .= 'index.php';
-        }
-
-        $url = add_query_arg('rest_route', $path, $url);
-
-        if (is_ssl() && isset($_SERVER['SERVER_NAME'])) {
-            // If the current host is the same as the REST URL host, force the REST URL scheme to HTTPS.
-            if (parse_url(get_home_url($blog_id), PHP_URL_HOST) === $_SERVER['SERVER_NAME']) {
-                $url = set_url_scheme($url, 'https');
-            }
-        }
-
-        if (is_admin() && force_ssl_admin()) {
-            /*
-                 * In this situation the home URL may be http:, and `is_ssl()` may be false,
-                 * but the admin is served over https: (one way or another), so REST API usage
-                 * will be blocked by browsers unless it is also served over HTTPS.
-                 */
-            $url = set_url_scheme($url, 'https');
-        }
-        return apply_filters('rest_url', $url, $path, $blog_id, $scheme);
-    }
-
     public function jsVariables()
     {
         $variables = [
-            'root' => $this->getRestUrl(),
+            'root' => Compatibility::getRestUrl(),
             'resourcesUrl' => Helpers::pluginUrl() . '/dist/',
             'baseUrl' => plugins_url(),
             'apiSite' => WAPPOINTMENT_SITE,

@@ -3,6 +3,7 @@
 namespace Wappointment\Jobs;
 
 use Wappointment\Models\Appointment;
+use Wappointment\Services\JobHelper;
 use Wappointment\Services\Wappointment\DotCom;
 
 class ProcessTransaction implements JobInterface
@@ -23,16 +24,40 @@ class ProcessTransaction implements JobInterface
         if ($this->api->isConnected()) {
             switch ($this->event) {
                 case 'create':
-                    $this->api->create($this->appointment);
+                    $this->createSafe();
                     break;
                 case 'update':
-                    $this->api->update($this->appointment);
+                    $this->updateSafe();
                     break;
                 case 'cancel':
-                    $this->api->delete($this->appointment);
+                    $this->deleteSafe();
                     break;
                 default:
             }
+        }
+    }
+
+    public function createSafe()
+    {
+        if ($this->appointment->canSendToDotCom()) {
+            $this->api->create($this->appointment);
+            $this->appointment->sentToDotCom();
+        }
+    }
+    public function updateSafe()
+    {
+        if ($this->appointment->canSendToDotCom()) {
+            $this->api->create($this->appointment);
+            $this->appointment->sentToDotCom();
+        } else {
+            $this->api->update($this->appointment);
+        }
+    }
+
+    public function deleteSafe()
+    {
+        if (!$this->appointment->canSendToDotCom()) {
+            $this->api->delete($this->appointment);
         }
     }
 

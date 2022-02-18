@@ -62,6 +62,21 @@ trait CanBook
 
         //test that this is bookable
         $dataReturned = AppointmentService::adminBook($this, $booking->get('start'), $end, 'unused', $booking->getService(), $booking->staff);
+
+        if (!empty($booking->input('recurrent'))) {
+            $dataReturned['appointment']->parent = 0;
+            $dataReturned['appointment']->recurrent = 1;
+            $options = $dataReturned['appointment']->options;
+            $options['recurrence'] = ['days' => $booking->input('recurrent')];
+            $dataReturned['appointment']->options = $options;
+            $dataReturned['appointment']->save();
+            $dataReturned['appointment']->getRecurrence()->generateChilds();
+        }
+
+        if (!empty($booking->input('page'))) {
+            //add page when requested
+        }
+
         if (!$dataReturned) {
             throw new \WappointmentException(__('Error while booking', 'wappointment') . '(3)', 1);
         }

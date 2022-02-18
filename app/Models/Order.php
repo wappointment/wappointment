@@ -5,8 +5,10 @@ namespace Wappointment\Models;
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\ClientSoftDeletes as SoftDeletes;
 use Wappointment\Formatters\BookingResult;
+use Wappointment\Jobs\CleanPendingPaymentAppointment;
 use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Payment;
+use Wappointment\Services\Ticket;
 use Wappointment\WP\Helpers;
 
 class Order extends Model
@@ -181,8 +183,7 @@ class Order extends Model
                 $appointment = $charge->appointment;
                 $charge->appointment_id = null;
                 $charge->save();
-
-                do_action('wappointment_cancel_ticket', apply_filters('wappointment_appointment_get_ticket', $appointment, $this->client_id), $charge->quantity);
+                Ticket::cancelTrigger(apply_filters('wappointment_appointment_get_ticket', $appointment, $this->client_id), $charge->quantity);
             }
         }
     }
@@ -207,23 +208,35 @@ class Order extends Model
         return $this->hasMany('Wappointment\Models\OrderPrice', 'order_id');
     }
 
-    public function clearLastAdded()
+
+    public function clearLastAdded($appointment)
     {
+
+        $this->cancelPreviousFromMeta($appointment);
+    }
+
+    protected function cancelPreviousFromMeta($appointment)
+    {
+        $reservations = $this->getReservation();
         $appointment_ids = [];
         $charge_ids = [];
         foreach ($this->prices as $charge) {
             $appointment_ids[] = $charge->appointment_id;
             $charge_ids[] = $charge->id;
         }
-
         AppointmentNew::silentCancel($appointment_ids, $charge_ids);
+
+        if (!empty($reservations) && $appointment->id !== (int)$reservations[0]['appointment_id']) {
+
+            CleanPendingPaymentAppointment::cancelReservations(array_merge($this->options, ['client_id' => $this->client_id]));
+        }
     }
 
     public function add(TicketAbstract $ticket, $quantity = false)
     {
 
         //clear all prices by cancelling previously placed appointment silently
-        $this->clearLastAdded();
+        $this->clearLastAdded($ticket->getAppointment());
 
         $this->setReservation($ticket->getAppointment()->id, $quantity);
 
@@ -239,14 +252,28 @@ class Order extends Model
         }
     }
 
+    public function getReservation()
+    {
+        return empty($this->options['reservations']) ? [] : $this->options['reservations'];
+    }
     public function setReservation($appointment_id, $slots)
     {
         $options = $this->options;
-        $options['reservations'] = empty($options['reservations']) ? [] : $options['reservations'];
-        $options['reservations'][] = [
-            'appointment_id' => $appointment_id,
-            'slots' => $slots
-        ];
+        $reservations = empty($options['reservations']) ? [] : [];
+        $requiresNew = true;
+        foreach ($reservations as $keyReservation => $reservation) {
+            if ((int)$reservation['appointment_id'] === (int)$appointment_id) {
+                $reservations[$keyReservation]['slots'] = $slots;
+                $requiresNew = false;
+            }
+        }
+        if ($requiresNew) {
+            $reservations[] = [
+                'appointment_id' => $appointment_id,
+                'slots' => $slots
+            ];
+        }
+        $options['reservations'] = $reservations;
         $this->options = $options;
         $this->save();
     }

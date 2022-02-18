@@ -139,6 +139,7 @@ class Settings
             'invoice_num' => __('Order nº', 'wappointment'),
             'invoice_client' => ['name'],
             'wp_remote' => false,
+            'jitsi_url' => '',
 
         ];
     }
@@ -215,7 +216,7 @@ class Settings
             if ($setting_key == 'service') {
                 unset($value['id']);
             }
-            $updatedValues[$setting_key] = $value;
+            $updatedValues[$setting_key] = static::format($setting_key, $value);
 
             //before save
             $method = $setting_key . 'BeforeSave';
@@ -333,12 +334,39 @@ class Settings
         return true;
     }
 
+    protected static function format($setting_key, $value)
+    {
+        $method = $setting_key . 'Format';
+        if (method_exists(static::class, $method)) {
+            return static::$method($value);
+        }
+        return $value;
+    }
+
     protected static function taxValid($value)
     {
         if (self::between($value, 0, 100)) {
             return true;
         }
         throw new \WappointmentException('Tax is not valid');
+    }
+
+    protected static function jitsi_urlValid($value)
+    {
+        $validated_url = filter_var($value, FILTER_VALIDATE_URL);
+
+        if (empty($validated_url)) {
+            throw new \WappointmentException('URL is not valid');
+        }
+        if (substr($validated_url, -1) != '/') {
+            $validated_url .= '/';
+        }
+        return $validated_url;
+    }
+
+    protected static function jitsi_urlFormat($value)
+    {
+        return static::jitsi_urlValid($value);
     }
 
     public static function save_appointment_text_linkValid($value)
@@ -472,8 +500,8 @@ class Settings
 
     protected static function hours_before_booking_allowedValid($value)
     {
-        if ($value < 1) {
-            throw new \WappointmentException('You need to give at least one hour before the appointment');
+        if ($value < 0) {
+            throw new \WappointmentException('This value must be greateer than 0');
         }
         return  self::hourField($value);
     }

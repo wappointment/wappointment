@@ -11,6 +11,7 @@ use Wappointment\Models\Job;
 use Wappointment\Models\Order;
 use Wappointment\Models\Appointment;
 use Wappointment\Services\Payment;
+use Wappointment\Services\Ticket;
 
 class CleanPendingPaymentAppointment implements JobInterface
 {
@@ -20,7 +21,7 @@ class CleanPendingPaymentAppointment implements JobInterface
 
         foreach ($data['appointments'] as $appointment) {
             if (empty($appointment->options['slots'])) {
-                if ($appointment->isPending()) {
+                if (!empty($appointment) && $appointment->isPending()) {
                     AppointmentNew::cancel($appointment);
                 }
             } else {
@@ -36,26 +37,27 @@ class CleanPendingPaymentAppointment implements JobInterface
     {
         $look_for_appointment = is_null($appointment);
 
-        foreach ($orderData['reservations'] as $reservation) {
-            if (!empty($reservation['appointment_id'])) {
-                if ($look_for_appointment || $appointment->id !== (int)$reservation['appointment_id']) {
-                    $appointment = Appointment::find((int)$reservation['appointment_id']);
-                }
-                if ((int)$reservation['appointment_id'] === (int)$appointment->id) {
+        if (!empty($orderData['reservations']) && !isset($orderData['already_cancelled'])) {
+            foreach ($orderData['reservations'] as $reservation) {
+                if (!empty($reservation['appointment_id'])) {
+                    if ($look_for_appointment || $appointment->id !== (int)$reservation['appointment_id']) {
+                        $appointment = Appointment::find((int)$reservation['appointment_id']);
+                    }
+                    if (!empty($appointment) && (int)$reservation['appointment_id'] === (int)$appointment->id) {
 
-                    $ticket = apply_filters('wappointment_appointment_get_ticket', $appointment, $orderData['client_id']);
-                    if (!is_null($ticket) && $ticket->is_participant) {
-                        do_action('wappointment_cancel_ticket', $ticket, !empty($reservation['slots']) ? $reservation['slots'] : false);
-                    } else {
-                        do_action('wappointment_cancel_appointment', $ticket);
+                        $ticket = apply_filters('wappointment_appointment_get_ticket', $appointment, $orderData['client_id']);
+                        Ticket::cancelTrigger($ticket, !empty($reservation['slots']) ? $reservation['slots'] : false);
                     }
                 }
             }
-        }
-        //woo state that we already cancelled
-        do_action('wappointment_woo_cancelled_order', $orderData);
-        if (!is_null($orderData['orderObj'])) {
-            $orderData['orderObj']->setAutoCancelled();
+
+            //woo marker
+            do_action('wappointment_woo_cancelled_order', $orderData);
+
+            //standalone marker
+            if (isset($orderData['orderObj']) && !is_null($orderData['orderObj'])) {
+                $orderData['orderObj']->setAutoCancelled();
+            }
         }
     }
 

@@ -4,6 +4,11 @@ namespace Wappointment\System;
 
 class Helpers
 {
+    public static function isProd()
+    {
+        return \WappointmentLv::isTest() === false;
+    }
+
     public static function wappointmentLink($medium = 'email', $campaign = 'daily_email')
     {
         return 'https://wappointment.com?utm_source=plugin&utm_medium=' . $medium . '&utm_campaign=' . $campaign;

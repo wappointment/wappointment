@@ -10,6 +10,7 @@ use Wappointment\Services\Calendars;
 use Wappointment\Services\Availability;
 use Wappointment\Services\Flag;
 use Wappointment\Jobs\CleanPendingPaymentAppointment;
+use Wappointment\Services\Recurrent;
 
 /**
  * TODO Most of this class is static but it has a constructor, review
@@ -68,15 +69,15 @@ class Scheduler
     public static function processQueue()
     {
         Flag::save('cronLastRun', time());
-        if (\WappointmentLv::isTest()) {
-            \Wappointment\Services\Queue::process();
-        } else {
+        if (Helpers::isProd()) {
             $lock = new \Wappointment\Services\Lock;
             if (!$lock->alreadySet()) {
                 $lock->set();
                 \Wappointment\Services\Queue::process();
                 $lock->release();
             }
+        } else {
+            \Wappointment\Services\Queue::process();
         }
         static::checkDotCom();
         static::registerCleanPending();
@@ -89,7 +90,6 @@ class Scheduler
      */
     public static function checkDotCom()
     {
-
         (new \Wappointment\Services\Wappointment\DotCom)->checkForUpdates();
     }
 
@@ -127,6 +127,7 @@ class Scheduler
                 }
                 (new CalendarsBack)->refresh();
             }
+            (new Recurrent)->generate();
             // we at least regenerate once a day to avoid empty calendar after aa while without a booking
             self::checkLicence();
         } catch (\Exception $e) {

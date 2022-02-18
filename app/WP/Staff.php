@@ -25,9 +25,16 @@ class Staff
             throw new \WappointmentException("Can't load staff information", 1);
         }
 
+
         if (!is_array($staff_data)) {
-            $calendar = Calendar::findOrFail($staff_data);
-            $staff_data = $calendar->toArray();
+            try {
+                $calendar = Calendar::findOrFail($staff_data);
+                $staff_data = $calendar->toArray();
+            } catch (\Throwable $th) {
+                $staff_data = ['name' => 'Missing Staff', 'id' => -1, 'status' => 0, 'wp_uid' => 0, 'availability' => [], 'options' => [
+                    'timezone' => 'UTC',
+                ]];
+            }
         }
         $this->initWithArray($staff_data);
     }

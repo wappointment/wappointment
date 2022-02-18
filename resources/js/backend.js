@@ -11,6 +11,7 @@ import PhoneInput from './BookingForm/PhoneInput'
 import AbstractListing from './Views/AbstractListing'
 import momenttz from './appMoment'
 import RequestMaker from './Modules/RequestMaker'
+import DeepDefined from './Mixins/DeepDefined'
 
 window.wappointmentExtends.store('commons', {RequestMaker,AbstractListing, PhoneInput, InputPh, ClickCopy, VideoIframe, FontAwesomeIcon, DurationCell, momenttz})
 
@@ -46,6 +47,7 @@ Vue.use(VueSanitize, {
 })
 Vue.mixin(helpers)
 Vue.mixin(i18n)
+Vue.mixin(DeepDefined)
 Vue.component('WapImage', WapImage)
 Vue.component('FieldsGenerated', FieldsGenerated)
 Vue.component('v-style', {

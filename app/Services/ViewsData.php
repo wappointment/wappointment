@@ -11,6 +11,8 @@ use Wappointment\Managers\Service as ManageService;
 use Wappointment\Managers\Central;
 use Wappointment\Models\Service as ModelService;
 use Wappointment\Repositories\Availability;
+use Wappointment\System\Helpers;
+use Wappointment\WP\PluginsDetection;
 
 class ViewsData
 {
@@ -205,6 +207,29 @@ class ViewsData
             'services' => $services,
             'durations' => ManageService::extractDurations($services),
             'cal_duration' => (new Preferences)->get('cal_duration'),
+            'buttons' => [
+                [
+                    'key' => 'book',
+                    'title' => __('Book an appointment', 'wappointment'),
+                    'subtitle' => __('On behalf of your client', 'wappointment'),
+                    'icon' => 'dashicons-admin-users',
+                    'component' => 'BehalfBooking',
+                ],
+                [
+                    'key' => 'free',
+                    'title' => __('Open this time', 'wappointment'),
+                    'subtitle' => __('Allow new bookings', 'wappointment'),
+                    'icon' => 'dashicons-unlock txt blue',
+                    'component' => 'StatusFreeConfirm',
+                ],
+                [
+                    'key' => 'busy',
+                    'title' => __('Block this time', 'wappointment'),
+                    'subtitle' =>  __('Prevent new bookings', 'wappointment'),
+                    'icon' => 'dashicons-lock txt red',
+                    'component' => 'StatusBusyConfirm',
+                ]
+            ]
         ];
 
         if (VersionDB::canServices()) {
@@ -243,7 +268,7 @@ class ViewsData
         }
 
         return [
-            'debug' => \WappointmentLv::isTest(),
+            'debug' => !Helpers::isProd(),
             'video_link_shows' => Settings::get('video_link_shows'),
             'buffer_time' => Settings::get('buffer_time'),
             'front_page_id' => (int) Settings::get('front_page'),
@@ -298,6 +323,7 @@ class ViewsData
             'invoice_client' => Settings::get('invoice_client'),
             'custom_fields' => Central::get('CustomFields')::get(),
             'wp_remote' => Settings::get('wp_remote'),
+            'jitsi_url' => Settings::get('jitsi_url'),
         ];
     }
 
@@ -321,7 +347,7 @@ class ViewsData
     {
         return [
             'mail_config' => Settings::get('mail_config'),
-            'wp_mail_overidden' => Status::hasSmtpPlugin(),
+            'wp_mail_overidden' => PluginsDetection::smtpConfigured(),
             'recipient' => wp_get_current_user()->user_email,
         ];
     }

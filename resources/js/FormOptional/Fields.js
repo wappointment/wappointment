@@ -1,4 +1,5 @@
-const FieldTipTap = () => import(/* webpackChunkName: "FieldTipTap" */ './FieldTipTap')
+//cannot split chunks here
+import FieldTipTap from './FieldTipTap'
 import FieldImageSelect from './FieldImageSelect'
 import FieldTimezone from './FieldTimezone'
 import FieldPhone from './FieldPhone'
