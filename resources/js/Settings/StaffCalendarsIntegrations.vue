@@ -84,14 +84,14 @@ export default {
         },
         successRefreshed(response){
             this.is_dotcom_connected = response.data.data.dotcom
-            this.$WapModal().notifySuccess(response.data.message,1)
+            this.$WapModal().notifySuccess(response.data.message, 1)
             this.$emit('reload')
         },
         successConnected(response){
             this.is_dotcom_connected = response.data.data.dotcom
-            this.$WapModal().notifySuccess(response.data.message,1)
+            this.$WapModal().notifySuccess(response.data.message, 1)
             this.$emit('reload')
-            this.$WapModal().reload()
+            //this.$WapModal().reload()
         },
 
         connectToWappo() {

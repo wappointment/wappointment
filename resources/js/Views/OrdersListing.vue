@@ -97,7 +97,7 @@ export default {
             return !this.wIsEmpty(client) ? client[attribute]:false
         },
         getStoredClientObject(order){
-            return !this.wIsEmpty(order.options.client) ? order.options.client : this.getClientObject(order) 
+            return !this.wIsEmpty(order.options) && !this.wIsEmpty(order.options.client) ? order.options.client : this.getClientObject(order) 
         },
         getClientObject(order){
             return !this.wIsEmpty(order.client)? order.client:false

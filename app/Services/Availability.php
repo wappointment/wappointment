@@ -215,8 +215,23 @@ class Availability
 
         $dayNumber = 1;
         $now = Carbon::today($this->timezone);
-        $min_time = Carbon::now($this->timezone)->addHours(Settings::get('hours_before_booking_allowed'));
-        //dd('days_regen', $this->daysRegenerating());
+        $min_hours = Settings::get('hours_before_booking_allowed');
+        $min_time = Carbon::now($this->timezone);
+
+        if ($min_hours > 0) {
+            $int_hours = $min_hours;
+            $int_minutes = 0;
+            if (strpos($min_hours, '.') !== false) {
+                $int_hours = floor($min_hours);
+                $int_minutes = ($min_hours - $int_hours) * 60;
+            }
+            if ($int_hours) {
+                $min_time->addHours($int_hours);
+            }
+            if ($int_minutes > 0) {
+                $min_time->addMinutes($int_minutes);
+            }
+        }
 
         $max_time = Carbon::now($this->timezone)->addDays($this->daysRegenerating())->endOfDay();
         $availability = [];
@@ -236,8 +251,13 @@ class Availability
                 if ($min_time->gte($end)) {
                     continue;
                 }
-                while ($min_time->gt($start)) {
-                    $start = $start->addMinutes(Service::getObject()->duration);
+                // while ($min_time->gt($start)) {
+
+                //     $start = $start->addMinutes(Service::getObject()->duration);
+                // }
+
+                if ($min_time->gt($start)) {
+                    $start = $min_time->copy();
                 }
 
                 $availability[] = [
@@ -248,6 +268,7 @@ class Availability
             $now->addDay();
             $dayNumber++;
         }
+
         return $availability;
     }
 

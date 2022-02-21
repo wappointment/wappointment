@@ -30,7 +30,9 @@
 
 <script>
 import AbstractField from './AbstractField'
-import {isObject, isNil, clone} from "lodash"
+import isObject from 'lodash/isObject'
+import isNil from 'lodash/isNil'
+import clone from 'lodash/clone'
 
 export default {
     name:'core-checkimages',

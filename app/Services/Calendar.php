@@ -2,6 +2,7 @@
 
 namespace Wappointment\Services;
 
+use Wappointment\Remote\Request as RequestRemote;
 use Wappointment\WP\Helpers as WPHelpers;
 
 class Calendar
@@ -29,7 +30,12 @@ class Calendar
 
     protected function loadCalendarLogs()
     {
-        return $this->legacy ? WPHelpers::getStaffOption('calendar_logs') : (!empty($this->staff->options['calendar_logs']) ? $this->staff->options['calendar_logs'] : []);
+        return $this->legacy ? WPHelpers::getStaffOption('calendar_logs') : $this->returnStaffLogs();
+    }
+
+    public function returnStaffLogs()
+    {
+        return !empty($this->staff->options['calendar_logs']) ? $this->staff->options['calendar_logs'] : [];
     }
 
     public function refetch()
@@ -38,33 +44,23 @@ class Calendar
         $this->log('last-hash', false);
         return $this->fetch();
     }
+
     public function fetch()
     {
 
         $start = microtime(true);
-
-        $client = new \GuzzleHttp\Client();
-        $responseQuery = $client->request('GET', $this->url, [
-            'curl' => [
-                CURLOPT_URL => $this->url,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_RETURNTRANSFER => true,
-            ]
-        ]);
+        $client = new RequestRemote;
+        $responseCalendar = $client->getCalendar($this->url);
 
         // Only headers are downloaded here.
-
-        if ($responseQuery->getStatusCode() != 200) {
+        if ($client->failed()) {
             throw new \WappointmentException(__('Cannot connect to the calendar', 'wappointment'));
         }
-
-        $body = $responseQuery->getBody();
-
-        if (strpos($responseQuery->getHeaderLine('content-type'), 'text/calendar') === false) {
+        if (!$client->headerIsEqual('content-type', 'text/calendar')) {
             throw new \WappointmentException('Invalid calendar');
         }
-        $original_content = $body->getContents();
+
+        $original_content = $responseCalendar->getContent();
         $body_string = $this->cleanContent($original_content);
         $result = false;
 
@@ -82,7 +78,6 @@ class Calendar
 
         return $result;
     }
-
 
     private function getCalendarLogs()
     {

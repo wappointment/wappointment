@@ -1,10 +1,10 @@
-=== Appointment Scheduling for Zoom GoogleMeet and more - Wappointment  ===
+=== Appointment Bookings for Zoom GoogleMeet and more - Wappointment  ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
 Requires at least: 4.7
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 2.4.3
+Stable tag: 2.4.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,16 +17,16 @@ Get booked 24/7 with the most **intuitive booking form**.
 
 Convert visitors into customers with a simple call to action.
 
-The perfect Calendly alternative designed for WordPress.
+The perfect [Calendly alternative for WordPress](https://wappointment.com).
 
 https://www.youtube.com/watch?v=jUkiyejbuzg
 
-[Try the demo](https://demo.wappointment.com)
+Try the [demo of the booking calendar](https://demo.wappointment.com)
 
 == Scheduling system headache free ==
 
 = Provide your appointments the way you like =
-* as a video Meeting over Zoom, GoogleMeet or Skype
+* as a video Meeting over Zoom, GoogleMeet, Jitsi or Skype
 * over the Phone
 * or at your office
 
@@ -147,6 +147,24 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.4.6 - 2022-02-16 =
+* added option to specify custom Jitsi Server URL
+* added wp_remote option to avoid CURL errors
+* fixed issue i18n date conversion in cancel and reschedule page
+* fixed issue save to calendar button
+* fixed auto cancel job issues
+* refactored bits and pieces
+
+= 2.4.5 - 2022-01-24 =
+* corrected fatal error
+
+= 2.4.4 - 2022-01-18 =
+* added staff appointments shortcode
+* added health panel for scheduled tasks
+* added Jitsi in video meeting providers
+* fixed bug Zoom Browser with google meet activated
+* fixed issue ics attachments and save to calendar button fixed issue pay on site
 
 = 2.4.3 - 2022-01-10 =
 * added TOS and privacy policy link in payment step

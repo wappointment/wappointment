@@ -87,7 +87,6 @@ class Reset
     {
         $dotcomapi = new DotCom;
         $dotcomapi->setStaff();
-        $dotcomapi->notifyReset();
     }
 
     private function removeStaffSettings()

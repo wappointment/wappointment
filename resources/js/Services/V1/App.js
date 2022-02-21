@@ -45,6 +45,10 @@ export default class AppService extends ApiV1{
                 method: 'post',
                 route: 'wappointment/refresh',
             },
+            health: {
+                method: 'get',
+                route: 'health',
+            },
         };
     }
 

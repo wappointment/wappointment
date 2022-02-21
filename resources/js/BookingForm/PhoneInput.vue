@@ -15,7 +15,7 @@
 
 <script>
 
-import VueTelInput from '../Plugins/vue-tel-input/index.js'
+const VueTelInput = () => import(/* webpackChunkName: "VueTelInput" */ '../Plugins/vue-tel-input/index.js')
 const CountryStyle = () => import(/* webpackChunkName: "style-flag" */ '../Components/CountryStyle')
 export default {
     mounted(){

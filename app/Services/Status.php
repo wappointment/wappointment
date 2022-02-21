@@ -25,51 +25,6 @@ class Status
         }
     }
 
-    public static function hasSmtpPlugin()
-    {
-        if (defined('WPMS_PLUGIN_VER')) {
-            return [
-                'config' => 'admin.php?page=wp-mail-smtp',
-                'icon' => 'wp-mail-smtp/assets/images/logo.svg',
-                'name' => 'WP Mail SMTP',
-            ];
-        }
-        if (defined('POST_SMTP_VER')) {
-            return [
-                'config' => 'admin.php?page=postman',
-                'icon' => 'post-smtp/style/images/badge.png',
-                'name' => 'Post SMTP',
-            ];
-        }
-        if (defined('HAET_MAIL_PATH')) {
-            return [
-                'config' => 'options-general.php?page=wp-html-mail',
-                'icon' => 'https://ps.w.org/wp-html-mail/assets/icon-128x128.png?rev=1730334',
-                'name' => 'WP HTML Mail',
-            ];
-        }
-
-        if (defined('FLUENTMAIL_PLUGIN_VERSION')) {
-            return [
-                'config' => 'options-general.php?page=fluent-mail',
-                'icon' => 'fluent-smtp/assets/images/logo.svg',
-                'name' => 'Fluent SMTP',
-            ];
-        }
-        return false;
-    }
-
-    public static function hasEmailConflict()
-    {
-        if (defined('WP_PGP_ENCRYPTED_EMAILS_MIN_PHP_VERSION')) {
-            return [
-                'name' => 'WP PGP Encrypted Emails',
-            ];
-        }
-
-        return false;
-    }
-
     private static function getAllowedStaffId($staff_id = null)
     {
         return $staff_id = CurrentUser::isAdmin() ? $staff_id : CurrentUser::calendarId();
@@ -94,8 +49,8 @@ class Status
     protected static function create($start, $end, $timezone, $type, $request = null, $staff_id = null)
     {
         $arrayCreate = [
-            'start_at' => DateTime::converTotUtc($start, $timezone),
-            'end_at' => DateTime::converTotUtc($end, $timezone),
+            'start_at' => static::tryConvertToUTCFormatted($start, $timezone),
+            'end_at' => static::tryConvertToUTCFormatted($end, $timezone),
             'type' => (int) $type,
             'staff_id' => $staff_id
         ];
@@ -108,6 +63,15 @@ class Status
         }
 
         return $resultObject;
+    }
+
+    public static function tryConvertToUTCFormatted($timevalue, $timezone)
+    {
+        if (is_numeric($timevalue)) { //unixtimestamp
+            return Carbon::createFromTimestamp($timevalue)->format(WAPPOINTMENT_DB_FORMAT . ':00');
+        } else {
+            return DateTime::converTotUtc($timevalue, $timezone);
+        }
     }
 
     public static function expand($recurringBusy, $until = false)
@@ -136,7 +100,10 @@ class Status
         $next = self::getNext($statusRecurrent, $from, $until, true);
 
         while ($next) {
-            $newEvents[] = $next;
+            if (static::canAdd($next)) {
+                $newEvents[] = $next;
+            }
+
             $from = $next->end_at->timestamp;
             $i++;
             if ($i > 300) {
@@ -151,6 +118,19 @@ class Status
         }
 
         return $newEvents;
+    }
+
+    public static function canAdd($next)
+    {
+        if (isset($next->options['exdate'])) {
+            foreach ($next->options['exdate'] as $exdate) {
+                if (Carbon::createFromTimestamp($exdate)->timestamp === $next->start_at->timestamp) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private static function getPreviousFrom($from, $recur)

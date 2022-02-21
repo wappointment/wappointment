@@ -161,9 +161,14 @@ export default {
         hasMeetingRoom(){
             return [undefined,false,''].indexOf(this.appointment.video_meeting) === -1 ? this.appointment.video_meeting:false
         },
+        isVideoZoom(){
+            let locationid = parseInt(this.appointment.location_id)
+            let location = this.service.locations.find(item => parseInt(item.id) === locationid)
+            return location.options.type == 'zoom' && location.options.video == 'zoom'
+        },
         meetingUrl(){
             let zoomflag = '.zoom.us/j/'
-            if(this.zoom_browser && this.hasMeetingRoom.indexOf(zoomflag) !== false){
+            if(this.isVideoZoom && this.zoom_browser && this.hasMeetingRoom.indexOf(zoomflag) !== false){
                 let meetingsplit = this.hasMeetingRoom.split(zoomflag)[1].split('?')
                 return 'https://zoom.us/wc/'+meetingsplit[0]+'/start?'+meetingsplit[1]
             }

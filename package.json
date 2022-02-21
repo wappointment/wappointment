@@ -89,7 +89,7 @@
     "client:dev": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=webpack.config.general.dev.js",
     "client:watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --watch --watch-poll --config=webpack.config.general.dev.js",
     "scss": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --config=webpack.config.scss.js",
-    "analyze": "node_modules/webpack/bin/webpack.js --progress --config=webpack.config.analyze.js",
+    "analyze": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --config=webpack.config.analyze.js",
     "copy": "node_modules/webpack/bin/webpack.js --progress --config=webpack.config.copy.js",
     "build": "npm run scss && npm run copy && npm run client:prod"
   },

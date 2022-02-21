@@ -4,15 +4,20 @@ namespace Wappointment\Models\Appointment;
 
 trait ManipulateDotcom
 {
+    // a request has been sent and we're waiting for the answer
     public function sentToDotCom()
     {
         $options = $this->options;
-        if (!isset($options['providers'])) {
+        if ($this->canSendToDotCom()) {
             $options['providers'] = [];
+            $this->options = $options;
+            $this->save();
         }
+    }
 
-        $this->options = $options;
-        $this->save();
+    public function canSendToDotCom()
+    {
+        return !isset($this->options['providers']);
     }
 
     public function toDotcom($timezone)

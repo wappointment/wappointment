@@ -90,7 +90,6 @@ import AppointmentOrder from './AppointmentOrder'
 import DurationCell from './DurationCell'
 BookingFormHeader.components = {DurationCell}
 import convertDateFormatPHPtoMoment from '../Standalone/convertDateFormatPHPtoMoment'
-import browserLang from '../Standalone/browserLang'
 import AppointmentTypeSelection from './AppointmentTypeSelection'
 import BookingServiceSelection from './ServiceSelection'
 import BookingDurationSelection from './DurationSelection'
@@ -99,6 +98,7 @@ import BookingStaffSelection from './StaffSelection'
 import BookingPaymentStep from './Payment'
 import MixinLegacy from './MixinLegacy'
 import MixinChange from './MixinChange'
+import MixinConvertDate from './MixinConvertDate'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
@@ -118,7 +118,7 @@ let compDeclared = {
     'AppointmentTypeSelection': AppointmentTypeSelection
 }
 compDeclared = window.wappointmentExtends.filter('BookingFormComp', compDeclared )
-let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [CanFormatPrice, Colors, Dates, MixinLegacy, window.wappointmentExtends.filter('MixinChange', MixinChange)] )
+let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [CanFormatPrice, Colors, Dates, MixinLegacy, MixinConvertDate, window.wappointmentExtends.filter('MixinChange', MixinChange)] )
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
@@ -147,7 +147,6 @@ export default {
         duration: false,
         currentStep: 'BookingCalendar',
         loadingStep: '',
-        converted:false,
         requiresScroll: false,
         selectedStaff: null,
         showHeader:true,
@@ -156,7 +155,8 @@ export default {
         selectedVariation:false,
         selectedPackage: false,
         lockToServiceIDs:[],
-        errorShortcode:false
+        errorShortcode:false,
+        appointmentStartsAt: false
     }),
 
     mounted () {
@@ -174,7 +174,19 @@ export default {
     beforeDestroy(){
         window.removeEventListener('resize', this.windowResized);
     },
-
+    watch:{
+        selectedSlot(newVal, oldVal){
+            if(newVal != oldVal){
+                this.getFormattedDate(
+                this.appointmentStartsAt, 
+                this.selectedSlot, 
+                this.viewData.site_lang, 
+                this.currentTz, 
+                this.fullDateFormat)
+            .then(this.formatAppointmentStartsAt) 
+            }
+        },
+    },
     computed: {
         showStaffSelection(){
             return this.mustSelectStaff || this.loadingStep == "BookingStaffSelection"
@@ -196,9 +208,6 @@ export default {
         isCompactHeader(){
             return this.options.general === undefined || !this.__isEmpty(this.options.general.check_header_compact_mode)
         },
-        appointmentStartsAt(){
-            return this.converted 
-        },
         serviceSelected(){
             return this.service !== false
         },
@@ -213,7 +222,12 @@ export default {
         },
         serviceIsNotFree(){
             return this.service !== false && this.service.options.woo_sellable === true
-            //return this.serviceUNotFree || this.serviceMNotFree
+        },
+        requiredPayment(){
+            return this.resultBooking !== false && this.resultBooking.payment_required === true
+        },
+        canSkipPayment(){
+            return this.serviceIsNotFree === false || (this.serviceIsNotFree && this.requiredPayment === false)
         },
         serviceUNotFree(){
             return this.service !== false && this.service.options.woo_sellable === true && this.service.options.woo_price > 0
@@ -361,17 +375,12 @@ export default {
         windowResized(){
             this.checkIfRequiresScroll()
         },
-        async convertDateRequest(data) {
-            return await this.serviceBooking.call('convertDate', data)
-        }, 
-
-        convertedDate(result){
-            this.converted = result.data.converted
-        },
 
         loadStep(step){
             this.loadingStep = step
-            this.fetchFormattedDate()
+        },
+        formatAppointmentStartsAt(formattedDate){
+            this.appointmentStartsAt = formattedDate
         },
         checkIfRequiresScrollDelay(){
             setTimeout(this.checkIfRequiresScroll, 200)
@@ -589,23 +598,6 @@ export default {
             if(Array.isArray(this.service.type) && this.service.type.length == 1){
                 this.location = this.service.type[0]
             }
-        },
-
-        fetchFormattedDate(){
-            if(this.selectedSlot === false) {
-                this.converted = false
-            }
-            if(this.selectedSlot !== false && this.converted === false){
-                if(this.viewData.site_lang!== 'en' && browserLang().substr(0,2)!=='en'){ // if the browser is not english we fetch for a localized date
-                    this.convertDateRequest({
-                        timezone: this.timeprops.currentTz,
-                        timestamp: this.selectedSlot.start
-                    }).then(this.convertedDate) 
-                }else{
-                    this.converted = this.getMoment(this.selectedSlot.start, this.currentTz).format(this.fullDateFormat)
-                }
-            }
-            
         },
 
         setAvailableServices(){
@@ -828,7 +820,7 @@ export default {
                     'serviceIsNotFree':true,
                 },
                 skip: {
-                'serviceIsNotFree':false,
+                    'canSkipPayment':true,
                 },
                 props: {
                     options:"options",
@@ -975,6 +967,12 @@ export default {
 .wap-front .mx-2{
     margin-right: .4em !important;
 }
+html[dir=rtl] .wap-front .mr-2, 
+html[dir=rtl] .wap-front .mx-2 {
+  margin-right: 0 !important;
+  margin-left: .4em !important;
+}
+
 .wap-front .ml-2,
 .wap-front .mx-2{
     margin-left: .4em !important;

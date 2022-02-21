@@ -46,7 +46,8 @@
             "vendor/illuminate/pagination/resources",
             "vendor/symfony/debug/Resources",
             "vendor/symfony/translation/Loader/schema",
-            "vendor/symfony/translation/Resources"
+            "vendor/symfony/translation/Resources",
+            "vendor/symfony/http-kernel/Resources"
         ],
         "files":[
             "dist/bootstrap.js",

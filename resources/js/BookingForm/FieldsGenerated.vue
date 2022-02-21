@@ -38,7 +38,8 @@ import BookingAddress from './Address'
 import PhoneInput from './PhoneInput'
 import MixinLegacy from './MixinLegacy'
 import IsDemo from '../Mixins/IsDemo'
-import {isEmail, isEmpty} from 'validator'
+import isEmail from 'validator/es/lib/isEmail'
+import isEmpty from 'validator/es/lib/isEmpty'
 export default {
     components: window.wappointmentExtends.filter('bookingFormComponents', {
         TextInput,
@@ -133,6 +134,7 @@ export default {
                 'checkbox':'Checkbox',
                 'select':'Dropdown',
                 'textarea':'TextArea',
+                'date':'DateInput',
             })
         },
         canShowEmail(){
@@ -388,7 +390,8 @@ export default {
                 this.service)
         },
         filterCustomFields(){
-            let customFields = [];
+            let customFields = []
+            
             for (const iterator of this.fieldsRequired()) {
                 let cfieldslist = []
                 for (const cfield of customFields) {
@@ -402,6 +405,7 @@ export default {
                     }
                 } 
             }
+            
             this.customFields = customFields[0].sorting !== undefined ? customFields.sort((a,b) => a.sorting > b.sorting):customFields
         },
 

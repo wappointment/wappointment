@@ -11,7 +11,6 @@ class BookingAdmin extends Booking
     {
         $this->validationRulesArray = [
             'name' => 'required_if:email',
-            'email' => 'present|email',
             'start' => 'required|min:' . time(),
             'end' => 'required|min:' . time(),
             'ctz' => '',
@@ -21,7 +20,12 @@ class BookingAdmin extends Booking
             'clientid' => '',
             'staff_id' => '',
             'phone' => '',
-            'skype' => ''
+            'skype' => '',
+            'recurrent' => '',
+            'page' => ''
         ];
+        if ($inputs['email'] !== '') {
+            $this->validationRulesArray['email'] = 'email';
+        }
     }
 }

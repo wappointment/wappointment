@@ -153,7 +153,8 @@ class AppointmentNew
         $order = null;
         $service = $service ? $service : $client->bookingRequest->getService();
         // no order if a package code is used
-        if (!$client->bookingRequest->get('package_code') && $service->isSold()) {
+        $payment_required = !$client->bookingRequest->get('package_code') && $service->isSold() && Payment::atLeastOneMethodIsActive();
+        if ($payment_required) {
             $ticket->hydrateService($service);
             if (Payment::isWooActive()) {
                 $order = apply_filters('wappointment_woocommerce_generate_order', $order, $client, $ticket, $service, !$slots ? 1 : $slots);
@@ -163,7 +164,7 @@ class AppointmentNew
         }
         $appointment = $ticket->getAppointment();
         $appointment->hydrateService($service);
-        return ['appointment' => $appointment, 'client' => $client, 'order' => $order, 'ticket' => $ticket];
+        return ['appointment' => $appointment, 'client' => $client, 'order' => $order, 'ticket' => $ticket, 'payment_required' => $payment_required];
     }
 
     protected static function createAppointment($data, $slots = false)
@@ -288,7 +289,7 @@ class AppointmentNew
         return VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
     }
 
-    protected static function canBook($start_at, $end_at, $is_admin = false, $staff_id = null, $service = false)
+    public static function canBook($start_at, $end_at, $is_admin = false, $staff_id = null, $service = false)
     {
         if ($is_admin === true) {
             return true;
@@ -301,6 +302,17 @@ class AppointmentNew
             }
         }
 
+        static::testExistingEvents($start_at, $end_at, $staff_id);
+
+        if ((new AvailabilityGetter(static::isLegacy() ? null : $staff_id, $start_at, $end_at))->isAvailable()) {
+            return true;
+        }
+
+        throw new \WappointmentException(__('Slot not available', 'wappointment'), 1);
+    }
+
+    public static function testExistingEvents($start_at, $end_at, $staff_id)
+    {
         //test that this is not a double booking scenario
         $start_at_str = static::unixToDb($start_at);
         $end_at_str = static::unixToDb($end_at);
@@ -356,12 +368,7 @@ class AppointmentNew
         ) {
             throw new \WappointmentException(__('Slot already booked', 'wappointment'), 1);
         }
-
-        if ((new AvailabilityGetter(static::isLegacy() ? null : $staff_id, $start_at, $end_at))->isAvailable()) {
-            return true;
-        }
-
-        throw new \WappointmentException(__('Slot not available', 'wappointment'), 1);
+        return true;
     }
 
     protected static function bookCreate($data, Client $client, $is_admin = false, $status = 0)
@@ -516,7 +523,7 @@ class AppointmentNew
 
     public static function getDefaultStatus($service)
     {
-        if ($service->isSold()) {
+        if ($service->isSold() && Payment::atLeastOneMethodIsActive()) {
             return static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION;
         } else {
             return ((int) Settings::get('approval_mode') === 1) ?

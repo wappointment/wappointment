@@ -5,12 +5,9 @@ namespace Wappointment\Controllers;
 use Wappointment\Helpers\Translations;
 use Wappointment\Services\Wappointment\EmailList;
 use Wappointment\Services\Wappointment\Contact;
-use Wappointment\Services\Wappointment\BookingTest as BookingTestAPI;
-use Wappointment\Services\BookingTest;
 use Wappointment\Validators\HttpRequest\SubscribeAdmin;
 use Wappointment\Validators\HttpRequest\ContactAdmin;
 use Wappointment\Services\Settings;
-use Wappointment\WP\Helpers as WPHelpers;
 
 class WappointmentController extends RestController
 {
@@ -44,28 +41,6 @@ class WappointmentController extends RestController
             ];
         }
         throw new \WappointmentException(Translations::get('error_sending'), 1);
-    }
-
-    /**
-     * Legacy TODO remove
-     */
-    public function sendTestBooking($request)
-    {
-        (new BookingTestAPI)->record($request);
-        $result = (new BookingTest)->send();
-        // quickly trigger the queue task
-        WPHelpers::cronTrigger();
-        if ($result) {
-            Settings::save('show_welcome', false);
-            return [
-                'result' => true,
-                'message' => "Alright we just created a test appointment"
-            ];
-        }
-        return [
-            'result' => false,
-            'message' => "We couldn't send test email"
-        ];
     }
 
     /**

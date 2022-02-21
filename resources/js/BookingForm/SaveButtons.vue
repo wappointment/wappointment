@@ -74,9 +74,8 @@ export default {
         
         generateLink(typeLink = 'view-event', html = false, label = ''){
             let url = apiWappointment.frontPage + '&view='+typeLink+'&appointmentkey=' + this.appointment.edit_key
-            return this.getLink(
-                window.wappointmentExtends.filter('urlAppointmentKey', url, this.appointment, this.ticket),
-                 html , label )
+            return this.getLink(window.wappointmentExtends.filter('urlAppointmentKey', url, {appointment:this.appointment, ticket:this.ticket})
+            , html , label )
         },
 
         getLink(url, html = false, label = ''){
@@ -93,7 +92,12 @@ export default {
         },
         getUnixNow(){
             return momenttz().unix()
-        }
+        },
+        getPhysicalAddress(){
+            let location_id = this.appointment.location_id
+            let found = this.service.locations.find(e => e.id == location_id)
+            return found !== undefined ? found.options.address:this.appointment.location_label
+        },
     },
     computed: {
         canCancel(){
@@ -155,7 +159,7 @@ export default {
         },
 
         eventLocation(){
-            return this.physicalSelected ? this.service.address:this.appointment.location_label
+            return this.appointment.type == 'physical' ? this.getPhysicalAddress():this.appointment.location_label
         },
         
         saveToIcal() {

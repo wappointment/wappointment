@@ -17,9 +17,10 @@ class Addons extends API
 
     public function get()
     {
-        $response = $this->client->request('GET', $this->call('/api/addons'));
+        $response = $this->client->get($this->call('/api/addons'));
         $solutions = static::licensedSolutions();
         $data = $this->processResponse($response);
+
         if (!empty($solutions)) {
             foreach ($data->addons as &$package) {
                 foreach ($solutions as $solution) {

@@ -14,7 +14,7 @@ class InitBackend
     public $isInstalledAndUpdated = false;
     public function __construct($isInstalledAndUpdated)
     {
-        $this->$isInstalledAndUpdated = $isInstalledAndUpdated;
+        $this->isInstalledAndUpdated = $isInstalledAndUpdated;
         add_action('admin_init', [$this, 'enqueueMin']);
         add_action('admin_menu', [$this, 'registerMenuRoot']);
         if ($isInstalledAndUpdated) {

@@ -1,4 +1,5 @@
 __webpack_public_path__ = apiWappointment.resourcesUrl;
+
 import Vue from './appVue'
 import ClickCopy from './Fields/ClickCopy'
 import InputPh from './Fields/InputLabelMaterial'
@@ -10,6 +11,7 @@ import PhoneInput from './BookingForm/PhoneInput'
 import AbstractListing from './Views/AbstractListing'
 import momenttz from './appMoment'
 import RequestMaker from './Modules/RequestMaker'
+import DeepDefined from './Mixins/DeepDefined'
 
 window.wappointmentExtends.store('commons', {RequestMaker,AbstractListing, PhoneInput, InputPh, ClickCopy, VideoIframe, FontAwesomeIcon, DurationCell, momenttz})
 
@@ -45,6 +47,7 @@ Vue.use(VueSanitize, {
 })
 Vue.mixin(helpers)
 Vue.mixin(i18n)
+Vue.mixin(DeepDefined)
 Vue.component('WapImage', WapImage)
 Vue.component('FieldsGenerated', FieldsGenerated)
 Vue.component('v-style', {
@@ -301,9 +304,6 @@ let WappoBackroutes = [
       el: '#wappointment_app',
       created: function () {
         routerSetupRedirect(router)
-        // if(routerSetupRedirect(router) === false){
-        //   routerQueryRedirect(router)
-        // }
       },
       components: { Backend },
       render: h => h(Backend)

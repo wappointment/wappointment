@@ -5,7 +5,7 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.3</span>   
+                <span>V2.4.6</span>   
                 <span class="ml-2">Bug fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
@@ -13,15 +13,12 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added TOS and privacy policy link in payment step</li>
-                        <li>added storing user details per order</li>
-                        <li>added extended data to email receipt</li>
-                        <li>added translatable strings</li>
-                        <li>fixed force user email issues</li>
-                        <li>fixed issue behalf booking</li>
-                        <li>fixed issue add to calendar button in booking confirmation</li>
-                        <li>fixed custom fields issue display in calendar and emails</li>
-                        <li>fixed issue "no idn encoder found" while sending email</li>
+                        <li>added option to specify custom Jitsi Server URL</li>
+                        <li>added wp_remote option to avoid CURL errors</li>
+                        <li>fixed issue i18n date conversion in cancel and reschedule page</li>
+                        <li>fixed issue save to calendar button</li>
+                        <li>fixed auto cancel job issues</li>
+                        <li>refactored bits and pieces</li>
                     </ol>
                     
                   </div>

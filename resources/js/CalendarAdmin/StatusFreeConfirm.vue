@@ -44,11 +44,11 @@ export default {
             this.$emit('confirmed')
         },
         async setRequest(params) {
-
+            console.log('this.startTime', this.startTime.unix())
             return await this.serviceStatus.call('save', 
             {
-                start: this.startTime.format(), 
-                end: this.endTime.format(), 
+                start: this.startTime.unix(), 
+                end: this.endTime.unix(), 
                 timezone: this.timezone, 
                 type: 'free',
                 staff_id: this.activeStaff.id !== undefined? this.activeStaff.id:null

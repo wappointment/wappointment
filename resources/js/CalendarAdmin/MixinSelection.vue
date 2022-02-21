@@ -1,91 +1,7 @@
 
 <script>
 export default {
-    computed: {
-      shownAppointmentForm(){
-        return this.selectedChoice === 3
-      },
-      shownBusyConfirm(){
-        return this.selectedChoice === 2
-      },
-      shownFreeConfirm(){
-        return this.selectedChoice === 1
-      },
-      selectionSingleDay(){
-        return (this.startTime.day() === this.endTime.day() && 
-          this.startTime.month() === this.endTime.month() && 
-          this.startTime.year() === this.endTime.year())
-      },
-      isAvailable(){
-        if(this.getThisWeekIntervals!==0) {
-          for (let index = 0; index < this.getThisWeekIntervals.intervals.length; index++) {
-            const element = this.getThisWeekIntervals.intervals[index]
-            if(this.selectIsWithin(element)){
-              return true
-            }
-          }
-        }
-        return false
-      },
-      
-
-      isBusy(){
-        if(this.getThisWeekIntervals!==0) {
-            for (let index = 0; index < this.getThisWeekIntervals.intervals.length; index++) {
-              const element = this.getThisWeekIntervals.intervals[index]
-              if(
-                this.selectWraps(element) ||
-                this.selectIntersectsLeft(element) ||
-                this.selectIntersectsRight(element) ||
-                this.selectIsWithin(element)
-              ){
-                return false
-              }
-
-            }
-        }
-        
-        return true
-      },
-    },
     methods:{
-      selectIsWithin(element){
-      let selStart = this.momenttz.tz(this.startTime.format(), this.timezone)
-      let selEnd = this.momenttz.tz(this.endTime.format(), this.timezone)
-      return selStart.unix() >= element.start 
-      && selEnd.unix() <= element.end
-    },
-    selectWraps(element){
-      let selStart = this.momenttz.tz(this.startTime.format(), this.timezone)
-      let selEnd = this.momenttz.tz(this.endTime.format(), this.timezone)
-      return selStart.unix() <= element.start 
-      && selEnd.unix() >= element.end
-    },
-    selectIntersectsLeft(element){
-      return this.startTime.unix() < element.start 
-      && this.endTime.unix() > element.start 
-      && this.endTime.unix() <= element.end
-    },
-    selectIntersectsRight(element){
-      return this.startTime.unix() >= element.start 
-      && this.startTime.unix() < element.end 
-      && this.endTime.unix() > element.end
-    },
-    confirmFree(){
-      if(!this.selectionSingleDay || this.isAvailable) return
-      if(this.selectionSingleDay){
-        this.selectedChoice = 1
-      }
-    },
-    confirmBusy(){
-      if(this.isBusy) return
-      this.selectedChoice = 2
-    },
-    confirmNewBooking(){
-      if(this.selectionSingleDay){
-        this.selectedChoice = 3
-      }
-    },
      mouseEnter(event){
         //this.viewAppointment(event)
         return false
@@ -105,7 +21,12 @@ export default {
       },
       cancelAppointment(event){
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
-        this.cancelRequest(eventId)
+        let appointment = this.findAppointmentById(eventId)
+        if(appointment.extendedProps.recurrent){
+          this.cancelRecurringRequest(eventId)
+        }else{
+          this.cancelRequest(eventId)
+        }
       },
 
       findAppointmentById(eventId){
@@ -118,12 +39,12 @@ export default {
       },
 
       findEventById(eventId, type = false){
-        for (let index = 0; index < this.events.length; index++) {
-          if(type === false && this.events[index]['type']=='appointment') {
+        for (const element of this.events) {
+          if(type === false && element['type']=='appointment') {
             continue //we ignore the appointment events
           }
-          if(this.events[index]['dbid']!== undefined && eventId == this.events[index]['dbid']) {
-            return this.events[index]
+          if(element['dbid']!== undefined && eventId == element['dbid']) {
+            return element
           }
         }
       },
@@ -188,8 +109,21 @@ export default {
           title: 'Do you really want to cancel this appointment?',
         }).then((result) => {
           if(result === true){
-            this.request(this.cancelEventRequest, eventId,undefined,false,  this.refreshEvents)
+            this.request(this.cancelEventRequest, {id: eventId},undefined,false,  this.refreshEvents)
           } 
+        })
+      },
+
+      cancelRecurringRequest(eventId){
+        this.$WapModal().confirm({
+          title: 'Do you really want to cancel this appointment?',
+          remember: true,
+          rememberLabel:'Delete related appointments too? (child or siblings from a recurrent event)'
+        }).then((result) => {
+          if(result === false){
+              return
+          }
+          this.request(this.cancelEventRequest, {id: eventId, sibblings: result.remember},undefined,false,  this.cancelEventSuccess)
         })
       },
 
@@ -221,13 +155,19 @@ export default {
       },
 
        getEventById(eventId){
-        for (let i = 0; i < this.events.length; i++) {
-          const element = this.events[i]
-
-          if(element.id !== undefined && element.id == eventId) {
+         for (const element of this.events) {
+            if(element.id !== undefined && element.id == eventId) {
             return element
           }
+         }
+      },
+      cancelEventSuccess(response){
+        this.$WapModal().notifySuccess(response.data['message'])
+        if(Array.isArray(response.data['failures']) && response.data['failures'].length > 0){
+          this.$WapModal().notifyError(response.data['failures'].join("\n"))
         }
+        
+        this.refreshEvents()
       },
 
 
@@ -264,8 +204,8 @@ export default {
 
       },
 
-       async cancelEventRequest(eventId) {
-          return await this.serviceEvent.call('delete', {id: eventId})
+       async cancelEventRequest(params) {
+          return await this.serviceEvent.call('delete', params)
       },
       async confirmEventRequest(eventId) {
           return await this.serviceEvent.call('confirm', {id: eventId})

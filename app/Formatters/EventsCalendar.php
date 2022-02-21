@@ -120,6 +120,7 @@ class EventsCalendar
             'options' => $event->options,
             'client' => $preparedClient,
             'type' => 'appointment',
+            'recurrent' => isset($event->recurrent) && $event->recurrent > 0,
             'onlyDelete' => true,
             'rendering' => (bool) $event->status ? 'appointment-confirmed' : 'appointment-pending',
             'className' => apply_filters('wappointment_calendar_appointment_class', $this->baseClassAppointment($owes, $event), $event),
@@ -188,7 +189,7 @@ class EventsCalendar
             $optionValues = !is_array($optionValues) ? [$optionValues] : $optionValues;
             foreach ($optionValues as $valueKey) {
                 foreach ($valuesLabelsDefinition as $valueLabelDefined) {
-                    if ($valueLabelDefined['value'] == $valueKey) {
+                    if (isset($valueLabelDefined['value']) && $valueLabelDefined['value'] == $valueKey) {
                         $valuesForHumans[] = $valueLabelDefined['label'];
                     }
                 }

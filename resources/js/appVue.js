@@ -1,3 +1,4 @@
+import babelpolyfill from './babelpolyfill.js'
 import Vue from 'vue'
 import axios from 'axios'
 import wappoExtend from './Standalone/extends.js'

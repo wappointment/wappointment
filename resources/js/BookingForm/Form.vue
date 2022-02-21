@@ -239,7 +239,7 @@ export default {
                         resultBooking: result.data
                     }
                 this.$emit('confirmed', 
-                    this.mustPay ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
+                    this.mustPay && result.data.payment_required === true ? 'BookingPaymentStep' :this.getAddonNextScreen(result.data.result), 
                     this.appointmentBookedDataFilter(data, result)
                 )
             }else{

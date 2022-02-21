@@ -133,6 +133,19 @@ animation-name: updatesreview;
 .w-major-update-warning + p {
     display: none;
 }
+
+/*RTL rules*/
+html[dir=rtl] .ProseMirror p{
+    text-align: right;
+}
+
+html[dir=rtl] body .wappointment-wrap,
+html[dir=rtl] body .wappointment-wrap h1,
+html[dir=rtl] body .wappointment-wrap div{
+    text-align: right;
+}
+
+
   
   @keyframes spin {
     0% { transform: rotate(0deg); }
