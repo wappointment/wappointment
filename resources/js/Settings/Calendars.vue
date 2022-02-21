@@ -236,7 +236,7 @@ export default {
             return this.isUserAdministrator || this.hasPermission(something)
         },
         isStaffCalendar(calendar){
-            return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1 && calendar.roles.indexOf('wappointment_staff') === -1
+            return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1 && calendar.roles.indexOf('wappointment_manager') === -1 && calendar.roles.indexOf('wappointment_staff') === -1
         },
         getShortCode(calendar_id){
             this.showShortcode = calendar_id

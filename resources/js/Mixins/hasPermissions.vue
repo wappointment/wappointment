@@ -7,7 +7,7 @@ export default {
     },
     computed:{
         isUserAdministrator(){
-            return this.hasPermission('administrator')
+            return this.hasPermission('administrator') || this.hasPermission('wappointment_manager')
         },
         canDeleteClient(){
             return this.isUserAdministrator || this.hasPermission('wappo_clients_del')

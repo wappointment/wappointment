@@ -2,6 +2,7 @@
 
 namespace Wappointment\Controllers;
 
+use Wappointment\Services\Permissions;
 use Wappointment\Services\Reset;
 use Wappointment\Services\ViewsData;
 
@@ -24,5 +25,13 @@ class DebugController extends RestController
     {
         Reset::refreshCache();
         return ['message' => __('Cache has been reseted', 'wappointment')];
+    }
+
+    public function addManagerRole()
+    {
+        $perms = new Permissions;
+        $perms->registerRole('wappointment_manager');
+
+        return (new ViewsData())->load('settingsadvanced');
     }
 }

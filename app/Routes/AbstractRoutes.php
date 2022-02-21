@@ -132,13 +132,13 @@ abstract class AbstractRoutes
 
     public function canExecuteAdministrator($args)
     {
-        return current_user_can('administrator');
+        return current_user_can('administrator') || current_user_can('wappointment_manager');
     }
 
     public function canExecuteMixed($request)
     {
         $cap = $this->getRequestCap($request);
-        return current_user_can('administrator') || current_user_can(empty($cap) ? 'administrator' : $cap);
+        return $this->canExecuteAdministrator(false) || current_user_can(empty($cap) ? 'administrator' : $cap);
     }
     protected function getRequestCap($request)
     {
