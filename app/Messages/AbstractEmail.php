@@ -10,7 +10,7 @@ use WappoSwift_Attachment;
 
 abstract class AbstractEmail extends AbstractMessage
 {
-    use ConvertHtmlToText;
+    use ConvertHtmlToText, CanDisplayRtl;
 
     public $subject = '';
     protected $renderer = null;
@@ -22,8 +22,8 @@ abstract class AbstractEmail extends AbstractMessage
     public function __construct($params)
     {
         parent::__construct($params);
-
-        $this->renderer = new FoundationEmail;
+        $this->detectRtlFromParams();
+        $this->renderer = new FoundationEmail($this->isRtl());
 
         if ($this->admin === false) {
             $email_logo = VersionDB::canServices() ? Settings::get('email_logo') : Settings::getStaff('email_logo');

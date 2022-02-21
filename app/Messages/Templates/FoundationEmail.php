@@ -12,6 +12,12 @@ class FoundationEmail
     'separator' => '#d5d5d5',
   ];
   private $includedStyles = ['core'];
+  private $rtl = false;
+
+  public function __construct($rtl)
+  {
+    $this->rtl = (bool)$rtl;
+  }
 
   public function setColors($colors)
   {
@@ -106,11 +112,25 @@ class FoundationEmail
     return $content_string;
   }
 
+  public function makeRtl()
+  {
+    return $this->rtl ? 'dir="rtl"' : '';
+  }
+
+  public function addRtlCss()
+  {
+    return $this->rtl ? 'direction:rtl; text-align:right;' : '';
+  }
+  public function convertAlignLeftRTL()
+  {
+    return $this->rtl ? 'direction:rtl; text-align:right;' : 'text-align:left;';
+  }
+
   public function wrapBoilerPlate($content)
   {
     return
       '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-        <html xmlns="http://www.w3.org/1999/xhtml">
+        <html xmlns="http://www.w3.org/1999/xhtml" ' . $this->makeRtl() . '>
         <head>
         <!-- The character set should be utf-8 -->
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -218,7 +238,7 @@ class FoundationEmail
                               margin: 0 0 16px 0;
                               Margin: 0 0 16px 0; }
                               table.button table td {
-                                text-align: left;
+                                ' . $this->convertAlignLeftRTL() . '
                                 color: #fefefe;
                                 background: ' . $this->getColor('primary') . ';
                                 border: 2px solid ' . $this->getColor('primary') . '; }
@@ -379,7 +399,9 @@ class FoundationEmail
                                 padding: 0;
                                 -moz-box-sizing: border-box;
                                 -webkit-box-sizing: border-box;
-                                box-sizing: border-box; }
+                                box-sizing: border-box; 
+                                ' . $this->addRtlCss() . '
+                              }
                               
                               .ExternalClass {
                                 width: 100%; }
@@ -432,7 +454,8 @@ class FoundationEmail
                               table, tr, td {
                                 padding: 0;
                                 vertical-align: top;
-                                text-align: left; }
+                                ' . $this->convertAlignLeftRTL() . ' 
+                                ' . $this->addRtlCss() . '}
                               
                               @media only screen {
                                 html {
@@ -442,7 +465,10 @@ class FoundationEmail
                               table.body {
                                 background: #f3f3f3;
                                 height: 100%;
-                                width: 100%; }
+                                width: 100%; 
+                                ' . $this->addRtlCss() . '
+                              }
+                                
                               
                               table.container {
                                 background: #fefefe;
@@ -1208,7 +1234,7 @@ class FoundationEmail
                                 padding: 0;
                                 margin: 0;
                                 Margin: 0;
-                                text-align: left;
+                                ' . $this->convertAlignLeftRTL() . '
                                 line-height: 1.3; }
                               
                               h1,

@@ -43,6 +43,7 @@ class Client
         }
 
         $dataClient = $booking->preparedData();
+        $dataClient['options'] = static::addRtl($dataClient['options']);
         if (empty($dataClient['name'])) {
             $dataClient['name'] = '';
         }
@@ -77,8 +78,15 @@ class Client
         return $clients;
     }
 
+    protected static function addRtl($options)
+    {
+        $options['rtl'] = is_rtl();
+        return $options;
+    }
     public static function save($data)
     {
+        $data['options'] = static::addRtl($data['options']);
+
         //create or load client account
         $client = MClient::firstOrCreate(
             ['email' =>  $data['email']],
@@ -96,6 +104,7 @@ class Client
         foreach ($data['options'] as $key => $value) {
             $options[$key] = $value;
         }
+
         $client->options = $options;
         $client->name = $data['name'];
         $client->save();

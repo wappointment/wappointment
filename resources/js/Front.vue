@@ -487,6 +487,32 @@ html[dir=rtl] .wap-booking-fields{
 .wap-booking-fields .isInvalid textarea{
     border-right: 4px solid var(--wappo-error-tx) !important;
 }
+.wap-booking-fields .isValid input[type="text"], 
+.wap-booking-fields .isValid input[type="email"], 
+.wap-booking-fields .isValid input[type="url"], 
+.wap-booking-fields .isValid input[type="tel"],
+.wap-booking-fields .isValid textarea{
+    border-right: 4px solid var(--wappo-valid-tx) !important;
+}
+
+html[dir=rtl] .wap-booking-fields .isInvalid input[type="text"], 
+html[dir=rtl] .wap-booking-fields .isInvalid input[type="email"], 
+html[dir=rtl] .wap-booking-fields .isInvalid input[type="url"], 
+html[dir=rtl] .wap-booking-fields .isInvalid input[type="tel"],
+html[dir=rtl] .wap-booking-fields .isInvalid textarea{
+    border-left: 4px solid var(--wappo-error-tx) !important;
+    border-right:1px solid var(--wappo-input-bor) !important;
+}
+html[dir=rtl] .wap-booking-fields .isValid input[type="text"], 
+html[dir=rtl] .wap-booking-fields .isValid input[type="email"], 
+html[dir=rtl] .wap-booking-fields .isValid input[type="url"], 
+html[dir=rtl] .wap-booking-fields .isValid input[type="tel"],
+html[dir=rtl] .wap-booking-fields .isValid textarea{
+    border-left: 4px solid var(--wappo-valid-tx) !important;
+    border-right:1px solid var(--wappo-input-bor) !important;
+}
+
+
 .wap-booking-fields .field-required label::after {
     content:" *";
     color:var(--wappo-error-tx);
