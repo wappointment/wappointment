@@ -3,7 +3,6 @@
 namespace Wappointment\Jobs;
 
 use Wappointment\Models\Appointment;
-use Wappointment\Services\JobHelper;
 use Wappointment\Services\Wappointment\DotCom;
 
 class ProcessTransaction implements JobInterface
