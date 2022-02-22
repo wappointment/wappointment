@@ -17,18 +17,24 @@ return [
     'cals_account_connect_fav_3' => __('and soon more to come ...', 'wappointment'),
 
 
-    'cals_connected_calendar' => __('Connected calendars', 'wappointment'),
-    'cals_connect_external' => __('Connect external calendar', 'wappointment'),
+    'cals_connected_calendar' => __('Sync .ICS', 'wappointment'),
+    'cals_connect_external' => __('Connect .ICS calendar', 'wappointment'),
     'cals_connect_external_tip' => __('Make sure clients can\'t book you when you\'re busy', 'wappointment'),
+    'cals_connect_external_paste' => __('Paste a .ICS calendar URL', 'wappointment'),
+    'cals_connect_external_how_url' => __('See how to get the URL of your calendar:', 'wappointment'),
+
+
+    'cals_ext_import' => __('Import', 'wappointment'),
+    'cals_ext_export' => __('Export', 'wappointment'),
     'cals_pick_services' => __('Pick services provided by staff', 'wappointment'),
+    /* translators: %s - replace by Google Calendar, iCal, etc ... */
+    'cals_connect_external_get_url' => __('Get your %s URL', 'wappointment'),
     'cals_connect_external_desc' => __('Connect your external calendars, to automatically lock times when you\'re already busy', 'wappointment'),
-
-
+    'cals_connect_external_export' => __('Get your new bookings to appear straight in your calendar app', 'wappointment'),
 
     'cals_set_default' => __('set default', 'wappointment'),
     'cals_permi' => __('Set Permissions', 'wappointment'),
     'cals_setcf' => __('Set Custom Field', 'wappointment'),
-
 
     'service_title' => __('Services', 'wappointment'),
     'service_add1_to_1' => __('Add 1-to-1 service', 'wappointment'),
