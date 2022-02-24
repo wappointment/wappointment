@@ -7,7 +7,6 @@ use Wappointment\Jobs\CleanPendingPaymentAppointment;
 use Wappointment\Models\Appointment;
 use Wappointment\Models\Job;
 use Wappointment\System\Status;
-use WappoVendor\Carbon\Carbon;
 
 class Health
 {
