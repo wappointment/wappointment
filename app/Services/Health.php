@@ -3,6 +3,7 @@
 namespace Wappointment\Services;
 
 use Wappointment\Helpers\Get;
+use Wappointment\Jobs\CleanPendingPaymentAppointment;
 use Wappointment\Models\Appointment;
 use Wappointment\Models\Job;
 use Wappointment\System\Status;
@@ -20,6 +21,7 @@ class Health
             $this->checkUnreliable();
             $this->checkLateRun();
             $this->checkLateTasks();
+            $this->checkCleanJob();
             $this->set('checks', $this->checks);
             $this->setSolutions();
         }
@@ -28,6 +30,11 @@ class Health
     public function get()
     {
         return $this->data;
+    }
+
+    public function checkCleanJob()
+    {
+        CleanPendingPaymentAppointment::registerJob();
     }
 
     public function set($key, $value)
@@ -43,7 +50,7 @@ class Health
     public function checkLateRun()
     {
         $last_run = $this->cronLastRun();
-        $this->checks['cron_late_run'] = $last_run < time() - (10); //late after 10 minutes
+        $this->checks['cron_late_run'] = $last_run + (10 * 60) < time(); //late after 10 minutes
         $this->set('cron_last_run', $last_run);
     }
 
@@ -51,8 +58,6 @@ class Health
     {
         $pendingTasks = $this->pendingTasks();
         $this->checks['cron_late_tasks'] = count($pendingTasks['late']) > 0;
-        //$this->checks['cron_old_tasks'] = count($pendingTasks['old']) > 0;
-        //$this->checks['cron_never_ending_tasks'] = count($pendingTasks['never_ending']) > 0;
         $this->set('cron_jobs', $pendingTasks);
     }
 
