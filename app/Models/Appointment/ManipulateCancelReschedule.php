@@ -44,13 +44,13 @@ trait ManipulateCancelReschedule
     public function cancelLimit()
     {
         return Carbon::createFromTimestamp($this->canCancelUntilTimestamp())
-            ->setTimezone($this->getClientModel()->getTimezone())->format($this->longFormat());
+            ->setTimezone($this->getClientModel()->getTimezone($this->getStaffTZ()))->format($this->longFormat());
     }
 
     public function rescheduleLimit()
     {
         return Carbon::createFromTimestamp($this->canRescheduleUntilTimestamp())
-            ->setTimezone($this->getClientModel()->getTimezone())->format($this->longFormat());
+            ->setTimezone($this->getClientModel()->getTimezone($this->getStaffTZ()))->format($this->longFormat());
     }
 
     protected function longFormat()
