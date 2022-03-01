@@ -4,7 +4,7 @@
         
         <div class="d-flex justify-content-center commands-hours commands-top">
             <button data-tt="Show less hours" class="btn btn-secondary btn-xs" @click="removeMin">-</button>
-            <div  data-tt="Change precision each 10min, 20min etc...">
+            <div  data-tt="Change precision each 5min, 10min, 20min etc...">
                 <HoursDropdown :elements="durations" :current="precision" :funcDisplay="funcDisplay" @selected="changePrecision"/>
             </div>
             <button data-tt="Show more hours" @click="addMin" class="btn btn-secondary btn-xs">+</button>
@@ -27,9 +27,9 @@
             
         </div>
 
-        <div  class="d-flex justify-content-center commands-hours commands-bottom">
+        <div class="d-flex justify-content-center commands-hours commands-bottom">
             <button data-tt="Show less hours" class="btn btn-secondary  btn-xs" @click="removeMax">-</button>
-            <div  data-tt="Change precision each 10min, 20min etc...">
+            <div  data-tt="Change precision each 5min, 10min, 20min etc...">
                 <HoursDropdown :elements="durations" :current="precision" :funcDisplay="funcDisplay" @selected="changePrecision"/>
             </div>
             <button data-tt="Show more hours" @click="addMax" class="btn btn-secondary  btn-xs">+</button>
@@ -46,7 +46,7 @@ export default {
     data() {
         return {
             edittime: false,
-            durations: [10, 15, 20, 30, 60],
+            durations: [5, 10, 15, 20, 30, 60],
         }
     },
     computed: {
