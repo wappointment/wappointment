@@ -69,15 +69,18 @@ export default {
         keyDataSource:'clients'
     }),
     methods: {
+        hasOption(client){
+          return [undefined,null,''].indexOf(client.options) === -1
+        },
         owes(client){
-            return client.options.owes !== undefined && client.options.owes > 0 ? this.formatPrice(client.options.owes, true):false
+            return this.hasOption(client) && client.options.owes !== undefined && client.options.owes > 0 ? this.formatPrice(client.options.owes, true):false
         },
         getPhone(client){
-          return client.options.phone !== undefined ? client.options.phone:'---'
+          return this.hasOption(client) && client.options.phone !== undefined ? client.options.phone:'---'
         },
 
         getSkype(client){
-          return client.options.skype !== undefined ? client.options.skype:'---'
+          return this.hasOption(client) && client.options.skype !== undefined ? client.options.skype:'---'
         },
 
         afterLoaded(response){
