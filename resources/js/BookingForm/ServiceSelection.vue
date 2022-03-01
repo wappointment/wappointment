@@ -30,7 +30,11 @@ export default {
         search: ''
     }),
     components:{ServiceButton},
-
+    created(){
+        if(this.services.length == 1){
+            this.selectService(this.services[0])
+        }
+    },
     computed:{
         filteredServices(){
             let searchterm = this.search.toLowerCase()
