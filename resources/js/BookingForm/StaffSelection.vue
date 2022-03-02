@@ -2,7 +2,7 @@
     <div v-if="calendars.length>0">
         <div class="title wtitle" v-if="options!==undefined ">
             <div>{{ options.staff_selection.pickstaff }}</div>
-            <div class="d-flex text-sm justify-content-center" v-if="servicesAvailable && servicesAvailable.length > 1">
+            <div class="d-flex text-sm justify-content-center align-items-center" v-if="servicesAvailable && servicesAvailable.length > 1">
                 <span>{{options.staff_selection.availabilityfor}}</span>
                 <div class="mr-2 ml-2">
                     <a v-if="!showDropdownService" href="javascript:;" @click="showDropdownService = true">{{ selectedServiceObject.name }}</a>
@@ -10,7 +10,7 @@
                         <option v-for="service in servicesAvailable" :value="service.id">{{ service.name }}</option>
                     </select>
                 </div>
-                <div>
+                <div v-if="selectedService > 0">
                     {{ getServiceDuration }} {{options.general.min}}
                 </div>
             </div>
@@ -64,7 +64,15 @@ export default {
         },
         servicesAvailable(){
             let serviceLocked = this.attributesEl !== undefined && this.attributesEl.serviceSelection !== undefined ? this.attributesEl.serviceSelection:[]
-            return serviceLocked.length > 1?this.viewData.services.filter(s => serviceLocked.indexOf(s.id)!==-1):this.viewData.services
+            let services = serviceLocked.length > 1? this.viewData.services.filter(s => serviceLocked.indexOf(s.id)!==-1):this.viewData.services
+            let dummyService = Object.assign({},services[0])
+
+            dummyService.id = -1
+            dummyService.name = '60'+this.options.general.min
+            dummyService.options.durations = [{duration: 60}]
+
+            services.unshift(dummyService)
+            return services
         },
         getServiceDuration(){
             return this.selectedServiceObject.options.durations[0].duration
@@ -74,7 +82,7 @@ export default {
             let serviceSelected = this.selectedService
             return this.calendars.map(e => Object.assign(
                 {name:e.n, options:{icon:{src:e.a.replace('?s=46','?s=80'),wp_id:true}}}, e)
-                ).filter(e => e.name.toLowerCase().indexOf(searchterm) !== -1 && e.services.indexOf(serviceSelected) !== -1)
+                ).filter(e => e.name.toLowerCase().indexOf(searchterm) !== -1 && (serviceSelected < 0 || serviceSelected>0 && e.services.indexOf(serviceSelected) !== -1))
         },
     },
     created(){
