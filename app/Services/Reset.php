@@ -5,7 +5,6 @@ namespace Wappointment\Services;
 use Wappointment\Config\Database;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\WP\Scheduler as WPScheduler;
-use Wappointment\ClassConnect\Capsule;
 use Wappointment\Services\Wappointment\DotCom;
 use Wappointment\Repositories\Availability;
 use Wappointment\Repositories\CalendarsBack;

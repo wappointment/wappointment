@@ -74,4 +74,6 @@ return [
     'remember' => __('Remember', 'wappointment'),
     'settings' => __('Settings', 'wappointment'),
     'created_at' => __('Created at', 'wappointment'),
+
+    'ddp_default' => __('Please make a selection', 'wappointment'),
 ];
