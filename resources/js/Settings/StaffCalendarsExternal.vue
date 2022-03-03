@@ -6,7 +6,7 @@
                     <span class="nav-link" :class="{'active' : isActive(key)}" @click="changeTab(key)">{{ tab.label }}</span>
                 </li>
             </ul>
-            <component v-if="activeComp" :is="activeComp" :calendar="user" />
+            <component v-if="activeComp" :is="activeComp" @savedSync="saveCalSuccess" :calendar="user" />
         </div>
     </StaffModalWrapper>
 </template>
@@ -44,7 +44,10 @@ export default {
         },
     },
     methods: {
-
+        saveCalSuccess(response){
+            this.$emit('savedSync', response)
+             this.$WapModal().notifySuccess(response.data.message)
+        },
         isActive(key){
             return key == this.activeTab
         },
