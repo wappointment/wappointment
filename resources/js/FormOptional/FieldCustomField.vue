@@ -6,7 +6,7 @@
         <div class="d-flex flex-wrap align-items-stretch check-locations check-cfields" :class="{'showControls':showControls}">
 
             <template v-for="(item, idx) in items">
-                <div :key="idx" @click="onChangedWrapped(item)"  
+                <div v-if="canPickCustomField(item)" :key="idx" @click="onChangedWrapped(item)"  
                 class="btn btn-secondary btn-cell align-self-start" 
                 :class="{'is-invalid':hasErrors,'core-field':item.core !== undefined,'custom-field':item.core === undefined, noclick: item.always !== undefined}">
                     <div> 
@@ -180,6 +180,9 @@ export default {
     },
 
     methods: {
+        canPickCustomField(item){
+            return item.nopick === undefined
+        },
         updateCustomFields(updatedCustomFields){
             this.itemsLoaded = updatedCustomFields
         },
