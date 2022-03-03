@@ -34,7 +34,9 @@ class WPUser extends Model
                 $user_data[$key] = $userObject->data->$key;
             }
         }
-        $user_data['role'] = $userObject->roles[0];
+        $roles = array_values(!is_array($userObject->roles) ? (array) $userObject->roles : $userObject->roles);
+
+        $user_data['role'] = $roles[0];
         $user_data['gravatar'] = static::getGravatar($userObject->data->ID);
         return $user_data;
     }

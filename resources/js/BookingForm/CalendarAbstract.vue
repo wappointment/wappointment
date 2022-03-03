@@ -403,19 +403,24 @@ export default {
             return this.cachedSlots[daynumber]
         },
         
-        
         dayWeekSelected(idweek) {
             return idweek === this.selectedWeek
         },
         getTodayStart(){
             let nowmin = momenttz.tz(this.now.clone(), this.currentTz).add(this.minTodayHour,'hours')
             let nowcopy = nowmin.clone().startOf('hour')
-            let i=0
-            while (nowcopy.unix() < nowmin.unix() && i <20) {
-                nowcopy.add( this.realSlotDuration(), 'seconds')
-                i++
+            
+            if(this.currentTime() > nowcopy.unix()){
+                let i = 0
+                while (nowcopy.unix() < nowmin.unix() && i <10) {
+                    nowcopy.add( 10, 'minutes')
+                    i++
+                }
             }
             return nowcopy
+        },
+        currentTime(){
+            return Math.round(Date.now() / 1000)
         },
         getTodayInterval(){
             let start = this.getTodayStart()

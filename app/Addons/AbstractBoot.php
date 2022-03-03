@@ -6,6 +6,7 @@ use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Helpers\Get;
 use Wappointment\Services\CurrentUser;
 use Wappointment\Services\Wappointment\Addons;
+use Wappointment\ClassConnect\Carbon;
 
 abstract class AbstractBoot implements Boot
 {
@@ -189,7 +190,6 @@ abstract class AbstractBoot implements Boot
         }
         add_action('admin_init', [static::$name_space . 'Boot', 'adminInit'], 11);
 
-
         add_action('in_plugin_update_message-' . static::pluginNamekey() . '/index.php', [static::$name_space . 'Boot', 'versionUpdateWarning'], 10, 2);
     }
 
@@ -198,18 +198,24 @@ abstract class AbstractBoot implements Boot
         return str_replace('_', '-', static::$addon_key);
     }
 
+    public static function licenceExpired()
+    {
+        $licence = static::getLicenceDetail();
+        $expires_at_carbon = (new Carbon($licence->expires_at));
+        return $expires_at_carbon->timestamp < time();
+    }
+
     public static function versionUpdateWarning($plugin)
     {
-        if (!static::hasAccessToNewVersion($plugin['new_version'])) {
+        if (static::licenceExpired() && !static::hasAccessToNewVersion($plugin['new_version'])) {
 ?>
             <hr class="w-major-update-warning__separator" />
             <div class="w-major-update-warning">
                 <div class="error-message error inline notice-error notice-alt">
                     <div>
-                        Your licence may be out of date, if so, you need to renew your licence in order to update to version <?php echo $plugin['new_version'] ?>
-                        <a href="<?php echo WAPPOINTMENT_SITE . "/renew/site_" . WPHelpers::getOption('site_key'); ?>" target="_blank">Renew now</a>
+                        <?php echo sprintf(__('Your licence expired, you must renew in order to update to version %s', 'wappointment'), $plugin['new_version']) ?>
+                        <a href="<?php echo WAPPOINTMENT_SITE . "/renew/site_" . WPHelpers::getOption('site_key'); ?>" target="_blank"><?php echo __('Renew now', 'wappointment'); ?></a>
                     </div>
-                    <div>You believe it's a mistake? Refresh your licence in <a href="admin.php?page=wappointment_addons">Wappointment > Addons</a></div>
                 </div>
             </div>
 <?php

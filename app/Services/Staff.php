@@ -80,7 +80,12 @@ class Staff
             return $staff_id;
         } else {
             //if user has administrative role it returns which ever
-            return current_user_can('administrator') ? (int) $request->input('staff_id') : $staff_id;
+            return  static::isAdminOrManager() ? (int) $request->input('staff_id') : $staff_id;
         }
+    }
+
+    public static function isAdminOrManager()
+    {
+        return current_user_can('administrator') || current_user_can('wappointment_manager');
     }
 }

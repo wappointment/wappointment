@@ -393,6 +393,12 @@ export default {
   color: var(--wappo-input-col);
   background: #fff;
 }
+
+html[dir=rtl] .wap-front .phone-field-wrap .phone-field input.tel {
+  direction: ltr;
+  text-align: right;
+}
+
 .phone-field-wrap ul {
   padding: 0;
   margin: 0;

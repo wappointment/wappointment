@@ -78,9 +78,9 @@ class Client extends Model
         return empty($this->options['skype']) ? '' : $this->options['skype'];
     }
 
-    public function getTimezone()
+    public function getTimezone($defaultTz = 'UTC')
     {
-        return empty($this->options['tz']) ? Settings::getStaff('timezone') : $this->options['tz'];
+        return empty($this->options['tz']) ? $defaultTz : $this->options['tz'];
     }
 
     public function getCustomField($tag = false)

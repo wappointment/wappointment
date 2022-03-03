@@ -37,6 +37,7 @@ return [
     'bwe_edit_more_colors' => __('Edit more colors', 'wappointment'),
 
     'create' => __('Create', 'wappointment'),
+    'hide' => __('Hide', 'wappointment'),
     'save' => __('Save', 'wappointment'),
     'edit' => __('Edit', 'wappointment'),
     'delete' => __('Delete', 'wappointment'),
@@ -73,4 +74,6 @@ return [
     'remember' => __('Remember', 'wappointment'),
     'settings' => __('Settings', 'wappointment'),
     'created_at' => __('Created at', 'wappointment'),
+
+    'ddp_default' => __('Please make a selection', 'wappointment'),
 ];

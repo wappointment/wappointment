@@ -27,8 +27,8 @@ class Menus
             }
             $this->sub_menus['clients'] = ['label' => __('Clients', 'wappointment'), 'cap' => $this->getClientCap()];
             $this->sub_menus['settings'] = ['label' => __('Settings', 'wappointment'), 'cap' => $this->getSettingsCap()];
-            $this->sub_menus['addons'] = ['label' => 'Addons', 'cap' => 'administrator'];
-            $this->sub_menus['help'] = ['label' => __('Help', 'wappointment'), 'cap' => 'administrator'];
+            $this->sub_menus['addons'] = ['label' => 'Addons', 'cap' => $this->getManagerCap()];
+            $this->sub_menus['help'] = ['label' => __('Help', 'wappointment'), 'cap' => $this->getManagerCap()];
         }
         add_menu_page(
             WAPPOINTMENT_NAME,
@@ -45,25 +45,38 @@ class Menus
     {
         return current_user_can('administrator');
     }
+    protected function isManager()
+    {
+        return current_user_can('wappointment_manager');
+    }
 
+    protected function isManagerOr($alternativeCap)
+    {
+        return $this->isManager() ? 'wappointment_manager' : $alternativeCap;
+    }
+
+    public function getManagerCap()
+    {
+        return $this->isManager() ? 'wappointment_manager' : 'administrator';
+    }
     protected function getCalendarCap()
     {
-        return $this->isAdministrator() ? 'administrator' : 'wappo_calendar_man';
+        return $this->isAdministrator() ? 'administrator' : $this->isManagerOr('wappo_calendar_man');
     }
 
     protected function getClientCap()
     {
-        return $this->isAdministrator() ?  'administrator' : 'wappo_clients_man';
+        return $this->isAdministrator() ?  'administrator' : $this->isManagerOr('wappo_clients_man');
     }
 
     protected function getSettingsCap()
     {
-        return $this->isAdministrator() ?  'administrator' : 'wappo_self_man';
+        return $this->isAdministrator() ?  'administrator' : $this->isManagerOr('wappo_self_man');
     }
 
     public function mainCap()
     {
-        return $this->isAdministrator() ?  'administrator' : 'wappo_can_use';
+        return $this->isAdministrator() ?  'administrator' : $this->isManagerOr('wappo_can_use');
     }
 
     public function addSubmenus()

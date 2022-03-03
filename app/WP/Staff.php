@@ -72,7 +72,7 @@ class Staff
     public function fullData()
     {
 
-        return [
+        return apply_filters('wappointment_staff_full_data', [
             'id' => $this->id,
             'wp_uid' => $this->wp_uid,
             'avatar' => $this->avatar,
@@ -90,7 +90,7 @@ class Staff
             'permissions' => $this->permissions,
             'custom_fields' => $this->getCustomFields(),
             'roles' => $this->getRoles()
-        ];
+        ], $this);
     }
 
     protected function getCustomFields()

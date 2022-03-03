@@ -128,7 +128,7 @@ class Payment
         return count($methods) < 2 && $methods[0]['key'] == 'woocommerce';
     }
 
-    protected static function atLeastOneMethodIsActive()
+    public static function atLeastOneMethodIsActive()
     {
         $methods = static::methods();
         foreach ($methods as $method) {

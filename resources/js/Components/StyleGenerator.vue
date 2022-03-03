@@ -201,14 +201,6 @@
             background-color: {{ hx_rgb(opts.colors.confirmation.bg) }};
         }
         
-        .wap-booking-fields .isValid input[type="text"], 
-        .wap-booking-fields .isValid input[type="email"], 
-        .wap-booking-fields .isValid input[type="url"], 
-        .wap-booking-fields .isValid input[type="tel"],
-        .wap-booking-fields .isValid textarea{
-            border-right: 4px solid {{ hx_rgb(opts.colors.form.success) }} !important;
-        }
-
 
         .wap-wid.wclosable > .wclose::before, 
         .wap-wid.wclosable > .wclose::after {

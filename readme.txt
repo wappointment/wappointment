@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 2.4.6
+Stable tag: 2.4.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,13 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.4.7 - 2022-03-01 =
+* added manager role
+* added RTL emails
+* fixed avoid display issue when a calendar staff is deleted
+* fixed calendar ICS parse exdate on recurrent event
+* fixed min start for availability
 
 = 2.4.6 - 2022-02-16 =
 * added option to specify custom Jitsi Server URL

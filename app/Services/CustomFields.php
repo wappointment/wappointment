@@ -58,6 +58,8 @@ class CustomFields
         'type' => 'required',
         'values' => 'required_if:type,checkboxes,select,radios',
         'is_address' => '',
+        'nodefault' => '',
+        'defaultlabel' => '',
     ];
 
 

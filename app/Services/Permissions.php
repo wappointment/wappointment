@@ -27,14 +27,27 @@ class Permissions
         return $array_roles;
     }
 
+    public static function hasManagerRole()
+    {
+        $roles = static::getAllWpRoles();
+        foreach ($roles as $role) {
+            if ($role['key'] == 'wappointment_manager') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public function registerRole($roleKey)
     {
         if (!empty($this->roles[$roleKey])) {
             $wp_roles = $this->loadWPRoles();
             add_role($roleKey, $this->roles[$roleKey]['name'], $this->roles[$roleKey]['caps']);
 
-            foreach ($this->getCaps(true) as $cap) {
-                $wp_roles->add_cap($roleKey, $cap);
+            if ($roleKey == 'wappointment_staff') {
+                foreach ($this->getCaps(true) as $cap) {
+                    $wp_roles->add_cap($roleKey, $cap);
+                }
             }
         }
     }
@@ -101,7 +114,12 @@ class Permissions
     }
     protected function setCapabilities()
     {
-        $this->capabilities = [
+        $this->capabilities = $this->capabilitiesStaff();
+    }
+
+    protected function capabilitiesStaff()
+    {
+        return [
             'wappo_calendar_man' => [
                 'name' => __('Can manage own calendar', 'wappointment'),
                 'sub_caps' => [

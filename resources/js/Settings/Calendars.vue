@@ -124,7 +124,7 @@
             <StaffCustomFieldEditor v-if="editCustomField" :staff="editCustomField" @save="saveCustomFields" />
             <StaffAssignServices v-if="editingServices" @save="saveServices" :user="editingServices" :current="editingServices.services" :services="elements.services" />
             <StaffCalendarsIntegrations v-if="dotcomOpen" @reload="reloadListing" :calendar="dotcomOpen" />
-            <StaffCalendarsExternal v-if="editingExternal" :user="editingExternal" :calendar_id="editingExternal.id" @savedSync="reloadListing" noback />
+            <StaffCalendarsExternal v-if="editingExternal" :user="editingExternal" @savedSync="reloadListing" noback />
             <StaffDefaultAvailability v-if="editingDefaultAvailability" :defaultSettings="elements.staffDefault" />
             <StaffDefaultServices v-if="editingDefaultServices" :defaultSettings="elements.servicesDefault" :services="elements.services" />
         </WapModal>
@@ -236,7 +236,7 @@ export default {
             return this.isUserAdministrator || this.hasPermission(something)
         },
         isStaffCalendar(calendar){
-            return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1 && calendar.roles.indexOf('wappointment_staff') === -1
+            return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1 && calendar.roles.indexOf('wappointment_manager') === -1 && calendar.roles.indexOf('wappointment_staff') === -1
         },
         getShortCode(calendar_id){
             this.showShortcode = calendar_id
@@ -247,7 +247,7 @@ export default {
                 return
             }
             this.editingExternal = calendar
-            this.openPopup('Connect Personal calendar')
+            this.openPopup(this.get_i18n('cals_connected_calendar', 'settings'))
         },
         goToDotCom(calendar){
             this.dotcomOpen = calendar
