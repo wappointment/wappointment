@@ -8,7 +8,11 @@ export default {
       shortDateFormat: 'YYYY-MM-DD HH:mm',
     };
   },
+
   methods: {
+    getMomentObject(){
+      return momenttz
+    },
     setMomentLocale(){
       momenttz.locale(browserLang())
     },
@@ -23,8 +27,7 @@ export default {
     },
     getUnixNow(){
         return momenttz().unix()
-    }
-
+    },
   }
 }
 </script>
