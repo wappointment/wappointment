@@ -243,6 +243,7 @@ class Availability
         $now = Carbon::today($this->timezone);
         $min_hours = Settings::get('hours_before_booking_allowed');
         $min_time = Carbon::now($this->timezone);
+        $min_time->second = 0;
 
         if ($min_hours > 0) {
             $int_hours = $min_hours;

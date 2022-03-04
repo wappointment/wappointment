@@ -52,7 +52,6 @@ export default {
         },
         setNewValue(newStart){
             let newIntervals = this.initIntervalsCollection
-            console.log('newStart',newStart)
             newIntervals.intervals[0].start = newStart
             this.updatedIntervals = newIntervals
         },
