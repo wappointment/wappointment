@@ -255,6 +255,11 @@ class Main extends AbstractRoutes
                     'method' => 'index',
                     'cap' => 'wappo_clients_man'
                 ],
+                '/calendars/customfields' => [
+                    'controller' => 'CalendarsController',
+                    'method' => 'getCFStructure',
+                    'cap' => 'wappo_self_cf',
+                ],
             ],
             'POST' => [
                 '/events/delete' => [
@@ -311,7 +316,7 @@ class Main extends AbstractRoutes
                 '/calendars/customfields' => [
                     'controller' => 'CalendarsController',
                     'method' => 'saveCustomFields',
-                    'cap' => 'wappo_self_weekly',
+                    'cap' => 'wappo_self_cf',
                 ],
                 '/wappointment/connect' => [
                     'method' => 'connect',

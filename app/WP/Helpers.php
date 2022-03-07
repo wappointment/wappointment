@@ -241,4 +241,9 @@ class Helpers
         wp_enqueue_script($scriptname);
         return $scriptname;
     }
+
+    public static function canManageWappo()
+    {
+        return current_user_can('administrator') || current_user_can('wappointment_manager');
+    }
 }

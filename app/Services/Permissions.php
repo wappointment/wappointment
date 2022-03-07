@@ -142,6 +142,8 @@ class Permissions
                     'wappo_self_add_ics' => __('Can add ICS calendar', 'wappointment'),
                     'wappo_self_del_ics' => __('Can delete ICS calendar', 'wappointment'),
                     'wappo_self_unpublish' => __('Can publish/unpublish self', 'wappointment'),
+                    'wappo_self_cf' => __('Can edit custom fields', 'wappointment'),
+                    'wappo_self_shortcode' => __('Can show shortcode', 'wappointment'),
                 ]
             ],
             'wappo_clients_man' => [
@@ -204,6 +206,16 @@ class Permissions
         if (!empty($cap_object['sub_caps'])) {
             foreach ($cap_object['sub_caps'] as $sub_cap_key => $sub_cap) {
                 $this->removeSingleCap($wp_user, $sub_cap_key);
+            }
+        }
+    }
+
+    public function refreshStaffCap()
+    {
+        $wappo_staff_role = get_role('wappointment_staff');
+        foreach ($this->getCaps(true) as $cap) {
+            if (!$wappo_staff_role->has_cap($cap)) {
+                $wappo_staff_role->add_cap($cap);
             }
         }
     }
