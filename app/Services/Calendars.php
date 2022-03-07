@@ -49,15 +49,15 @@ class Calendars
             'avb' => 'required|numeric',
         ];
 
-        if ($calendarData['wp_uid'] > 0) {
-            $query = static::getModel()::where('wp_uid', $calendarData['wp_uid']);
-            if ($calendarData['id'] > 0) {
-                $query->where('id', '!=', (int) $calendarData['id']);
-            }
-            if ($query->first()) {
-                throw new \WappointmentException(__("Select another account this one is already used for another calendar", 'wappointment'), 1);
-            }
-        }
+        // if ($calendarData['wp_uid'] > 0) {
+        //     $query = static::getModel()::where('wp_uid', $calendarData['wp_uid']);
+        //     if ($calendarData['id'] > 0) {
+        //         $query->where('id', '!=', (int) $calendarData['id']);
+        //     }
+        //     if ($query->first()) {
+        //         throw new \WappointmentException(__("Select another account this one is already used for another calendar", 'wappointment'), 1);
+        //     }
+        // }
 
         $validationRules = apply_filters('wappointment_calendar_validation_rules', $validationRules);
         $validation = $validator->make($calendarData, $validationRules);
