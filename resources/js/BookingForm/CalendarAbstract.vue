@@ -47,6 +47,9 @@ export default {
     }),
     created(){
         this.intervalsCollection = this.filteredServices()
+        if(this.viewData.frontend_weekstart){
+            this.startDay = this.viewData.week_starts_on
+        }
     },
     mounted(){
         this.time_format = this.timeprops.time_format

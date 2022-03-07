@@ -53,13 +53,17 @@
                   </div>
             </div>
             <div class="d-flex mb-2">
-            <div>
-              <label for="week-starts-on" class="m-0">Week starts on</label>
-              <div class="small text-muted">In Admin Calendar view</div>
-            </div>
-            <div class="ml-4">
-                <weekDays id="week-starts-on" classN="form-control" :selected="viewData.week_starts_on" @changed="changedDayStart"></weekDays>
-            </div>
+              <div>
+                <label for="week-starts-on" class="m-0">Week starts on</label>
+                <div class="small text-muted">In Admin Calendar view</div>
+              </div>
+              <div class="ml-4">
+                  <weekDays id="week-starts-on" classN="form-control" :selected="viewData.week_starts_on" @changed="changedDayStart"></weekDays>
+              </div>
+              <div class="d-flex align-items-center ml-2"> 
+                <input type="checkbox" v-model="viewData.frontend_weekstart" id="frontend_weekstart" @change="changedVD('frontend_weekstart')">
+                <div class="small text-muted">Apply to frontend </div>
+              </div>
           </div> 
             <div class="mb-2">
               <label class="form-check-label" for="hrs-before-allowed">

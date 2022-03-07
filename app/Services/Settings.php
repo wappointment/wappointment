@@ -140,6 +140,7 @@ class Settings
             'invoice_client' => ['name'],
             'wp_remote' => false,
             'jitsi_url' => '',
+            'frontend_weekstart' => false
 
         ];
     }
