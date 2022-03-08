@@ -1259,10 +1259,12 @@ html[dir=rtl] .wap-front .mx-2 {
 
 .wap-front .wap-form-body,
 .wap-front .wlabel,
-.wap-front .wrap-calendar div
+.wap-front .wrap-calendar div, 
+.wap-front .wrap-calendar div a
 {
     color: var(--wappo-body-tx);
 }
+
 .wbtn.wbtn-secondary .wduration,
 .wbtn.wbtn-secondary .wap-img svg,
 .wbtn.wbtn-secondary .service-label .service-name,
