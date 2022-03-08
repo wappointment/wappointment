@@ -245,7 +245,7 @@ export default {
       return this.getThisWeekIntervals === 0 ? 0:this.getThisWeekIntervals.splits(parseInt(this.selectedDuration)*60).totalSlots()
     },
     lastDay() {
-      return momenttz.tz(this.firstDay,this.displayTimezone).day(7)
+      return momenttz.tz(this.firstDay,this.displayTimezone).add(6, 'day')
     },
     realFirstday() {
       
