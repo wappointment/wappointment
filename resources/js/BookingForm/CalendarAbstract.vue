@@ -1,6 +1,7 @@
 <script>
 import calendar from '../Plugins/calendar-js'
 import Dates from '../Modules/Dates'
+import DatesExtended from '../Modules/DatesExtended'
 import momenttz from '../appMoment'
 import DaySlots from './DaySlots'
 import DaysOfWeek from './DaysOfWeek'
@@ -13,7 +14,7 @@ import IsDemo from '../Mixins/IsDemo'
  */
 export default {
     props: ['options','initIntervalsCollection', 'timeprops', 'duration', 'viewData', 'staffs', 'location','service'],
-    mixins: [Dates, IsDemo],
+    mixins: [Dates, IsDemo, DatesExtended],
     components: {
         DaySlots, DaysOfWeek, WeekHeader
     }, 
@@ -46,6 +47,9 @@ export default {
     }),
     created(){
         this.intervalsCollection = this.filteredServices()
+        if(this.viewData.frontend_weekstart){
+            this.startDay = this.viewData.week_starts_on
+        }
     },
     mounted(){
         this.time_format = this.timeprops.time_format
@@ -71,15 +75,9 @@ export default {
     },
 
     computed: {   
-        minTodayHour(){
-            return parseInt(this.viewData.min_bookable)
-        },
         isDemo(){
             return this.options.demoData !== undefined
         }, 
-        now() {
-            return momenttz().tz(this.currentTz)
-        },
         
         realMonthNumber() { //month number go from 0 to 11 in momentjs
             return this.monthNumber + 1
@@ -406,24 +404,12 @@ export default {
         dayWeekSelected(idweek) {
             return idweek === this.selectedWeek
         },
-        getTodayStart(){
-            let nowmin = momenttz.tz(this.now.clone(), this.currentTz).add(this.minTodayHour,'hours')
-            let nowcopy = nowmin.clone().startOf('hour')
-            
-            if(this.currentTime() > nowcopy.unix()){
-                let i = 0
-                while (nowcopy.unix() < nowmin.unix() && i <10) {
-                    nowcopy.add( 10, 'minutes')
-                    i++
-                }
-            }
-            return nowcopy
+        getTodayStart(){ //TODO replace with getMinStart
+            return this.getMinStart()
         },
-        currentTime(){
-            return Math.round(Date.now() / 1000)
-        },
+        
         getTodayInterval(){
-            let start = this.getTodayStart()
+            let start = this.getMinStart()
     
             if(start.day() != this.now.day()){ //exception when today changes to tomorrow with the adition of min_bookable
                 //that means that's the end of the day and there is nothing new
@@ -450,7 +436,7 @@ export default {
 
         formatDayInterval(intervalsObject){
 
-            let min_start = this.getTodayStart()
+            let min_start = this.getMinStart()
             if(min_start.unix() >= intervalsObject.end.unix()) {
                 return this.currentIntervals.get(false) // we skip returnin an empty interval
             } else if(min_start.unix() > intervalsObject.start.unix()){

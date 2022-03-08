@@ -210,6 +210,32 @@ class Availability
         return Settings::get('allow_refreshavb') && Carbon::now($this->timezone)->hour >= Settings::get('refreshavb_at') ? $this->days : $this->days - 1;
     }
 
+    /**
+     * avoid values such as 12.37, 13.37 etc ...
+     *
+     * @return void
+     */
+    private function correctMinuteValue($carbon)
+    {
+        $test_array = $this->generate5minarray();
+        while (!in_array($carbon->minute, $test_array)) {
+            $carbon->addMinute(1);
+        }
+
+        return $carbon;
+    }
+
+    private function generate5minarray()
+    {
+        $array = [];
+        $value = 0;
+        while ($value < 60) {
+            $array[] = $value;
+            $value += 5;
+        }
+        return $array;
+    }
+
     private function generateAvailabilityWithRA()
     {
 
@@ -217,6 +243,7 @@ class Availability
         $now = Carbon::today($this->timezone);
         $min_hours = Settings::get('hours_before_booking_allowed');
         $min_time = Carbon::now($this->timezone);
+        $min_time->second = 0;
 
         if ($min_hours > 0) {
             $int_hours = $min_hours;
@@ -232,6 +259,8 @@ class Availability
                 $min_time->addMinutes($int_minutes);
             }
         }
+
+        $min_time = $this->correctMinuteValue($min_time);
 
         $max_time = Carbon::now($this->timezone)->addDays($this->daysRegenerating())->endOfDay();
         $availability = [];

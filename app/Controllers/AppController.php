@@ -4,6 +4,7 @@ namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
 use Wappointment\Services\Health;
+use Wappointment\Services\Permissions;
 use Wappointment\Services\Wappointment\Feedback;
 use Wappointment\System\Status;
 
@@ -20,6 +21,9 @@ class AppController extends RestController
 
     public function health()
     {
+        $perms = new Permissions;
+        $perms->refreshStaffCap();
+
         return (new Health)->get();
     }
 
