@@ -39,10 +39,13 @@ export default {
         let detected_issue = this.issueResponseDetected(response)
           if(detected_issue){
             this.serviceError({
-              message: "Server response altered, make sure you hide debug information from your WP site.",
+              message: "Server response altered, make sure your WordPress' site does not display server errors.",
               submessage: [
                 '-----------',
-                'Error found: ',
+                'Read this:',
+                'https://wappointment.com/docs/unidentified-error/',
+                '-----------',
+                'Error detected: ',
                 detected_issue
               ]
               })
