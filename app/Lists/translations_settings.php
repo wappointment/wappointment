@@ -9,7 +9,7 @@ return [
     'cals_account_connect' => __('Connect Account', 'wappointment'),
     'cals_account_enter_code' => __('Enter account code', 'wappointment'),
     'cals_account_donthave' => __('Don\'t have an account yet?', 'wappointment'),
-    'cals_account_create_free' => __('Create you free account', 'wappointment'),
+    'cals_account_create_free' => __('Create your free account', 'wappointment'),
     'cals_account_create_title' => __('Automate your appointments\' process', 'wappointment'),
     'cals_account_connect_fav' => __('Connect your favourite tools in seconds and automatically:', 'wappointment'),
     'cals_account_connect_fav_1' => __('Create meetings for', 'wappointment'),
