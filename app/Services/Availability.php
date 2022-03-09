@@ -213,7 +213,7 @@ class Availability
     /**
      * avoid values such as 12.37, 13.37 etc ...
      *
-     * @return void
+     * @return object
      */
     private function correctMinuteValue($carbon)
     {
@@ -280,12 +280,8 @@ class Availability
                 if ($min_time->gte($end)) {
                     continue;
                 }
-                // while ($min_time->gt($start)) {
 
-                //     $start = $start->addMinutes(Service::getObject()->duration);
-                // }
-
-                if ($min_time->gt($start)) {
+                if ($min_time->gt($start) && Settings::get('availability_fluid')) {
                     $start = $min_time->copy();
                 }
 

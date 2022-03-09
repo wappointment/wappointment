@@ -17,7 +17,8 @@ import DatesExtended from '../Modules/DatesExtended'
 export default {
     props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs', 'duration', 'location', 'viewData','rescheduling', 'relations'],
     data: () => ({
-        updatedIntervals: false
+        updatedIntervals: false,
+        intervalId: false
     }),
     mixins: [Dates, DatesExtended],
     components: {
@@ -38,7 +39,7 @@ export default {
             //if today has slots we register an event
             if(this.isTSToday(this.updatedIntervals.intervals[0].start)){
                 this.refreshIntervals()
-                setInterval(this.refreshIntervals, 60 * 1000)
+                this.intervalId = setInterval(this.refreshIntervals, 60 * 1000)
             }
             
             
@@ -53,12 +54,23 @@ export default {
         setNewValue(newStart){
             let newIntervals = this.initIntervalsCollection
             if(newIntervals.intervals[0].start < newStart){
-                newIntervals.intervals[0].start = newStart
+                if(this.viewData.availability_fluid){
+                    newIntervals.intervals[0].start = newStart //we get automatically the first value with 5 min increments
+                }else{
+                     while (newIntervals.intervals[0].start < this.now.unix()) { //standard increment by duration selected
+                         newIntervals.intervals[0].start += this.duration *60
+                     }
+                }
+                
+                
             }
             this.updatedIntervals = newIntervals
         },
         selectSlot(slot){
             let next = this.relations.next
+            if(this.intervalId){
+                clearInterval(this.intervalId)
+            }
             this.$emit('selectSlot', this.rescheduling ? 'RescheduleConfirm':next, {selectedSlot: slot})
         },
     }
