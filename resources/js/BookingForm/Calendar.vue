@@ -52,7 +52,9 @@ export default {
         },
         setNewValue(newStart){
             let newIntervals = this.initIntervalsCollection
-            newIntervals.intervals[0].start = newStart
+            if(newIntervals.intervals[0].start < newStart){
+                newIntervals.intervals[0].start = newStart
+            }
             this.updatedIntervals = newIntervals
         },
         selectSlot(slot){
