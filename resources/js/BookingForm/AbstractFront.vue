@@ -35,12 +35,39 @@ export default {
         .catch(this.serviceError)
       },
 
-      loaded(viewData) {
-          this.viewData = viewData.data
+      loaded(response) {
+        let detected_issue = this.issueResponseDetected(response)
+          if(detected_issue){
+            this.serviceError({
+              message: "Server response altered, make sure you hide debug information from your WP site.",
+              submessage: [
+                '-----------',
+                'Error found: ',
+                detected_issue
+              ]
+              })
+            return false;
+          }
+          this.viewData = response.data
           this.loading = false
           if(this.loadedAfter !== undefined) {
             this.loadedAfter()
           }
+      },
+      issueResponseDetected(response){
+        
+        if(!this.responseDataIsObject(response) && response.request !== undefined && response.request.response !== undefined){
+          let string_clean = response.request.response.trim()
+          if(string_clean.charAt(0) !== '{'){
+            let split = string_clean.split('{')
+            return split[0]
+          }
+        }
+        return false
+      },
+
+      responseDataIsObject(response){
+        return typeof response.data == 'object' && Object.keys(response.data).length > 0
       },
 
       beforeRequest(){
@@ -66,6 +93,16 @@ export default {
         }else{
           this.errorMessages = []
           this.errorMessages.push(error.message !== undefined ? error.message : 'An unidentified error occured')
+          if(error.submessage !== undefined ){
+            let submessages = error.submessage
+            if(!Array.isArray(submessages)){
+              submessages = [submessages]
+            }
+            for (const submessage of submessages) {
+                this.errorMessages.push(submessage)
+            }
+
+          }
         }
 
       },
