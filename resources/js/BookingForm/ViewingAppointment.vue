@@ -169,8 +169,10 @@ export default {
         meetingUrl(){
             let zoomflag = '.zoom.us/j/'
             if(this.isVideoZoom && this.zoom_browser && this.hasMeetingRoom.indexOf(zoomflag) !== false){
-                let meetingsplit = this.hasMeetingRoom.split(zoomflag)[1].split('?')
-                return 'https://zoom.us/wc/'+meetingsplit[0]+'/start?'+meetingsplit[1]
+                let firstsplit = this.hasMeetingRoom.split(zoomflag)
+                let meetingsplit = firstsplit[1].split('?')
+                
+                return firstsplit[0]+'.zoom.us/wc/join/'+meetingsplit[0]+'?'+meetingsplit[1]
             }
             return this.hasMeetingRoom
         },
