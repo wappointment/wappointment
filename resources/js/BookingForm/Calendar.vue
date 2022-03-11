@@ -19,13 +19,15 @@ export default {
     data: () => ({
         updatedIntervals: false,
         intervalId: false,
-        started: false
+        started: false,
+        cleanedIntervals: false
     }),
     mixins: [Dates, DatesExtended],
     components: {
         CalendarMonth, CalendarWeek
     }, 
     mounted(){
+         this.cleanedIntervals = this.cleanStartingFromEnd(this.initIntervalsCollection, this.getMinStart().unix())
         // clear today's intervals as they expire with time
         this.setAutoRefreshIntervals()
     },
@@ -36,7 +38,7 @@ export default {
     },
     methods: {
         setAutoRefreshIntervals(){
-            this.updatedIntervals = this.initIntervalsCollection
+            this.updatedIntervals = this.cleanedIntervals
             //if today has slots we register an event
             if(this.isTSToday(this.updatedIntervals.intervals[0].start)){
                 this.refreshIntervals()
@@ -62,7 +64,8 @@ export default {
             setTimeout(this.setNewValue.bind(null,newStart), 50)
         },
         setNewValue(newStart){
-            let newIntervals = this.initIntervalsCollection
+            let newIntervals = this.cleanedIntervals
+            
             newIntervals = this.incrementStartingValue(newIntervals, newStart) //increment 
             newIntervals = this.cleanStartingFromEnd(newIntervals, newStart)
             
@@ -89,7 +92,8 @@ export default {
                 if(this.viewData.availability_fluid){
                     intervals[0].start = newStart //we get automatically the first value with 5 min increments
                 }else{
-                     while (intervals[0].start < this.now.unix()) { //standard increment by duration selected
+                    let min_unix_time = this.now.unix() + (this.minTodayHour * 3600) + (this.minTodayMin * 60)
+                     while (intervals[0].start < min_unix_time) { //standard increment by duration selected
                          intervals[0].start += this.duration *60
                     }
                 }

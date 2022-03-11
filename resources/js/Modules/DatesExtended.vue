@@ -8,7 +8,7 @@ export default {
         return Math.floor(this.viewData.min_bookable)
     },
     minTodayMin(){
-        return this.getDecimalPart(this.viewData.min_bookable) * 60
+        return Math.floor(this.getDecimalPart(this.viewData.min_bookable-this.minTodayHour) * 60)
     },
     now() {
         return this.getMomentObject()().tz(this.timeprops.currentTz)
