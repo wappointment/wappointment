@@ -275,6 +275,15 @@
               </label>
           </div>
 
+          <div class="mb-2">
+              <label class="form-check-label" for="availability-fluid" data-tt="Mostly has an impact on same day bookings, if applied, we will look for the earliest available time by 5min increments">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.availability_fluid" id="availability-fluid" @change="changedVD('availability_fluid')">
+                    Availability fluid
+                  </div>
+              </label>
+          </div>
+
           
           <div>
             <label for="roles-allowed" class="m-0">WordPress' users listed for calendars creation</label>

@@ -179,7 +179,7 @@ class EventsCalendar
 
     public function getLabelFromValues($keyOption, $optionValues)
     {
-        if ($keyOption == 'owes') {
+        if ($keyOption == 'owes' && is_numeric($optionValues)) {
             return Payment::formatPrice($optionValues / 100);
         }
 

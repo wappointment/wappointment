@@ -44,7 +44,6 @@ export default {
             this.$emit('confirmed')
         },
         async setRequest(params) {
-            console.log('this.startTime', this.startTime.unix())
             return await this.serviceStatus.call('save', 
             {
                 start: this.startTime.unix(), 

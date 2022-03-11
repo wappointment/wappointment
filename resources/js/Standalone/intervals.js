@@ -26,7 +26,9 @@ export default class Intervals {
             if(serviceid !== false && element.service !== undefined && element.service !== serviceid){ //avoid slots that are service specific
                 continue;
             }
-            
+            if(element.start >= element.end){
+                continue;
+            }
             //if there is an intersection before or after in between two days
             let DummyInterval = {start: from.unix(), end: until.unix()}
             if(this.intersecting(DummyInterval, element)) {
