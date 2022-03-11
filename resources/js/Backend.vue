@@ -2,7 +2,7 @@
     <transition name="fade" mode="out-in">
       <div class="wappointment-wrap" >
           <Php8 v-if="php8"/>
-          <template>
+          <template v-else>
             <PendingDBUpdate v-if="db_update"/>
             <template v-else>
                 <AddonsRequireUpdate v-if="addonsRequiringUpdate.length > 0" :addonsRequiringUpdate="addonsRequiringUpdate" />
