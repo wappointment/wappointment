@@ -141,7 +141,7 @@ class Settings
             'wp_remote' => false,
             'jitsi_url' => '',
             'frontend_weekstart' => false,
-            'availability_fluid' => true
+            'availability_fluid' => false
 
         ];
     }
