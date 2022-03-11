@@ -13,13 +13,13 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added manager role</li>
-                        <li>added RTL emails</li>
-                        <li>fixed avoid display issue when a calendar staff is deleted</li>
-                        <li>fixed calendar ICS parse exdate on recurrent event</li>
-                        <li>fixed min start for availability</li>
-                        <li>fixed if no payment method, auto confirm</li>
-                        <li>fixed minimum slot starting time from now increments every 10 minutes</li>
+                        <li>added dirt detector in availability json response</li>
+                        <li>added fluid availability option</li>
+                        <li>fixed issue 3001 when using Zoom without app option</li>
+                        <li>fixed issue not available slot when available</li>
+                        <li>fixed today's slot picking strange value</li>
+                        <li>fixed issue start day of the week in admin calendar</li>
+                        <li>fixed issue php8</li>
                     </ol>
                     
                   </div>
