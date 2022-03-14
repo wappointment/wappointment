@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Wappointment plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wappointment 2.4.7\n"
+"Project-Id-Version: Wappointment 2.4.8\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wappointment-plugin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-03-03T10:57:46+00:00\n"
+"POT-Creation-Date: 2022-03-14T10:10:33+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: wappointment\n"
@@ -26,6 +26,14 @@ msgstr ""
 
 #. Description of the plugin
 msgid "Clients quickly book a meeting with you on Zoom , GoogleMeet , the phone or at your office"
+msgstr ""
+
+#: app/Addons/AbstractBoot.php:216
+msgid "Your licence expired, you must renew in order to update to version %s"
+msgstr ""
+
+#: app/Addons/AbstractBoot.php:217
+msgid "Renew now"
 msgstr ""
 
 #: app/Controllers/AppointmentController.php:27
@@ -56,15 +64,15 @@ msgstr ""
 msgid "Appointment recorded"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:184
+#: app/Controllers/CalendarsController.php:193
 msgid "Services assigned"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:194
+#: app/Controllers/CalendarsController.php:203
 msgid "Permissions saved"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:272
+#: app/Controllers/CalendarsController.php:281
 #: app/Services/AdminLegacy.php:18
 #: app/Services/Appointment.php:78
 #: app/Services/Appointment.php:260
@@ -73,27 +81,27 @@ msgstr ""
 msgid "Malformed parameter"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:293
+#: app/Controllers/CalendarsController.php:302
 msgid "Connected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:296
+#: app/Controllers/CalendarsController.php:305
 msgid "Error connecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:310
+#: app/Controllers/CalendarsController.php:319
 msgid "Disconnected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:313
+#: app/Controllers/CalendarsController.php:322
 msgid "Error disconnecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:327
+#: app/Controllers/CalendarsController.php:336
 msgid "Refreshed"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:330
+#: app/Controllers/CalendarsController.php:339
 msgid "Error refreshing"
 msgstr ""
 
@@ -902,7 +910,7 @@ msgid "Don't have an account yet?"
 msgstr ""
 
 #: app/Lists/translations_settings.php:12
-msgid "Create you free account"
+msgid "Create your free account"
 msgstr ""
 
 #: app/Lists/translations_settings.php:13
@@ -2189,15 +2197,23 @@ msgstr ""
 msgid "Can publish/unpublish self"
 msgstr ""
 
-#: app/Services/Permissions.php:148
-msgid "Can manage own clients"
+#: app/Services/Permissions.php:145
+msgid "Can edit custom fields"
+msgstr ""
+
+#: app/Services/Permissions.php:146
+msgid "Can show shortcode"
 msgstr ""
 
 #: app/Services/Permissions.php:150
+msgid "Can manage own clients"
+msgstr ""
+
+#: app/Services/Permissions.php:152
 msgid "Can delete clients"
 msgstr ""
 
-#: app/Services/Permissions.php:151
+#: app/Services/Permissions.php:153
 msgid "Can edit clients"
 msgstr ""
 
