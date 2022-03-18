@@ -34,13 +34,14 @@
         },
         "files": ["included/swiftmailer/swiftmailer/lib/swift_required.php"]
     },
-    "autoload-dev": {
-        "psr-4": {
-            "Tests\\": "tests/"
-        }
-    },
     "require-dev": {
         "phpcompatibility/php-compatibility": "^9.3",
-        "consolidation/robo": "^3.0"
+        "consolidation/robo": "^3.0",
+        "pestphp/pest": "^1.21"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        }
     }
 }
