@@ -65,10 +65,12 @@ export default {
         servicesAvailable(){
             let serviceLocked = this.attributesEl !== undefined && this.attributesEl.serviceSelection !== undefined ? this.attributesEl.serviceSelection:[]
             let services = serviceLocked.length > 1? this.viewData.services.filter(s => serviceLocked.indexOf(s.id)!==-1):this.viewData.services
-            let dummyService = Object.assign({},services[0])
-
+            let dummyService = {}
+            dummyService.locations = services[0].locations
+            dummyService.sorting = services[0].sorting
             dummyService.id = -1
             dummyService.name = '60'+this.options.general.min
+            dummyService.options = {}
             dummyService.options.durations = [{duration: 60}]
 
             services.unshift(dummyService)
@@ -117,7 +119,6 @@ export default {
             if(this.isDemo || !this.hasIntervals(staff)) {
               return
             } 
-
             this.$emit('staffSelected', staff)
         }
     }
