@@ -380,7 +380,7 @@ export default {
           return await this.serviceBooking.call('bookadmin', Object.assign({ 
               start: params.start.unix(), 
               end: this.endTimeParam.unix(), 
-              timezone: this.timezone,
+              ctz: this.activeStaff.options.timezone,
               service: this.service.id,
               location: this.location.id,
               duration: this.duration,
