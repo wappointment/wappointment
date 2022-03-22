@@ -88,6 +88,18 @@ class Booking extends LegacyBooking
         return array_keys($this->validationRulesArray);
     }
 
+    /**
+     * Ignore certain given values
+     *
+     * @return void
+     */
+    public function getFieldsFiltered()
+    {
+        return array_filter($this->getFields(), function ($var) {
+            return !in_array($var, ['recurrent', 'page']);
+        });
+    }
+
     protected function validationRules()
     {
         return $this->validationRulesArray;
@@ -173,7 +185,7 @@ class Booking extends LegacyBooking
 
     public function preparedData()
     {
-        $custom_fields = $this->getFields();
+        $custom_fields = $this->getFieldsFiltered();
         $dataClient = ['options' => []];
         foreach ($custom_fields as $cfield) {
             if (in_array($cfield, ['location', 'duration', 'service', 'time', 'start', 'clientid', 'end'])) {
@@ -199,6 +211,7 @@ class Booking extends LegacyBooking
                     break;
             }
         }
+
         return $dataClient;
     }
 }
