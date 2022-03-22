@@ -151,6 +151,9 @@ export default {
         },
 
         clientEdited(client){
+          if(client.options.tz === false){
+            client.options.tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+          }
           this.clientDataToSave = client
         },
 
