@@ -36,7 +36,7 @@
             </WapModal>
         </div>
         <div v-if="serviceAdd">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('save', 'common') }}</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('back', 'common') }}</button>
             <ServicesAddEdit :element="elementPassed" :params="paramsPassed" :legacy="false" @saved="hasBeenSaved"/>
         </div>
     </div>
