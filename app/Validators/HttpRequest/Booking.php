@@ -30,7 +30,12 @@ class Booking extends LegacyBooking
     }
     public function getUserEmail()
     {
-        return $this->forceEmail() && $this->isLogged() ? Helpers::currentUserEmail() : $this->get('email');
+        return $this->forceEmail() && $this->isLogged() && $this->bookingFromFront() ? Helpers::currentUserEmail() : $this->get('email');
+    }
+
+    protected function bookingFromFront()
+    {
+        return strpos(get_class($this), 'BookingAdmin') === false;
     }
 
     protected function forceEmail()
