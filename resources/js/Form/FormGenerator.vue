@@ -5,15 +5,15 @@
         </div>
         <div v-if="reload" class="fields-wrap" >
             <template v-for="(element, keydi) in schema">
-                <div v-if="element.type == 'row'"  :class="getRowClass(element)">
-                    <div class="form-group"  v-for="(subelement, skeydi) in element.fields" 
+                <div v-if="element.type == 'row'" :class="getRowClass(element)">
+                    <div class="form-group" v-for="(subelement, skeydi) in element.fields" 
                     :class="getRowEachClass(element,subelement)" :style="getStyle(subelement)">
                         <div :class="{'d-none': inVisibles(subelement)}">
                             <component :is="getFormComponent(subelement)" :value="getModelValue(subelement)" 
                             :parentErrors="errorsData" :parentModel="modelHolder" :formGen="true" :minimal="minimal"
                             @loaded="loadedField(keydi, skeydi)"
                             v-bind="allowBind(subelement)" @change="changedValue" @activated="wasActive(subelement)" 
-                            :definition="subelement"  :errors="getErrors(subelement)" />
+                            :definition="subelement" :errors="getErrors(subelement)" />
                         </div>
                     </div>
                 </div>

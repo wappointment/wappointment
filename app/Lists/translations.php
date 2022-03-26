@@ -17,4 +17,6 @@ return [
     /* translators: %s - addon's name. */
     'add_services_addon' => __('Add more services with the "%s" addon', 'wappointment'),
     'forbidden' => __('Forbidden action', 'wappointment'),
+    /* translators: %s is replaced with the number of slots */
+    'slots' => __('Slots: %s', 'wappointment')
 ];

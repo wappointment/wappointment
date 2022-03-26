@@ -107,13 +107,13 @@
 
         </div>
         <div v-if="calendarAdd">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('save', 'common') }}</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('back', 'common') }}</button>
             <CalendarsAddEdit :calendar="elementPassed" :timezones_list="elements.timezones_list" 
             :staffs="elements.staffs" :services="elements.services" :calendarsUsed="calendarsUsed"
             @saved="hasBeenSavedDeleted"/>
         </div>
         <div v-if="calendarRegav">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('save', 'common') }}</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('back', 'common') }}</button>
             <WeeklyAvailability :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs"/>
         </div>
 
