@@ -153,7 +153,7 @@ class EventsCalendar
             $data[] = sprintf(__('Email: %s', 'wappointment'), $preparedClient->email);
             foreach ($preparedClient->options as $keyOption => $optionValue) {
 
-                if ($keyOption == 'appointment_key') {
+                if ($keyOption == 'appointment_key' || ($keyOption == 'rtl' && $optionValue === false) || !isset($this->customFieldsKeyLabel[$keyOption])) {
                     continue;
                 }
                 /* translators: %1$s is label %2$s is value */
@@ -171,6 +171,8 @@ class EventsCalendar
                 return __('Timezone', 'wappointment');
             case 'owes':
                 return __('Owes', 'wappointment');
+            case 'rtl':
+                return 'Right to left';
             default:
                 $label = isset($this->customFieldsKeyLabel[$keyOption]) ? $this->customFieldsKeyLabel[$keyOption] : $keyOption;
                 return strpos($label, ':') !== false ? str_replace(':', '', $label) : $label;
