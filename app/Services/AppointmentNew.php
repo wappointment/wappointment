@@ -55,7 +55,7 @@ class AppointmentNew
             'package_price_id' => $client->bookingRequest->get('package_price_id'),
         ], $client, $start_at, $service, $adminBooked);
 
-        return static::bookCreate($appointmentData, $client, $forceConfirmed, $status);
+        return static::bookCreate($appointmentData, $client, $forceConfirmed, $status, $adminBooked);
     }
 
     protected static function getStaffId($staff_id)
@@ -141,19 +141,19 @@ class AppointmentNew
      * we go through here each time we CREATE a new appointment
      * whether it's free or paid
      */
-    public static function create($data, Client $client, $status)
+    public static function create($data, Client $client, $status, $adminBooked = false)
     {
         $appointment = static::createAppointment($data, $client->bookingRequest->get('slots'));
         $ticket = apply_filters('wappointment_create_appointment_ticket', $appointment, $client, $status);
-        return static::generateOrder($client, $ticket, $client->bookingRequest->get('slots'));
+        return static::generateOrder($client, $ticket, $client->bookingRequest->get('slots'), false, $adminBooked);
     }
 
-    public static function generateOrder($client, TicketAbstract $ticket, $slots = false, $service = false)
+    public static function generateOrder($client, TicketAbstract $ticket, $slots = false, $service = false, $adminBooked = false)
     {
         $order = null;
         $service = $service ? $service : $client->bookingRequest->getService();
         // no order if a package code is used
-        $payment_required = !$client->bookingRequest->get('package_code') && $service->isSold() && Payment::atLeastOneMethodIsActive();
+        $payment_required = !$adminBooked && !$client->bookingRequest->get('package_code') && $service->isSold() && Payment::atLeastOneMethodIsActive();
         if ($payment_required) {
             $ticket->hydrateService($service);
             if (Payment::isWooActive()) {
@@ -371,10 +371,10 @@ class AppointmentNew
         return true;
     }
 
-    protected static function bookCreate($data, Client $client, $is_admin = false, $status = 0)
+    protected static function bookCreate($data, Client $client, $is_admin = false, $status = 0, $adminBooked = false)
     {
 
-        $dataReturned = static::create($data, $client, $status);
+        $dataReturned = static::create($data, $client, $status, $adminBooked);
 
         JobHelper::dcCreate($dataReturned['appointment']);
 
