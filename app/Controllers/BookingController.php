@@ -43,6 +43,7 @@ class BookingController extends RestController
 
     public function adminBook(BookingAdmin $booking)
     {
+
         if ($booking->hasErrors()) {
             return $this->fieldsError($booking);
         }
