@@ -378,6 +378,12 @@ class Status
 
     private static function getByDay($statusRecurrent)
     {
-        return empty($statusRecurrent->options['byday']) ? false : $statusRecurrent->options['byday'];
+        //we don't accept array of bydays for monthly recurrence [1,4,5] this only applies to weekly recurrence
+        // so if it occurs we return the first value only
+        $byday = empty($statusRecurrent->options['byday']) ? false : $statusRecurrent->options['byday'];
+        if (is_array($byday) && isset($byday[0])) {
+            return $byday[0];
+        }
+        return $byday;
     }
 }
