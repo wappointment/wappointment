@@ -284,6 +284,16 @@
               </label>
           </div>
 
+          <div class="mb-2">
+              <label class="form-check-label" for="starting-times" data-tt="Offer more starting times, each 5 min, 10min, 15 min etc ..., useful for long lasting services to offer more flexibility">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.more_st" id="starting-times" @change="changedVD('more_st')">
+                    Add more starting times
+                    <span class="ml-2 d-flex align-items-center" v-if="viewData.more_st"><div>Start each</div> <HoursDropdown :elements="[5, 10, 15, 20, 30, 60]" :current="viewData.starting_each" :funcDisplay="funcDisplay" @selected="changeMoreSt"/></span>
+                  </div>
+              </label>
+          </div>
+
           
           <div>
             <label for="roles-allowed" class="m-0">WordPress' users listed for calendars creation</label>
@@ -397,6 +407,7 @@ import NotificationEmail from '../Notification/Email'
 import InputValueCards from '../Fields/InputValueCards'
 import FormFieldSelect from '../Form/FormFieldSelect'
 import Health from '../WP/Health'
+import HoursDropdown from '../Fields/ButtonMenu'
 export default {
   extends: abstractView,
   props:['tablabel'],
@@ -412,7 +423,8 @@ export default {
     NotificationEmail,
     InputValueCards,
     FormFieldSelect,
-    Health
+    Health,
+    HoursDropdown
   },
   mixins: [ hasBreadcrumbs],
   data() {
@@ -456,6 +468,9 @@ export default {
     }
   },
   methods: {
+    changeMoreSt(selected){
+      return this.changed(selected, 'starting_each')
+    },
     changedVidLink(val){
       return this.changed(val, 'video_link_shows')
     },
@@ -465,7 +480,9 @@ export default {
     changedCleaningPending(val){
       return this.changed(val, 'clean_pending_every')
     },
-    
+    funcDisplay(element){
+        return this.sprintf_i18n('regav_min', 'common', element)
+    },
     changedMaxActive(){
       if(this.viewData.max_active_bookings<1){
         this.maxBookings = false

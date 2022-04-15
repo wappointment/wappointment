@@ -327,6 +327,8 @@ class ViewsData
             'wp_remote' => Settings::get('wp_remote'),
             'jitsi_url' => Settings::get('jitsi_url'),
             'availability_fluid' => Settings::get('availability_fluid'),
+            'more_st' => Settings::get('more_st'),
+            'starting_each' => Settings::get('starting_each'),
         ];
     }
 
