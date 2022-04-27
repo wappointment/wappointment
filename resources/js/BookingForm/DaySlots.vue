@@ -7,7 +7,7 @@
                 <BookingButton @click="$emit('selected', slot)" 
                 className="wbtn wbtn-primary wbtn-slot" :key="'button-'+slot.start" :options="options" >
                     <span>{{ getMoment(slot.start, currentTz).format(time_format) }}</span>
-                    <span v-if="slot.left" class="sleft">{{ slot.left }} left</span>
+                    <span v-if="slot.left" class="sleft">{{ showSlots(slot.left) }}</span>
                 </BookingButton>
                 </template>
             </div>
@@ -54,7 +54,9 @@ export default {
     },
     
     methods: {
-        
+        showSlots(left){
+            return this.options.general.left.replace('%s',left)
+        },
         getLabel(section){
             return this.options.selection[section] !== undefined ? this.options.selection[section]:section
         },

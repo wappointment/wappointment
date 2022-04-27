@@ -98,6 +98,9 @@ return [
             ],
             'noappointments' => [
                 'tip' => __('Show when no appointments are available for that staff', 'wappointment')
+            ],
+            'left' => [
+                'tip' => __('%s is a variable replaced by the number of slots left', 'wappointment')
             ]
         ]
     ],

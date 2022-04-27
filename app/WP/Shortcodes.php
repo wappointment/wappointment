@@ -50,6 +50,7 @@ class Shortcodes
             'pop_off' => in_array('pop_off', $atts),
             'auto_pop' => in_array('pop', $atts),
             'week' => in_array('week', $atts),
+            'list' => in_array('list', $atts),
             'button_title' => !empty($atts['title']) ?
                 $atts['title'] : (new \Wappointment\Services\WidgetSettings)->get()['button']['title'],
         ];

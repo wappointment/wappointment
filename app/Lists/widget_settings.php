@@ -48,7 +48,9 @@ return [
         'location' => __('Where', 'wappointment'),
         'package' => __('Package', 'wappointment'),
         'min' => __('min', 'wappointment'),
-        'noappointments' => __('No appointments available', 'wappointment')
+        'noappointments' => __('No appointments available', 'wappointment'),
+        /* translators: %s - number of slots left. */
+        'left' => sprintf(__('%s left', 'wappointment'), '[slots]'),
     ],
     'button' => [
         'title' => __('Book now!', 'wappointment'),
