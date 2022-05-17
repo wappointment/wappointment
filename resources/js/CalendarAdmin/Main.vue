@@ -245,7 +245,7 @@ export default {
       return this.getThisWeekIntervals === 0 ? 0:this.getThisWeekIntervals.splits(parseInt(this.selectedDuration)*60).totalSlots()
     },
     lastDay() {
-      return momenttz.tz(this.firstDay,this.displayTimezone).day(7)
+      return momenttz.tz(this.firstDay,this.displayTimezone).add(6, 'day')
     },
     realFirstday() {
       
@@ -342,7 +342,7 @@ export default {
     startTimeDisplayed() {
       if(this.fcIsReady) {
         if(this.getDate() !== undefined)
-          return this.getDate().tz(this.selectedTimezone).day(1).hours(this.minHour)
+          return this.getDate().tz(this.selectedTimezone).day(this.firstDay).hours(this.minHour)
       }
       return undefined
     },
@@ -354,7 +354,9 @@ export default {
     },
     endTimeDisplayed() {
       if(this.fcIsReady && this.getDate() !== undefined) {
-        return this.getDate().tz(this.selectedTimezone).day(7).hours(this.maxHour)
+        
+        return this.getDate().tz(this.selectedTimezone).add(6, 'day').hours(this.maxHour)
+        //return this.getDate().tz(this.selectedTimezone).day(7).hours(this.maxHour)
       }
       return undefined
     },

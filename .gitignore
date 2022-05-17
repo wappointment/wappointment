@@ -8,3 +8,4 @@
 /wappointment
 /wappointment.zip
 !/bin/build.sh
+/test_availability.json

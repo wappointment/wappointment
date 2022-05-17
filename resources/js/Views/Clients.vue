@@ -16,7 +16,7 @@
             <component ref="listing" :is="view" @editClient="editClient" @deleteClient="deleteClient" @loaded="loadedResult"/>
         </template>
         <template v-else>
-          <button class="btn btn-link btn-xs mb-2" @click="back"> < {{ get_i18n('save', 'common') }}</button>
+          <button class="btn btn-link btn-xs mb-2" @click="back"> < {{ get_i18n('back', 'common') }}</button>
           <WAPFormGenerator ref="formgenerator" :schema="schema" classWrapper="clientage-form" :data="clientDataToSave" @submit="saveClient" />
         </template>
   </div>
@@ -151,7 +151,18 @@ export default {
         },
 
         clientEdited(client){
+          client = this.fixBrokenOption(client)
+          if(client.options.tz === false){
+            client.options.tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+          }
           this.clientDataToSave = client
+        },
+
+        fixBrokenOption(client){
+          if(client.options === null){
+            client.options = {tz:false}
+          }
+          return client
         },
 
         deleteClient(clientId){

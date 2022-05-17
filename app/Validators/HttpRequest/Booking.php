@@ -30,7 +30,12 @@ class Booking extends LegacyBooking
     }
     public function getUserEmail()
     {
-        return $this->forceEmail() && $this->isLogged() ? Helpers::currentUserEmail() : $this->get('email');
+        return $this->forceEmail() && $this->isLogged() && $this->bookingFromFront() ? Helpers::currentUserEmail() : $this->get('email');
+    }
+
+    protected function bookingFromFront()
+    {
+        return strpos(get_class($this), 'BookingAdmin') === false;
     }
 
     protected function forceEmail()
@@ -86,6 +91,18 @@ class Booking extends LegacyBooking
     public function getFields()
     {
         return array_keys($this->validationRulesArray);
+    }
+
+    /**
+     * Ignore certain given values
+     *
+     * @return void
+     */
+    public function getFieldsFiltered()
+    {
+        return array_filter($this->getFields(), function ($var) {
+            return !in_array($var, ['recurrent', 'page']);
+        });
     }
 
     protected function validationRules()
@@ -173,7 +190,7 @@ class Booking extends LegacyBooking
 
     public function preparedData()
     {
-        $custom_fields = $this->getFields();
+        $custom_fields = $this->getFieldsFiltered();
         $dataClient = ['options' => []];
         foreach ($custom_fields as $cfield) {
             if (in_array($cfield, ['location', 'duration', 'service', 'time', 'start', 'clientid', 'end'])) {
@@ -199,6 +216,7 @@ class Booking extends LegacyBooking
                     break;
             }
         }
+
         return $dataClient;
     }
 }

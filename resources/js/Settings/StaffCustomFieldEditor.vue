@@ -10,7 +10,7 @@
                 <button class="btn btn-primary" :class="{'disabled':!isValidField}" @click="saveField">{{get_i18n('save', 'common') }}</button>
             </div>
             <div v-else>
-                <button class="btn btn-secondary btn-sm mb-2" @click="newField"><span class="dashicons dashicons-insert"></span> Add Custom Field</button>
+                <button class="btn btn-secondary btn-sm mb-2" @click="newField" v-if="isUserAdministrator"><span class="dashicons dashicons-insert"></span> Add Custom Field</button>
                 <div v-if="filteredCF.length > 0 ">
                     <div class="d-flex align-items-center" v-for="field in filteredCF">
                         <div>
@@ -19,7 +19,7 @@
                         <a href="javascript:;" @click="deleteField(field.key)"><span class="dashicons dashicons-trash"></span></a>
                         <a href="javascript:;" @click="editField(field)" data-tt="Edit Field Label"><span class="dashicons dashicons-edit"></span></a>
                     </div>
-                    <button class="btn btn-primary" @click="save">Save staff values</button>
+                    <button class="btn btn-primary" @click="saveCustomFields">Save staff values</button>
                 </div>
             </div>
         </div>
@@ -29,16 +29,14 @@
 <script>
 
 import StaffModalWrapper from './StaffModalWrapper'
-import ViewData from '../Modules/ViewData'
 import RequestMaker from '../Modules/RequestMaker'
 export default {
-    props: ['staff'],
-    mixins:[RequestMaker, ViewData],
+    props: ['staff', 'mainService', 'isUserAdministrator'],
+    mixins:[RequestMaker],
     components:{StaffModalWrapper},
     data() {
         return {
             custom_fields: [],
-            viewName: 'staffCustomField',
             field_values:{},
             adding: false,
             field_name: '',
@@ -50,6 +48,7 @@ export default {
         if(this.staff.custom_fields !== undefined){
             this.field_values = Object.assign({},this.staff.custom_fields)
         }
+        this.loadCustomFields()
     },
 
     computed:{
@@ -62,6 +61,29 @@ export default {
         }
     },
     methods:{ 
+
+        closeRefresh(){
+            this.$emit('close')
+        },
+        loadedFields(e){
+            this.custom_fields = e.data.custom_fields
+        },
+        loadCustomFields(){
+            this.request(this.loadCustomFieldsRequest, {}, undefined, false, this.loadedFields)
+        },
+         async loadCustomFieldsRequest(){
+           return await this.mainService.call('loadCustomFields')
+        },
+        saveCustomFields(customFields, fieldsValues, deletedFields){
+            this.request(this.saveCustomFieldsRequest, {
+                id: this.staff.id, 
+                custom_fields:this.custom_fields, 
+                values:this.field_values, 
+                deleted:this.deleted_fields}, undefined, false, this.closeRefresh)
+        },
+         async saveCustomFieldsRequest(params){
+           return await this.mainService.call('saveCustomFields',params)
+        },
         updateFieldName(){
             this.field_name = this.field_name.trim()
         },
@@ -122,10 +144,6 @@ export default {
             this.custom_fields = [null,undefined,false].indexOf(viewData.data.custom_fields) === -1?viewData.data.custom_fields:[]
         },
         
-        save(){
-            this.$emit('save', this.custom_fields, this.field_values, this.deleted_fields)
-        },
-
     }
 
 }

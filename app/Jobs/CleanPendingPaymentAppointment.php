@@ -19,16 +19,8 @@ class CleanPendingPaymentAppointment implements JobInterface
     {
         $data = !Payment::isWooActive() ? $this->appointmentsToProcess() : \WappointmentAddonWoocommerce\Jobs\CleanPendingPaymentAppointment::getAppointmentsToReview();
 
-        foreach ($data['appointments'] as $appointment) {
-            if (empty($appointment->options['slots'])) {
-                if (!empty($appointment) && $appointment->isPending()) {
-                    AppointmentNew::cancel($appointment);
-                }
-            } else {
-                foreach ($data['orders'] as $orderData) {
-                    static::cancelReservations($orderData, $appointment);
-                }
-            }
+        foreach ($data['orders'] as $orderData) {
+            static::cancelReservations($orderData, static::getAppointment($data, $orderData));
         }
         static::registerJob(true);
     }
@@ -50,14 +42,41 @@ class CleanPendingPaymentAppointment implements JobInterface
                     }
                 }
             }
+            static::flagCancelled($orderData);
+        }
+    }
 
-            //woo marker
-            do_action('wappointment_woo_cancelled_order', $orderData);
-
-            //standalone marker
-            if (isset($orderData['orderObj']) && !is_null($orderData['orderObj'])) {
-                $orderData['orderObj']->setAutoCancelled();
+    /**
+     * allow to load the appointment of the order without refetching
+     *
+     * @param array $data
+     * @param array $orderData
+     * @return void
+     */
+    protected static function getAppointment($data, $orderData)
+    {
+        if (!empty($orderData['reservations'])) {
+            foreach ($orderData['reservations'] as $reservation) {
+                if (!empty($reservation['appointment_id'])) {
+                    foreach ($data['appointments'] as $appointment) {
+                        if ((int)$reservation['appointment_id'] === (int)$appointment->id) {
+                            return $appointment;
+                        }
+                    }
+                }
             }
+        }
+        return null;
+    }
+
+    protected static function flagCancelled($orderData)
+    {
+        //woo marker
+        do_action('wappointment_woo_cancelled_order', $orderData);
+
+        //standalone marker
+        if (isset($orderData['orderObj']) && !is_null($orderData['orderObj'])) {
+            $orderData['orderObj']->setAutoCancelled();
         }
     }
 

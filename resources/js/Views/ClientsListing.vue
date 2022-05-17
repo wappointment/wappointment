@@ -21,8 +21,9 @@
                                     <img :src="client.avatar" :alt="client.name" class="border border-secondary wrounded mr-2">
                                 </div>
                                 <div>
-                                    <div>{{ client.name }} <span v-if="owes(client)"class="owes bg-warning p-1 rounded text-white">{{ get_i18n('owes', 'clients') }} {{owes(client)}}</span></div>
+                                    <div>{{ client.name }} <span v-if="owes(client)" class="owes bg-warning p-1 rounded text-white">{{ get_i18n('owes', 'clients') }} {{owes(client)}}</span></div>
                                     <div>{{ client.email }} </div>
+                                    <div><span class="dashicons dashicons-admin-site-alt3"></span> {{ getTimezone(client) }} </div>
                                 </div>
                             </div>
                             <div class="wlist-actions text-muted">
@@ -81,6 +82,10 @@ export default {
 
         getSkype(client){
           return this.hasOption(client) && client.options.skype !== undefined ? client.options.skype:'---'
+        },
+
+        getTimezone(client){
+          return this.hasOption(client) && client.options.tz !== undefined ? client.options.tz:'---'
         },
 
         afterLoaded(response){

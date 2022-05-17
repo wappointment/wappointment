@@ -17,6 +17,7 @@ class Availability extends AbstractRepository
         return apply_filters('wappointment_front_availability', [
             'staffs' => Staff::get(),
             'week_starts_on' => Settings::get('week_starts_on'),
+            'frontend_weekstart' => Settings::get('frontend_weekstart'),
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'min_bookable' => Settings::get('hours_before_booking_allowed'),
@@ -26,6 +27,7 @@ class Availability extends AbstractRepository
             'services' => ManageService::all(),
             'site_lang' => substr(get_locale(), 0, 2),
             'custom_fields' => Central::get('CustomFields')::get(),
+            'availability_fluid' => Settings::get('availability_fluid'),
         ]);
     }
 }

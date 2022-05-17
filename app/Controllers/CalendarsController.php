@@ -104,6 +104,13 @@ class CalendarsController extends RestController
         }
     }
 
+    public function getCFStructure(Request $request)
+    {
+        return [
+            'custom_fields' => WPHelpers::getOption('staff_custom_fields', [])
+        ];
+    }
+
     public function saveCustomFields(Request $request)
     {
         $this->testIsAllowedToRunQuery('id', $request);
@@ -146,8 +153,8 @@ class CalendarsController extends RestController
      */
     protected function refreshCustomFields(Request $request)
     {
-        $staff_custom_fields = \WappointmentLv::collect(WPHelpers::getOption('staff_custom_fields', []));
-        if (!empty($request->input('custom_fields'))) {
+        $new_staff_custom_fields = $staff_custom_fields = \WappointmentLv::collect(WPHelpers::getOption('staff_custom_fields', []));
+        if (WPHelpers::canManageWappo() && !empty($request->input('custom_fields'))) {
             $current_cf_keys = $staff_custom_fields->map(function ($e) {
                 return $e['key'];
             })->toArray();
@@ -172,8 +179,10 @@ class CalendarsController extends RestController
 
             WPHelpers::setOption('staff_custom_fields', array_values($new_staff_custom_fields->toArray()));
         }
+
         return $new_staff_custom_fields;
     }
+
 
     public function saveServices(Request $request)
     {

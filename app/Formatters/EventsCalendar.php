@@ -109,7 +109,7 @@ class EventsCalendar
     {
         $owes = !empty($event->client->options['owes']) ? $event->client->options['owes'] : 0;
         $preparedClient = $this->prepareClient($event->client);
-
+        $nameService = isset($event->service->name) ? $event->service->name : 'Undefined service';
         return [
             'start' => $this->formatAppointmentTime($event->start_at),
             'end' => $this->formatAppointmentTime($event->end_at),
@@ -129,7 +129,7 @@ class EventsCalendar
                 'short' => [
                     'title' => !empty($preparedClient) ? $preparedClient->name : __('Unknown client', 'wappointment'),
                     /* translators: %1$s is service name, %2$s is the duration  */
-                    'service' => sprintf(__('%1$s - %2$smin', 'wappointment'), $event->service->name, $event->getDurationInSec() / 60),
+                    'service' => sprintf(__('%1$s - %2$smin', 'wappointment'), $nameService, $event->getDurationInSec() / 60),
                     'time' => $this->formatAppointmentTime($event->start_at, $this->timeFormat)
                         . ' - ' .
                         $this->formatAppointmentTime($event->end_at, $this->timeFormat),
@@ -153,7 +153,7 @@ class EventsCalendar
             $data[] = sprintf(__('Email: %s', 'wappointment'), $preparedClient->email);
             foreach ($preparedClient->options as $keyOption => $optionValue) {
 
-                if ($keyOption == 'appointment_key') {
+                if ($keyOption == 'appointment_key' || ($keyOption == 'rtl' && $optionValue === false) || !isset($this->customFieldsKeyLabel[$keyOption])) {
                     continue;
                 }
                 /* translators: %1$s is label %2$s is value */
@@ -171,6 +171,8 @@ class EventsCalendar
                 return __('Timezone', 'wappointment');
             case 'owes':
                 return __('Owes', 'wappointment');
+            case 'rtl':
+                return 'Right to left';
             default:
                 $label = isset($this->customFieldsKeyLabel[$keyOption]) ? $this->customFieldsKeyLabel[$keyOption] : $keyOption;
                 return strpos($label, ':') !== false ? str_replace(':', '', $label) : $label;
@@ -179,7 +181,7 @@ class EventsCalendar
 
     public function getLabelFromValues($keyOption, $optionValues)
     {
-        if ($keyOption == 'owes') {
+        if ($keyOption == 'owes' && is_numeric($optionValues)) {
             return Payment::formatPrice($optionValues / 100);
         }
 

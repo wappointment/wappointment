@@ -14,7 +14,10 @@ class Admin
         if ($client_id > 0) {
             $client = MClient::find((int)$client_id);
         } else {
-            $client = MClient::where('email', $booking->get('email'))->first();
+            $client = MClient::where('email', $booking->get('email'))->withTrashed()->first();
+            if (!empty($client) && $client->trashed()) {
+                $client->restore();
+            }
         }
 
         if (empty($client)) {

@@ -40,11 +40,11 @@
                                 </div>
                                 <div class="wlist-actions text-muted" v-if="isUserAdministrator || canCalEdit">
                                     <span :data-tt="get_i18n( 'sort', 'common')" v-if="isUserAdministrator && searchterm=='' && elements.calendars.length > 1" ><span class="dashicons dashicons-move"></span></span>
-                                    <span :data-tt="get_i18n( 'edit', 'common')"><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
+                                    <span :data-tt="get_i18n( 'edit', 'common')" ><span class="dashicons dashicons-edit" @click.prevent.stop="editAvailability(calendar)"></span></span>
                                     <span :data-tt="get_i18n( 'delete', 'common')" v-if="isUserAdministrator"><span class="dashicons dashicons-trash" @click.prevent.stop="deleteCalendar(calendar.id)"></span></span>
-                                    <span :data-tt="get_i18n( 'getshort', 'common')"><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
+                                    <span :data-tt="get_i18n( 'getshort', 'common')" v-if="canGetShortCode" ><span class="dashicons dashicons-shortcode" @click.prevent.stop="getShortCode(calendar.id)"></span></span>
                                     <span :data-tt="get_i18n( 'cals_permi', 'settings')" v-if="isStaffCalendar(calendar)"><span class="dashicons dashicons-unlock" @click.prevent.stop="editPermission(calendar)"></span></span>
-                                    <span :data-tt="get_i18n( 'cals_setcf', 'settings')" v-if="elements.allowStaffCf" ><span class="dashicons dashicons-editor-code" @click.prevent.stop="setCustomFields(calendar)"></span></span>
+                                    <span :data-tt="get_i18n( 'cals_setcf', 'settings')" v-if="elements.allowStaffCf && canEditCf" ><span class="dashicons dashicons-editor-code" @click.prevent.stop="setCustomFields(calendar)"></span></span>
                                     <span>(id: {{ calendar.id }})</span>
                                 </div>
                             </td>
@@ -107,13 +107,13 @@
 
         </div>
         <div v-if="calendarAdd">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('save', 'common') }}</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('back', 'common') }}</button>
             <CalendarsAddEdit :calendar="elementPassed" :timezones_list="elements.timezones_list" 
             :staffs="elements.staffs" :services="elements.services" :calendarsUsed="calendarsUsed"
             @saved="hasBeenSavedDeleted"/>
         </div>
         <div v-if="calendarRegav">
-            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('save', 'common') }}</button>
+            <button class="btn btn-link btn-xs mb-2" @click="showListing"> < {{ get_i18n('back', 'common') }}</button>
             <WeeklyAvailability :calendar="elementPassed" :timezones_list="elements.timezones_list" :staffs="elements.staffs"/>
         </div>
 
@@ -121,7 +121,7 @@
             <h4 slot="title" class="modal-title"> {{ modalTitle }} </h4>
             <ShortcodeDesigner v-if="showShortcode" :calendar_id="showShortcode" :calendars="elements.calendars" :services="elements.services" :showTip="false" />
             <StaffPermissionsManager v-if="showPermissions" :permissions="elements.permissions" :user="showPermissions" @save="savePermissions" />
-            <StaffCustomFieldEditor v-if="editCustomField" :staff="editCustomField" @save="saveCustomFields" />
+            <StaffCustomFieldEditor v-if="editCustomField" :staff="editCustomField" :mainService="mainService" @close="closeRefresh" :isUserAdministrator="isUserAdministrator" />
             <StaffAssignServices v-if="editingServices" @save="saveServices" :user="editingServices" :current="editingServices.services" :services="elements.services" />
             <StaffCalendarsIntegrations v-if="dotcomOpen" @reload="reloadListing" :calendar="dotcomOpen" />
             <StaffCalendarsExternal v-if="editingExternal" :user="editingExternal" @savedSync="reloadListing" noback />
@@ -206,9 +206,13 @@ export default {
         calendarRegav(){
             return this.currentView == 'regav'
         },
+        canGetShortCode(){
+            return this.canCalendarEdit('wappo_self_shortcode')
+        },
         canCalEditServices(){
             return this.canCalendarEdit('wappo_self_services')
         },
+
         canCalConnectAccount(){
             return this.canCalendarEdit('wappo_self_connect_account')
         },
@@ -224,6 +228,9 @@ export default {
         canCalUnpublish(){
             return this.canCalendarEdit('wappo_self_unpublish')
         },
+        canEditCf(){
+            return this.canCalendarEdit('wappo_self_cf')
+        },
         canCalEdit(){
             return this.canCalendarEdit('wappo_self_man')
         },
@@ -236,7 +243,10 @@ export default {
             return this.isUserAdministrator || this.hasPermission(something)
         },
         isStaffCalendar(calendar){
-            return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1 && calendar.roles.indexOf('wappointment_manager') === -1 && calendar.roles.indexOf('wappointment_staff') === -1
+            return this.isUserAdministrator
+            return parseInt(calendar.wp_uid) > 0 && calendar.roles.indexOf('administrator') === -1 && 
+            calendar.roles.indexOf('wappointment_manager') === -1 && 
+            calendar.roles.indexOf('wappointment_staff') === -1
         },
         getShortCode(calendar_id){
             this.showShortcode = calendar_id
@@ -288,12 +298,6 @@ export default {
             this.editingDefaultAvailability = false
             this.editingDefaultServices = false
             this.largeModal = false
-        },
-        saveCustomFields(customFields, fieldsValues, deletedFields){
-            this.request(this.saveCustomFieldsRequest, {id: this.editCustomField.id, custom_fields:customFields, values:fieldsValues, deleted:deletedFields}, undefined, false, this.closeRefresh)
-        },
-         async saveCustomFieldsRequest(params){
-           return await this.mainService.call('saveCustomFields',params)
         },
 
         saveServices(changedServices){

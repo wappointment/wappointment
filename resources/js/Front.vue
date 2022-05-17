@@ -293,9 +293,10 @@ export default {
 .wap-wid .loader {
     min-height: 68px;
 }
-/* .wap-front{
-    font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,Noto Sans,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;
-} */
+
+.wap-front a.initial{
+  color:initial !important;
+}
 
 .wap-front .wbtn.wbtn-secondary.wbtn-cell{
   border-radius: .5em;

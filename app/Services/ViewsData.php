@@ -285,6 +285,7 @@ class ViewsData
             'allow_rescheduling' => Settings::get('allow_rescheduling'),
             'week_starts_on' => Settings::get('week_starts_on'),
             'hours_before_booking_allowed' => Settings::get('hours_before_booking_allowed'),
+            'frontend_weekstart' => Settings::get('frontend_weekstart'),
             'hours_before_cancellation_allowed' => Settings::get('hours_before_cancellation_allowed'),
             'hours_before_rescheduling_allowed' => Settings::get('hours_before_rescheduling_allowed'),
             'timezone' => $timezone,
@@ -325,6 +326,7 @@ class ViewsData
             'custom_fields' => Central::get('CustomFields')::get(),
             'wp_remote' => Settings::get('wp_remote'),
             'jitsi_url' => Settings::get('jitsi_url'),
+            'availability_fluid' => Settings::get('availability_fluid'),
         ];
     }
 

@@ -5,7 +5,7 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.7</span>   
+                <span>V2.4.9</span>   
                 <span class="ml-2">Bug fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
@@ -13,13 +13,10 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added manager role</li>
-                        <li>added RTL emails</li>
-                        <li>fixed avoid display issue when a calendar staff is deleted</li>
-                        <li>fixed calendar ICS parse exdate on recurrent event</li>
-                        <li>fixed min start for availability</li>
-                        <li>fixed if no payment method, auto confirm</li>
-                        <li>fixed minimum slot starting time from now increments every 10 minutes</li>
+                        <li>fixed issue admin notif double client data</li>
+                        <li>fixed issue deleted service</li>
+                        <li>fixed behalf booking</li>
+                        <li>fixed translated strings</li>
                     </ol>
                     
                   </div>

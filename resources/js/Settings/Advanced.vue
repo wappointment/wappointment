@@ -53,13 +53,17 @@
                   </div>
             </div>
             <div class="d-flex mb-2">
-            <div>
-              <label for="week-starts-on" class="m-0">Week starts on</label>
-              <div class="small text-muted">In Admin Calendar view</div>
-            </div>
-            <div class="ml-4">
-                <weekDays id="week-starts-on" classN="form-control" :selected="viewData.week_starts_on" @changed="changedDayStart"></weekDays>
-            </div>
+              <div>
+                <label for="week-starts-on" class="m-0">Week starts on</label>
+                <div class="small text-muted">In Admin Calendar view</div>
+              </div>
+              <div class="ml-4">
+                  <weekDays id="week-starts-on" classN="form-control" :selected="viewData.week_starts_on" @changed="changedDayStart"></weekDays>
+              </div>
+              <div class="d-flex align-items-center ml-2"> 
+                <input type="checkbox" v-model="viewData.frontend_weekstart" id="frontend_weekstart" @change="changedVD('frontend_weekstart')">
+                <div class="small text-muted">Apply to frontend </div>
+              </div>
           </div> 
             <div class="mb-2">
               <label class="form-check-label" for="hrs-before-allowed">
@@ -267,6 +271,15 @@
                     <input type="text" class="ml-2" v-model="viewData.jitsi_url" id="jitsi-url" 
                     @keyup.enter.prevent="changedFromModel('jitsi_url')" 
                     @focusout="changedFromModel('jitsi_url')">
+                  </div>
+              </label>
+          </div>
+
+          <div class="mb-2">
+              <label class="form-check-label" for="availability-fluid" data-tt="Mostly has an impact on same day bookings, if applied, we will look for the earliest available time by 5min increments">
+                  <div class="d-flex align-items-center">
+                    <input type="checkbox" v-model="viewData.availability_fluid" id="availability-fluid" @change="changedVD('availability_fluid')">
+                    Availability fluid
                   </div>
               </label>
           </div>

@@ -21,6 +21,10 @@ trait IsAppointmentJob
         }
 
         $this->client = (new Client)->fill($params['client']);
+        if (!empty($params['client']['id'])) {
+            $this->client->id = $params['client']['id'];
+        }
+
         if (!empty($params['appointment']['options'])) {
             $params['appointment']['options'] = json_encode($params['appointment']['options']);
         }
