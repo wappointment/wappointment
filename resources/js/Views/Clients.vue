@@ -151,10 +151,18 @@ export default {
         },
 
         clientEdited(client){
+          client = this.fixBrokenOption(client)
           if(client.options.tz === false){
             client.options.tz = Intl.DateTimeFormat().resolvedOptions().timeZone
           }
           this.clientDataToSave = client
+        },
+
+        fixBrokenOption(client){
+          if(client.options === null){
+            client.options = {tz:false}
+          }
+          return client
         },
 
         deleteClient(clientId){

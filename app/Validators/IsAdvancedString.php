@@ -13,6 +13,6 @@ class IsAdvancedString extends \Rakit\Validation\Rule
             return false;
         }
 
-        return preg_match('/^[\pL\pM\pN\s\'\+\?\=\¿\!\¡\"\%\&\$\(\)\[\]\*\´\,\`\;\:\.\@\/\~\#\^-]+$/u', $value) > 0;
+        return empty($value) || preg_match('/^[\pL\pM\pN\s\'\+\?\=\¿\!\¡\"\%\&\$\(\)\[\]\*\´\,\`\;\:\.\@\/\~\#\^-]+$/u', $value) > 0;
     }
 }

@@ -1,8 +1,8 @@
 <template>
     <div >
-        <div class="d-flex bg-secondary p-2 rounded" v-if="!isIsolated" @mouseenter="showSettingsNow" @mouseleave="delayRemove">
-            <button @click="manageServices" class="btn btn-light mr-2">{{ get_i18n('services_manage', 'settings') }}</button>
-            <button @click="managePackages" class="btn btn-light mr-2 active">{{ get_i18n('sell_pack', 'settings') }}</button>
+        <div class="d-flex bg-secondary p-2 rounded packlisting" v-if="!isIsolated" @mouseenter="showSettingsNow" @mouseleave="delayRemove">
+            <button @click="manageServices" class="btn btn-light mr-2"  :class="{active: !packShown}">{{ get_i18n('services_manage', 'settings') }}</button>
+            <button @click="managePackages" class="btn btn-light mr-2" :class="{active: packShown}">{{ get_i18n('sell_pack', 'settings') }}</button>
             <transition name="fade" mode="out-in">
                 <div class="d-flex">
                     <div  v-if="showSettings">
@@ -62,6 +62,9 @@ export default {
         getComponent(){
             return this.currentView == 'services' ? 'ServicesManage':'PackagesManage'
         },
+        packShown(){
+            return this.currentView == 'packages'
+        }
     },
     methods: {
         dataUp(data){
@@ -136,5 +139,12 @@ export default {
 <style>
 .text-dark.tt-danger{
     cursor:default;
+}
+.packlisting .btn-light:not(:disabled):not(.disabled).active,
+.packlisting .btn-light:not(:disabled):not(.disabled):active
+ {
+  color: #fff;
+  background-color: #b5b4e6;
+  border-color: #d3d9df;
 }
 </style>

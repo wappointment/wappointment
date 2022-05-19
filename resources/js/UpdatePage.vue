@@ -5,7 +5,7 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.8</span>   
+                <span>V2.4.9</span>   
                 <span class="ml-2">Bug fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
@@ -13,13 +13,10 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added dirt detector in availability json response</li>
-                        <li>added fluid availability</li>
-                        <li>fixed issue 3001 when using Zoom without app option</li>
-                        <li>fixed issue not available slot when available</li>
-                        <li>fixed today's slot picking strange value</li>
-                        <li>fixed issue start day of the week in admin calendar</li>
-                        <li>fixed issue php8</li>
+                        <li>fixed issue admin notif double client data</li>
+                        <li>fixed issue deleted service</li>
+                        <li>fixed behalf booking</li>
+                        <li>fixed translated strings</li>
                     </ol>
                     
                   </div>

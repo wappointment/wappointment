@@ -148,7 +148,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.4.9 - 2022-04-08 =
+= 2.4.9 - 2022-04-13 =
 * fixed issue admin notif double client data
 * fixed issue deleted service
 * fixed behalf booking when deleted client
