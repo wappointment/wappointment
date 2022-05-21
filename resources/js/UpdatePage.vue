@@ -5,7 +5,7 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.9</span>   
+                <span>V2.4.10</span>   
                 <span class="ml-2">Bug fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
@@ -13,10 +13,10 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>fixed issue admin notif double client data</li>
-                        <li>fixed issue deleted service</li>
-                        <li>fixed behalf booking</li>
-                        <li>fixed translated strings</li>
+                        <li>added "more starting times" option in Settings > Advanced custom segmenting over bookable time</li>
+                        <li>added option to use same staff email for different calendars</li>
+                        <li>added option to use the same wappointment.com account key on different accounts</li>
+                        <li>fixed issue for custom timezones when reading some .ICS calendars from Microsoft Exchange</li>
                     </ol>
                     
                   </div>
