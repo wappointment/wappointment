@@ -3,7 +3,7 @@
 
     <BreadCrumbs v-if="crumbs.length>0" :crumbs="crumbs" @click="goTo"/>
     <component v-if="currentView !== false" :is="currentView" :key="subCompKey" 
-    :subview="subview" v-bind="dynamicProps" @updateCrumb="updateCrumb"></component>
+    :subview="subview" v-bind="dynamicProps" @updateCrumb="updateCrumb" />
     
     <div class="reduced" v-else>
         <div class="card p-2 px-3">
@@ -248,14 +248,6 @@
               </label>
           </div>
           <div class="mb-2">
-              <label class="form-check-label" for="zoom-browser" data-tt="Zoom requires an app to be installed; check this option to launch a meeting where the app is not required(easier for your clients)">
-                  <div class="d-flex align-items-center">
-                    <input type="checkbox" v-model="viewData.zoom_browser" id="zoom-browser" @change="changedVD('zoom_browser')">
-                    Zoom without app
-                  </div>
-              </label>
-          </div>
-          <div class="mb-2">
               <label class="form-check-label" for="wp-remote" data-tt="When getting errors as such 'cURL error ***'">
                   <div class="d-flex align-items-center">
                     <input type="checkbox" v-model="viewData.wp_remote" id="wp-remote" @change="changedVD('wp_remote')">
@@ -289,7 +281,9 @@
                   <div class="d-flex align-items-center">
                     <input type="checkbox" v-model="viewData.more_st" id="starting-times" @change="changedVD('more_st')">
                     Add more starting times
-                    <span class="ml-2 d-flex align-items-center" v-if="viewData.more_st"><div>Start each</div> <HoursDropdown :elements="[5, 10, 15, 20, 30, 60]" :current="viewData.starting_each" :funcDisplay="funcDisplay" @selected="changeMoreSt"/></span>
+                    <span class="ml-2 d-flex align-items-center" v-if="viewData.more_st"><div>Start each</div> 
+                    <HoursDropdown :elements="[5, 10, 15, 20, 30, 60]" :current="viewData.starting_each" :funcDisplay="funcDisplay" @selected="changeMoreSt"/>
+                    </span>
                   </div>
               </label>
           </div>
@@ -602,6 +596,7 @@ export default {
     },
     changed(value, key) {
       this.settingSave(key, value)
+      this.viewData[key] = value
     },
     changedFromModel(key) {
       this.settingSave(key, this.viewData[key])
