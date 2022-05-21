@@ -133,7 +133,6 @@ class Settings
             'servicesDefault' => true,
             'calendar_handles_free' => false,
             'calendar_ignores_free' => false,
-            'zoom_browser' => false,
             'invoice' => false,
             'invoice_seller' => '',
             'invoice_num' => __('Order nº', 'wappointment'),
@@ -141,7 +140,9 @@ class Settings
             'wp_remote' => false,
             'jitsi_url' => '',
             'frontend_weekstart' => false,
-            'availability_fluid' => false
+            'availability_fluid' => false,
+            'more_st' => false,
+            'starting_each' => 30,
 
         ];
     }

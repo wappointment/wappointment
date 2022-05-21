@@ -318,7 +318,6 @@ class ViewsData
             'refreshavb_at' => Settings::get('refreshavb_at'),
             'clean_pending_every' => Settings::get('clean_pending_every'),
             'payment_active' => Payment::active(),
-            'zoom_browser' => Settings::get('zoom_browser'),
             'invoice' => Settings::get('invoice'),
             'invoice_seller' => Settings::get('invoice_seller'),
             'invoice_num' => Settings::get('invoice_num'),
@@ -327,6 +326,8 @@ class ViewsData
             'wp_remote' => Settings::get('wp_remote'),
             'jitsi_url' => Settings::get('jitsi_url'),
             'availability_fluid' => Settings::get('availability_fluid'),
+            'more_st' => Settings::get('more_st'),
+            'starting_each' => Settings::get('starting_each'),
         ];
     }
 

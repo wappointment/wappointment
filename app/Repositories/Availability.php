@@ -28,6 +28,8 @@ class Availability extends AbstractRepository
             'site_lang' => substr(get_locale(), 0, 2),
             'custom_fields' => Central::get('CustomFields')::get(),
             'availability_fluid' => Settings::get('availability_fluid'),
+            'more_st' => Settings::get('more_st'),
+            'starting_each' => Settings::get('starting_each'),
         ]);
     }
 }
