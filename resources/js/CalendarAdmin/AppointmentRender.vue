@@ -17,41 +17,37 @@ export default {
            if(namekey == 'owes') {
              return 'Owes'
            }
-            for (let i = 0; i < this.viewData.custom_fields.length; i++) {
-                const element = this.viewData.custom_fields[i]
-                if(element['namekey'] == namekey) return element.name
-            }
+           for (const element of this.viewData.custom_fields) {
+              if(element['namekey'] == namekey) return element.name
+           }
         },
       getValueLabel(namekey, values){
           let newvalues = values
-            for (let i = 0; i < this.viewData.custom_fields.length; i++) {
-                const element = this.viewData.custom_fields[i]
-                if(element['namekey'] == namekey && element.values !== undefined){
-                  if(Array.isArray(values)){
+          for (const element of this.viewData.custom_fields) {
+            if(element['namekey'] == namekey && element.values !== undefined){
+                if(Array.isArray(values)){
 
-                    for (let k = 0; k < values.length; k++) {
-                      const valuekey = values[k]
-                      newvalues[k]= this.getValueLabelFrom(element.values, valuekey)
-                    }
-                    newvalues = newvalues.join(', ')
-                  }else{
-                    newvalues = this.getValueLabelFrom(element.values, newvalues)
+                  for (let k = 0; k < values.length; k++) {
+                    const valuekey = values[k]
+                    newvalues[k]= this.getValueLabelFrom(element.values, valuekey)
                   }
-                  
+                  newvalues = newvalues.join(', ')
+                }else{
+                  newvalues = this.getValueLabelFrom(element.values, newvalues)
                 }
-            }
+              }
+          }
+
             return this.cleanString(newvalues)
         },
 
         getValueLabelFrom(valuesDescriptions, keyValue){
-          for (let j = 0; j < valuesDescriptions.length; j++) {
-              const subelement = valuesDescriptions[j]
-
-              if(subelement.value == keyValue){
-                return this.cleanString(subelement.label)
-              }  
-            }
-            return 'errorLabel'
+          for (const subelement of valuesDescriptions) {
+            if(subelement.value == keyValue){
+              return this.cleanString(subelement.label)
+            } 
+          }
+          return 'errorLabel'
         },
         getAppointmentInfoHTML(appointment, delta = false){
             return (delta !== false) ? this.getOldAndNewAppointment(appointment, delta):this.getScheduledTime(appointment)

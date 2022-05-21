@@ -29,7 +29,9 @@ export default {
               icon: '',
               address: '',
               countries: [],
-              fields:[]
+              fields:[],
+              description_on:false,
+              description: ''
             }
           },
         schemaLocation: [
@@ -103,13 +105,19 @@ export default {
                 ],
             },
             {
-              type: 'opt-customfields',
-              label: 'When client select this modality, display the following fields',
-              model: 'options.fields',
-              bus: true,
-              listenBus: true,
-              cast: Array,
-              checklistOptions: { value:'namekey'}
+              type: 'checkbox',
+              label: 'Add description?',
+              model: 'options.description_on',
+              cast: Number,
+            },
+            {
+                type: 'textarea',
+                label: 'Description',
+                model: 'options.description',
+                conditions: [
+                  { model:'options.description_on', values: [true] }
+                ],
+                cast: String,
             },
             
           ]
