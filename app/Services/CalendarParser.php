@@ -9,6 +9,9 @@ use Wappointment\ClassConnect\VtzUtil;
 
 class CalendarParser
 {
+
+    use CustomTZParser;
+
     protected $url;
     protected $type;
     protected $source;
@@ -52,7 +55,6 @@ class CalendarParser
 
         $this->setTimezone($vcalendar);
 
-
         $uids = \WappointmentLv::collect([]);
         foreach ($vcalendar->VEVENT as $vevent) {
             if ($start > ($start + 60)) {
@@ -84,7 +86,6 @@ class CalendarParser
             $start_at_record = $this->getFormatedDate($carbon_start);
             $end_at_record = $this->getFormatedDate($carbon_end);
 
-
             $dataInsert = [
                 'start_at' => $start_at_record,
                 'end_at' => $end_at_record,
@@ -113,10 +114,12 @@ class CalendarParser
         $column = 'X-MICROSOFT-CDO-BUSYSTATUS';
         return !empty($vevent->$column) && $vevent->$column->getValue() == 'FREE';
     }
+
     public function freeSpotted($vevent)
     {
         return $this->isFreeOutlook($vevent);
     }
+
     public function getStatus($vevent)
     {
         return $this->handles_free && $this->freeSpotted($vevent) ? STATUS::TYPE_FREE : STATUS::TYPE_BUSY;
@@ -157,6 +160,14 @@ class CalendarParser
 
     private function vcalDateToCarbon($vcalDateTimeString, $vevent = null)
     {
+        if ($this->isCustomTZ()) {
+            return $this->parseCustomTZ($vcalDateTimeString, $vevent);
+        }
+        return $this->standardParsing($vcalDateTimeString, $vevent);
+    }
+
+    public function standardParsing($vcalDateTimeString, $vevent = null)
+    {
         $timezoneTemp = '';
 
         if (empty($this->timezone)) {
@@ -183,10 +194,13 @@ class CalendarParser
 
     private function setTimezone($vcalObject)
     {
-        $this->timezone = $this->tryGetTz($vcalObject);
-        if (empty($this->timezone)) {
-            $timezonekey = 'X-WR-TIMEZONE';
-            $this->timezone = $this->findTimezone((string) $vcalObject->$timezonekey);
+        $customtimezone = $this->isCustomTimezone($vcalObject);
+        if (empty($customtimezone)) {
+            $this->timezone = $this->tryGetTz($vcalObject);
+            if (empty($this->timezone)) {
+                $timezonekey = 'X-WR-TIMEZONE';
+                $this->timezone = $this->findTimezone((string) $vcalObject->$timezonekey);
+            }
         }
     }
 
@@ -252,11 +266,13 @@ class CalendarParser
                     $options['interval'] = (int) $vevent->RRULE->getParts()['INTERVAL'];
                 }
 
-                foreach ($vevent->EXDATE as $value) {
-                    $options['exdate'][] = $this->vcalDateToCarbon($value->getParts()[0], $vevent)->timestamp;
+                if (!empty($vevent->EXDATE)) {
+                    foreach ($vevent->EXDATE as $value) {
+                        $options['exdate'][] = $this->vcalDateToCarbon($value->getParts()[0], $vevent)->timestamp;
+                    }
                 }
 
-                $options['origin_tz'] = $this->timezone;
+                $options['origin_tz'] = $this->isCustomTZ() ? $this->getTimezoneNameFromDateString((string) $vevent->DTSTART) : $this->timezone;
                 $options['origin_start'] = $this->vcalDateToCarbon((string) $vevent->DTSTART, $vevent)
                     ->format(WAPPOINTMENT_DB_FORMAT);
             }
