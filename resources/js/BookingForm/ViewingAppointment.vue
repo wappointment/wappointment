@@ -64,7 +64,6 @@ export default {
         errorLoading: '',
         dataLoaded: null,
         momenttz: momenttz,
-        zoom_browser: false,
         justRescheduled: false,
         disabledButtons: false
     }),
@@ -141,7 +140,6 @@ export default {
             this.staff = d.data.staff
             this.time_format = this.convertDateFormat(d.data.time_format)
             this.date_format = this.convertDateFormat(d.data.date_format)
-            this.zoom_browser = d.data.zoom_browser
             this.date_time_union = d.data.date_time_union
             this.loadedAppointment = true
             this.loading = false
@@ -167,13 +165,6 @@ export default {
             return location.options.type == 'zoom' && location.options.video == 'zoom'
         },
         meetingUrl(){
-            let zoomflag = '.zoom.us/j/'
-            if(this.isVideoZoom && this.zoom_browser && this.hasMeetingRoom.indexOf(zoomflag) !== false){
-                let firstsplit = this.hasMeetingRoom.split(zoomflag)
-                let meetingsplit = firstsplit[1].split('?')
-                
-                return firstsplit[0]+'.zoom.us/wc/join/'+meetingsplit[0]+'?'+meetingsplit[1]
-            }
             return this.hasMeetingRoom
         },
 

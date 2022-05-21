@@ -90,7 +90,7 @@ export default {
             this.generatedPassword = Math.random().toString(36).slice(-12)
         },
         displayElementFunc(element){
-            return element !== undefined ? element.user_email: 'Unknown'
+            return element !== undefined ? element.user_email+(element.used > 0 ?' (used:'+element.used+')':''): 'Unknown'
         },
 
         findUserById(staffId){

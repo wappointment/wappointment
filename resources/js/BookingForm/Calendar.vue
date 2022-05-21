@@ -13,6 +13,7 @@ import CalendarMonth from './CalendarMonth'
 import CalendarWeek from './CalendarWeek'
 import Dates from '../Modules/Dates'
 import DatesExtended from '../Modules/DatesExtended'
+import IncrementTime from './IncrementTime'
 
 export default {
     props: ['options','service','initIntervalsCollection', 'timeprops', 'staffs', 'duration', 'location', 'viewData','rescheduling', 'relations'],
@@ -22,7 +23,7 @@ export default {
         started: false,
         cleanedIntervals: false
     }),
-    mixins: [Dates, DatesExtended],
+    mixins: [Dates, DatesExtended, IncrementTime],
     components: {
         CalendarMonth, CalendarWeek
     }, 
@@ -94,13 +95,14 @@ export default {
                 }else{
                     let min_unix_time = this.now.unix() + (this.minTodayHour * 3600) + (this.minTodayMin * 60)
                      while (intervals[0].start < min_unix_time) { //standard increment by duration selected
-                         intervals[0].start += this.duration *60
+                         intervals[0].start += this.incrementTime()
                     }
                 }
             }
             newIntervals.intervals = intervals
             return newIntervals
         },
+        
         selectSlot(slot){
             let next = this.relations.next
             if(this.intervalId){

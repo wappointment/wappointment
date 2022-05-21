@@ -13,7 +13,7 @@
                         <InputPh v-model="calendarSelected.name" :ph="get_i18n( 'name', 'common')" @updatedValue="updateStaffName" />
                     </div>
                     <div class="account-selector">
-                        <StaffSelector :staffs="onlyUnusedStaff" :activeStaffId="calendarSelected.wp_uid" @updateStaff="updateStaff"></StaffSelector>
+                        <StaffSelector :staffs="onlyUnusedStaff" :activeStaffId="calendarSelected.wp_uid" @updateStaff="updateStaff" />
                     </div>
                 </div>
             </div>
@@ -115,9 +115,21 @@ export default {
     },
   computed: {
       onlyUnusedStaff(){
-          let mywp_uid = this.calendarSelected.wp_uid;
+          let mywp_uid = this.calendarSelected.wp_uid
           let wp_uid = this.calendarsUsed.filter(e => e != mywp_uid)
-          return this.staffs.filter(e => wp_uid.indexOf(e.ID) === -1)
+          let mystaff = [].concat(this.staffs)
+          return mystaff.map(e => {
+              if(wp_uid.indexOf(e.ID) === -1){
+                  e.used = 0
+              }else{
+                  if(e.used === undefined){
+                      e.used = 1
+                  }else{
+                      e.used ++
+                  }
+              }
+              return e
+          })
       },
       getRegav(){
           let regav = Object.assign({},this.calendar.regav)

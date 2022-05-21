@@ -270,10 +270,10 @@ class DotCom extends API
         if ($this->isLegacy) {
             Settings::saveStaff('dotcom', $data);
         } else {
-            $account = $this->isAccountKeyUsed($account_key);
-            if ($account) {
-                throw new \WappointmentException("Account key already used on another calendar : " . $account->name, 1);
-            }
+            // $account = $this->isAccountKeyUsed($account_key);
+            // if ($account) {
+            //     throw new \WappointmentException("Account key already used on another calendar : " . $account->name, 1);
+            // }
 
             $options = $this->staff->options;
             Flag::save('dotcomSet', true);
