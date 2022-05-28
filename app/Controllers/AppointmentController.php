@@ -39,7 +39,6 @@ class AppointmentController extends RestController
             'date_format' => Settings::get('date_format'),
             'time_format' => Settings::get('time_format'),
             'date_time_union' => Settings::get('date_time_union', ' - '),
-            'zoom_browser' => Settings::get('zoom_browser'),
             'display' => [
                 '[h2]getText(title)[/h2]',
                 /* translators: %1$s is service name, %2$s is the duration  */

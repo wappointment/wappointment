@@ -24,6 +24,7 @@
                             :time_format="time_format"
                             :options="options"
                             :now="now"
+                            :viewData="viewData"
                             @selected="selectSlot" />
                         </div>
                     </div>

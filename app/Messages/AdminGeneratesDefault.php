@@ -2,6 +2,7 @@
 
 namespace Wappointment\Messages;
 
+use Wappointment\Services\Addons;
 use Wappointment\Services\Settings;
 
 trait AdminGeneratesDefault
@@ -29,14 +30,18 @@ trait AdminGeneratesDefault
             /* translators: %s is replaced with the client's email */
             sprintf(__("Client's email: %s", 'wappointment'), sanitize_text_field($client->email)),
         ];
-        // if (!empty($client->getPhone())) {
-        //     /* translators: %s is replaced with the client's phone */
-        //     $dataEmail[] =  sprintf(__("Client's phone: %s", 'wappointment'), sanitize_text_field($client->getPhone()));
-        // }
-        // if (!empty($client->getSkype())) {
-        //     /* translators: %s is replaced with the client's skype username */
-        //     $dataEmail[] =  sprintf(__("Client's skype: %s", 'wappointment'), sanitize_text_field($client->getSkype()));
-        // }
+
+        if (!Addons::isActive('wappointment_services')) {
+            if (!empty($client->getPhone())) {
+                /* translators: %s is replaced with the client's phone */
+                $dataEmail[] =  sprintf(__("Client's phone: %s", 'wappointment'), sanitize_text_field($client->getPhone()));
+            }
+            if (!empty($client->getSkype())) {
+                /* translators: %s is replaced with the client's skype username */
+                $dataEmail[] =  sprintf(__("Client's skype: %s", 'wappointment'), sanitize_text_field($client->getSkype()));
+            }
+        }
+
 
         if ($appointment->isZoom()) {
             /* translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page */

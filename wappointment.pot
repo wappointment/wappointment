@@ -2040,10 +2040,6 @@ msgstr ""
 msgid "Cannot connect to the calendar"
 msgstr ""
 
-#: app/Services/Calendars.php:58
-msgid "Select another account this one is already used for another calendar"
-msgstr ""
-
 #: app/Services/Client.php:16
 msgid "Max active bookings reached! Cancel one of your appointments in order to book a new one."
 msgstr ""

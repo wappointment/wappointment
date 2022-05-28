@@ -38,7 +38,10 @@ export default {
         },
         now:{
             type: Object
-        }
+        },
+        viewData:{
+            type: Object
+        },
     },
     data: () => ({
         ready: false,
@@ -73,9 +76,12 @@ export default {
                 let slotStart = segment.start
                 while (end >= slotStart) {
                     this.identifySlot({start:slotStart})
-                    slotStart += this.duration
+                    slotStart += this.incrementType()
                 }
             }
+        },
+        incrementType(){
+            return this.viewData.more_st ? this.viewData.starting_each*60:this.duration
         },
         identifySlot(segment){
             let hour = this.getMoment(segment.start, this.currentTz).hour()

@@ -6,6 +6,7 @@
             <WapImage class="mx-2" :element="location" :desc="location.name" size="md" />
             <div class="service-label">
                 <div>{{ location.name }}</div>
+                <div class="description" v-if="hasDesc(location)">{{ hasDesc(location) }}</div>
             </div>
         </div>
       </div>
@@ -28,6 +29,11 @@ export default {
                 return
             }
             this.$emit('locationSelected', 'BookingCalendar', {location:location})
+        },
+        hasDesc(location){
+            return location.options !== undefined && 
+            location.options.description_on !== undefined 
+            && location.options.description_on ?location.options.description:false
         }
     }
 }   

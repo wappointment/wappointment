@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 5.9
 Requires PHP: 7.0
-Stable tag: 2.4.9
+Stable tag: 2.4.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,12 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.4.10 - 2022-05-21 =
+* added "more starting times" option in Settings > Advanced custom segmenting over bookable time
+* added option to use same staff email for different calendars
+* added option to use the same wappointment.com account key on different accounts
+* fixed issue for custom timezones when reading some .ICS calendars from Microsoft Exchange
 
 = 2.4.9 - 2022-04-13 =
 * fixed issue admin notif double client data

@@ -97,6 +97,9 @@ class Status
         $from = time();
         $i = 0;
         self::$diff = $statusRecurrent->end_at->timestamp - $statusRecurrent->start_at->timestamp;
+        if (self::$diff == 0) {
+            return $newEvents;
+        }
         $next = self::getNext($statusRecurrent, $from, $until, true);
 
         while ($next) {
@@ -195,7 +198,7 @@ class Status
     {
         $interval = self::getInterval($statusRecurrent);
 
-        $days_accepted = empty($statusRecurrent->options['byday']) ? [] : $statusRecurrent->options['byday'];
+        $days_accepted = static::getByDay($statusRecurrent);
 
         $daysAdded = $start_at->timestamp > time() ? 0 : Carbon::now()->diffInDays($start_at);
 
@@ -242,7 +245,7 @@ class Status
         $dayofthemonth = self::getMonthDay($statusRecurrent);
 
         if (!$dayofthemonth) {
-            $dayofthemonth = self::getByDay($statusRecurrent);
+            $dayofthemonth = self::getByDayMonthly($statusRecurrent);
         }
 
         if (!$dayofthemonth) {
@@ -376,14 +379,23 @@ class Status
         return empty($statusRecurrent->options['bymonthday']) ? false : $statusRecurrent->options['bymonthday'];
     }
 
-    private static function getByDay($statusRecurrent)
+    protected static function getByDay($statusRecurrent)
     {
-        //we don't accept array of bydays for monthly recurrence [1,4,5] this only applies to weekly recurrence
-        // so if it occurs we return the first value only
-        $byday = empty($statusRecurrent->options['byday']) ? false : $statusRecurrent->options['byday'];
-        if (is_array($byday) && isset($byday[0])) {
-            return $byday[0];
-        }
-        return $byday;
+        return empty($statusRecurrent->options['byday']) ? [] : $statusRecurrent->options['byday'];
+    }
+    private static function getByDayMonthly($statusRecurrent)
+    {
+        return static::fixArrayBydays(static::getByDay($statusRecurrent));
+    }
+
+    /**
+     *  e don't accept array of bydays for monthly recurrence [1,4,5] this only applies to weekly recurrence
+     *  so if it occurs we return the first value only
+     * @param [type] $byday
+     * @return void
+     */
+    protected static function fixArrayBydays($byday)
+    {
+        return is_array($byday) && isset($byday[0]) ? $byday[0] : (empty($byday) ? false : $byday);
     }
 }
