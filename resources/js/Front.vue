@@ -12,7 +12,7 @@
                 <EventList v-if="showEventList" @selectedEvent="selectedEvent" :list="attributesEl.list" :options="opts"/>
                 <template v-else>
                   <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
-                  <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" 
+                  <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :eventSelected="eventSelected"
                   :attributesEl="attributesElProcess" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
                   <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
                 </template>
@@ -191,6 +191,7 @@ export default {
     methods: {
       selectedEvent(event){
         this.eventSelected = event
+        this.currentStep = 'BookingCalendar'
         return event
       },
         serviceSelectionAttribute(){

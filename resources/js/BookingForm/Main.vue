@@ -122,7 +122,7 @@ let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Can
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
-     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid', 'demoAs', 'attributesEl'],
+     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid', 'demoAs', 'attributesEl', 'eventSelected'],
      components: compDeclared, 
     data: () => ({
         viewName: 'availability',
@@ -168,11 +168,14 @@ export default {
         if(this.step !== null) {
             this.requiresScroll = true //booking widget editor requires scroll always
         }
-        window.addEventListener('resize', this.windowResized);
+        window.addEventListener('resize', this.windowResized)
+        if(this.eventSelected){
+            this.selectedSlot = this.eventSelected
+        }
         
     },
     beforeDestroy(){
-        window.removeEventListener('resize', this.windowResized);
+        window.removeEventListener('resize', this.windowResized)
     },
     watch:{
         selectedSlot(newVal, oldVal){
