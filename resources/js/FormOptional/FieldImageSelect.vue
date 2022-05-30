@@ -39,7 +39,7 @@
                     </div>
                     <div class="gallery" v-if="galleryShow && selected_image === null">
                         <div class="pt-4 px-4">
-                            <input type="text" v-model="search_term">
+                            <input type="text" v-model="search_term" @keyup.enter.prevent="refreshGallery">
                             <button class="btn btn-outline-primary" @click.prevent.stop="refreshGallery">{{ get_i18n('search','common') }}</button>
                         </div>
                         <hr>

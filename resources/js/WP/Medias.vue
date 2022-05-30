@@ -28,7 +28,7 @@
             We cannot find any image in your site's medias <a target="_blank" :href="getUploadLink">Upload media</a>
         </div>
         <div  class="d-flex justify-content-center">
-            <template v-for="p in pages">
+            <template v-for="p in pagination">
                 <span v-if="p == page">{{ p }}</span>
                 <a v-else href="javascript:;" @click="changePage(p)">{{ p }}</a>
                 <span v-if="p!=pages"> - </span>
@@ -86,6 +86,31 @@ export default {
     computed: {
         getUploadLink(){
             return window.apiWappointment.base_admin.replace('admin.php','upload.php')
+        },
+        pagination(){
+            if(this.pages < 10){
+                return this.pages
+            }
+            let pages = []
+            let min = 1
+            let max = this.pages
+            pages.push(min)
+            if(this.page > 3 && this.page < this.pages -3){
+                min = this.page - 3
+                max = this.page + 3
+            }else if(this.page<=3){
+                min = 2
+                max = 4
+            }else if(this.page>= this.pages -3){
+                min = this.pages -6
+                max = this.pages -1
+            }
+            for (let i = min; i <= max; i++) {
+                pages.push(i)
+            }
+
+            pages.push(this.pages)
+            return pages;
         }
     },
     methods: {
