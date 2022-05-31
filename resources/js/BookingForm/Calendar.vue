@@ -40,6 +40,7 @@ export default {
     methods: {
         setAutoRefreshIntervals(){
             this.updatedIntervals = this.cleanedIntervals
+
             //if today has slots we register an event
             if(this.updatedIntervals.intervals[0] !== undefined && this.isTSToday(this.updatedIntervals.intervals[0].start)){
                 this.refreshIntervals()
