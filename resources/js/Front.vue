@@ -203,6 +203,8 @@ export default {
       selectedEvent(event){
         this.eventSelected = event
         this.currentStep = 'BookingCalendar'
+        this.toggleBookForm()
+        
         return event
       },
         serviceSelectionAttribute(){
@@ -278,10 +280,16 @@ export default {
           if(this.popup){
             let clone = document.getElementById('clone-'+this.elementId)
             let wappo_module = clone.getElementsByClassName('wap-front')[0]
+            if(typeof wappo_module == 'object'){
               document.getElementById(this.elementId).appendChild(wappo_module)
+            }
+              
               clone.remove()
           }
           this.bookForm = false
+          if(this.eventSelected){
+            this.eventSelected = false
+          }
         },
         toggleBookForm() {
             this.bookForm = !this.bookForm
@@ -289,8 +297,13 @@ export default {
               let wappo_module = document.getElementById(this.elementId).getElementsByClassName('wap-front')[0]
               let cloneWrapper = document.createElement('div')
               cloneWrapper.setAttribute('id', 'clone-'+this.elementId)
-              document.getElementById('wap-footer-container').appendChild(cloneWrapper)
-              cloneWrapper.appendChild(wappo_module)
+              if(typeof cloneWrapper == 'object'){
+                document.getElementById('wap-footer-container').appendChild(cloneWrapper)
+              }
+              
+              if(typeof wappo_module == 'object'){
+                cloneWrapper.appendChild(wappo_module)
+              }
               
             }
             if(this.canPop || this.popup){

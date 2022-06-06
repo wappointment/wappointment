@@ -172,8 +172,6 @@ export default {
             this.requiresScroll = true //booking widget editor requires scroll always
         }
         window.addEventListener('resize', this.windowResized)
-        
-        
     },
     beforeDestroy(){
         window.removeEventListener('resize', this.windowResized)
