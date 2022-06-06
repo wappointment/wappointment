@@ -58,7 +58,7 @@ export default {
     
     methods: {
         showSlots(left){
-            return this.options.general.left.replace('%s',left)
+            return this.options.general.left.replace('[slots]',left)
         },
         getLabel(section){
             return this.options.selection[section] !== undefined ? this.options.selection[section]:section
