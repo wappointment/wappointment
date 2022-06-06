@@ -22,15 +22,18 @@ trait CustomTZParser
     private function isCustomTimezone($vcalObject)
     {
         $found_customtimezone = false;
-        foreach ($vcalObject->VTIMEZONE->children() as $childrenTZ) {
-            if ($childrenTZ->name === 'TZID' && $childrenTZ->getValue() === 'Customized Time Zone') {
-                $found_customtimezone = true;
-                $this->initCustomTZ($childrenTZ);
-            }
-            if (in_array($childrenTZ->name, ['STANDARD', 'DAYLIGHT']) && $found_customtimezone) {
-                $this->setCustomTZProps($childrenTZ);
+        if (!empty($vcalObject->VTIMEZONE) && method_exists($vcalObject->VTIMEZONE, 'children')) {
+            foreach ($vcalObject->VTIMEZONE->children() as $childrenTZ) {
+                if ($childrenTZ->name === 'TZID' && $childrenTZ->getValue() === 'Customized Time Zone') {
+                    $found_customtimezone = true;
+                    $this->initCustomTZ($childrenTZ);
+                }
+                if (in_array($childrenTZ->name, ['STANDARD', 'DAYLIGHT']) && $found_customtimezone) {
+                    $this->setCustomTZProps($childrenTZ);
+                }
             }
         }
+
 
         return !is_null($this->customTZ);
     }

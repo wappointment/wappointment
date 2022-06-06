@@ -40,8 +40,9 @@ export default {
     methods: {
         setAutoRefreshIntervals(){
             this.updatedIntervals = this.cleanedIntervals
+
             //if today has slots we register an event
-            if(this.isTSToday(this.updatedIntervals.intervals[0].start)){
+            if(this.updatedIntervals.intervals[0] !== undefined && this.isTSToday(this.updatedIntervals.intervals[0].start)){
                 this.refreshIntervals()
                 setTimeout(this.initTodayInterval,  100)
                 this.intervalId = setInterval(this.refreshIntervals, 60 * 1000)
@@ -75,13 +76,13 @@ export default {
 
         cleanStartingFromEnd(newIntervals, newStart){
             let intervals = newIntervals.intervals
-            for (let i = 0; i < intervals.length; i++) {
-                const element = intervals[i]
-                if(element.end < newStart){
-                    intervals.splice(i, 1)
+            let validIntervals = []
+            for (const element of intervals) {
+                if(element.end > newStart){
+                    validIntervals.push(element)
                 }
             }
-            newIntervals.intervals = intervals
+            newIntervals.intervals = validIntervals
             return newIntervals
         },
         /**

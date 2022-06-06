@@ -20,8 +20,12 @@
                 </button>
             </div>
             <div v-if="gallery" class="gallery">
+                <div class="pt-4 px-4">
+                    <input type="text" v-model="search_term" @keyup.enter.prevent="refreshGallery">
+                    <button class="btn btn-outline-primary" @click.prevent.stop="refreshGallery">{{ get_i18n('search','common') }}</button>
+                </div>
                 <hr>
-                <WPMedias @selected="selectedFromGallery" @confirmed="saveNewAvatar" :sizeSelect="false"></WPMedias>
+                <WPMedias :search="search_term" @selected="selectedFromGallery" @confirmed="saveNewAvatar" :sizeSelect="false"></WPMedias>
                 <div class="bg-white pt-3">
                     <button class="btn btn-secondary" @click="close">Close</button>
                 </div>
@@ -47,6 +51,8 @@ export default {
             edit: false,
             gallery: false,
             selectedId: false,
+            search_term: '',
+            galleryShow: false,
         } 
     },
     methods:{
@@ -54,7 +60,7 @@ export default {
             this.edit = true
         },
         openGallery(){
-            this.gallery = true
+            this.galleryOn()
         },
         close(){
             this.edit = false
@@ -80,7 +86,14 @@ export default {
             this.close()
             this.selectedId = false
             this.$emit('changed', selected)
-        }
+        },
+        refreshGallery(){
+            this.gallery = false
+            setTimeout(this.galleryOn, 100)
+        },
+        galleryOn(){
+            this.gallery = true
+        },
     },
     computed:{
         styleGravatar(){

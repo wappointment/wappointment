@@ -11,11 +11,11 @@ export default {
         return editionsSteps
     },
     updateEditionsSteps: function(editionsSteps, inserts, removes){
-        for (let o = 0; o < inserts.length; o++) {
-            editionsSteps = this.insertViewBefore(editionsSteps, inserts[o].insertAt, inserts[o].insertStep)
+        for (const insertor of inserts) {
+            editionsSteps = this.insertViewBefore(editionsSteps, insertor.insertAt, insertor.insertStep)
         }
-        for (let j = 0; j < removes.length; j++) {
-            editionsSteps = this.removeView(editionsSteps, removes[j])
+        for (const remover of removes) {
+            editionsSteps = this.removeView(editionsSteps, remover)
         }
         return editionsSteps
     }
