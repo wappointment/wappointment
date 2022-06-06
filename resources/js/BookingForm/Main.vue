@@ -18,6 +18,7 @@
             @changeDuration="childChangedStep"
             @changeLocation="childChangedStep"
             @showStaffScreen="childChangedStep"
+            @backToStart="$emit('backToStart')"
             />
             <div class="wap-form-body" :id="getWapBodyId" >
                 <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
@@ -38,6 +39,7 @@
                 @changeService="childChangedStep"
                 @changeDuration="childChangedStep"
                 @changeLocation="childChangedStep"
+                @backToStart="$emit('backToStart')"
                 />
                 <template v-else>
                     <AppointmentOrder v-if="order" :order="order" />
@@ -162,6 +164,7 @@ export default {
     mounted () {
         
         this.refreshInitValue()
+        
         this.currentTz = this.tzGuess()
         this.createdAt = this.getUnixNow()
     
@@ -169,9 +172,7 @@ export default {
             this.requiresScroll = true //booking widget editor requires scroll always
         }
         window.addEventListener('resize', this.windowResized)
-        if(this.eventSelected){
-            this.selectedSlot = this.eventSelected
-        }
+        
         
     },
     beforeDestroy(){
@@ -538,7 +539,15 @@ export default {
         refreshAvail(){
             this.intervalsCollection = new Intervals(this.selectedStaff.availability)
         },
-
+        autoSelectEvent(){
+            this.setStaff(this.eventSelected.staff)
+            this.selectedSlot = this.eventSelected
+            let serviceId = this.eventSelected.service
+            this.service = this.services.find(e => e.id == serviceId)
+            this.duration = (this.eventSelected.duration / 60) - this.viewData.buffer_time
+            this.autoSelectLocation()
+            this.refreshAvail() // parse the selected staff to ge the availability
+        },
         loadedAfter() {
             this.cacheValue()
             this.time_format = convertDateFormatPHPtoMoment(this.viewData.time_format)
@@ -552,9 +561,16 @@ export default {
             }
             this.setMomentLocale()
             this.dataloaded = true
-            if(!this.mustSelectStaff || this.mustSelectStaff && this.getStaffs.length == 1){
+            
+            if(this.eventSelected){ // when event selected auto select
+                this.autoSelectEvent()
+            }
+            
+           if(!this.mustSelectStaff || this.mustSelectStaff && this.getStaffs.length == 1){
                 this.initServiceStaffDurationLocation()
             }
+
+            
     
             this.setComponentLists()
 
@@ -567,11 +583,17 @@ export default {
                 this.location = this.rescheduleData.location
 
             }else{
-                let stepdata = {service:this.service, duration:this.duration, location: this.location}
+                if(this.eventSelected){ // when event selected auto select
+                    this.goNext('BookingCalendar')
+                }else{
+                    let stepdata = {service:this.service, duration:this.duration, location: this.location}
 
-                let stepfirst = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', stepdata)
-                this.currentStep = this.selectFirstStep(stepfirst, stepdata)
-                this.autoSelectLocation()
+                    let stepfirst = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', stepdata)
+
+                    this.currentStep = this.selectFirstStep(stepfirst, stepdata)
+                    this.autoSelectLocation()
+                }
+                
             }
             this.$emit('changedStep',this.currentStep)
             this.loadStep(this.currentStep)
@@ -579,6 +601,13 @@ export default {
             if(this.loadedInit !== undefined){
                 this.loadedInit(this.step)
             }
+        },
+
+        goNext(stepName){
+            this.currentStep = this.getNextStep(stepName)
+        },
+        getNextStep(stepName){
+            return this.componentsList[stepName] !== undefined ? this.componentsList[stepName].relations.next:'BookingCalendar'
         },
 
         selectFirstStep(step_name, params) {

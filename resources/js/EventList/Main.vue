@@ -1,5 +1,5 @@
 <template>
-    <div class="wap-bf show">
+    <div class="wap-bf show has-scroll">
       <div class="wap-form-body">
         <Loader v-if="loading"/>
         <div v-if="isLoaded" class="p-2">
@@ -23,6 +23,7 @@ export default {
     data() {
       return {
         tz: '',
+        selectedStaff: false,
       }
     },
     mounted(){
@@ -35,9 +36,10 @@ export default {
       },
       allAvailabilityMerged(){
         if(!this.isLoaded) return []
-        let list = this.list
-        return this.viewData.staffs.map(staff => staff.availability.filter(e => e.length > 5 && e[5] == list))
+        return this.viewData.staffs.map(staff => staff.availability.filter(this.filterEvents.bind(null,staff)))
       },
+
+      
       eventFromList(){
         let concated = []
         for (const iterator of this.allAvailabilityMerged) {
@@ -57,7 +59,14 @@ export default {
       }
     },
     methods: {
+      filterEvents(staff,e){
+        if(e.length > 5 && e[5] == this.list){
+          this.selectedStaff = staff
+          return true
+        }
+      },
       selectedEvent(event){
+        event.staff = Object.assign({},this.selectedStaff)
         this.$emit('selectedEvent', event)
       },
       formatDate(unixts){

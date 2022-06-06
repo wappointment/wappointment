@@ -13,7 +13,7 @@
                 <template v-else>
                   <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
                   <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :eventSelected="eventSelected"
-                  :attributesEl="attributesElProcess" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
+                  :attributesEl="attributesElProcess" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" @backToStart="backToStart" />
                   <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
                 </template>
             </div>
@@ -189,6 +189,10 @@ export default {
         }
     },
     methods: {
+      backToStart(){
+        this.currentStep = null
+        this.eventSelected = false
+      },
       selectedEvent(event){
         this.eventSelected = event
         this.currentStep = 'BookingCalendar'

@@ -55,15 +55,6 @@ export default {
         },
     },
     methods:{
-        
-        showAllStaff(){
-            if(this.disabledButtons) {
-              return
-            } 
-            if(this.canChangeStaff){
-                return this.$emit('showStaffScreen', 'BookingStaffSelection',{ selectedStaff:null, selectedSlot:false, service: false, location: false, duration: false,})
-            }
-        },
         getStyleBackground(staff){
             return 'background-image: url("'+staff.a+'");'
         }
