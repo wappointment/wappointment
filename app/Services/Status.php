@@ -97,6 +97,9 @@ class Status
         $from = time();
         $i = 0;
         self::$diff = $statusRecurrent->end_at->timestamp - $statusRecurrent->start_at->timestamp;
+        if (self::$diff == 0) {
+            return $newEvents;
+        }
         $next = self::getNext($statusRecurrent, $from, $until, true);
 
         while ($next) {

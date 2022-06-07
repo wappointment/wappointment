@@ -59,7 +59,7 @@ trait ManipulateLinks
     {
 
         $video_provider = $this->getVideoProvider();
-        if ($video_provider == 'jitsi') {
+        if ($video_provider == 'jitsi' && $this->canShowLink()) {
             return Jitsi::generate($this);
         }
         $url_meeting_key = $video_provider == 'google' ? 'google_meet_url' : 'join_url';

@@ -84,8 +84,11 @@ export default {
     computed:{
       attributesElProcess(){
         let attributesEl = Object.assign({},this.attributesEl)
-         if(this.getParameterByName('staff')){
+        if(this.getParameterByName('staff')){
           attributesEl.staffSelection = this.getParameterByName('staff')
+        }
+        if(this.isNewEventPage){
+          attributesEl.staffPage = 1
         }
           
         return this.castAttributes(attributesEl)
@@ -161,7 +164,11 @@ export default {
             return this.classEl === 'wappointment_page'
         },
         isBookingPage(){
-            return this.isPage && this.getParameterByName('view') === 'new-event'
+            return this.isPage && this.isNewEventPage
+        },
+
+        isNewEventPage(){
+          return this.getParameterByName('view') === 'new-event'
         },
 
         isWidget(){
