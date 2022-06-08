@@ -4,15 +4,15 @@
         <span class="wbtn-secondary wbtn googlecal d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToGoogle)">
             <WapImage :faIcon="['fab', 'google']" size="md" /> <span class="ml-2">Google</span>
         </span>
-        <span class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToIcal)">
+        <a class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" :href="saveToIcal" download="event.ics">
             <WapImage :faIcon="['fab', 'windows']" size="md" /> <span class="ml-2">Outlook</span>
-        </span>
+        </a>
         <span class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToOutlookOnline)">
             <WapImage :faIcon="['fab', 'windows']" size="md" /> <span class="ml-2">Outlook Live</span>
         </span>
-        <span class="wbtn-secondary wbtn d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToIcal)">
+        <a class="wbtn-secondary wbtn d-flex align-items-center d-flex-inline" :href="saveToIcal" download="event.ics">
             <WapImage :faIcon="['fab', 'apple']" size="md" /> <span class="ml-2">iCal</span>
-        </span>
+        </a>
         <span class="wbtn-secondary wbtn d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToYahoo)">
             <WapImage :faIcon="['fab', 'yahoo']" size="md" /> <span class="ml-2">Yahoo</span>
         </span>
