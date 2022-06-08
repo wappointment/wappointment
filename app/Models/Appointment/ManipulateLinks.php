@@ -55,6 +55,11 @@ trait ManipulateLinks
         return $this->getLocationVideo() == 'googlemeet' ? 'google' : $this->getLocationVideo();
     }
 
+    public function isJitsi()
+    {
+        return $this->getVideoProvider() === 'jitsi';
+    }
+
     public function getMeetingLink()
     {
 
