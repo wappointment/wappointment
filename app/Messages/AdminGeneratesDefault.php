@@ -12,7 +12,13 @@ trait AdminGeneratesDefault
         $tz = $this->getStaffTz($appointment);
         $date_start = $appointment->start_at->setTimezone($tz)->format(Settings::get('date_format'));
         $time_start = $appointment->start_at->setTimezone($tz)->format(Settings::get('time_format'));
-        $time_end = $appointment->end_at->setTimezone($tz)->format(Settings::get('time_format'));
+        $end_copy = $appointment->end_at->copy();
+
+        if (!empty($appointment->options['buffer_time'])) {
+            $end_copy->subMinutes($appointment->options['buffer_time']);
+        }
+
+        $time_end = $end_copy->setTimezone($tz)->format(Settings::get('time_format'));
         $dataEmail = [
             '<u>' . $this->subject . '</u>',
             /* translators: %s is replaced with the date the appointment startt at */
