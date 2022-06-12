@@ -400,6 +400,9 @@ html[dir=rtl] .wap-front .mx-2 {
   opacity: 1;
 }
 
+.wap-front .werror{
+    color:var(--wappo-error-tx) !important;
+}
 
 @media only screen and (max-width: 500px) {
   .wap-front.poppedup .wappo_module .wap-wid{

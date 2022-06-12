@@ -95,7 +95,4 @@ export default {
 .wap-front .first-avail .tt-here[data-tt]::after{
     display:none;
 }
-.wap-front .werror{
-    color:var(--wappo-error-tx) !important;
-}
 </style>

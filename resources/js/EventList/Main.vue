@@ -3,10 +3,15 @@
       <div class="wap-form-body">
         <Loader v-if="loading"/>
         <div v-if="isLoaded" class="p-2">
-          <h2>{{ service.name }}</h2>
-          <Event v-for="event in eventFromList" :key="event[4]" 
-          :event="event" :buffer="bufferInSec" :tz="tz" :options="options" 
-          @selectEvent="selectedEvent"/>
+          <div v-if="!service" class="werror">
+            {{ options.general.noappointments }}
+          </div>
+          <template v-else>
+            <h2>{{ service.name }}</h2>
+            <Event v-for="event in eventFromList" :key="event[4]" 
+            :event="event" :buffer="bufferInSec" :tz="tz" :options="options" 
+            @selectEvent="selectedEvent"/>
+          </template>
         </div>
       </div>
     </div>
@@ -38,7 +43,6 @@ export default {
         if(!this.isLoaded) return []
         return this.viewData.staffs.map(staff => staff.availability.filter(this.filterEvents.bind(null,staff)))
       },
-
       
       eventFromList(){
         let concated = []
@@ -48,9 +52,12 @@ export default {
         return concated
       },
       firstEvent(){
-        return this.isLoaded ? this.eventFromList[0]:[]
+        return this.isLoaded && this.eventFromList.length > 0? this.eventFromList[0]:[]
       },
       service(){
+        if(this.firstEvent.length === 0){
+          return false;
+        }
         let service_id = parseInt(this.firstEvent[3])
         return this.viewData.services.find(e => parseInt(e.id) === service_id)
       },
