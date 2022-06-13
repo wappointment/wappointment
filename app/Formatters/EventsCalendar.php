@@ -117,7 +117,7 @@ class EventsCalendar
             'delId' => $event->id,
             'location' => $event->getLocationSlug(),
             'status' => $event->status,
-            'options' => $event->options,
+            'options' => $this->formatEventOptions($event),
             'client' => $preparedClient,
             'type' => 'appointment',
             'recurrent' => isset($event->recurrent) && $event->recurrent > 0,
@@ -138,6 +138,15 @@ class EventsCalendar
                 'long' => $this->getClientOptions($preparedClient)
             ]
         ];
+    }
+
+    private function formatEventOptions($event)
+    {
+        $options = $event->options;
+        if ($event->isJitsi()) {
+            $options['jitsi_url'] = $event->getMeetingLink();
+        }
+        return $options;
     }
 
     public function baseClassAppointment($owes, $event)
@@ -210,7 +219,6 @@ class EventsCalendar
             'end_at' => $this->end_at_string,
             'staff_id' => $staff_id
         ], $this->isLegacy);
-
         if (empty($appointments)) {
             $appointments = $this->getAppointments($staff_id);
         }

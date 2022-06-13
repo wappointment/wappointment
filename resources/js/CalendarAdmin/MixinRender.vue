@@ -135,10 +135,9 @@ export default {
       },
 
       appointmentHasJitsiUrl(eventId){
+       
         let appointment = this.findAppointmentById(eventId)
-        return appointment.extendedProps.options.providers !== undefined 
-        && appointment.extendedProps.options.providers.jitsi !== undefined 
-        && appointment.extendedProps.options.providers.jitsi.join_url !== undefined 
+        return appointment.extendedProps.options.jitsi_url !== undefined 
       },
 
       getZoomMeetingUrl(eventId){
@@ -153,7 +152,7 @@ export default {
 
       getJitsiMeetingUrl(eventId){
         let appointment = this.findAppointmentById(eventId)
-        return appointment.extendedProps.options.providers.jitsi.join_url
+        return appointment.extendedProps.options.jitsi_url
       },
 
       isBackgroundEvent(el){
@@ -185,7 +184,7 @@ export default {
       },
 
       isAppointmentVideoUpcoming(el){
-        return !el.hasClass('past-event') && this.hasDotcom() && this.appointmentIsZoom(el.attr('data-id'))
+        return !el.hasClass('past-event') && this.appointmentIsZoom(el.attr('data-id'))
       },
       
       getZoomGoogleMeetButton(el){
@@ -203,7 +202,7 @@ export default {
         }
 
           if(this.appointmentHasJitsiUrl(el.attr('data-id'))){
-            return '<div data-href="'+this.getJitsiMeetingUrl(el.attr('data-id'))+'" class="gotojitsi" data-tt="Go to Jitsi" >'+
+            return '<div data-href="'+this.getJitsiMeetingUrl(el.attr('data-id'))+'" class="gotozoom gotojitsi" data-tt="Go to Jitsi" >'+
             '<img src="'+window.apiWappointment.resourcesUrl+'images/jitsi.png'+'" /></div>'
           }
          return ''
@@ -390,5 +389,10 @@ export default {
 }
 .gotozoom:hover{
   filter: none;
+}
+.gotojitsi{
+  background-color:#ffffff;
+  max-height: 40px;
+  border-radius: 50%;
 }
 </style>
