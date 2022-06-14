@@ -148,6 +148,20 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 2.4.11 - 2022-06-15 =
+* added search box and improved pagination on media 
+* fixed phone number and skype missing from notification email 
+* fixed issues with .ics calendar import
+* fixed set staff page on new event link
+* fixed availability filter out old slots
+* fixed issue auto-increment on availability slots generation in the frontend
+* fixed jitsi meeting link showing too early 
+* fixed missing jitsi link from backend 
+* fixed admin duration when buffer, in emails and in admin
+* fixed save to calendar button when booking confirmed for firefox and chrome
+* fixed wrong duration sent to google cal 
+* fixed when no timezone is set in ics calendar default to staff timezone 
+
 = 2.4.10 - 2022-05-21 =
 * added "more starting times" option in Settings > Advanced custom segmenting over bookable time
 * added option to use same staff email for different calendars
