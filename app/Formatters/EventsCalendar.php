@@ -132,7 +132,7 @@ class EventsCalendar
                     'service' => sprintf(__('%1$s - %2$smin', 'wappointment'), $nameService, $event->getDurationInSec() / 60),
                     'time' => $this->formatAppointmentTime($event->start_at, $this->timeFormat)
                         . ' - ' .
-                        $this->formatAppointmentTime($event->end_at, $this->timeFormat),
+                        $this->formatAppointmentTime($event->getEndTimeWithoutBuffer(), $this->timeFormat),
                     'location' => $event->location->name
                 ],
                 'long' => $this->getClientOptions($preparedClient)
