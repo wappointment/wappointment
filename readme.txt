@@ -2,7 +2,7 @@
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
 Requires at least: 4.7
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 7.0
 Stable tag: 2.4.11
 License: GPLv2 or later
