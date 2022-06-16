@@ -7,7 +7,7 @@
               <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
           </div>
           
-          <div class="wappo_module" :class="getWidClass" >
+          <div class="wappo_module" :class="getWidClass" @click.self="backToButton">
               <div class="wap-wid wclosable" :class="getStepName" v-if="isWidget">
                 <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
                 <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :attributesEl="attributesElProcess" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
