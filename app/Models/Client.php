@@ -27,11 +27,16 @@ class Client extends Model
         return $this->hasMany(Appointment::class);
     }
 
-    public function hasActiveBooking()
+    public function hasActiveBooking($staff_id)
     {
         $start_at_string = Carbon::now('UTC')->format(WAPPOINTMENT_DB_FORMAT);
-        return Appointment::where('client_id', $this->id)
-            ->where('start_at', '>=', $start_at_string)->count();
+        $appointments_query = Appointment::where('client_id', $this->id)
+            ->where('start_at', '>=', $start_at_string);
+
+        if ((int)Settings::get('max_active_per_staff')) {
+            $appointments_query->where('staff_id', $staff_id);
+        }
+        return $appointments_query->count();
     }
 
     public function getEmailAttribute($value)

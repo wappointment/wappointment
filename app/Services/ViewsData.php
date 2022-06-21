@@ -311,6 +311,7 @@ class ViewsData
             'calendar_roles' => Settings::get('calendar_roles'),
             'all_roles' => Permissions::getAllWpRoles(),
             'max_active_bookings' => (int)Settings::get('max_active_bookings'),
+            'max_active_per_staff' => (int)Settings::get('max_active_per_staff'),
             'autofill' => (int)Settings::get('autofill'),
             'manager_added' => Permissions::hasManagerRole(),
             'forceemail' => Settings::get('forceemail'),
