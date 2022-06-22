@@ -37,17 +37,20 @@ export default {
     },
     computed:{
         getServiceFilter(){
-          let arrayids = this.options.attributesEl !== undefined &&  this.options.attributesEl.serviceSelection !== undefined &&
-          this.options.attributesEl.serviceSelection.indexOf(',') !== -1 ? this.options.attributesEl.serviceSelection.split(','):[this.options.attributesEl.serviceSelection]
+            if(this.options.attributesEl === undefined ||  this.options.attributesEl.serviceSelection === undefined){
+                return [];
+            }
+            let arrayids = this.options.attributesEl.serviceSelection.indexOf(',') !== -1 ? 
+            this.options.attributesEl.serviceSelection.split(','):[this.options.attributesEl.serviceSelection]
 
-          for (let i = 0; i < arrayids.length; i++) {
-            arrayids[i] = parseInt(arrayids[i])
-          }
-          return arrayids
+            for (let i = 0; i < arrayids.length; i++) {
+                arrayids[i] = parseInt(arrayids[i])
+            }
+            return arrayids
         },
         firstLevelServiceFilter(){
             let serviceAlowed = this.getServiceFilter
-            return this.services.filter(e => serviceAlowed.indexOf(e.id) !== -1)
+            return serviceAlowed.length < 1 ? this.services:this.services.filter(e => serviceAlowed.indexOf(e.id) !== -1)
         },
         filteredServices(){
             let searchterm = this.search.toLowerCase()
