@@ -55,7 +55,7 @@ export default {
 
         getScheduledTime(appointment){
           let start = this.toMoment(appointment.start)
-          let end = this.toMoment(appointment.end)
+          let end = this.toMomentEnd(appointment)
             return `
                 <div class="d-sm-flex justify-content-around align-items-center my-2">
                 ${this.getClientAppointment(appointment)}
@@ -68,6 +68,13 @@ export default {
                 </div>
             `
         },
+        toMomentEnd(appointment){
+          let end = this.toMoment(appointment.end)
+          if(this.getBuffer(appointment) > 0){
+            return end.clone().subtract(this.getBuffer(appointment), 'm')
+          }
+          return end
+        },
 
       
         getOldAndNewAppointment(appointment, delta){
@@ -76,7 +83,7 @@ export default {
             let daysdelta = -delta.days
             
             let oldStart = this.toMoment(appointment.start).clone().add(dms, 'ms').add(daysdelta, 'd')
-            let oldEnd = this.toMoment(appointment.end).clone().add(dms, 'ms').add(daysdelta, 'd')
+            let oldEnd = this.toMomentEnd(appointment).clone().add(dms, 'ms').add(daysdelta, 'd')
             return `
                 <div class="d-flex justify-content-center">${this.getClientAppointment(appointment, 'm-auto')}<hr></div>
                 <div class="d-sm-flex justify-content-around align-items-center my-2">
@@ -88,7 +95,7 @@ export default {
                     <div class="d-sm-none"> <span class="dashicons dashicons-arrow-down-alt2"></span> </div>
                     <div class="bg-light border border-primary rounded p-2">
                     <div> New schedule </div>
-                    ${this.getAppointmentTimeAndDate(this.toMoment(appointment.start), this.toMoment(appointment.end), 'text-success')}
+                    ${this.getAppointmentTimeAndDate(this.toMoment(appointment.start), this.toMomentEnd(appointment), 'text-success')}
                     </div>  
                 </div>
             `

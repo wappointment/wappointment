@@ -225,12 +225,7 @@ export default {
           return ''
         }
         let innerhtml = '<div class="d-flex justify-content-center align-items-center mx-4 ctrlbar">'
-        let services = this.dotComServices
-        if(!el.hasClass('past-event') && this.hasDotcomButnoProvider(el.attr('data-id')) && isAppointmentEvent) {
-          innerhtml += '<button class="btn btn-xs btn-light recordDotcom" data-tt="Send details for '+services.join(', ')+'" data-id="'+el.attr('data-id')+'">'+
-                        '<span class="dashicons dashicons-cloud-upload"></span>'+
-                        '</button>'
-        }
+
         innerhtml += isAppointmentEvent ? this.getZoomGoogleMeetButton(el):''
         
         innerhtml += this.getConfirmOrViewButton(el, el.attr('data-rendering'))

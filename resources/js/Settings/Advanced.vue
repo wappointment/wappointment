@@ -158,6 +158,8 @@
                 <div class="input-group-sm mx-2">
                   <input v-if="maxBookings" id="max-active-booking" v-model="viewData.max_active_bookings" 
                   @change="changedMaxActive" class="form-control min-field" size="2" type="text">
+                  <input id="max-active-per-staff" 
+                  v-model="viewData.max_active_per_staff" @change="changedVD('max_active_per_staff')" type="checkbox" >Limit per staff
                 </div> </div>
             </label>
           </div>

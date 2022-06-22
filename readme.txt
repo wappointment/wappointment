@@ -2,9 +2,9 @@
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
 Requires at least: 4.7
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 2.4.10
+Stable tag: 2.4.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,20 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.4.11 - 2022-06-15 =
+* added search box and improved pagination on media 
+* fixed phone number and skype missing from notification email 
+* fixed issues with .ics calendar import
+* fixed set staff page on new event link
+* fixed availability filter out old slots
+* fixed issue auto-increment on availability slots generation in the frontend
+* fixed jitsi meeting link showing too early 
+* fixed missing jitsi link from backend 
+* fixed admin duration when buffer, in emails and in admin
+* fixed save to calendar button when booking confirmed for firefox and chrome
+* fixed wrong duration sent to google cal 
+* fixed when no timezone is set in ics calendar default to staff timezone 
 
 = 2.4.10 - 2022-05-21 =
 * added "more starting times" option in Settings > Advanced custom segmenting over bookable time

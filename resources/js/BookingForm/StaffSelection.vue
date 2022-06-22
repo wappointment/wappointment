@@ -79,10 +79,23 @@ export default {
         getServiceDuration(){
             return this.selectedServiceObject.options.durations[0].duration
         },
+        getStaffBasedOnserviceFilter(){
+            let servicesAllowed = this.attributesEl.serviceSelection !== undefined && typeof this.attributesEl.serviceSelection == 'array' ? this.attributesEl.serviceSelection: []
+            let staffWithInService = servicesAllowed.length === 0 ? this.calendars:this.calendars.filter(function(e){
+                for (const serviceId of staffWithInService) {
+                    if(e.services.indexOf(serviceId)!== -1){
+                        return true;
+                    }
+                }
+                return false;
+            })
+            return staffWithInService
+        },
         filteredStaff(){
             let searchterm = this.search.toLowerCase()
             let serviceSelected = this.selectedService
-            return this.calendars.map(e => Object.assign(
+            
+            return this.getStaffBasedOnserviceFilter.map(e => Object.assign(
                 {name:e.n, options:{icon:{src:e.a.replace('?s=46','?s=80'),wp_id:true}}}, e)
                 ).filter(e => e.name.toLowerCase().indexOf(searchterm) !== -1 && (serviceSelected < 0 || serviceSelected>0 && e.services.indexOf(serviceSelected) !== -1))
         },

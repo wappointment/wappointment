@@ -31,6 +31,14 @@ trait ManipulateDuration
         return  isset($this->options) && isset($this->options['buffer_time']) ? ((int) $this->options['buffer_time']) * 60 : 0;
     }
 
+    public function getEndTimeWithoutBuffer()
+    {
+        if (!empty($this->options['buffer_time'])) {
+            return $this->end_at->subMinutes($this->options['buffer_time']);
+        }
+        return $this->end_at;
+    }
+
     public function getBuffer()
     {
         $buffer = $this->getBufferInSec();

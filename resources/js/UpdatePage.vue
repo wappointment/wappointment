@@ -5,7 +5,7 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.10</span>   
+                <span>V2.4.11</span>   
                 <span class="ml-2">Bug fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
@@ -13,10 +13,18 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added "more starting times" option in Settings > Advanced custom segmenting over bookable time</li>
-                        <li>added option to use same staff email for different calendars</li>
-                        <li>added option to use the same wappointment.com account key on different accounts</li>
-                        <li>fixed issue for custom timezones when reading some .ICS calendars from Microsoft Exchange</li>
+                        <li>added search box and improved pagination on media </li>
+                        <li>fixed phone number and skype missing from notification email </li>
+                        <li>fixed issues with .ics calendar import</li>
+                        <li>fixed set staff page on new event link</li>
+                        <li>fixed availability filter out old slots</li>
+                        <li>fixed issue auto-increment on availability slots generation in the frontend</li>
+                        <li>fixed jitsi meeting link showing too early </li>
+                        <li>fixed missing jitsi link from backend </li>
+                        <li>fixed admin duration when buffer, in emails and in admin</li>
+                        <li>fixed save to calendar button when booking confirmed for firefox and chrome</li>
+                        <li>fixed wrong duration sent to google cal </li>
+                        <li>fixed when no timezone is set in ics calendar default to staff timezone </li>
                     </ol>
                     
                   </div>
