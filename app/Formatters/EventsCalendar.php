@@ -129,7 +129,7 @@ class EventsCalendar
                 'short' => [
                     'title' => !empty($preparedClient) ? $preparedClient->name : __('Unknown client', 'wappointment'),
                     /* translators: %1$s is service name, %2$s is the duration  */
-                    'service' => sprintf(__('%1$s - %2$smin', 'wappointment'), $nameService, $event->getDurationInSec() / 60),
+                    'service' => sprintf(__('%1$s - %2$s min', 'wappointment'), $nameService, $event->getDurationInSec() / 60),
                     'time' => $this->formatAppointmentTime($event->start_at, $this->timeFormat)
                         . ' - ' .
                         $this->formatAppointmentTime($event->getEndTimeWithoutBuffer(), $this->timeFormat),

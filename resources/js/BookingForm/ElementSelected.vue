@@ -29,20 +29,18 @@ export default {
     },
     computed:{
         getDuration(){
-            return this.duration + this.options.general.min
+            return this.duration +' '+ this.options.general.min
         },
 
         getPrice(){
             if(this.service.options.durations === undefined){
                 return false
             }
-            for (let i = 0; i < this.service.options.durations.length; i++) {
-                const dur = this.service.options.durations[i]
+            for (const dur of this.service.options.durations) {
                 if(dur.duration == this.duration && ['',undefined].indexOf(dur.woo_price) === -1 ){
                     return this.formatPrice(dur.woo_price)
                 }
             }
-            
         }
     },
 }
