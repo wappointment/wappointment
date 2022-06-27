@@ -54,7 +54,7 @@ return [
 
     'regav_hours' => __('Hours', 'wappointment'),
     /* translators: %s - minutes */
-    'regav_min' => __('%smin', 'wappointment'),
+    'regav_min' => __('%s min', 'wappointment'),
     /* translators: %s - hours */
     'regav_h' => __('%sh', 'wappointment'),
     'regav_step1' => __('Account Selection', 'wappointment'),
