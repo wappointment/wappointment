@@ -120,7 +120,12 @@ export default {
         },
 
         endDate(){
-            return momenttz.unix(this.appointment.end_at)
+            return momenttz.unix(this.endDateMinusBuffer)
+        },
+
+        endDateMinusBuffer(){
+            let buffer_time_sec = this.appointment.options.buffer_time !== undefined ? parseInt(this.appointment.options.buffer_time) *60:0
+            return this.appointment.end_at - buffer_time_sec
         },
 
         formattedStartDate(){
@@ -171,6 +176,8 @@ export default {
                 'VERSION:2.0',
                 'BEGIN:VEVENT',
                 'ORGANIZER:'          + this.appointment.ics_organizer,
+                'CATEGORIES:APPOINTMENT'+
+                'TRANSP:OPAQUE'+
                 'URL:'          + document.URL,
                 'DTSTART:'      + this.formattedStartDate,
                 'DTEND:'        + this.formattedEndDate,
