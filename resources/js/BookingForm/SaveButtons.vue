@@ -171,6 +171,8 @@ export default {
                 'VERSION:2.0',
                 'BEGIN:VEVENT',
                 'ORGANIZER:'          + this.appointment.ics_organizer,
+                'CATEGORIES:APPOINTMENT'+
+                'TRANSP:OPAQUE'+
                 'URL:'          + document.URL,
                 'DTSTART:'      + this.formattedStartDate,
                 'DTEND:'        + this.formattedEndDate,
