@@ -140,6 +140,7 @@ export default {
         this.mail_status = d.data.mail_status
         this.allow_rescheduling = d.data.allow_rescheduling
         this.allow_cancellation = d.data.allow_cancellation
+        this.email_footer = d.data.email_footer
         this.reschedule_link = d.data.reschedule_link
         this.cancellation_link = d.data.cancellation_link
         this.save_appointment_text_link = d.data.save_appointment_text_link
@@ -297,6 +298,7 @@ export default {
                 mail_status: this.mail_status,
                 allow_rescheduling: this.allow_rescheduling,
                 allow_cancellation: this.allow_cancellation,
+                email_footer: this.email_footer,
                 reschedule_link: this.reschedule_link,
                 cancellation_link: this.cancellation_link,
                 save_appointment_text_link: this.save_appointment_text_link,

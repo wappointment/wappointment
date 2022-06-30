@@ -283,6 +283,7 @@ class ViewsData
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'allow_cancellation' => Settings::get('allow_cancellation'),
             'allow_rescheduling' => Settings::get('allow_rescheduling'),
+            'email_footer' => Settings::get('email_footer'),
             'week_starts_on' => Settings::get('week_starts_on'),
             'hours_before_booking_allowed' => Settings::get('hours_before_booking_allowed'),
             'frontend_weekstart' => Settings::get('frontend_weekstart'),

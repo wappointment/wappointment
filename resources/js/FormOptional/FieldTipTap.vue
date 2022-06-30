@@ -163,12 +163,13 @@
         </div> 
       </div>
       <div class="p-0 d-flex align-items-center" v-else>
-        <LinkEdit :fieldValue="definition.save_appointment_text_link" fieldKey="save_appointment_text_link"></LinkEdit>
+        <LinkEdit :fieldValue="definition.save_appointment_text_link" fieldKey="save_appointment_text_link" />
         <div class="text-muted mx-2" v-if="definition.allow_cancellation || definition.allow_rescheduling"> | </div>
-        <LinkEdit v-if="definition.allow_rescheduling" :fieldValue="definition.reschedule_link" fieldKey="reschedule_link"></LinkEdit>
+        <LinkEdit v-if="definition.allow_rescheduling" :fieldValue="definition.reschedule_link" fieldKey="reschedule_link" />
         <div class="text-muted mx-2" v-if="definition.allow_cancellation && definition.allow_rescheduling"> | </div>
-        <LinkEdit v-if="definition.allow_cancellation" :fieldValue="definition.cancellation_link" fieldKey="cancellation_link"></LinkEdit>
+        <LinkEdit v-if="definition.allow_cancellation" :fieldValue="definition.cancellation_link" fieldKey="cancellation_link" />
       </div>
+      <FooterEdit :fieldValue="definition.email_footer" fieldKey="email_footer" />
       
     </div>
   </div>
@@ -176,7 +177,7 @@
 
 <script>
 import AbstractField from '../Form/AbstractField'
-import { Editor } from "tiptap"
+import { Editor } from 'tiptap'
 import {
   // Nodes
   BlockquoteNode,
@@ -209,13 +210,15 @@ import ConditionalSkypeBlockNode from "./text-editor/ConditionalSkypeBlock.js"
 import ConditionalZoomBlockNode from "./text-editor/ConditionalZoomBlock.js"
 import ConditionalPhysicalBlockNode from "./text-editor/ConditionalPhysicalBlock.js"
 import LinkEdit from "../Components/LinkEdit"
+import FooterEdit from "../Components/FooterEdit"
 
 export default {
   name:'opt-tiptap',
     mixins: [AbstractField],
     components: {
         Editor,
-        LinkEdit
+        LinkEdit,
+        FooterEdit
     },
     data(){
         return {
