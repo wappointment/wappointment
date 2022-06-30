@@ -153,8 +153,8 @@ class IcsGenerator
 
     protected function getTitle(Appointment $appointment, $staff)
     {
-        $title = $appointment->getServiceName() . ' ';
-        $title .= $this->admin ? $appointment->getClientModel()->name . '(' . $appointment->getClientModel()->email . ')' :  $staff->name;
+        $title = $appointment->getServiceName() . ' - ';
+        $title .= $this->admin ? $appointment->getClientModel()->name . ' (' . $appointment->getClientModel()->email . ')' :  $staff->name;
 
         return esc_html($title);
     }
