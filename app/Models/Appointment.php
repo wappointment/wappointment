@@ -43,7 +43,11 @@ class Appointment extends TicketAbstract
     const STATUS_AWAITING_CONFIRMATION = 0;
     const STATUS_CONFIRMED = 1;
 
-    protected $appends = ['duration_sec', 'location_label', 'can_cancel_until', 'can_reschedule_until'];
+    protected $appends = [
+        'duration_sec', 'location_label',
+        'can_cancel_until', 'can_reschedule_until',
+        'cancel_until_text', 'reschedule_until_text'
+    ];
     private $shared_client = null;
 
     public function order()

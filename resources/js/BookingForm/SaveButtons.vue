@@ -88,8 +88,12 @@ export default {
                 ((this.canCancel && this.canReschedule) ?' - ':'') 
                 + (this.canCancel ? this.generateLink('cancel-event', html, this.options.i18n.cancel):'')
             }
-            return (this.canReschedule? lnb + lnb + this.options.i18n.reschedule+" " + lnb +  this.generateLink('reschedule-event'):'') +
-            (this.canCancel ? lnb + lnb + this.options.i18n.cancel+" " + lnb + this.generateLink('cancel-event'):'')
+            
+            return (this.canReschedule? lnb + lnb + 
+            this.appointment.reschedule_until_text.replace('&#10;','').replace('\n',lnb) :'') +
+            (this.canCancel ? lnb + lnb + 
+            this.appointment.cancel_until_text.replace('&#10;','').replace('\n',lnb)
+            + ' ' + lnb + this.generateLink('cancel-event'):'')
         },
         getUnixNow(){
             return momenttz().unix()
