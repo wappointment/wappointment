@@ -77,6 +77,7 @@ class ReminderController extends RestController
         $data = [
             'mail_status' => (bool) Settings::get('mail_status'),
             'allow_cancellation' => (bool) Settings::get('allow_cancellation'),
+            'email_footer' => Settings::get('email_footer'),
             'allow_rescheduling' => (bool) Settings::get('allow_rescheduling'),
             'reschedule_link' => Settings::get('reschedule_link'),
             'cancellation_link' => Settings::get('cancellation_link'),

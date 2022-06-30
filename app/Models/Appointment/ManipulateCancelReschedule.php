@@ -14,6 +14,23 @@ trait ManipulateCancelReschedule
         }
     }
 
+    public function getRescheduleUntilTextAttribute()
+    {
+        return sprintf(
+            __('Reschedule (until %1$s): &#10; %2$s', 'wappointment'),
+            $this->rescheduleLimit(),
+            $this->getLinkRescheduleEvent()
+        );
+    }
+
+    public function getCancelUntilTextAttribute()
+    {
+        return sprintf(
+            __('Cancel (until %1$s): &#10; %2$s', 'wappointment'),
+            $this->cancelLimit(),
+            $this->getLinkCancelEvent()
+        );
+    }
     public function getCanCancelUntilAttribute()
     {
         if (Settings::get('allow_cancellation')) {

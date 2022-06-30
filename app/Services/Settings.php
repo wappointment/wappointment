@@ -68,6 +68,7 @@ class Settings
             'date_time_union' => ' - ',
             'allow_cancellation' => true,
             'allow_rescheduling' => true,
+            'email_footer' => '',
             'hours_before_booking_allowed' => 3,
             'hours_before_cancellation_allowed' => 24,
             'hours_before_rescheduling_allowed' => 24,

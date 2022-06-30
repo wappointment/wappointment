@@ -51,6 +51,7 @@ class TipTap
             case 'customfield':
             case 'text':
             case 'doc':
+            case 'hard_break':
                 return false;
         }
     }

@@ -53,6 +53,7 @@ export default {
             mail_status: this.passedViewData.mail_status,
             allow_rescheduling: this.passedViewData.allow_rescheduling,
             allow_cancellation: this.passedViewData.allow_cancellation,
+            email_footer: this.passedViewData.email_footer,
             reschedule_link: this.passedViewData.reschedule_link,
             cancellation_link: this.passedViewData.cancellation_link,
             save_appointment_text_link: this.passedViewData.save_appointment_text_link,
