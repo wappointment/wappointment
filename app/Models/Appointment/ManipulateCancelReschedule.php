@@ -4,6 +4,7 @@ namespace Wappointment\Models\Appointment;
 
 use Wappointment\Services\Settings;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Services\DateTime;
 
 trait ManipulateCancelReschedule
 {
@@ -60,14 +61,12 @@ trait ManipulateCancelReschedule
 
     public function cancelLimit()
     {
-        return Carbon::createFromTimestamp($this->canCancelUntilTimestamp())
-            ->setTimezone($this->getClientModel()->getTimezone($this->getStaffTZ()))->format($this->longFormat());
+        return DateTime::i18nDateTime($this->canCancelUntilTimestamp(), $this->getStaffTZ());
     }
 
     public function rescheduleLimit()
     {
-        return Carbon::createFromTimestamp($this->canRescheduleUntilTimestamp())
-            ->setTimezone($this->getClientModel()->getTimezone($this->getStaffTZ()))->format($this->longFormat());
+        return DateTime::i18nDateTime($this->canRescheduleUntilTimestamp(), $this->getStaffTZ());
     }
 
     protected function longFormat()
