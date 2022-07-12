@@ -91,12 +91,12 @@ class Appointment extends TicketAbstract
 
     public function getTitle($includes_buffer = true)
     {
-        return $this->getStatusTag() .
+        return apply_filters('wappointment_get_title', $this->getStatusTag() .
             $this->getServiceName() . ' ' .
             $this->getDuration() .
             ($includes_buffer ?
                 $this->getBuffer() :
-                '') . ' - ' . $this->getClientMethodOrEmpty('getNameForDotcom');
+                '') . ' - ' . $this->getClientMethodOrEmpty('getNameForDotcom'), $this);
     }
 
     public function getIdentifier()
