@@ -140,6 +140,10 @@ trait CustomTZParser
     public function isCustomTZDST($vcalDateTimeString)
     {
         $carbon = Carbon::parse($vcalDateTimeString);
+
+        if (empty($this->customTZ->DAYLIGHT->RRULE) || $this->customTZ->STANDARD->RRULE) {
+            return false;
+        }
         $dstLowerLimit = $this->getMonthAndDayStart($carbon->year, $this->customTZ->DAYLIGHT->RRULE);
         $dstHigherLimit = $this->getMonthAndDayStart($carbon->year, $this->customTZ->STANDARD->RRULE);
 
