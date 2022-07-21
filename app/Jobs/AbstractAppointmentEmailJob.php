@@ -22,10 +22,11 @@ abstract class AbstractAppointmentEmailJob extends AbstractEmailJob
 
     protected function addReplyTo()
     {
-        if (!empty($this->appointment)) {
+        $has_reply_to = apply_filters('wappointment_replyto_email', '');
+        if (!empty($has_reply_to)) {
             $this->transport->reply(
-                apply_filters('wappointment_replyto_email', $this->client->email),
-                apply_filters('wappointment_replyto_name', $this->client->name)
+                $has_reply_to,
+                apply_filters('wappointment_replyto_name', '')
             );
         }
     }
