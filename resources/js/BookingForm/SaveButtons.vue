@@ -180,7 +180,7 @@ export default {
                 'BEGIN:VCALENDAR',
                 'VERSION:2.0',
                 'BEGIN:VEVENT',
-                'ORGANIZER:'          + this.appointment.ics_organizer,
+                this.appointment.ics_organizer,
                 'CATEGORIES:APPOINTMENT',
                 'TRANSP:OPAQUE',
                 'URL:'          + document.URL,
