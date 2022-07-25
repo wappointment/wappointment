@@ -228,7 +228,10 @@ export default {
       } else if (this.mode === 'prefix') {
         // Remove the first '0' if this is a '0' prefix number
         // Ex: 0432421999
-        phone = this.phone.slice(1)
+        if(this.activeCountry.doNotSlice.length < 1 || this.phone.substr(0,2).indexOf(this.activeCountry.doNotSlice) === -1){
+          phone = this.phone.slice(1)
+        }
+        
       }
       if (this.disabledFormatting) {
         return this.phone
