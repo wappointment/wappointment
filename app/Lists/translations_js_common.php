@@ -15,6 +15,7 @@ return [
     'bwe_widget_settings' => __('Widget\'s settings', 'wappointment'),
     'bwe_widget_button_title' => __('Button Title', 'wappointment'),
     'bwe_widget_ck_fs_popup' => __('Opens in a full screen popup', 'wappointment'),
+    'bwe_widget_ck_random' => __('Random auto-select', 'wappointment'),
     'bwe_widget_ck_center' => __('Center', 'wappointment'),
     'bwe_widget_ck_open' => __('Auto-open Calendar', 'wappointment'),
     'bwe_widget_ck_full' => __('Full-width Calendar', 'wappointment'),
