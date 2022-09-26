@@ -527,7 +527,7 @@ return [
     'name' => 'Indian rupee',
     'symbol' => '₹',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => '.',
     'thousand_sep' => ' ',
   ],
   66 => [
