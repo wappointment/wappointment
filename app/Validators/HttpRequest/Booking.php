@@ -217,6 +217,6 @@ class Booking extends LegacyBooking
             }
         }
 
-        return $dataClient;
+        return apply_filters('wappointment_booking_data_process', $dataClient, Central::get('CustomFields')::get());
     }
 }

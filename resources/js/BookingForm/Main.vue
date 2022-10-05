@@ -195,6 +195,9 @@ export default {
         mustSelectStaff(){
             return this.attributesEl !== undefined && this.attributesEl.staffPage !== undefined && this.attributesEl.staffPage == 1
         },
+        randomSelection(){
+            return this.attributesEl !== undefined && this.attributesEl.random !== undefined && this.attributesEl.random == 1
+        },
         staffIsSelected(){
             return [null, undefined, false].indexOf(this.selectedStaff) === -1
         },
@@ -515,6 +518,11 @@ export default {
         getDefaultStaff(){
             let ordered = []
             if(this.filterStaffByService!== undefined && this.filterStaffByService.length > 1){
+
+                if(this.randomSelection){
+                    return this.filterStaffByService[Math.floor(Math.random() * this.filterStaffByService.length)]
+                }
+
                 for (let i = 0; i < this.filterStaffByService.length; i++) {
                     if(this.filterStaffByService[i].services.length > 0 && this.filterStaffByService[i].availability.length > 0){
                         ordered.push({

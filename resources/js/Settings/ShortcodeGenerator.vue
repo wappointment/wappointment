@@ -10,6 +10,7 @@
             <div data-tt="Show a week view instead of the full month"><label><input type="checkbox" v-model="week"> {{ get_i18n( 'bwe_widget_ck_week', 'common') }}</label></div>
             <div data-tt="The first screen in your booking form will be a staff selection page(if you have more than one staff)">
                 <label :class="{'text-muted':staffSelected}"><input :disabled="staffSelected" type="checkbox" v-model="staffpage"> {{ get_i18n( 'bwe_widget_ck_staff', 'common') }}</label></div>
+            <div data-tt="Random selection of the staff"><label><input type="checkbox" v-model="random" :disabled="staffpage"> {{ get_i18n( 'bwe_widget_ck_random', 'common') }}</label></div>
             <template v-if="!simple">
                 <div v-if="filteredCalendars" >
                     <SearchDropdown v-model="active_staff_id" ph="Lock Calendar/Staff" :elements="filteredCalendars" labelSearchKey="name"/>
@@ -73,6 +74,7 @@ export default {
         large:false,
         open:false,
         popup:false,
+        random:false,
         center: false,
         week:false,
         staffpage: false,
@@ -126,6 +128,11 @@ export default {
                 this.center = false
                 this.large = false
             }
+        },
+        staffpage(val){
+            if(val){
+                this.random = false
+            }
         }
     },
     computed:{
@@ -155,6 +162,7 @@ export default {
             shortcode += this.center? ' center ':''
             shortcode += this.week? ' week ':''
             shortcode += this.staffpage? ' staff_page ':''
+            shortcode += this.random? ' random ':''
             shortcode += this.active_staff_id? ' staff="'+this.active_staff_id+'" ':''
             shortcode += this.active_service_id? ' service="'+this.active_service_id+'" ':''
             shortcode = '['+shortcode+']'
@@ -166,6 +174,7 @@ export default {
                 week: this.week,
                 center: this.center,
                 staffPage: this.staffpage,
+                random: this.random,
                 buttonTitle: this.titleGiven
             })
             return shortcode
