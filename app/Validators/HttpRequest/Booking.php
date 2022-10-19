@@ -67,11 +67,16 @@ class Booking extends LegacyBooking
             $this->validationRulesArray['email'] = 'required|email';
         }
 
+        $this->validationRulesArray = $this->applyMoreRules();
+    }
+
+    protected function applyMoreRules()
+    {
         $custom_fields = Central::get('CustomFields')::get();
         $this->addCustomValidations($this->service, $custom_fields);
         $this->addCustomValidations($this->location, $custom_fields);
 
-        $this->validationRulesArray = apply_filters('wappointment_booking_validation_rules', $this->validationRulesArray, $this->service);
+        return apply_filters('wappointment_booking_validation_rules', $this->validationRulesArray, $this->service);
     }
 
     protected function addCustomValidations($model, $custom_fields)
@@ -112,7 +117,6 @@ class Booking extends LegacyBooking
 
     protected function addValidators()
     {
-
         $location = LocationModel::find((int)$this->request->input('location'));
 
         if (LocationModel::TYPE_PHONE === $location->type) {

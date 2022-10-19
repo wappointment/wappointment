@@ -4,7 +4,6 @@ namespace Wappointment\Validators\HttpRequest;
 
 class BookingAdmin extends Booking
 {
-
     public static $startKey = 'start';
 
     public function generateValidation($inputs)
@@ -27,5 +26,7 @@ class BookingAdmin extends Booking
         if ($inputs['email'] !== '') {
             $this->validationRulesArray['email'] = 'email';
         }
+
+        $this->validationRulesArray = $this->applyMoreRules();
     }
 }
