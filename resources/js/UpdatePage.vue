@@ -5,7 +5,7 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.11</span>   
+                <span>V2.4.12</span>   
                 <span class="ml-2">Bug fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
@@ -13,18 +13,20 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added search box and improved pagination on media </li>
-                        <li>fixed phone number and skype missing from notification email </li>
-                        <li>fixed issues with .ics calendar import</li>
-                        <li>fixed set staff page on new event link</li>
-                        <li>fixed availability filter out old slots</li>
-                        <li>fixed issue auto-increment on availability slots generation in the frontend</li>
-                        <li>fixed jitsi meeting link showing too early </li>
-                        <li>fixed missing jitsi link from backend </li>
-                        <li>fixed admin duration when buffer, in emails and in admin</li>
-                        <li>fixed save to calendar button when booking confirmed for firefox and chrome</li>
-                        <li>fixed wrong duration sent to google cal </li>
-                        <li>fixed when no timezone is set in ics calendar default to staff timezone </li>
+                        <li>added random staff auto-selection</li>
+                        <li>added max booking per staff</li>
+                        <li>added email footer notes</li>
+                        <li>added reply to address through filter wappointment_replyto_email and wappointment_replyto_name</li>
+                        <li>fixed popup close when clicking on background</li>
+                        <li>fixed staff filtering</li>
+                        <li>fixed save to calendar button generated .ICS</li>
+                        <li>fixed double fields in .ics</li>
+                        <li>fixed calendar sync and custom DST issue for Outlook</li>
+                        <li>fixed issue with italian phone validation</li>
+                        <li>fixed indian rupee currency decimal separator</li>
+                        <li>fixed bug on calendar edit</li>
+                        <li>fixed multiple installations on same db</li>
+                        <li>fixed issue custom fields not saved when booking from backend</li>
                     </ol>
                     
                   </div>
