@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 2.4.11
+Stable tag: 2.4.12
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,22 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.4.12 - 2022-10-29 =
+* added random staff auto-selection
+* added max booking per staff
+* added email footer notes
+* added reply to address through filter wappointment_replyto_email and wappointment_replyto_name
+* fixed popup close when clicking on background
+* fixed staff filtering
+* fixed save to calendar button generated .ICS
+* fixed double fields in .ics
+* fixed calendar sync and custom DST issue for Outlook
+* fixed issue with italian phone validation
+* fixed indian rupee currency decimal separator
+* fixed bug on calendar edit
+* fixed multiple installations on same db
+* fixed issue custom fields not saved when booking from backend
 
 = 2.4.11 - 2022-06-15 =
 * added search box and improved pagination on media 

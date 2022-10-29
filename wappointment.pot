@@ -2,14 +2,14 @@
 # This file is distributed under the same license as the Wappointment plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wappointment 2.4.11\n"
+"Project-Id-Version: Wappointment 2.4.12\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wappointment-plugin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2022-09-06T19:55:56+00:00\n"
+"POT-Creation-Date: 2022-10-29T21:14:41+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: wappointment\n"
@@ -76,15 +76,15 @@ msgstr ""
 msgid "Appointment recorded"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:193
+#: app/Controllers/CalendarsController.php:192
 msgid "Services assigned"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:203
+#: app/Controllers/CalendarsController.php:202
 msgid "Permissions saved"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:281
+#: app/Controllers/CalendarsController.php:280
 #: app/Services/AdminLegacy.php:18
 #: app/Services/Appointment.php:78
 #: app/Services/Appointment.php:260
@@ -93,27 +93,27 @@ msgstr ""
 msgid "Malformed parameter"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:302
+#: app/Controllers/CalendarsController.php:301
 msgid "Connected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:305
+#: app/Controllers/CalendarsController.php:304
 msgid "Error connecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:319
+#: app/Controllers/CalendarsController.php:318
 msgid "Disconnected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:322
+#: app/Controllers/CalendarsController.php:321
 msgid "Error disconnecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:336
+#: app/Controllers/CalendarsController.php:335
 msgid "Refreshed"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:339
+#: app/Controllers/CalendarsController.php:338
 msgid "Error refreshing"
 msgstr ""
 
@@ -2072,7 +2072,7 @@ msgid "Max active bookings reached! Cancel one of your appointments in order to 
 msgstr ""
 
 #. translators: %s - email of the account.
-#: app/Services/CurrentUser.php:27
+#: app/Services/CurrentUser.php:31
 msgid "No Wappointment calendar is connected to your WordPress account %s"
 msgstr ""
 
