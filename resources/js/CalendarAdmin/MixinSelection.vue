@@ -177,11 +177,13 @@ export default {
       },
 
       eventDragStart(event){
+        this.showWeeksControls()
         if(event.editable !== true) return false
         this.disableBgEvent = true
       },
 
       eventDragStop(event ){
+        this.hideWeeksControls()
         if(event.editable !== true) return false
         this.disableBgEvent = false
       },

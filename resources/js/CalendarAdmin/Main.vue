@@ -30,6 +30,7 @@
       </StickyBar>
 
       <div class="full-width center-content calendar-wrap full-width-layout" >
+        <DragActions v-if="false && fcIsReady && dragActionsVisible" @prev="prevWeek" @next="nextWeek" />
         <div class="wrap">
             
             <div  v-if="fullCalOption!==undefined">
@@ -45,7 +46,6 @@
             <ControlBar v-if="viewData!==null" :progressWizard="viewData.wizard_step" />
 
             <div v-if="fcIsReady">
-                
               <PopupActions v-if="popupActionVisible" @refreshEvents="refreshEvents" @hide="hideModal" 
               :getThisWeekIntervals="getThisWeekIntervals" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
               :momenttz="momenttz" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"/>
@@ -77,6 +77,8 @@ import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import momenttz from '../appMoment'
 import WelcomeModal from './WelcomeModal'
 import PopupActions from './PopupActions'
+import DragActions from './DragActions'
+
 import AppointmentRender from './AppointmentRender'
 import FreeSlotsSelector from './FreeSlotsSelector'
 import CalendarSettings from './CalendarSettings'
@@ -118,7 +120,8 @@ export default {
       WelcomeModal,
       CalendarSettings,
       PopupActions,
-      MainStyle
+      MainStyle,
+      DragActions
   }, 
   data: () => ({
     momenttz: momenttz,
@@ -171,6 +174,7 @@ export default {
     activeStaff: null,
     rolledOverName: '',
     popupActionVisible:false,
+    dragActionsVisible: false
   }),
 
   created(){
@@ -586,6 +590,15 @@ export default {
         this.disableBgEvent = false
         this.popupActionVisible = true
       },
+
+      hideWeeksControls(){
+        this.dragActionsVisible = false
+      },
+      showWeeksControls() {
+        this.dragActionsVisible = true
+      },
+
+      
 
       setMinAndMax(){
             
