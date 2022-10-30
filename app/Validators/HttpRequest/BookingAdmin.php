@@ -23,10 +23,15 @@ class BookingAdmin extends Booking
             'recurrent' => '',
             'page' => ''
         ];
+
         if ($inputs['email'] !== '') {
             $this->validationRulesArray['email'] = 'email';
         }
 
         $this->validationRulesArray = $this->applyMoreRules();
+
+        if (!empty($inputs['clientid'])) {
+            unset($this->validationRulesArray['email']);
+        }
     }
 }
