@@ -3,7 +3,6 @@
 namespace Wappointment\Helpers;
 
 use Wappointment\Plugins\Helper;
-use Wappointment\Plugins\Contract\PluginMultilang;
 use Wappointment\System\Container;
 
 class Site
@@ -25,14 +24,14 @@ class Site
 
     public static function MultiLang()
     {
-        return Helper::getPlugin(PluginMultilang::class,'multilang');
+        return Helper::getPlugin('multilang');
     }
-    
+
     public static function container()
     {
         static $container = false;
 
-        if($container === false){
+        if ($container === false) {
             $container = new Container();
         }
         return $container;

@@ -1,9 +1,9 @@
 <?php
 
-use Wappointment\Plugins\MultiLang\NullMultiLang;
-use Wappointment\Plugins\MultiLang\TranslatePress;
-
 return [
-  'translatepress-multilingual/index.php' => TranslatePress::class,
-  'default' => NullMultiLang::class
+  'contract' => Wappointment\Plugins\Contract\PluginMultilang::class,
+  'implementations' => [
+    'translatepress-multilingual/index.php' => Wappointment\Plugins\MultiLang\TranslatePress::class,
+    'default' => Wappointment\Plugins\MultiLang\NullMultiLang::class
+  ]
 ];
