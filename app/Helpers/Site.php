@@ -17,6 +17,11 @@ class Site
         return Helper::getPlugin('MultiLang')->lang();
     }
 
+    public static function languages()
+    {
+        return Helper::getPlugin('MultiLang')->languages();
+    }
+
     public static function container()
     {
         static $container = false;
@@ -31,10 +36,10 @@ class Site
     {
         $instance = Site::container()->resolve($className);
 
-        if(!empty($instance)){
+        if (!empty($instance)) {
             return $instance;
         }
-        if(!class_exists($className)){
+        if (!class_exists($className)) {
             throw new \WappointmentException("Class cannot be binded ".$className, 1);
         }
         return Site::container()->bind($className, new $className());

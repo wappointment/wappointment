@@ -3,16 +3,15 @@
 namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
+use Wappointment\Helpers\Site;
 use Wappointment\Helpers\Translations;
 use Wappointment\Services\Reminder;
 use Wappointment\Models\Reminder as MReminder;
-use Wappointment\Plugins\Helper;
 use Wappointment\Services\Settings;
 use Wappointment\Services\VersionDB;
 
 class ReminderController extends RestController
 {
-
     public function isLegacy()
     {
         return !VersionDB::canServices();
@@ -71,10 +70,9 @@ class ReminderController extends RestController
 
         $queryReminders->activeReminders();
         $queryReminders->whereIn('type', MReminder::getTypes('code'));
-
         $data = [
             'mail_status' => (bool) Settings::get('mail_status'),
-            'languages' => Helper::getPlugin('MultiLang')->languages(),
+            'languages' => Site::languages(),
             'allow_cancellation' => (bool) Settings::get('allow_cancellation'),
             'email_footer' => Settings::get('email_footer'),
             'allow_rescheduling' => (bool) Settings::get('allow_rescheduling'),
