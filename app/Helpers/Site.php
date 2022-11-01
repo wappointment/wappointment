@@ -7,24 +7,14 @@ use Wappointment\System\Container;
 
 class Site
 {
-    /**
-     * we've create the helpr to wrap the get_locale with logic if needed
-     *
-     * @return void
-     */
     public static function locale()
     {
-        return get_locale();
+        return Helper::getPlugin('MultiLang')->locale();
     }
 
-    public static function languages()
+    public static function lang()
     {
-        return static::MultiLang()->languages();
-    }
-
-    public static function MultiLang()
-    {
-        return Helper::getPlugin('multilang');
+        return Helper::getPlugin('MultiLang')->lang();
     }
 
     public static function container()
@@ -35,5 +25,18 @@ class Site
             $container = new Container();
         }
         return $container;
+    }
+
+    public static function singleton($className)
+    {
+        $instance = Site::container()->resolve($className);
+
+        if(!empty($instance)){
+            return $instance;
+        }
+        if(!class_exists($className)){
+            throw new \WappointmentException("Class cannot be binded ".$className, 1);
+        }
+        return Site::container()->bind($className, new $className());
     }
 }

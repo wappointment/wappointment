@@ -75,6 +75,9 @@ export default {
         })
         
       }
+      if(this.viewData.languages!==false){
+        this.model.canTranslate = true
+      }
     },
     computed: {
         canSend(){
@@ -129,6 +132,20 @@ export default {
                 },
 
                 ]
+              },
+              {
+                  type: "select",
+                  label: this.get_i18n('language','common'),
+                  model: "lang",
+                  elements: this.viewData.languages.map(function(item){
+                    item.id = item.locale
+                    item.name = item.name + '('+item.locale+')'
+                    return item
+                  }),
+                  cast: String,
+                  conditions: [
+                    { model:'canTranslate', values: [true] }
+                  ],
               },
               {
                   type: "input",

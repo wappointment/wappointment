@@ -12,11 +12,15 @@ class Container
             'name' => $bindingName,
             'instance' => $instance,
         ];
+        return $instance;
     }
 
     public function resolve($bindingName)
     {
-        return array_first($this->bindings, fn($item) => $item['name'] === $bindingName)['instance'] ?? null;
+        $result = array_first($this->bindings, function($item) use($bindingName) {
+            return $item['name'] === $bindingName;
+        });
+        return $result['instance'] ?? null;
     }
 
 }

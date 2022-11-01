@@ -2,6 +2,8 @@
 
 namespace Wappointment\Services\Wappointment;
 
+use Wappointment\Plugins\Helper;
+
 class VersionCheck extends API
 {
 
@@ -20,8 +22,8 @@ class VersionCheck extends API
 
         foreach ($this->getWappointmentActiveSlugs() as $plugin) {
             $plugin_file = $plugin . '/index.php';
-
-            if (is_plugin_active($plugin_file) && !isset($transient->response[$plugin_file])) {
+            
+            if (Helper::active($plugin_file) && !isset($transient->response[$plugin_file])) {
                 $latestVersion = $this->latestVersion($plugin);
                 if ($latestVersion !== false && version_compare($latestVersion, $this->getActivePluginVersion($plugin), '>')) {
                     //then there needs to be an update on that plugin

@@ -6,14 +6,12 @@ use Wappointment\ClassConnect\Request;
 use Wappointment\Helpers\Translations;
 use Wappointment\Services\Reminder;
 use Wappointment\Models\Reminder as MReminder;
+use Wappointment\Plugins\Helper;
 use Wappointment\Services\Settings;
 use Wappointment\Services\VersionDB;
 
 class ReminderController extends RestController
 {
-    private $columns = [
-        'id', 'subject', 'type', 'event', 'locked', 'published', 'options'
-    ];
 
     public function isLegacy()
     {
@@ -69,13 +67,14 @@ class ReminderController extends RestController
 
     public function get()
     {
-        $queryReminders = MReminder::select($this->columns);
+        $queryReminders = MReminder::query();
 
         $queryReminders->activeReminders();
         $queryReminders->whereIn('type', MReminder::getTypes('code'));
 
         $data = [
             'mail_status' => (bool) Settings::get('mail_status'),
+            'languages' => Helper::getPlugin('MultiLang')->languages(),
             'allow_cancellation' => (bool) Settings::get('allow_cancellation'),
             'email_footer' => Settings::get('email_footer'),
             'allow_rescheduling' => (bool) Settings::get('allow_rescheduling'),

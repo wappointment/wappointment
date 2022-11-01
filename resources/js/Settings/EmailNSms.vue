@@ -17,10 +17,11 @@
                     </div>
                   </div>
                   <div class="d-flex align-items-center">
-                    <button v-if="isUnlocked(reminder)" data-tt="Duplicate" class="btn btn-xs" @click="duplicateReminder(reminder)"><span class="dashicons dashicons-plus"></span></button>
-                    <button class="btn btn-xs" @click="editReminder(reminder)"><span class="dashicons dashicons-edit"></span></button>
-                    <button v-if="isUnlocked(reminder)" class="btn btn-xs" @click="deleteReminder(reminder.id)"><span class="dashicons dashicons-trash"></span></button>
-                    <button v-else class="btn btn-xs disabled" disabled aria-disabled="true" title="You can unpublish it this message, but not delete it"><span class="dashicons dashicons-trash"></span></button>
+                    <button v-if="viewData.languages!==false" :data-tt="get_i18n('translate', 'common')" class="btn btn-xs" @click="translateEmail(reminder)"><span class="dashicons dashicons-translation"></span></button>
+                    <button v-if="isUnlocked(reminder)" :data-tt="get_i18n('duplicate', 'common')" class="btn btn-xs" @click="duplicateReminder(reminder)"><span class="dashicons dashicons-plus"></span></button>
+                    <button class="btn btn-xs" @click="editReminder(reminder)" :data-tt="get_i18n('edit', 'common')"><span class="dashicons dashicons-edit"></span></button>
+                    <button v-if="isUnlocked(reminder)" class="btn btn-xs" :data-tt="get_i18n('delete', 'common')" @click="deleteReminder(reminder.id)"><span class="dashicons dashicons-trash"></span></button>
+                    <button v-else class="btn btn-xs disabled" disabled aria-disabled="true" :data-tt="get_i18n('only_unpublish','settings')"><span class="dashicons dashicons-trash"></span></button>
                   </div>
                 </div>
                 
@@ -179,6 +180,14 @@ export default {
     },
     deleted() {
       this.refreshInitValue()
+    },
+    translateEmail(reminder){
+      if(reminder.parent===null){ // we only allow translation of parent email
+        reminder.parent = reminder.id
+        console.log('is null')
+      }
+      console.log('reminder',reminder)
+      this.duplicateReminder(reminder)
     },
     duplicateReminder(reminder){
       reminder.id = undefined
