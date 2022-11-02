@@ -9,10 +9,10 @@ class AppointmentConfirmedListener extends AbstractJobAppointmentListener
     protected $jobClass = '\Wappointment\Jobs\AppointmentEmailConfirmed';
     protected $delay = 0;
     protected $event_trigger = Reminder::APPOINTMENT_CONFIRMED;
+    protected $get_first = true;
 
     protected function addToJobs($event)
     {
-
         $params = [
             'appointment' => $event->getAppointment(),
             'client' => $event->getClient(),
@@ -31,6 +31,9 @@ class AppointmentConfirmedListener extends AbstractJobAppointmentListener
                     null,
                     $this->delay
                 );
+                if ($this->get_first) {
+                    return;
+                }
             }
         }
     }
