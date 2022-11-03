@@ -8,23 +8,14 @@
       <div class="reduced" v-else>
           <div v-if="remindersAreLoaded" class="mt-2">
               <div v-if="!addingReminder" v-for="reminder in reminders" class="p-2 lrow" :class="{'unpublished' : !isPublished(reminder)}">
-                <div class="d-flex align-items-center justify-content-between">
-                  <div class="d-flex align-items-center">
-                    <Checkbox :element="reminder" :labels="labels" @changed="toggledPublish"></Checkbox>
-                    <div>
-                      <div>{{ reminder.subject }}</div>
-                      <div class="text-muted small">{{ reminder.label }}</div>
-                    </div>
-                  </div>
-                  <div class="d-flex align-items-center">
-                    <button v-if="viewData.languages!==false" :data-tt="get_i18n('translate', 'common')" class="btn btn-xs" @click="translateEmail(reminder)"><span class="dashicons dashicons-translation"></span></button>
-                    <button v-if="isUnlocked(reminder)" :data-tt="get_i18n('duplicate', 'common')" class="btn btn-xs" @click="duplicateReminder(reminder)"><span class="dashicons dashicons-plus"></span></button>
-                    <button class="btn btn-xs" @click="editReminder(reminder)" :data-tt="get_i18n('edit', 'common')"><span class="dashicons dashicons-edit"></span></button>
-                    <button v-if="isUnlocked(reminder)" class="btn btn-xs" :data-tt="get_i18n('delete', 'common')" @click="deleteReminder(reminder.id)"><span class="dashicons dashicons-trash"></span></button>
-                    <button v-else class="btn btn-xs disabled" disabled aria-disabled="true" :data-tt="get_i18n('only_unpublish','settings')"><span class="dashicons dashicons-trash"></span></button>
-                  </div>
+                <RowReminder :reminder="reminder" :canTranslate="viewData.languages!==false" 
+                              @toggledPublish="toggledPublish" @translateEmail="translateEmail" @duplicateReminder="duplicateReminder"
+                              @editReminder="editReminder" @deleteReminder="deleteReminder"/>
+                <div class="pl-4 pt-2 bg-secondary" v-if="reminder.children.length > 0">
+                    <RowReminder v-for="childReminder in reminder.children" child :key="'child-'+childReminder.id" :reminder="childReminder" :canTranslate="viewData.languages!==false" 
+                              @toggledPublish="toggledPublish"
+                              @editReminder="editReminder" @deleteReminder="deleteReminder"> - <small>{{ childReminder.lang }}</small></RowReminder>
                 </div>
-                
               </div>
               <div class="mt-2">
                 <div v-if="!addingReminder">
@@ -62,14 +53,14 @@ import NotificationEmail from '../Notification/Email'
 import EditReminders from './EditReminders' 
 import MailConfig from '../Components/MailConfig'
 import Scroll from '../Modules/Scroll'
-import Checkbox from '../Fields/Checkbox'
 import abstractView from '../Views/Abstract'
 import reminderTypeLabel from '../Mixins/reminderTypeLabel'
+import RowReminder from './RowReminder'
 
 export default {
   extends: abstractView,
   mixins: [Scroll, hasBreadcrumbs, isReminder, reminderTypeLabel], 
-  components: { MailConfig, NotificationEmail, EditReminders, Checkbox},
+  components: { MailConfig, NotificationEmail, EditReminders, RowReminder},
   data() {
       return {
         multiple_service_type: false,

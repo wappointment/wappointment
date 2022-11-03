@@ -70,6 +70,7 @@ class ReminderController extends RestController
 
         $queryReminders->activeReminders();
         $queryReminders->whereIn('type', MReminder::getTypes('code'));
+
         $data = [
             'mail_status' => (bool) Settings::get('mail_status'),
             'languages' => Site::languages(),
@@ -80,7 +81,7 @@ class ReminderController extends RestController
             'cancellation_link' => Settings::get('cancellation_link'),
             'save_appointment_text_link' => Settings::get('save_appointment_text_link'),
             'multiple_service_type' => \Wappointment\Helpers\Service::hasMultipleTypes($this->isLegacy()),
-            'reminders' => $queryReminders->get(),
+            'reminders' => $queryReminders->getParentSorting(),
             'recipient' => wp_get_current_user()->user_email,
             'defaultReminders' => [
                 'email' => Reminder::getSeedReminder()
