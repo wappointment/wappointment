@@ -36,6 +36,7 @@ return [
     'bwe_general' => __('General', 'wappointment'),
     'bwe_step' => __('Step', 'wappointment'),
     'bwe_edit_more_colors' => __('Edit more colors', 'wappointment'),
+    'bwe_primary_color' => __('Primary Color', 'wappointment'),
 
     'create' => __('Create', 'wappointment'),
     'hide' => __('Hide', 'wappointment'),

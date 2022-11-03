@@ -162,21 +162,22 @@
             </div>
         </div> 
       </div>
-      <div class="p-0 d-flex align-items-center" v-else>
-        <LinkEdit :fieldValue="definition.save_appointment_text_link" fieldKey="save_appointment_text_link" />
+      <div class="p-0 d-flex align-items-center linkcolor" v-else>
+        <LinkEdit :fieldValue="definition.save_appointment_text_link" fieldKey="save_appointment_text_link" :color="linkColor"/>
         <div class="text-muted mx-2" v-if="definition.allow_cancellation || definition.allow_rescheduling"> | </div>
-        <LinkEdit v-if="definition.allow_rescheduling" :fieldValue="definition.reschedule_link" fieldKey="reschedule_link" />
+        <LinkEdit v-if="definition.allow_rescheduling" :fieldValue="definition.reschedule_link" fieldKey="reschedule_link" :color="linkColor"/>
         <div class="text-muted mx-2" v-if="definition.allow_cancellation && definition.allow_rescheduling"> | </div>
-        <LinkEdit v-if="definition.allow_cancellation" :fieldValue="definition.cancellation_link" fieldKey="cancellation_link" />
+        <LinkEdit v-if="definition.allow_cancellation" :fieldValue="definition.cancellation_link" fieldKey="cancellation_link" :color="linkColor"/>
       </div>
       <FooterEdit :fieldValue="definition.email_footer" fieldKey="email_footer" />
-      
+      <ColorPicker v-model="linkColor" :label="get_i18n('bwe_primary_color','common')"/>
     </div>
   </div>
 </template>
 
 <script>
 import AbstractField from '../Form/AbstractField'
+import ColorPicker from '../Components/ColorPicker'
 import { Editor } from 'tiptap'
 import {
   // Nodes
@@ -211,17 +212,21 @@ import ConditionalZoomBlockNode from "./text-editor/ConditionalZoomBlock.js"
 import ConditionalPhysicalBlockNode from "./text-editor/ConditionalPhysicalBlock.js"
 import LinkEdit from "../Components/LinkEdit"
 import FooterEdit from "../Components/FooterEdit"
+import SettingsSave from '../Modules/SettingsSave'
 
 export default {
   name:'opt-tiptap',
+    extends:SettingsSave,
     mixins: [AbstractField],
     components: {
         Editor,
         LinkEdit,
-        FooterEdit
+        FooterEdit,
+        ColorPicker
     },
     data(){
         return {
+        linkColor:null,
         position: false,
         linkUrl: null,
         writingUrl: false,
@@ -291,6 +296,14 @@ export default {
         ],
         };
     },
+    watch: {
+      linkColor(val, newval){
+        if(val !== newval){
+          this.settingSave('email_link_color', val)
+        }
+          
+      },
+    },
     computed: {
       selectionIsOn(){
         if(this.$refs.editor !== undefined){
@@ -340,6 +353,7 @@ export default {
             new ConditionalPhysicalBlockNode()
         ]
     }
+    this.linkColor = this.definition.link_color
   },
     methods:{
 

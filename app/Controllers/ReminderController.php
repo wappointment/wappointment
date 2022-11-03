@@ -16,10 +16,14 @@ class ReminderController extends RestController
     {
         return !VersionDB::canServices();
     }
-
+    private function getRequested(Request $request)
+    {
+        return $request->except(['rest_route', 'locked', 'email_logo', 'label', 'canTranslate', 'children']);
+    }
     public function save(Request $request)
     {
-        $requested = $request->except(['rest_route', 'locked', 'email_logo', 'label']);
+        $requested = $this->getRequested($request);
+
         $requested['published'] = true;
         $this->saveImage($request);
         if ($this->isTrueOrFail(Reminder::save($requested))) {
@@ -42,7 +46,7 @@ class ReminderController extends RestController
     public function patch(Request $request)
     {
         $this->saveImage($request);
-        if ($this->isTrueOrFail(Reminder::save($request->except(['rest_route', 'locked', 'email_logo', 'label'])))) {
+        if ($this->isTrueOrFail(Reminder::save($this->getRequested($request)))) {
             return ['message' => Translations::get('element_updated')];
         }
         throw new \WappointmentException(Translations::get('error_updating'), 1);
@@ -76,6 +80,7 @@ class ReminderController extends RestController
             'languages' => Site::languages(),
             'allow_cancellation' => (bool) Settings::get('allow_cancellation'),
             'email_footer' => Settings::get('email_footer'),
+            'link_color' => Settings::get('email_link_color'),
             'allow_rescheduling' => (bool) Settings::get('allow_rescheduling'),
             'reschedule_link' => Settings::get('reschedule_link'),
             'cancellation_link' => Settings::get('cancellation_link'),

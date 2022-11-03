@@ -133,6 +133,7 @@ export default {
         this.allow_rescheduling = d.data.allow_rescheduling
         this.allow_cancellation = d.data.allow_cancellation
         this.email_footer = d.data.email_footer
+        this.link_color = d.data.link_color
         this.reschedule_link = d.data.reschedule_link
         this.cancellation_link = d.data.cancellation_link
         this.save_appointment_text_link = d.data.save_appointment_text_link

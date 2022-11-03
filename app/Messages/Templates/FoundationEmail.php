@@ -2,6 +2,7 @@
 
 namespace Wappointment\Messages\Templates;
 
+use Wappointment\Services\Settings;
 use Wappointment\System\Helpers;
 
 class FoundationEmail
@@ -17,6 +18,8 @@ class FoundationEmail
   public function __construct($rtl)
   {
     $this->rtl = (bool)$rtl;
+    $this->colors['primary'] = Settings::get('email_link_color');
+    $this->colors['primary'] = Settings::get('email_link_color');
   }
 
   public function setColors($colors)
@@ -1299,9 +1302,9 @@ class FoundationEmail
                                 color: ' . $this->getColor('primary') . ';
                                 text-decoration: none; }
                                 a:hover {
-                                  color: ' . $this->getColor('primaryLight') . '; }
+                                  color: ' . $this->getColor('primary') . '; }
                                 a:active {
-                                  color: ' . $this->getColor('primaryLight') . '; }
+                                  color: ' . $this->getColor('primary') . '; }
                                 a:visited {
                                   color: ' . $this->getColor('primary') . '; }
                               
