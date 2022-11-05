@@ -1,4 +1,5 @@
 <?php
+
 return [
     'cals_title' => __('Calendars & Staff', 'wappointment'),
     'cals_name' => __('Name', 'wappointment'),
@@ -86,6 +87,7 @@ return [
     'appearance_title' => __('Appearance', 'wappointment'),
 
     'advanced_title' => __('Advanced', 'wappointment'),
+    'addons_title' => 'Addons',
 
     'when_reminder_sent' => __('When is the reminder sent? (before the appointment)', 'wappointment'),
     'select_unit' => __('Select unit', 'wappointment'),
