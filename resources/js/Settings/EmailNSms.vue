@@ -8,11 +8,12 @@
       <div class="reduced" v-else>
           <div v-if="remindersAreLoaded" class="mt-2">
               <div v-if="!addingReminder" v-for="reminder in reminders" class="p-2 lrow" :class="{'unpublished' : !isPublished(reminder)}">
-                <RowReminder :reminder="reminder" :canTranslate="viewData.languages!==false" 
+                <RowReminder :reminder="reminder" :canTranslate="viewData.languages!==false" :labels="labels"
                               @toggledPublish="toggledPublish" @translateEmail="translateEmail" @duplicateReminder="duplicateReminder"
                               @editReminder="editReminder" @deleteReminder="deleteReminder"/>
                 <div class="pl-4 pt-2 bg-secondary" v-if="reminder.children.length > 0">
-                    <RowReminder v-for="childReminder in reminder.children" child :key="'child-'+childReminder.id" :reminder="childReminder" :canTranslate="viewData.languages!==false" 
+                    <RowReminder v-for="childReminder in reminder.children" 
+                    child :key="'child-'+childReminder.id" :reminder="childReminder" :canTranslate="viewData.languages!==false" :labels="labels"
                               @toggledPublish="toggledPublish"
                               @editReminder="editReminder" @deleteReminder="deleteReminder"> - <small>{{ childReminder.lang }}</small></RowReminder>
                 </div>
