@@ -4,7 +4,6 @@ namespace Wappointment\Events;
 
 class AbstractEvent extends \Symfony\Component\EventDispatcher\Event
 {
-
     protected function getWPAction()
     {
         if (empty(get_called_class()::NAME)) {
