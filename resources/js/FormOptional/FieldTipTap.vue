@@ -170,7 +170,9 @@
         <LinkEdit v-if="definition.allow_cancellation" :fieldValue="definition.cancellation_link" fieldKey="cancellation_link" :color="linkColor"/>
       </div>
       <FooterEdit :fieldValue="definition.email_footer" fieldKey="email_footer" />
-      <ColorPicker v-model="linkColor" :label="get_i18n('bwe_primary_color','common')"/>
+    </div>
+    <div class="mt-2">
+      <ColorPicker v-if="!simpleVersion" v-model="linkColor" @validated="validatedColor" :label="get_i18n('bwe_primary_color','common')"/>
     </div>
   </div>
 </template>
@@ -296,14 +298,6 @@ export default {
         ],
         };
     },
-    watch: {
-      linkColor(val, newval){
-        if(val !== newval){
-          this.settingSave('email_link_color', val)
-        }
-          
-      },
-    },
     computed: {
       selectionIsOn(){
         if(this.$refs.editor !== undefined){
@@ -356,7 +350,9 @@ export default {
     this.linkColor = this.definition.link_color
   },
     methods:{
-
+      validatedColor(){
+        this.settingSave('email_link_color', this.linkColor)
+      },
       updateModel({ getJSON, getHTML }) {
           this.updatedValue = getJSON()
           this.hasShortcodes = this.getShortcodes(this.$refs.editor.state.doc.content)
