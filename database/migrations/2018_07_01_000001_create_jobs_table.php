@@ -15,7 +15,7 @@ class CreateJobsTable extends Wappointment\Installation\Migrate
         if (!Capsule::schema()->hasTable(Database::$prefix_self . '_jobs')) {
             Capsule::schema()->create(Database::$prefix_self . '_jobs', function ($table) {
                 $table->bigIncrements('id');
-                $table->string('queue')->nullable();
+                $table->string('queue', 25)->nullable();
                 $table->longText('payload');
                 $table->unsignedInteger('appointment_id')->nullable();
                 $table->unsignedTinyInteger('attempts')->default(0);
@@ -27,7 +27,6 @@ class CreateJobsTable extends Wappointment\Installation\Migrate
 
 
         Capsule::schema()->table(Database::$prefix_self . '_jobs', function ($table) {
-            $table->string('queue', 25)->nullable()->change();
             $table->index(['queue', 'reserved_at']);
         });
     }
