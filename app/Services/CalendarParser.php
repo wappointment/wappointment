@@ -9,7 +9,6 @@ use Wappointment\ClassConnect\VtzUtil;
 
 class CalendarParser
 {
-
     use CustomTZParser;
 
     protected $url;
@@ -115,9 +114,15 @@ class CalendarParser
         return !empty($vevent->$column) && $vevent->$column->getValue() == 'FREE';
     }
 
+    public function isFreeGoogle($vevent)
+    {
+        $column = 'TRANSP';
+        return !empty($vevent->$column) && $vevent->$column->getValue() === 'TRANSPARENT';
+    }
+
     public function freeSpotted($vevent)
     {
-        return $this->isFreeOutlook($vevent);
+        return $this->isFreeOutlook($vevent) || $this->isFreeGoogle($vevent);
     }
 
     public function getStatus($vevent)
