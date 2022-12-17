@@ -27,7 +27,7 @@ class BookingAdmin extends Booking
         if ($inputs['email'] !== '') {
             $this->validationRulesArray['email'] = 'email';
         }
-        if (!$this->getService()->isGroup()) {
+        if (!$this->getService()->isGroup() && empty($inputs['clientid'])) {
             $this->validationRulesArray = $this->applyMoreRules();
         }
 
