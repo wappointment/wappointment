@@ -3,7 +3,7 @@ export default class Intervals {
     constructor(intervals, intervalsPassed = false) {
         if(intervalsPassed === false){
             this.intervals = []
-            let sortedIntervals = intervals.sort((a, b) => { return a[0] > b[0] } )
+            let sortedIntervals = intervals.sort((a, b) => { return a[0] > b[0]? 1 : -1; } )
             for (const element of sortedIntervals) {
                 if(element.length > 2){
                     this.intervals.push( { start: element[0], end: element[1], left:parseInt(element[2]),service:element[3], edit_key:element[4] } )
