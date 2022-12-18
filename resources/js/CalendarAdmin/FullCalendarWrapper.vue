@@ -79,7 +79,7 @@
                 if(options.indexOf('next') !== -1) return this.getApi.gotodate()
                 if(options.indexOf('prev') !== -1) return this.getApi.prev()
                 if(options.indexOf('getDate') !== -1) return this.getApi.getDate()
-                if(options.indexOf('click') !== -1) return this.getApi.select()
+                if(options.indexOf('refetchEvents') !== -1) return this.getApi.refetchEvents()
                 if(options.indexOf('unselect') !== -1) return this.getApi.unselect()
 
             }, 
