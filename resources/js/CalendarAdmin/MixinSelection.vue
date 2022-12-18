@@ -57,11 +57,32 @@ export default {
       viewAppointment(event){
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
         let appointment = this.findAppointmentById(eventId)
-
-        this.$WapModalOn({
-            title:'Appointment details',
-            content: this.getAppointmentInfoHTML(appointment)
+        let optionsModal = {}
+        if(appointment.extendedProps.participants!==undefined && appointment.extendedProps.participants.length > 0){
+          optionsModal = {
+            prompt: true,
+            cancel: 'Back',
+            confirm: 'Cancel or Reschedule Event',
+          }
+        }
+        let instanceModal = this.$WapModal()
+        instanceModal.showModal(
+          'Appointment details', 
+          this.getAppointmentInfoHTML(appointment), 
+          false, 
+          optionsModal
+        )
+        
+        new Promise(instanceModal.promiseCallback ).then((response) => {
+            if(response !== false){
+                this.rescheduleOrCancel(appointment)
+            }
         })
+
+      },
+
+      rescheduleOrCancel(appointment){
+        this.openAppointmentModal(appointment)
       },
 
       recordDotcom(event){

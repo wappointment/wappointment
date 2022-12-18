@@ -80,7 +80,6 @@ class AppointmentNew
 
     public static function adminCalendarUpdateAppointmentArray($addedEvent, $appointment)
     {
-
         if (!empty($appointment->service)) {
             $addedEvent['service'] = $appointment->service->toArray();
             foreach ($appointment->service->locations as $location) {
@@ -187,7 +186,6 @@ class AppointmentNew
 
     public static function confirm($id, $soft = false, $client = null, $order = null)
     {
-
         $oldAppointment = $appointment = static::getAppointmentModel()::where('id', (int)$id)
             ->where('status', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)->first();
         if (empty($appointment)) {
@@ -373,7 +371,6 @@ class AppointmentNew
 
     protected static function bookCreate($data, Client $client, $is_admin = false, $status = 0, $adminBooked = false)
     {
-
         $dataReturned = static::create($data, $client, $status, $adminBooked);
 
         JobHelper::dcCreate($dataReturned['appointment']);
@@ -445,24 +442,36 @@ class AppointmentNew
         //used for credit return in addons
         apply_filters('wappointment_cancelled_appointment', $appointment);
 
-        \Wappointment\Models\Log::canceledAppointment($appointment);
+        if ($appointment->service->isGroup() && class_exists('\\WappointmentAddonGroup\\Models\\AppointmentsParticipants')) {
+            $participants = \WappointmentAddonGroup\Models\AppointmentsParticipants::where('appointment_id', $appointment->id)
+            ->with(['client'])
+            ->get();
 
-        $client = is_null($client) ? $appointment->getClientModel() : $client;
+            foreach ($participants as $participant) {
+                $client = $participant->client;
+                static::sendCancelNotification($appointment, $client);
+                $participant->delete();
+            }
+        } else {
+            static::sendCancelNotification($appointment, is_null($client) ? $appointment->getClientModel() : $client);
+        }
 
         //clearing charges for that appointment clearing order prices
         if (!Payment::isWooActive()) {
             static::clearCharges([$appointment->id]);
         }
-
         static::destroy($appointment, $force);
 
+        return true;
+    }
+
+    public static function sendCancelNotification($appointment, $client)
+    {
         //trigger cancelled email to user and cancelled notification to admin
         JobHelper::dispatch('AppointmentCanceledEvent', [
             'appointment' => $appointment,
             'client' => $client
         ], $client);
-
-        return true;
     }
 
     public static function destroy($appointment, $force = false)

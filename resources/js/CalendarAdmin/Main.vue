@@ -26,10 +26,18 @@
                 <a v-if="!isToday" class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="today">{{ get_i18n('calendar_this_week', 'common') }}</a>
               </div>
           </div>
+           <div v-if="rescheduleModeOn" id="follower">
+            <div v-if="canMoveReschedule">Click to select new start</div>
+            <div v-else>New start: {{ newStartDate.format() }} 
+            <button class="btn btn-secondary" @click="cancelReschedule">Cancel</button>
+            <button class="btn btn-primary"  @click="acceptReschedule">Reschedule</button>
+            </div>
+          </div>
         </div>
+       
       </StickyBar>
 
-      <div class="full-width center-content calendar-wrap full-width-layout" >
+      <div class="full-width center-content calendar-wrap full-width-layout" @mousemove="mouseMove">
         <div class="wrap">
             
             <div  v-if="fullCalOption!==undefined">
@@ -49,6 +57,11 @@
               <PopupActions v-if="popupActionVisible" @refreshEvents="refreshEvents" @hide="hideModal" 
               :getThisWeekIntervals="getThisWeekIntervals" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
               :momenttz="momenttz" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"/>
+
+              <PopupAppointment v-if="popupAppointmentVisible" 
+              @refreshEvents="refreshEvents" @rescheduleOn="rescheduleOn" @hide="hideModal" 
+              :displayTimezone="displayTimezone" :activeStaff="activeStaff"
+              :getThisWeekIntervals="getThisWeekIntervals" :appointment="activeAppointment" :momenttz="momenttz"  :viewData="viewData" />
               
               <WapModal v-if="showRegularAv" :show="showRegularAv" @hide="hideRegavModal" large>
                 <h4 slot="title" class="modal-title">Modify your Weekly Availability</h4>
@@ -67,6 +80,19 @@
     <MainStyle v-if="fcIsReady" :viewData="viewData"/>
   </div>
 </template>
+<style>
+#follower{
+    position: absolute;
+    padding:.3rem;
+    border-color: rgba(75,108,151,1);
+    background-color: rgba(75,108,151,1);
+    border-radius: 1rem;
+    box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,0);
+    color: white;
+margin-left: -140px;
+margin-top: -40px;
+}
+</style>
 <script>
 import WeeklyAvailability from '../RegularAvailability/View'
 import abstractView from '../Views/Abstract'
@@ -77,6 +103,7 @@ import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import momenttz from '../appMoment'
 import WelcomeModal from './WelcomeModal'
 import PopupActions from './PopupActions'
+import PopupAppointment from './PopupAppointment'
 import AppointmentRender from './AppointmentRender'
 import FreeSlotsSelector from './FreeSlotsSelector'
 import CalendarSettings from './CalendarSettings'
@@ -118,6 +145,7 @@ export default {
       WelcomeModal,
       CalendarSettings,
       PopupActions,
+      PopupAppointment,
       MainStyle
   }, 
   data: () => ({
@@ -171,6 +199,12 @@ export default {
     activeStaff: null,
     rolledOverName: '',
     popupActionVisible:false,
+    popupAppointmentVisible: false,
+    activeAppointment: null,
+    rescheduleModeOn: false,
+    moveCursor:false,
+    canMoveReschedule: true,
+    newStartDate:null
   }),
 
   created(){
@@ -489,6 +523,7 @@ export default {
                 eventDragStop: this.eventDragStop,
                 eventDrop: this.eventPatch,
                 eventResize: this.eventPatch,
+                dateClick: this.dateClick
               },
               props: {
                 header: {
@@ -523,7 +558,8 @@ export default {
                 eventLimit: true,
                 events: this.loadingEvents,
                 eventAllow: this.eventAllow,
-                eventRender: this.eventRender
+                eventRender: this.eventRender,
+                
               }
               
             }
@@ -532,6 +568,83 @@ export default {
               this.fullCalOption.props.defaultDate = defaultDate
             }
       },
+      rescheduleOn(){
+        this.rescheduleModeOn = true
+      },
+      dateClick(info){
+        if(!this.canMoveReschedule){
+          return
+        }
+        /* console.log(this.toMoment(info.dateStr), this.toMoment(info.dateStr).unix()) */
+        this.canMoveReschedule = false
+        this.newStartDate = this.toMoment(info.dateStr)
+/*         if(this.rescheduleModeOn){
+          console.log('rescheduling and listening for reschedule events')
+        } */
+      },
+      cancelReschedule(){
+        this.canMoveReschedule = true
+      },
+      acceptReschedule(){
+        //console.log('this.activeAppointment',this.activeAppointment)
+        let duration = this.toMoment(this.activeAppointment.end).unix() - this.toMoment(this.activeAppointment.start).unix()
+/*         console.log('this.activeAppointment',duration)
+        console.log('test',{
+          eventId: this.activeAppointment.extendedProps.dbid, 
+          start: this.newStartDate.unix(), 
+          end: this.newStartDate.unix()+duration
+          })
+          return; */
+
+        this.request(this.editEventRequest, {
+          eventId: this.activeAppointment.extendedProps.dbid, 
+          start: this.newStartDate.unix(), 
+          end: this.newStartDate.unix()+duration
+          },
+          undefined,false,  this.resetRescheduleMode)
+      },
+
+      resetRescheduleMode(){
+        this.activeAppointment = null
+          this.rescheduleModeOn = false
+          this.moveCursor =false
+          this.canMoveReschedule = true
+          this.newStartDate = null
+          this.refreshEvents()
+      },
+      mouseMove(event) {
+        if(this.rescheduleModeOn ){
+          /* let coordinates = {x:event.clientX, y:event.clientY}
+          if(!this.moveCursor || this.distanceUpdate(coordinates)){
+            
+            
+            this.moveCursor = coordinates
+          } */
+          if(this.canMoveReschedule){
+            let xp = 40, yp = 40;
+            // change 12 to alter damping higher is slower
+              xp += (event.pageX - xp) 
+              yp += (event.pageY - yp) 
+              document.getElementById("follower").style.left = event.pageX+"px"
+              document.getElementById("follower").style.top = event.pageY +"px"
+          }
+          
+          
+        }
+      },
+
+      distanceUpdate(coordinates){
+        let newdist = this.getDistance(coordinates.x, coordinates.y,this.moveCursor.x, this.moveCursor.y)
+        return newdist > 50;
+      },
+
+      getDistance(x1, y1, x2, y2){
+        let y = x2 - x1;
+        let x = y2 - y1;
+
+        return Math.sqrt(x * x + y * y);
+      },
+
       loadAgain(staffChange){
         this.loaded({data:Object.assign({},this.viewData)}, true, staffChange)
       },
@@ -581,10 +694,17 @@ export default {
       
       hideModal(){
         this.popupActionVisible = false
+        this.popupAppointmentVisible = false
       },
       openCreateModal() {
         this.disableBgEvent = false
         this.popupActionVisible = true
+      },
+      openAppointmentModal(appointment) {
+        this.disableBgEvent = false
+        this.popupAppointmentVisible = true
+        console.log('openAppointmentModal',appointment)
+        this.activeAppointment = appointment
       },
 
       setMinAndMax(){
@@ -744,7 +864,7 @@ export default {
       
       refreshEvents(){
         this.hasBeenSetCalProps = false
-        this.$refs.calendar.fireMethod('refetchEvents')
+        this.$refs.calendar.refresh()
       },
 
     }
