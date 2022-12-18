@@ -98,6 +98,14 @@ And for any question or doubt, you can reach us:
 
 == Frequently Asked Questions ==
 
+**Why do reminders go out late sometimes?**
+
+WordPress by default uses an unreliable system to process background scheduled tasks; but we have created a guide to help you [make your site faster and more reliable](https://wappointment.com/docs/wp-cron?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
+
+**Why does nobody receive my confirmations or reminders emails?**
+
+Your emails most likely go straight to SPAM or don't event reach your inbox. Check this guide to [improve your emails' deliverability](https://wappointment.com/docs/configure-email?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
+
 **Can I change text and colors of the booking form?**
 
 You can change all the texts, colors and few other parameters of each step of the booking process. We plan on adding several templates in the future, meanwhile simply use css to make it exactly the way you want.
@@ -113,14 +121,6 @@ Sure you can, we allow up to 4 calendars in the ics format to be synched from. I
 **How often my Google calendar is being checked for sync?**
 
 Every 5 minutes we download your calendar and check for changes, we don't do it more often as it could be a heavy task depending on how big is your calendar.
-
-**Why do reminders go out late sometimes?**
-
-It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
-
-**Why does nobody receive my confirmations or reminders emails?**
-
-Your emails most likely go straight to SPAM or don't event reach your inbox. *Change the email sending method* in *Wappointment > Settings > Confirmations & Reminders* just go for the easy and reliable solution, [create a free account at SendGrid (100emails/day are free)](https://signup.sendgrid.com/) and configure Wappointment with the *SendGrid API*
 
 **I need 10 minutes to prepare between 2 appointments, how do I proceed?**
 

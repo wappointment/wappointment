@@ -57,7 +57,7 @@ export default {
       if(this.step !== undefined) {
         this.currentStep = this.step
       }
-      this.opts = this.options === undefined ? window.widgetWappointment : Object.assign ({}, this.options)
+      this.opts = this.options === undefined ? Object.assign ({}, window.widgetWappointment) : Object.assign ({}, this.options)
       this.processShortcode()
     },
     mounted(){
