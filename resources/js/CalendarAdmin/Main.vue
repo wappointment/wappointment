@@ -26,9 +26,9 @@
                 <a v-if="!isToday" class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="today">{{ get_i18n('calendar_this_week', 'common') }}</a>
               </div>
           </div>
-           <div v-if="rescheduleModeOn" id="follower">
-            <div v-if="canMoveReschedule">Click to select new start</div>
-            <div v-else>New start: {{ newStartDate.format() }} 
+           <div v-if="rescheduleModeOn" id="follower" class="bg-warning text-white">
+            <div v-if="canMoveReschedule">Click a time to select new start</div>
+            <div v-else>Confirm new start: {{ newStartDate.format() }} 
             <button class="btn btn-secondary" @click="cancelReschedule">Cancel</button>
             <button class="btn btn-primary"  @click="acceptReschedule">Reschedule</button>
             </div>
@@ -82,15 +82,12 @@
 </template>
 <style>
 #follower{
-    position: absolute;
     padding:.3rem;
-    border-color: rgba(75,108,151,1);
-    background-color: rgba(75,108,151,1);
     border-radius: 1rem;
     box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,0);
-    color: white;
-margin-left: -140px;
-margin-top: -40px;
+    margin: 0 auto;
+width: 400px;
+text-align: center;
 }
 </style>
 <script>
@@ -204,7 +201,8 @@ export default {
     rescheduleModeOn: false,
     moveCursor:false,
     canMoveReschedule: true,
-    newStartDate:null
+    newStartDate:null,
+    tempRescheduleEvent: null
   }),
 
   created(){
@@ -578,12 +576,24 @@ export default {
         /* console.log(this.toMoment(info.dateStr), this.toMoment(info.dateStr).unix()) */
         this.canMoveReschedule = false
         this.newStartDate = this.toMoment(info.dateStr)
+        let duration = this.toMoment(this.activeAppointment.end).unix() - this.toMoment(this.activeAppointment.start).unix()
+        this.tempRescheduleEvent = this.$refs.calendar.getApi.addEvent(
+          { // this object will be "parsed" into an Event Object
+            title: 'confirm new event', // a property!
+            start: this.toMoment(info.dateStr).format(), // a property!
+            end: this.toMoment(info.dateStr).add(duration,'seconds').format() // a property! ** see important note below about 'end' **
+          }
+        )
+        
 /*         if(this.rescheduleModeOn){
           console.log('rescheduling and listening for reschedule events')
         } */
       },
       cancelReschedule(){
         this.canMoveReschedule = true
+        if(this.tempRescheduleEvent !== null){
+          this.tempRescheduleEvent.remove()
+        }
       },
       acceptReschedule(){
         //console.log('this.activeAppointment',this.activeAppointment)
@@ -595,7 +605,9 @@ export default {
           end: this.newStartDate.unix()+duration
           })
           return; */
-
+        if(this.tempRescheduleEvent !== null){
+          this.tempRescheduleEvent.remove()
+        }
         this.request(this.editEventRequest, {
           eventId: this.activeAppointment.extendedProps.dbid, 
           start: this.newStartDate.unix(), 
@@ -621,12 +633,12 @@ export default {
             this.moveCursor = coordinates
           } */
           if(this.canMoveReschedule){
-            let xp = 40, yp = 40;
+            /* let xp = 40, yp = 40;
             // change 12 to alter damping higher is slower
               xp += (event.pageX - xp) 
               yp += (event.pageY - yp) 
               document.getElementById("follower").style.left = event.pageX+"px"
-              document.getElementById("follower").style.top = event.pageY +"px"
+              document.getElementById("follower").style.top = event.pageY +"px" */
           }
           
           

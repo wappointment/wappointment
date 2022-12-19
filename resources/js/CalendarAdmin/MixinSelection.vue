@@ -193,7 +193,7 @@ export default {
 
 
       selectAllow(selectInfo){
-         if(this.isInThePast(selectInfo)) return false
+         if(this.isInThePast(selectInfo) || this.rescheduleModeOn) return false
          return true
       },
 
