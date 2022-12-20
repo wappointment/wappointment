@@ -179,8 +179,11 @@ export default {
       },
 
       getConfirmOrViewButton( el, rendering,){
-        if(this.isAppointmentConfirmed(rendering)) return '<button data-tt="View appointment details" class="btn btn-xs btn-light viewElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-visibility"></span></button>'
-        return !this.isAppointmentPending(rendering) ? '': '<button data-tt="Confirm appointment" class="btn btn-xs btn-light confirmElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-yes"></span></button>'
+        if(this.isAppointmentConfirmed(rendering)) {
+          return '<button data-tt="'+this.get_i18n('reschedule','common')+'" class="btn btn-xs btn-light rescheduleElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-update"></span></button>'+
+          '<button data-tt="'+this.get_i18n('view_appointment','common')+'" class="btn btn-xs btn-light viewElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-visibility"></span></button>'
+        }
+        return !this.isAppointmentPending(rendering) ? '': '<button data-tt="'+this.get_i18n('confirm','common')+'" class="btn btn-xs btn-light confirmElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-yes"></span></button>'
       },
 
       isAppointmentVideoUpcoming(el){
@@ -243,6 +246,7 @@ export default {
             el.find('.cancelAppointment').on( "click", this.cancelAppointment)
             el.find('.recordDotcom').on( "click", this.recordDotcom)
             el.find('.viewElement').on( "click", this.viewAppointment)
+            el.find('.rescheduleElement').on( "click", this.rescheduleAppointment)
             el.find('.gotozoom').on( "click", this.goToZoom)
             
             el.find('.confirmElement').on( "click", this.confirmAppointment)

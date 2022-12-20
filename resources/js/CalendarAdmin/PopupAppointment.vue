@@ -2,12 +2,7 @@
 <template>
     <WapModal :show="true" @hide="hideModal" noscroll>
         <h4 slot="title" class="modal-title">{{ get_i18n('calendar_popup', 'calendar') }}</h4>
-
-        <div class="d-flex flex-column flex-md-row justify-content-between" v-if="!activeCompName">
-            <ButtonPopup v-for="button in buttons"  @click="confirmButtonClick(button)"
-            :key="button.key" :classIcon="button.icon" :title="button.title" :subtitle="button.subtitle" />
-        </div>
-        <component v-else :is="activeComp.name"
+        <component :is="activeComp.name"
             v-bind="activeComp.props"
             v-on="activeComp.listeners" />
     </WapModal>
@@ -16,14 +11,12 @@
 <script>
 import ButtonPopup from './ButtonPopup'
 import CancelBooking from './CancelBooking'
-import RescheduleBooking from './RescheduleBooking'
 
 export default {
     props:['displayTimezone', 'activeStaff', 'appointment', 'viewData', 'getThisWeekIntervals', 'momenttz'],
     components: {
         ButtonPopup,
         CancelBooking,
-        RescheduleBooking
     },
     data: () =>({
         activeCompName: false,
@@ -31,6 +24,7 @@ export default {
     }),
     created(){  
         this.setComponentList()
+        this.activeCompName = 'CancelBooking'
     },
     computed:{
         buttons(){
@@ -43,9 +37,6 @@ export default {
 
     },
     methods:{
-        confirmButtonClick(button){
-            this.activeCompName = button.component
-        },
 
         setComponentList(){
             let default_object = {
@@ -72,13 +63,8 @@ export default {
         hideModal(){
             this.$emit('hide')
         },
-        confirmedStatus(rescheduled=false){
-            
-            if(rescheduled){
-                this.$emit('rescheduleOn')
-            }else{
-                this.$emit('refreshEvents')
-            }
+        confirmedStatus(){
+            this.$emit('refreshEvents')
             this.hideModal()
             
         },

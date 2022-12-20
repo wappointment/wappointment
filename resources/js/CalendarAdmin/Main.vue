@@ -26,11 +26,12 @@
                 <a v-if="!isToday" class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="today">{{ get_i18n('calendar_this_week', 'common') }}</a>
               </div>
           </div>
-           <div v-if="rescheduleModeOn" id="follower" class="bg-warning text-white">
-            <div v-if="canMoveReschedule">Click a time to select new start</div>
-            <div v-else>Confirm new start: {{ newStartDate.format() }} 
-            <button class="btn btn-secondary" @click="cancelReschedule">Cancel</button>
-            <button class="btn btn-primary"  @click="acceptReschedule">Reschedule</button>
+           <div v-if="rescheduleModeOn" id="follower" >
+            <div v-if="canMoveReschedule">{{ get_i18n('click_for_new_start','calendar') }}</div>
+            <div v-else>{{ get_i18n('confirm_new_start','calendar') }} <div>{{ formattedNewStart }} </div>
+            <button class="btn btn-link" @click="resetRescheduleMode">{{ get_i18n('cancel','common') }}</button>
+            <button class="btn btn-secondary" @click="rescheduleDifferentTime">{{ get_i18n('select_another_time','calendar') }}</button>
+            <button class="btn btn-primary"  @click="acceptReschedule">{{ get_i18n('reschedule','common') }}</button>
             </div>
           </div>
         </div>
@@ -64,10 +65,10 @@
               :getThisWeekIntervals="getThisWeekIntervals" :appointment="activeAppointment" :momenttz="momenttz"  :viewData="viewData" />
               
               <WapModal v-if="showRegularAv" :show="showRegularAv" @hide="hideRegavModal" large>
-                <h4 slot="title" class="modal-title">Modify your Weekly Availability</h4>
+                <h4 slot="title" class="modal-title">{{ get_i18n('modify_weekly_availability','calendar') }}</h4>
 
                   <WeeklyAvailability noback :calendar="activeStaff" :timezones_list="viewData.timezones_list" :staffs="viewData.staff"/>
-                    <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">Close</button>
+                    <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">{{ get_i18n('close','common') }}</button>
                 
               </WapModal>
 
@@ -82,12 +83,20 @@
 </template>
 <style>
 #follower{
-    padding:.3rem;
     border-radius: 1rem;
-    box-shadow: 0 .2rem 1rem 0 rgba(0,0,0,0);
-    margin: 0 auto;
-width: 400px;
-text-align: center;
+  box-shadow: 0 1.2rem 1rem 0 rgba(0,0,0,0.1);
+  margin: 0 auto;
+  width: 450px;
+  text-align: center;
+  position: absolute;
+  border: 2px solid var(--warning);
+  background-color: white;
+  color: #797676;
+  font-size: 1.1rem;
+  font-weight: bold;
+  left: 36%;
+  padding: 0.4rem;
+  top:4px;
 }
 </style>
 <script>
@@ -225,6 +234,9 @@ export default {
   },
  
  computed: {
+   formattedNewStart(){
+     return this.newStartDate.format(this.viewData.date_format+' '+this.viewData.time_format)
+   },
    activeAvailability(){
      return this.activeStaff.availability
    },
@@ -589,7 +601,8 @@ export default {
           console.log('rescheduling and listening for reschedule events')
         } */
       },
-      cancelReschedule(){
+
+      rescheduleDifferentTime(){
         this.canMoveReschedule = true
         if(this.tempRescheduleEvent !== null){
           this.tempRescheduleEvent.remove()
@@ -598,16 +611,7 @@ export default {
       acceptReschedule(){
         //console.log('this.activeAppointment',this.activeAppointment)
         let duration = this.toMoment(this.activeAppointment.end).unix() - this.toMoment(this.activeAppointment.start).unix()
-/*         console.log('this.activeAppointment',duration)
-        console.log('test',{
-          eventId: this.activeAppointment.extendedProps.dbid, 
-          start: this.newStartDate.unix(), 
-          end: this.newStartDate.unix()+duration
-          })
-          return; */
-        if(this.tempRescheduleEvent !== null){
-          this.tempRescheduleEvent.remove()
-        }
+        
         this.request(this.editEventRequest, {
           eventId: this.activeAppointment.extendedProps.dbid, 
           start: this.newStartDate.unix(), 
@@ -617,6 +621,9 @@ export default {
       },
 
       resetRescheduleMode(){
+        if(this.tempRescheduleEvent !== null){
+          this.tempRescheduleEvent.remove()
+        }
         this.activeAppointment = null
           this.rescheduleModeOn = false
           this.moveCursor =false
@@ -715,7 +722,6 @@ export default {
       openAppointmentModal(appointment) {
         this.disableBgEvent = false
         this.popupAppointmentVisible = true
-        console.log('openAppointmentModal',appointment)
         this.activeAppointment = appointment
       },
 

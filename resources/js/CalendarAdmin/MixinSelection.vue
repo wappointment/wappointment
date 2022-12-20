@@ -62,7 +62,7 @@ export default {
           optionsModal = {
             prompt: true,
             cancel: 'Back',
-            confirm: 'Cancel or Reschedule Event',
+            confirm: 'Cancel for the group',
           }
         }
         let instanceModal = this.$WapModal()
@@ -98,6 +98,11 @@ export default {
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
         this.confirmRequest(eventId)
       },
+      rescheduleAppointment(event){
+        this.activeAppointment = this.findAppointmentById(window.jQuery(event.currentTarget).attr('data-id'))
+        this.rescheduleOn()
+      },
+      
       pendingOrderOrNot(params){
         if(params.appointment.extendedProps.options.order_id !== undefined) {
           return `<div class="bg-dark p-2 text-white rounded align-items-center mb-2">

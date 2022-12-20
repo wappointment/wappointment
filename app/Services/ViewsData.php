@@ -237,13 +237,7 @@ class ViewsData
                         'icon' => 'dashicons-dismiss red',
                         'component' => 'CancelBooking',
                     ],
-                    [
-                        'key' => 'reschedule',
-                        'title' => __('Reschedule', 'wappointment'),
-                        'subtitle' => '',
-                        'icon' => 'dashicons-clock txt blue',
-                        'component' => 'RescheduleBooking',
-                    ],
+
                 ]
         ];
 

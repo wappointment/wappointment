@@ -128,13 +128,12 @@ class EventsController extends RestController
 
     public function patch(Request $request)
     {
-        $this->canEditAppointment($request->input('id'));
-        if (AppointmentNew::patch(
+        $appointment = $this->canEditAppointment($request->input('id'));
+        if (AppointmentNew::reschedule(
             (int)$request->input('id'),
-            [
-                'start_at' => DateTime::convertUnixTS($request->input('start')),
-                'end_at' => DateTime::convertUnixTS($request->input('end'))
-            ]
+            $request->input('start'),
+            true,
+            $appointment
         )) {
             return ['message' => Translations::get('element_updated')];
         } else {

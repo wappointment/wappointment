@@ -27,8 +27,7 @@ export default {
             this.$emit('confirmed')
         },
         async setRequest(params) {
-            console.log('params',params)
-            this.serviceEvent.call('forceDelete', params)
+            return await this.serviceEvent.call('forceDelete', params)
         },
     }
 }
