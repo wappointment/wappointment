@@ -57,11 +57,32 @@ export default {
       viewAppointment(event){
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
         let appointment = this.findAppointmentById(eventId)
-
-        this.$WapModalOn({
-            title:'Appointment details',
-            content: this.getAppointmentInfoHTML(appointment)
+        let optionsModal = {}
+        if(appointment.extendedProps.participants!==undefined && appointment.extendedProps.participants.length > 0){
+          optionsModal = {
+            prompt: true,
+            cancel: 'Back',
+            confirm: 'Cancel for the group',
+          }
+        }
+        let instanceModal = this.$WapModal()
+        instanceModal.showModal(
+          'Appointment details', 
+          this.getAppointmentInfoHTML(appointment), 
+          false, 
+          optionsModal
+        )
+        
+        new Promise(instanceModal.promiseCallback ).then((response) => {
+            if(response !== false){
+                this.rescheduleOrCancel(appointment)
+            }
         })
+
+      },
+
+      rescheduleOrCancel(appointment){
+        this.openAppointmentModal(appointment)
       },
 
       recordDotcom(event){
@@ -77,6 +98,11 @@ export default {
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
         this.confirmRequest(eventId)
       },
+      rescheduleAppointment(event){
+        this.activeAppointment = this.findAppointmentById(window.jQuery(event.currentTarget).attr('data-id'))
+        this.rescheduleOn()
+      },
+      
       pendingOrderOrNot(params){
         if(params.appointment.extendedProps.options.order_id !== undefined) {
           return `<div class="bg-dark p-2 text-white rounded align-items-center mb-2">
@@ -172,7 +198,7 @@ export default {
 
 
       selectAllow(selectInfo){
-         if(this.isInThePast(selectInfo)) return false
+         if(this.isInThePast(selectInfo) || this.rescheduleModeOn) return false
          return true
       },
 
