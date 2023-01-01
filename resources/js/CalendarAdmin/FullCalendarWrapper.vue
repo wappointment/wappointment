@@ -1,5 +1,5 @@
 <template>
-    <FullCalendar  v-bind="configPrepared" v-on="eventsPrepared" ref="calendarcore"/>
+    <FullCalendar v-bind="configPrepared" v-on="eventsPrepared" ref="calendarcore"/>
 </template>
 
 <script>
