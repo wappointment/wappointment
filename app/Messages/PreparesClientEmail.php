@@ -8,15 +8,17 @@ use Wappointment\Models\Reminder;
 
 trait PreparesClientEmail
 {
-    public function prepareClientEmail(Client $client, Appointment $appointment, $eventType)
+    public function prepareClientEmail(Client $client, Appointment $appointment, $eventType, $reminderId = 0)
     {
         $this->client = $client;
         $this->appointment = $appointment;
-
-        $email = Reminder::where('published', 1)
+        $queryReminder = Reminder::where('published', 1)
             ->where('type', Reminder::getType('email'))
-            ->where('event', $eventType)
-            ->first();
+            ->where('event', $eventType);
+        if ($reminderId>0) {
+            $queryReminder->where('id', $reminderId);
+        }
+        $email = $queryReminder->first();
 
         if (!$email) {
             return false;
