@@ -25,6 +25,7 @@
     "js-cookie": "^2.2.0",
     "libphonenumber-js": "^1.7.9",
     "lodash": "^4.17.21",
+    "luxon": "^3.2.1",
     "moment": "2.24.*",
     "moment-timezone": "0.5.*",
     "nouislider": "^11.1.0",
