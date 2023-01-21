@@ -107,6 +107,7 @@ import ControlBar from './ControlBar'
 import FullCalendarWrapper from './FullCalendarWrapper'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import momenttz from '../appMoment'
+import luxonApp from '../appLuxon'
 import WelcomeModal from './WelcomeModal'
 import PopupActions from './PopupActions'
 import PopupAppointment from './PopupAppointment'
@@ -193,7 +194,7 @@ export default {
     },
     activeBgOverId: false,
     shortDayFormat: 'Do MMM YY',
-    headerDayFormat: 'ddd Do',
+    headerDayFormat: { weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true },
     daysProperties: false,
     serviceEvent: null,
     serviceStatus: null,
@@ -692,7 +693,7 @@ export default {
       },
 
       selectMethod(selectInfo) {
-        
+          
             this.startTime = this.toMoment(selectInfo.startStr)
             this.realEndTime = this.toMoment(selectInfo.endStr)
             this.endTime = this.toMoment(selectInfo.endStr)

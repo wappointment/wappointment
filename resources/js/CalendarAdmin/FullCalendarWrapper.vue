@@ -9,6 +9,7 @@
     import interactionPlugin from '@fullcalendar/interaction'
     import momentTimezonePlugin from '../Plugins/fcmoment-timezone/main.esm' //tz recognition
     import momentPlugin from '../Plugins/fcmoment/main.esm'
+    import luxonPlugin from '@fullcalendar/luxon';
     
     export default {
         components:{
@@ -16,7 +17,7 @@
         },
         data() {
             return {
-                calendarPlugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, momentTimezonePlugin, momentPlugin],
+                calendarPlugins: [ dayGridPlugin, timeGridPlugin, interactionPlugin, luxonPlugin],
                 configPrepared: {},
                 eventsPrepared: {},
                 isReady: false,
