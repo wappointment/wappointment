@@ -56,7 +56,7 @@
             <div v-if="fcIsReady">
                 
               <PopupActions v-if="popupActionVisible" @refreshEvents="refreshEvents" @hide="hideModal" 
-              :getThisWeekIntervals="getThisWeekIntervals" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
+              :getThisWeekIntervals="getThisWeekIntervals" :startTimeLuxon="startTimeLuxon" :endTimeLuxon="endTimeLuxon" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
               :momenttz="momenttz" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"/>
 
               <PopupAppointment v-if="popupAppointmentVisible" 
@@ -693,8 +693,10 @@ export default {
       },
 
       selectMethod(selectInfo) {
-          
+            
             this.startTime = this.toMoment(selectInfo.startStr)
+            this.startTimeLuxon = luxonApp.fromISO(selectInfo.startStr)
+            this.endTimeLuxon = luxonApp.fromISO(selectInfo.endStr)
             this.realEndTime = this.toMoment(selectInfo.endStr)
             this.endTime = this.toMoment(selectInfo.endStr)
 
