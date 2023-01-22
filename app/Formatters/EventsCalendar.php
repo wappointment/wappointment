@@ -311,6 +311,10 @@ class EventsCalendar
     {
         $bg_events = [];
         $startDate = new Carbon($this->request->input('start'), $this->timezone);
+        if($startDate->hour !== 0){ // fixed issue next an prevs in summertime
+            $startDate->addDay(1);
+            $startDate->hour(0);
+        }
 
         $daysOfTheWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
