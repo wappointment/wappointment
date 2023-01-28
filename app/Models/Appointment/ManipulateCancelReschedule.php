@@ -4,6 +4,7 @@ namespace Wappointment\Models\Appointment;
 
 use Wappointment\Services\Settings;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Services\DateTime;
 
 trait ManipulateCancelReschedule
 {
@@ -14,6 +15,23 @@ trait ManipulateCancelReschedule
         }
     }
 
+    public function getRescheduleUntilTextAttribute()
+    {
+        return sprintf(
+            __('Reschedule (until %1$s): &#10; %2$s', 'wappointment'),
+            $this->rescheduleLimit(),
+            $this->getLinkRescheduleEvent()
+        );
+    }
+
+    public function getCancelUntilTextAttribute()
+    {
+        return sprintf(
+            __('Cancel (until %1$s): &#10; %2$s', 'wappointment'),
+            $this->cancelLimit(),
+            $this->getLinkCancelEvent()
+        );
+    }
     public function getCanCancelUntilAttribute()
     {
         if (Settings::get('allow_cancellation')) {
@@ -43,14 +61,12 @@ trait ManipulateCancelReschedule
 
     public function cancelLimit()
     {
-        return Carbon::createFromTimestamp($this->canCancelUntilTimestamp())
-            ->setTimezone($this->getClientModel()->getTimezone($this->getStaffTZ()))->format($this->longFormat());
+        return DateTime::i18nDateTime($this->canCancelUntilTimestamp(), $this->getStaffTZ());
     }
 
     public function rescheduleLimit()
     {
-        return Carbon::createFromTimestamp($this->canRescheduleUntilTimestamp())
-            ->setTimezone($this->getClientModel()->getTimezone($this->getStaffTZ()))->format($this->longFormat());
+        return DateTime::i18nDateTime($this->canRescheduleUntilTimestamp(), $this->getStaffTZ());
     }
 
     protected function longFormat()

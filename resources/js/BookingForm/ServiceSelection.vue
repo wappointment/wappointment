@@ -36,9 +36,25 @@ export default {
         }
     },
     computed:{
+        getServiceFilter(){
+            if(this.options.attributesEl === undefined ||  this.options.attributesEl.serviceSelection === undefined){
+                return [];
+            }
+            let arrayids = this.options.attributesEl.serviceSelection.indexOf(',') !== -1 ? 
+            this.options.attributesEl.serviceSelection.split(','):[this.options.attributesEl.serviceSelection]
+
+            for (let i = 0; i < arrayids.length; i++) {
+                arrayids[i] = parseInt(arrayids[i])
+            }
+            return arrayids
+        },
+        firstLevelServiceFilter(){
+            let serviceAlowed = this.getServiceFilter
+            return serviceAlowed.length < 1 ? this.services:this.services.filter(e => serviceAlowed.indexOf(e.id) !== -1)
+        },
         filteredServices(){
             let searchterm = this.search.toLowerCase()
-            return this.services.filter(e => e.name.toLowerCase().indexOf(searchterm) !== -1)
+            return this.firstLevelServiceFilter.filter(e => e.name.toLowerCase().indexOf(searchterm) !== -1)
         }
     },
 

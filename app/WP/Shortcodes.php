@@ -45,6 +45,7 @@ class Shortcodes
         $params = [
             'center' => in_array('center', $atts),
             'auto_open' => in_array('open', $atts),
+            'random' => in_array('random', $atts),
             'large_version' => in_array('large', $atts),
             'popup' => in_array('popup', $atts),
             'pop_off' => in_array('pop_off', $atts),

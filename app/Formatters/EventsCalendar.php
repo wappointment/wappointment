@@ -117,7 +117,7 @@ class EventsCalendar
             'delId' => $event->id,
             'location' => $event->getLocationSlug(),
             'status' => $event->status,
-            'options' => $event->options,
+            'options' => $this->formatEventOptions($event),
             'client' => $preparedClient,
             'type' => 'appointment',
             'recurrent' => isset($event->recurrent) && $event->recurrent > 0,
@@ -131,15 +131,24 @@ class EventsCalendar
                 'short' => [
                     'title' => !empty($preparedClient) ? $preparedClient->name : __('Unknown client', 'wappointment'),
                     /* translators: %1$s is service name, %2$s is the duration  */
-                    'service' => sprintf(__('%1$s - %2$smin', 'wappointment'), $nameService, $event->getDurationInSec() / 60),
+                    'service' => sprintf(__('%1$s - %2$s min', 'wappointment'), $nameService, $event->getDurationInSec() / 60),
                     'time' => $this->formatAppointmentTime($event->start_at, $this->timeFormat)
                         . ' - ' .
-                        $this->formatAppointmentTime($event->end_at, $this->timeFormat),
+                        $this->formatAppointmentTime($event->getEndTimeWithoutBuffer(), $this->timeFormat),
                     'location' => $event->location->name
                 ],
                 'long' => $this->getClientOptions($preparedClient)
             ]
         ];
+    }
+
+    private function formatEventOptions($event)
+    {
+        $options = $event->options;
+        if ($event->isJitsi()) {
+            $options['jitsi_url'] = $event->getMeetingLink();
+        }
+        return $options;
     }
 
     public function baseClassAppointment($owes, $event)
@@ -212,7 +221,6 @@ class EventsCalendar
             'end_at' => $this->end_at_string,
             'staff_id' => $staff_id
         ], $this->isLegacy);
-
         if (empty($appointments)) {
             $appointments = $this->getAppointments($staff_id);
         }
@@ -305,6 +313,10 @@ class EventsCalendar
     {
         $bg_events = [];
         $startDate = new Carbon($this->request->input('start'), $this->timezone);
+        if($startDate->hour !== 0){ // fixed issue next an prevs in summertime
+            $startDate->addDay(1);
+            $startDate->hour(0);
+        }
 
         $daysOfTheWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 

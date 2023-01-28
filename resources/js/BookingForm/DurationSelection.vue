@@ -3,7 +3,7 @@
       <div class="title wtitle" v-if="options!==undefined">{{options.service_duration.select_duration}}</div>
       <div class="d-flex flex-wrap justify-content-around" >
         <div class="wbtn wbtn-cell wbtn-duration wbtn-secondary d-flex align-items-center" role="button" v-for="(duration,idx) in durationsOrdered"  @click="selectDuration(duration)">
-            <span class="mr-2 wduration" :class="{wsold: canSell(duration)}">{{duration.duration}}{{options.general.min}}</span>
+            <span class="mr-2 wduration" :class="{wsold: canSell(duration)}">{{duration.duration}} {{options.general.min}}</span>
             <span v-if="canSell(duration)" class="wprice">{{ formatPrice(duration.woo_price) }}</span>
         </div>
       </div>

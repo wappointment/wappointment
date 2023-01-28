@@ -9,7 +9,6 @@ use Wappointment\ClassConnect\VtzUtil;
 
 class CalendarParser
 {
-
     use CustomTZParser;
 
     protected $url;
@@ -115,9 +114,15 @@ class CalendarParser
         return !empty($vevent->$column) && $vevent->$column->getValue() == 'FREE';
     }
 
+    public function isFreeGoogle($vevent)
+    {
+        $column = 'TRANSP';
+        return !empty($vevent->$column) && $vevent->$column->getValue() === 'TRANSPARENT';
+    }
+
     public function freeSpotted($vevent)
     {
-        return $this->isFreeOutlook($vevent);
+        return $this->isFreeOutlook($vevent) || $this->isFreeGoogle($vevent);
     }
 
     public function getStatus($vevent)
@@ -184,7 +189,20 @@ class CalendarParser
             $timezoneTemp = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
         }
 
+        if (empty($timezoneTemp)) {
+            $timezoneTemp = $this->getStaff()->timezone;
+        }
+
         return Carbon::parse($vcalDateTimeString, $timezoneTemp);
+    }
+
+    private function getStaff()
+    {
+        if (empty($this->staff)) {
+            $this->staff = new \Wappointment\WP\Staff((int)$this->staff_id);
+        }
+
+        return $this->staff;
     }
 
     private function getFormatedDate($carbonTime, $format = WAPPOINTMENT_DB_FORMAT)

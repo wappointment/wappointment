@@ -553,6 +553,8 @@ const allCountries = [
     'it',
     '39',
     0,
+    null,
+    ['06']
   ],
   [
     'Jamaica',
@@ -1269,4 +1271,5 @@ export default allCountries.map(country => ({
   dialCode: country[2],
   priority: country[3] || 0,
   areaCodes: country[4] || null,
+  doNotSlice: country[5] || [],
 }));

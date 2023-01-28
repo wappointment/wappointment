@@ -25,19 +25,18 @@ class CalendarsController extends RestController
 {
     public function get()
     {
-
         $db_update_required = VersionDB::isLessThan(VersionDB::CAN_CREATE_SERVICES);
 
         $calendars = $db_update_required ? $this->getStafflegacy() : $this->getCalendarsStaff();
 
-        $services = (new Services)->get();
+        $services = (new Services())->get();
         $data = [
             'db_required' => $db_update_required,
             'timezones_list' => DateTime::tz(),
             'calendars' => empty($calendars) ? [] : $this->filterCalendarServices($calendars, $services),
             'staffs' => StaffServices::getWP(CurrentUser::isAdmin() ? false : CurrentUser::id()),
             'staffDefault' => Settings::staffDefaults(),
-            'permissions' => (new Permissions)->getCaps(),
+            'permissions' => (new Permissions())->getCaps(),
             'allowStaffCf' => Settings::get('allow_staff_cf'),
         ];
 
@@ -79,7 +78,7 @@ class CalendarsController extends RestController
 
     public function getCalendarsStaff()
     {
-        $calendars = (new CalendarsBack)->get();
+        $calendars = (new CalendarsBack())->get();
 
         return CurrentUser::isAdmin() ? $calendars : array_values(\WappointmentLv::collect($calendars)->filter(function ($e) {
             return $e['wp_uid'] == CurrentUser::id();
@@ -99,7 +98,7 @@ class CalendarsController extends RestController
 
     public function testIsAllowedToRunQuery($idName, Request $request)
     {
-        if (!CurrentUser::isAdmin() && (int)CurrentUser::calendarId() !== (int)$request->input($idName)) {
+        if (!CurrentUser::isAdmin() && !CurrentUser::owns((int)$request->input($idName))) {
             throw new \WappointmentException(Translations::get('forbidden'), 1);
         }
     }
@@ -142,7 +141,7 @@ class CalendarsController extends RestController
 
     protected function refreshRepository()
     {
-        (new CalendarsBack)->refresh();
+        (new CalendarsBack())->refresh();
     }
 
     /**
@@ -197,7 +196,7 @@ class CalendarsController extends RestController
     {
         $this->testIsAllowedToRunQuery('id', $request);
         $calendar = Central::get('CalendarModel')::findOrFail($this->getIdAllowedToSave('id', $request));
-        $permissions = new Permissions;
+        $permissions = new Permissions();
         $permissions->assign($calendar, $request->input('permissions'));
         $this->refreshRepository();
         return ['message' => __('Permissions saved', 'wappointment'), $request->all()];
@@ -215,7 +214,7 @@ class CalendarsController extends RestController
 
     public function getStafflegacy()
     {
-        return [(new StaffLegacy)->fullData()];
+        return [(new StaffLegacy())->fullData()];
     }
 
     public function save(Request $request)
@@ -291,7 +290,7 @@ class CalendarsController extends RestController
     public function connect(Request $request)
     {
         $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
-        $dotcomapi = new DotCom;
+        $dotcomapi = new DotCom();
         $dotcomapi->setStaff($staff_id);
         $result = $dotcomapi->connect($request->get('account_key'));
 
@@ -308,7 +307,7 @@ class CalendarsController extends RestController
     public function disconnect(Request $request)
     {
         $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
-        $dotcom = new DotCom;
+        $dotcom = new DotCom();
         $dotcom->setStaff($staff_id);
         $result = $dotcom->disconnect($staff_id);
 
@@ -325,7 +324,7 @@ class CalendarsController extends RestController
     public function refresh(Request $request)
     {
         $staff_id = !empty($request->input('id')) ? $request->input('id') : Settings::get('activeStaffId');
-        $dotcom = new DotCom;
+        $dotcom = new DotCom();
         $dotcom->setStaff($staff_id);
         $result = $dotcom->refresh();
 

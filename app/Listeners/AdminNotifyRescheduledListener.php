@@ -8,8 +8,12 @@ class AdminNotifyRescheduledListener extends AbstractJobRecordListener
 
     protected function addToJobs($event)
     {
+        $appointment = $event->getAppointment();
+        if ($appointment->service->isGroup()) {
+            return false;
+        }
         $this->data_job = [
-            'appointment' => $event->getAppointment(),
+            'appointment' => $appointment,
             'client' => $event->getClient(),
             'oldAppointment' => $event->getOldAppointment(),
             'args' => $event->getAdditional(),

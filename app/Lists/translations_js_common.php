@@ -1,4 +1,5 @@
 <?php
+
 return [
     'timezone_dropdown_ph' => __('Select or search timezone', 'wappointment'),
     'timezones_count' => __('timezones', 'wappointment'),
@@ -15,6 +16,7 @@ return [
     'bwe_widget_settings' => __('Widget\'s settings', 'wappointment'),
     'bwe_widget_button_title' => __('Button Title', 'wappointment'),
     'bwe_widget_ck_fs_popup' => __('Opens in a full screen popup', 'wappointment'),
+    'bwe_widget_ck_random' => __('Random auto-select', 'wappointment'),
     'bwe_widget_ck_center' => __('Center', 'wappointment'),
     'bwe_widget_ck_open' => __('Auto-open Calendar', 'wappointment'),
     'bwe_widget_ck_full' => __('Full-width Calendar', 'wappointment'),
@@ -35,11 +37,15 @@ return [
     'bwe_general' => __('General', 'wappointment'),
     'bwe_step' => __('Step', 'wappointment'),
     'bwe_edit_more_colors' => __('Edit more colors', 'wappointment'),
+    'bwe_primary_color' => __('Primary Color', 'wappointment'),
 
     'create' => __('Create', 'wappointment'),
     'hide' => __('Hide', 'wappointment'),
     'save' => __('Save', 'wappointment'),
     'edit' => __('Edit', 'wappointment'),
+    'duplicate' => __('Duplicate', 'wappointment'),
+    'translate' => __('Translate', 'wappointment'),
+    'language' => __('Language', 'wappointment'),
     'delete' => __('Delete', 'wappointment'),
     'sort' => __('Sort', 'wappointment'),
     'cancel' => __('Cancel', 'wappointment'),
@@ -51,10 +57,12 @@ return [
     'search' => __('Search', 'wappointment'),
     'close' => __('Close', 'wappointment'),
     'add' => __('Add', 'wappointment'),
+    'reschedule' => __('Reschedule', 'wappointment'),
+    'view_appointment' => __('View appointment', 'View'),
 
     'regav_hours' => __('Hours', 'wappointment'),
     /* translators: %s - minutes */
-    'regav_min' => __('%smin', 'wappointment'),
+    'regav_min' => __('%s min', 'wappointment'),
     /* translators: %s - hours */
     'regav_h' => __('%sh', 'wappointment'),
     'regav_step1' => __('Account Selection', 'wappointment'),

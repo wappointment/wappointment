@@ -7,8 +7,8 @@
               <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
           </div>
           
-          <div class="wappo_module" :class="getWidClass" v-if="isWidget">
-            <div class="wap-wid wclosable" :class="getStepName" >
+          <div class="wappo_module" :class="getWidClass" @click.self="backToButton">
+            <div class="wap-wid wclosable" :class="getStepName" v-if="isWidget">
                 <EventList v-if="showEventList" @selectedEvent="selectedEvent" :list="attributesEl.list" :options="opts"/>
                 <template v-else>
                   <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
@@ -66,7 +66,7 @@ export default {
       if(this.step !== undefined) {
         this.currentStep = this.step
       }
-      this.opts = this.options === undefined ? window.widgetWappointment : Object.assign ({}, this.options)
+      this.opts = this.options === undefined ? Object.assign ({}, window.widgetWappointment) : Object.assign ({}, this.options)
       this.processShortcode()
     },
     mounted(){

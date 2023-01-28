@@ -53,6 +53,8 @@ export default {
             mail_status: this.passedViewData.mail_status,
             allow_rescheduling: this.passedViewData.allow_rescheduling,
             allow_cancellation: this.passedViewData.allow_cancellation,
+            email_footer: this.passedViewData.email_footer,
+            link_color: this.passedViewData.link_color,
             reschedule_link: this.passedViewData.reschedule_link,
             cancellation_link: this.passedViewData.cancellation_link,
             save_appointment_text_link: this.passedViewData.save_appointment_text_link,
@@ -73,6 +75,9 @@ export default {
             multiple_service_type: this.passedViewData.multiple_service_type,
         })
         
+      }
+      if(this.viewData.languages!==false){
+        this.model.canTranslate = true
       }
     },
     computed: {
@@ -128,6 +133,20 @@ export default {
                 },
 
                 ]
+              },
+              {
+                  type: "select",
+                  label: this.get_i18n('language','common'),
+                  model: "lang",
+                  elements: this.canTranslate ? this.viewData.languages.map(function(item){
+                    item.id = item.locale
+                    item.name = item.name + '('+item.locale+')'
+                    return item
+                  }):[],
+                  cast: String,
+                  conditions: [
+                    { model:'canTranslate', values: [true] }
+                  ],
               },
               {
                   type: "input",

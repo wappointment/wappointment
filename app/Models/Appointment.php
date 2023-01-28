@@ -20,7 +20,16 @@ use Wappointment\Services\JobHelper;
 
 class Appointment extends TicketAbstract
 {
-    use CanLock, ManipulateIcs, ManipulateType, ManipulateLinks, ManipulateStaff, ManipulateDotcom, ManipulateService, ManipulateDuration, ManipulateLocation, ManipulateCancelReschedule;
+    use CanLock;
+    use ManipulateIcs;
+    use ManipulateType;
+    use ManipulateLinks;
+    use ManipulateStaff;
+    use ManipulateDotcom;
+    use ManipulateService;
+    use ManipulateDuration;
+    use ManipulateLocation;
+    use ManipulateCancelReschedule;
     protected $table = 'wappo_appointments';
 
     protected $fillable = [
@@ -36,14 +45,18 @@ class Appointment extends TicketAbstract
         'start_at', 'end_at', 'created_at', 'updated_at',
     ];
 
-    const TYPE_PHYSICAL = 0;
-    const TYPE_PHONE = 1;
-    const TYPE_SKYPE = 2;
-    const TYPE_ZOOM = 5;
-    const STATUS_AWAITING_CONFIRMATION = 0;
-    const STATUS_CONFIRMED = 1;
+    public const TYPE_PHYSICAL = 0;
+    public const TYPE_PHONE = 1;
+    public const TYPE_SKYPE = 2;
+    public const TYPE_ZOOM = 5;
+    public const STATUS_AWAITING_CONFIRMATION = 0;
+    public const STATUS_CONFIRMED = 1;
 
-    protected $appends = ['duration_sec', 'location_label', 'can_cancel_until', 'can_reschedule_until'];
+    protected $appends = [
+        'duration_sec', 'location_label',
+        'can_cancel_until', 'can_reschedule_until',
+        'cancel_until_text', 'reschedule_until_text'
+    ];
     private $shared_client = null;
 
     public function order()
@@ -64,6 +77,7 @@ class Appointment extends TicketAbstract
     public function getClientMethodOrEmpty($key)
     {
         $cmodel = $this->getClientModel();
+
         if ($cmodel && !is_null($cmodel) && in_array($key, ['getPhone', 'getSkype', 'getNameForDotcom', 'getEmailForDotcom'])) {
             return call_user_func([$cmodel, $key]);
         }
@@ -87,12 +101,12 @@ class Appointment extends TicketAbstract
 
     public function getTitle($includes_buffer = true)
     {
-        return $this->getStatusTag() .
+        return apply_filters('wappointment_get_title', $this->getStatusTag() .
             $this->getServiceName() . ' ' .
             $this->getDuration() .
             ($includes_buffer ?
                 $this->getBuffer() :
-                '') . ' - ' . $this->getClientMethodOrEmpty('getNameForDotcom');
+                '') . ' - ' . $this->getClientMethodOrEmpty('getNameForDotcom'), $this);
     }
 
     public function getIdentifier()

@@ -3,6 +3,7 @@
 namespace Wappointment\Models\Appointment;
 
 use Wappointment\Messages\EmailHelper;
+use Wappointment\Services\CurrentUser;
 use Wappointment\Services\Jitsi;
 use Wappointment\Services\Settings;
 
@@ -55,6 +56,11 @@ trait ManipulateLinks
         return $this->getLocationVideo() == 'googlemeet' ? 'google' : $this->getLocationVideo();
     }
 
+    public function isJitsi()
+    {
+        return $this->getVideoProvider() === 'jitsi';
+    }
+
     public function getMeetingLink()
     {
 
@@ -72,6 +78,11 @@ trait ManipulateLinks
 
     public function canShowLink()
     {
+        //show link if admin or owns the appointment
+        if (CurrentUser::isAdmin() || CurrentUser::id() == $this->getStaff()->wp_user->ID) {
+            return true;
+        }
+
         $when_shows_link = (int)Settings::get('video_link_shows');
         if (($when_shows_link > 0 && $this->start_at->timestamp - ($when_shows_link * 60) > time()) || $this->isOver()) {
             return false;

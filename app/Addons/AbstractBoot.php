@@ -134,7 +134,6 @@ abstract class AbstractBoot implements Boot
 
     public static function adminInit()
     {
-
         if (\Wappointment\WP\Helpers::isPluginPage()) {
             if (static::$has_back_setup) {
                 static::backSetup();
@@ -174,7 +173,6 @@ abstract class AbstractBoot implements Boot
      */
     public static function hooksAndFiltersWhenInstalled()
     {
-
         add_filter('wappointment_viewdata_' . static::$addon_settings, [static::$name_space . 'Boot', 'getMainSettings']);
         if (static::$has_front_script) {
             add_action('wappointment_enqueue_front_' . static::$addon_key, [static::$name_space . 'Boot', 'frontEnqueue']);
@@ -208,7 +206,7 @@ abstract class AbstractBoot implements Boot
     public static function versionUpdateWarning($plugin)
     {
         if (static::licenceExpired() && !static::hasAccessToNewVersion($plugin['new_version'])) {
-?>
+            ?>
             <hr class="w-major-update-warning__separator" />
             <div class="w-major-update-warning">
                 <div class="error-message error inline notice-error notice-alt">
@@ -249,7 +247,6 @@ abstract class AbstractBoot implements Boot
 
     public static function registerAddon($addons)
     {
-
         $addons[static::$addon_key] = [
             'name' => static::$addon_name,
             'icon' => static::$addon_settings_icon,

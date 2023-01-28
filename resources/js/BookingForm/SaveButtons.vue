@@ -4,15 +4,15 @@
         <span class="wbtn-secondary wbtn googlecal d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToGoogle)">
             <WapImage :faIcon="['fab', 'google']" size="md" /> <span class="ml-2">Google</span>
         </span>
-        <span class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToIcal)">
+        <a class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" :href="saveToIcal" download="event.ics">
             <WapImage :faIcon="['fab', 'windows']" size="md" /> <span class="ml-2">Outlook</span>
-        </span>
+        </a>
         <span class="wbtn-secondary wbtn outlook d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToOutlookOnline)">
             <WapImage :faIcon="['fab', 'windows']" size="md" /> <span class="ml-2">Outlook Live</span>
         </span>
-        <span class="wbtn-secondary wbtn d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToIcal)">
+        <a class="wbtn-secondary wbtn d-flex align-items-center d-flex-inline" :href="saveToIcal" download="event.ics">
             <WapImage :faIcon="['fab', 'apple']" size="md" /> <span class="ml-2">iCal</span>
-        </span>
+        </a>
         <span class="wbtn-secondary wbtn d-flex align-items-center d-flex-inline" role="button" @click="goToUrl(saveToYahoo)">
             <WapImage :faIcon="['fab', 'yahoo']" size="md" /> <span class="ml-2">Yahoo</span>
         </span>
@@ -73,7 +73,8 @@ export default {
         },
         
         generateLink(typeLink = 'view-event', html = false, label = ''){
-            let url = apiWappointment.frontPage + '&view='+typeLink+'&appointmentkey=' + this.appointment.edit_key
+            let startparam = apiWappointment.frontPage.indexOf('?') === -1 ? '?':'&'
+            let url = apiWappointment.frontPage + startparam +'view='+typeLink+'&appointmentkey=' + this.appointment.edit_key
             return this.getLink(window.wappointmentExtends.filter('urlAppointmentKey', url, {appointment:this.appointment, ticket:this.ticket})
             , html , label )
         },
@@ -87,8 +88,12 @@ export default {
                 ((this.canCancel && this.canReschedule) ?' - ':'') 
                 + (this.canCancel ? this.generateLink('cancel-event', html, this.options.i18n.cancel):'')
             }
-            return (this.canReschedule? lnb + lnb + this.options.i18n.reschedule+" " + lnb +  this.generateLink('reschedule-event'):'') +
-            (this.canCancel ? lnb + lnb + this.options.i18n.cancel+" " + lnb + this.generateLink('cancel-event'):'')
+            
+            return (this.canReschedule? lnb + lnb + 
+            this.appointment.reschedule_until_text.replace('&#10;','').replace('\n',lnb) :'') +
+            (this.canCancel ? lnb + lnb + 
+            this.appointment.cancel_until_text.replace('&#10;','').replace('\n',lnb)
+            + ' ' + lnb + this.generateLink('cancel-event'):'')
         },
         getUnixNow(){
             return momenttz().unix()
@@ -120,7 +125,12 @@ export default {
         },
 
         endDate(){
-            return momenttz.unix(this.appointment.end_at)
+            return momenttz.unix(this.endDateMinusBuffer)
+        },
+
+        endDateMinusBuffer(){
+            let buffer_time_sec = this.appointment.options.buffer_time !== undefined ? parseInt(this.appointment.options.buffer_time) *60:0
+            return this.appointment.end_at - buffer_time_sec
         },
 
         formattedStartDate(){
@@ -170,7 +180,9 @@ export default {
                 'BEGIN:VCALENDAR',
                 'VERSION:2.0',
                 'BEGIN:VEVENT',
-                'ORGANIZER:'          + this.appointment.ics_organizer,
+                this.appointment.ics_organizer,
+                'CATEGORIES:APPOINTMENT',
+                'TRANSP:OPAQUE',
                 'URL:'          + document.URL,
                 'DTSTART:'      + this.formattedStartDate,
                 'DTEND:'        + this.formattedEndDate,

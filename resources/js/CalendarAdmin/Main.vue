@@ -26,10 +26,20 @@
                 <a v-if="!isToday" class="btn btn-sm btn-secondary align-self-center" href="javascript:;" @click="today">{{ get_i18n('calendar_this_week', 'common') }}</a>
               </div>
           </div>
+           <div v-if="rescheduleModeOn" id="follower" >
+            <div v-if="canMoveReschedule">{{ get_i18n('click_for_new_start','calendar') }}</div>
+            <div v-else>{{ get_i18n('confirm_new_start','calendar') }} <div>{{ formattedNewStart }} </div>
+            <button class="btn btn-link" @click="resetRescheduleMode">{{ get_i18n('cancel','common') }}</button>
+            <button class="btn btn-secondary" @click="rescheduleDifferentTime">{{ get_i18n('select_another_time','calendar') }}</button>
+            <button class="btn btn-primary"  @click="acceptReschedule">{{ get_i18n('reschedule','common') }}</button>
+            </div>
+          </div>
         </div>
+       
       </StickyBar>
 
-      <div class="full-width center-content calendar-wrap full-width-layout" >
+      <div class="full-width center-content calendar-wrap full-width-layout" @mousemove="mouseMove">
+        <DragActions v-if="false && fcIsReady && dragActionsVisible" @prev="prevWeek" @next="nextWeek" />
         <div class="wrap">
             
             <div  v-if="fullCalOption!==undefined">
@@ -45,16 +55,20 @@
             <ControlBar v-if="viewData!==null" :progressWizard="viewData.wizard_step" />
 
             <div v-if="fcIsReady">
-                
               <PopupActions v-if="popupActionVisible" @refreshEvents="refreshEvents" @hide="hideModal" 
-              :getThisWeekIntervals="getThisWeekIntervals" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
+              :getThisWeekIntervals="getThisWeekIntervals" :startTimeLuxon="startTimeLuxon" :endTimeLuxon="endTimeLuxon" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
               :momenttz="momenttz" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"/>
+
+              <PopupAppointment v-if="popupAppointmentVisible" 
+              @refreshEvents="refreshEvents" @rescheduleOn="rescheduleOn" @hide="hideModal" 
+              :displayTimezone="displayTimezone" :activeStaff="activeStaff"
+              :getThisWeekIntervals="getThisWeekIntervals" :appointment="activeAppointment" :momenttz="momenttz"  :viewData="viewData" />
               
               <WapModal v-if="showRegularAv" :show="showRegularAv" @hide="hideRegavModal" large>
-                <h4 slot="title" class="modal-title">Modify your Weekly Availability</h4>
+                <h4 slot="title" class="modal-title">{{ get_i18n('modify_weekly_availability','calendar') }}</h4>
 
                   <WeeklyAvailability noback :calendar="activeStaff" :timezones_list="viewData.timezones_list" :staffs="viewData.staff"/>
-                    <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">Close</button>
+                    <button type="button" class="btn btn-secondary btn-lg mt-2" @click="hideRegavModal">{{ get_i18n('close','common') }}</button>
                 
               </WapModal>
 
@@ -67,6 +81,24 @@
     <MainStyle v-if="fcIsReady" :viewData="viewData"/>
   </div>
 </template>
+<style>
+#follower{
+    border-radius: 1rem;
+  box-shadow: 0 1.2rem 1rem 0 rgba(0,0,0,0.1);
+  margin: 0 auto;
+  width: 450px;
+  text-align: center;
+  position: absolute;
+  border: 2px solid var(--warning);
+  background-color: white;
+  color: #797676;
+  font-size: 1.1rem;
+  font-weight: bold;
+  left: 36%;
+  padding: 0.4rem;
+  top:4px;
+}
+</style>
 <script>
 import WeeklyAvailability from '../RegularAvailability/View'
 import abstractView from '../Views/Abstract'
@@ -75,8 +107,11 @@ import ControlBar from './ControlBar'
 import FullCalendarWrapper from './FullCalendarWrapper'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import momenttz from '../appMoment'
+import luxonApp from '../appLuxon'
 import WelcomeModal from './WelcomeModal'
 import PopupActions from './PopupActions'
+import DragActions from './DragActions'
+import PopupAppointment from './PopupAppointment'
 import AppointmentRender from './AppointmentRender'
 import FreeSlotsSelector from './FreeSlotsSelector'
 import CalendarSettings from './CalendarSettings'
@@ -118,6 +153,8 @@ export default {
       WelcomeModal,
       CalendarSettings,
       PopupActions,
+      DragActions
+      PopupAppointment,
       MainStyle
   }, 
   data: () => ({
@@ -159,7 +196,7 @@ export default {
     },
     activeBgOverId: false,
     shortDayFormat: 'Do MMM YY',
-    headerDayFormat: 'ddd Do',
+    headerDayFormat: { weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true },
     daysProperties: false,
     serviceEvent: null,
     serviceStatus: null,
@@ -171,6 +208,14 @@ export default {
     activeStaff: null,
     rolledOverName: '',
     popupActionVisible:false,
+    dragActionsVisible: false
+    popupAppointmentVisible: false,
+    activeAppointment: null,
+    rescheduleModeOn: false,
+    moveCursor:false,
+    canMoveReschedule: true,
+    newStartDate:null,
+    tempRescheduleEvent: null
   }),
 
   created(){
@@ -193,6 +238,9 @@ export default {
   },
  
  computed: {
+   formattedNewStart(){
+     return this.newStartDate.format(this.viewData.date_format+' '+this.viewData.time_format)
+   },
    activeAvailability(){
      return this.activeStaff.availability
    },
@@ -489,6 +537,7 @@ export default {
                 eventDragStop: this.eventDragStop,
                 eventDrop: this.eventPatch,
                 eventResize: this.eventPatch,
+                dateClick: this.dateClick
               },
               props: {
                 header: {
@@ -523,7 +572,8 @@ export default {
                 eventLimit: true,
                 events: this.loadingEvents,
                 eventAllow: this.eventAllow,
-                eventRender: this.eventRender
+                eventRender: this.eventRender,
+                
               }
               
             }
@@ -532,6 +582,92 @@ export default {
               this.fullCalOption.props.defaultDate = defaultDate
             }
       },
+      rescheduleOn(){
+        this.rescheduleModeOn = true
+      },
+      dateClick(info){
+        if(!this.canMoveReschedule){
+          return
+        }
+        /* console.log(this.toMoment(info.dateStr), this.toMoment(info.dateStr).unix()) */
+        this.canMoveReschedule = false
+        this.newStartDate = this.toMoment(info.dateStr)
+        let duration = this.toMoment(this.activeAppointment.end).unix() - this.toMoment(this.activeAppointment.start).unix()
+        this.tempRescheduleEvent = this.$refs.calendar.getApi.addEvent(
+          { // this object will be "parsed" into an Event Object
+            title: 'confirm new event', // a property!
+            start: this.toMoment(info.dateStr).format(), // a property!
+            end: this.toMoment(info.dateStr).add(duration,'seconds').format() // a property! ** see important note below about 'end' **
+          }
+        )
+        
+/*         if(this.rescheduleModeOn){
+          console.log('rescheduling and listening for reschedule events')
+        } */
+      },
+
+      rescheduleDifferentTime(){
+        this.canMoveReschedule = true
+        if(this.tempRescheduleEvent !== null){
+          this.tempRescheduleEvent.remove()
+        }
+      },
+      acceptReschedule(){
+        //console.log('this.activeAppointment',this.activeAppointment)
+        let duration = this.toMoment(this.activeAppointment.end).unix() - this.toMoment(this.activeAppointment.start).unix()
+        
+        this.request(this.editEventRequest, {
+          eventId: this.activeAppointment.extendedProps.dbid, 
+          start: this.newStartDate.unix(), 
+          end: this.newStartDate.unix()+duration
+          },
+          undefined,false,  this.resetRescheduleMode)
+      },
+
+      resetRescheduleMode(){
+        if(this.tempRescheduleEvent !== null){
+          this.tempRescheduleEvent.remove()
+        }
+        this.activeAppointment = null
+          this.rescheduleModeOn = false
+          this.moveCursor =false
+          this.canMoveReschedule = true
+          this.newStartDate = null
+          this.refreshEvents()
+      },
+      mouseMove(event) {
+        if(this.rescheduleModeOn ){
+          /* let coordinates = {x:event.clientX, y:event.clientY}
+          if(!this.moveCursor || this.distanceUpdate(coordinates)){
+            
+            
+            this.moveCursor = coordinates
+          } */
+          if(this.canMoveReschedule){
+            /* let xp = 40, yp = 40;
+            // change 12 to alter damping higher is slower
+              xp += (event.pageX - xp) 
+              yp += (event.pageY - yp) 
+              document.getElementById("follower").style.left = event.pageX+"px"
+              document.getElementById("follower").style.top = event.pageY +"px" */
+          }
+          
+          
+        }
+      },
+
+      distanceUpdate(coordinates){
+        let newdist = this.getDistance(coordinates.x, coordinates.y,this.moveCursor.x, this.moveCursor.y)
+        return newdist > 50;
+      },
+
+      getDistance(x1, y1, x2, y2){
+        let y = x2 - x1;
+        let x = y2 - y1;
+
+        return Math.sqrt(x * x + y * y);
+      },
+
       loadAgain(staffChange){
         this.loaded({data:Object.assign({},this.viewData)}, true, staffChange)
       },
@@ -560,8 +696,10 @@ export default {
       },
 
       selectMethod(selectInfo) {
-        
+            
             this.startTime = this.toMoment(selectInfo.startStr)
+            this.startTimeLuxon = luxonApp.fromISO(selectInfo.startStr)
+            this.endTimeLuxon = luxonApp.fromISO(selectInfo.endStr)
             this.realEndTime = this.toMoment(selectInfo.endStr)
             this.endTime = this.toMoment(selectInfo.endStr)
 
@@ -581,11 +719,26 @@ export default {
       
       hideModal(){
         this.popupActionVisible = false
+        this.popupAppointmentVisible = false
       },
       openCreateModal() {
         this.disableBgEvent = false
         this.popupActionVisible = true
       },
+      openAppointmentModal(appointment) {
+        this.disableBgEvent = false
+        this.popupAppointmentVisible = true
+        this.activeAppointment = appointment
+      },
+
+      hideWeeksControls(){
+        this.dragActionsVisible = false
+      },
+      showWeeksControls() {
+        this.dragActionsVisible = true
+      },
+
+      
 
       setMinAndMax(){
             
@@ -706,7 +859,7 @@ export default {
           this.queryParameters = {
               page: 'wappointment_calendar',
               start: this.firstDay.format(),
-              end: this.firstDay.clone().day(8).format(),
+              end: this.lastDay.format(),
               timezone: this.displayTimezone,
               staff: this.activeStaff.id,
             }
@@ -744,7 +897,7 @@ export default {
       
       refreshEvents(){
         this.hasBeenSetCalProps = false
-        this.$refs.calendar.fireMethod('refetchEvents')
+        this.$refs.calendar.refresh()
       },
 
     }

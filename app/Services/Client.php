@@ -2,6 +2,7 @@
 
 namespace Wappointment\Services;
 
+use Wappointment\Helpers\Site;
 use Wappointment\Models\Client as MClient;
 use Wappointment\Validators\HttpRequest\Booking;
 
@@ -12,7 +13,7 @@ class Client
 
         $client = static::clientLoadAdd($booking);
 
-        if (static::maxActiveBookingReached($client)) {
+        if (static::maxActiveBookingReached($client, $booking)) {
             throw new \WappointmentException(__('Max active bookings reached! Cancel one of your appointments in order to book a new one.', 'wappointment'), 1);
         }
 
@@ -28,10 +29,10 @@ class Client
         //book with that client
         return $client->bookLegacy($booking);
     }
-    protected static function maxActiveBookingReached(MClient $client)
+    protected static function maxActiveBookingReached(MClient $client, Booking $booking)
     {
         $max_active_bookings = (int)Settings::get('max_active_bookings');
-        return $max_active_bookings > 0 && $client->hasActiveBooking() >= $max_active_bookings;
+        return $max_active_bookings > 0 && $client->hasActiveBooking($booking->get('staff_id')) >= $max_active_bookings;
     }
 
     protected static function clientLoadAdd(Booking $booking)
@@ -47,6 +48,11 @@ class Client
         if (empty($dataClient['name'])) {
             $dataClient['name'] = '';
         }
+
+        if (empty($dataClient['options']['locale'])) {
+            $dataClient['options']['locale'] = Site::locale();
+        }
+        
         if (empty($client)) {
             $client = MClient::create($dataClient);
         } else {

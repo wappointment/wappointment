@@ -102,6 +102,7 @@ import MixinLegacy from './MixinLegacy'
 import MixinChange from './MixinChange'
 import MixinConvertDate from './MixinConvertDate'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
+import { DateTime } from "luxon";
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
     'RescheduleConfirm': RescheduleConfirm,
@@ -178,7 +179,10 @@ export default {
     },
     watch:{
         selectedSlot(newVal, oldVal){
+            
             if(newVal != oldVal){
+                this.appointmentStartsAt = DateTime.fromSeconds(this.selectedSlot.start).toLocaleString(DateTime.DATETIME_MED)
+            return '';
                 this.getFormattedDate(
                 this.appointmentStartsAt, 
                 this.selectedSlot, 
@@ -196,6 +200,9 @@ export default {
         
         mustSelectStaff(){
             return this.attributesEl !== undefined && this.attributesEl.staffPage !== undefined && this.attributesEl.staffPage == 1
+        },
+        randomSelection(){
+            return this.attributesEl !== undefined && this.attributesEl.random !== undefined && this.attributesEl.random == 1
         },
         staffIsSelected(){
             return [null, undefined, false].indexOf(this.selectedStaff) === -1
@@ -517,6 +524,11 @@ export default {
         getDefaultStaff(){
             let ordered = []
             if(this.filterStaffByService!== undefined && this.filterStaffByService.length > 1){
+
+                if(this.randomSelection){
+                    return this.filterStaffByService[Math.floor(Math.random() * this.filterStaffByService.length)]
+                }
+
                 for (let i = 0; i < this.filterStaffByService.length; i++) {
                     if(this.filterStaffByService[i].services.length > 0 && this.filterStaffByService[i].availability.length > 0){
                         ordered.push({

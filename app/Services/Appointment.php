@@ -276,8 +276,6 @@ class Appointment
 
     public static function cancel(AppointmentModel $appointment)
     {
-        \Wappointment\Models\Log::canceledAppointment($appointment);
-
         $client = $appointment->client()->first();
         $staff_id_regenerate = $appointment->getStaffId();
         $appointment->incrementSequence();
