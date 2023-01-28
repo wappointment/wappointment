@@ -153,7 +153,7 @@ export default {
       WelcomeModal,
       CalendarSettings,
       PopupActions,
-      DragActions
+      DragActions,
       PopupAppointment,
       MainStyle
   }, 
