@@ -9,10 +9,12 @@ use Wappointment\Services\Settings;
 
 class Reminder extends Model
 {
+    use CanSortByParent;
+    
     protected $table = 'wappo_reminders';
 
     protected $fillable = [
-        'subject', 'type', 'event', 'locked', 'options', 'published'
+        'subject', 'type', 'event', 'locked', 'options', 'published', 'parent', 'lang'
     ];
 
     protected $casts = [
