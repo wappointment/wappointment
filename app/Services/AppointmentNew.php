@@ -80,7 +80,6 @@ class AppointmentNew
 
     public static function adminCalendarUpdateAppointmentArray($addedEvent, $appointment)
     {
-
         if (!empty($appointment->service)) {
             $addedEvent['service'] = $appointment->service->toArray();
             foreach ($appointment->service->locations as $location) {
@@ -187,7 +186,6 @@ class AppointmentNew
 
     public static function confirm($id, $soft = false, $client = null, $order = null)
     {
-
         $oldAppointment = $appointment = static::getAppointmentModel()::where('id', (int)$id)
             ->where('status', static::getAppointmentModel()::STATUS_AWAITING_CONFIRMATION)->first();
         if (empty($appointment)) {
@@ -231,24 +229,29 @@ class AppointmentNew
         return $result;
     }
 
-    public static function reschedule($edit_key, $start_at)
+    public static function reschedule($edit_key, $start_at, $admin = false, $appointmentObject= null)
     {
         $allowrescheduling = (bool) Settings::get('allow_rescheduling');
-        if (!$allowrescheduling) {
+        if (!$admin && !$allowrescheduling) {
             throw new \WappointmentException('Appointment rescheduling is not allowed', 1);
         }
-        if (is_array($edit_key)) {
+        if (!$admin && is_array($edit_key)) {
             throw new \WappointmentException(__("Malformed parameter", 'wappointment'), 1);
         }
-        $appointment = static::getAppointmentModel()::where('edit_key', $edit_key)->first();
-        if (!apply_filters('wappointment_reschedule_allowed', $allowrescheduling, ['appointment' => $appointment])) {
+        if ($admin) {
+            $appointment = $appointmentObject;
+        } else {
+            $appointment = static::getAppointmentModel()::where('edit_key', $edit_key)->first();
+        }
+
+        if (!$admin && !apply_filters('wappointment_reschedule_allowed', $allowrescheduling, ['appointment' => $appointment])) {
             throw new \WappointmentException('Appointment rescheduling is not allowed', 1);
         }
         $oldAppointment = $appointment->replicate();
         if (empty($appointment)) {
             throw new \WappointmentException(__("Can't find appointment", 'wappointment'), 1);
         }
-        if (!$appointment->canStillReschedule()) {
+        if (!$admin && !$appointment->canStillReschedule()) {
             throw new \WappointmentException(__("Can't reschedule appointment anymore", 'wappointment'), 1);
         }
 
@@ -269,14 +272,29 @@ class AppointmentNew
     protected static function appointmentModified($appointment, $oldAppointment)
     {
         (new Availability($appointment->staff_id))->regenerate();
+
+        if ($appointment->service->isGroup() && class_exists('\\WappointmentAddonGroup\\Models\\AppointmentsParticipants')) {
+            $participants = \WappointmentAddonGroup\Models\AppointmentsParticipants::where('appointment_id', $appointment->id)
+            ->with(['client'])
+            ->get();
+
+            foreach ($participants as $participant) {
+                $client = $participant->client;
+                static::sendRescheduleNotification($appointment, $client, $oldAppointment);
+            }
+        } else {
+            static::sendRescheduleNotification($appointment, $appointment->getClientModel(), $oldAppointment);
+        }
         //send rescheduled email to client and admin
         $clientModel = $appointment->getClientModel();
-
+    }
+    public static function sendRescheduleNotification($appointment, $client, $oldAppointment)
+    {
         JobHelper::dispatch('AppointmentRescheduledEvent', [
             'appointment' => $appointment,
-            'client' => $clientModel,
+            'client' => $client,
             'oldAppointment' => $oldAppointment
-        ], $clientModel);
+        ], $client);
     }
 
     public static function unixToDb($unixTS)
@@ -373,7 +391,6 @@ class AppointmentNew
 
     protected static function bookCreate($data, Client $client, $is_admin = false, $status = 0, $adminBooked = false)
     {
-
         $dataReturned = static::create($data, $client, $status, $adminBooked);
 
         JobHelper::dcCreate($dataReturned['appointment']);
@@ -445,24 +462,36 @@ class AppointmentNew
         //used for credit return in addons
         apply_filters('wappointment_cancelled_appointment', $appointment);
 
-        \Wappointment\Models\Log::canceledAppointment($appointment);
+        if ($appointment->service->isGroup() && class_exists('\\WappointmentAddonGroup\\Models\\AppointmentsParticipants')) {
+            $participants = \WappointmentAddonGroup\Models\AppointmentsParticipants::where('appointment_id', $appointment->id)
+            ->with(['client'])
+            ->get();
 
-        $client = is_null($client) ? $appointment->getClientModel() : $client;
+            foreach ($participants as $participant) {
+                $client = $participant->client;
+                static::sendCancelNotification($appointment, $client);
+                $participant->delete();
+            }
+        } else {
+            static::sendCancelNotification($appointment, is_null($client) ? $appointment->getClientModel() : $client);
+        }
 
         //clearing charges for that appointment clearing order prices
         if (!Payment::isWooActive()) {
             static::clearCharges([$appointment->id]);
         }
-
         static::destroy($appointment, $force);
 
+        return true;
+    }
+
+    public static function sendCancelNotification($appointment, $client)
+    {
         //trigger cancelled email to user and cancelled notification to admin
         JobHelper::dispatch('AppointmentCanceledEvent', [
             'appointment' => $appointment,
             'client' => $client
         ], $client);
-
-        return true;
     }
 
     public static function destroy($appointment, $force = false)

@@ -9,7 +9,10 @@ use Wappointment\ClassConnect\Carbon;
 
 class Client extends Model
 {
-    use SoftDeletes, CanBook, CanBookLegacy;
+    use SoftDeletes;
+    use CanBook;
+    use CanBookLegacy;
+    use CanGetCustomFieldValue;
 
     protected $table = 'wappo_clients';
     public $generatingOrder = true;
@@ -90,7 +93,16 @@ class Client extends Model
 
     public function getCustomField($tag = false)
     {
-        return empty($tag) || empty($this->options[$tag['key']]) ? '' : $this->options[$tag['key']];
+        return empty($tag) || empty($this->options[$tag['key']]) ? '' : $this->getCfReadableValue($tag);
+    }
+
+    private function getCfReadableValue($tag)
+    {
+        if (class_exists('\\WappointmentAddonServices\\Services\\CustomFields')) {
+            return $this->getCustomFieldFormattedValue($tag);
+        }
+
+        return $this->options[$tag['key']];
     }
 
     protected function getRealDuration($service)

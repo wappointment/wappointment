@@ -267,6 +267,12 @@ class Main extends AbstractRoutes
                     'controller' => 'EventsController',
                     'cap' => 'wappo_calendar_cancel'
                 ],
+                '/events/forceDelete' => [
+                    'method' => 'forceDelete',
+                    'controller' => 'EventsController',
+                    'cap' => 'wappo_calendar_cancel'
+                ],
+
                 '/events/patch' => [
                     'method' => 'patch',
                     'controller' => 'EventsController',
@@ -366,7 +372,7 @@ class Main extends AbstractRoutes
 
     public function __construct()
     {
-        new Init;
+        new Init();
         parent::__construct();
     }
 }

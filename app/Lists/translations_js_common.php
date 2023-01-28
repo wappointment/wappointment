@@ -1,4 +1,5 @@
 <?php
+
 return [
     'timezone_dropdown_ph' => __('Select or search timezone', 'wappointment'),
     'timezones_count' => __('timezones', 'wappointment'),
@@ -56,6 +57,8 @@ return [
     'search' => __('Search', 'wappointment'),
     'close' => __('Close', 'wappointment'),
     'add' => __('Add', 'wappointment'),
+    'reschedule' => __('Reschedule', 'wappointment'),
+    'view_appointment' => __('View appointment', 'View'),
 
     'regav_hours' => __('Hours', 'wappointment'),
     /* translators: %s - minutes */

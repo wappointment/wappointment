@@ -86,7 +86,6 @@ class ReminderController extends RestController
             'cancellation_link' => Settings::get('cancellation_link'),
             'save_appointment_text_link' => Settings::get('save_appointment_text_link'),
             'multiple_service_type' => \Wappointment\Helpers\Service::hasMultipleTypes($this->isLegacy()),
-            'reminders' => $queryReminders->getParentSorting(),
             'recipient' => wp_get_current_user()->user_email,
             'defaultReminders' => [
                 'email' => Reminder::getSeedReminder()
@@ -99,6 +98,9 @@ class ReminderController extends RestController
 
         $data['email_logo'] = $this->isLegacy() ? Settings::getStaff('email_logo') : Settings::get('email_logo');
 
-        return apply_filters('wappointment_settings_reminders_get', $data);
+        return array_merge(
+            apply_filters('wappointment_settings_reminders_get', $data),
+            ['reminders' => $queryReminders->getParentSorting()]
+        ) ;
     }
 }

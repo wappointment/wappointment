@@ -8,12 +8,11 @@ use Wappointment\Models\Reminder;
 
 trait PreparesClientEmail
 {
-    public function prepareClientEmail(Client $client, Appointment $appointment, $eventType)
+    public function prepareClientEmail(Client $client, Appointment $appointment, $eventType, $reminderId = 0)
     {
         $this->client = $client;
         $this->appointment = $appointment;
-
-        $email = $this->tryToLoadEmail($eventType, $this->client->options['locale'] ?? false);
+        $email = $this->tryToLoadEmail($eventType, $this->client->options['locale'] ?? false, $reminderId);
 
         if (!$email) {
             return false;
@@ -37,13 +36,16 @@ trait PreparesClientEmail
         return $this->tryEmail($eventType);
     }
 
-    private function tryEmail($eventType, $localized = false)
+    private function tryEmail($eventType, $localized = false, $reminderId)
     {
         $query = Reminder::where('published', 1)
         ->where('type', Reminder::getType('email'))
         ->where('event', $eventType);
         if($localized){
             $query->where('lang', $localized);
+        }
+        if ($reminderId>0) {
+            $query->where('id', $reminderId);
         }
         return $query->first();
     }
