@@ -39,6 +39,7 @@
       </StickyBar>
 
       <div class="full-width center-content calendar-wrap full-width-layout" @mousemove="mouseMove">
+        <DragActions v-if="false && fcIsReady && dragActionsVisible" @prev="prevWeek" @next="nextWeek" />
         <div class="wrap">
             
             <div  v-if="fullCalOption!==undefined">
@@ -54,7 +55,6 @@
             <ControlBar v-if="viewData!==null" :progressWizard="viewData.wizard_step" />
 
             <div v-if="fcIsReady">
-                
               <PopupActions v-if="popupActionVisible" @refreshEvents="refreshEvents" @hide="hideModal" 
               :getThisWeekIntervals="getThisWeekIntervals" :startTimeLuxon="startTimeLuxon" :endTimeLuxon="endTimeLuxon" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
               :momenttz="momenttz" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"/>
@@ -110,6 +110,7 @@ import momenttz from '../appMoment'
 import luxonApp from '../appLuxon'
 import WelcomeModal from './WelcomeModal'
 import PopupActions from './PopupActions'
+import DragActions from './DragActions'
 import PopupAppointment from './PopupAppointment'
 import AppointmentRender from './AppointmentRender'
 import FreeSlotsSelector from './FreeSlotsSelector'
@@ -152,6 +153,7 @@ export default {
       WelcomeModal,
       CalendarSettings,
       PopupActions,
+      DragActions
       PopupAppointment,
       MainStyle
   }, 
@@ -206,6 +208,7 @@ export default {
     activeStaff: null,
     rolledOverName: '',
     popupActionVisible:false,
+    dragActionsVisible: false
     popupAppointmentVisible: false,
     activeAppointment: null,
     rescheduleModeOn: false,
@@ -727,6 +730,15 @@ export default {
         this.popupAppointmentVisible = true
         this.activeAppointment = appointment
       },
+
+      hideWeeksControls(){
+        this.dragActionsVisible = false
+      },
+      showWeeksControls() {
+        this.dragActionsVisible = true
+      },
+
+      
 
       setMinAndMax(){
             
