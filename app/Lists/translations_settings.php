@@ -88,7 +88,7 @@ return [
 
     'advanced_title' => __('Advanced', 'wappointment'),
     'addons_title' => 'Addons',
-
+    'only_unpublish' => __('You can only unpublish it', 'wappointment'),
     'when_reminder_sent' => __('When is the reminder sent? (before the appointment)', 'wappointment'),
     'select_unit' => __('Select unit', 'wappointment'),
     'header_image' => __('Header Image', 'wappointment'),

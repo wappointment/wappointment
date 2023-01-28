@@ -1,4 +1,5 @@
 <?php
+
 return [
     'timezone_dropdown_ph' => __('Select or search timezone', 'wappointment'),
     'timezones_count' => __('timezones', 'wappointment'),
@@ -36,11 +37,15 @@ return [
     'bwe_general' => __('General', 'wappointment'),
     'bwe_step' => __('Step', 'wappointment'),
     'bwe_edit_more_colors' => __('Edit more colors', 'wappointment'),
+    'bwe_primary_color' => __('Primary Color', 'wappointment'),
 
     'create' => __('Create', 'wappointment'),
     'hide' => __('Hide', 'wappointment'),
     'save' => __('Save', 'wappointment'),
     'edit' => __('Edit', 'wappointment'),
+    'duplicate' => __('Duplicate', 'wappointment'),
+    'translate' => __('Translate', 'wappointment'),
+    'language' => __('Language', 'wappointment'),
     'delete' => __('Delete', 'wappointment'),
     'sort' => __('Sort', 'wappointment'),
     'cancel' => __('Cancel', 'wappointment'),
@@ -52,6 +57,8 @@ return [
     'search' => __('Search', 'wappointment'),
     'close' => __('Close', 'wappointment'),
     'add' => __('Add', 'wappointment'),
+    'reschedule' => __('Reschedule', 'wappointment'),
+    'view_appointment' => __('View appointment', 'View'),
 
     'regav_hours' => __('Hours', 'wappointment'),
     /* translators: %s - minutes */

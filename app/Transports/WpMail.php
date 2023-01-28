@@ -8,7 +8,10 @@ use Wappointment\WP\PluginsDetection;
 
 class WpMail extends Transport
 {
-    use WpMailPatched, CanSendPlainText, CanSendMultipart, CanSendPlugin;
+    use WpMailPatched;
+    use CanSendPlainText;
+    use CanSendMultipart;
+    use CanSendPlugin;
     private $configSave = [];
 
     public function __construct($config)

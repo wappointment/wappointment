@@ -2,6 +2,7 @@
 
 namespace Wappointment\Services;
 
+use Wappointment\Helpers\Site;
 use Wappointment\Models\Client as MClient;
 use Wappointment\Validators\HttpRequest\Booking;
 
@@ -47,6 +48,11 @@ class Client
         if (empty($dataClient['name'])) {
             $dataClient['name'] = '';
         }
+
+        if (empty($dataClient['options']['locale'])) {
+            $dataClient['options']['locale'] = Site::locale();
+        }
+        
         if (empty($client)) {
             $client = MClient::create($dataClient);
         } else {

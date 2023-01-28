@@ -228,7 +228,17 @@ class ViewsData
                     'icon' => 'dashicons-lock txt red',
                     'component' => 'StatusBusyConfirm',
                 ]
-            ]
+                ],
+                'buttons_appointment' => [
+                    [
+                        'key' => 'cancel',
+                        'title' => __('Cancel', 'wappointment'),
+                        'subtitle' => '',
+                        'icon' => 'dashicons-dismiss red',
+                        'component' => 'CancelBooking',
+                    ],
+
+                ]
         ];
 
         if (VersionDB::canServices()) {

@@ -9,10 +9,12 @@ use Wappointment\Services\Settings;
 
 class Reminder extends Model
 {
+    use CanSortByParent;
+    
     protected $table = 'wappo_reminders';
 
     protected $fillable = [
-        'subject', 'type', 'event', 'locked', 'options', 'published'
+        'subject', 'type', 'event', 'locked', 'options', 'published', 'parent', 'lang'
     ];
 
     protected $casts = [
@@ -22,15 +24,15 @@ class Reminder extends Model
     ];
     protected $appends = ['label'];
 
-    const APPOINTMENT_STARTS = 1;
-    const APPOINTMENT_CONFIRMED = 2;
-    const APPOINTMENT_RESCHEDULED = 3;
-    const APPOINTMENT_CANCELLED = 4;
-    const APPOINTMENT_PENDING = 5;
+    public const APPOINTMENT_STARTS = 1;
+    public const APPOINTMENT_CONFIRMED = 2;
+    public const APPOINTMENT_RESCHEDULED = 3;
+    public const APPOINTMENT_CANCELLED = 4;
+    public const APPOINTMENT_PENDING = 5;
 
-    const WHEN_UNIT_MINUTES = 1;
-    const WHEN_UNIT_HOURS = 2;
-    const WHEN_UNIT_DAYS = 3;
+    public const WHEN_UNIT_MINUTES = 1;
+    public const WHEN_UNIT_HOURS = 2;
+    public const WHEN_UNIT_DAYS = 3;
 
     public static function getType($type)
     {
@@ -45,18 +47,14 @@ class Reminder extends Model
 
     public function scopeActiveReminders($query)
     {
-        $is_in = [static::APPOINTMENT_STARTS, static::APPOINTMENT_CONFIRMED];
+        $is_in = [
+            static::APPOINTMENT_STARTS,
+            static::APPOINTMENT_CONFIRMED,
+
+        ];
         if ((int) Settings::get('approval_mode') != 1 || Payment::active()) {
             $is_in[] = static::APPOINTMENT_PENDING;
         }
-        if (Settings::get('allow_rescheduling')) {
-            $is_in[] = static::APPOINTMENT_RESCHEDULED;
-        }
-        if (Settings::get('allow_cancellation')) {
-            $is_in[] = static::APPOINTMENT_CANCELLED;
-        }
-
-        $query->whereIn('event', apply_filters('wappointment_reminders_listed', $is_in));
     }
 
     public static function getTypes($col = false)
