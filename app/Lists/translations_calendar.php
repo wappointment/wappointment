@@ -1,4 +1,5 @@
 <?php
+
 return [
     'calendar_this_week' => __('This week', 'wappointment'),
     'calendar_free_slots' => __('free slots', 'wappointment'),
@@ -14,4 +15,13 @@ return [
     'show_free_slots' => __('Show free times', 'wappointment'),
     'titlege' => __('Group event', 'wappointment'),
     'subtitlege' =>  __('Event for multiple participants', 'wappointment'),
+    'really_cancel' => __('Do you really want to cancel', 'wappointment'),
+    'confirm_free' => __('Confirm that you are free?', 'wappointment'),
+    'click_for_new_start' => __('Click a time to select new start', 'wappointment'),
+    'confirm_new_start' => __('Confirm new start:', 'wappointment'),
+    'select_another_time' => __('Select another time', 'wappointment'),
+    'modify_weekly_availability' => __('Modify your Weekly Availability', 'wappointment'),
+
+
+
 ];

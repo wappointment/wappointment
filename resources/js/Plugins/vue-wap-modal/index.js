@@ -37,12 +37,11 @@ VueWapModal.install = function (Vue, options) {
     if(Vue.prototype.$WapModalContainerInstance === null) {
       Vue.prototype.$WapModalBoot()
     }
-    Vue.prototype.$WapModalContainerInstance.showModal(methodOptions.title, methodOptions.content, methodOptions.screenshot !== undefined)
+    Vue.prototype.$WapModalContainerInstance.showModal(methodOptions.title, methodOptions.content, methodOptions.screenshot !== undefined, methodOptions.options !== undefined ? methodOptions.options:false)
 
   }
 
   Vue.prototype.$WapModal = function () {
-
     if(Vue.prototype.$WapModalContainerInstance === null) {
       Vue.prototype.$WapModalBoot()
     }

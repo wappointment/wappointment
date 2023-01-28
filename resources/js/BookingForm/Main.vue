@@ -100,6 +100,7 @@ import MixinLegacy from './MixinLegacy'
 import MixinChange from './MixinChange'
 import MixinConvertDate from './MixinConvertDate'
 import CanFormatPrice from '../Mixins/CanFormatPrice'
+import { DateTime } from "luxon";
 let compDeclared = {
     'BookingFormConfirmation' : BookingFormConfirmation,
     'RescheduleConfirm': RescheduleConfirm,
@@ -176,7 +177,10 @@ export default {
     },
     watch:{
         selectedSlot(newVal, oldVal){
+            
             if(newVal != oldVal){
+                this.appointmentStartsAt = DateTime.fromSeconds(this.selectedSlot.start).toLocaleString(DateTime.DATETIME_MED)
+            return '';
                 this.getFormattedDate(
                 this.appointmentStartsAt, 
                 this.selectedSlot, 

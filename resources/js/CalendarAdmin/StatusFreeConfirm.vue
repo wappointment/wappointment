@@ -1,8 +1,8 @@
 <template>
     <div>
-        <h5>Confirm that you are free?</h5>
-        <button type="button" class="btn btn-secondary btn-lg" @click="$emit('cancelled')">Cancel</button>
-        <button type="button" class="btn btn-primary btn-lg" @click="confirmRequest">Confirm</button>
+        <h5>{{ get_i18n('confirm_free', 'calendar') }}</h5>
+        <button type="button" class="btn btn-secondary btn-lg" @click="$emit('cancelled')">{{ get_i18n('cancel', 'common') }}</button>
+        <button type="button" class="btn btn-primary btn-lg" @click="confirmRequest">{{ get_i18n('confirm', 'common') }}</button>
     </div>
 </template>
 <script>

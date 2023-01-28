@@ -141,10 +141,9 @@ class ViewsData
 
     private function wizardwidget()
     {
-
         return [
             'booking_page_id' => (int) Settings::get('booking_page'),
-            'widget' => (new WidgetSettings)->get(),
+            'widget' => (new WidgetSettings())->get(),
         ];
     }
 
@@ -152,16 +151,16 @@ class ViewsData
     {
         $data = [
             'front_availability' => $this->front_availability(),
-            'widget' => (new WidgetSettings)->get(),
-            'widgetDefault' => (new WidgetSettings)->defaultSettings(),
-            'steps' => (new WidgetSettings)->steps(),
+            'widget' => (new WidgetSettings())->get(),
+            'widgetDefault' => (new WidgetSettings())->defaultSettings(),
+            'steps' => (new WidgetSettings())->steps(),
             'config' => [
                 'service' => Service::get(),
                 'approval_mode' => Settings::get('approval_mode'),
             ],
             'bgcolor' => WPHelpers::getThemeBgColor(),
             'more' => get_theme_mods(),
-            'widgetFields' => (new \Wappointment\Services\WidgetSettings)->adminFieldsInfo(),
+            'widgetFields' => (new \Wappointment\Services\WidgetSettings())->adminFieldsInfo(),
             'booking_page_id' => (int) Settings::get('booking_page'),
             'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
         ];
@@ -175,8 +174,8 @@ class ViewsData
     private function widgetcancel()
     {
         return [
-            'widget' => (new WidgetSettings)->get(),
-            'widgetDefault' => (new WidgetSettings)->defaultSettings(),
+            'widget' => (new WidgetSettings())->get(),
+            'widgetDefault' => (new WidgetSettings())->defaultSettings(),
             'staff' => Staff::getWP(), //(new \Wappointment\WP\Staff())->toArray()
         ];
     }
@@ -196,17 +195,17 @@ class ViewsData
             'date_time_union' => Settings::get('date_time_union', ' - '),
             'preferredCountries' => Service::getObject()->getCountries(),
             'buffer_time' => Settings::get('buffer_time'),
-            'widget' => (new WidgetSettings)->get(),
+            'widget' => (new WidgetSettings())->get(),
             'booking_page_id' => (int) Settings::get('booking_page'),
             'booking_page_url' => get_permalink((int) Settings::get('booking_page')),
             'showWelcome' => Settings::get('show_welcome'),
             'subscribe_email' => Settings::get('email_notifications'),
             'welcome_site' => get_site_url(),
-            'preferences' => (new Preferences)->preferences,
+            'preferences' => (new Preferences())->preferences,
             //'is_dotcom_connected' => Settings::getStaff('dotcom'),
             'services' => $services,
             'durations' => ManageService::extractDurations($services),
-            'cal_duration' => (new Preferences)->get('cal_duration'),
+            'cal_duration' => (new Preferences())->get('cal_duration'),
             'buttons' => [
                 [
                     'key' => 'book',
@@ -229,7 +228,17 @@ class ViewsData
                     'icon' => 'dashicons-lock txt red',
                     'component' => 'StatusBusyConfirm',
                 ]
-            ]
+                ],
+                'buttons_appointment' => [
+                    [
+                        'key' => 'cancel',
+                        'title' => __('Cancel', 'wappointment'),
+                        'subtitle' => '',
+                        'icon' => 'dashicons-dismiss red',
+                        'component' => 'CancelBooking',
+                    ],
+
+                ]
         ];
 
         if (VersionDB::canServices()) {
@@ -333,6 +342,13 @@ class ViewsData
         ];
     }
 
+    private function settingsaddons()
+    {
+        return [
+            'addons' => Addons::withSettings(),
+        ];
+    }
+
     private function wizardinit()
     {
         return [
@@ -369,7 +385,7 @@ class ViewsData
 
     private function front_availability()
     {
-        $availability = (new Availability)->get();
+        $availability = (new Availability())->get();
         $availability['wpauth'] = WPHelpers::wpUserData();
         return $availability;
     }

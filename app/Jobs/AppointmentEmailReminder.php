@@ -4,5 +4,6 @@ namespace Wappointment\Jobs;
 
 class AppointmentEmailReminder extends AppointmentEmailConfirmed
 {
-    const CONTENT = '\\Wappointment\\Messages\\AppointmentReminderEmail';
+    public const CONTENT = '\\Wappointment\\Messages\\AppointmentReminderEmail';
+    protected $get_first = false;
 }

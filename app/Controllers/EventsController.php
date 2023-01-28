@@ -17,7 +17,6 @@ use Wappointment\Repositories\CalendarsBack;
 
 class EventsController extends RestController
 {
-
     protected function getAppointmentModel()
     {
         return Central::get('AppointmentModel');
@@ -45,6 +44,18 @@ class EventsController extends RestController
             } else {
                 throw new \WappointmentException(__('Error deleting appointment', 'wappointment'), 1);
             }
+        }
+
+        return ['message' => __('Appointment cancelled', 'wappointment'), 'failures' => $failures];
+    }
+
+    public function forceDelete(Request $request)
+    {
+        $appointment = $this->canEditAppointment($request->input('id'));
+        if ($this->processCancel($appointment)) {
+            return ['message' => __('Appointment cancelled', 'wappointment')];
+        } else {
+            throw new \WappointmentException(__('Error deleting appointment', 'wappointment'), 1);
         }
 
         return ['message' => __('Appointment cancelled', 'wappointment'), 'failures' => $failures];
@@ -90,7 +101,7 @@ class EventsController extends RestController
     {
         $appointment = $this->getAppointmentModel()::with('client')->where('id', (int)$request->input('id'))->first();
         $staff_id = empty($appointment->staff_id) ? Settings::get('activeStaffId') : (int)$appointment->staff_id;
-        $dotcomapi = new DotCom;
+        $dotcomapi = new DotCom();
         $dotcomapi->setStaff($staff_id);
         if (empty($appointment->options['providers']) && $dotcomapi->isConnected()) {
             $dotcomapi->create($appointment);
@@ -117,13 +128,12 @@ class EventsController extends RestController
 
     public function patch(Request $request)
     {
-        $this->canEditAppointment($request->input('id'));
-        if (AppointmentNew::patch(
+        $appointment = $this->canEditAppointment($request->input('id'));
+        if (AppointmentNew::reschedule(
             (int)$request->input('id'),
-            [
-                'start_at' => DateTime::convertUnixTS($request->input('start')),
-                'end_at' => DateTime::convertUnixTS($request->input('end'))
-            ]
+            $request->input('start'),
+            true,
+            $appointment
         )) {
             return ['message' => Translations::get('element_updated')];
         } else {
@@ -150,7 +160,7 @@ class EventsController extends RestController
 
         if (!empty($pref_save)) {
             //we save the duration preference
-            (new Preferences)->saveMany($pref_save);
+            (new Preferences())->saveMany($pref_save);
         }
     }
 }

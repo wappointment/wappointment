@@ -3,6 +3,7 @@
 namespace Wappointment\Controllers;
 
 use Wappointment\ClassConnect\Request;
+use Wappointment\Helpers\Site;
 use Wappointment\Helpers\Translations;
 use Wappointment\Services\Reminder;
 use Wappointment\Models\Reminder as MReminder;
@@ -11,18 +12,18 @@ use Wappointment\Services\VersionDB;
 
 class ReminderController extends RestController
 {
-    private $columns = [
-        'id', 'subject', 'type', 'event', 'locked', 'published', 'options'
-    ];
-
     public function isLegacy()
     {
         return !VersionDB::canServices();
     }
-
+    private function getRequested(Request $request)
+    {
+        return $request->except(['rest_route', 'locked', 'email_logo', 'label', 'canTranslate', 'children']);
+    }
     public function save(Request $request)
     {
-        $requested = $request->except(['rest_route', 'locked', 'email_logo', 'label']);
+        $requested = $this->getRequested($request);
+
         $requested['published'] = true;
         $this->saveImage($request);
         if ($this->isTrueOrFail(Reminder::save($requested))) {
@@ -45,7 +46,7 @@ class ReminderController extends RestController
     public function patch(Request $request)
     {
         $this->saveImage($request);
-        if ($this->isTrueOrFail(Reminder::save($request->except(['rest_route', 'locked', 'email_logo', 'label'])))) {
+        if ($this->isTrueOrFail(Reminder::save($this->getRequested($request)))) {
             return ['message' => Translations::get('element_updated')];
         }
         throw new \WappointmentException(Translations::get('error_updating'), 1);
@@ -69,21 +70,22 @@ class ReminderController extends RestController
 
     public function get()
     {
-        $queryReminders = MReminder::select($this->columns);
+        $queryReminders = MReminder::query();
 
         $queryReminders->activeReminders();
         $queryReminders->whereIn('type', MReminder::getTypes('code'));
 
         $data = [
             'mail_status' => (bool) Settings::get('mail_status'),
+            'languages' => Site::languages(),
             'allow_cancellation' => (bool) Settings::get('allow_cancellation'),
             'email_footer' => Settings::get('email_footer'),
+            'link_color' => Settings::get('email_link_color'),
             'allow_rescheduling' => (bool) Settings::get('allow_rescheduling'),
             'reschedule_link' => Settings::get('reschedule_link'),
             'cancellation_link' => Settings::get('cancellation_link'),
             'save_appointment_text_link' => Settings::get('save_appointment_text_link'),
             'multiple_service_type' => \Wappointment\Helpers\Service::hasMultipleTypes($this->isLegacy()),
-            'reminders' => $queryReminders->get(),
             'recipient' => wp_get_current_user()->user_email,
             'defaultReminders' => [
                 'email' => Reminder::getSeedReminder()
@@ -96,6 +98,9 @@ class ReminderController extends RestController
 
         $data['email_logo'] = $this->isLegacy() ? Settings::getStaff('email_logo') : Settings::get('email_logo');
 
-        return apply_filters('wappointment_settings_reminders_get', $data);
+        return array_merge(
+            apply_filters('wappointment_settings_reminders_get', $data),
+            ['reminders' => $queryReminders->getParentSorting()]
+        ) ;
     }
 }

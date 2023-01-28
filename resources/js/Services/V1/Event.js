@@ -19,6 +19,10 @@ export default class ServiceEvent extends ApiV1{
                 method: 'delete', 
                 route: 'events'
             },
+            forceDelete: { 
+                method: 'post', 
+                route: 'events/forceDelete'
+            },
             confirm: { 
                 method: 'put', 
                 route: 'events'

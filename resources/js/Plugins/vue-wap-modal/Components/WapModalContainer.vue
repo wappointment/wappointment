@@ -119,11 +119,17 @@ export default {
       })
     },
 
-    showModal(title, content, screenshot = false){
+    showModal(title, content, screenshot = false, options = false){
         this.show = true
         this.prompt = false
         this.loader = false
-        this.options = {}
+        this.options = options
+        for (const property in options) {
+          if(['prompt'].indexOf(property) !== -1){
+            this[property] = options[property]
+          }
+        }
+
         this.title = title
         this.content = content
         this.screenshot = screenshot

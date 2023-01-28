@@ -4,14 +4,12 @@ namespace Wappointment\Services\Wappointment;
 
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\WP\Plugins;
 
 class Addons extends API
 {
     public function __construct()
     {
-        if (!function_exists('get_plugins')) {
-            require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        }
         parent::__construct();
     }
 
@@ -36,8 +34,8 @@ class Addons extends API
                     $package->plugin = false;
                     if ($this->isAPlugin($package)) {
                         $package->plugin = $package->solutions[0]->type === 1;
-                        $package->installed  = $this->isPluginInstalled($package);
-                        $package->activated = $this->isPluginActivated($package);
+                        $package->installed = Plugins::wp()->installed($this->pluginFileName($package));
+                        $package->activated = Plugins::wp()->active($this->pluginFileName($package));
                     }
                     if ($this->pluginNamekey($package)) {
                         $package = apply_filters(
@@ -62,20 +60,6 @@ class Addons extends API
         return $this->pluginNamekey($package) . '/index.php';
     }
 
-    private function pluginName($package)
-    {
-        return $this->getPluginDetails($package)->name;
-    }
-
-    private function isPluginInstalled($package)
-    {
-        return !empty(get_plugins()[$this->pluginFileName($package)]);
-    }
-
-    private function isPluginActivated($package)
-    {
-        return is_plugin_active($this->pluginFileName($package));
-    }
     private function getPluginDetails($package)
     {
         if (empty($package->solutions[0])) {
@@ -94,11 +78,7 @@ class Addons extends API
     }
     public function activate($package)
     {
-        if (!current_user_can('activate_plugins')) {
-            throw new \WappointmentException('Sorry, you are not allowed to activate plugins on this site.');
-        }
-
-        $result = activate_plugin($this->pluginFileName($package));
+        $result = Plugins::wp()->activate($this->pluginFileName($package));
         if (is_wp_error($result)) {
             // Process Error
         } else {
@@ -107,11 +87,7 @@ class Addons extends API
     }
     public function deactivate($package)
     {
-        if (!current_user_can('activate_plugins')) {
-            throw new \WappointmentException('Sorry, you are not allowed to activate plugins on this site.');
-        }
-
-        $result = deactivate_plugins([$this->pluginFileName($package)]);
+        Plugins::wp()->deactivate([$this->pluginFileName($package)]);
         return ['message' => 'Addon deactivated'];
     }
     private function wpInstall($solutionToInstall)

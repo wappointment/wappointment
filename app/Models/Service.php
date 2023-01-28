@@ -7,7 +7,8 @@ use Wappointment\ClassConnect\SoftDeletes;
 
 class Service extends Model
 {
-    use SoftDeletes, CanLimit;
+    use SoftDeletes;
+    use CanLimit;
     protected $dates = ['deleted_at'];
     protected $table = 'wappo_services';
     protected $with = ['locations'];
@@ -46,6 +47,11 @@ class Service extends Model
     public function isSold()
     {
         return !empty($this->options['woo_sellable']);
+    }
+
+    public function isGroup()
+    {
+        return !empty($this->options['slots']);
     }
 
     public function hasDuration($duration)
