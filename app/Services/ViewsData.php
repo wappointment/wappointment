@@ -342,6 +342,13 @@ class ViewsData
         ];
     }
 
+    private function settingsaddons()
+    {
+        return [
+            'addons' => Addons::withSettings(),
+        ];
+    }
+
     private function wizardinit()
     {
         return [
