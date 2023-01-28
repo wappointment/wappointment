@@ -208,7 +208,7 @@ export default {
     activeStaff: null,
     rolledOverName: '',
     popupActionVisible:false,
-    dragActionsVisible: false
+    dragActionsVisible: false,
     popupAppointmentVisible: false,
     activeAppointment: null,
     rescheduleModeOn: false,
