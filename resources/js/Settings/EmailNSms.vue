@@ -177,9 +177,7 @@ export default {
     translateEmail(reminder){
       if(reminder.parent===null){ // we only allow translation of parent email
         reminder.parent = reminder.id
-        console.log('is null')
       }
-      console.log('reminder',reminder)
       this.duplicateReminder(reminder)
     },
     duplicateReminder(reminder){

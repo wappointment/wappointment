@@ -33,7 +33,8 @@ export default {
           errorMessages: [],
           errors:{},
           formKey: 'formmailconfig',
-          schema: []
+          schema: [],
+          canTranslate: false
           
       }
     },
@@ -41,7 +42,11 @@ export default {
       this.recipient = this.passedViewData.recipient
       this.model = Object.assign({},this.reminder)
       this.viewData = Object.assign({},this.passedViewData)
-      this.schema = this.schemai18n
+      if(this.viewData.languages!==false){
+        this.model.canTranslate = true
+        this.canTranslate = true
+      }
+      this.schema = this.schemai18n()
       this.schema[0].label = this.model.label
       if(this.model.type == 1){
         this.schema.push({
@@ -76,15 +81,18 @@ export default {
         })
         
       }
-      if(this.viewData.languages!==false){
-        this.model.canTranslate = true
-      }
+      
     },
     computed: {
         canSend(){
             return this.formready
         },
-        schemai18n(){
+        
+    },
+
+
+    methods: {
+      schemai18n(){
           return [
               {
                   type: 'label',
@@ -139,9 +147,10 @@ export default {
                   label: this.get_i18n('language','common'),
                   model: "lang",
                   elements: this.canTranslate ? this.viewData.languages.map(function(item){
-                    item.id = item.locale
-                    item.name = item.name + '('+item.locale+')'
-                    return item
+                    return {
+                      id: item.locale,
+                      name: item.name + '('+item.locale+')'
+                    }
                   }):[],
                   cast: String,
                   conditions: [
@@ -168,11 +177,7 @@ export default {
               },
               
           ]
-        }
-    },
-
-
-    methods: {
+        },
       filterSchema(){
         for (let i = 0; i < this.model.ignore.length; i++) {
             const ignore = this.model.ignore[i]
