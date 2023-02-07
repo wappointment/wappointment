@@ -90,10 +90,79 @@ class Status
         return $punctualEvents;
     }
 
+    private static function autoMute($statusRecurrent, $ts)
+    {
+        $options = $statusRecurrent->options;
+        $options['last_event_on'] = $ts;
+        $statusRecurrent->options = $options;
+        $statusRecurrent->muted = 2;
+        $statusRecurrent->save();
+        //echo 'hello '.$statusRecurrent->options['title']."\n<br/>";
+    }
+
+    private static function hasRemainingOccurence($statusRecurrent, $maxOccurrences)
+    {
+        return static::getLastOccurence($statusRecurrent, $maxOccurrences) > time();
+    }
+
+    private static function getLastOccurence($statusRecurrent, $maxOccurrences)
+    {
+        $start_at = $statusRecurrent->start_at->copy();
+        $interval = self::getInterval($statusRecurrent);
+        $days_accepted = static::getByDay($statusRecurrent);
+        $i = 1;
+        switch ($statusRecurrent->recur) {
+            case MStatus::RECUR_DAILY:
+                while($i < $maxOccurrences){
+                    $start_at->addDays($interval);
+                    if(in_array($start_at->dayOfWeek, $days_accepted)){
+                        $i++;
+                    }
+                }
+                
+                break;
+            case MStatus::RECUR_WEEKLY:
+                while($i < $maxOccurrences){
+                    
+                    if(count($days_accepted)){
+                        if(in_array($start_at->dayOfWeek, $days_accepted)){
+                            $i++;
+                        }
+                        $start_at->addDays(1);
+                    }else{
+                        $start_at->addWeeks($interval);
+                    }
+                   
+                }
+  
+                break;
+            case MStatus::RECUR_MONTHLY:
+                while($i < $maxOccurrences){
+                    $start_at->addMonths($interval);
+                    $i++;
+                   
+                }
+            case MStatus::RECUR_YEARLY:
+                while($i < $maxOccurrences){
+                    $start_at->addYears($interval);
+                    $i++;
+                   
+                }
+            default:
+        }
+        return $start_at->timestamp;
+    }
     private static function generateRecurring($statusRecurrent, $until)
     {
 
         $newEvents = [];
+        $maxOccurrences = !empty($statusRecurrent->options['count']) ? (int)$statusRecurrent->options['count'] : 0;
+        if($maxOccurrences > 0){
+            if(!static::hasRemainingOccurence($statusRecurrent, $maxOccurrences)){
+                static::autoMute($statusRecurrent, time());
+                return $newEvents;
+            }
+        }
         $from = time();
         $i = 0;
         self::$diff = $statusRecurrent->end_at->timestamp - $statusRecurrent->start_at->timestamp;

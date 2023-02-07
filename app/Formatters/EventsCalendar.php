@@ -161,7 +161,6 @@ class EventsCalendar
             /* translators: %s - email address. */
             $data[] = sprintf(__('Email: %s', 'wappointment'), $preparedClient->email);
             foreach ($preparedClient->options as $keyOption => $optionValue) {
-
                 if ($keyOption == 'appointment_key' || ($keyOption == 'rtl' && $optionValue === false) || !isset($this->customFieldsKeyLabel[$keyOption])) {
                     continue;
                 }
@@ -249,7 +248,9 @@ class EventsCalendar
             $statusEventsQuery->where('staff_id', (int)$staff_id);
         }
 
+        //$statusEvents = collect();
         $statusEvents = $statusEventsQuery->get();
+
 
         $recurringBusyQuery = Mstatus::where('recur', '>', Mstatus::RECUR_NOT)
             ->where('muted', '<', 1);
@@ -311,7 +312,7 @@ class EventsCalendar
     {
         $bg_events = [];
         $startDate = new Carbon($this->request->input('start'), $this->timezone);
-        if($startDate->hour !== 0){ // fixed issue next an prevs in summertime
+        if ($startDate->hour !== 0) { // fixed issue next an prevs in summertime
             $startDate->addDay(1);
             $startDate->hour(0);
         }

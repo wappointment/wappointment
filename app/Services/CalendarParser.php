@@ -274,10 +274,27 @@ class CalendarParser
             if (!empty($vevent->RRULE)) {
                 if (!empty($vevent->RRULE->getParts()['BYDAY'])) {
                     $options['byday'] = $this->convertDays($vevent->RRULE->getParts()['BYDAY']);
+
+                    if (!empty($vevent->RRULE->getParts()['BYSETPOS'])) {
+                        $newbyday = [];
+                        if (is_array($options['byday'])) {
+                            foreach ($options['byday'] as $daynumber) {
+                                $newbyday[] =[
+                                    'each' => $vevent->RRULE->getParts()['BYSETPOS'],
+                                    'day' => $daynumber,
+                                ];
+                            }
+                        }
+                        $options['byday'] = $newbyday;
+                    }
                 }
 
                 if (!empty($vevent->RRULE->getParts()['BYMONTHDAY'])) {
                     $options['bymonthday'] = (int) $vevent->RRULE->getParts()['BYMONTHDAY'];
+                }
+
+                if (!empty($vevent->RRULE->getParts()['COUNT'])) {
+                    $options['count'] = (int) $vevent->RRULE->getParts()['COUNT'];
                 }
 
                 if (!empty($vevent->RRULE->getParts()['INTERVAL'])) {
@@ -290,7 +307,13 @@ class CalendarParser
                     }
                 }
 
-                $options['origin_tz'] = $this->isCustomTZ() ? $this->getTimezoneNameFromDateString((string) $vevent->DTSTART) : $this->timezone;
+                if (!empty($vevent) && !empty($vevent->DTSTART['TZID'])) {
+                    $options['origin_tz'] = $this->findTimezone($vevent->DTSTART['TZID']->getValue());
+                } else {
+                    $options['origin_tz'] = $this->isCustomTZ() ? $this->getTimezoneNameFromDateString((string) $vevent->DTSTART) : $this->timezone;
+                }
+
+
                 $options['origin_start'] = $this->vcalDateToCarbon((string) $vevent->DTSTART, $vevent)
                     ->format(WAPPOINTMENT_DB_FORMAT);
             }
@@ -307,7 +330,7 @@ class CalendarParser
         $newArray = [];
         foreach ($days as $day) {
             $dayconverted = $this->getDayNumber($day);
-            if (is_array($dayconverted) && count($days) == 1) {
+            if (is_array($dayconverted) && count($days) == 1 && !isset($dayconverted['each'])) {
                 return $dayconverted;
             }
             $newArray[] = $dayconverted;
