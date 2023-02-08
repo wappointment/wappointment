@@ -2,6 +2,8 @@
 
 namespace Wappointment\System;
 
+use Wappointment\ClassConnect\Arr;
+
 class Container
 {
     private $bindings = [];
@@ -17,10 +19,9 @@ class Container
 
     public function resolve($bindingName)
     {
-        $result = array_first($this->bindings, function($item) use($bindingName) {
+        $result = Arr::first($this->bindings, function ($item) use ($bindingName) {
             return $item['name'] === $bindingName;
         });
         return $result['instance'] ?? null;
     }
-
 }
