@@ -142,6 +142,10 @@ if (!function_exists("dds")) {
                     '\WappoVendor\WP_Filesystem_Base',
                     '\WappoVendor\WappoSwift_',
                     '\WappoVendor\__',
+                    '\WappoVendor\is_plugin_active',
+                    '\WappoVendor\get_plugins',
+                    '\WappoVendor\activate_plugin',
+                    '\WappoVendor\deactivate_plugin',
                 ], [
                     '\WappointmentValidationException',
                     '\WappointmentException',
@@ -153,6 +157,10 @@ if (!function_exists("dds")) {
                     '\WP_Filesystem_Base',
                     '\WappoSwift_',
                     '__',
+                    '\is_plugin_active',
+                    '\get_plugins',
+                    '\activate_plugin',
+                    '\deactivate_plugin',
 
                 ], $contents);
             }
