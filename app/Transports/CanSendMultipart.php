@@ -6,7 +6,6 @@ use WappoSwift_Attachment;
 
 trait CanSendMultipart
 {
-
     public function sendMultiPartVersion($to, $message)
     {
         add_filter('wp_mail_content_type', [$this, 'setHtmlContentType']);

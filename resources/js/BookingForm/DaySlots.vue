@@ -6,7 +6,7 @@
                 <template v-for="(slot, slid) in slots" >
                 <BookingButton @click="$emit('selected', slot)" 
                 className="wbtn wbtn-primary wbtn-slot" :key="'button-'+slot.start" :options="options" >
-                    <span>{{ getMoment(slot.start, currentTz).format(time_format) }}</span>
+                    <span>{{ getDateTime().fromSeconds(slot.start).toFormat(time_format) }}</span>
                     <span v-if="slot.left" class="sleft">{{ slot.left }} left</span>
                 </BookingButton>
                 </template>
@@ -18,6 +18,7 @@
 <script>
 import BookingButton from './BookingButton'
 import Dates from '../Modules/Dates'
+import { DateTime } from "luxon";
 export default {
     mixins: [Dates],
     props: {
@@ -57,7 +58,9 @@ export default {
     },
     
     methods: {
-        
+        getDateTime(){
+            return DateTime
+        },
         getLabel(section){
             return this.options.selection[section] !== undefined ? this.options.selection[section]:section
         },
@@ -82,7 +85,8 @@ export default {
             return this.viewData.more_st ? this.viewData.starting_each*60:this.duration
         },
         identifySlot(segment){
-            let hour = this.getMoment(segment.start, this.currentTz).hour()
+            let hour = DateTime.fromSeconds(segment.start).toFormat("H")
+
             if(hour >= 12 && hour < 18){
                 this.insertSlotToDayPart(segment, 'afternoon')
             }else if(hour >= 18 && hour <= 23 ){

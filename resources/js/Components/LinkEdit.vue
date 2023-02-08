@@ -4,7 +4,7 @@
         <div v-if="showInput" class="input-group-append">
             <button class="btn btn-outline-primary" v-if="showInput" @click.prevent="saveSettings">{{ get_i18n('save', 'common') }}</button>
         </div>
-        <a v-else href="javascript:;" :data-tt="editLabel"
+        <a v-else href="javascript:;" :style="'color:'+color+'!important'" :data-tt="editLabel"
             :title="editLabel" @click="showInput=!showInput">{{ value }}</a>
     </div>
 </template>
@@ -24,6 +24,9 @@ export default {
         type: String,
     },
     fieldKey: {
+        type: String,
+    },
+    color: {
         type: String,
     },
   },

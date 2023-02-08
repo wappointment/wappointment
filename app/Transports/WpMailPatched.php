@@ -2,12 +2,13 @@
 
 namespace Wappointment\Transports;
 
+use Wappointment\Plugins\MultiLang\TranslatePress;
+
 /**
  * stack overflow solution to multipart emails in wp https://wordpress.stackexchange.com/a/191974/11795
  */
 trait WpMailPatched
 {
-
     public function getPhpMailer()
     {
         global $phpmailer, $wp_version;
@@ -37,6 +38,7 @@ trait WpMailPatched
 
     public function wpMail($to, $subject, $message, $headers = '', $attachments = array())
     {
+        TranslatePress::hackTranslatePress();
         // Compact the input, apply the filters, and extract them back out
 
         /**
@@ -102,7 +104,7 @@ trait WpMailPatched
                     $content = trim($content);
 
                     switch (strtolower($name)) {
-                            // Mainly for legacy -- process a From: header if it's there
+                        // Mainly for legacy -- process a From: header if it's there
                         case 'from':
                             $bracket_pos = strpos($content, '<');
                             if ($bracket_pos !== false) {
@@ -117,7 +119,7 @@ trait WpMailPatched
                                 $from_email = str_replace('>', '', $from_email);
                                 $from_email = trim($from_email);
 
-                                // Avoid setting an empty $from_email.
+                            // Avoid setting an empty $from_email.
                             } elseif ('' !== trim($content)) {
                                 $from_email = trim($content);
                             }
@@ -137,7 +139,7 @@ trait WpMailPatched
                                     $charset = '';
                                 }
 
-                                // Avoid setting an empty $content_type.
+                            // Avoid setting an empty $content_type.
                             } elseif ('' !== trim($content)) {
                                 $content_type = trim($content);
                             }

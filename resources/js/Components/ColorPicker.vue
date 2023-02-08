@@ -35,6 +35,7 @@ export default {
     methods: {
         clickedOutside(){
             this.hidePicker()
+            this.$emit('validated')
         },
         hidePicker(){
             this.picker = false;

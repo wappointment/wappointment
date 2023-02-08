@@ -39,6 +39,7 @@
       </StickyBar>
 
       <div class="full-width center-content calendar-wrap full-width-layout" @mousemove="mouseMove">
+        <DragActions v-if="false && fcIsReady && dragActionsVisible" @prev="prevWeek" @next="nextWeek" />
         <div class="wrap">
             
             <div  v-if="fullCalOption!==undefined">
@@ -54,9 +55,8 @@
             <ControlBar v-if="viewData!==null" :progressWizard="viewData.wizard_step" />
 
             <div v-if="fcIsReady">
-                
               <PopupActions v-if="popupActionVisible" @refreshEvents="refreshEvents" @hide="hideModal" 
-              :getThisWeekIntervals="getThisWeekIntervals" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
+              :getThisWeekIntervals="getThisWeekIntervals" :startTimeLuxon="startTimeLuxon" :endTimeLuxon="endTimeLuxon" :displayTimezone="displayTimezone" :activeStaff="activeStaff" 
               :momenttz="momenttz" :startTime="startTime" :endTime="endTime" :realEndTime="realEndTime" :viewData="viewData"/>
 
               <PopupAppointment v-if="popupAppointmentVisible" 
@@ -107,8 +107,10 @@ import ControlBar from './ControlBar'
 import FullCalendarWrapper from './FullCalendarWrapper'
 import SubscribeNewsletter from '../Wappointment/SubscribeNewsletter'
 import momenttz from '../appMoment'
+import luxonApp from '../appLuxon'
 import WelcomeModal from './WelcomeModal'
 import PopupActions from './PopupActions'
+import DragActions from './DragActions'
 import PopupAppointment from './PopupAppointment'
 import AppointmentRender from './AppointmentRender'
 import FreeSlotsSelector from './FreeSlotsSelector'
@@ -151,6 +153,7 @@ export default {
       WelcomeModal,
       CalendarSettings,
       PopupActions,
+      DragActions,
       PopupAppointment,
       MainStyle
   }, 
@@ -193,7 +196,7 @@ export default {
     },
     activeBgOverId: false,
     shortDayFormat: 'Do MMM YY',
-    headerDayFormat: 'ddd Do',
+    headerDayFormat: { weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true },
     daysProperties: false,
     serviceEvent: null,
     serviceStatus: null,
@@ -205,6 +208,7 @@ export default {
     activeStaff: null,
     rolledOverName: '',
     popupActionVisible:false,
+    dragActionsVisible: false,
     popupAppointmentVisible: false,
     activeAppointment: null,
     rescheduleModeOn: false,
@@ -692,8 +696,10 @@ export default {
       },
 
       selectMethod(selectInfo) {
-        
+            
             this.startTime = this.toMoment(selectInfo.startStr)
+            this.startTimeLuxon = luxonApp.fromISO(selectInfo.startStr)
+            this.endTimeLuxon = luxonApp.fromISO(selectInfo.endStr)
             this.realEndTime = this.toMoment(selectInfo.endStr)
             this.endTime = this.toMoment(selectInfo.endStr)
 
@@ -724,6 +730,15 @@ export default {
         this.popupAppointmentVisible = true
         this.activeAppointment = appointment
       },
+
+      hideWeeksControls(){
+        this.dragActionsVisible = false
+      },
+      showWeeksControls() {
+        this.dragActionsVisible = true
+      },
+
+      
 
       setMinAndMax(){
             
@@ -844,7 +859,7 @@ export default {
           this.queryParameters = {
               page: 'wappointment_calendar',
               start: this.firstDay.format(),
-              end: this.firstDay.clone().day(8).format(),
+              end: this.lastDay.format(),
               timezone: this.displayTimezone,
               staff: this.activeStaff.id,
             }

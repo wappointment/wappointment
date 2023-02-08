@@ -2,9 +2,10 @@
 
 namespace Wappointment\Services\Wappointment;
 
+use Wappointment\WP\Plugins;
+
 class VersionCheck extends API
 {
-
     public function __construct()
     {
         parent::__construct();
@@ -20,8 +21,7 @@ class VersionCheck extends API
 
         foreach ($this->getWappointmentActiveSlugs() as $plugin) {
             $plugin_file = $plugin . '/index.php';
-
-            if (is_plugin_active($plugin_file) && !isset($transient->response[$plugin_file])) {
+            if (Plugins::wp()->active($plugin_file) && !isset($transient->response[$plugin_file])) {
                 $latestVersion = $this->latestVersion($plugin);
                 if ($latestVersion !== false && version_compare($latestVersion, $this->getActivePluginVersion($plugin), '>')) {
                     //then there needs to be an update on that plugin
@@ -53,7 +53,7 @@ class VersionCheck extends API
     {
         $id_url = $this->call('/' . $plugin_slug);
 
-        $data = new \stdClass;
+        $data = new \stdClass();
         if ($new_version !== false) {
             $data->new_version = (string) $new_version;
         }
