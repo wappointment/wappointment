@@ -150,7 +150,7 @@ class MimeDir extends \Sabre\VObject\Parser\MimeDir
             $propObj->add(null, $namelessParameter);
         }
 
-        if (strtoupper($propObj['ENCODING']) === 'QUOTED-PRINTABLE') {
+        if (is_string($propObj['ENCODING']) && strtoupper($propObj['ENCODING']) === 'QUOTED-PRINTABLE') {
             $propObj->setQuotedPrintableValue($this->extractQuotedPrintableValue());
         } else {
             $charset = $this->charset;
