@@ -31,12 +31,8 @@ class WappoSwift_SmtpTransport extends WappoSwift_Transport_EsmtpTransport
      */
     public function __construct($host = 'localhost', $port = 25, $security = null)
     {
-        call_user_func_array(
-            [$this, 'WappoSwift_Transport_EsmtpTransport::__construct'],
-            WappoSwift_DependencyContainer::getInstance()
-                ->createDependenciesFor('transport.smtp')
-            );
-
+        parent::__construct(...WappoSwift_DependencyContainer::getInstance()
+        ->createDependenciesFor('transport.smtp'));
         $this->setHost($host);
         $this->setPort($port);
         $this->setEncryption($security);

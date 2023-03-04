@@ -17,10 +17,7 @@ class WappoSwift_NullTransport extends WappoSwift_Transport_NullTransport
 {
     public function __construct()
     {
-        call_user_func_array(
-            [$this, 'WappoSwift_Transport_NullTransport::__construct'],
-            WappoSwift_DependencyContainer::getInstance()
-                ->createDependenciesFor('transport.null')
-        );
+        parent::__construct(...WappoSwift_DependencyContainer::getInstance()
+        ->createDependenciesFor('transport.null'));
     }
 }

@@ -22,12 +22,8 @@ class WappoSwift_SendmailTransport extends WappoSwift_Transport_SendmailTranspor
      */
     public function __construct($command = '/usr/sbin/sendmail -bs')
     {
-        call_user_func_array(
-            [$this, 'WappoSwift_Transport_SendmailTransport::__construct'],
-            WappoSwift_DependencyContainer::getInstance()
-                ->createDependenciesFor('transport.sendmail')
-            );
-
+        parent::__construct(...WappoSwift_DependencyContainer::getInstance()
+        ->createDependenciesFor('transport.sendmail'));
         $this->setCommand($command);
     }
 }

@@ -22,11 +22,9 @@ class WappoSwift_FailoverTransport extends WappoSwift_Transport_FailoverTranspor
      */
     public function __construct($transports = [])
     {
-        call_user_func_array(
-            [$this, 'WappoSwift_Transport_FailoverTransport::__construct'],
-            WappoSwift_DependencyContainer::getInstance()
-                ->createDependenciesFor('transport.failover')
-            );
+
+        parent::__construct(...WappoSwift_DependencyContainer::getInstance()
+        ->createDependenciesFor('transport.failover'));
 
         $this->setTransports($transports);
     }

@@ -22,12 +22,10 @@ class WappoSwift_LoadBalancedTransport extends WappoSwift_Transport_LoadBalanced
      */
     public function __construct($transports = [])
     {
-        call_user_func_array(
-            [$this, 'WappoSwift_Transport_LoadBalancedTransport::__construct'],
-            WappoSwift_DependencyContainer::getInstance()
-                ->createDependenciesFor('transport.loadbalanced')
-            );
 
+        parent::__construct(...WappoSwift_DependencyContainer::getInstance()
+            ->createDependenciesFor('transport.loadbalanced'));
+            
         $this->setTransports($transports);
     }
 }
