@@ -42,7 +42,7 @@ class Plugins
     public function deactivate($pluginEntryPoint)
     {
         $this->canActivate();
-        return \deactivate_plugin($pluginEntryPoint);
+        return \deactivate_plugins($pluginEntryPoint);
     }
 
     private function canActivate()
@@ -51,5 +51,4 @@ class Plugins
             throw new \WappointmentException('Sorry, you are not allowed to activate plugins on this site.');
         }
     }
-
 }
