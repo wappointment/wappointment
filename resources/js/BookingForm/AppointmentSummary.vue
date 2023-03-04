@@ -130,6 +130,10 @@ export default {
             return true
         },
         changeTime(){
+            if(this.attributesEl.list !== undefined){
+                this.$emit('backToStart')
+                return true
+            }
             this.$emit('changeService', 'BookingCalendar', {selectedSlot:false})
         },
         changePackage(){

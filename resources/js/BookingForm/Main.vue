@@ -18,6 +18,7 @@
             @changeDuration="childChangedStep"
             @changeLocation="childChangedStep"
             @showStaffScreen="childChangedStep"
+            @backToStart="$emit('backToStart')"
             />
             <div class="wap-form-body" :id="getWapBodyId" >
                 <BookingFormSummary v-if="!appointmentSaved && !isCompactHeader"
@@ -38,6 +39,7 @@
                 @changeService="childChangedStep"
                 @changeDuration="childChangedStep"
                 @changeLocation="childChangedStep"
+                @backToStart="$emit('backToStart')"
                 />
                 <template v-else>
                     <AppointmentOrder v-if="order" :order="order" />
@@ -123,7 +125,7 @@ let mixinsDeclared = window.wappointmentExtends.filter('BookingFormMixins', [Can
 export default {
      extends: AbstractFront,
      mixins: mixinsDeclared,
-     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid', 'demoAs', 'attributesEl'],
+     props: ['serviceAction', 'appointmentkey', 'rescheduleData', 'options', 'step','passedDataSent','wrapperid', 'demoAs', 'attributesEl', 'eventSelected'],
      components: compDeclared, 
     data: () => ({
         viewName: 'availability',
@@ -163,17 +165,17 @@ export default {
     mounted () {
         
         this.refreshInitValue()
+        
         this.currentTz = this.tzGuess()
         this.createdAt = this.getUnixNow()
     
         if(this.step !== null) {
             this.requiresScroll = true //booking widget editor requires scroll always
         }
-        window.addEventListener('resize', this.windowResized);
-        
+        window.addEventListener('resize', this.windowResized)
     },
     beforeDestroy(){
-        window.removeEventListener('resize', this.windowResized);
+        window.removeEventListener('resize', this.windowResized)
     },
     watch:{
         selectedSlot(newVal, oldVal){
@@ -547,7 +549,15 @@ export default {
         refreshAvail(){
             this.intervalsCollection = new Intervals(this.selectedStaff.availability)
         },
-
+        autoSelectEvent(){
+            this.setStaff(this.eventSelected.staff)
+            this.selectedSlot = this.eventSelected
+            let serviceId = this.eventSelected.service
+            this.service = this.services.find(e => e.id == serviceId)
+            this.duration = (this.eventSelected.duration / 60) - this.viewData.buffer_time
+            this.autoSelectLocation()
+            this.refreshAvail() // parse the selected staff to ge the availability
+        },
         loadedAfter() {
             this.cacheValue()
             this.time_format = convertDateFormatPHPtoMoment(this.viewData.time_format)
@@ -561,9 +571,16 @@ export default {
             }
             this.setMomentLocale()
             this.dataloaded = true
-            if(!this.mustSelectStaff || this.mustSelectStaff && this.getStaffs.length == 1){
+            
+            if(this.eventSelected){ // when event selected auto select
+                this.autoSelectEvent()
+            }
+            
+           if(!this.mustSelectStaff || this.mustSelectStaff && this.getStaffs.length == 1){
                 this.initServiceStaffDurationLocation()
             }
+
+            
     
             this.setComponentLists()
 
@@ -576,11 +593,17 @@ export default {
                 this.location = this.rescheduleData.location
 
             }else{
-                let stepdata = {service:this.service, duration:this.duration, location: this.location}
+                if(this.eventSelected){ // when event selected auto select
+                    this.goNext('BookingCalendar')
+                }else{
+                    let stepdata = {service:this.service, duration:this.duration, location: this.location}
 
-                let stepfirst = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', stepdata)
-                this.currentStep = this.selectFirstStep(stepfirst, stepdata)
-                this.autoSelectLocation()
+                    let stepfirst = window.wappointmentExtends.filter('BFFirstStep','BookingCalendar', stepdata)
+
+                    this.currentStep = this.selectFirstStep(stepfirst, stepdata)
+                    this.autoSelectLocation()
+                }
+                
             }
             this.$emit('changedStep',this.currentStep)
             this.loadStep(this.currentStep)
@@ -588,6 +611,13 @@ export default {
             if(this.loadedInit !== undefined){
                 this.loadedInit(this.step)
             }
+        },
+
+        goNext(stepName){
+            this.currentStep = this.getNextStep(stepName)
+        },
+        getNextStep(stepName){
+            return this.componentsList[stepName] !== undefined ? this.componentsList[stepName].relations.next:'BookingCalendar'
         },
 
         selectFirstStep(step_name, params) {
@@ -957,14 +987,6 @@ export default {
 }
 </script>
 <style>
-.wap-bf{
-    transition: box-shadow ease-in-out .3s;
-}
-.wap-bf.show{
-    box-shadow: 0px 8px 10px 0 rgba(0,0,0,.08);
-    overflow: hidden;
-    position: relative;
-}
 
 .d-flex.ddays > div{
     width: 14.3%;
@@ -975,71 +997,13 @@ export default {
     margin: .4em 0;
 }
 
-.wap-front .mr-2,
-.wap-front .mx-2{
-    margin-right: .4em !important;
-}
-html[dir=rtl] .wap-front .mr-2, 
-html[dir=rtl] .wap-front .mx-2 {
-  margin-right: 0 !important;
-  margin-left: .4em !important;
-}
-
-.wap-front .ml-2,
-.wap-front .mx-2{
-    margin-left: .4em !important;
-}
-
-.wap-front .mb-2,
-.wap-front .my-2{
-    margin-bottom: .4em !important;
-}
-
-.wap-front .mt-2,
-.wap-front .my-2{
-    margin-top: .4em !important;
-}
-.wap-front .p-2 {
-    padding: .5em !important;
-}
-.wap-front .pl-2 {
-    padding-left: .5em !important;
-}
 .wap-front .slotsPane{
     box-shadow: inset 0px 0px 10px rgba(0,0,0,.14);
     border-radius: .2em;
     overflow: hidden;
     margin-top: .3em;
 }
-.wap-front [data-tt]:not([data-tt=""]) {
-  cursor: pointer;
-}
-.wap-front [data-tt]:hover {
-  position: relative;
-  z-index: 2;
-}
 
-.wap-front [data-tt]:before,
-.wap-front [data-tt]:after {
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.wap-front [data-tt]:before {
-  position: absolute;
-  bottom: 150%;
-  left: 50%;
-  margin-bottom: -5px;
-  margin-left: -48px;
-  padding: 7px;
-  width: auto;
-  border-radius: 3px;
-  content: attr(data-tt);
-  text-align: center;
-  font-size: 14px;
-  line-height: 1.2;
-}
 .wap-front .first-day[data-tt]::before {
   left: calc( 100% + 100%/3);
   right: auto;
@@ -1050,35 +1014,9 @@ html[dir=rtl] .wap-front .mx-2 {
 }
 
 
-.wap-front [data-tt]:after {
-  position: absolute;
-  bottom: 150%;
-  left: 50%;
-  margin-left: -5px;
-  width: 0;
-  border-right: 5px solid transparent;
-  border-left: 5px solid transparent;
-  content: " ";
-  font-size: 0;
-  line-height: 0;
-  margin-bottom: -10px;
-}
-
-.wap-front [data-tt]:hover:before,
-.wap-front [data-tt]:hover:after,
-.wap-front [data-tt].hover:before,
-.wap-front [data-tt].hover:after {
-  visibility: visible;
-  opacity: 1;
-}
-
 .wap-front .confirmation-cell .success,
 .wap-front .wap-form-body .success .text-conf {
     color: var(--wappo-success-tx);
-}
-
-.wap-front .wap-form-body{
-    background-color: var(--wappo-body-bg);
 }
 
 .wclosable .wclose::before, 
@@ -1267,14 +1205,6 @@ html[dir=rtl] .wap-front .mx-2 {
 .wap-front .has-scroll .wap-form-body{
     overflow-y: scroll;
     overflow-x: hidden;
-}
-
-.wap-front .wap-form-body,
-.wap-front .wlabel,
-.wap-front .wrap-calendar div, 
-.wap-front .wrap-calendar div a
-{
-    color: var(--wappo-body-tx);
 }
 
 .wbtn.wbtn-secondary .wduration,

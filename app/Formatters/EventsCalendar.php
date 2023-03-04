@@ -123,6 +123,8 @@ class EventsCalendar
             'recurrent' => isset($event->recurrent) && $event->recurrent > 0,
             'onlyDelete' => true,
             'rendering' => (bool) $event->status ? 'appointment-confirmed' : 'appointment-pending',
+            'recurrent' => (bool) $event->recurrent,
+            'parent' => (int) $event->parent,
             'className' => apply_filters('wappointment_calendar_appointment_class', $this->baseClassAppointment($owes, $event), $event),
             'owes' => $owes,
             'display' => [

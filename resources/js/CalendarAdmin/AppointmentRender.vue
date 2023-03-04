@@ -3,12 +3,12 @@ import CanFormatPrice from '../Mixins/CanFormatPrice'
 export default {
   mixins: [CanFormatPrice],
     methods:{
-      getClientAppointment(event){
+      getClientAppointment(appointment){
         return`<div>
-                ${this.getAppointmentPicture(event, true)}
-                ${this.longDescription(event)}
+                ${this.getAppointmentPicture(appointment, true)}
+                ${this.longDescription(appointment)}
+                ${this.getShortcode(appointment)}
                 </div>`
-
       },
       getFieldLabel(namekey){
            if(namekey == 'tz') {
@@ -59,13 +59,12 @@ export default {
             return `
                 <div class="d-sm-flex justify-content-around align-items-center my-2">
                 ${this.getClientAppointment(appointment)}
-                
                 <div class="bg-light border border-primary rounded p-2 text-center">
                     <div> Scheduled Time </div>
                     ${this.getLocation(appointment)} 
                     ${this.getAppointmentTimeAndDate(start, end)}
                 </div>
-                </div>
+              </div>
             `
         },
         toMomentEnd(appointment){
@@ -76,7 +75,14 @@ export default {
           return end
         },
 
-      
+        getShortcode(appointment){
+          return this.isDDF(appointment,'extendedProps.recurrent') && appointment.extendedProps.recurrent? 'shortcode: [wap_widget list="'+parseInt(this.getParent(appointment))+'"]':''
+        },
+
+        getParent(appointment){
+          return appointment.extendedProps.parent < 1 ? appointment.extendedProps.dbid:appointment.extendedProps.parent
+        },
+
         getOldAndNewAppointment(appointment, delta){
 
             let dms = -delta.milliseconds

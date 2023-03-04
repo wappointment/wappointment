@@ -2,14 +2,10 @@
 # This file is distributed under the same license as the Wappointment plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wappointment 2.4.13\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wappointment-plugin\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-01-20T21:07:58+00:00\n"
+"POT-Creation-Date: 2022-04-23T04:57:11+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.5.0\n"
 "X-Domain: wappointment\n"
@@ -71,7 +67,7 @@ msgstr ""
 msgid "Booking failed"
 msgstr ""
 
-#: app/Controllers/BookingController.php:54
+#: app/Controllers/BookingController.php:56
 #: app/Controllers/ClientController.php:36
 msgid "Appointment recorded"
 msgstr ""
@@ -463,6 +459,10 @@ msgstr ""
 #. translators: %s is replaced with the number of slots
 #: app/Lists/translations.php:21
 msgid "Slots: %s"
+msgstr ""
+
+#: app/Lists/translations_calendar.php:3
+msgid "This week"
 msgstr ""
 
 #: app/Lists/translations_calendar.php:4
@@ -1895,16 +1895,6 @@ msgstr ""
 #. translators: %s is replaced with the client's email
 #: app/Messages/AdminGeneratesDefault.php:37
 msgid "Client's email: %s"
-msgstr ""
-
-#. translators: %s is replaced with the client's phone
-#: app/Messages/AdminGeneratesDefault.php:43
-msgid "Client's phone: %s"
-msgstr ""
-
-#. translators: %s is replaced with the client's skype username
-#: app/Messages/AdminGeneratesDefault.php:47
-msgid "Client's skype: %s"
 msgstr ""
 
 #. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
