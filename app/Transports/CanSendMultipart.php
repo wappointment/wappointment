@@ -2,8 +2,6 @@
 
 namespace Wappointment\Transports;
 
-use WappoSwift_Attachment;
-
 trait CanSendMultipart
 {
     public function sendMultiPartVersion($to, $message)
@@ -17,7 +15,7 @@ trait CanSendMultipart
     {
         $attachments = [];
         foreach ($message->getChildren() as $child) {
-            if ($child instanceof WappoSwift_Attachment) {
+            if ($child instanceof \WappoSwift_Attachment) {
                 $attachments[] = [
                     'body' => $child->getBody(),
                     'type' => 'text/calendar',

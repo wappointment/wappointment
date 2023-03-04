@@ -2,9 +2,6 @@
 
 namespace Wappointment\Services;
 
-use WappoSwift_Mailer;
-use WappoSwift_Message;
-
 class Mail
 {
     private static $transportMethod = false;
@@ -133,9 +130,9 @@ class Mail
 
     private function sendTransport()
     {
-        $mailer = new WappoSwift_Mailer(self::$transportMethod);
+        $mailer = new \WappoSwift_Mailer(self::$transportMethod);
         // Create a message
-        $message = (new WappoSwift_Message($this->subject))
+        $message = (new \WappoSwift_Message($this->subject))
             ->setFrom($this->getFrom())
             ->setTo($this->getTo())
             ->setBody($this->body, $this->bodyVersion);

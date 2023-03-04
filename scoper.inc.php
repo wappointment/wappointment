@@ -143,6 +143,14 @@ if (!function_exists("dds")) {
                     '\WappoVendor\get_plugins',
                     '\WappoVendor\activate_plugin',
                     '\WappoVendor\deactivate_plugin',
+
+/*                     'use WappoVendor\WappoSwift_Attachment;',
+                    'use WappoVendor\WappoSwift_Mailer;',
+                    'use WappoVendor\WappoSwift_Message;',
+                    'use WappoVendor\WappoSwift_MimePart;',
+                    'use WappoVendor\WappoSwift_Mime_SimpleMessage;',
+                    'use WappoVendor\WappoSwift_MimePart;',
+                    'use WappoVendor\WappoSwift_Attachment;', */
                 ], [
                     '\WappointmentValidationException',
                     '\WappointmentException',
@@ -158,6 +166,8 @@ if (!function_exists("dds")) {
                     '\get_plugins',
                     '\activate_plugin',
                     '\deactivate_plugin',
+
+                 /*    '' */
 
                 ], $contents);
             }
