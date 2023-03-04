@@ -2,9 +2,9 @@
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
 Requires at least: 4.7
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 7.0
-Stable tag: 2.4.10
+Stable tag: 2.4.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,6 +98,14 @@ And for any question or doubt, you can reach us:
 
 == Frequently Asked Questions ==
 
+**Why do reminders go out late sometimes?**
+
+WordPress by default uses an unreliable system to process background scheduled tasks; but we have created a guide to help you [make your site faster and more reliable](https://wappointment.com/docs/wp-cron?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
+
+**Why does nobody receive my confirmations or reminders emails?**
+
+Your emails most likely go straight to SPAM or don't event reach your inbox. Check this guide to [improve your emails' deliverability](https://wappointment.com/docs/configure-email?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
+
 **Can I change text and colors of the booking form?**
 
 You can change all the texts, colors and few other parameters of each step of the booking process. We plan on adding several templates in the future, meanwhile simply use css to make it exactly the way you want.
@@ -113,14 +121,6 @@ Sure you can, we allow up to 4 calendars in the ics format to be synched from. I
 **How often my Google calendar is being checked for sync?**
 
 Every 5 minutes we download your calendar and check for changes, we don't do it more often as it could be a heavy task depending on how big is your calendar.
-
-**Why do reminders go out late sometimes?**
-
-It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
-
-**Why does nobody receive my confirmations or reminders emails?**
-
-Your emails most likely go straight to SPAM or don't event reach your inbox. *Change the email sending method* in *Wappointment > Settings > Confirmations & Reminders* just go for the easy and reliable solution, [create a free account at SendGrid (100emails/day are free)](https://signup.sendgrid.com/) and configure Wappointment with the *SendGrid API*
 
 **I need 10 minutes to prepare between 2 appointments, how do I proceed?**
 
@@ -147,6 +147,39 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.4.13 - 2022-10-30 =
+* fixed bug admin booking email not valid
+
+= 2.4.12 - 2022-10-29 =
+* added random staff auto-selection
+* added max booking per staff
+* added email footer notes
+* added reply to address through filter wappointment_replyto_email and wappointment_replyto_name
+* fixed popup close when clicking on background
+* fixed staff filtering
+* fixed save to calendar button generated .ICS
+* fixed double fields in .ics
+* fixed calendar sync and custom DST issue for Outlook
+* fixed issue with italian phone validation
+* fixed indian rupee currency decimal separator
+* fixed bug on calendar edit
+* fixed multiple installations on same db
+* fixed issue custom fields not saved when booking from backend
+
+= 2.4.11 - 2022-06-15 =
+* added search box and improved pagination on media 
+* fixed phone number and skype missing from notification email 
+* fixed issues with .ics calendar import
+* fixed set staff page on new event link
+* fixed availability filter out old slots
+* fixed issue auto-increment on availability slots generation in the frontend
+* fixed jitsi meeting link showing too early 
+* fixed missing jitsi link from backend 
+* fixed admin duration when buffer, in emails and in admin
+* fixed save to calendar button when booking confirmed for firefox and chrome
+* fixed wrong duration sent to google cal 
+* fixed when no timezone is set in ics calendar default to staff timezone 
 
 = 2.4.10 - 2022-05-21 =
 * added "more starting times" option in Settings > Advanced custom segmenting over bookable time

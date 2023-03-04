@@ -29,7 +29,7 @@ trait ManipulateDotcom
             'video' => $this->getLocationVideo(),
             'starts_at' => $this->start_at->timestamp,
             'appointment_id' => $this->id,
-            'duration' => $this->getFullDurationInSec(),
+            'duration' => $this->getDurationInSec(),
             'location' => $this->type == 0 ? $this->getServiceAddress() : $this->getLocation(),
             'timezone' => $timezone,
             'attendees' => $attendees,

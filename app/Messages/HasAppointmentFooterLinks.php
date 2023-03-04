@@ -32,11 +32,19 @@ trait HasAppointmentFooterLinks
 
     protected function footerLinks()
     {
+        $footer = '';
+
+        if (!empty(Settings::get('email_footer'))) {
+            $footer .= '<p>' . nl2br(strip_tags(Settings::get('email_footer'))) . '</p>';
+        }
+
         $rescheduleAndCancelLinks = $this->rescheduleAndCancelLinks();
         if (!empty($rescheduleAndCancelLinks)) {
             $rescheduleAndCancelLinks = $this->separator . $rescheduleAndCancelLinks;
         }
 
-        return '<p>' . $this->calendarLink() . $rescheduleAndCancelLinks . '</p>';
+        $footer .=  '<p>' . $this->calendarLink() . $rescheduleAndCancelLinks . '</p>';
+
+        return $footer;
     }
 }

@@ -15,7 +15,7 @@
             </div>
             <div>
                 <span class="wlabel">{{options.confirmation.duration}}</span>
-                <span>{{calculateDuration}}{{getMinText}}</span>
+                <span>{{calculateDuration}} {{getMinText}}</span>
             </div>
             
         </div>

@@ -27,7 +27,6 @@ class BookingController extends RestController
 
     public function save(Booking $booking)
     {
-
         if ($booking->hasErrors()) {
             return $this->fieldsError($booking);
         }
@@ -43,7 +42,6 @@ class BookingController extends RestController
 
     public function adminBook(BookingAdmin $booking)
     {
-
         if ($booking->hasErrors()) {
             return $this->fieldsError($booking);
         }

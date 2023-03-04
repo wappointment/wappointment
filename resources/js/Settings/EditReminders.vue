@@ -33,7 +33,8 @@ export default {
           errorMessages: [],
           errors:{},
           formKey: 'formmailconfig',
-          schema: []
+          schema: [],
+          canTranslate: false
           
       }
     },
@@ -41,7 +42,11 @@ export default {
       this.recipient = this.passedViewData.recipient
       this.model = Object.assign({},this.reminder)
       this.viewData = Object.assign({},this.passedViewData)
-      this.schema = this.schemai18n
+      if(this.viewData.languages!==false){
+        this.model.canTranslate = true
+        this.canTranslate = true
+      }
+      this.schema = this.schemai18n()
       this.schema[0].label = this.model.label
       if(this.model.type == 1){
         this.schema.push({
@@ -53,6 +58,8 @@ export default {
             mail_status: this.passedViewData.mail_status,
             allow_rescheduling: this.passedViewData.allow_rescheduling,
             allow_cancellation: this.passedViewData.allow_cancellation,
+            email_footer: this.passedViewData.email_footer,
+            link_color: this.passedViewData.link_color,
             reschedule_link: this.passedViewData.reschedule_link,
             cancellation_link: this.passedViewData.cancellation_link,
             save_appointment_text_link: this.passedViewData.save_appointment_text_link,
@@ -74,12 +81,18 @@ export default {
         })
         
       }
+      
     },
     computed: {
         canSend(){
             return this.formready
         },
-        schemai18n(){
+        
+    },
+
+
+    methods: {
+      schemai18n(){
           return [
               {
                   type: 'label',
@@ -130,6 +143,21 @@ export default {
                 ]
               },
               {
+                  type: "select",
+                  label: this.get_i18n('language','common'),
+                  model: "lang",
+                  elements: this.canTranslate ? this.viewData.languages.map(function(item){
+                    return {
+                      id: item.locale,
+                      name: item.name + '('+item.locale+')'
+                    }
+                  }):[],
+                  cast: String,
+                  conditions: [
+                    { model:'canTranslate', values: [true] }
+                  ],
+              },
+              {
                   type: "input",
                   label: this.get_i18n('subject','settings'),
                   model: "subject",
@@ -149,11 +177,7 @@ export default {
               },
               
           ]
-        }
-    },
-
-
-    methods: {
+        },
       filterSchema(){
         for (let i = 0; i < this.model.ignore.length; i++) {
             const ignore = this.model.ignore[i]

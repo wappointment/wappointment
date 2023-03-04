@@ -35,7 +35,6 @@ class DotCom extends API
 
     public function checkForUpdates()
     {
-
         $must_refresh = WPHelpers::getOption('appointments_must_refresh');
 
         // 0 - only check if site connected
@@ -195,7 +194,6 @@ class DotCom extends API
 
     public function update($appointment)
     {
-
         $response = $this->client
             ->setForm($this->getParams($this->getAppointmentDetails($appointment)))
             ->post($this->call('/api/appointment/update'));
@@ -229,7 +227,6 @@ class DotCom extends API
 
     protected function getAppointmentDetails($appointment)
     {
-
         $tz = $this->isLegacy ? Settings::getStaff('timezone', $this->staff_id) : $this->staff->getTimezone();
 
         return [
@@ -240,7 +237,7 @@ class DotCom extends API
 
     public function wrapAppointment($appointment)
     {
-        if ((new Licences)->hasLicenceInstalled() && has_filter('wappointment_ics_signature')) {
+        if ((new Licences())->hasLicenceInstalled() && has_filter('wappointment_ics_signature')) {
             $appointment['no_sign'] = true;
         }
         return $appointment;

@@ -245,7 +245,7 @@ return [
     'code' => 'CLP',
     'name' => 'Chilean peso',
     'symbol' => '$',
-    'position' => 1,
+    'position' => 2,
     'decimals_sep' => false,
     'thousand_sep' => ' ',
   ],
@@ -527,7 +527,7 @@ return [
     'name' => 'Indian rupee',
     'symbol' => '₹',
     'position' => 1,
-    'decimals_sep' => ',',
+    'decimals_sep' => '.',
     'thousand_sep' => ' ',
   ],
   66 => [

@@ -9,7 +9,10 @@ use Wappointment\ClassConnect\Carbon;
 
 class Client extends Model
 {
-    use SoftDeletes, CanBook, CanBookLegacy;
+    use SoftDeletes;
+    use CanBook;
+    use CanBookLegacy;
+    use CanGetCustomFieldValue;
 
     protected $table = 'wappo_clients';
     public $generatingOrder = true;
@@ -27,11 +30,16 @@ class Client extends Model
         return $this->hasMany(Appointment::class);
     }
 
-    public function hasActiveBooking()
+    public function hasActiveBooking($staff_id)
     {
         $start_at_string = Carbon::now('UTC')->format(WAPPOINTMENT_DB_FORMAT);
-        return Appointment::where('client_id', $this->id)
-            ->where('start_at', '>=', $start_at_string)->count();
+        $appointments_query = Appointment::where('client_id', $this->id)
+            ->where('start_at', '>=', $start_at_string);
+
+        if ((int)Settings::get('max_active_per_staff')) {
+            $appointments_query->where('staff_id', $staff_id);
+        }
+        return $appointments_query->count();
     }
 
     public function getEmailAttribute($value)
@@ -85,7 +93,16 @@ class Client extends Model
 
     public function getCustomField($tag = false)
     {
-        return empty($tag) || empty($this->options[$tag['key']]) ? '' : $this->options[$tag['key']];
+        return empty($tag) || empty($this->options[$tag['key']]) ? '' : $this->getCfReadableValue($tag);
+    }
+
+    private function getCfReadableValue($tag)
+    {
+        if (class_exists('\\WappointmentAddonServices\\Services\\CustomFields')) {
+            return $this->getCustomFieldFormattedValue($tag);
+        }
+
+        return $this->options[$tag['key']];
     }
 
     protected function getRealDuration($service)

@@ -10,7 +10,7 @@
                 <div role="button" @click="showAllStaff" v-if="showStaffName" :class="{'wcan-edit':canChangeStaff}"><strong>{{ staff.n }}</strong></div>
                 <div class="header-service" v-if="service!== false && isCompactHeader">
                     <span class="compact-servicename" role="button" :class="{'wcan-edit':canChangeService}" @click="changeService">{{ service.name }}</span>
-                    <span v-if="duration" role="button" class="wduration" :class="{'wcan-edit':canChangeDuration}" @click="changeDuration">{{duration}}{{getMinText}}</span>
+                    <span v-if="duration" role="button" class="wduration" :class="{'wcan-edit':canChangeDuration}" @click="changeDuration">{{duration}} {{getMinText}}</span>
                 </div>
             </div>
         </div>

@@ -153,8 +153,8 @@ class IcsGenerator
 
     protected function getTitle(Appointment $appointment, $staff)
     {
-        $title = $appointment->getServiceName() . ' ';
-        $title .= $this->admin ? $appointment->getClientModel()->name . '(' . $appointment->getClientModel()->email . ')' :  $staff->name;
+        $title = $appointment->getServiceName() . ' - ';
+        $title .= $this->admin ? $appointment->getClientModel()->name . ' (' . $appointment->getClientModel()->email . ')' :  $staff->name;
 
         return esc_html($title);
     }
@@ -162,19 +162,23 @@ class IcsGenerator
     protected function getDescription(Appointment $appointment)
     {
         $description = '';
-        foreach (['name', 'tz', 'email', 'phone', 'skype'] as $key) {
+        $keysParse = ['name', 'tz', 'email'];
+        if (!Addons::isActive('wappointment_services')) {
+            $keysParse[] = 'phone';
+            $keysParse[] = 'skype';
+        }
+        foreach ($keysParse as $key) {
             if (!empty($appointment->getClientModel()->options[$key])) {
                 $description .= "\n" . $key . ' : ';
                 $description .= esc_html($appointment->getClientModel()->options[$key]);
             }
         }
 
-
-        $description = apply_filters('wappointment_ics_description', $description, $appointment);
+        $description = str_replace('::', ':', apply_filters('wappointment_ics_description', $description, $appointment));
 
         if ($appointment->isZoom()) {
             $description .= "\n\n" . __('Appointment is a Video meeting', 'wappointment');
-            $description .= "\n" . __('Meeting will be accessible from the link below:', 'wappointment') .
+            $description .= "\n\n" . __('Meeting will be accessible from the link below:', 'wappointment') .
                 "\n " . $appointment->getLinkViewEvent();
         }
 

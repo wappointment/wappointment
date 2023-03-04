@@ -8,7 +8,7 @@ use Wappointment\Services\Settings;
 
 class AppointmentBookedEvent extends AbstractEvent
 {
-    const NAME = 'appointment.booked';
+    public const NAME = 'appointment.booked';
 
     protected $appointment;
     protected $client;

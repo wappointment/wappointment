@@ -4,7 +4,6 @@ namespace Wappointment\Services;
 
 class CurrentUser
 {
-
     public static function get()
     {
         $current_user = false;
@@ -17,6 +16,11 @@ class CurrentUser
     public static function id()
     {
         return static::get()->ID;
+    }
+
+    public static function owns($calendarId)
+    {
+        return \Wappointment\Models\Calendar::where('wp_uid', static::id())->where('id', $calendarId)->first();
     }
 
     public static function calendarId()

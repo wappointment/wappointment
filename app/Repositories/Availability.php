@@ -7,6 +7,7 @@ use Wappointment\Services\Staff;
 use Wappointment\Managers\Service as ManageService;
 use Wappointment\Services\Settings;
 use Wappointment\ClassConnect\Carbon;
+use Wappointment\Helpers\Site;
 
 class Availability extends AbstractRepository
 {
@@ -25,7 +26,7 @@ class Availability extends AbstractRepository
             'now' => (new Carbon())->format('Y-m-d\TH:i:00'),
             'buffer_time' => Settings::get('buffer_time'),
             'services' => ManageService::all(),
-            'site_lang' => substr(get_locale(), 0, 2),
+            'site_lang' => Site::lang(),
             'custom_fields' => Central::get('CustomFields')::get(),
             'availability_fluid' => Settings::get('availability_fluid'),
             'more_st' => Settings::get('more_st'),

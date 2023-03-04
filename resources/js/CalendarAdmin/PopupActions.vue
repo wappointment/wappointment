@@ -31,7 +31,7 @@ let calendar_components = window.wappointmentExtends.filter('BackendCalendarComp
   })
 
 export default {
-    props:['displayTimezone', 'activeStaff', 'startTime', 'endTime', 'realEndTime', 'viewData', 'getThisWeekIntervals', 'momenttz'],
+    props:['displayTimezone', 'activeStaff', 'startTime', 'endTime', 'realEndTime', 'viewData', 'getThisWeekIntervals', 'momenttz', 'startTimeLuxon', 'endTimeLuxon'],
     mixins: window.wappointmentExtends.filter('PopupActionsMixin', []),
     components: calendar_components,
     data: () =>({
@@ -46,9 +46,11 @@ export default {
             return this.viewData.buttons
         },
         startTimeDisplay(){
+            return this.startTimeLuxon.toLocaleString({hour: 'numeric',minute: '2-digit'})
             return this.formatTime(this.startTime)
         },
         endTimeDisplay(){
+            return this.endTimeLuxon.toLocaleString({hour: 'numeric',minute: '2-digit'})
             return this.formatTime(this.endTime)
         },
         shortStDayDisplay(){
@@ -58,7 +60,7 @@ export default {
             return this.endTime.format(this.shortDayFormat+' '+this.viewData.time_format)
         },
         startDayDisplay() {
-            return this.startTime.format(this.viewData.date_format)
+            return this.startTimeLuxon.toLocaleString({year: 'numeric',month: 'long',day: 'numeric'})
         },
         activeComp(){
             let name = this.activeCompName

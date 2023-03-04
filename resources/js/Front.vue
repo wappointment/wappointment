@@ -7,14 +7,13 @@
               <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
           </div>
           
-          <div class="wappo_module" :class="getWidClass" v-if="isWidget">
-            <div class="wap-wid wclosable" :class="getStepName" >
+          <div class="wappo_module" :class="getWidClass" @click.self="backToButton">
+              <div class="wap-wid wclosable" :class="getStepName" v-if="isWidget">
                 <EventList v-if="showEventList" @selectedEvent="selectedEvent" :list="attributesEl.list" :options="opts"/>
                 <template v-else>
                   <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
-                  <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :eventSelected="eventSelected"
-                  :attributesEl="attributesElProcess" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" @backToStart="backToStart" />
-                  <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
+                <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :attributesEl="attributesElProcess" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
+                <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
                 </template>
             </div>
           </div>
@@ -66,7 +65,7 @@ export default {
       if(this.step !== undefined) {
         this.currentStep = this.step
       }
-      this.opts = this.options === undefined ? window.widgetWappointment : Object.assign ({}, this.options)
+      this.opts = this.options === undefined ? Object.assign ({}, window.widgetWappointment) : Object.assign ({}, this.options)
       this.processShortcode()
     },
     mounted(){

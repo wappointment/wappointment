@@ -21,9 +21,14 @@ trait ManipulateDuration
         return $this->getFullDurationInSec() - $this->getBufferInSec();
     }
 
+    protected function formatDuration($durationInMin)
+    {
+        /* translators: %s - minutes */
+        return sprintf(__('%s min', 'wappointment'), $durationInMin);
+    }
     public function getDuration()
     {
-        return ($this->getDurationInSec() / 60) . __('min', 'wappointment');
+        return $this->formatDuration($this->getDurationInSec() / 60);
     }
 
     public function getBufferInSec()
@@ -31,10 +36,18 @@ trait ManipulateDuration
         return  isset($this->options) && isset($this->options['buffer_time']) ? ((int) $this->options['buffer_time']) * 60 : 0;
     }
 
+    public function getEndTimeWithoutBuffer()
+    {
+        if (!empty($this->options['buffer_time'])) {
+            return $this->end_at->subMinutes($this->options['buffer_time']);
+        }
+        return $this->end_at;
+    }
+
     public function getBuffer()
     {
         $buffer = $this->getBufferInSec();
-        return $buffer > 0 ? '(+' . ($buffer / 60) .  __('min', 'wappointment') . ')' : '';
+        return $buffer > 0 ? '(+' . $this->formatDuration($buffer / 60) . ')' : '';
     }
 
     public function getStartsDayAndTime($timezone)

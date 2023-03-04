@@ -5,7 +5,7 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.10</span>   
+                <span>V2.4.12</span>   
                 <span class="ml-2">Bug fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
@@ -13,10 +13,20 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added "more starting times" option in Settings > Advanced custom segmenting over bookable time</li>
-                        <li>added option to use same staff email for different calendars</li>
-                        <li>added option to use the same wappointment.com account key on different accounts</li>
-                        <li>fixed issue for custom timezones when reading some .ICS calendars from Microsoft Exchange</li>
+                        <li>added random staff auto-selection</li>
+                        <li>added max booking per staff</li>
+                        <li>added email footer notes</li>
+                        <li>added reply to address through filter wappointment_replyto_email and wappointment_replyto_name</li>
+                        <li>fixed popup close when clicking on background</li>
+                        <li>fixed staff filtering</li>
+                        <li>fixed save to calendar button generated .ICS</li>
+                        <li>fixed double fields in .ics</li>
+                        <li>fixed calendar sync and custom DST issue for Outlook</li>
+                        <li>fixed issue with italian phone validation</li>
+                        <li>fixed indian rupee currency decimal separator</li>
+                        <li>fixed bug on calendar edit</li>
+                        <li>fixed multiple installations on same db</li>
+                        <li>fixed issue custom fields not saved when booking from backend</li>
                     </ol>
                     
                   </div>

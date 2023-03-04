@@ -1,12 +1,8 @@
-# Copyright (C) 2022 Wappointment
+# Copyright (C) 2023 Wappointment
 # This file is distributed under the same license as the Wappointment plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wappointment 2.4.9\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wappointment-plugin\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2022-04-23T04:57:11+00:00\n"
@@ -39,8 +35,8 @@ msgstr ""
 #: app/Controllers/AppointmentController.php:27
 #: app/Services/Appointment.php:83
 #: app/Services/Appointment.php:266
-#: app/Services/AppointmentNew.php:249
-#: app/Services/AppointmentNew.php:432
+#: app/Services/AppointmentNew.php:252
+#: app/Services/AppointmentNew.php:449
 msgid "Can't find appointment"
 msgstr ""
 
@@ -50,7 +46,19 @@ msgstr ""
 msgid "%1$s - %2$s"
 msgstr ""
 
-#: app/Controllers/AppointmentController.php:57
+#. translators: %s is replaced with the staff name
+#: app/Controllers/AppointmentController.php:48
+#: app/Messages/AdminGeneratesDefault.php:29
+msgid "Staff: %s"
+msgstr ""
+
+#. translators: %s is replaced with the location name
+#: app/Controllers/AppointmentController.php:49
+#: app/Messages/AdminGeneratesDefault.php:33
+msgid "Location: %s"
+msgstr ""
+
+#: app/Controllers/AppointmentController.php:59
 msgid "Appointment has been canceled"
 msgstr ""
 
@@ -64,44 +72,44 @@ msgstr ""
 msgid "Appointment recorded"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:193
+#: app/Controllers/CalendarsController.php:192
 msgid "Services assigned"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:203
+#: app/Controllers/CalendarsController.php:202
 msgid "Permissions saved"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:281
+#: app/Controllers/CalendarsController.php:280
 #: app/Services/AdminLegacy.php:18
 #: app/Services/Appointment.php:78
 #: app/Services/Appointment.php:260
-#: app/Services/AppointmentNew.php:241
-#: app/Services/AppointmentNew.php:426
+#: app/Services/AppointmentNew.php:239
+#: app/Services/AppointmentNew.php:443
 msgid "Malformed parameter"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:302
+#: app/Controllers/CalendarsController.php:301
 msgid "Connected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:305
+#: app/Controllers/CalendarsController.php:304
 msgid "Error connecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:319
+#: app/Controllers/CalendarsController.php:318
 msgid "Disconnected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:322
+#: app/Controllers/CalendarsController.php:321
 msgid "Error disconnecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:336
+#: app/Controllers/CalendarsController.php:335
 msgid "Refreshed"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:339
+#: app/Controllers/CalendarsController.php:338
 msgid "Error refreshing"
 msgstr ""
 
@@ -113,24 +121,27 @@ msgstr ""
 msgid "Cache has been reseted"
 msgstr ""
 
-#: app/Controllers/EventsController.php:30
+#: app/Controllers/EventsController.php:29
 msgid "Cannot modify an appointment which doesn't belong to you"
 msgstr ""
 
-#: app/Controllers/EventsController.php:44
-#: app/Controllers/EventsController.php:50
+#: app/Controllers/EventsController.php:43
+#: app/Controllers/EventsController.php:49
+#: app/Controllers/EventsController.php:56
+#: app/Controllers/EventsController.php:61
 msgid "Appointment cancelled"
 msgstr ""
 
-#: app/Controllers/EventsController.php:46
+#: app/Controllers/EventsController.php:45
+#: app/Controllers/EventsController.php:58
 msgid "Error deleting appointment"
 msgstr ""
 
-#: app/Controllers/EventsController.php:112
+#: app/Controllers/EventsController.php:123
 msgid "Appointment confirmed"
 msgstr ""
 
-#: app/Controllers/EventsController.php:114
+#: app/Controllers/EventsController.php:125
 msgid "Error confirming appointment"
 msgstr ""
 
@@ -200,24 +211,24 @@ msgstr ""
 
 #. translators: %1$s is service name, %2$s is the duration
 #: app/Formatters/EventsCalendar.php:132
-msgid "%1$s - %2$smin"
+msgid "%1$s - %2$s min"
 msgstr ""
 
 #. translators: %s - email address.
-#: app/Formatters/EventsCalendar.php:153
+#: app/Formatters/EventsCalendar.php:162
 msgid "Email: %s"
 msgstr ""
 
 #. translators: %1$s is label %2$s is value
-#: app/Formatters/EventsCalendar.php:160
+#: app/Formatters/EventsCalendar.php:169
 msgid "%1$s: %2$s"
 msgstr ""
 
-#: app/Formatters/EventsCalendar.php:171
+#: app/Formatters/EventsCalendar.php:180
 msgid "Timezone"
 msgstr ""
 
-#: app/Formatters/EventsCalendar.php:173
+#: app/Formatters/EventsCalendar.php:182
 msgid "Owes"
 msgstr ""
 
@@ -455,39 +466,67 @@ msgid "This week"
 msgstr ""
 
 #: app/Lists/translations_calendar.php:4
-msgid "free slots"
+msgid "This week"
 msgstr ""
 
 #: app/Lists/translations_calendar.php:5
+msgid "free slots"
+msgstr ""
+
+#: app/Lists/translations_calendar.php:6
 msgid "Choose an action"
 msgstr ""
 
 #. translators: %1$s - date start %2$s - date end.
-#: app/Lists/translations_calendar.php:7
+#: app/Lists/translations_calendar.php:8
 msgid "From %1$s until %2$s"
 msgstr ""
 
 #. translators: %s - cbuffer value in minutes
-#: app/Lists/translations_calendar.php:9
-msgid "includes %smin buffer"
+#: app/Lists/translations_calendar.php:10
+msgid "includes %s min buffer"
 msgstr ""
 
 #. translators: %s - total slot.
-#: app/Lists/translations_calendar.php:13
+#: app/Lists/translations_calendar.php:14
 #: app/Lists/widget_settings.php:66
 msgid "%s free slots"
 msgstr ""
 
-#: app/Lists/translations_calendar.php:14
+#: app/Lists/translations_calendar.php:15
 msgid "Show free times"
 msgstr ""
 
-#: app/Lists/translations_calendar.php:15
+#: app/Lists/translations_calendar.php:16
 msgid "Group event"
 msgstr ""
 
-#: app/Lists/translations_calendar.php:16
+#: app/Lists/translations_calendar.php:17
 msgid "Event for multiple participants"
+msgstr ""
+
+#: app/Lists/translations_calendar.php:18
+msgid "Do you really want to cancel"
+msgstr ""
+
+#: app/Lists/translations_calendar.php:19
+msgid "Confirm that you are free?"
+msgstr ""
+
+#: app/Lists/translations_calendar.php:20
+msgid "Click a time to select new start"
+msgstr ""
+
+#: app/Lists/translations_calendar.php:21
+msgid "Confirm new start:"
+msgstr ""
+
+#: app/Lists/translations_calendar.php:22
+msgid "Select another time"
+msgstr ""
+
+#: app/Lists/translations_calendar.php:23
+msgid "Modify your Weekly Availability"
 msgstr ""
 
 #: app/Lists/translations_clients.php:3
@@ -563,165 +602,170 @@ msgstr ""
 msgid "Show all"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:3
+#: app/Lists/translations_js_common.php:4
 msgid "Select or search timezone"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:4
+#: app/Lists/translations_js_common.php:5
 msgid "timezones"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:6
+#: app/Lists/translations_js_common.php:7
 msgid "Element is required"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:8
+#: app/Lists/translations_js_common.php:9
 msgid "Select countries"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:9
+#: app/Lists/translations_js_common.php:10
 msgid "Clear selection"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:11
+#: app/Lists/translations_js_common.php:12
 msgid "View"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:12
+#: app/Lists/translations_js_common.php:13
 msgid "Title"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:13
-#: app/Lists/translations_js_common.php:42
+#: app/Lists/translations_js_common.php:14
+#: app/Lists/translations_js_common.php:44
 msgid "Edit"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:14
+#: app/Lists/translations_js_common.php:15
 msgid "Slug"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:15
+#: app/Lists/translations_js_common.php:16
 msgid "Widget's settings"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:16
+#: app/Lists/translations_js_common.php:17
 msgid "Button Title"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:17
+#: app/Lists/translations_js_common.php:18
 msgid "Opens in a full screen popup"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:18
-msgid "Center"
-msgstr ""
-
 #: app/Lists/translations_js_common.php:19
-msgid "Auto-open Calendar"
+msgid "Random auto-select"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:20
-msgid "Full-width Calendar"
+msgid "Center"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:21
-msgid "Week view"
+msgid "Auto-open Calendar"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:22
-msgid "Select staff first"
+msgid "Full-width Calendar"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:23
-msgid "Preview"
+msgid "Week view"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:24
-msgid "Your booking page exists already!"
+msgid "Select staff first"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:25
-msgid "Insert the booking form in a new page, within an existing page or within a widget area"
+msgid "Preview"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:26
-msgid "Create a new page"
+msgid "Your booking page exists already!"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:27
-msgid "Using a Shortcode"
+msgid "Insert the booking form in a new page, within an existing page or within a widget area"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:28
-msgid "Using our Widget"
+msgid "Create a new page"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:29
-msgid "Your shortcode:"
+msgid "Using a Shortcode"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:30
-msgid "How can I use this shortcode?"
+msgid "Using our Widget"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:31
-msgid "Customize"
+msgid "Your shortcode:"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:32
-msgid "Insert"
+msgid "How can I use this shortcode?"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:33
-msgid "Edit Text"
+msgid "Customize"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:34
-msgid "Edit Color"
+msgid "Insert"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:35
-msgid "General"
+msgid "Edit Text"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:36
-msgid "Step"
+msgid "Edit Color"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:37
-msgid "Edit more colors"
+msgid "General"
+msgstr ""
+
+#: app/Lists/translations_js_common.php:38
+msgid "Step"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:39
-msgid "Create"
-msgstr ""
-
-#: app/Lists/translations_js_common.php:40
-msgid "Hide"
+msgid "Edit more colors"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:41
-#: app/Lists/translations_js_common.php:67
-msgid "Save"
+msgid "Create"
+msgstr ""
+
+#: app/Lists/translations_js_common.php:42
+msgid "Hide"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:43
-msgid "Delete"
-msgstr ""
-
-#: app/Lists/translations_js_common.php:44
-msgid "Sort"
+#: app/Lists/translations_js_common.php:71
+msgid "Save"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:45
-#: app/Lists/translations_orders.php:6
-#: app/Lists/widget_settings.php:114
-#: app/Lists/widget_translations.php:12
-#: app/Services/Settings.php:100
-msgid "Cancel"
+msgid "Delete"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:46
+msgid "Sort"
+msgstr ""
+
+#: app/Lists/translations_js_common.php:47
+#: app/Lists/translations_orders.php:6
+#: app/Lists/widget_settings.php:114
+#: app/Lists/widget_translations.php:12
+#: app/Services/Settings.php:101
+#: app/Services/ViewsData.php:235
+msgid "Cancel"
+msgstr ""
+
+#: app/Lists/translations_js_common.php:48
 #: app/Lists/widget_settings.php:83
 #: app/Lists/widget_settings.php:115
 #: app/Lists/widget_settings.php:122
@@ -729,112 +773,120 @@ msgstr ""
 msgid "Confirm"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:47
+#: app/Lists/translations_js_common.php:49
 msgid "Get Shortcode"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:48
+#: app/Lists/translations_js_common.php:50
 #: app/Lists/translations_wizard.php:3
 #: app/Lists/widget_settings.php:82
 msgid "Back"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:49
+#: app/Lists/translations_js_common.php:51
 msgid "No results found"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:50
+#: app/Lists/translations_js_common.php:52
 msgid "Clear"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:51
+#: app/Lists/translations_js_common.php:53
 msgid "Search"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:52
+#: app/Lists/translations_js_common.php:54
 msgid "Close"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:53
+#: app/Lists/translations_js_common.php:55
 msgid "Add"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:55
+#: app/Lists/translations_js_common.php:56
+#: app/Lists/widget_settings.php:121
+#: app/Lists/widget_translations.php:11
+#: app/Services/Settings.php:100
+msgid "Reschedule"
+msgstr ""
+
+#: app/Lists/translations_js_common.php:59
 msgid "Hours"
 msgstr ""
 
 #. translators: %s - minutes
-#: app/Lists/translations_js_common.php:57
-msgid "%smin"
+#: app/Lists/translations_js_common.php:61
+#: app/Models/Appointment/ManipulateDuration.php:27
+msgid "%s min"
 msgstr ""
 
 #. translators: %s - hours
-#: app/Lists/translations_js_common.php:59
+#: app/Lists/translations_js_common.php:63
 msgid "%sh"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:60
+#: app/Lists/translations_js_common.php:64
 msgid "Account Selection"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:61
+#: app/Lists/translations_js_common.php:65
 msgid "Select an account or enter an email to create a new one"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:62
+#: app/Lists/translations_js_common.php:66
 #: app/Lists/translations_settings.php:4
 #: app/WP/StaffHistory.php:80
 msgid "Name"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:63
+#: app/Lists/translations_js_common.php:67
 msgid "Select account or enter email"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:64
+#: app/Lists/translations_js_common.php:68
 msgid "Set a timezone"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:65
+#: app/Lists/translations_js_common.php:69
 msgid "Set a standard weekly schedule"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:66
+#: app/Lists/translations_js_common.php:70
 msgid "Available Booking Days"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:68
+#: app/Lists/translations_js_common.php:72
 msgid "Send Preview"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:70
+#: app/Lists/translations_js_common.php:74
 msgid "Unlock this feature"
 msgstr ""
 
 #. translators: %s is the addon name
-#: app/Lists/translations_js_common.php:72
+#: app/Lists/translations_js_common.php:76
 msgid "Unlock premium feature with our addon \"%s\""
 msgstr ""
 
-#: app/Lists/translations_js_common.php:73
+#: app/Lists/translations_js_common.php:77
 msgid "Get the Addon"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:74
+#: app/Lists/translations_js_common.php:78
 msgid "Remember"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:75
+#: app/Lists/translations_js_common.php:79
 #: app/System/InitBackend.php:176
 #: app/WP/Menus.php:29
 msgid "Settings"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:76
+#: app/Lists/translations_js_common.php:80
 msgid "Created at"
 msgstr ""
 
-#: app/Lists/translations_js_common.php:78
+#: app/Lists/translations_js_common.php:82
 msgid "Please make a selection"
 msgstr ""
 
@@ -870,12 +922,12 @@ msgid "Paid at"
 msgstr ""
 
 #: app/Lists/translations_orders.php:14
-#: app/Models/Service.php:35
+#: app/Models/Service.php:36
 msgid "Free"
 msgstr ""
 
 #: app/Lists/translations_orders.php:15
-#: app/Models/Service.php:33
+#: app/Models/Service.php:34
 msgid "Selling"
 msgstr ""
 
@@ -1488,8 +1540,6 @@ msgid "Package"
 msgstr ""
 
 #: app/Lists/widget_settings.php:50
-#: app/Models/Appointment/ManipulateDuration.php:26
-#: app/Models/Appointment/ManipulateDuration.php:37
 msgid "min"
 msgstr ""
 
@@ -1648,12 +1698,6 @@ msgstr ""
 msgid "Too late to reschedule"
 msgstr ""
 
-#: app/Lists/widget_settings.php:121
-#: app/Lists/widget_translations.php:11
-#: app/Services/Settings.php:99
-msgid "Reschedule"
-msgstr ""
-
 #: app/Lists/widget_settings.php:125
 msgid "Pick a service"
 msgstr ""
@@ -1720,12 +1764,12 @@ msgid "Confirmation"
 msgstr ""
 
 #: app/Lists/widget_translations.php:3
-#: app/Services/IcsGenerator.php:176
+#: app/Services/IcsGenerator.php:180
 msgid "Appointment is a Video meeting"
 msgstr ""
 
 #: app/Lists/widget_translations.php:4
-#: app/Services/IcsGenerator.php:177
+#: app/Services/IcsGenerator.php:181
 msgid "Meeting will be accessible from the link below:"
 msgstr ""
 
@@ -1740,7 +1784,7 @@ msgstr ""
 
 #. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
 #: app/Lists/widget_translations.php:8
-#: app/Messages/AdminGeneratesDefault.php:43
+#: app/Messages/AdminGeneratesDefault.php:54
 msgid "Begin meeting"
 msgstr ""
 
@@ -1827,44 +1871,34 @@ msgid "Ps: An .ics file with all your appointments is attached"
 msgstr ""
 
 #. translators: %s is replaced with the date the appointment startt at
-#: app/Messages/AdminGeneratesDefault.php:18
+#: app/Messages/AdminGeneratesDefault.php:25
 #: app/Messages/AdminRescheduledAppointmentEmail.php:30
 msgid "Date: %s"
 msgstr ""
 
 #. translators: %1$s is replaced with the start time, %2$s is replaced with the end time
-#: app/Messages/AdminGeneratesDefault.php:20
+#: app/Messages/AdminGeneratesDefault.php:27
 #: app/Messages/AdminRescheduledAppointmentEmail.php:35
 msgid "Time: %1$s - %2$s"
 msgstr ""
 
-#. translators: %s is replaced with the staff name
-#: app/Messages/AdminGeneratesDefault.php:22
-msgid "Staff: %s"
-msgstr ""
-
 #. translators: %s is replaced with the service name
-#: app/Messages/AdminGeneratesDefault.php:24
+#: app/Messages/AdminGeneratesDefault.php:31
 msgid "Service: %s"
 msgstr ""
 
-#. translators: %s is replaced with the location name
-#: app/Messages/AdminGeneratesDefault.php:26
-msgid "Location: %s"
-msgstr ""
-
 #. translators: %s is replaced with the client's name
-#: app/Messages/AdminGeneratesDefault.php:28
+#: app/Messages/AdminGeneratesDefault.php:35
 msgid "Client's name: %s"
 msgstr ""
 
 #. translators: %s is replaced with the client's email
-#: app/Messages/AdminGeneratesDefault.php:30
+#: app/Messages/AdminGeneratesDefault.php:37
 msgid "Client's email: %s"
 msgstr ""
 
 #. translators: %s is replaced with a "Begin the meeting" button linking to a wappointment page
-#: app/Messages/AdminGeneratesDefault.php:43
+#: app/Messages/AdminGeneratesDefault.php:54
 msgid "Video meeting: %s"
 msgstr ""
 
@@ -1948,6 +1982,18 @@ msgstr ""
 msgid "Staff Custom Field - %s"
 msgstr ""
 
+#. translators: %1$s - date %2$s rescheule link.
+#: app/Models/Appointment/ManipulateCancelReschedule.php:21
+#: app/Services/IcsGenerator.php:190
+msgid "Reschedule (until %1$s): &#10; %2$s"
+msgstr ""
+
+#. translators: %1$s - date %2$s cancel link.
+#: app/Models/Appointment/ManipulateCancelReschedule.php:30
+#: app/Services/IcsGenerator.php:192
+msgid "Cancel (until %1$s): &#10; %2$s"
+msgstr ""
+
 #: app/Models/CanBook.php:17
 msgid "Error cannot load the service"
 msgstr ""
@@ -1984,24 +2030,24 @@ msgstr ""
 msgid "Pay On Site"
 msgstr ""
 
-#: app/Models/Reminder.php:97
+#: app/Models/Reminder.php:93
 msgid "Sent after appointment has been confirmed."
 msgstr ""
 
-#: app/Models/Reminder.php:98
+#: app/Models/Reminder.php:94
 msgid "Sent after appointment has been rescheduled."
 msgstr ""
 
-#: app/Models/Reminder.php:99
+#: app/Models/Reminder.php:95
 msgid "Sent after appointment has been cancelled."
 msgstr ""
 
-#: app/Models/Reminder.php:100
+#: app/Models/Reminder.php:96
 msgid "Sent after appointment has been booked (when admin approval is required or when payment method is active)"
 msgstr ""
 
 #. translators: %1$s is replaced with a number of %2$s which are either, minutes, hours or days
-#: app/Models/Reminder.php:109
+#: app/Models/Reminder.php:105
 msgid "Sent before appointment takes place.(sent %1$s %2$s before)"
 msgstr ""
 
@@ -2015,24 +2061,24 @@ msgid "Appointment rescheduling is not allowed"
 msgstr ""
 
 #: app/Services/Appointment.php:86
-#: app/Services/AppointmentNew.php:252
+#: app/Services/AppointmentNew.php:255
 msgid "Can't reschedule appointment anymore"
 msgstr ""
 
 #: app/Services/Appointment.php:269
-#: app/Services/AppointmentNew.php:435
+#: app/Services/AppointmentNew.php:452
 msgid "Can't cancel appointment anymore"
 msgstr ""
 
-#: app/Services/AppointmentNew.php:301
+#: app/Services/AppointmentNew.php:319
 msgid "Not allowed to book"
 msgstr ""
 
-#: app/Services/AppointmentNew.php:311
+#: app/Services/AppointmentNew.php:329
 msgid "Slot not available"
 msgstr ""
 
-#: app/Services/AppointmentNew.php:369
+#: app/Services/AppointmentNew.php:387
 msgid "Slot already booked"
 msgstr ""
 
@@ -2045,7 +2091,7 @@ msgid "Max active bookings reached! Cancel one of your appointments in order to 
 msgstr ""
 
 #. translators: %s - email of the account.
-#: app/Services/CurrentUser.php:27
+#: app/Services/CurrentUser.php:31
 msgid "No Wappointment calendar is connected to your WordPress account %s"
 msgstr ""
 
@@ -2061,22 +2107,12 @@ msgstr ""
 msgid "Calendar already connected"
 msgstr ""
 
-#: app/Services/IcsGenerator.php:184
+#: app/Services/IcsGenerator.php:188
 msgid "Need to modify this event?"
 msgstr ""
 
-#. translators: %1$s - date %2$s rescheule link.
-#: app/Services/IcsGenerator.php:186
-msgid "Reschedule (until %1$s): &#10; %2$s"
-msgstr ""
-
-#. translators: %1$s - date %2$s cancel link.
-#: app/Services/IcsGenerator.php:188
-msgid "Cancel (until %1$s): &#10; %2$s"
-msgstr ""
-
 #. translators: %s is replaced with https://wappointment.com
-#: app/Services/IcsGenerator.php:198
+#: app/Services/IcsGenerator.php:202
 msgid "Booked with %s"
 msgstr ""
 
@@ -2261,15 +2297,15 @@ msgstr ""
 msgid "Please select how do you deliver the service"
 msgstr ""
 
-#: app/Services/Settings.php:101
+#: app/Services/Settings.php:102
 msgid "Save to calendar"
 msgstr ""
 
-#: app/Services/Settings.php:102
+#: app/Services/Settings.php:103
 msgid "Book a new appointment"
 msgstr ""
 
-#: app/Services/Settings.php:139
+#: app/Services/Settings.php:140
 msgid "Order nº"
 msgstr ""
 
@@ -2278,28 +2314,28 @@ msgstr ""
 msgid "Yay! Emails are working!"
 msgstr ""
 
-#: app/Services/ViewsData.php:213
+#: app/Services/ViewsData.php:212
 #: app/WP/Widget.php:38
 msgid "Book an appointment"
 msgstr ""
 
-#: app/Services/ViewsData.php:214
+#: app/Services/ViewsData.php:213
 msgid "On behalf of your client"
 msgstr ""
 
-#: app/Services/ViewsData.php:220
+#: app/Services/ViewsData.php:219
 msgid "Open this time"
 msgstr ""
 
-#: app/Services/ViewsData.php:221
+#: app/Services/ViewsData.php:220
 msgid "Allow new bookings"
 msgstr ""
 
-#: app/Services/ViewsData.php:227
+#: app/Services/ViewsData.php:226
 msgid "Block this time"
 msgstr ""
 
-#: app/Services/ViewsData.php:228
+#: app/Services/ViewsData.php:227
 msgid "Prevent new bookings"
 msgstr ""
 
