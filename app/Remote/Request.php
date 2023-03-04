@@ -8,9 +8,10 @@ use Wappointment\Services\Settings;
 
 class Request
 {
+    public $client = null;
     public function __construct()
     {
-        $this->client = Settings::get('wp_remote') ? new WPClient : new GuzzleClient;
+        $this->client = Settings::get('wp_remote') ? new WPClient() : new GuzzleClient();
     }
 
     public function post($url)
