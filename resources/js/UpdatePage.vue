@@ -5,7 +5,7 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.12</span>   
+                <span>V2.4.15</span>   
                 <span class="ml-2">Bug fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
@@ -13,20 +13,16 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added random staff auto-selection</li>
-                        <li>added max booking per staff</li>
-                        <li>added email footer notes</li>
-                        <li>added reply to address through filter wappointment_replyto_email and wappointment_replyto_name</li>
-                        <li>fixed popup close when clicking on background</li>
-                        <li>fixed staff filtering</li>
-                        <li>fixed save to calendar button generated .ICS</li>
-                        <li>fixed double fields in .ics</li>
-                        <li>fixed calendar sync and custom DST issue for Outlook</li>
-                        <li>fixed issue with italian phone validation</li>
-                        <li>fixed indian rupee currency decimal separator</li>
-                        <li>fixed bug on calendar edit</li>
-                        <li>fixed multiple installations on same db</li>
-                        <li>fixed issue custom fields not saved when booking from backend</li>
+                        <li>added reschedule from backend improved</li>
+                        <li>added multilang emails for "TranslatePress for Multiples languages sites"</li>
+                        <li>fixed dailight saving time bug</li>
+                        <li>fixed issue validation when creating appointment from backend</li>
+                        <li>fixed chrome issue</li>
+                        <li>fixed remove reminders from pending emails</li>
+                        <li>fixed custom field in confirmation email</li>
+                        <li>fixed chilean pesos formatting</li>
+                        <li>fixed set collate with default value</li>
+                        <li>improved .ics import recognize more recurrence</li>
                     </ol>
                     
                   </div>
