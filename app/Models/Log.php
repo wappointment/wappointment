@@ -10,12 +10,9 @@ class Log extends Model
     protected $fillable = [
         'client_id', 'type', 'options'
     ];
-    protected $casts = [
-        'options' => 'array',
-    ];
 
-    const TYPE_DEFAULT = 0;
-    const TYPE_APPOINTMENT_CANCELLED = 1;
+    public const TYPE_DEFAULT = 0;
+    public const TYPE_APPOINTMENT_CANCELLED = 1;
 
     public static function canceledAppointment($appointment)
     {

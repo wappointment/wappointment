@@ -9,16 +9,12 @@ use Wappointment\Services\Settings;
 
 class Calendar extends Model
 {
-    use SoftDeletes, CanLimit;
-    protected $dates = ['deleted_at'];
+    use SoftDeletes;
+    use CanLimit;
     protected $table = 'wappo_calendars';
     protected $with = ['services'];
     protected $visible = ['id', 'wp_uid', 'name', 'options', 'services', 'sorting', 'status',  'availability', 'avatar'];
     protected $fillable = ['name', 'wp_uid', 'options', 'sorting', 'availability', 'account_key'];
-    protected $casts = [
-        'options' => 'array',
-        'availability' => 'array',
-    ];
     protected $appends = ['avatar'];
 
     public function scopeActive($query)
@@ -70,7 +66,7 @@ class Calendar extends Model
     {
         $default = Settings::get('servicesDefault');
         if ($default === true) {
-            $services = \WappointmentLv::collect((new Services)->get());
+            $services = \WappointmentLv::collect((new Services())->get());
 
             return $services->map(function ($e) {
                 return $e['id'];
