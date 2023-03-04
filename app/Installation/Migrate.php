@@ -40,7 +40,7 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
 
     protected function addFolder($folder = false)
     {
-        if ($folder) {
+        if ($folder!==false) {
             $this->migrations_folders[] = $folder;
         }
     }
