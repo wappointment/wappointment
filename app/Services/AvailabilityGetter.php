@@ -9,7 +9,7 @@ class AvailabilityGetter
     public $start_at = false;
     public $end_at = false;
     private $isLegacy = true;
-    private $availabilityProcessed = [];
+    private $selectedStaff = null;
 
     /**
      * start_at & end_at utc timestamps
@@ -22,13 +22,12 @@ class AvailabilityGetter
             $this->isLegacy = false;
             $this->selectedStaff = $staff;
         } else {
-            $this->selectedStaff = new StaffLegacy;
+            $this->selectedStaff = new StaffLegacy();
         }
     }
 
     public function isAvailable()
     {
-
         foreach ($this->getAvail() as $segment) {
             if ($segment[0] <= $this->start_at && $segment[1] >= $this->end_at) {
                 return true;
