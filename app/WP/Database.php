@@ -35,7 +35,7 @@ class Database
 
         $charset_collate = $wpdb->determine_charset($wpdb->charset, $wpdb->collate);
         $this->charset =  !empty($charset_collate['charset']) ? $charset_collate['charset'] : $wpdb->charset;
-        $this->collate =  !empty($charset_collate['collate']) ? $charset_collate['collate'] : (!empty($wpdb->collate) ? $wpdb->collate : 'utf8mb4_unicode_ci');
+        $this->collate =  !empty($charset_collate['collate']) ? $charset_collate['collate'] : $wpdb->collate;
     }
 
     public function getAltPort()
