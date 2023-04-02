@@ -43,12 +43,16 @@
             "vendor/squizlabs",
             "vendor/giggsey/locale",
             "vendor/giggsey/libphonenumber-for-php/src/geocoding",
+            "vendor/illuminate/database/Console",
+            "vendor/symfony/console",
             "vendor/illuminate/pagination/resources",
             "vendor/symfony/debug/Resources",
+            "vendor/symfony/error-handler/Resources",
             "vendor/symfony/translation/Loader/schema",
             "vendor/symfony/translation/Resources/data",
             "vendor/symfony/translation/Resources/schemas",
-            "vendor/symfony/http-kernel/Resources"
+            "vendor/symfony/http-kernel/Resources",
+            "vendor/voku/portable-ascii/build"
         ],
         "files":[
             "dist/bootstrap.js",
