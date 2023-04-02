@@ -12,8 +12,8 @@ if (!defined('ABSPATH')) {
  * Author: Wappointment
  * Author URI: https://wappointment.com
  * Requires at least: 4.7
- * Requires PHP: 7.0
- * Tested up to: 6.0
+ * Requires PHP: 7.3
+ * Tested up to: 6.2
  *
  * Text Domain: wappointment
  * Domain Path: /languages
@@ -32,8 +32,8 @@ if (!defined('ABSPATH')) {
  * GNU General Public License for more details.
  */
 
-define('WAPPOINTMENT_VERSION', '2.4.13');
-define('WAPPOINTMENT_PHP_MIN', '7.0.0');
+define('WAPPOINTMENT_VERSION', '2.4.15');
+define('WAPPOINTMENT_PHP_MIN', '7.3.0');
 define('WAPPOINTMENT_NAME', 'Wappointment');
 define('WAPPOINTMENT_SLUG', strtolower(WAPPOINTMENT_NAME));
 define('WAPPOINTMENT_FILE', __FILE__);
