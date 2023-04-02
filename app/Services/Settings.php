@@ -146,6 +146,8 @@ class Settings
             'availability_fluid' => false,
             'more_st' => false,
             'starting_each' => 30,
+            'collate'=>'',
+            'charset'=>''
 
         ];
     }

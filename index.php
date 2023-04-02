@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Plugin Name: Wappointment
- * Version: 2.5.0-beta10
+ * Version: 2.5.0-beta11
  * Plugin URI: https://wappointment.com
  * Description: Clients quickly book a meeting with you on Zoom , GoogleMeet , the phone or at your office
  * Author: Wappointment
