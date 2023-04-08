@@ -5,30 +5,20 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.4.15</span>   
-                <span class="ml-2">Bug fixes and improvements</span>
+                <span>V2.6.0</span>   
+                <span class="ml-2">PHP 8 Finally</span>
               </h3>
               <div class="d-flex flex-align-items-center">
                   <div class="ml-3">
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added reschedule from backend improved</li>
-                        <li>added multilang emails for "TranslatePress for Multiples languages sites"</li>
-                        <li>fixed dailight saving time bug</li>
-                        <li>fixed issue validation when creating appointment from backend</li>
-                        <li>fixed chrome issue</li>
-                        <li>fixed remove reminders from pending emails</li>
-                        <li>fixed custom field in confirmation email</li>
-                        <li>fixed chilean pesos formatting</li>
-                        <li>fixed set collate with default value</li>
-                        <li>improved .ics import recognize more recurrence</li>
+                        <li>added PHP8 compatibility</li>
                     </ol>
-                    
                   </div>
               </div>
 
-            <div class="wprevious-version" >
+            <div v-if="false" class="wprevious-version" >
                 <a href="javascript:;" @click="showPrevious">View previous version 2.4.0</a>
                 <div v-if="previous">
                     <div>
