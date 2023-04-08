@@ -10,18 +10,13 @@ use Wappointment\Services\Settings;
 class Reminder extends Model
 {
     use CanSortByParent;
-    
+
     protected $table = 'wappo_reminders';
 
     protected $fillable = [
         'subject', 'type', 'event', 'locked', 'options', 'published', 'parent', 'lang'
     ];
 
-    protected $casts = [
-        'options' => 'array',
-        'locked' => 'boolean',
-        'published' => 'boolean'
-    ];
     protected $appends = ['label'];
 
     public const APPOINTMENT_STARTS = 1;

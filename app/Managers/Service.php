@@ -30,6 +30,7 @@ class Service
         if (!method_exists(Central::get('Service'), 'hasZoom')) {
             return false;
         }
+
         return Central::get('Service')::hasZoom($service);
     }
 

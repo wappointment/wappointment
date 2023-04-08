@@ -10,7 +10,7 @@ class IsSmtp extends \Rakit\Validation\Rules\Required
 
     protected $message = 'Cannot connect to SMTP server with selected port';
 
-    public function check($value)
+    public function check($value): bool
     {
         if (empty($value)) {
             return false;

@@ -109,5 +109,15 @@ module.exports = {
     // new BundleAnalyzerPlugin({
     //   analyzerHost: '192.168.56.56'
     // })
+    {
+      apply: (compiler) => {
+        compiler.hooks.done.tap('DonePlugin', (stats) => {
+          console.log('Compile is done !')
+          setTimeout(() => {
+            process.exit(0)
+          })
+        });
+      }
+   }
   ], 
 }

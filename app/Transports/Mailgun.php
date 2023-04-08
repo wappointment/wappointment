@@ -2,7 +2,6 @@
 
 namespace Wappointment\Transports;
 
-use WappoSwift_Mime_SimpleMessage;
 use GuzzleHttp\ClientInterface;
 
 class Mailgun extends Transport
@@ -60,7 +59,7 @@ class Mailgun extends Transport
      * @param  string  $to
      * @return array
      */
-    protected function payload(WappoSwift_Mime_SimpleMessage $message, $to)
+    protected function payload(\WappoSwift_Mime_SimpleMessage $message, $to)
     {
 
         $multipart = [
@@ -95,7 +94,7 @@ class Mailgun extends Transport
         ];
     }
 
-    private function getReplyTo(WappoSwift_Mime_SimpleMessage $message)
+    private function getReplyTo(\WappoSwift_Mime_SimpleMessage $message)
     {
 
         $reply_to = $message->getReplyTo();

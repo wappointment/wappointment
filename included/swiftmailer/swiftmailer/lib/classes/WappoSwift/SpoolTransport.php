@@ -24,10 +24,7 @@ class WappoSwift_SpoolTransport extends WappoSwift_Transport_SpoolTransport
             ->createDependenciesFor('transport.spool');
 
         $arguments[] = $spool;
-
-        call_user_func_array(
-            [$this, 'WappoSwift_Transport_SpoolTransport::__construct'],
-            $arguments
-        );
+        
+        parent::__construct(...$arguments);
     }
 }

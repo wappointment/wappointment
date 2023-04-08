@@ -38,12 +38,7 @@ class Appointment extends TicketAbstract
         'recurrent', 'parent',
         'created_at', 'updated_at',
     ];
-    protected $casts = [
-        'options' => 'array',
-    ];
-    protected $dates = [
-        'start_at', 'end_at', 'created_at', 'updated_at',
-    ];
+
 
     public const TYPE_PHYSICAL = 0;
     public const TYPE_PHONE = 1;

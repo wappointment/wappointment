@@ -26,11 +26,8 @@ class WappoSwift_EmbeddedFile extends WappoSwift_Mime_EmbeddedFile
      */
     public function __construct($data = null, $filename = null, $contentType = null)
     {
-        call_user_func_array(
-            [$this, 'WappoSwift_Mime_EmbeddedFile::__construct'],
-            WappoSwift_DependencyContainer::getInstance()
-                ->createDependenciesFor('mime.embeddedfile')
-            );
+        parent::__construct(...WappoSwift_DependencyContainer::getInstance()
+        ->createDependenciesFor('mime.embeddedfile'));
 
         $this->setBody($data);
         $this->setFilename($filename);

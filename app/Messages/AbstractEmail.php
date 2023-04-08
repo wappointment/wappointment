@@ -6,7 +6,6 @@ use Wappointment\Messages\Templates\FoundationEmail;
 use Pelago\Emogrifier\CssInliner;
 use Wappointment\Services\Settings;
 use Wappointment\Services\VersionDB;
-use WappoSwift_Attachment;
 
 abstract class AbstractEmail extends AbstractMessage
 {
@@ -137,13 +136,13 @@ abstract class AbstractEmail extends AbstractMessage
         if (!file_exists($file)) {
             throw new \WappointmentException("Error Processing Request", 1);
         }
-        return WappoSwift_Attachment::fromPath($file);
+        return \WappoSwift_Attachment::fromPath($file);
     }
 
 
     protected function createAttachmentFromData($data, $name)
     {
-        return new WappoSwift_Attachment($data, $name);
+        return new \WappoSwift_Attachment($data, $name);
     }
 
     protected function addAttachment($attachment, $options = [])

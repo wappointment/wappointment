@@ -13,6 +13,7 @@
  */
 class WappoSwift_Mime_IdGenerator implements WappoSwift_IdGenerator
 {
+    public $idRight;
     /**
      * @param string $idRight
      */

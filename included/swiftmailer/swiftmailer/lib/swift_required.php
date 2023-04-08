@@ -8,19 +8,17 @@
  * file that was distributed with this source code.
  */
 
-if (!defined('ABSPATH')) {
-    exit;
+if (defined('ABSPATH')) {
+    require __DIR__ . '/classes/Swift.php';
+
+    WappoSwift::registerAutoload(function () {
+        // Load in dependency maps
+        require __DIR__ . '/dependency_maps/cache_deps.php';
+        require __DIR__ . '/dependency_maps/mime_deps.php';
+        require __DIR__ . '/dependency_maps/message_deps.php';
+        require __DIR__ . '/dependency_maps/transport_deps.php';
+
+        // Load in global library preferences
+        require __DIR__ . '/preferences.php';
+    });
 }
-
-require __DIR__ . '/classes/Swift.php';
-
-WappoSwift::registerAutoload(function () {
-    // Load in dependency maps
-    require __DIR__ . '/dependency_maps/cache_deps.php';
-    require __DIR__ . '/dependency_maps/mime_deps.php';
-    require __DIR__ . '/dependency_maps/message_deps.php';
-    require __DIR__ . '/dependency_maps/transport_deps.php';
-
-    // Load in global library preferences
-    require __DIR__ . '/preferences.php';
-});

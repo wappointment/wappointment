@@ -14,7 +14,7 @@ class Phone extends \Rakit\Validation\Rule
         $this->countries = $countriesAllowed;
     }
 
-    public function check($value)
+    public function check($value): bool
     {
         if (empty($value)) {
             return false;
@@ -32,35 +32,4 @@ class Phone extends \Rakit\Validation\Rule
         return true;
     }
 
-    public function checkOld($value)
-    {
-        $value = preg_replace('/\s+/', '', $value);
-        return $this->isE164($value) || $this->isNANP($value) || $this->isDigits($value);
-    }
-
-    protected function isDigits($value)
-    {
-        $conditions = [];
-        $conditions[] = strlen($value) >= 10;
-        $conditions[] = strlen($value) <= 16;
-        $conditions[] = preg_match("/[^\d]/i", $value) === 0;
-        return (bool)array_product($conditions);
-    }
-
-    protected function isE164($value)
-    {
-        $conditions = [];
-        $conditions[] = strpos($value, '+') === 0;
-        $conditions[] = strlen($value) >= 9;
-        $conditions[] = strlen($value) <= 16;
-        $conditions[] = preg_match("/[^\d+]/i", $value) === 0;
-        return (bool)array_product($conditions);
-    }
-
-    protected function isNANP($value)
-    {
-        $conditions = [];
-        $conditions[] = preg_match("/^(?:\+1|1)?\s?-?\(?\d{3}\)?(\s|-)?\d{3}-\d{4}$/i", $value) > 0;
-        return (bool)array_product($conditions);
-    }
 }

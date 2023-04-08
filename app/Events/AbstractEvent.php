@@ -2,7 +2,7 @@
 
 namespace Wappointment\Events;
 
-class AbstractEvent extends \Symfony\Component\EventDispatcher\Event
+class AbstractEvent extends \Symfony\Component\EventDispatcher\GenericEvent
 {
     protected function getWPAction()
     {

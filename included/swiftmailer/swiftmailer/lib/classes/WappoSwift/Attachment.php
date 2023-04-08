@@ -26,11 +26,7 @@ class WappoSwift_Attachment extends WappoSwift_Mime_Attachment
      */
     public function __construct($data = null, $filename = null, $contentType = null)
     {
-        call_user_func_array(
-            [$this, 'WappoSwift_Mime_Attachment::__construct'],
-            WappoSwift_DependencyContainer::getInstance()
-                ->createDependenciesFor('mime.attachment')
-            );
+        parent::__construct(...WappoSwift_DependencyContainer::getInstance()->createDependenciesFor('mime.attachment'));
 
         $this->setBody($data);
         $this->setFilename($filename);

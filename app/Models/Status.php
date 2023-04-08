@@ -16,14 +16,14 @@ class Status extends Model
 
     protected $table = 'wappo_statuses';
 
-    const TYPE_FREE = 0;
-    const TYPE_BUSY = 1;
+    public const TYPE_FREE = 0;
+    public const TYPE_BUSY = 1;
 
-    const RECUR_NOT = 0;
-    const RECUR_DAILY = 1;
-    const RECUR_WEEKLY = 2;
-    const RECUR_MONTHLY = 3;
-    const RECUR_YEARLY = 4;
+    public const RECUR_NOT = 0;
+    public const RECUR_DAILY = 1;
+    public const RECUR_WEEKLY = 2;
+    public const RECUR_MONTHLY = 3;
+    public const RECUR_YEARLY = 4;
 
     protected $fillable = [
         'type', 'start_at', 'end_at', 'source', 'recur', 'staff_id', 'muted', 'options'
@@ -31,8 +31,5 @@ class Status extends Model
 
     protected $dates = [
         'start_at', 'end_at'
-    ];
-    protected $casts = [
-        'options' => 'array',
     ];
 }

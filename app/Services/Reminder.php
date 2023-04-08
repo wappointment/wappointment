@@ -12,8 +12,7 @@ class Reminder
 {
     public static function save($reminderData)
     {
-
-        $validator = new RakitValidator;
+        $validator = new RakitValidator();
         $reminderData['subject'] = strip_tags($reminderData['subject']);
         $validationRules = [
             'subject' => 'required|max:100',
@@ -39,7 +38,6 @@ class Reminder
                 $validation->errors()->toArray()
             );
         }
-
         if (isset($reminderData['id']) && $reminderData['id'] > 0) {
             $reminderData['options'] = json_encode($reminderData['options']);
             return (bool) MReminder::where('id', (int)$reminderData['id'])
@@ -66,7 +64,7 @@ class Reminder
     {
         return (new Mail())
             ->to($recipient)
-            ->send($reminder->toMailable(new Appointment));
+            ->send($reminder->toMailable(new Appointment()));
     }
 
     public static function getSeedReminder()

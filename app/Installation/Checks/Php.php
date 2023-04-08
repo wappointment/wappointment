@@ -14,11 +14,11 @@ class Php extends \Wappointment\Installation\MethodsRunner
                     . WAPPOINTMENT_PHP_MIN
             );
         }
-        $max = '8.0.0';
-        if (version_compare(PHP_VERSION, $max) >= 0) {
-            throw new \WappointmentException(
-                'Wappointment is not yet compatible with PHP 8 yet. You can install our PHP 8 beta version following this guide: https://wappointment.com/docs/installing-php8-version/'
-            );
-        }
+        // $max = '8.0.0';
+        // if (version_compare(PHP_VERSION, $max) >= 0) {
+        //     throw new \WappointmentException(
+        //         'That\'s embarassing... Wappointment is not compatible with PHP 8 yet, we\'re working on it. You can use us with any PHP 7 version though '
+        //     );
+        // }
     }
 }

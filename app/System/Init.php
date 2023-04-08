@@ -9,11 +9,9 @@ use Wappointment\Services\Settings;
 class Init
 {
     private $is_installed = false;
-    private $runs_php8 = false;
 
     public function __construct()
     {
-        $this->runs_php8 = Status::runningPHP8();
         $this->is_installed =  Status::isInstalled();
         WPHelpers::requestCapture($this->is_installed);
         if (defined('WAPPOINTMENT_PDO_FAIL')) {
@@ -93,9 +91,7 @@ class Init
         if (defined('WP_DEBUG')) {
             $variables['debug'] = true;
         }
-        if ($this->runs_php8) {
-            $variables['error_php8'] = $this->runs_php8;
-        }
+
         if (is_admin()) {
             $parsed = parse_url(WPHelpers::adminUrl('admin.php'));
             $variables['base_admin'] = !empty($parsed['path']) ? $parsed['path'] : '/wp-admin/admin.php';

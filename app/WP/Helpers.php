@@ -215,8 +215,12 @@ class Helpers
     }
 
     public static function isPluginPage()
-    {
-        return \WappointmentLv::starts_with(self::$request->get('page'), self::$option_prefix);
+    {   
+        $page = self::$request->get('page');
+        if(empty($page)){
+            return;
+        }
+        return \WappointmentLv::starts_with($page, self::$option_prefix);
     }
 
     public static function restError($error_string, $status = 500, $errors = [])
