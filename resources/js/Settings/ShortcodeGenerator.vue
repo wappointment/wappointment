@@ -3,7 +3,12 @@
     <div class="d-flex align-items-center justify-content-between">
         <div class="commands-div">
             <div data-tt="Booking button's title"><label><InputPh v-model="titleGiven" :ph="get_i18n( 'bwe_widget_button_title', 'common')"/></label></div>
-            <div data-tt="Opens in a full screen popup (avoid CSS conflicts overlays)"><label><input type="checkbox" v-model="popup"> {{ get_i18n( 'bwe_widget_ck_fs_popup', 'common') }}</label></div>
+            <div :data-tt="get_i18n( 'bwe_widget_ck_fs_popup_tip', 'common')">
+                <label><input type="checkbox" v-model="popup"> {{ get_i18n( 'bwe_widget_ck_fs_popup', 'common') }}</label>
+            </div>
+            <div class="ml-2" v-if="popup">
+                <label><input type="checkbox" v-model="close_cross"> {{ get_i18n( 'bwe_widget_ck_fs_popup_closes', 'common') }}</label>
+            </div>
             <div data-tt="Center the widget within the container"><label><input type="checkbox" v-model="center" :disabled="popup"> {{ get_i18n( 'bwe_widget_ck_center', 'common') }}</label></div>
             <div data-tt="Opens the calendar's step automatically"><label><input type="checkbox" v-model="open"> {{ get_i18n( 'bwe_widget_ck_open', 'common') }}</label></div>
             <div data-tt="Calendar will expand to the container's width"><label><input type="checkbox" v-model="large" :disabled="popup"> {{ get_i18n( 'bwe_widget_ck_full', 'common') }}</label></div>
@@ -74,6 +79,7 @@ export default {
         large:false,
         open:false,
         popup:false,
+        close_cross:false,
         random:false,
         center: false,
         week:false,
@@ -159,6 +165,7 @@ export default {
             shortcode += this.large? ' large ':'' 
             shortcode += this.open? ' open ':''
             shortcode += this.popup? ' popup ':''
+            shortcode += this.close_cross? ' close_cross ':''
             shortcode += this.center? ' center ':''
             shortcode += this.week? ' week ':''
             shortcode += this.staffpage? ' staff_page ':''
@@ -171,6 +178,7 @@ export default {
                 largeVersion: this.large,
                 autoOpen: this.open,
                 popup: this.popup,
+                close_cross: this.close_cross,
                 week: this.week,
                 center: this.center,
                 staffPage: this.staffpage,

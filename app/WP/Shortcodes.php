@@ -48,6 +48,7 @@ class Shortcodes
             'random' => in_array('random', $atts),
             'large_version' => in_array('large', $atts),
             'popup' => in_array('popup', $atts),
+            'close_cross' => in_array('close_cross', $atts),
             'pop_off' => in_array('pop_off', $atts),
             'auto_pop' => in_array('pop', $atts),
             'week' => in_array('week', $atts),
