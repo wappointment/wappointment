@@ -33,11 +33,11 @@ class Database
             }
         }
 
-        $this->setCharsetAndCollate();
+        $this->setCharsetAndCollate($wpdb);
 
     }
 
-    private function setCharsetAndCollate()
+    private function setCharsetAndCollate($wpdb)
     {
         
         if(!empty($wpdb->charset) && !empty($wpdb->collate)){
