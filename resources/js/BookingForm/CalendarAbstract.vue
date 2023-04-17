@@ -2,7 +2,7 @@
 import calendar from '../Plugins/calendar-js'
 import Dates from '../Modules/Dates'
 import DatesExtended from '../Modules/DatesExtended'
-import momenttz from '../appMoment'
+import luxonApp from '../appLuxon'
 import DaySlots from './DaySlots'
 import DaysOfWeek from './DaysOfWeek'
 import WeekHeader from './WeekHeader'
@@ -83,13 +83,15 @@ export default {
             return this.monthNumber + 1
         },
         firstDayMonth() {
-             return momenttz().tz(this.currentTz).year(this.yearNumber).month(this.monthNumber).startOf('month')
+             return luxonApp.setZone(this.currentTz).set({year: this.yearNumber, month:this.monthNumber}).startOf('month')
+             //return momenttz().tz(this.currentTz).year(this.yearNumber).month(this.monthNumber).startOf('month')
         },
         lastDayMonth() {
             if(this.isCurrentMonth) {
                 return this.now.clone().endOf('month')
             } else {
-                return momenttz().tz(this.currentTz).year(this.yearNumber).month(this.monthNumber).endOf('month')
+                return luxonApp.setZone(this.currentTz).set({year: this.yearNumber, month:this.monthNumber}).endOf('month')
+                //return momenttz().tz(this.currentTz).year(this.yearNumber).month(this.monthNumber).endOf('month')
             }
         },
         todayIs() {
@@ -100,8 +102,9 @@ export default {
         },
         isLastMonth(){
             if(this.lastAvailableSlot !== undefined) {
-                let lavs = momenttz.unix(this.lastAvailableSlot).tz(this.currentTz)
-                return this.monthNumber === lavs.month() && this.yearNumber === lavs.year()
+                //let lavs = momenttz.unix(this.lastAvailableSlot).tz(this.currentTz)
+                let lavs = luxonApp.fromSeconds(this.lastAvailableSlot).setZone(this.currentTz);
+                return this.monthNumber === lavs.month && this.yearNumber === lavs.year
             }
             
             return true
@@ -450,6 +453,9 @@ export default {
             return dayIntervals
         },
 
+        getLuxonObj() {
+            return luxonApp.setZone(this.currentTz)
+        },
         getMomentObj() {
             return momenttz.tz(this.currentTz)
         },
