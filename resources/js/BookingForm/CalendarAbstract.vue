@@ -323,7 +323,7 @@ export default {
         },
         
         nowNextHour(){
-            return this.now.clone().add(this.minTodayHour,'h').startOf('hour')
+            return this.now.plus({minutes:this.minTodayHour}).startOf('hour')
         },
         
         resetIntervals(){
@@ -412,21 +412,21 @@ export default {
         getTodayInterval(){
             let start = this.getMinStart()
     
-            if(start.day() != this.now.day()){ //exception when today changes to tomorrow with the adition of min_bookable
+            if(start.day != this.now.day){ //exception when today changes to tomorrow with the adition of min_bookable
                 //that means that's the end of the day and there is nothing new
-                start = momenttz.tz(this.now.clone(), this.currentTz)
+                start = this.now
             }
-            return {start:start, end:start.clone().add(1, 'day').startOf('day')}
+            return {start:start, end:start.plus({days:1}).startOf('day')}
         },
         getNotTodayInterval(daynumber){
             let prefixDay = daynumber < 10 ?'0':''
             let prefixMonth = this.realMonthNumber < 10 ? '0':''
             let formattedDayString = this.yearNumber + '-' + prefixMonth + this.realMonthNumber + '-' + prefixDay + daynumber
-            let start = momenttz.tz(formattedDayString, this.currentTz).startOf('day')
+            let start = luxonApp.fromIso(formattedDayString).startOf('day')
 
             return {
                 start: start, 
-                end: start.clone().add(1, 'day')
+                end: start.plus({days:1})
             }
         },
         getDayIntervals(daynumber){
@@ -438,10 +438,10 @@ export default {
         formatDayInterval(intervalsObject){
 
             let min_start = this.getMinStart()
-            if(min_start.unix() >= intervalsObject.end.unix()) {
+            if(min_start.toSeconds() >= intervalsObject.end.toSeconds()) {
                 return this.currentIntervals.get(false) // we skip returnin an empty interval
-            } else if(min_start.unix() > intervalsObject.start.unix()){
-                intervalsObject.start = min_start.clone()
+            } else if(min_start.toSeconds() > intervalsObject.start.toSeconds()){
+                intervalsObject.start = min_start
             }
             
             let dayIntervals = this.currentIntervals.get(intervalsObject.start, intervalsObject.end, this.service.id)
@@ -454,7 +454,7 @@ export default {
         },
 
         getLuxonObj() {
-            return luxonApp.setZone(this.currentTz)
+            return luxonApp.local()
         },
         getMomentObj() {
             return momenttz.tz(this.currentTz)
