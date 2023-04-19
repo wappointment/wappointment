@@ -30,7 +30,7 @@ export default class Intervals {
                 continue;
             }
             //if there is an intersection before or after in between two days
-            let DummyInterval = {start: from.unix(), end: until.unix()}
+            let DummyInterval = {start: from.toSeconds(), end: until.toSeconds()}
             if(this.intersecting(DummyInterval, element)) {
                if(this.aContainsB(DummyInterval,element)){
                    let newt1 = Object.assign({},element)

@@ -83,19 +83,19 @@ export default {
             return this.monthNumber + 1
         },
         firstDayMonth() {
-             return luxonApp.setZone(this.currentTz).set({year: this.yearNumber, month:this.monthNumber}).startOf('month')
+             return luxonApp({zone:this.currentTz}).set({year: this.yearNumber, month:this.monthNumber}).startOf('month')
              //return momenttz().tz(this.currentTz).year(this.yearNumber).month(this.monthNumber).startOf('month')
         },
         lastDayMonth() {
             if(this.isCurrentMonth) {
-                return this.now.clone().endOf('month')
+                return this.now.endOf('month')
             } else {
-                return luxonApp.setZone(this.currentTz).set({year: this.yearNumber, month:this.monthNumber}).endOf('month')
+                return luxonApp({zone:this.currentTz}).set({year: this.yearNumber, month:this.monthNumber}).endOf('month')
                 //return momenttz().tz(this.currentTz).year(this.yearNumber).month(this.monthNumber).endOf('month')
             }
         },
         todayIs() {
-            return this.now.format()
+            return this.now.toFormat()
         },
         isCurrentMonth() {
             return this.todayMonth === this.realMonthNumber && this.todayYear === this.yearNumber
@@ -115,15 +115,15 @@ export default {
 
         
         todayYear() {
-            return parseInt(this.now.format('YYYY'))
+            return parseInt(this.now.toFormat('yyyy'))
         },
 
         todayDay() {
-            return parseInt(this.now.format('DD'))
+            return parseInt(this.now.toFormat('dd'))
         },
 
         todayMonth() {
-            return parseInt(this.now.format('M'))
+            return parseInt(this.now.toFormat('L'))
         },
 
         reorganiseDays() {
@@ -185,7 +185,7 @@ export default {
             return window.wappointmentExtends.filter('CalendarAbstractFilterIntervals', intervalsCollection, this.service, this.conditionMatches)
         },
         timezoneDisplay(timezoneString){
-            return this.getTzString.replace('[timezone]', timezoneString + ' [' + this.now.format('Z') + ']')
+            return this.getTzString.replace('[timezone]', timezoneString + ' [' + this.now.toFormat('Z') + ']')
         },
         autoRunOnMount(){
             this.findFirstMonthwithAvail()
@@ -329,7 +329,6 @@ export default {
         resetIntervals(){
             if(this.intervalsCollection === null) return false
             this.cachedSlots = {}
-
             if(this.isCurrentMonth) {
                 this.setIntervals(this.nowNextHour(), this.lastDayMonth)
             } else {
@@ -347,7 +346,6 @@ export default {
         setIntervals(start, end){
             this.currentIntervals = this.intervalsCollection.get(start, end)
             this.totalSlots = this.currentIntervals.splits(this.realSlotDuration()).totalSlots()
-
             this.cacheAvailability()
         },
 
@@ -422,7 +420,7 @@ export default {
             let prefixDay = daynumber < 10 ?'0':''
             let prefixMonth = this.realMonthNumber < 10 ? '0':''
             let formattedDayString = this.yearNumber + '-' + prefixMonth + this.realMonthNumber + '-' + prefixDay + daynumber
-            let start = luxonApp.fromIso(formattedDayString).startOf('day')
+            let start = luxonApp.fromISO(formattedDayString).startOf('day')
 
             return {
                 start: start, 

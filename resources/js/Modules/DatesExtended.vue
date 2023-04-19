@@ -1,5 +1,5 @@
 <script>
-
+import luxonApp from '../appLuxon'
 export default {
 
   computed:{
@@ -11,7 +11,7 @@ export default {
         return Math.floor(this.getDecimalPart(this.viewData.min_bookable-this.minTodayHour) * 60)
     },
     now() {
-        return getLuxonObj.now()
+        return luxonApp.now()
     },
   },
 
@@ -37,14 +37,13 @@ export default {
     },
 
     getMinStart(){
-        let nowmin = this.getMomentObject().tz(this.now.clone(), this.timeprops.currentTz).add(this.minTodayHour,'hours').add(this.minTodayMin,'minutes')
-        let nowcopy = nowmin.clone().startOf('hour')
+        let nowmin = this.now.setZone(this.timeprops.currentTz).plus({hours:this.minTodayHour, minutes:this.minTodayMin})
+        let nowcopy = nowmin.startOf('hour')
         
-        if((this.currentTime() + (this.minTodayHour * 3600))  >= nowcopy.unix()){
+        if((this.currentTime() + (this.minTodayHour * 3600))  >= nowcopy.toSeconds()){
             let i = 0
-            while (nowcopy.unix() < nowmin.unix() && i <13) {
-                nowcopy.add( 5, 'minutes')
-                nowcopy.set('second', 0)
+            while (nowcopy.toSeconds() < nowmin.toSeconds() && i <13) {
+                nowcopy.plus({minutes:5}).set({second: 0})
                 i++
             }
         }

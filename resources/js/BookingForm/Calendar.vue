@@ -28,7 +28,7 @@ export default {
         CalendarMonth, CalendarWeek
     }, 
     mounted(){
-         this.cleanedIntervals = this.cleanStartingFromEnd(this.initIntervalsCollection, this.getMinStart().unix())
+         this.cleanedIntervals = this.cleanStartingFromEnd(this.initIntervalsCollection, this.getMinStart().toSeconds())
         // clear today's intervals as they expire with time
         this.setAutoRefreshIntervals()
     },
@@ -61,7 +61,7 @@ export default {
         
         refreshIntervals(){
             // min is now 
-            let newStart = this.getMinStart().unix()
+            let newStart = this.getMinStart().toSeconds()
             this.updatedIntervals = false
             setTimeout(this.setNewValue.bind(null,newStart), 50)
         },
