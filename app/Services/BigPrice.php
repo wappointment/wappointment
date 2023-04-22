@@ -16,6 +16,11 @@ class BigPrice
             Capsule::schema()->table(Database::$prefix_self . '_order_price', function ($table) {
                 $table->unsignedBigInteger('price_value')->change();
             });
+
+            Capsule::schema()->table(Database::$prefix_self . '_orders', function ($table) {
+                $table->unsignedBigInteger('total')->change();
+                $table->unsignedBigInteger('tax_amount')->change();
+            });
         } catch (\Throwable $th) {
             throw $th;
         }
