@@ -147,7 +147,8 @@ class Settings
             'more_st' => false,
             'starting_each' => 30,
             'collate'=>'',
-            'charset'=>''
+            'charset'=>'',
+            'big_prices' => false
 
         ];
     }

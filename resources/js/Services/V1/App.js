@@ -11,6 +11,10 @@ export default class AppService extends ApiV1{
                 method: 'post',
                 route: 'addmanagerrole',
             },
+            addbigprice: {
+                method: 'post',
+                route: 'addbigprice',
+            },
             freshinstall: {
                 method: 'post',
                 route: 'freshinstall',

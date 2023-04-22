@@ -185,6 +185,10 @@ class Main extends AbstractRoutes
                     'controller' => 'DebugController',
                     'method' => 'addManagerRole',
                 ],
+                '/addbigprice' => [
+                    'controller' => 'DebugController',
+                    'method' => 'addBigPrice',
+                ],
                 '/settings' => [
                     'controller' => 'SettingsController',
                     'method' => 'save',
