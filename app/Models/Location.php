@@ -9,23 +9,19 @@ class Location extends Model
 {
     use SoftDeletes;
 
-    protected $dates = ['deleted_at'];
-    const TYPE_AT_LOCATION = 1;
-    const TYPE_PHONE = 2;
-    const TYPE_SKYPE = 3;
-    const TYPE_OTHERS = 4;
-    const TYPE_ZOOM = 5;
-    const STATUS_ARCHIVED = -1;
-    const STATUS_DEFAULT = 0;
+    public const TYPE_AT_LOCATION = 1;
+    public const TYPE_PHONE = 2;
+    public const TYPE_SKYPE = 3;
+    public const TYPE_OTHERS = 4;
+    public const TYPE_ZOOM = 5;
+    public const STATUS_ARCHIVED = -1;
+    public const STATUS_DEFAULT = 0;
 
     protected $table = 'wappo_locations';
     protected $fillable = [
         'name', 'type', 'status',  'options',
     ];
     protected $hidden = ['pivot'];
-    protected $casts = [
-        'options' => 'array',
-    ];
 
     public function services()
     {

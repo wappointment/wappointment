@@ -7,14 +7,14 @@
               <ViewingAppointment v-else  :options="opts" :view="getView" :appointmentkey="getParameterByName('appointmentkey')" />
           </div>
           
-          <div class="wappo_module" :class="getWidClass" @click.self="backToButton">
+          <div class="wappo_module" :class="getWidClass" @click.self="backToButtonFromBg">
               <div class="wap-wid wclosable" :class="getStepName" v-if="isWidget">
                 <span v-if="hasCloseCross" @click="backToButton" class="wclose"></span>
                 <BookingForm v-if="bookForm" :demoAs="demoAs" :step="currentStep" :options="opts" :attributesEl="attributesElProcess" :wrapperid="elementId" :passedDataSent="dataSent" @changedStep="stepChanged" />
                 <BookingButton v-else @click="toggleBookForm" class="wbtn wbtn-booking wbtn-primary" :options="opts" >{{ realButtonTitle }}</BookingButton>
             </div>
           </div>
-          <div class="wap-bg" v-if="bgEnabled" @click="backToButton"></div>
+          <div class="wap-bg" v-if="bgEnabled" @click="backToButtonFromBg"></div>
       </div>
     </div>
     
@@ -49,6 +49,7 @@ export default {
         popup: false,
         largeVersion: false,
         autoPop: true,
+        closeCross: false,
         demoAs: false,
         stepChanging: false,
     }),
@@ -222,6 +223,8 @@ export default {
             this.autoPop = [undefined,false].indexOf(this.attributesEl.popOff) !== -1
             this.popup = this.attributeIsEmpty('popup') && !this.demoAs
 
+            this.closeCross = this.attributesEl.closeCross !== undefined
+
             this.opts.attributesEl = Object.assign({},this.attributesEl)
 
           }
@@ -249,6 +252,13 @@ export default {
             this.autoPop = [undefined,false].indexOf(this.attributesEl.autoPop) === -1 //no auto pop on 
             this.toggleBookForm() // this one goes last
           }
+        },
+        backToButtonFromBg(){
+          if(this.closeCross && this.isPoppedUp){
+            return false
+          }
+          this.backToButton()
+          return true
         },
         backToButton(){
           if(this.canPop || this.popup){

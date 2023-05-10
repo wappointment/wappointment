@@ -2,12 +2,7 @@
 
 namespace Wappointment\Transports;
 
-use WappoSwift_Transport;
-use WappoSwift_Events_SendEvent;
-use WappoSwift_Mime_SimpleMessage;
-use WappoSwift_Events_EventListener;
-
-abstract class Transport implements WappoSwift_Transport
+abstract class Transport implements \WappoSwift_Transport
 {
     /**
      * The plug-ins registered with the transport.
@@ -54,7 +49,7 @@ abstract class Transport implements WappoSwift_Transport
      * @param  \WappoSwift_Events_EventListener  $plugin
      * @return void
      */
-    public function registerPlugin(WappoSwift_Events_EventListener $plugin)
+    public function registerPlugin(\WappoSwift_Events_EventListener $plugin)
     {
         array_push($this->plugins, $plugin);
     }
@@ -65,9 +60,9 @@ abstract class Transport implements WappoSwift_Transport
      * @param  \WappoSwift_Mime_SimpleMessage  $message
      * @return void
      */
-    protected function beforeSendPerformed(WappoSwift_Mime_SimpleMessage $message)
+    protected function beforeSendPerformed(\WappoSwift_Mime_SimpleMessage $message)
     {
-        $event = new WappoSwift_Events_SendEvent($this, $message);
+        $event = new \WappoSwift_Events_SendEvent($this, $message);
 
         foreach ($this->plugins as $plugin) {
             if (method_exists($plugin, 'beforeSendPerformed')) {
@@ -82,9 +77,9 @@ abstract class Transport implements WappoSwift_Transport
      * @param  \WappoSwift_Mime_SimpleMessage  $message
      * @return void
      */
-    protected function sendPerformed(WappoSwift_Mime_SimpleMessage $message)
+    protected function sendPerformed(\WappoSwift_Mime_SimpleMessage $message)
     {
-        $event = new WappoSwift_Events_SendEvent($this, $message);
+        $event = new \WappoSwift_Events_SendEvent($this, $message);
 
         foreach ($this->plugins as $plugin) {
             if (method_exists($plugin, 'sendPerformed')) {
@@ -99,7 +94,7 @@ abstract class Transport implements WappoSwift_Transport
      * @param  \WappoSwift_Mime_SimpleMessage  $message
      * @return int
      */
-    protected function numberOfRecipients(WappoSwift_Mime_SimpleMessage $message)
+    protected function numberOfRecipients(\WappoSwift_Mime_SimpleMessage $message)
     {
         return count(array_merge(
             (array) $message->getTo(),
@@ -115,7 +110,7 @@ abstract class Transport implements WappoSwift_Transport
      * @param  \WappoSwift_Mime_SimpleMessage  $message
      * @return string
      */
-    protected function getTo(WappoSwift_Mime_SimpleMessage $message)
+    protected function getTo(\WappoSwift_Mime_SimpleMessage $message)
     {
         return \WappointmentLv::collect($this->allContacts($message))->map(function ($display, $address) {
             return $display ? $display . " <{$address}>" : $address;
@@ -128,7 +123,7 @@ abstract class Transport implements WappoSwift_Transport
      * @param  \WappoSwift_Mime_SimpleMessage  $message
      * @return array
      */
-    protected function allContacts(WappoSwift_Mime_SimpleMessage $message)
+    protected function allContacts(\WappoSwift_Mime_SimpleMessage $message)
     {
         return array_merge(
             (array) $message->getTo(),
@@ -162,7 +157,7 @@ abstract class Transport implements WappoSwift_Transport
     /**
      * {@inheritdoc}
      */
-    public function send(WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
+    public function send(\WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
         $this->beforeSendPerformed($message);
 

@@ -339,6 +339,7 @@ class ViewsData
             'availability_fluid' => Settings::get('availability_fluid'),
             'more_st' => Settings::get('more_st'),
             'starting_each' => Settings::get('starting_each'),
+            'big_prices' => Settings::get('big_prices'),
         ];
     }
 

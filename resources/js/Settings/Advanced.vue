@@ -320,6 +320,12 @@
                 Add manager role
             </button>
           </div>
+            <span v-if="viewData.big_prices">
+              Big prices allowed
+            </span>
+            <button v-else class="btn btn-secondary btn-sm" @click="addBigPrices" >
+                Allow Big Prices range
+            </button>
           
         </div>
 
@@ -532,7 +538,20 @@ export default {
     toggle(element){
       this.isToggled[element] = !this.isToggled[element]
     },
-
+    addBigPrices(){
+      this.$WapModal().confirm({
+          title: 'Are you sure you need this?',
+          content: 'Use this option only if you have an issue setting up big price when setting your services'
+        }).then((result) => {
+          if(result === true){
+              this.request(this.addBigPriceRequest,  undefined, undefined,false, this.updateViewData)
+          } 
+        })
+      
+    },
+    async addBigPriceRequest() {
+        return await this.service.call('addbigprice')
+    },
     addManagerRole(){
       this.$WapModal().confirm({
           title: 'Are you sure you need this?',

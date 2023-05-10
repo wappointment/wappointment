@@ -4,8 +4,9 @@
 /dist
 /dist2
 /logs
-/vendor
+/vendor*
 /wappointment
 /wappointment.zip
 !/bin/build.sh
 /test_availability.json
+/.phpunit.result.cache

@@ -32,8 +32,43 @@ class Database
                 $this->port = $this->getAltPort(); // make sure this cannot break working connection
             }
         }
-        $this->charset =  $wpdb->charset;
-        $this->collate =  $wpdb->collate;
+
+        $this->setCharsetAndCollate($wpdb);
+
+    }
+
+    private function setCharsetAndCollate($wpdb)
+    {
+        
+        if(!empty($wpdb->charset) && !empty($wpdb->collate)){
+            $this->charset = $wpdb->charset;
+            $this->collate = $wpdb->collate;
+            return;
+        }
+        if(empty(Settings::get('collate'))){
+            $this->findCharsetCollate($wpdb);
+        }
+            
+        $this->charset = Settings::get('charset');
+        $this->collate = Settings::get('collate');
+    }
+
+    private function findCharsetCollate($wpdb)
+    {
+        //determine collate
+        $prefix = is_multisite() ? $this->getMainPrefix():$this->getPrefix();
+        $dbResult=$wpdb->get_results('show create table '.$prefix.'wappo_appointments');
+        $responseString='';
+        foreach($dbResult[0] as $res){
+            $responseString.=$res;
+        }
+
+        if(preg_match('/(?>CHARSET=)(.*) /', $responseString, $charsetMatch)){
+            Settings::save('charset', trim($charsetMatch[1]));
+        }
+        if(preg_match('/(?>COLLATE=)(.*)/', $responseString, $collateMatch)){
+            Settings::save('collate', trim($collateMatch[1]));
+        }
     }
 
     public function getAltPort()

@@ -16,6 +16,8 @@ return [
     'bwe_widget_settings' => __('Widget\'s settings', 'wappointment'),
     'bwe_widget_button_title' => __('Button Title', 'wappointment'),
     'bwe_widget_ck_fs_popup' => __('Opens in a full screen popup', 'wappointment'),
+    'bwe_widget_ck_fs_popup_tip' => __('Opens in a full screen popup (avoid CSS conflicts overlays)', 'wappointment'),
+    'bwe_widget_ck_fs_popup_closes' => __('Closes only when cross is pressed', 'wappointment'),
     'bwe_widget_ck_random' => __('Random auto-select', 'wappointment'),
     'bwe_widget_ck_center' => __('Center', 'wappointment'),
     'bwe_widget_ck_open' => __('Auto-open Calendar', 'wappointment'),

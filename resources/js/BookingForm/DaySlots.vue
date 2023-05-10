@@ -6,8 +6,8 @@
                 <template v-for="(slot, slid) in slots" >
                 <BookingButton @click="$emit('selected', slot)" 
                 className="wbtn wbtn-primary wbtn-slot" :key="'button-'+slot.start" :options="options" >
-                    <span>{{ getDateTime().fromSeconds(slot.start).toFormat(time_format) }}</span>
-                    <span v-if="slot.left" class="sleft">{{ slot.left }} left</span>
+                    <span>{{ getDateTime().fromSeconds(slot.start).setLocale(browserLocale).toLocaleString(timeFormatLuxon) }}</span>
+                    <span v-if="slot.left" class="sleft">{{options.selection.slots_left.replace('[slots_left]', slot.left) }}</span>
                 </BookingButton>
                 </template>
             </div>
@@ -106,7 +106,12 @@ export default {
 
     },
     computed: {
-
+        browserLocale(){
+            return (navigator.language !== null && navigator.language !== undefined) ? navigator.language : 'en-US'
+        },
+        timeFormatLuxon(){
+            return DateTime.TIME_SIMPLE
+        },
         getSectionClass(){
             return 'd-section ds-'+ Object.keys(this.dayParts).length
         }

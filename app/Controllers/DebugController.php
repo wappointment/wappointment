@@ -5,6 +5,7 @@ namespace Wappointment\Controllers;
 use Wappointment\Services\Permissions;
 use Wappointment\Services\Reset;
 use Wappointment\Services\ViewsData;
+use Wappointment\Services\BigPrice;
 
 class DebugController extends RestController
 {
@@ -34,4 +35,13 @@ class DebugController extends RestController
 
         return (new ViewsData())->load('settingsadvanced');
     }
+
+    public function addBigPrice()
+    {
+        $bigPrice = new BigPrice;
+        $bigPrice->setup();
+
+        return (new ViewsData())->load('settingsadvanced');
+    }
+    
 }

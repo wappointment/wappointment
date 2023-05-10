@@ -12,6 +12,8 @@ class AppointmentReminderEmail extends AbstractEmail
     use PreparesClientEmail;
 
     protected $icsRequired = true;
+    public $client;
+    public $appointment;
 
     public const EVENT = Reminder::APPOINTMENT_STARTS;
 

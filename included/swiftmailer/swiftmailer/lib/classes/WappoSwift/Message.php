@@ -42,11 +42,9 @@ class WappoSwift_Message extends WappoSwift_Mime_SimpleMessage
      */
     public function __construct($subject = null, $body = null, $contentType = null, $charset = null)
     {
-        call_user_func_array(
-            [$this, 'WappoSwift_Mime_SimpleMessage::__construct'],
-            WappoSwift_DependencyContainer::getInstance()
-                ->createDependenciesFor('mime.message')
-            );
+
+        parent::__construct(...WappoSwift_DependencyContainer::getInstance()
+        ->createDependenciesFor('mime.message'));
 
         if (!isset($charset)) {
             $charset = WappoSwift_DependencyContainer::getInstance()

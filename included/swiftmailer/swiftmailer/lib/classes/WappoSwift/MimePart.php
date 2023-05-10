@@ -26,11 +26,8 @@ class WappoSwift_MimePart extends WappoSwift_Mime_MimePart
      */
     public function __construct($body = null, $contentType = null, $charset = null)
     {
-        call_user_func_array(
-            [$this, 'WappoSwift_Mime_MimePart::__construct'],
-            WappoSwift_DependencyContainer::getInstance()
-                ->createDependenciesFor('mime.part')
-            );
+        parent::__construct(...WappoSwift_DependencyContainer::getInstance()
+        ->createDependenciesFor('mime.part'));
 
         if (!isset($charset)) {
             $charset = WappoSwift_DependencyContainer::getInstance()

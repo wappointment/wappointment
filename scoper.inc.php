@@ -52,7 +52,7 @@ return [
     // Whitelists a list of files. Unlike the other whitelist related features, this one is about completely leaving
     // a file untouched.
     // Paths are relative to the configuration file unless if they are already absolute
-    'files-whitelist' => [
+    'exclude-files' => [
         'app/required.php',
         'app/Transports/WpMailPatched.php',
         'app/Services/IcsGenerator.php',
@@ -92,11 +92,8 @@ return [
             }
 
             $files_search = [
-                '/vendor/illuminate/database/',
-                '/vendor/illuminate/filesystem/',
-                '/vendor/illuminate/http/',
-                '/vendor/illuminate/session/',
-                '/vendor/illuminate/support/'
+                '/vendor/illuminate',
+
             ];
             if (strpos($filePath, '/vendor/illuminate/support/helpers.php') !== false) {
                 echo "\nFULL REPLACE $filePath  \n";
@@ -142,6 +139,18 @@ if (!function_exists("dds")) {
                     '\WappoVendor\WP_Filesystem_Base',
                     '\WappoVendor\WappoSwift_',
                     '\WappoVendor\__',
+                    '\WappoVendor\is_plugin_active',
+                    '\WappoVendor\get_plugins',
+                    '\WappoVendor\activate_plugin',
+                    '\WappoVendor\deactivate_plugin',
+
+/*                     'use WappoVendor\WappoSwift_Attachment;',
+                    'use WappoVendor\WappoSwift_Mailer;',
+                    'use WappoVendor\WappoSwift_Message;',
+                    'use WappoVendor\WappoSwift_MimePart;',
+                    'use WappoVendor\WappoSwift_Mime_SimpleMessage;',
+                    'use WappoVendor\WappoSwift_MimePart;',
+                    'use WappoVendor\WappoSwift_Attachment;', */
                 ], [
                     '\WappointmentValidationException',
                     '\WappointmentException',
@@ -153,6 +162,12 @@ if (!function_exists("dds")) {
                     '\WP_Filesystem_Base',
                     '\WappoSwift_',
                     '__',
+                    '\is_plugin_active',
+                    '\get_plugins',
+                    '\activate_plugin',
+                    '\deactivate_plugin',
+
+                 /*    '' */
 
                 ], $contents);
             }
@@ -172,6 +187,36 @@ if (!function_exists("dds")) {
 
             return $contents;
         },
+        function (string $filePath, string $prefix, string $contents): string {
+            if (strpos($filePath, '/vendor/symfony/polyfill-php80/bootstrap.php') !== false) {
+                $contents = str_replace([
+                    'namespace WappoVendor;',
+                    'WappoVendor\\',
+                ], [
+                    '',
+                    ''
+
+                ], $contents);
+            }
+
+            return $contents;
+        },
+        function (string $filePath, string $prefix, string $contents): string {
+            if (strpos($filePath, '/vendor/illuminate/database/Migrations/DatabaseMigrationRepository.php') !== false) {
+                $contents = str_replace([
+                    '$this->table()->orderBy(\'batch\', \'asc\')->orderBy(\'migration\', \'asc\')->pluck(\'migration\')->all();',
+
+                ], [
+                    '$this->table()->orderBy(\'batch\', \'asc\')->orderBy(\'migration\', \'asc\')->get()->pluck(\'migration\')->all();',
+
+
+                ], $contents);
+            }
+
+            return $contents;
+        }
+
+
     ],
 
     // PHP-Scoper's goal is to make sure that all code for a project lies in a distinct PHP namespace. However, you
@@ -183,30 +228,31 @@ if (!function_exists("dds")) {
     // that this does not work with functions or constants neither with classes belonging to the global namespace.
     //
     // Fore more see https://github.com/humbug/php-scoper#whitelist
-    'whitelist' => [
+    'exclude-namespaces' => [
         // 'PHPUnit\Framework\TestCase',   // A specific class
         // 'PHPUnit\Framework\*',          // The whole namespace
         // '*',                            // Everything
-        'Wappointment\*',                            // Everything
-        /*        '\WappointmentLv',
-        '\WappointmentException',
-        '\WP_Widget',*/
+        'Wappointment',                            // Everything
+    ],
+
+    'exclude-constants' => [
         'true',
         'false',
     ],
 
+
     // If `true` then the user defined constants belonging to the global namespace will not be prefixed.
     //
     // For more see https://github.com/humbug/php-scoper#constants--constants--functions-from-the-global-namespace
-    'whitelist-global-constants' => true,
+    'expose-global-constants' => true,
 
     // If `true` then the user defined classes belonging to the global namespace will not be prefixed.
     //
     // For more see https://github.com/humbug/php-scoper#constants--constants--functions-from-the-global-namespace
-    'whitelist-global-classes' => true,
+    'expose-global-classes' => true,
 
     // If `true` then the user defined functions belonging to the global namespace will not be prefixed.
     //
     // For more see https://github.com/humbug/php-scoper#constants--constants--functions-from-the-global-namespace
-    'whitelist-global-functions' => true,
+    'expose-global-functions' => true,
 ];

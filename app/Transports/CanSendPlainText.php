@@ -2,8 +2,6 @@
 
 namespace Wappointment\Transports;
 
-use WappoSwift_MimePart;
-
 trait CanSendPlainText
 {
 
@@ -17,7 +15,7 @@ trait CanSendPlainText
     public function getTextVersion($message)
     {
         foreach ($message->getChildren() as $child) {
-            if ($child instanceof WappoSwift_MimePart && $child->getContentType() === 'text/plain') {
+            if ($child instanceof \WappoSwift_MimePart && $child->getContentType() === 'text/plain') {
                 return $child->getBody();
             }
         }

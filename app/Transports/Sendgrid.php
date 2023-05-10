@@ -2,9 +2,6 @@
 
 namespace Wappointment\Transports;
 
-use WappoSwift_Mime_SimpleMessage;
-use WappoSwift_MimePart;
-use WappoSwift_Attachment;
 use GuzzleHttp\ClientInterface;
 use stdClass;
 
@@ -54,7 +51,7 @@ class Sendgrid extends Transport
      * @param  string  $to
      * @return array
      */
-    protected function payload(WappoSwift_Mime_SimpleMessage $message, $to)
+    protected function payload(\WappoSwift_Mime_SimpleMessage $message, $to)
     {
 
         $data = [
@@ -91,11 +88,11 @@ class Sendgrid extends Transport
         ];
     }
 
-    private function getAttachments(WappoSwift_Mime_SimpleMessage $message)
+    private function getAttachments(\WappoSwift_Mime_SimpleMessage $message)
     {
         $attachments = [];
         foreach ($message->getChildren() as $attachment) {
-            if (!$attachment instanceof WappoSwift_Attachment) {
+            if (!$attachment instanceof \WappoSwift_Attachment) {
                 continue;
             }
             $attachments[] = [
@@ -109,7 +106,7 @@ class Sendgrid extends Transport
         return $this->attachments = $attachments;
     }
 
-    private function getFrom(WappoSwift_Mime_SimpleMessage $message)
+    private function getFrom(\WappoSwift_Mime_SimpleMessage $message)
     {
         if ($message->getFrom()) {
             foreach ($message->getFrom() as $email => $name) {
@@ -119,7 +116,7 @@ class Sendgrid extends Transport
         return [];
     }
 
-    private function getReplyTo(WappoSwift_Mime_SimpleMessage $message)
+    private function getReplyTo(\WappoSwift_Mime_SimpleMessage $message)
     {
 
         $reply_to = $message->getReplyTo();
@@ -129,7 +126,7 @@ class Sendgrid extends Transport
         return null;
     }
 
-    private function getPersonalizations(WappoSwift_Mime_SimpleMessage $message)
+    private function getPersonalizations(\WappoSwift_Mime_SimpleMessage $message)
     {
         $setter = function (array $addresses) {
             $recipients = [];
@@ -156,7 +153,7 @@ class Sendgrid extends Transport
 
         return [$personalization];
     }
-    private function getContents(WappoSwift_Mime_SimpleMessage $message)
+    private function getContents(\WappoSwift_Mime_SimpleMessage $message)
     {
         $contentType = $message->getContentType();
         switch ($contentType) {
@@ -180,7 +177,7 @@ class Sendgrid extends Transport
         // Following RFC 1341, text/html after text/plain in multipart
         $content = [];
         foreach ($message->getChildren() as $child) {
-            if ($child instanceof WappoSwift_MimePart && $child->getContentType() === 'text/plain') {
+            if ($child instanceof \WappoSwift_MimePart && $child->getContentType() === 'text/plain') {
                 $content[] = [
                     'type'  => 'text/plain',
                     'value' => $child->getBody(),

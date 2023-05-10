@@ -18,19 +18,17 @@ class Order extends Model
     protected $table = 'wappo_orders';
     protected $fillable = ['transaction_id', 'status', 'total', 'refunded_at', 'client_id', 'options', 'paid_at', 'payment', 'currency', 'tax_percent', 'tax_amount'];
     protected $with = ['client', 'prices', 'appointments'];
-    protected $dates = ['refunded_at', 'paid_at', 'created_at', 'updated_at'];
-    protected $casts = ['options' => 'array'];
     protected $appends = ['charge', 'payment_label', 'status_label', 'description'];
 
-    const STATUS_PENDING = 0;
-    const STATUS_AWAITING = 1;
-    const STATUS_PAID = 2;
-    const STATUS_CANCELLED = -1;
-    const STATUS_REFUNDED = -2;
+    public const STATUS_PENDING = 0;
+    public const STATUS_AWAITING = 1;
+    public const STATUS_PAID = 2;
+    public const STATUS_CANCELLED = -1;
+    public const STATUS_REFUNDED = -2;
 
-    const PAYMENT_ONSITE = 0;
-    const PAYMENT_STRIPE = 1;
-    const PAYMENT_PAYPAL = 2;
+    public const PAYMENT_ONSITE = 0;
+    public const PAYMENT_STRIPE = 1;
+    public const PAYMENT_PAYPAL = 2;
 
     public function appointments()
     {
@@ -159,7 +157,6 @@ class Order extends Model
 
     public function refund()
     {
-
         if (!$this->isOnSite()) {
             //refund from the actual payment's platform
             do_action('wappointment_order_refund', $this);
@@ -211,7 +208,6 @@ class Order extends Model
 
     public function clearLastAdded($appointment)
     {
-
         $this->cancelPreviousFromMeta($appointment);
     }
 
@@ -227,14 +223,12 @@ class Order extends Model
         AppointmentNew::silentCancel($appointment_ids, $charge_ids);
 
         if (!empty($reservations) && $appointment->id !== (int)$reservations[0]['appointment_id']) {
-
             CleanPendingPaymentAppointment::cancelReservations(array_merge($this->options, ['client_id' => $this->client_id]));
         }
     }
 
     public function add(TicketAbstract $ticket, $quantity = false)
     {
-
         //clear all prices by cancelling previously placed appointment silently
         $this->clearLastAdded($ticket->getAppointment());
 

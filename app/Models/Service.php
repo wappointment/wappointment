@@ -9,15 +9,12 @@ class Service extends Model
 {
     use SoftDeletes;
     use CanLimit;
-    protected $dates = ['deleted_at'];
     protected $table = 'wappo_services';
     protected $with = ['locations'];
     protected $visible = ['id', 'name', 'options', 'locations', 'sorting', 'labels'];
     protected $hidden = ['pivot'];
     protected $fillable = ['name', 'options', 'sorting'];
-    protected $casts = [
-        'options' => 'array',
-    ];
+
     protected $appends = ['labels'];
 
     public function __construct(array $attributes = [])

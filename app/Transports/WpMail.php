@@ -2,7 +2,6 @@
 
 namespace Wappointment\Transports;
 
-use WappoSwift_Mime_SimpleMessage;
 use Wappointment\Services\Status;
 use Wappointment\WP\PluginsDetection;
 
@@ -35,7 +34,7 @@ class WpMail extends Transport
         add_filter('wpMailFrom', [$this, 'wpMailFrom']);
     }
 
-    public function send(WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
+    public function send(\WappoSwift_Mime_SimpleMessage $message, &$failedRecipients = null)
     {
         $this->beforeSendPerformed($message);
 
@@ -78,7 +77,7 @@ class WpMail extends Transport
      * @param  \WappoSwift_Mime_SimpleMessage  $message
      * @return string
      */
-    protected function getTo(WappoSwift_Mime_SimpleMessage $message)
+    protected function getTo(\WappoSwift_Mime_SimpleMessage $message)
     {
         return \WappointmentLv::collect($this->allContacts($message))->map(function ($display, $address) {
             return $display ? $display . " <{$address}>" : $address;
@@ -91,7 +90,7 @@ class WpMail extends Transport
      * @param  \WappoSwift_Mime_SimpleMessage  $message
      * @return array
      */
-    protected function allContacts(WappoSwift_Mime_SimpleMessage $message)
+    protected function allContacts(\WappoSwift_Mime_SimpleMessage $message)
     {
         return array_merge(
             (array) $message->getTo(),

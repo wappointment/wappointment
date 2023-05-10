@@ -28,6 +28,7 @@ class WappoSwift_Mime_SimpleHeaderFactory implements WappoSwift_Mime_CharsetObse
 
     /** The charset of created Headers */
     private $charset;
+    public $addressEncoder;
 
     /**
      * Creates a new SimpleHeaderFactory using $encoder and $paramEncoder.
