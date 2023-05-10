@@ -69,6 +69,7 @@ return [
         'morning' => __('Morning', 'wappointment'),
         'afternoon' => __('Afternoon', 'wappointment'),
         'evening' => __('Evening', 'wappointment'),
+        'slots_left' => sprintf(__('%s left', 'wappointment'), '[slots_left]'),
     ],
     'form' => [
         'byskype' => __('By Skype', 'wappointment'),
