@@ -178,7 +178,7 @@ export default {
           return (el.attr('data-calendar-title')!== undefined && el.children('.cal-title').length == 0) ? '<div class="cal-title">'+el.attr('data-calendar-title')+'</div>' : ''
       },
 
-      getConfirmOrViewButton( el, rendering,){
+      getConfirmOrViewButton( el, rendering){
         if(this.isAppointmentConfirmed(rendering)) {
           return '<button data-tt="'+this.get_i18n('reschedule','common')+'" class="btn btn-xs btn-light rescheduleElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-update"></span></button>'+
           '<button data-tt="'+this.get_i18n('view_appointment','common')+'" class="btn btn-xs btn-light viewElement" data-id="'+el.attr('data-id')+'"><span class="dashicons dashicons-visibility"></span></button>'

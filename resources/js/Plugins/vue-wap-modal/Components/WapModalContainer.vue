@@ -20,7 +20,9 @@
       :loader="loader" :screenshot="screenshot" :options="options" :prompt="prompt" 
       @hide="hideModal"  @canceled="canceled" @confirmed="confirmed">
             <h4 class="modal-title" slot="title">{{ title }}</h4>
-            <div v-if="content" v-html="cleanHtml"></div>
+            <div v-if="content && options.component === undefined" v-html="cleanHtml"></div>
+            <component v-if="options.component !== undefined" 
+            :is="options.component" :options="options" :cleanHtml="cleanHtml" />
       </WapModal>
     </div>
 </template>

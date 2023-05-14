@@ -63,6 +63,8 @@ export default {
             prompt: true,
             cancel: 'Back',
             confirm: 'Cancel for the group',
+            component: window.wappointmentExtends.filter('GroupPopupComponent', undefined),
+            appointment: appointment
           }
         }
         let instanceModal = this.$WapModal()
