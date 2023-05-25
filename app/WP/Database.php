@@ -49,8 +49,10 @@ class Database
             $this->findCharsetCollate($wpdb);
         }
             
-        $this->charset = Settings::get('charset');
-        $this->collate = Settings::get('collate');
+        $savedCharset = Settings::get('charset');
+        $savedCollate = Settings::get('collate');
+        $this->charset = !empty($savedCharset) ? $savedCharset:$wpdb->charset;
+        $this->collate = !empty($savedCollate) ? $savedCollate:'utf8_unicode_ci';
     }
 
     private function findCharsetCollate($wpdb)
