@@ -31,6 +31,7 @@ import getRoutePush from './Standalone/getRoutePush'
 import ServicesDelivery from './Settings/ServicesDelivery'
 import VueSanitize from 'vue-sanitize'
 import FieldsGenerated from './BookingForm/FieldsGenerated'
+import InputEmailSelector from './CalendarAdmin/InputEmailSelector'
 
 import i18n from './Mixins/i18n'
 import helpers from './Mixins/helpers'
@@ -50,6 +51,7 @@ Vue.mixin(i18n)
 Vue.mixin(DeepDefined)
 Vue.component('WapImage', WapImage)
 Vue.component('FieldsGenerated', FieldsGenerated)
+Vue.component('InputEmailSelector', InputEmailSelector)
 Vue.component('v-style', {
   render: function (createElement) {
       return createElement('style', this.$slots.default)

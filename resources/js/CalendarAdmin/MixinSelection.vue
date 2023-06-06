@@ -58,13 +58,14 @@ export default {
         let eventId = window.jQuery(event.currentTarget).attr('data-id')
         let appointment = this.findAppointmentById(eventId)
         let optionsModal = {}
-        if(appointment.extendedProps.participants!==undefined && appointment.extendedProps.participants.length > 0){
+        if(appointment.extendedProps.options.slots!==undefined && appointment.extendedProps.options.slots.total > 0){
           optionsModal = {
             prompt: true,
             cancel: 'Back',
             confirm: 'Cancel for the group',
             component: window.wappointmentExtends.filter('GroupPopupComponent', undefined),
-            appointment: appointment
+            appointment: appointment,
+            viewData: this.viewData
           }
         }
         let instanceModal = this.$WapModal()

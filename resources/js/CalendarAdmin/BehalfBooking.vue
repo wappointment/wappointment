@@ -69,13 +69,13 @@ import ServiceSelection from '../BookingForm/ServiceSelection'
 import DurationSelection from '../BookingForm/DurationSelection'
 import LocationSelection from '../BookingForm/LocationSelection'
 import WappoServiceBooking from '../Services/V1/BookingN'
-import InputEmailSelector from './InputEmailSelector'
+
 export default {
     props: ['viewData','startTime', "endTime", "realEndTime", 'activeStaff'],
     mixins: window.wappointmentExtends.filter('WappointmentBehalfBookingMixins', [RequestMaker]) ,
     components: {
         AppointmentTypeSelection, PhoneInput, FormInputs, StyleGenerator, 
-        ServiceSelection, DurationSelection, LocationSelection, InputEmailSelector
+        ServiceSelection, DurationSelection, LocationSelection
         },
     data: () => ({
         bookingForm: {
