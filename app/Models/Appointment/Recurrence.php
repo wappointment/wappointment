@@ -30,6 +30,8 @@ class Recurrence
     {
         //simple case weekly on the same day
         $start_temp = $this->start->copy();
+        $start_temp->addDay();
+
         while ($start_temp->timestamp < $this->end->timestamp) {
             //if is a day 
             if ($this->needsGeneration($start_temp)) {
@@ -37,6 +39,7 @@ class Recurrence
             }
             $start_temp->addDay();
         }
+
     }
 
     public function generateEditKey($start_at)
@@ -58,8 +61,8 @@ class Recurrence
         //generate new key 
         $data_new['edit_key'] = $this->generateEditKey($start_temp->timestamp . $this->master->staff_id);
 
-        $data_new['start_at'] = $start_temp->timestamp;
-        $data_new['end_at'] = $start_temp->timestamp + $this->master->getFullDurationInSec();
+        $data_new['start_at'] = AppointmentNew::unixToDb($start_temp->timestamp);
+        $data_new['end_at'] = AppointmentNew::unixToDb($start_temp->timestamp + $this->master->getFullDurationInSec());
         $data_new['parent'] = $this->master->id;
         if (isset($data_new['options']['slots'])) {
             $data_new['options']['slots']['booked'] = 0;
@@ -80,6 +83,7 @@ class Recurrence
 
     private function needsGeneration(Carbon $start_temp)
     {
+
         if ($this->check_days && $this->isDayAllowed($this->check_days, strtolower($start_temp->englishDayOfWeek))) {
             return true;
         }
@@ -88,7 +92,6 @@ class Recurrence
 
     protected function isDayAllowed($daysAllowed, $dayIsoTocheck)
     {
-
         foreach ($daysAllowed as $dayname => $required) {
             if ($dayIsoTocheck === $dayname && $required) {
                 return true;
