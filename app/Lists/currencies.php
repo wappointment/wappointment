@@ -1311,4 +1311,12 @@ return [
     'decimals_sep' => ',',
     'thousand_sep' => ' ',
   ],
+  163 => [
+    'code' => 'EUR',
+    'name' => 'Euro(Ireland)',
+    'symbol' => '€',
+    'position' => 1,
+    'decimals_sep' => '.',
+    'thousand_sep' => ' ',
+  ],
 ];
