@@ -15,7 +15,7 @@ class Health
 
     public function __construct()
     {
-        if (CurrentUser::isAdmin() && Status::isInstalled() && Appointment::count() > 0) {
+        if (CurrentUser::isAdmin() && Status::isInstalled()) {
             $this->set('lang', Get::list('translations_health'));
             $this->checkUnreliable();
             $this->checkLateRun();
