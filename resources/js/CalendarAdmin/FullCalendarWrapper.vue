@@ -59,7 +59,11 @@
                 return this.calendarAPI !== undefined
             },
             next(lastDay){
-                let nextweek = lastDay.clone().add(1,'day')
+                let nextweek = lastDay.clone().add(1,'days')
+                if(lastDay.get('date') === 28 && lastDay.get('month') === 9){
+                    nextweek.add(1, 'hours'); // this is a hack to fix a moment issue with DST switch to winter time
+                }
+
                 this.getApi.gotoDate(nextweek.format())
                 this.getApi.refetchEvents()
                 return nextweek

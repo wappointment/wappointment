@@ -195,7 +195,7 @@ export default {
       minutes: 0
     },
     activeBgOverId: false,
-    shortDayFormat: 'Do MMM YY',
+    shortDayFormat: 'dd LLL yyyy',
     headerDayFormat: { weekday: 'short', month: 'numeric', day: 'numeric', omitCommas: true },
     daysProperties: false,
     serviceEvent: null,
@@ -270,8 +270,9 @@ export default {
       });
     },
     weekTitle() {
-      return (this.firstDay!== undefined) ? this.firstDay.format(this.shortDayFormat) + ' - ' + this.lastDay.format(this.shortDayFormat) : ''
+      return (this.firstDay!== undefined) ? this.toLuxon(this.firstDay).toFormat(this.shortDayFormat) + ' - ' + this.toLuxon(this.lastDay).toFormat(this.shortDayFormat) : ''
     },
+
     weekTitleShort() {
       return (this.firstDay!== undefined) ? this.firstDay.format('Do MMM') + ' - ' + this.lastDay.format('Do MMM') : ''
     },
@@ -306,6 +307,9 @@ export default {
     },
  },
   methods: {
+    toLuxon(moment){
+      return luxonApp.fromSeconds(moment.unix()).setZone(this.displayTimezone)
+    },
     async initValueRequest() {
         return await this.serviceViewData.call('calendar')
     },
@@ -813,13 +817,11 @@ export default {
             timezone: this.timezone
           }
           this.writeHistory()
-          
         } else{
           params = {start: this.toMoment(fetchInfo.start), end: this.toMoment(fetchInfo.end), timezone: this.timezone}
         }
 
         this.firstDay = params.start
-
         if(this.canLoadEvents){
           this.request(this.getEventsRequest, params,undefined,false,  this.callbackInternal)
           this.canLoadEvents = false
