@@ -127,7 +127,7 @@ return [
         'check_full_width' => false
     ],
     'service_duration' => [
-        'select_duration' => __('How long will be the session?', 'wappointment'),
+        'select_duration' => __('How long will the session be?', 'wappointment'),
     ],
     'service_location' => [
         'select_location' => __('How should we meet?', 'wappointment'),
