@@ -148,7 +148,8 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.6.1 - 2023-09-?? =
+= 2.6.1 - 2024-04-26 =
+* fix security issue
 * fix calendar dates in the backend when switching to winter time
 
 = 2.6.0 - 2023-08-23 =

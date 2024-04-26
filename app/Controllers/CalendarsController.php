@@ -205,7 +205,9 @@ class CalendarsController extends RestController
     public function saveCal(Request $request)
     {
         $this->testIsAllowedToRunQuery('calendar_id', $request);
+
         $externalCalendar = new ExternalCalendar($this->getIdAllowedToSave('calendar_id', $request));
+        
         $result = $externalCalendar->save($request->input('calurl'));
         $this->refreshRepository();
         return $result;

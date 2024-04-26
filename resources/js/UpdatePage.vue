@@ -4,16 +4,16 @@
           </h4>
           <div class="update-section">
               <h3 class="d-flex align-items-center">
-                <img :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.6.0</span>   
-                <span class="ml-2">PHP 8 Finally</span>
+                <img v-if="false" :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
+                <span>V2.6.1</span>   
+                <span class="ml-2">Long due update</span>
               </h3>
               <div class="d-flex flex-align-items-center">
                   <div class="ml-3">
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added PHP8 compatibility</li>
+                        <li>security issue fixed</li>
                     </ol>
                   </div>
               </div>
