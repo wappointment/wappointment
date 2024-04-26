@@ -7,7 +7,7 @@ use Wappointment\ClassConnect\Arr;
 use Wappointment\ClassConnect\Collection;
 use Wappointment\ClassConnect\HigherOrderTapProxy;
 use Wappointment\ClassConnect\Carbon;
-
+// @codingStandardsIgnoreFile
 /**
  * Simple widget insertion in php code useful for custom made versions
  *

@@ -26,7 +26,7 @@ trait IsAppointmentJob
         }
 
         if (!empty($params['appointment']['options'])) {
-            $params['appointment']['options'] = json_encode($params['appointment']['options']);
+            $params['appointment']['options'] = wp_json_encode($params['appointment']['options']);
         }
         $this->appointment = apply_filters('wappointment_appointment_job_params_parse', (new Appointment)->newFromBuilder($params['appointment']), $params);
 

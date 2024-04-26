@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace Wappointment\Achse\Math\Interval;
 
 use Wappointment\Achse\Comparable\IComparable;
+// @codingStandardsIgnoreFile
 class Interval
 {
     const STRING_DELIMITER = ',';

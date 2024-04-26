@@ -3,7 +3,7 @@
 namespace Wappointment\WP;
 
 use Wappointment\Services\Settings;
-
+// @codingStandardsIgnoreFile
 class Database
 {
     public $host = '';
@@ -59,7 +59,9 @@ class Database
     {
         //determine collate
         $prefix = is_multisite() ? $this->getMainPrefix():$this->getPrefix();
-        $dbResult=$wpdb->get_results('show create table '.$prefix.'wappo_appointments');
+        $dbResult=$wpdb->get_results(
+            $wpdb->prepare( "show create table  %swappo_appointments",$prefix )
+        );
         $responseString='';
         foreach($dbResult[0] as $res){
             $responseString.=$res;

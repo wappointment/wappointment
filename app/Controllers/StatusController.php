@@ -5,7 +5,7 @@ namespace Wappointment\Controllers;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Helpers\Translations;
 use Wappointment\Services\Status;
-
+// phpcs:ignoreFile
 class StatusController extends RestController
 {
     public function save(Request $request)

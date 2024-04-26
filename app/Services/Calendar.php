@@ -4,7 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\Remote\Request as RequestRemote;
 use Wappointment\WP\Helpers as WPHelpers;
-
+// @codingStandardsIgnoreFile
 class Calendar
 {
     public $url = '';

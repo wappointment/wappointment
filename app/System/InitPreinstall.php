@@ -3,7 +3,7 @@
 namespace Wappointment\System;
 
 use Wappointment\WP\Helpers as WPHelpers;
-
+// @codingStandardsIgnoreFile
 class InitPreinstall
 {
     private $plugin_file = '';

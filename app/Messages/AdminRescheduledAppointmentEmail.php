@@ -3,7 +3,7 @@
 namespace Wappointment\Messages;
 
 use Wappointment\Services\Settings;
-
+// @codingStandardsIgnoreFile
 class AdminRescheduledAppointmentEmail extends AbstractAdminEmail
 {
     use AttachesIcs, AdminGeneratesDefault;

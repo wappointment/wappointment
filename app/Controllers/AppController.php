@@ -7,7 +7,7 @@ use Wappointment\Services\Health;
 use Wappointment\Services\Permissions;
 use Wappointment\Services\Wappointment\Feedback;
 use Wappointment\System\Status;
-
+// @codingStandardsIgnoreFile
 class AppController extends RestController
 {
     public function migrate(Request $request)

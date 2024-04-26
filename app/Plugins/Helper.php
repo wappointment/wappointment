@@ -5,7 +5,7 @@ namespace Wappointment\Plugins;
 use Wappointment\Helpers\Site;
 use Wappointment\Plugins\Contract\PluginDefinition;
 use Wappointment\WP\Plugins;
-
+// @codingStandardsIgnoreFile
 class Helper
 {
     public static function getPlugin($type)

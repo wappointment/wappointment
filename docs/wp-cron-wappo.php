@@ -9,7 +9,7 @@
  * This is in case your calendars are not synched properly or your emails are not processed out of the queue
  * This case scenario may happen if another WordPress plugin is running cron tasks that are crashing or blocking the other processes somehow
  */
-
+// phpcs:ignoreFile
 if (!defined('ABSPATH')) {
     /** Set up WordPress environment */
     require_once __DIR__ . '/wp-load.php';

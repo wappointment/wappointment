@@ -7,13 +7,13 @@ use Wappointment\Models\Reminder as MReminder;
 use Wappointment\Models\Appointment;
 use Wappointment\Helpers\TipTap;
 use Wappointment\Helpers\Translations;
-
+// @codingStandardsIgnoreFile
 class Reminder
 {
     public static function save($reminderData)
     {
         $validator = new RakitValidator();
-        $reminderData['subject'] = strip_tags($reminderData['subject']);
+        $reminderData['subject'] = wp_strip_all_tags($reminderData['subject']);
         $validationRules = [
             'subject' => 'required|max:100',
             'type' => 'required',
@@ -39,7 +39,7 @@ class Reminder
             );
         }
         if (isset($reminderData['id']) && $reminderData['id'] > 0) {
-            $reminderData['options'] = json_encode($reminderData['options']);
+            $reminderData['options'] = wp_json_encode($reminderData['options']);
             MReminder::where('id', (int)$reminderData['id'])
                 ->update($reminderData);
             return true;

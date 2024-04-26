@@ -10,6 +10,7 @@ use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Payment;
 use Wappointment\Services\Ticket;
 use Wappointment\WP\Helpers;
+use Wappointment\ClassConnect\Carbon;
 
 class Order extends Model
 {
@@ -134,7 +135,7 @@ class Order extends Model
     {
         $this->currency = Payment::currencyCode();
         $this->status = static::STATUS_PAID;
-        $this->paid_at = date('Y-m-d H:i:s');
+        $this->paid_at = Carbon::now()->format('Y-m-d H:i:s');
         $this->storeClient();
     }
 
@@ -197,7 +198,7 @@ class Order extends Model
     public function setRefund()
     {
         $this->status = static::STATUS_REFUNDED;
-        $this->refunded_at = date('Y-m-d H:i:s');
+        $this->refunded_at = Carbon::now()->format('Y-m-d H:i:s');
     }
 
     public function prices()

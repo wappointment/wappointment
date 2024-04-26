@@ -15,6 +15,7 @@ namespace Wappointment\Services\Parser;
  * @author Evert Pot (http://evertpot.com/)
  * @license http://sabre.io/license/ Modified BSD License
  */
+// @codingStandardsIgnoreFile
 class MimeDir extends \Sabre\VObject\Parser\MimeDir
 {
     /**

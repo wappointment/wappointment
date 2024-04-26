@@ -6,7 +6,7 @@ use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Helpers\Translations;
-
+// @codingStandardsIgnoreFile
 class Settings
 {
     public static $key_option = 'settings';
@@ -165,7 +165,7 @@ class Settings
 
     public static function getHost()
     {
-        $parsed_url = parse_url(WPHelpers::getWPOption('home'));
+        $parsed_url = wp_parse_url(WPHelpers::getWPOption('home'));
         return !empty($parsed_url['host']) ? static::cleanHost($parsed_url['host']) : 'example.com';
     }
 

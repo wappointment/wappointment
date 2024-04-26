@@ -5,7 +5,7 @@ namespace Wappointment\Services\Wappointment;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\WP\Plugins;
-
+// @codingStandardsIgnoreFile
 class Addons extends API
 {
     public function __construct()

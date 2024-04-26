@@ -1,5 +1,5 @@
 <?php
-
+// @codingStandardsIgnoreFile
 return [
     'calendar_this_week' => __('This week', 'wappointment'),
     'calendar_free_slots' => __('free slots', 'wappointment'),
@@ -21,7 +21,4 @@ return [
     'confirm_new_start' => __('Confirm new start:', 'wappointment'),
     'select_another_time' => __('Select another time', 'wappointment'),
     'modify_weekly_availability' => __('Modify your Weekly Availability', 'wappointment'),
-
-
-
 ];

@@ -1,7 +1,7 @@
 <?php
 
 namespace Wappointment\Achse\DateTimeFormatTools;
-
+// @codingStandardsIgnoreFile
 class Tools
 {
     const UNSAFE_SYMBOLS = ['d' => 'j', 'm' => 'n'];

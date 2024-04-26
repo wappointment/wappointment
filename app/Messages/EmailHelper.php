@@ -6,7 +6,7 @@ use Wappointment\Messages\Templates\Order as OrderMessage;
 use Wappointment\Models\Order;
 use Wappointment\Services\Payment;
 use Wappointment\Services\Settings;
-
+// @codingStandardsIgnoreFile
 class EmailHelper
 {
     public function getOrderTable($params)

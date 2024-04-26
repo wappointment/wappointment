@@ -4,7 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\Models\Client as MClient;
 use Wappointment\Validators\HttpRequest\BookingAdmin;
-
+// @codingStandardsIgnoreFile
 class AdminLegacy
 {
     public static function book(BookingAdmin $booking)

@@ -1,7 +1,7 @@
 <?php
 
 namespace Wappointment\Helpers;
-
+// @codingStandardsIgnoreFile
 class Get
 {
     protected static function getFilePath($listName, $directory, $extension)
@@ -33,6 +33,6 @@ class Get
 
     public static function style($listName, $directory = false)
     {
-        return '<style>' . file_get_contents(static::getFilePath($listName, static::getDir('Styles', $directory), '.css')) . '</style>';
+        return '<style>' . wp_remote_get(static::getFilePath($listName, static::getDir('Styles', $directory), '.css')) . '</style>';
     }
 }

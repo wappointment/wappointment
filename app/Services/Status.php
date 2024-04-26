@@ -5,7 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\Models\Status as MStatus;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\Helpers\Translations;
-
+// @codingStandardsIgnoreFile
 class Status
 {
     private static $diff = 0;

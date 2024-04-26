@@ -6,6 +6,7 @@ namespace Wappointment\Achse\Math\Interval;
 use Wappointment\Achse\Comparable\ComparisonMethods;
 use Wappointment\Achse\Comparable\IComparable;
 use LogicException;
+// @codingStandardsIgnoreFile
 class Boundary implements \Wappointment\Achse\Comparable\IComparable
 {
     use ComparisonMethods;

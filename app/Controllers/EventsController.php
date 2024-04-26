@@ -14,7 +14,7 @@ use Wappointment\Services\CurrentUser;
 use Wappointment\Managers\Central;
 use Wappointment\Models\Appointment;
 use Wappointment\Repositories\CalendarsBack;
-
+// @codingStandardsIgnoreFile
 class EventsController extends RestController
 {
     protected function getAppointmentModel()

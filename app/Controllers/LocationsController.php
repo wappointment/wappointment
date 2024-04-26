@@ -7,7 +7,7 @@ use Wappointment\Controllers\RestController;
 use Wappointment\Helpers\Translations;
 use Wappointment\Models\Location;
 use Wappointment\Services\Location as LocationService;
-
+// @codingStandardsIgnoreFile
 class LocationsController extends RestController
 {
     public function get(Request $request)

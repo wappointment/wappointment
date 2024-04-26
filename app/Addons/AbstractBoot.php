@@ -7,7 +7,7 @@ use Wappointment\Helpers\Get;
 use Wappointment\Services\CurrentUser;
 use Wappointment\Services\Wappointment\Addons;
 use Wappointment\ClassConnect\Carbon;
-
+// @codingStandardsIgnoreFile
 abstract class AbstractBoot implements Boot
 {
     public static $addon_key;
@@ -277,7 +277,7 @@ abstract class AbstractBoot implements Boot
             'installed_at' => static::isInstalled(),
         ];
 
-        return $var .= 'var ' . static::$addon_key . ' = ' . json_encode($variables) . ";\n";
+        return $var .= 'var ' . static::$addon_key . ' = ' . wp_json_encode($variables) . ";\n";
     }
 
     public static function isSetup()

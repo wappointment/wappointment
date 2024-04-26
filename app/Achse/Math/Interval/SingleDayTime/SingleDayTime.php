@@ -13,6 +13,7 @@ use DateTimeInterface;
 use DateTimeZone;
 use InvalidArgumentException;
 use LogicException;
+// @codingStandardsIgnoreFile
 final class SingleDayTime implements \Wappointment\Achse\Comparable\IComparable
 {
     use ComparisonMethods;

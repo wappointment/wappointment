@@ -91,7 +91,7 @@ class DotCom extends API
 
     public function hasPendingChanges($appointments, $appointments_update)
     {
-        return md5(json_encode($appointments)) !== md5(json_encode($appointments_update));
+        return md5(wp_json_encode($appointments)) !== md5(wp_json_encode($appointments_update));
     }
 
     public function getAppointments()

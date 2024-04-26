@@ -5,7 +5,7 @@ namespace Wappointment\Models\Appointment;
 use Wappointment\Services\Settings;
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\Services\DateTime;
-
+// @codingStandardsIgnoreFile
 trait ManipulateCancelReschedule
 {
     public function getCanRescheduleUntilAttribute()

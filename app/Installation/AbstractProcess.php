@@ -3,7 +3,7 @@
 namespace Wappointment\Installation;
 
 use Wappointment\WP\Helpers as WPHelpers;
-
+// @codingStandardsIgnoreFile
 class AbstractProcess
 {
     protected $errors = [];

@@ -5,7 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\Managers\Central;
 use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Helpers\Translations;
-
+// @codingStandardsIgnoreFile
 class Calendars
 {
     public static function getModel()

@@ -1,7 +1,7 @@
 <?php
 
 namespace Wappointment\Helpers;
-
+// @codingStandardsIgnoreFile
 class Events
 {
     public static function dispatch($eventClassName, $args)

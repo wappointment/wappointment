@@ -7,6 +7,7 @@ use Wappointment\Achse\Comparable\ComparisonMethods;
 use Wappointment\Achse\Comparable\IComparable;
 use Wappointment\Achse\Math\Interval\Utils;
 use InvalidArgumentException;
+// @codingStandardsIgnoreFile
 final class Integer implements \Wappointment\Achse\Comparable\IComparable
 {
     use ComparisonMethods;

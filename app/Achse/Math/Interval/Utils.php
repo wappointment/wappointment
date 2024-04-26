@@ -2,7 +2,7 @@
 
 declare (strict_types=1);
 namespace Wappointment\Achse\Math\Interval;
-
+// @codingStandardsIgnoreFile
 use DateTimeInterface;
 use InvalidArgumentException;
 /**

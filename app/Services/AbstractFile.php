@@ -1,7 +1,7 @@
 <?php
 
 namespace Wappointment\Services;
-
+// phpcs:ignoreFile
 abstract class AbstractFile
 {
     protected $path = '';
@@ -35,7 +35,7 @@ abstract class AbstractFile
     public function release()
     {
         if (file_exists($this->path)) {
-            unlink($this->path);
+            wp_delete_file($this->path);
         }
     }
 

@@ -13,7 +13,7 @@ use Wappointment\Models\Client as ClientModel;
 use Wappointment\Services\CurrentUser;
 use Wappointment\Services\DateTime;
 use Wappointment\Services\Settings;
-
+// @codingStandardsIgnoreFile
 class ClientController extends RestController
 {
 

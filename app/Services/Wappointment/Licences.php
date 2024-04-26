@@ -3,7 +3,7 @@
 namespace Wappointment\Services\Wappointment;
 
 use Wappointment\WP\Helpers as WPHelpers;
-
+// @codingStandardsIgnoreFile
 class Licences extends API
 {
     public function hasLicenceInstalled()
@@ -62,7 +62,7 @@ class Licences extends API
 
     protected function recordDetails($data)
     {
-        return WPHelpers::setOption('site_details', json_encode($data));
+        return WPHelpers::setOption('site_details', wp_json_encode($data));
     }
 
     protected function recordSiteKey($data)
@@ -71,7 +71,7 @@ class Licences extends API
             throw new \WappointmentException("Cannot record site's key" . print_r($data));
         }
         if (!empty($data->details)) {
-            WPHelpers::setOption('site_details', json_encode($data->details));
+            WPHelpers::setOption('site_details', wp_json_encode($data->details));
         }
         return WPHelpers::setOption('site_key', $data->sitekey);
     }

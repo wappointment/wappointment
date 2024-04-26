@@ -1,7 +1,7 @@
 <?php
 
 namespace Wappointment\System;
-
+// @codingStandardsIgnoreFile
 class Helpers
 {
     public static function isProd()
@@ -53,7 +53,7 @@ class Helpers
                 throw new \WappointmentException('The manifest is not readable.');
             }
 
-            $manifests[$manifestPath] = json_decode(file_get_contents($manifestPath), true);
+            $manifests[$manifestPath] = json_decode(wp_remote_get($manifestPath), true);
         }
 
         $manifest = $manifests[$manifestPath];

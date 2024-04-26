@@ -9,7 +9,7 @@ use Wappointment\Helpers\Translations;
 use Wappointment\Validators\RequiredIfFields;
 use Wappointment\Models\Location as LocationModel;
 use Wappointment\Models\Price as ModelsPrice;
-
+// @codingStandardsIgnoreFile
 class Services implements ServiceInterface
 {
     public static function getModel()

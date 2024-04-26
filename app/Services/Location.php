@@ -6,7 +6,7 @@ use Wappointment\Models\Location as LocationModel;
 use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Helpers\Translations;
 use Wappointment\Managers\Service as ServiceManager;
-
+// @codingStandardsIgnoreFile
 class Location
 {
 

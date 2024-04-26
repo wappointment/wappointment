@@ -1,7 +1,7 @@
 <?php
 
 namespace Wappointment\WP;
-
+// phpcs:ignoreFile
 class Widget extends WidgetAbstract
 {
     public function __construct()

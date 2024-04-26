@@ -6,7 +6,7 @@ use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Helpers\Translations;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Models\Calendar;
-
+// @codingStandardsIgnoreFile
 class ExternalCalendar
 {
     private $isLegacy = true;

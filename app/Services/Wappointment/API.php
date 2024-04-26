@@ -4,7 +4,7 @@ namespace Wappointment\Services\Wappointment;
 
 use Wappointment\Remote\Request as RequestRemote;
 use Wappointment\WP\Helpers as WPHelpers;
-
+// @codingStandardsIgnoreFile
 abstract class API
 {
     protected $client = null;

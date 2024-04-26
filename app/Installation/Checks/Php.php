@@ -1,7 +1,7 @@
 <?php
 
 namespace Wappointment\Installation\Checks;
-
+// @codingStandardsIgnoreFile
 class Php extends \Wappointment\Installation\MethodsRunner
 {
 

@@ -28,7 +28,7 @@ abstract class WidgetAbstract extends \WP_Widget
                     break;
 
                 default:
-                    $instance[$key] = (!empty($new_instance[$key])) ? strip_tags($new_instance[$key]) : '';
+                    $instance[$key] = (!empty($new_instance[$key])) ? wp_strip_all_tags($new_instance[$key]) : '';
             }
         }
         return $instance;

@@ -4,7 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\Achse\Math\Interval\Integer\IntegerInterval;
-
+// @codingStandardsIgnoreFile
 class Segment
 {
     public function convertModel($collection)

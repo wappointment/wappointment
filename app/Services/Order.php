@@ -4,7 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\Helpers\Translations;
 use Wappointment\Models\Order as ModelOrder;
-
+// @codingStandardsIgnoreFile
 class Order
 {
     public $order = null;

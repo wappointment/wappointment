@@ -20,7 +20,7 @@ use Wappointment\Services\ExternalCalendar;
 use Wappointment\Services\Permissions;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Wappointment\DotCom;
-
+// @codingStandardsIgnoreFile
 class CalendarsController extends RestController
 {
     public function get()
@@ -345,7 +345,7 @@ class CalendarsController extends RestController
 
     protected function isKnownDomainOrThrow($url)
     {
-        $host = parse_url($url, PHP_URL_HOST);
+        $host = wp_parse_url($url, PHP_URL_HOST);
         foreach($this->allowedDomains() as $testDomain){
             if($this->endsWith($host, $testDomain)){
                 return true;

@@ -5,7 +5,7 @@ namespace Wappointment\Validators\HttpRequest;
 use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\ClassConnect\Request;
 use Wappointment\Helpers\Translations;
-
+// @codingStandardsIgnoreFile
 abstract class AbstractProcessor implements InterfaceProcessor
 {
     protected $validator = null;

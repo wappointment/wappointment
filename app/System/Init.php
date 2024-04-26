@@ -5,7 +5,7 @@ namespace Wappointment\System;
 use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Config\Database;
 use Wappointment\Services\Settings;
-
+// @codingStandardsIgnoreFile
 class Init
 {
     private $is_installed = false;
@@ -93,16 +93,16 @@ class Init
         }
 
         if (is_admin()) {
-            $parsed = parse_url(WPHelpers::adminUrl('admin.php'));
+            $parsed = wp_parse_url(WPHelpers::adminUrl('admin.php'));
             $variables['base_admin'] = !empty($parsed['path']) ? $parsed['path'] : '/wp-admin/admin.php';
             $variables['wp_user'] = WPHelpers::wpUserData(true);
         }
         $return = '<script type="text/javascript">' . "\n";
         $return .= '/* Wappointment globals */ ' . "\n";
         $return .= '/* <![CDATA[ */ ' . "\n";
-        $return .= 'var apiWappointment = ' . json_encode($variables) . ";\n";
+        $return .= 'var apiWappointment = ' . wp_json_encode($variables) . ";\n";
         $return .= 'var widgetWappointment = '
-            . json_encode((new \Wappointment\Services\WidgetSettings)->get()) . ";\n";
+            . wp_json_encode((new \Wappointment\Services\WidgetSettings)->get()) . ";\n";
 
         if (is_admin()) {
             $return .= 'var wappoEmailTags =' .  $this->getWappoEmailTags() . ";\n";
@@ -117,11 +117,11 @@ class Init
 
     public function getWappoEmailLinks()
     {
-        return json_encode(\Wappointment\Messages\TagsReplacement::emailsLinks());
+        return wp_json_encode(\Wappointment\Messages\TagsReplacement::emailsLinks());
     }
 
     public function getWappoEmailTags()
     {
-        return json_encode(\Wappointment\Messages\TagsReplacement::emailsTags());
+        return wp_json_encode(\Wappointment\Messages\TagsReplacement::emailsTags());
     }
 }

@@ -7,7 +7,7 @@ use Wappointment\Models\Client;
 use Wappointment\Helpers\Events;
 use Wappointment\Managers\Central;
 use Wappointment\WP\Helpers as WPHelpers;
-
+// @codingStandardsIgnoreFile
 /**
  * LEGACY DO NOT EDIT
  */

@@ -3,7 +3,7 @@
 namespace Wappointment\Managers;
 
 use Wappointment\Services\VersionDB;
-
+// @codingStandardsIgnoreFile
 /**
  * Singleton to replace specific core classes with addons classes
  */

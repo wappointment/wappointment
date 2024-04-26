@@ -28,7 +28,7 @@ trait ConvertHtmlToText
             ['', '', '', '', "\n\n", "\n* ", "\n", "\n", '${2} ( ${1} )'],
             $html
         );
-        $text = str_replace(['Â ', '&nbsp;'], ' ', strip_tags($text));
+        $text = str_replace(['Â ', '&nbsp;'], ' ', wp_strip_all_tags($text));
         $text = trim(@html_entity_decode($text, ENT_QUOTES, 'UTF-8'));
 
         if ($fullConvert) {

@@ -6,7 +6,7 @@ use Wappointment\ClassConnect\Carbon;
 use Wappointment\Models\Status;
 use Wappointment\System\Status as SystemStatus;
 use Wappointment\ClassConnect\VtzUtil;
-
+// @codingStandardsIgnoreFile
 class CalendarParser
 {
     use CustomTZParser;
@@ -296,7 +296,7 @@ class CalendarParser
             }
         }
 
-        return empty($options) ? '' : json_encode($options);
+        return empty($options) ? '' : wp_json_encode($options);
     }
 
     private function convertDays($days)

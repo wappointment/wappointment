@@ -4,7 +4,7 @@ namespace Wappointment\Models;
 
 use Wappointment\Services\Appointment as AppointmentServiceLegacy;
 use Wappointment\Services\Service;
-
+// @codingStandardsIgnoreFile
 trait CanBookLegacy
 {
     public function bookLegacy($bookingRequest, $forceConfirmed = false)

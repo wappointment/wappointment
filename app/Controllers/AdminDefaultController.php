@@ -6,6 +6,6 @@ class AdminDefaultController
 {
     public static function defaultContent()
     {
-        echo '<div id="' . WAPPOINTMENT_SLUG . '_app"></div>';
+        _safe('<div id="' . WAPPOINTMENT_SLUG . '_app"></div>');
     }
 }

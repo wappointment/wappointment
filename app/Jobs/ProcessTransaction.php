@@ -70,7 +70,7 @@ class ProcessTransaction implements JobInterface
     {
         if ($this->event == 'cancel') {
             if (!empty($appointmentArray['options'])) {
-                $appointmentArray['options'] = json_encode($appointmentArray['options']);
+                $appointmentArray['options'] = wp_json_encode($appointmentArray['options']);
             }
             $this->appointment = (new Appointment)->newFromBuilder($appointmentArray);
         } else {

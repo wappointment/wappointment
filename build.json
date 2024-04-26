@@ -56,8 +56,8 @@
         ],
         "files":[
             "dist/bootstrap.js",
-            "included/swiftmailer/swiftmailer/LICENSE", 
-            "included/swiftmailer/swiftmailer/README",
+            "vendors/included/swiftmailer/swiftmailer/LICENSE", 
+            "vendors/included/swiftmailer/swiftmailer/README",
             "vendor/composer/LICENSE", 
             "vendor/composer/installed.json",
             "vendor/scoper-autoload.php",

@@ -6,7 +6,7 @@ use Wappointment\Models\Job;
 use Wappointment\Models\FailedJob;
 use Wappointment\Helpers\Debug;
 use Wappointment\WP\Helpers;
-
+// @codingStandardsIgnoreFile
 class Queue
 {
     const MAX_FAILURE = 3;

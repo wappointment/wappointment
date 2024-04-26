@@ -8,7 +8,7 @@ use Wappointment\Services\Wappointment\Contact;
 use Wappointment\Validators\HttpRequest\SubscribeAdmin;
 use Wappointment\Validators\HttpRequest\ContactAdmin;
 use Wappointment\Services\Settings;
-
+// @codingStandardsIgnoreFile
 class WappointmentController extends RestController
 {
 

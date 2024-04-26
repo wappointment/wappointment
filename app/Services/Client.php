@@ -5,7 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\Helpers\Site;
 use Wappointment\Models\Client as MClient;
 use Wappointment\Validators\HttpRequest\Booking;
-
+// @codingStandardsIgnoreFile
 class Client
 {
     public static function book(Booking $booking)

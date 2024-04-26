@@ -27,7 +27,7 @@ abstract class AbstractJobRecordListener
     protected function recordJob($jobClass, $params, $queue = 'default', $appointment_id = 0, $available_at = 0)
     {
         $this->jobs[] = [
-            'payload' => json_encode([
+            'payload' => wp_json_encode([
                 'job' => $jobClass,
                 'params' => $params
             ]),

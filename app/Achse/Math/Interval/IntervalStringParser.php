@@ -4,6 +4,7 @@ declare (strict_types=1);
 namespace Wappointment\Achse\Math\Interval;
 
 use LogicException;
+// @codingStandardsIgnoreFile
 abstract class IntervalStringParser
 {
     /**

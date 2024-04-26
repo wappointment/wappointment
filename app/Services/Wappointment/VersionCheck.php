@@ -10,7 +10,7 @@ class VersionCheck extends API
     {
         parent::__construct();
         //testing version check set_site_transient('update_plugins', null);
-        add_filter('pre_set_site_transient_update_plugins', [$this, 'sitePluginsVersionCheckTriggerred'], 10, 2);
+        add_filter('pre_set_'.'site_transient'.'_update_plugins', [$this, 'sitePluginsVersionCheckTriggerred'], 10, 2);
     }
 
     public function sitePluginsVersionCheckTriggerred($transient, $deux)

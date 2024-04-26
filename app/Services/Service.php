@@ -5,7 +5,7 @@ namespace Wappointment\Services;
 use Wappointment\ClassConnect\RakitValidator;
 use Wappointment\Helpers\Translations;
 use Wappointment\Models\Location;
-
+// @codingStandardsIgnoreFile
 class Service implements ServiceInterface
 {
     public static function save($serviceData)

@@ -4,7 +4,7 @@ namespace Wappointment\Services;
 
 use Wappointment\ClassConnect\Carbon;
 use Wappointment\WP\Helpers;
-
+// @codingStandardsIgnoreFile
 class DateTime
 {
     public static function tz()

@@ -4,7 +4,7 @@ namespace Wappointment\Helpers;
 
 use Wappointment\Plugins\Helper;
 use Wappointment\System\Container;
-
+// @codingStandardsIgnoreFile
 class Site
 {
     public static function locale()

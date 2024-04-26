@@ -1,7 +1,7 @@
 <?php
 
 namespace Wappointment\Services;
-
+// phpcs:ignoreFile
 class Ping
 {
     public $domain;

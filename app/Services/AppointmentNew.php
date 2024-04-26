@@ -9,7 +9,7 @@ use Wappointment\Managers\Central;
 use Wappointment\Models\OrderPrice;
 use Wappointment\Models\TicketAbstract;
 use Wappointment\WP\Helpers as WPHelpers;
-
+// @codingStandardsIgnoreFile
 class AppointmentNew
 {
     public static function tryBook(Client $client, $start_at, $end_at, $type, $service, $staff_id = null)

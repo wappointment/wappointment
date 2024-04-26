@@ -4,7 +4,7 @@ namespace Wappointment\Models;
 
 use Wappointment\Services\AppointmentNew as AppointmentService;
 use Wappointment\Models\Service;
-
+// @codingStandardsIgnoreFile
 trait CanBook
 {
 

@@ -7,7 +7,7 @@ use Wappointment\WP\Helpers as WPHelpers;
 use Wappointment\Services\Settings;
 use Wappointment\Services\Addons;
 use Wappointment\Services\Reset;
-
+// @codingStandardsIgnoreFile
 class InitBackend
 {
     public $menus;
@@ -72,7 +72,7 @@ class InitBackend
         $return = '<script type="text/javascript">' . "\n";
         $return .= '/* Wappointment globals */ ' . "\n";
         $return .= '/* <![CDATA[ */ ' . "\n";
-        $return .= 'var wappointmentBackMenus = ' . json_encode($variables) . ";\n";
+        $return .= 'var wappointmentBackMenus = ' . wp_json_encode($variables) . ";\n";
         $return .= '/* ]]> */ ' . "\n";
 
         $return .= '</script>' . "\n";

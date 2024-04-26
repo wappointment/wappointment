@@ -6,6 +6,7 @@ namespace Wappointment\Achse\Math\Interval\Integer;
 use Wappointment\Achse\Math\Interval\Boundary;
 use Wappointment\Achse\Math\Interval\Interval;
 use Wappointment\Achse\Math\Interval\IntervalStringParser;
+// @codingStandardsIgnoreFile
 final class IntegerIntervalStringParser extends \Wappointment\Achse\Math\Interval\IntervalStringParser
 {
     /**

@@ -9,7 +9,7 @@ use Wappointment\Services\Reminder;
 use Wappointment\Models\Reminder as MReminder;
 use Wappointment\Services\Settings;
 use Wappointment\Services\VersionDB;
-
+// @codingStandardsIgnoreFile
 class ReminderController extends RestController
 {
     public function isLegacy()

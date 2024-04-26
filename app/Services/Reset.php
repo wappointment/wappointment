@@ -9,7 +9,7 @@ use Wappointment\Services\Wappointment\DotCom;
 use Wappointment\Repositories\Availability;
 use Wappointment\Repositories\CalendarsBack;
 use Wappointment\Repositories\Services;
-
+// @codingStandardsIgnoreFile
 class Reset
 {
     private $options = [
@@ -112,7 +112,9 @@ class Reset
         foreach (apply_filters('wappointment_db_drop', $db_list) as $table_name) {
             $full_table = Database::getWpSitePrefix() . $table_name;
 
-            $wpdb->query("DROP TABLE IF EXISTS $full_table;");
+            $wpdb->query(
+                $wpdb->prepare("DROP TABLE IF EXISTS %s;", $full_table)
+            );
         }
         $wpdb->query("SET FOREIGN_KEY_CHECKS=1;");
         //Capsule::schema()->enableForeignKeyConstraints();

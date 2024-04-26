@@ -9,7 +9,7 @@ use Wappointment\Services\AppointmentNew;
 use Wappointment\Services\Service;
 use Wappointment\Services\VersionDB;
 use Wappointment\Managers\Central;
-
+// @codingStandardsIgnoreFile
 class AppointmentController extends RestController
 {
     public function get(Request $request)

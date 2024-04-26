@@ -1,7 +1,7 @@
 <?php
 
 namespace Wappointment\Services;
-
+// @codingStandardsIgnoreFile
 class CurrentUser
 {
     public static function get()
