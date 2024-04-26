@@ -204,10 +204,12 @@ class CalendarsController extends RestController
 
     public function saveCal(Request $request)
     {
+        $this->isKnownDomainOrThrow($request->input('calurl'));
+
         $this->testIsAllowedToRunQuery('calendar_id', $request);
 
         $externalCalendar = new ExternalCalendar($this->getIdAllowedToSave('calendar_id', $request));
-        
+
         $result = $externalCalendar->save($request->input('calurl'));
         $this->refreshRepository();
         return $result;
@@ -338,5 +340,41 @@ class CalendarsController extends RestController
             ];
         }
         throw new \WappointmentException(__('Error refreshing', 'wappointment'), 1);
+    }
+
+
+    protected function isKnownDomainOrThrow($url)
+    {
+        $host = parse_url($url, PHP_URL_HOST);
+        foreach($this->allowedDomains() as $testDomain){
+            if($this->endsWith($host, $testDomain)){
+                return true;
+            }
+        }
+        throw new \WappointmentException(
+                sprintf(
+                    'Unknown calendar external domain %s (allowed: %s)', 
+                    $host, 
+                    implode(',',$this->allowedDomains()
+                )
+            )
+        );
+    }
+
+    protected function allowedDomains()
+    {
+        return [
+            'google.com',
+            'apple.com',
+            'icloud.com',
+            'microsoft.com',
+            'live.com',
+            'outlook.com',
+            'calendly.com',
+        ];
+    }
+
+    protected function endsWith($haystack, $needle) {
+        return substr_compare($haystack, $needle, -strlen($needle)) === 0;
     }
 }

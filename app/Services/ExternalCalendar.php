@@ -85,8 +85,6 @@ class ExternalCalendar
             throw new \WappointmentException(__('Cannot save calendar verify it respects the Ical ics format', 'wappointment'));
         }
 
-        $this->isKnownDomainOrThrow($calurl);
-
         $calurls = $this->getCalUrls();
 
         if (isset($calurls[md5($calurl)])) {
@@ -170,41 +168,6 @@ class ExternalCalendar
         }
 
         return $result;
-    }
-
-    protected function isKnownDomainOrThrow($url)
-    {
-        $host = parse_url($url, PHP_URL_HOST);
-        foreach($this->allowedDomains() as $testDomain){
-            if($this->endsWith($host, $testDomain)){
-                return true;
-            }
-        }
-        throw new \WappointmentException(
-                sprintf(
-                    'Unknown calendar external domain %s (allowed: %s)', 
-                    $host, 
-                    implode(',',$this->allowedDomains()
-                )
-            )
-        );
-    }
-
-    protected function allowedDomains()
-    {
-        return [
-            'google.com',
-            'apple.com',
-            'icloud.com',
-            'microsoft.com',
-            'live.com',
-            'outlook.com',
-            'calendly.com',
-        ];
-    }
-
-    protected function endsWith($haystack, $needle) {
-        return substr_compare($haystack, $needle, -strlen($needle)) === 0;
     }
 
 }
