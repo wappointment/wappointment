@@ -13,7 +13,8 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>security issue fixed</li>
+                        <li>fixed security issue</li>
+                        <li>fixed calendar dates in the backend when switching to winter time</li>
                     </ol>
                   </div>
               </div>
