@@ -1,30 +1,33 @@
-# Copyright (C) 2023 Wappointment
+# Copyright (C) 2024 Wappointment
 # This file is distributed under the same license as the Wappointment plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Wappointment 2.6.0\n"
+"Project-Id-Version: Wappointment 2.6.1\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/wappointment-plugin\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2023-09-10T10:43:45+00:00\n"
+"POT-Creation-Date: 2024-04-26T18:36:35+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"X-Generator: WP-CLI 2.8.1\n"
+"X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: wappointment\n"
 
 #. Plugin Name of the plugin
 #. Author of the plugin
+#: index.php
 msgid "Wappointment"
 msgstr ""
 
 #. Plugin URI of the plugin
 #. Author URI of the plugin
+#: index.php
 msgid "https://wappointment.com"
 msgstr ""
 
 #. Description of the plugin
+#: index.php
 msgid "Clients quickly book a meeting with you on Zoom , GoogleMeet , the phone or at your office"
 msgstr ""
 
@@ -84,7 +87,7 @@ msgstr ""
 msgid "Permissions saved"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:280
+#: app/Controllers/CalendarsController.php:284
 #: app/Services/AdminLegacy.php:18
 #: app/Services/Appointment.php:78
 #: app/Services/Appointment.php:260
@@ -93,27 +96,27 @@ msgstr ""
 msgid "Malformed parameter"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:301
+#: app/Controllers/CalendarsController.php:305
 msgid "Connected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:304
+#: app/Controllers/CalendarsController.php:308
 msgid "Error connecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:318
+#: app/Controllers/CalendarsController.php:322
 msgid "Disconnected"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:321
+#: app/Controllers/CalendarsController.php:325
 msgid "Error disconnecting"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:335
+#: app/Controllers/CalendarsController.php:339
 msgid "Refreshed"
 msgstr ""
 
-#: app/Controllers/CalendarsController.php:338
+#: app/Controllers/CalendarsController.php:342
 msgid "Error refreshing"
 msgstr ""
 
@@ -250,7 +253,7 @@ msgid "If the order is not completed within %s minutes, the slot will be made av
 msgstr ""
 
 #: app/Installation/Steps/SeedData.php:18
-#: app/Services/Reminder.php:90
+#: app/Services/Reminder.php:91
 msgid "Your appointment is pending"
 msgstr ""
 
@@ -258,78 +261,78 @@ msgstr ""
 #: app/Installation/Steps/SeedData.php:23
 #: app/Installation/Steps/SeedData.php:44
 #: app/Installation/Steps/SeedData.php:65
-#: app/Services/Reminder.php:97
-#: app/Services/Reminder.php:120
-#: app/Services/Reminder.php:142
-#: app/Services/Reminder.php:167
-#: app/Services/Reminder.php:174
+#: app/Services/Reminder.php:98
+#: app/Services/Reminder.php:121
+#: app/Services/Reminder.php:143
+#: app/Services/Reminder.php:168
+#: app/Services/Reminder.php:175
 msgid "Dear %s,"
 msgstr ""
 
 #. translators: %1$s is the service name, %2$s is the appointment duration, %3$s is appointment start date
 #: app/Installation/Steps/SeedData.php:26
-#: app/Services/Reminder.php:101
-#: app/Services/Reminder.php:170
+#: app/Services/Reminder.php:102
+#: app/Services/Reminder.php:171
 msgid "You have booked a %1$s of %2$s long on %3$s"
 msgstr ""
 
 #: app/Installation/Steps/SeedData.php:27
-#: app/Services/Reminder.php:102
+#: app/Services/Reminder.php:103
 msgid "It will be confirmed shortly, you will receive the confirmation by email."
 msgstr ""
 
 #: app/Installation/Steps/SeedData.php:29
-#: app/Services/Reminder.php:104
-#: app/Services/Reminder.php:162
+#: app/Services/Reminder.php:105
+#: app/Services/Reminder.php:163
 msgid "Best,"
 msgstr ""
 
 #: app/Installation/Steps/SeedData.php:38
-#: app/Services/Reminder.php:113
+#: app/Services/Reminder.php:114
 msgid "Your appointment has been rescheduled"
 msgstr ""
 
 #: app/Installation/Steps/SeedData.php:46
-#: app/Services/Reminder.php:122
+#: app/Services/Reminder.php:123
 msgid "Your appointment has been rescheduled."
 msgstr ""
 
 #. translators: %s - appointment starts date.
 #: app/Installation/Steps/SeedData.php:48
-#: app/Services/Reminder.php:124
+#: app/Services/Reminder.php:125
 msgid "Your new appointment will start on %s"
 msgstr ""
 
 #: app/Installation/Steps/SeedData.php:50
-#: app/Services/Reminder.php:126
+#: app/Services/Reminder.php:127
 msgid "We look forward to seeing you!"
 msgstr ""
 
 #: app/Installation/Steps/SeedData.php:59
-#: app/Services/Reminder.php:135
+#: app/Services/Reminder.php:136
 msgid "Your appointment has been cancelled"
 msgstr ""
 
 #. translators: %s - appointment starts date.
 #: app/Installation/Steps/SeedData.php:68
-#: app/Services/Reminder.php:145
+#: app/Services/Reminder.php:146
 msgid "Your appointment taking place the %s has been cancelled."
 msgstr ""
 
 #. translators: %s - a "click here" link will be added.
 #: app/Installation/Steps/SeedData.php:70
-#: app/Services/Reminder.php:147
+#: app/Services/Reminder.php:148
 msgid "If you want to book a new appointment with us, %s."
 msgstr ""
 
 #. translators: %s - a "click here" link will be added.
 #: app/Installation/Steps/SeedData.php:70
-#: app/Services/Reminder.php:147
+#: app/Services/Reminder.php:148
 msgid "click here"
 msgstr ""
 
 #: app/Installation/Steps/SeedData.php:72
-#: app/Services/Reminder.php:149
+#: app/Services/Reminder.php:150
 msgid "We hope to see you soon!"
 msgstr ""
 
@@ -489,7 +492,7 @@ msgstr ""
 
 #. translators: %s - total slot.
 #: app/Lists/translations_calendar.php:14
-#: app/Lists/widget_settings.php:66
+#: app/Lists/widget_settings.php:67
 msgid "%s free slots"
 msgstr ""
 
@@ -782,7 +785,7 @@ msgstr ""
 
 #: app/Lists/translations_js_common.php:53
 #: app/Lists/translations_orders.php:6
-#: app/Lists/widget_settings.php:115
+#: app/Lists/widget_settings.php:116
 #: app/Lists/widget_translations.php:12
 #: app/Services/Settings.php:102
 #: app/Services/ViewsData.php:235
@@ -790,10 +793,10 @@ msgid "Cancel"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:54
-#: app/Lists/widget_settings.php:84
-#: app/Lists/widget_settings.php:116
-#: app/Lists/widget_settings.php:123
-#: app/Lists/widget_settings.php:139
+#: app/Lists/widget_settings.php:85
+#: app/Lists/widget_settings.php:117
+#: app/Lists/widget_settings.php:124
+#: app/Lists/widget_settings.php:140
 msgid "Confirm"
 msgstr ""
 
@@ -803,7 +806,7 @@ msgstr ""
 
 #: app/Lists/translations_js_common.php:56
 #: app/Lists/translations_wizard.php:3
-#: app/Lists/widget_settings.php:83
+#: app/Lists/widget_settings.php:84
 msgid "Back"
 msgstr ""
 
@@ -828,7 +831,7 @@ msgid "Add"
 msgstr ""
 
 #: app/Lists/translations_js_common.php:62
-#: app/Lists/widget_settings.php:122
+#: app/Lists/widget_settings.php:123
 #: app/Lists/widget_translations.php:11
 #: app/Services/Settings.php:101
 msgid "Reschedule"
@@ -1097,7 +1100,7 @@ msgid "You don't have any services yet"
 msgstr ""
 
 #: app/Lists/translations_settings.php:48
-#: app/Lists/widget_settings.php:47
+#: app/Lists/widget_settings.php:48
 #: app/Messages/EmailHelper.php:94
 #: app/WP/AppointmentHistory.php:50
 msgid "Service"
@@ -1307,7 +1310,7 @@ msgid "Service Delivery"
 msgstr ""
 
 #: app/Lists/translations_wizard.php:21
-#: app/Lists/widget_settings.php:77
+#: app/Lists/widget_settings.php:78
 msgid "Video meeting"
 msgstr ""
 
@@ -1316,12 +1319,12 @@ msgid "At an address"
 msgstr ""
 
 #: app/Lists/translations_wizard.php:23
-#: app/Lists/widget_settings.php:76
+#: app/Lists/widget_settings.php:77
 msgid "By Phone"
 msgstr ""
 
 #: app/Lists/translations_wizard.php:24
-#: app/Lists/widget_settings.php:75
+#: app/Lists/widget_settings.php:76
 msgid "By Skype"
 msgstr ""
 
@@ -1555,207 +1558,207 @@ msgstr ""
 msgid "Privacy link is in previous step"
 msgstr ""
 
-#: app/Lists/widget_settings.php:46
+#: app/Lists/widget_settings.php:47
 msgid "When"
 msgstr ""
 
-#: app/Lists/widget_settings.php:48
+#: app/Lists/widget_settings.php:49
 msgid "Where"
 msgstr ""
 
-#: app/Lists/widget_settings.php:49
+#: app/Lists/widget_settings.php:50
 msgid "Package"
 msgstr ""
 
-#: app/Lists/widget_settings.php:50
+#: app/Lists/widget_settings.php:51
 msgid "min"
 msgstr ""
 
-#: app/Lists/widget_settings.php:51
+#: app/Lists/widget_settings.php:52
 msgid "No appointments available"
 msgstr ""
 
-#: app/Lists/widget_settings.php:54
+#: app/Lists/widget_settings.php:55
 #: app/required.php:20
 #: app/WP/Widget.php:30
 msgid "Book now!"
 msgstr ""
 
-#: app/Lists/widget_settings.php:60
+#: app/Lists/widget_settings.php:61
 msgid "Select staff"
 msgstr ""
 
-#: app/Lists/widget_settings.php:61
+#: app/Lists/widget_settings.php:62
 msgid "Availability for"
 msgstr ""
 
 #. translators: %s - timezone.
-#: app/Lists/widget_settings.php:68
+#: app/Lists/widget_settings.php:69
 msgid "Timezone: %s"
 msgstr ""
 
-#: app/Lists/widget_settings.php:69
+#: app/Lists/widget_settings.php:70
 msgid "Morning"
 msgstr ""
 
-#: app/Lists/widget_settings.php:70
+#: app/Lists/widget_settings.php:71
 msgid "Afternoon"
 msgstr ""
 
-#: app/Lists/widget_settings.php:71
+#: app/Lists/widget_settings.php:72
 msgid "Evening"
 msgstr ""
 
-#: app/Lists/widget_settings.php:72
+#: app/Lists/widget_settings.php:73
 msgid "%s left"
 msgstr ""
 
-#: app/Lists/widget_settings.php:78
+#: app/Lists/widget_settings.php:79
 msgid "At a Location"
 msgstr ""
 
-#: app/Lists/widget_settings.php:79
+#: app/Lists/widget_settings.php:80
 msgid "Full Name:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:80
+#: app/Lists/widget_settings.php:81
 msgid "Email:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:81
+#: app/Lists/widget_settings.php:82
 msgid "Phone:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:82
+#: app/Lists/widget_settings.php:83
 msgid "Skype username:"
 msgstr ""
 
 #. translators: %s - a "we process your data" link is added.
-#: app/Lists/widget_settings.php:87
+#: app/Lists/widget_settings.php:88
 msgid "View %s"
 msgstr ""
 
 #. translators: %s - a "we process your data" link is added.
-#: app/Lists/widget_settings.php:87
-#: app/Lists/widget_settings.php:148
+#: app/Lists/widget_settings.php:88
+#: app/Lists/widget_settings.php:149
 msgid "the privacy policy"
 msgstr ""
 
-#: app/Lists/widget_settings.php:91
+#: app/Lists/widget_settings.php:92
 msgid "Appointment Booked"
 msgstr ""
 
-#: app/Lists/widget_settings.php:92
+#: app/Lists/widget_settings.php:93
 msgid "When:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:93
+#: app/Lists/widget_settings.php:94
 msgid "Service:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:94
+#: app/Lists/widget_settings.php:95
 msgid "Duration:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:95
+#: app/Lists/widget_settings.php:96
 msgid "The appointment is pending and should be quickly confirmed"
 msgstr ""
 
-#: app/Lists/widget_settings.php:96
+#: app/Lists/widget_settings.php:97
 msgid "The appointment will take place on Skype, we will call you on this account:"
 msgstr ""
 
 #. translators: %s - a "here" link is added.
-#: app/Lists/widget_settings.php:98
+#: app/Lists/widget_settings.php:99
 msgid "The appointment will take place by Video meeting online, the link will show %s."
 msgstr ""
 
 #. translators: %s - a "here" link is added.
-#: app/Lists/widget_settings.php:98
-#: app/Services/Reminder.php:195
+#: app/Lists/widget_settings.php:99
+#: app/Services/Reminder.php:196
 msgid "here"
 msgstr ""
 
-#: app/Lists/widget_settings.php:99
+#: app/Lists/widget_settings.php:100
 msgid "The appointment will take place over the phone, we will call you on this number:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:100
+#: app/Lists/widget_settings.php:101
 msgid "The appointment will take place at this address:"
 msgstr ""
 
-#: app/Lists/widget_settings.php:101
+#: app/Lists/widget_settings.php:102
 msgid "Save it to your calendar"
 msgstr ""
 
-#: app/Lists/widget_settings.php:104
+#: app/Lists/widget_settings.php:105
 msgid "Join Meeting"
 msgstr ""
 
-#: app/Lists/widget_settings.php:105
+#: app/Lists/widget_settings.php:106
 msgid "The meeting room link will appear once it is time to start."
 msgstr ""
 
 #. translators: %1$s - number of days, %2$s - number of hours, %3$s - number of minutes, %4$s - number of seconds
-#: app/Lists/widget_settings.php:107
+#: app/Lists/widget_settings.php:108
 msgid "(%1$sd %2$sh %3$sm %4$ss)"
 msgstr ""
 
-#: app/Lists/widget_settings.php:110
+#: app/Lists/widget_settings.php:111
 msgid "Cancel Appointment"
 msgstr ""
 
-#: app/Lists/widget_settings.php:111
-#: app/Lists/widget_settings.php:120
+#: app/Lists/widget_settings.php:112
+#: app/Lists/widget_settings.php:121
 msgid "Appointment details"
 msgstr ""
 
-#: app/Lists/widget_settings.php:112
+#: app/Lists/widget_settings.php:113
 msgid "Appointment has been cancelled!"
 msgstr ""
 
-#: app/Lists/widget_settings.php:113
+#: app/Lists/widget_settings.php:114
 msgid "Are you sure you want to cancel your appointment?"
 msgstr ""
 
-#: app/Lists/widget_settings.php:114
+#: app/Lists/widget_settings.php:115
 msgid "Too late to cancel"
 msgstr ""
 
-#: app/Lists/widget_settings.php:119
+#: app/Lists/widget_settings.php:120
 msgid "Reschedule Appointment"
 msgstr ""
 
-#: app/Lists/widget_settings.php:121
+#: app/Lists/widget_settings.php:122
 msgid "Too late to reschedule"
 msgstr ""
 
-#: app/Lists/widget_settings.php:126
+#: app/Lists/widget_settings.php:127
 msgid "Pick a service"
 msgstr ""
 
-#: app/Lists/widget_settings.php:130
-msgid "How long will be the session?"
+#: app/Lists/widget_settings.php:131
+msgid "How long will the session be?"
 msgstr ""
 
-#: app/Lists/widget_settings.php:133
+#: app/Lists/widget_settings.php:134
 msgid "How should we meet?"
 msgstr ""
 
-#: app/Lists/widget_settings.php:137
+#: app/Lists/widget_settings.php:138
 msgid "Pay later"
 msgstr ""
 
-#: app/Lists/widget_settings.php:138
+#: app/Lists/widget_settings.php:139
 msgid "You will pay on the day of your appointment"
 msgstr ""
 
 #. translators: %1$s - "the terms of sale" %2$s - "privacy policy"
-#: app/Lists/widget_settings.php:146
+#: app/Lists/widget_settings.php:147
 msgid "You agree to %1$s and %2$s"
 msgstr ""
 
-#: app/Lists/widget_settings.php:147
+#: app/Lists/widget_settings.php:148
 msgid "the terms of sale"
 msgstr ""
 
@@ -2056,27 +2059,27 @@ msgstr ""
 msgid "No"
 msgstr ""
 
-#: app/Models/Order.php:49
+#: app/Models/Order.php:50
 msgid "Pending"
 msgstr ""
 
-#: app/Models/Order.php:51
+#: app/Models/Order.php:52
 msgid "Awaiting payment"
 msgstr ""
 
-#: app/Models/Order.php:53
+#: app/Models/Order.php:54
 msgid "Paid"
 msgstr ""
 
-#: app/Models/Order.php:55
+#: app/Models/Order.php:56
 msgid "Cancelled"
 msgstr ""
 
-#: app/Models/Order.php:57
+#: app/Models/Order.php:58
 msgid "Refunded"
 msgstr ""
 
-#: app/Models/Order.php:65
+#: app/Models/Order.php:66
 msgid "Pay On Site"
 msgstr ""
 
@@ -2299,39 +2302,39 @@ msgid "Select a type of reminder"
 msgstr ""
 
 #. translators: %s - appointment starts date
-#: app/Services/Reminder.php:177
+#: app/Services/Reminder.php:178
 msgid "We remind you that you have an appointment on %s"
 msgstr ""
 
 #. translators: %s - service address
-#: app/Services/Reminder.php:182
+#: app/Services/Reminder.php:183
 msgid "It will take place at this address: %s"
 msgstr ""
 
 #. translators: %s - client's phone number
-#: app/Services/Reminder.php:186
+#: app/Services/Reminder.php:187
 msgid "It will take place over the phone, we will call you on this number: %s"
 msgstr ""
 
 #. translators: %s - client's skype username
-#: app/Services/Reminder.php:190
+#: app/Services/Reminder.php:191
 msgid "It will take place on Skype, we will call you on this account: %s"
 msgstr ""
 
-#: app/Services/Reminder.php:193
+#: app/Services/Reminder.php:194
 msgid "It will take place by video online."
 msgstr ""
 
 #. translators: %s - a "here" link is added.
-#: app/Services/Reminder.php:195
+#: app/Services/Reminder.php:196
 msgid "Click %s to begin the meeting"
 msgstr ""
 
-#: app/Services/Reminder.php:218
+#: app/Services/Reminder.php:219
 msgid "Your appointment has been confirmed"
 msgstr ""
 
-#: app/Services/Reminder.php:230
+#: app/Services/Reminder.php:231
 msgid "Don't forget your appointment"
 msgstr ""
 
