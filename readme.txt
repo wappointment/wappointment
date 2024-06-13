@@ -148,6 +148,9 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
+= 2.6.2 - 2024-06-13 =
+* feat allow external domains for ics import
+
 = 2.6.1 - 2024-04-26 =
 * fix security issue
 * fix calendar dates in the backend when switching to winter time

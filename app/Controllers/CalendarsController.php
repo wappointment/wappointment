@@ -353,9 +353,9 @@ class CalendarsController extends RestController
         }
         throw new \WappointmentException(
                 sprintf(
-                    'Unknown calendar external domain %s (allowed: %s)', 
-                    $host, 
-                    implode(',',$this->allowedDomains()
+                    'Unknown calendar external domain %s (allowed: %s) Read how to allow your own domain: ',
+                    $host,
+                    implode(', ',$this->allowedDomains()
                 )
             )
         );
@@ -363,7 +363,7 @@ class CalendarsController extends RestController
 
     protected function allowedDomains()
     {
-        return [
+        return apply_filters('wappointment_allow_external_domains', [
             'google.com',
             'apple.com',
             'icloud.com',
@@ -371,7 +371,7 @@ class CalendarsController extends RestController
             'live.com',
             'outlook.com',
             'calendly.com',
-        ];
+        ]);
     }
 
     protected function endsWith($haystack, $needle) {
