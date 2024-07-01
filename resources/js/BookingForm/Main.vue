@@ -569,12 +569,11 @@ export default {
 
             if(this.rescheduling) {
                 this.currentStep = 'BookingCalendar'
-
+                this.changeStaff(this.rescheduleData.staff)
                 this.service = this.rescheduleData.service
                 let buffer_time_sec = this.rescheduleData.appointment.options.buffer_time !== undefined ? parseInt(this.rescheduleData.appointment.options.buffer_time) *60:0
                 this.duration = (this.rescheduleData.appointment.end_at - this.rescheduleData.appointment.start_at - buffer_time_sec)/60
                 this.location = this.rescheduleData.location
-
             }else{
                 let stepdata = {service:this.service, duration:this.duration, location: this.location}
 

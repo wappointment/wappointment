@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 6.5
 Requires PHP: 7.3
-Stable tag: 2.6.1
+Stable tag: 2.6.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,9 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.6.3 - 2024-07-01 =
+* fix reschedule auto select staff
 
 = 2.6.2 - 2024-06-13 =
 * feat allow external domains for ics import

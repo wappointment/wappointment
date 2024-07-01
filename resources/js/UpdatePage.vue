@@ -5,16 +5,15 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img v-if="false" :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.6.1</span>   
-                <span class="ml-2">Long due update</span>
+                <span>V2.6.3</span>   
+                <span class="ml-2">Minor bug fix</span>
               </h3>
               <div class="d-flex flex-align-items-center">
                   <div class="ml-3">
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>fixed security issue</li>
-                        <li>fixed calendar dates in the backend when switching to winter time</li>
+                        <li>fixed rescheduled feature autoslecting staff</li>
                     </ol>
                   </div>
               </div>
