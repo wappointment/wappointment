@@ -371,6 +371,8 @@ class CalendarsController extends RestController
             'live.com',
             'outlook.com',
             'calendly.com',
+            'office365.com',
+            'outlook.office365.com'
         ]);
     }
 
