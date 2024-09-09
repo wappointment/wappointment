@@ -372,7 +372,9 @@ class CalendarsController extends RestController
             'outlook.com',
             'calendly.com',
             'office365.com',
-            'outlook.office365.com'
+            'outlook.office365.com',
+            'proton.me',
+            'calendar.proton.me'
         ]);
     }
 
