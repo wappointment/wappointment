@@ -62,7 +62,8 @@ class AppointmentHistory
 
     public function renderAppointmentListing()
     {
-        $history = Get::style('table_history') . '<div id="wappointment-history"><table>';
+        $history = Get::style('table_history');
+        $history .= '<div id="wappointment-history"><table>';
         $history .= $this->renderHeader();
         foreach ($this->appointments as $appointment) {
             $history .= $this->renderRow($appointment);
