@@ -2,9 +2,9 @@
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
 Requires at least: 4.7
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 7.3
-Stable tag: 2.6.7
+Stable tag: 2.6.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,9 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.6.8 - 2025-01-19 =
+* fixed email notifications not going in specific server configuration
 
 = 2.6.7 - 2024-10-23 =
 * fixed bug appointment history [wap_history]

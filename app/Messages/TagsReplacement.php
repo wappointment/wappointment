@@ -85,7 +85,7 @@ class TagsReplacement
         if (isset($tag['getResult'])) {
             return $tag['getResult'];
         } else {
-            if (isset($tag['getMethod'])) {
+            if (isset($tag['getMethod']) && is_object($this->params[$model_key])) {
                 if (method_exists($this->params[$model_key], $tag['getMethod'])) {
                     if ($tag['getMethod'] == 'getStartsDayAndTime') {
                         return $this->params['appointment']->getStartsDayAndTime($this->params['client']->getTimezone());
