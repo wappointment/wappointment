@@ -56,6 +56,7 @@
         ],
         "files":[
             "dist/bootstrap.js",
+            "blank.js",
             "vendors/included/swiftmailer/swiftmailer/LICENSE", 
             "vendors/included/swiftmailer/swiftmailer/README",
             "vendor/composer/LICENSE", 
