@@ -53,7 +53,6 @@ return [
     ],
     'button' => [
         'title' => __('Book now!', 'wappointment'),
-        'check_full' => false,
         'check_bold' => false,
         'slide_size' => 1.3
     ],
@@ -125,7 +124,6 @@ return [
     ],
     'service_selection' => [
         'select_service' => __('Pick a service', 'wappointment'),
-        'check_full_width' => false
     ],
     'service_duration' => [
         'select_duration' => __('How long will the session be?', 'wappointment'),
