@@ -9,7 +9,7 @@
                 <span class="dashicons dashicons-id text-primary mr-2" ></span> {{ get_i18n('add_cf', 'clients') }}
               </button>
               <div class="form-inline ml-2 my-2 my-lg-0">
-                <input class="form-control mr-sm-2" v-model="searchTerm" type="search" :placeholder="get_i18n('search', 'common')">
+                <input class="form-control mr-sm-2" v-model="searchTerm" v-on:keyup.enter="searchClients" type="search" :placeholder="get_i18n('search', 'common')">
                 <button class="btn btn-outline-primary my-2 my-sm-0" @click="searchClients" type="button">{{ get_i18n('search', 'common') }}</button>
               </div>
             </div>
