@@ -8,6 +8,10 @@
               <button v-if="isUserAdministrator" type="button" class="btn btn-outline-primary d-flex align-items-center" @click.prevent.stop="addCustomField">
                 <span class="dashicons dashicons-id text-primary mr-2" ></span> {{ get_i18n('add_cf', 'clients') }}
               </button>
+              <div class="form-inline ml-2 my-2 my-lg-0">
+                <input class="form-control mr-sm-2" v-model="searchTerm" type="search" :placeholder="get_i18n('search', 'common')">
+                <button class="btn btn-outline-primary my-2 my-sm-0" @click="searchClients" type="button">{{ get_i18n('search', 'common') }}</button>
+              </div>
             </div>
             <div v-if="Object.keys(clientListing).length > 1" class="d-flex align-items-center">
               <span v-for="(listingComp,key) in clientListing" :class="{'btn btn-link':view!=key}" @click="view=key">{{ listingComp.label }}</span>
@@ -38,6 +42,7 @@ export default {
     data: () => ({
         clientDataToSave: null,
         per_page: false,
+        searchTerm: '',
         view: 'MainClients',
         schema: [
             {
@@ -94,6 +99,9 @@ export default {
       },
     },
     methods: {
+        searchClients(){
+          this.$refs.listing.loadElements({search:this.searchTerm})
+        },
         perPage(per_page){
           this.$refs.listing.perPage(per_page)
         },

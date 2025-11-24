@@ -70,6 +70,9 @@ export default {
         keyDataSource:'clients'
     }),
     methods: {
+        searchClients(term){
+            this.loadElements({search:term})
+        },
         hasOption(client){
           return [undefined,null,''].indexOf(client.options) === -1
         },
