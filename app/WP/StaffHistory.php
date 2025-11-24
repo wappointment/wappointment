@@ -31,12 +31,12 @@ class StaffHistory extends AppointmentHistory
 
     public function clientLabel()
     {
-        return empty($this->atts['client_label']) ? __('Client', 'wappointment') : $this->atts['client_label'];
+        return empty($this->atts['client_label']) ? esc_html__('Client', 'wappointment') : esc_html($this->atts['client_label']);
     }
 
     public function locationLabel()
     {
-        return empty($this->atts['location_label']) ? __('Location', 'wappointment') : $this->atts['location_label'];
+        return empty($this->atts['location_label']) ? esc_html__('Location', 'wappointment') : esc_html($this->atts['location_label']);
     }
 
     public function renderHeader()
@@ -52,7 +52,7 @@ class StaffHistory extends AppointmentHistory
     {
         $row = '<tr>';
         $row .= '<td>'
-            . '<div>' . $appointment->getStartsDayAndTime($this->timezone) . '</div>'
+            . '<div>' . esc_html($appointment->getStartsDayAndTime($this->timezone)) . '</div>'
             . '<div>' . $this->renderCancelRescheduleLink($appointment) . '</div>'
             . '</td>';
         $row .= '<td>' . esc_html($appointment->getServiceName()) . '<br/>' . esc_html($appointment->getLocation()) . '</td>';
@@ -77,17 +77,17 @@ class StaffHistory extends AppointmentHistory
         }
         $data = [
             'name' => [
-                'label' => __('Name', 'wappointment'),
+                'label' => esc_html__('Name', 'wappointment'),
                 'value' => $client->name
             ],
             'email' => [
-                'label' => __('Email', 'wappointment'),
+                'label' => esc_html__('Email', 'wappointment'),
                 'value' => $client->email
             ]
         ];
         if (!empty($client->getPhone())) {
             $data['phone'] = [
-                'label' => __('Phone', 'wappointment'),
+                'label' => esc_html__('Phone', 'wappointment'),
                 'value' => $client->getPhone()
             ];
         }
