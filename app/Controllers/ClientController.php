@@ -48,11 +48,11 @@ class ClientController extends RestController
                 'per_page' => Settings::getStaff('per_page'),
                 'timezones_list' => DateTime::tz()
             ],
-            'clients' => $this->getClients()
+            'clients' => $this->getClients($request)
         ];
     }
 
-    protected function getClients()
+    protected function getClients(Request $request)
     {
         $query = ClientModel::orderBy('id', 'DESC');
         if (!CurrentUser::isAdmin()) {
@@ -65,6 +65,16 @@ class ClientController extends RestController
                     ->toSql()
             );
             $query->whereRaw('id IN (' . $raw . ')');
+        }
+
+        if (!empty($request->input('search'))) {
+            $searchTerm = $request->input('search');
+            $query->where(function ($query) use ($searchTerm) {
+                $query->orWhere('email', 'LIKE', '%' . $searchTerm . '%');
+                $query->orWhere('name', 'LIKE', '%' . $searchTerm . '%');
+                $query->orWhere('options', 'LIKE', '%' . $searchTerm . '%');
+            });
+           
         }
 
         return $query->paginate(Settings::getStaff('per_page'));

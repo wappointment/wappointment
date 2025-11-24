@@ -104,7 +104,6 @@ return [
 
     'button' => [
         'fields' => [
-            'check_full' => ['label' => __('Full Width', 'wappointment')],
             'check_bold' => ['label' => __('Bold', 'wappointment')],
             'slide_size' => [
                 'label' => __('Text Size', 'wappointment'),
@@ -124,7 +123,6 @@ return [
     'service_selection' => [
         'fields' => [
             'check_price_right' => ['label' => __('Price right aligned', 'wappointment')],
-            'check_full_width' => ['label' => __('Wide Buttons', 'wappointment'), 'tip' => __('Format adapted to long description on full width booking widget', 'wappointment')],
         ],
     ],
     'service_location' => [

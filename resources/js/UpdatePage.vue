@@ -5,7 +5,7 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img v-if="false" :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.6.4</span>   
+                <span>V2.7.0</span>   
                 <span class="ml-2">Minor bug fix</span>
               </h3>
               <div class="d-flex flex-align-items-center">
@@ -13,7 +13,9 @@
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>fixed reschedule not showing times</li>
+                        <li>added search feature on clients listing</li>
+                        <li>fixed xss security issue</li>
+                        <li>fixed remove broken and unused full width mode</li>
                     </ol>
                   </div>
               </div>

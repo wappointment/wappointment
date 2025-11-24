@@ -34,7 +34,6 @@
         .wap-front .wbtn-primary.wbtn-booking:not(:disabled):not(.disabled).active {
             font-size: {{ opts.button.slide_size+'em' }} !important;
             {{ buttonIsBold }}
-            {{ buttonIsFull }}
         }
         .wap-front .wbtn.wbtn-primary,
         .wap-front .wbtn-primary:not(:disabled):not(.disabled):active, 
@@ -235,9 +234,6 @@ export default {
     computed:{
         buttonIsBold(){
             return this.opts.button.check_bold === true ? 'font-weight:bold;':''
-        },
-        buttonIsFull(){
-            return this.opts.button.check_full === true ? 'width:100%;':''
         },
     },
     mounted(){
