@@ -11,6 +11,419 @@
           "comment": "Add ReturnTypeWillChange attribute for PHP 8.1+ compatibility"
         }
       ]
+    },
+    {
+      "file": "vendor/illuminate/database/MySqlConnection.php",
+      "patches": [
+        {
+          "matches": [
+            "public function getSchemaState(Filesystem $files = null, callable $processFactory = null)"
+          ],
+          "replace": "public function getSchemaState(?Filesystem $files = null, ?callable $processFactory = null)",
+          "comment": "Fix nullable parameter types for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/illuminate/database/Query/Builder.php",
+      "patches": [
+        {
+          "matches": [
+            "    public function __construct(ConnectionInterface $connection,\n                                Grammar $grammar = null,\n                                Processor $processor = null)"
+          ],
+          "replace": "    public function __construct(ConnectionInterface $connection,\n                                ?Grammar $grammar = null,\n                                ?Processor $processor = null)",
+          "comment": "Fix nullable parameter types for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/illuminate/database/Eloquent/Builder.php",
+      "patches": [
+        {
+          "matches": [
+            "public function withoutGlobalScopes(array $scopes = null)"
+          ],
+          "replace": "public function withoutGlobalScopes(?array $scopes = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function firstOr($columns = ['*'], Closure $callback = null)"
+          ],
+          "replace": "public function firstOr($columns = ['*'], ?Closure $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/illuminate/database/Eloquent/Concerns/QueriesRelationships.php",
+      "patches": [
+        {
+          "matches": [
+            "public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)"
+          ],
+          "replace": "public function has($relation, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function doesntHave($relation, $boolean = 'and', Closure $callback = null)"
+          ],
+          "replace": "public function doesntHave($relation, $boolean = 'and', ?Closure $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function whereHas($relation, Closure $callback = null, $operator = '>=', $count = 1)"
+          ],
+          "replace": "public function whereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function orWhereHas($relation, Closure $callback = null, $operator = '>=', $count = 1)"
+          ],
+          "replace": "public function orWhereHas($relation, ?Closure $callback = null, $operator = '>=', $count = 1)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function whereDoesntHave($relation, Closure $callback = null)"
+          ],
+          "replace": "public function whereDoesntHave($relation, ?Closure $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function orWhereDoesntHave($relation, Closure $callback = null)"
+          ],
+          "replace": "public function orWhereDoesntHave($relation, ?Closure $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', Closure $callback = null)"
+          ],
+          "replace": "public function hasMorph($relation, $types, $operator = '>=', $count = 1, $boolean = 'and', ?Closure $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function doesntHaveMorph($relation, $types, $boolean = 'and', Closure $callback = null)"
+          ],
+          "replace": "public function doesntHaveMorph($relation, $types, $boolean = 'and', ?Closure $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function whereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1)"
+          ],
+          "replace": "public function whereHasMorph($relation, $types, ?Closure $callback = null, $operator = '>=', $count = 1)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function orWhereHasMorph($relation, $types, Closure $callback = null, $operator = '>=', $count = 1)"
+          ],
+          "replace": "public function orWhereHasMorph($relation, $types, ?Closure $callback = null, $operator = '>=', $count = 1)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function whereDoesntHaveMorph($relation, $types, Closure $callback = null)"
+          ],
+          "replace": "public function whereDoesntHaveMorph($relation, $types, ?Closure $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function orWhereDoesntHaveMorph($relation, $types, Closure $callback = null)"
+          ],
+          "replace": "public function orWhereDoesntHaveMorph($relation, $types, ?Closure $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/illuminate/collections/Collection.php",
+      "patches": [
+        {
+          "matches": [
+            "public function filter(callable $callback = null)"
+          ],
+          "replace": "public function filter(?callable $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function first(callable $callback = null, $default = null)"
+          ],
+          "replace": "public function first(?callable $callback = null, $default = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function last(callable $callback = null, $default = null)"
+          ],
+          "replace": "public function last(?callable $callback = null, $default = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/illuminate/collections/Traits/EnumeratesValues.php",
+      "patches": [
+        {
+          "matches": [
+            "public static function times($number, callable $callback = null)"
+          ],
+          "replace": "public static function times($number, ?callable $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function when($value, callable $callback = null, callable $default = null)"
+          ],
+          "replace": "public function when($value, ?callable $callback = null, ?callable $default = null)",
+          "comment": "Fix nullable parameter types for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function whenEmpty(callable $callback, callable $default = null)"
+          ],
+          "replace": "public function whenEmpty(callable $callback, ?callable $default = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function whenNotEmpty(callable $callback, callable $default = null)"
+          ],
+          "replace": "public function whenNotEmpty(callable $callback, ?callable $default = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function unless($value, callable $callback = null, callable $default = null)"
+          ],
+          "replace": "public function unless($value, ?callable $callback = null, ?callable $default = null)",
+          "comment": "Fix nullable parameter types for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function unlessEmpty(callable $callback, callable $default = null)"
+          ],
+          "replace": "public function unlessEmpty(callable $callback, ?callable $default = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function unlessNotEmpty(callable $callback, callable $default = null)"
+          ],
+          "replace": "public function unlessNotEmpty(callable $callback, ?callable $default = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/illuminate/collections/Enumerable.php",
+      "patches": [
+        {
+          "matches": [
+            "public static function times($number, callable $callback = null);"
+          ],
+          "replace": "public static function times($number, ?callable $callback = null);",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function filter(callable $callback = null);"
+          ],
+          "replace": "public function filter(?callable $callback = null);",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function when($value, callable $callback = null, callable $default = null);"
+          ],
+          "replace": "public function when($value, ?callable $callback = null, ?callable $default = null);",
+          "comment": "Fix nullable parameter types for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function whenEmpty(callable $callback, callable $default = null);"
+          ],
+          "replace": "public function whenEmpty(callable $callback, ?callable $default = null);",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function whenNotEmpty(callable $callback, callable $default = null);"
+          ],
+          "replace": "public function whenNotEmpty(callable $callback, ?callable $default = null);",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function unless($value, callable $callback = null, callable $default = null);"
+          ],
+          "replace": "public function unless($value, ?callable $callback = null, ?callable $default = null);",
+          "comment": "Fix nullable parameter types for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function unlessEmpty(callable $callback, callable $default = null);"
+          ],
+          "replace": "public function unlessEmpty(callable $callback, ?callable $default = null);",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function unlessNotEmpty(callable $callback, callable $default = null);"
+          ],
+          "replace": "public function unlessNotEmpty(callable $callback, ?callable $default = null);",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function first(callable $callback = null, $default = null);"
+          ],
+          "replace": "public function first(?callable $callback = null, $default = null);",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function last(callable $callback = null, $default = null);"
+          ],
+          "replace": "public function last(?callable $callback = null, $default = null);",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/illuminate/database/Eloquent/Relations/Relation.php",
+      "patches": [
+        {
+          "matches": [
+            "public static function morphMap(array $map = null, $merge = true)"
+          ],
+          "replace": "public static function morphMap(?array $map = null, $merge = true)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "protected static function buildMorphMapFromModels(array $models = null)"
+          ],
+          "replace": "protected static function buildMorphMapFromModels(?array $models = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/illuminate/database/Eloquent/Relations/BelongsToMany.php",
+      "patches": [
+        {
+          "matches": [
+            "public function firstOr($columns = ['*'], Closure $callback = null)"
+          ],
+          "replace": "public function firstOr($columns = ['*'], ?Closure $callback = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/nesbot/carbon/src/Carbon/Traits/Date.php",
+      "patches": [
+        {
+          "matches": [
+            "public function getDaysFromStartOfWeek(int $weekStartsAt = null)"
+          ],
+          "replace": "public function getDaysFromStartOfWeek(?int $weekStartsAt = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function setDaysFromStartOfWeek(int $numberOfDays, int $weekStartsAt = null)"
+          ],
+          "replace": "public function setDaysFromStartOfWeek(int $numberOfDays, ?int $weekStartsAt = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function utcOffset(int $minuteOffset = null)"
+          ],
+          "replace": "public function utcOffset(?int $minuteOffset = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/nesbot/carbon/src/Carbon/Traits/Localization.php",
+      "patches": [
+        {
+          "matches": [
+            "public function locale(string $locale = null, ...$fallbackLocales)"
+          ],
+          "replace": "public function locale(?string $locale = null, ...$fallbackLocales)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/symfony/translation-contracts/TranslatorInterface.php",
+      "patches": [
+        {
+          "matches": [
+            "public function trans(string $id, array $parameters = [], string $domain = null, string $locale = null);"
+          ],
+          "replace": "public function trans(string $id, array $parameters = [], ?string $domain = null, ?string $locale = null);",
+          "comment": "Fix nullable parameter types for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/nesbot/carbon/src/Carbon/Traits/Test.php",
+      "patches": [
+        {
+          "matches": [
+            "private static function setDefaultTimezone($timezone, DateTimeInterface $date = null)"
+          ],
+          "replace": "private static function setDefaultTimezone($timezone, ?DateTimeInterface $date = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
+    },
+    {
+      "file": "vendor/nesbot/carbon/src/Carbon/CarbonTimeZone.php",
+      "patches": [
+        {
+          "matches": [
+            "public function toOffsetName(DateTimeInterface $date = null)"
+          ],
+          "replace": "public function toOffsetName(?DateTimeInterface $date = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function toOffsetTimeZone(DateTimeInterface $date = null)"
+          ],
+          "replace": "public function toOffsetTimeZone(?DateTimeInterface $date = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function toRegionName(DateTimeInterface $date = null, $isDst = 1)"
+          ],
+          "replace": "public function toRegionName(?DateTimeInterface $date = null, $isDst = 1)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "public function toRegionTimeZone(DateTimeInterface $date = null)"
+          ],
+          "replace": "public function toRegionTimeZone(?DateTimeInterface $date = null)",
+          "comment": "Fix nullable parameter type for PHP 8.1+"
+        }
+      ]
     }
   ]
 }

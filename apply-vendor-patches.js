@@ -51,7 +51,7 @@ function readConfig() {
 /**
  * Apply a single pattern/match to content
  */
-function applyPattern(content, patternStr, prepend, append, regex, flags) {
+function applyPattern(content, patternStr, prepend, append, replace, regex, flags) {
   // Create search pattern (regex or literal string)
   let searchPattern;
   if (regex) {
@@ -72,28 +72,42 @@ function applyPattern(content, patternStr, prepend, append, regex, flags) {
   
   if (matchCount === 0) {
     log(`  ⚠ Pattern not found: ${patternStr}`, 'yellow');
-    return { content, applied: false };
+    return { content, applied: false, details: null };
   }
 
   // Build replacement string
-  let replacement = '';
-  if (prepend) {
-    replacement += prepend;
-  }
-  replacement += patternStr;
-  if (append) {
-    replacement += append;
+  let replacement;
+  if (replace !== undefined) {
+    // If replace is specified, use it directly
+    replacement = replace;
+  } else {
+    // Otherwise, use prepend + pattern + append
+    replacement = '';
+    if (prepend) {
+      replacement += prepend;
+    }
+    replacement += patternStr;
+    if (append) {
+      replacement += append;
+    }
   }
 
   // Apply the patch
   const newContent = content.replace(searchPattern, replacement);
   
   if (newContent !== content) {
-    log(`  ✓ Applied patch to: ${patternStr} (${matchCount} occurrence${matchCount > 1 ? 's' : ''})`, 'green');
-    return { content: newContent, applied: true };
+    const changeDetails = {
+      from: patternStr,
+      to: replacement,
+      occurrences: matchCount
+    };
+    log(`  ✓ Applied patch (${matchCount} occurrence${matchCount > 1 ? 's' : ''})`, 'green');
+    log(`    From: ${patternStr.substring(0, 80)}${patternStr.length > 80 ? '...' : ''}`, 'cyan');
+    log(`    To:   ${replacement.substring(0, 80)}${replacement.length > 80 ? '...' : ''}`, 'cyan');
+    return { content: newContent, applied: true, details: changeDetails };
   }
 
-  return { content, applied: false };
+  return { content, applied: false, details: null };
 }
 
 /**
@@ -105,7 +119,7 @@ function patchFile(filePath, patches) {
   // Check if file exists
   if (!fs.existsSync(fullPath)) {
     log(`  ⚠ File not found: ${filePath}`, 'yellow');
-    return { success: false, error: 'File not found' };
+    return { success: false, error: 'File not found', changes: [] };
   }
 
   try {
@@ -113,18 +127,22 @@ function patchFile(filePath, patches) {
     let content = fs.readFileSync(fullPath, 'utf8');
     let modified = false;
     let appliedPatches = 0;
+    const changes = [];
 
     // Apply each patch configuration
     for (const patch of patches) {
-      const { matches, prepend, append, regex, flags } = patch;
+      const { matches, prepend, append, replace, regex, flags, comment } = patch;
 
       // Handle backward compatibility: if 'pattern' exists (old format), use it
       if (patch.pattern) {
-        const result = applyPattern(content, patch.pattern, prepend, append, regex, flags);
+        const result = applyPattern(content, patch.pattern, prepend, append, replace, regex, flags);
         content = result.content;
         if (result.applied) {
           modified = true;
           appliedPatches++;
+          if (result.details) {
+            changes.push({ ...result.details, comment });
+          }
         }
         continue;
       }
@@ -135,18 +153,21 @@ function patchFile(filePath, patches) {
         continue;
       }
 
-      if (!prepend && !append) {
-        log(`  ⚠ Skipping patch: no prepend or append specified`, 'yellow');
+      if (!prepend && !append && !replace) {
+        log(`  ⚠ Skipping patch: no prepend, append, or replace specified`, 'yellow');
         continue;
       }
 
-      // Apply the same prepend/append to all matches
+      // Apply the same prepend/append/replace to all matches
       for (const match of matches) {
-        const result = applyPattern(content, match, prepend, append, regex, flags);
+        const result = applyPattern(content, match, prepend, append, replace, regex, flags);
         content = result.content;
         if (result.applied) {
           modified = true;
           appliedPatches++;
+          if (result.details) {
+            changes.push({ ...result.details, comment });
+          }
         }
       }
     }
@@ -154,14 +175,14 @@ function patchFile(filePath, patches) {
     // Write back to file if modified
     if (modified) {
       fs.writeFileSync(fullPath, content, 'utf8');
-      return { success: true, appliedPatches };
+      return { success: true, appliedPatches, changes };
     } else {
-      return { success: false, error: 'No patches applied' };
+      return { success: false, error: 'No patches applied', changes: [] };
     }
 
   } catch (error) {
     log(`  ✗ Error patching file: ${error.message}`, 'red');
-    return { success: false, error: error.message };
+    return { success: false, error: error.message, changes: [] };
   }
 }
 
