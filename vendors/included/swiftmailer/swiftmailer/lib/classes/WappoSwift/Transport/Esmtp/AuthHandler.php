@@ -254,7 +254,7 @@ class WappoSwift_Transport_Esmtp_AuthHandler implements WappoSwift_Transport_Esm
      */
     protected function getAuthenticatorsForAgent()
     {
-        if (!$mode = strtolower($this->auth_mode)) {
+        if (!$mode = @strtolower($this->auth_mode)) {
             return $this->authenticators;
         }
 
