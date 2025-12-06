@@ -1,21 +1,21 @@
 <template>
 <div>
     <label v-if="label">{{ label }}</label>
-    <editor-content :editor="editor" ref="editorComponent">
-      <div class="menubar" slot="menubar" slot-scope="{ nodes, marks }">
-        <div v-if="nodes && marks">
+    <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, getMarkAttrs }">
+      <div class="menubar">
+        <div v-if="commands">
           <div v-if="linkUrl" class="linkfield" :style="styleLinkContainer">
             <input
               type="text"
               @focus="writingUrl=true"
               placeholder="https://"
               v-model="linkUrl"
-              @keyup.enter.prevent="confirmLinkMark(marks, nodes)"
+              @keyup.enter.prevent="confirmLinkMarkNew(commands)"
             >
-            <button class="btn btn-secondary btn-xs" @click.prevent="confirmLinkMark(marks, nodes)">
+            <button class="btn btn-secondary btn-xs" @click.prevent="confirmLinkMarkNew(commands)">
               <span class="dashicons dashicons-yes"></span>
             </button>
-            <button class="btn btn-secondary btn-xs" @click.prevent="removeLinkMark(marks, nodes)">
+            <button class="btn btn-secondary btn-xs" @click.prevent="removeLinkMarkNew(commands)">
               <span class="dashicons dashicons-editor-unlink"></span>
             </button>
           </div>
@@ -23,8 +23,8 @@
             <div class="d-flex flex-wrap">
               <button
                 class="btn btn-secondary btn-xs"
-                :class="{ 'active': getActiveState(marks, nodes, button.mark) }"
-                @click.prevent="getCommand(marks, nodes, button.mark)"
+                :class="{ 'active': isActive[button.mark] && isActive[button.mark]() }"
+                @click.prevent="commands[button.mark] && commands[button.mark]()"
                 v-for="button in toolbar"
               >
                 <span
@@ -50,14 +50,14 @@
                 >
                   <a
                     class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': nodes.paragraph.active() }"
-                    @click.prevent="wrapHeaders(nodes)"
+                    :class="{ 'active': isActive.paragraph && isActive.paragraph() }"
+                    @click.prevent="commands.paragraph && commands.paragraph()"
                   >Normal</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     v-for="n in 3"
-                    :class="{ 'active': nodes.heading.active({ level: n }) }"
-                    @click.prevent="wrapHeaders(nodes, n)"
+                    :class="{ 'active': isActive.heading && isActive.heading({ level: n }) }"
+                    @click.prevent="commands.heading && commands.heading({ level: n })"
                   >H{{ n }}</a>
                 </div>
               </div>
@@ -78,7 +78,7 @@
                   <a
                     class="dropdown-item btn btn-secondary"
                     v-for="etag in emailtags"
-                    @click.prevent="insertCfield(nodes, etag.model, etag.key)"
+                    @click.prevent="insertCfieldNew(commands, etag.model, etag.key)"
                   >{{ etag.label }}</a>
                 </div>
               </div>
@@ -101,14 +101,14 @@
                   <a
                     class="dropdown-item btn btn-secondary"
                     v-for="elink in emaillinks"
-                    @click.prevent="linkToSomething(marks, elink.model, elink.key)"
+                    @click.prevent="linkToSomethingNew(commands, elink.model, elink.key)"
                   >{{ elink.label }}</a>
                 </div>
               </div>
-              <div class="dropdown" v-if="definition.multiple_service_type" :data-tt="selectionIsOn ? get_i18n('showonlywhen', 'settings'):get_i18n('selectenable', 'settings')">
+              <div class="dropdown" :data-tt="get_i18n('showonlywhen', 'settings')">
                 <button
                   class="btn btn-secondary dropdown-toggle"
-                   :class="{'disabled':!selectionIsOn, 'active': (nodes.cblockphysical.active()|| nodes.cblockskype.active() || nodes.cblockphone.active() || nodes.cblockzoom.active())}"
+                   :class="{'active': (isActive.cblockphysical && isActive.cblockphysical() || isActive.cblockskype && isActive.cblockskype() || isActive.cblockphone && isActive.cblockphone() || isActive.cblockzoom && isActive.cblockzoom())}"
                   type="button"
                   @click="toggleDDP('ddpc')"
                   data-toggle="dropdown"
@@ -122,23 +122,23 @@
                 >
                   <a
                     class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': nodes.cblockphone.active() }"
-                    @click.prevent="conditionalBlock(nodes, 'cblockphone')"
+                    :class="{ 'active': isActive.cblockphone && isActive.cblockphone() }"
+                    @click.prevent="conditionalBlockNew(commands, 'cblockphone')"
                   >{{ get_i18n('phonesession', 'settings') }}</a>
                   <a
                     class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': nodes.cblockskype.active() }"
-                    @click.prevent="conditionalBlock(nodes, 'cblockskype')"
+                    :class="{ 'active': isActive.cblockskype && isActive.cblockskype() }"
+                    @click.prevent="conditionalBlockNew(commands, 'cblockskype')"
                   >{{ get_i18n('skypesession', 'settings') }}</a>
                   <a
                     class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': nodes.cblockzoom.active() }"
-                    @click.prevent="conditionalBlock(nodes, 'cblockzoom')"
+                    :class="{ 'active': isActive.cblockzoom && isActive.cblockzoom() }"
+                    @click.prevent="conditionalBlockNew(commands, 'cblockzoom')"
                   >{{ get_i18n('videosession', 'settings') }}</a>
                   <a
                     class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': nodes.cblockphysical.active() }"
-                    @click.prevent="conditionalBlock(nodes, 'cblockphysical')"
+                    :class="{ 'active': isActive.cblockphysical && isActive.cblockphysical() }"
+                    @click.prevent="conditionalBlockNew(commands, 'cblockphysical')"
                   >{{ get_i18n('physicalsession', 'settings') }}</a>
                 </div>
               </div>
@@ -146,11 +146,8 @@
           </div>
         </div>
       </div>
-
-      <div slot="content" slot-scope="props"></div>
-
-      <div>{{ value }}</div>
-    </editor-content>
+    </editor-menu-bar>
+    <editor-content :editor="editor" ref="editorComponent" />
     <div class="footer-reminder" >
       <div v-if="simpleVersion">
         <div>Total characters:  {{ characterCount }}</div>
@@ -180,7 +177,7 @@
 <script>
 import AbstractField from '../Form/AbstractField'
 import ColorPicker from '../Components/ColorPicker'
-import { Editor, EditorContent } from 'tiptap'
+import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import {
   Blockquote,
   CodeBlock,
@@ -216,6 +213,7 @@ export default {
     mixins: [AbstractField],
     components: {
         EditorContent,
+        EditorMenuBar,
         LinkEdit,
         FooterEdit,
         ColorPicker
@@ -526,6 +524,46 @@ export default {
 
         if (rerun) nodes[activateCondition].command();
         this.hideDropDowns();
+      },
+
+      // New methods using commands API
+      insertCfieldNew(commands, model, key) {
+        this.hideDropDowns();
+        if (commands.customfield) {
+          return commands.customfield({ src: model, alt: key });
+        }
+      },
+
+      linkToSomethingNew(commands, model, key) {
+        this.hideDropDowns();
+        if (commands.link) {
+          commands.link({ href: "["+model+':'+key+"]" });
+        }
+        this.resetLink();
+        this.writingUrl = false;
+      },
+
+      conditionalBlockNew(commands, activateCondition) {
+        if (commands[activateCondition]) {
+          commands[activateCondition]();
+        }
+        this.hideDropDowns();
+      },
+
+      confirmLinkMarkNew(commands) {
+        if (commands.link) {
+          commands.link({ href: this.linkUrl });
+        }
+        this.resetLink();
+        this.writingUrl = false;
+      },
+
+      removeLinkMarkNew(commands) {
+        if (commands.link) {
+          commands.link({ href: "" });
+        }
+        this.resetLink();
+        this.writingUrl = false;
       }
     },
     mounted() {
@@ -545,7 +583,7 @@ export default {
 .is-active {
   background-color: #ccc !important;
 }
-.vue-editor .ProseMirror p {
+.ProseMirror p {
   margin-bottom: 0.4rem;
 }
 .conditional {
@@ -603,13 +641,13 @@ export default {
   content: "\f235 " attr(data-tt);
 }
 
-.vue-editor .ProseMirror {
+.ProseMirror {
   box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.3);
   border: 1px solid #ccc;
   padding: 0.4rem;
 }
 
-.vue-editor .menubar {
+.menubar {
   padding: 0.4rem;
   background-color: #d7d7d7;
   border-top-left-radius: 0.5rem;
@@ -618,12 +656,12 @@ export default {
 }
 
 
-.vue-editor .ProseMirror ul {
+.ProseMirror ul {
   list-style: disc;
   margin-left: 1.8rem;
 }
 
-.vue-editor .menubar .linkfield {
+.menubar .linkfield {
     padding: 0.5rem;
     background-color: #969696;
     border-radius: 0.2rem;
