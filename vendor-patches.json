@@ -1,0 +1,16 @@
+{
+  "patches": [
+    {
+      "file": "vendor/nesbot/carbon/src/Carbon/Traits/Timestamp.php",
+      "patches": [
+        {
+          "matches": [
+            "    public static function createFromTimestamp($timestamp, $tz = null)"
+          ],
+          "prepend": "    #[\\ReturnTypeWillChange]\n",
+          "comment": "Add ReturnTypeWillChange attribute for PHP 8.1+ compatibility"
+        }
+      ]
+    }
+  ]
+}
