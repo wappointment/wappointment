@@ -1,7 +1,7 @@
 <template>
 <div>
     <label v-if="label">{{ label }}</label>
-    <editor :extensions="extensions" @update="updateModel" @onFocus="hideDropDowns" ref="editor">
+    <editor-content :editor="editor" ref="editorComponent">
       <div class="menubar" slot="menubar" slot-scope="{ nodes, marks }">
         <div v-if="nodes && marks">
           <div v-if="linkUrl" class="linkfield" :style="styleLinkContainer">
@@ -150,7 +150,7 @@
       <div slot="content" slot-scope="props"></div>
 
       <div>{{ value }}</div>
-    </editor>
+    </editor-content>
     <div class="footer-reminder" >
       <div v-if="simpleVersion">
         <div>Total characters:  {{ characterCount }}</div>
@@ -180,33 +180,27 @@
 <script>
 import AbstractField from '../Form/AbstractField'
 import ColorPicker from '../Components/ColorPicker'
-import { Editor } from 'tiptap'
+import { Editor, EditorContent } from 'tiptap'
 import {
-  // Nodes
-  BlockquoteNode,
-  CodeBlockNode,
-  CodeBlockHighlightNode,
-  HardBreakNode,
-  HeadingNode,
-  ImageNode,
-  OrderedListNode,
-  BulletListNode,
-  ListItemNode,
-  TodoItemNode,
-  TodoListNode,
-
-  // Marks
-  BoldMark,
-  CodeMark,
-  ItalicMark,
-  LinkMark,
-  StrikeMark,
-  UnderlineMark,
-
-  // General Extensions
-  HistoryExtension,
-  PlaceholderExtension
-} from "tiptap-extensions"
+  Blockquote,
+  CodeBlock,
+  HardBreak,
+  Heading,
+  Image,
+  OrderedList,
+  BulletList,
+  ListItem,
+  TodoItem,
+  TodoList,
+  Bold,
+  Code,
+  Italic,
+  Link,
+  Strike,
+  Underline,
+  History,
+  Placeholder
+} from 'tiptap-extensions'
 import CustomFieldNode from "./text-editor/CustomField.js"
 import ConditionalPhoneBlockNode from "./text-editor/ConditionalPhoneBlock.js"
 import ConditionalSkypeBlockNode from "./text-editor/ConditionalSkypeBlock.js"
@@ -221,13 +215,14 @@ export default {
     extends:SettingsSave,
     mixins: [AbstractField],
     components: {
-        Editor,
+        EditorContent,
         LinkEdit,
         FooterEdit,
         ColorPicker
     },
     data(){
         return {
+        editor: null,
         linkColor:null,
         position: false,
         linkUrl: null,
@@ -271,37 +266,13 @@ export default {
         ddpc: false,
         emaillinks: window.wappoEmailLinks,
         emailtags: window.wappoEmailTags,
-        extensions: [
-            new BlockquoteNode(),
-            new BulletListNode(),
-            new CodeBlockNode(),
-            new HardBreakNode(),
-            new HeadingNode({ maxLevel: 3 }),
-            new ImageNode(),
-            new ListItemNode(),
-            new OrderedListNode(),
-            new TodoItemNode(),
-            new TodoListNode(),
-            new BoldMark(),
-            new CodeMark(),
-            new ItalicMark(),
-            new LinkMark(),
-            new StrikeMark(),
-            new UnderlineMark(),
-            new HistoryExtension(),
-            new PlaceholderExtension(),
-            new CustomFieldNode(),
-            new ConditionalPhoneBlockNode(),
-            new ConditionalSkypeBlockNode(),
-            new ConditionalZoomBlockNode(),
-            new ConditionalPhysicalBlockNode()
-        ],
+        extensions: [],
         };
     },
     computed: {
       selectionIsOn(){
-        if(this.$refs.editor !== undefined){
-          return this.$refs.editor.state.selection.ranges[0].$to.pos - this.$refs.editor.state.selection.ranges[0].$from.pos > 0
+        if(this.editor !== null){
+          return this.editor.state.selection.ranges[0].$to.pos - this.editor.state.selection.ranges[0].$from.pos > 0
         }
         return false
       },
@@ -309,10 +280,10 @@ export default {
         if (this.position) {
           let topPos = Math.round(this.position.top - this.position.height);
           let leftPos = Math.round(32);
-          if (this.$refs.editor.state.ranges !== undefined) {
+          if (this.editor.state.ranges !== undefined) {
             leftPos +=
-              this.$refs.editor.state.ranges[0].$from.pos -
-              this.$refs.editor.state.ranges[0].$to.pos;
+              this.editor.state.ranges[0].$from.pos -
+              this.editor.state.ranges[0].$to.pos;
           }
           let position = "fixed";
           if (this.position.top == 0) {
@@ -338,16 +309,52 @@ export default {
   },
   created(){
     this.simpleVersion = this.definition.simple !== undefined && this.definition.simple === true
+    
+    let extensions = []
     if(this.simpleVersion){
       this.toolbar=[]
-      this.extensions=[new CustomFieldNode(),
-            new ConditionalPhoneBlockNode(),
-            new ConditionalSkypeBlockNode(),
-            new ConditionalZoomBlockNode(),
-            new ConditionalPhysicalBlockNode()
-        ]
+      extensions = [
+        new CustomFieldNode(),
+        new ConditionalPhoneBlockNode(),
+        new ConditionalSkypeBlockNode(),
+        new ConditionalZoomBlockNode(),
+        new ConditionalPhysicalBlockNode()
+      ]
+    } else {
+      extensions = [
+        new Blockquote(),
+        new BulletList(),
+        new CodeBlock(),
+        new HardBreak(),
+        new Heading({ maxLevel: 3 }),
+        new Image(),
+        new ListItem(),
+        new OrderedList(),
+        new TodoItem(),
+        new TodoList(),
+        new Bold(),
+        new Code(),
+        new Italic(),
+        new Link(),
+        new Strike(),
+        new Underline(),
+        new History(),
+        new Placeholder(),
+        new CustomFieldNode(),
+        new ConditionalPhoneBlockNode(),
+        new ConditionalSkypeBlockNode(),
+        new ConditionalZoomBlockNode(),
+        new ConditionalPhysicalBlockNode()
+      ]
     }
     this.linkColor = this.definition.link_color
+    
+    // Create the Editor instance
+    this.editor = new Editor({
+      extensions: extensions,
+      content: this.value || '',
+      onUpdate: this.updateModel
+    })
   },
     methods:{
       validatedColor(){
@@ -355,8 +362,8 @@ export default {
       },
       updateModel({ getJSON, getHTML }) {
           this.updatedValue = getJSON()
-          this.hasShortcodes = this.getShortcodes(this.$refs.editor.state.doc.content)
-          this.characterCount = this.$refs.editor.state.doc.content.size - 2
+          this.hasShortcodes = this.getShortcodes(this.editor.state.doc.content)
+          this.characterCount = this.editor.state.doc.content.size - 2
       },
       getShortcodes(content){
         let customfields = []
@@ -465,12 +472,12 @@ export default {
       },
       setContent() {
         // set content for json object
-        this.$refs.editor.setContent(
+        this.editor.setContent(
           JSON.parse(JSON.stringify(this.value)),
           true
         );
 
-        this.$refs.editor.focus();
+        this.editor.focus();
       },
 
       toggleDDP(ddpName) {
@@ -523,6 +530,11 @@ export default {
     },
     mounted() {
       this.setContent();
+    },
+    beforeDestroy() {
+      if (this.editor) {
+        this.editor.destroy();
+      }
     },
 }
 </script>

@@ -1,9 +1,10 @@
 {
     "presets": [
-      ["es2015", { "modules": false }],
+      ["es2015", { "modules": false, "loose": true }],
       ["stage-2"],
       ["env", {
         "modules": false,
+        "loose": true,
         "targets": {
           "browsers": ["> 1%", "last 2 versions", "not ie <= 10"]
         }
@@ -11,7 +12,7 @@
     ],
     "plugins": [
       "syntax-dynamic-import", 
-      "transform-class-properties", 
+      ["transform-class-properties", { "loose": true }], 
       "transform-vue-jsx",
       [
         "transform-imports", {

@@ -23,7 +23,11 @@ module.exports = {
   resolve: {
     extensions: ['.vue', '.js'],
     enforceExtension: false,
-    mainFiles: ['index']
+    mainFiles: ['index'],
+    alias: {
+      'tiptap$': 'tiptap/src/index.js',
+      'tiptap-extensions$': 'tiptap-extensions/src/index.js'
+    }
   },
   optimization: {
     splitChunks: {
@@ -59,7 +63,10 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        exclude: /(node_modules)/,
+        exclude: [
+          /node_modules/,
+          /resources\/js\/FormOptional\/text-editor/
+        ],
         use: [
           'babel-loader'
         ]
