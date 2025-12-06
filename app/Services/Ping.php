@@ -22,7 +22,7 @@ class Ping
     public function run()
     {
         $starttime = microtime(true);
-        $file = fsockopen($this->domain, $this->port, $this->errno, $this->errstr, $this->timeout);
+        $file = @fsockopen($this->domain, $this->port, $this->errno, $this->errstr, $this->timeout);
         $stoptime = microtime(true);
         $status = 0;
 

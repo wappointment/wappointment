@@ -48,15 +48,16 @@ class SettingsController extends RestController
                 'message' => __('Configuration completed!', 'wappointment') . ' ' . __('Check your inbox for the test email just sent to your address.', 'wappointment')
             ];
         } else {
+            $error = $resultEmail['error'] ?? $error['host']['is_smtp'] ?? '';
             if (\Wappointment\ClassConnect\Str::contains(
-                $resultEmail['error'],
+                $error,
                 ['username', 'password', 'login', 'user', 'credentials']
             )) {
                 $this->setError(__('Error with your credentials', 'wappointment'));
-                $this->setError($resultEmail['error'], 'debug');
+                $this->setError($error, 'debug');
             } else {
                 $this->setError(__('Couldn\'t send test email.', 'wappointment'));
-                $this->setError($resultEmail['error'], 'debug');
+                $this->setError($error, 'debug');
             }
         }
     }
