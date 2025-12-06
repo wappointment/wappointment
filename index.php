@@ -13,7 +13,7 @@ if (!defined('ABSPATH')) {
  * Author URI: https://wappointment.com
  * Requires at least: 5.5
  * Requires PHP: 7.4
- * Tested up to: 6.8
+ * Tested up to: 6.9
  *
  * Text Domain: wappointment
  * Domain Path: /languages
