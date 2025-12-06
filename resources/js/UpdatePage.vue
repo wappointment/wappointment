@@ -5,17 +5,17 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img v-if="false" :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.7.0</span>   
-                <span class="ml-2">Minor bug fix</span>
+                <span>V2.7.1</span>   
+                <span class="ml-2">mail reminder  editor fixes and improvements</span>
               </h3>
               <div class="d-flex flex-align-items-center">
                   <div class="ml-3">
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>added search feature on clients listing</li>
-                        <li>fixed xss security issue</li>
-                        <li>fixed remove broken and unused full width mode</li>
+                        <li>fixed email reminder functionality</li>
+                        <li>improved appointment date/time display to include timezone abbreviation in emails</li>
+                        <li>fixed minor bugs and improved overall stability</li>
                     </ol>
                   </div>
               </div>

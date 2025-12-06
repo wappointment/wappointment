@@ -1,21 +1,21 @@
 <template>
 <div>
     <label v-if="label">{{ label }}</label>
-    <editor :extensions="extensions" @update="updateModel" @onFocus="hideDropDowns" ref="editor">
-      <div class="menubar" slot="menubar" slot-scope="{ nodes, marks }">
-        <div v-if="nodes && marks">
+    <editor-menu-bar :editor="editor" v-slot="{ commands, isActive, getMarkAttrs }">
+      <div class="menubar">
+        <div v-if="commands">
           <div v-if="linkUrl" class="linkfield" :style="styleLinkContainer">
             <input
               type="text"
               @focus="writingUrl=true"
               placeholder="https://"
               v-model="linkUrl"
-              @keyup.enter.prevent="confirmLinkMark(marks, nodes)"
+              @keyup.enter.prevent="confirmLinkMarkNew(commands)"
             >
-            <button class="btn btn-secondary btn-xs" @click.prevent="confirmLinkMark(marks, nodes)">
+            <button class="btn btn-secondary btn-xs" @click.prevent="confirmLinkMarkNew(commands)">
               <span class="dashicons dashicons-yes"></span>
             </button>
-            <button class="btn btn-secondary btn-xs" @click.prevent="removeLinkMark(marks, nodes)">
+            <button class="btn btn-secondary btn-xs" @click.prevent="removeLinkMarkNew(commands)">
               <span class="dashicons dashicons-editor-unlink"></span>
             </button>
           </div>
@@ -23,8 +23,8 @@
             <div class="d-flex flex-wrap">
               <button
                 class="btn btn-secondary btn-xs"
-                :class="{ 'active': getActiveState(marks, nodes, button.mark) }"
-                @click.prevent="getCommand(marks, nodes, button.mark)"
+                :class="{ 'active': isActive[button.mark] && isActive[button.mark]() }"
+                @click.prevent="commands[button.mark] && commands[button.mark]()"
                 v-for="button in toolbar"
               >
                 <span
@@ -50,14 +50,14 @@
                 >
                   <a
                     class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': nodes.paragraph.active() }"
-                    @click.prevent="wrapHeaders(nodes)"
+                    :class="{ 'active': isActive.paragraph && isActive.paragraph() }"
+                    @click.prevent="commands.paragraph && commands.paragraph()"
                   >Normal</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     v-for="n in 3"
-                    :class="{ 'active': nodes.heading.active({ level: n }) }"
-                    @click.prevent="wrapHeaders(nodes, n)"
+                    :class="{ 'active': isActive.heading && isActive.heading({ level: n }) }"
+                    @click.prevent="commands.heading && commands.heading({ level: n })"
                   >H{{ n }}</a>
                 </div>
               </div>
@@ -78,7 +78,7 @@
                   <a
                     class="dropdown-item btn btn-secondary"
                     v-for="etag in emailtags"
-                    @click.prevent="insertCfield(nodes, etag.model, etag.key)"
+                    @click.prevent="insertCfieldNew(commands, etag.model, etag.key)"
                   >{{ etag.label }}</a>
                 </div>
               </div>
@@ -101,14 +101,14 @@
                   <a
                     class="dropdown-item btn btn-secondary"
                     v-for="elink in emaillinks"
-                    @click.prevent="linkToSomething(marks, elink.model, elink.key)"
+                    @click.prevent="linkToSomethingNew(commands, elink.model, elink.key)"
                   >{{ elink.label }}</a>
                 </div>
               </div>
-              <div class="dropdown" v-if="definition.multiple_service_type" :data-tt="selectionIsOn ? get_i18n('showonlywhen', 'settings'):get_i18n('selectenable', 'settings')">
+              <div class="dropdown" :data-tt="get_i18n('showonlywhen', 'settings')">
                 <button
                   class="btn btn-secondary dropdown-toggle"
-                   :class="{'disabled':!selectionIsOn, 'active': (nodes.cblockphysical.active()|| nodes.cblockskype.active() || nodes.cblockphone.active() || nodes.cblockzoom.active())}"
+                   :class="{'active': (isActive.cblockphysical && isActive.cblockphysical() || isActive.cblockskype && isActive.cblockskype() || isActive.cblockphone && isActive.cblockphone() || isActive.cblockzoom && isActive.cblockzoom())}"
                   type="button"
                   @click="toggleDDP('ddpc')"
                   data-toggle="dropdown"
@@ -122,23 +122,23 @@
                 >
                   <a
                     class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': nodes.cblockphone.active() }"
-                    @click.prevent="conditionalBlock(nodes, 'cblockphone')"
+                    :class="{ 'active': isActive.cblockphone && isActive.cblockphone() }"
+                    @click.prevent="conditionalBlockNew(commands, 'cblockphone')"
                   >{{ get_i18n('phonesession', 'settings') }}</a>
                   <a
                     class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': nodes.cblockskype.active() }"
-                    @click.prevent="conditionalBlock(nodes, 'cblockskype')"
+                    :class="{ 'active': isActive.cblockskype && isActive.cblockskype() }"
+                    @click.prevent="conditionalBlockNew(commands, 'cblockskype')"
                   >{{ get_i18n('skypesession', 'settings') }}</a>
                   <a
                     class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': nodes.cblockzoom.active() }"
-                    @click.prevent="conditionalBlock(nodes, 'cblockzoom')"
+                    :class="{ 'active': isActive.cblockzoom && isActive.cblockzoom() }"
+                    @click.prevent="conditionalBlockNew(commands, 'cblockzoom')"
                   >{{ get_i18n('videosession', 'settings') }}</a>
                   <a
                     class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': nodes.cblockphysical.active() }"
-                    @click.prevent="conditionalBlock(nodes, 'cblockphysical')"
+                    :class="{ 'active': isActive.cblockphysical && isActive.cblockphysical() }"
+                    @click.prevent="conditionalBlockNew(commands, 'cblockphysical')"
                   >{{ get_i18n('physicalsession', 'settings') }}</a>
                 </div>
               </div>
@@ -146,11 +146,8 @@
           </div>
         </div>
       </div>
-
-      <div slot="content" slot-scope="props"></div>
-
-      <div>{{ value }}</div>
-    </editor>
+    </editor-menu-bar>
+    <editor-content :editor="editor" ref="editorComponent" />
     <div class="footer-reminder" >
       <div v-if="simpleVersion">
         <div>Total characters:  {{ characterCount }}</div>
@@ -180,33 +177,27 @@
 <script>
 import AbstractField from '../Form/AbstractField'
 import ColorPicker from '../Components/ColorPicker'
-import { Editor } from 'tiptap'
+import { Editor, EditorContent, EditorMenuBar } from 'tiptap'
 import {
-  // Nodes
-  BlockquoteNode,
-  CodeBlockNode,
-  CodeBlockHighlightNode,
-  HardBreakNode,
-  HeadingNode,
-  ImageNode,
-  OrderedListNode,
-  BulletListNode,
-  ListItemNode,
-  TodoItemNode,
-  TodoListNode,
-
-  // Marks
-  BoldMark,
-  CodeMark,
-  ItalicMark,
-  LinkMark,
-  StrikeMark,
-  UnderlineMark,
-
-  // General Extensions
-  HistoryExtension,
-  PlaceholderExtension
-} from "tiptap-extensions"
+  Blockquote,
+  CodeBlock,
+  HardBreak,
+  Heading,
+  Image,
+  OrderedList,
+  BulletList,
+  ListItem,
+  TodoItem,
+  TodoList,
+  Bold,
+  Code,
+  Italic,
+  Link,
+  Strike,
+  Underline,
+  History,
+  Placeholder
+} from 'tiptap-extensions'
 import CustomFieldNode from "./text-editor/CustomField.js"
 import ConditionalPhoneBlockNode from "./text-editor/ConditionalPhoneBlock.js"
 import ConditionalSkypeBlockNode from "./text-editor/ConditionalSkypeBlock.js"
@@ -221,13 +212,15 @@ export default {
     extends:SettingsSave,
     mixins: [AbstractField],
     components: {
-        Editor,
+        EditorContent,
+        EditorMenuBar,
         LinkEdit,
         FooterEdit,
         ColorPicker
     },
     data(){
         return {
+        editor: null,
         linkColor:null,
         position: false,
         linkUrl: null,
@@ -271,37 +264,13 @@ export default {
         ddpc: false,
         emaillinks: window.wappoEmailLinks,
         emailtags: window.wappoEmailTags,
-        extensions: [
-            new BlockquoteNode(),
-            new BulletListNode(),
-            new CodeBlockNode(),
-            new HardBreakNode(),
-            new HeadingNode({ maxLevel: 3 }),
-            new ImageNode(),
-            new ListItemNode(),
-            new OrderedListNode(),
-            new TodoItemNode(),
-            new TodoListNode(),
-            new BoldMark(),
-            new CodeMark(),
-            new ItalicMark(),
-            new LinkMark(),
-            new StrikeMark(),
-            new UnderlineMark(),
-            new HistoryExtension(),
-            new PlaceholderExtension(),
-            new CustomFieldNode(),
-            new ConditionalPhoneBlockNode(),
-            new ConditionalSkypeBlockNode(),
-            new ConditionalZoomBlockNode(),
-            new ConditionalPhysicalBlockNode()
-        ],
+        extensions: [],
         };
     },
     computed: {
       selectionIsOn(){
-        if(this.$refs.editor !== undefined){
-          return this.$refs.editor.state.selection.ranges[0].$to.pos - this.$refs.editor.state.selection.ranges[0].$from.pos > 0
+        if(this.editor !== null){
+          return this.editor.state.selection.ranges[0].$to.pos - this.editor.state.selection.ranges[0].$from.pos > 0
         }
         return false
       },
@@ -309,10 +278,10 @@ export default {
         if (this.position) {
           let topPos = Math.round(this.position.top - this.position.height);
           let leftPos = Math.round(32);
-          if (this.$refs.editor.state.ranges !== undefined) {
+          if (this.editor.state.ranges !== undefined) {
             leftPos +=
-              this.$refs.editor.state.ranges[0].$from.pos -
-              this.$refs.editor.state.ranges[0].$to.pos;
+              this.editor.state.ranges[0].$from.pos -
+              this.editor.state.ranges[0].$to.pos;
           }
           let position = "fixed";
           if (this.position.top == 0) {
@@ -338,16 +307,52 @@ export default {
   },
   created(){
     this.simpleVersion = this.definition.simple !== undefined && this.definition.simple === true
+    
+    let extensions = []
     if(this.simpleVersion){
       this.toolbar=[]
-      this.extensions=[new CustomFieldNode(),
-            new ConditionalPhoneBlockNode(),
-            new ConditionalSkypeBlockNode(),
-            new ConditionalZoomBlockNode(),
-            new ConditionalPhysicalBlockNode()
-        ]
+      extensions = [
+        new CustomFieldNode(),
+        new ConditionalPhoneBlockNode(),
+        new ConditionalSkypeBlockNode(),
+        new ConditionalZoomBlockNode(),
+        new ConditionalPhysicalBlockNode()
+      ]
+    } else {
+      extensions = [
+        new Blockquote(),
+        new BulletList(),
+        new CodeBlock(),
+        new HardBreak(),
+        new Heading({ maxLevel: 3 }),
+        new Image(),
+        new ListItem(),
+        new OrderedList(),
+        new TodoItem(),
+        new TodoList(),
+        new Bold(),
+        new Code(),
+        new Italic(),
+        new Link(),
+        new Strike(),
+        new Underline(),
+        new History(),
+        new Placeholder(),
+        new CustomFieldNode(),
+        new ConditionalPhoneBlockNode(),
+        new ConditionalSkypeBlockNode(),
+        new ConditionalZoomBlockNode(),
+        new ConditionalPhysicalBlockNode()
+      ]
     }
     this.linkColor = this.definition.link_color
+    
+    // Create the Editor instance
+    this.editor = new Editor({
+      extensions: extensions,
+      content: this.value || '',
+      onUpdate: this.updateModel
+    })
   },
     methods:{
       validatedColor(){
@@ -355,8 +360,8 @@ export default {
       },
       updateModel({ getJSON, getHTML }) {
           this.updatedValue = getJSON()
-          this.hasShortcodes = this.getShortcodes(this.$refs.editor.state.doc.content)
-          this.characterCount = this.$refs.editor.state.doc.content.size - 2
+          this.hasShortcodes = this.getShortcodes(this.editor.state.doc.content)
+          this.characterCount = this.editor.state.doc.content.size - 2
       },
       getShortcodes(content){
         let customfields = []
@@ -465,12 +470,12 @@ export default {
       },
       setContent() {
         // set content for json object
-        this.$refs.editor.setContent(
+        this.editor.setContent(
           JSON.parse(JSON.stringify(this.value)),
           true
         );
 
-        this.$refs.editor.focus();
+        this.editor.focus();
       },
 
       toggleDDP(ddpName) {
@@ -519,10 +524,55 @@ export default {
 
         if (rerun) nodes[activateCondition].command();
         this.hideDropDowns();
+      },
+
+      // New methods using commands API
+      insertCfieldNew(commands, model, key) {
+        this.hideDropDowns();
+        if (commands.customfield) {
+          return commands.customfield({ src: model, alt: key });
+        }
+      },
+
+      linkToSomethingNew(commands, model, key) {
+        this.hideDropDowns();
+        if (commands.link) {
+          commands.link({ href: "["+model+':'+key+"]" });
+        }
+        this.resetLink();
+        this.writingUrl = false;
+      },
+
+      conditionalBlockNew(commands, activateCondition) {
+        if (commands[activateCondition]) {
+          commands[activateCondition]();
+        }
+        this.hideDropDowns();
+      },
+
+      confirmLinkMarkNew(commands) {
+        if (commands.link) {
+          commands.link({ href: this.linkUrl });
+        }
+        this.resetLink();
+        this.writingUrl = false;
+      },
+
+      removeLinkMarkNew(commands) {
+        if (commands.link) {
+          commands.link({ href: "" });
+        }
+        this.resetLink();
+        this.writingUrl = false;
       }
     },
     mounted() {
       this.setContent();
+    },
+    beforeDestroy() {
+      if (this.editor) {
+        this.editor.destroy();
+      }
     },
 }
 </script>
@@ -533,7 +583,7 @@ export default {
 .is-active {
   background-color: #ccc !important;
 }
-.vue-editor .ProseMirror p {
+.ProseMirror p {
   margin-bottom: 0.4rem;
 }
 .conditional {
@@ -591,13 +641,13 @@ export default {
   content: "\f235 " attr(data-tt);
 }
 
-.vue-editor .ProseMirror {
+.ProseMirror {
   box-shadow: inset 0px 0px 10px rgba(0, 0, 0, 0.3);
   border: 1px solid #ccc;
   padding: 0.4rem;
 }
 
-.vue-editor .menubar {
+.menubar {
   padding: 0.4rem;
   background-color: #d7d7d7;
   border-top-left-radius: 0.5rem;
@@ -606,12 +656,12 @@ export default {
 }
 
 
-.vue-editor .ProseMirror ul {
+.ProseMirror ul {
   list-style: disc;
   margin-left: 1.8rem;
 }
 
-.vue-editor .menubar .linkfield {
+.menubar .linkfield {
     padding: 0.5rem;
     background-color: #969696;
     border-radius: 0.2rem;

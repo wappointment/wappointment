@@ -21,6 +21,8 @@ class Init
             Database::capsule();
         }
 
+        $this->registerLaravelMacros();
+
         if ($this->is_installed) {
             Listeners::init();
             add_action('init', [$this, 'baseInit']);
@@ -36,6 +38,14 @@ class Init
         }
     }
 
+    private function registerLaravelMacros()
+    {
+        if (!\Illuminate\Support\Arr::hasMacro('query')) {
+            \Illuminate\Support\Arr::macro('query', function ($array) {
+                return http_build_query($array);
+            });
+        }
+    }
 
     public function initNotInstalled()
     {

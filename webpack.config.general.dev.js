@@ -40,7 +40,11 @@ module.exports = {
   resolve: {
     extensions: ['.vue', '.js'],
     enforceExtension: false,
-    mainFiles: ['index']
+    mainFiles: ['index'],
+    alias: {
+      'tiptap$': 'tiptap/src/index.js',
+      'tiptap-extensions$': 'tiptap-extensions/src/index.js'
+    }
   },
 
   module: {
@@ -72,9 +76,32 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        exclude: /(node_modules)/,
+        exclude: [
+          /node_modules/,
+          /resources\/js\/FormOptional\/text-editor/
+        ],
         use: [
-          'babel-loader'
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                ['es2015', { modules: false, loose: true }],
+                'stage-2',
+                ['env', {
+                  modules: false,
+                  loose: true,
+                  targets: {
+                    browsers: ["> 1%", "last 2 versions", "not ie <= 10"]
+                  }
+                }]
+              ],
+              plugins: [
+                'syntax-dynamic-import',
+                ['transform-class-properties', { loose: true }],
+                'transform-vue-jsx'
+              ]
+            }
+          }
         ]
       },
       {

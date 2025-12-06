@@ -21,11 +21,8 @@ export default class ConditionalBlockNode extends Node {
 		}
 	}
  */
-/* 	command({ type }) {
-		return toggleWrap(type)
-	} */
-	command({ type, schema }) {
-		return toggleWrap(type, schema.nodes.paragraph)
+	commands({ type, schema }) {
+		return () => toggleWrap(type, schema.nodes.paragraph)
 	}
 /* 	command({ type, schema, attrs }) {
 		return toggleBlockType(type, schema.nodes.paragraph, attrs)
