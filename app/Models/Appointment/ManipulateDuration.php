@@ -52,7 +52,12 @@ trait ManipulateDuration
 
     public function getStartsDayAndTime($timezone)
     {
-        return !empty($this->start_at) ? DateTime::i18nDateTime($this->start_at->timestamp, $timezone) : '';
+        if (empty($this->start_at)) {
+            return '';
+        }
+        $datetime = DateTime::i18nDateTime($this->start_at->timestamp, $timezone);
+        $tzAbbr = $this->start_at->copy()->setTimezone($timezone)->format('T');
+        return $datetime . ' (' . $tzAbbr . ')';
     }
 
     public function isOver()
