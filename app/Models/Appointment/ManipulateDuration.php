@@ -56,7 +56,7 @@ trait ManipulateDuration
             return '';
         }
         $datetime = DateTime::i18nDateTime($this->start_at->timestamp, $timezone);
-        return $datetime;
+        return $datetime . ' (' . $timezone . ')';
     }
 
     public function isOver()
