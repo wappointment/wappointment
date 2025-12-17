@@ -11,7 +11,6 @@ class LegacyBooking extends AbstractProcessor
         return [
             'is_phone' => __('Your phone number is not valid', 'wappointment'),
             'email' => __('Your email is not valid', 'wappointment'),
-            'skype:regex' => __('Your skype username is not valid', 'wappointment'),
             'time' => __('The selected time is not valid', 'wappointment'),
         ];
     }
@@ -21,9 +20,8 @@ class LegacyBooking extends AbstractProcessor
         return [
             'name' => 'required|is_string|max:100',
             'email' => 'required|email',
-            'type' => 'required|in:physical,phone,skype,zoom',
+            'type' => 'required|in:physical,phone,zoom',
             'phone' => 'required_if:type,phone|is_phone',
-            'skype' => 'required_if:type,skype|regex:/^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/',
             'time' => 'required|min:' . $this->getTimeMin(),
             'ctz' => ''
         ];
@@ -42,9 +40,6 @@ class LegacyBooking extends AbstractProcessor
     public function prepareInputs($inputs): array
     {
 
-        if ($inputs['type'] != 'skype') {
-            unset($inputs['skype']);
-        }
 
         $inputs['time'] = (int) $inputs['time'];
         return $inputs;

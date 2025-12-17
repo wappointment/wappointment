@@ -105,9 +105,6 @@ export default {
             if(this.phoneSelected || [undefined,'', false].indexOf(this.service.options.phone_required) === -1){
                 fields.push('phone')
             }
-            if(this.skypeSelected){
-                fields.push('skype')
-            }
             return fields
         },
         phoneSelected(){
@@ -115,9 +112,6 @@ export default {
         },
         physicalSelected(){
             return this.locationObj.type == 1
-        },
-        skypeSelected(){
-            return this.locationObj.type == 3
         },
         getPhoneCountries(){
             return this.phoneSelected ? this.locationObj.options.countries:this.service.options.countries
@@ -191,11 +185,6 @@ export default {
                                 countries: this.service.options.countries
                             },
                             type:2
-                        }
-                    case 'skype':
-                        return {
-                            options:{},
-                            type:3
                         }
                     case 'zoom':
                         return {
@@ -356,7 +345,6 @@ export default {
                                 return customF
                             case 'email':
                             case 'phone':
-                            case 'skype':
                             default:
                                 customF.name = customF.updated === true ?customF.name:this.options.form[customF.namekey]
                                 return customF
@@ -377,9 +365,6 @@ export default {
             }
             if(this.phoneSelected && this.locationObj.options.fields.indexOf('phone') === -1){
                 this.locationObj.options.fields.unshift('phone') //inser phone to the beginning
-            }
-            if(this.skypeSelected && this.locationObj.options.fields.indexOf('skype') === -1){
-                this.locationObj.options.fields.unshift('skype') //inser skype to the beginning
             }
         },
         fieldsRequired(){

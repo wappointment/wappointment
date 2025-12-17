@@ -165,7 +165,6 @@ class IcsGenerator
         $keysParse = ['name', 'tz', 'email'];
         if (!Addons::isActive('wappointment_services')) {
             $keysParse[] = 'phone';
-            $keysParse[] = 'skype';
         }
         foreach ($keysParse as $key) {
             if (!empty($appointment->getClientModel()->options[$key])) {

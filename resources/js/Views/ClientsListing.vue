@@ -7,7 +7,6 @@
                         <th scope="col">#</th>
                         <th scope="col">{{ get_i18n('client', 'clients') }}</th>
                         <th scope="col">{{ get_i18n('phone', 'clients') }}</th>
-                        <th scope="col">{{ get_i18n('skype', 'clients') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -38,9 +37,6 @@
                         </td>
                         <td>
                             {{ getPhone(client) }}
-                        </td>
-                        <td>
-                            {{ getSkype(client) }}
                         </td>
                     </tr>
                     <tr v-else>
@@ -82,11 +78,6 @@ export default {
         getPhone(client){
           return this.hasOption(client) && client.options.phone !== undefined ? client.options.phone:'---'
         },
-
-        getSkype(client){
-          return this.hasOption(client) && client.options.skype !== undefined ? client.options.skype:'---'
-        },
-
         getTimezone(client){
           return this.hasOption(client) && client.options.tz !== undefined ? client.options.tz:'---'
         },

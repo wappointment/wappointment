@@ -186,10 +186,6 @@ class Reminder
                 /* translators: %s - client's phone number */
                 ['p' => sprintf(__('It will take place over the phone, we will call you on this number: %s', 'wappointment'), '[client:phone]')]
             ],
-            'skype' => [
-                /* translators: %s - client's skype username */
-                ['p' => sprintf(__('It will take place on Skype, we will call you on this account: %s', 'wappointment'), '[client:skype]')]
-            ],
             'zoom' => [
                 ['p' => __('It will take place by video online.', 'wappointment')],
                 /* translators: %s - a "here" link is added. */
@@ -197,7 +193,7 @@ class Reminder
             ]
         ];
         if (!is_array($types)) {
-            $types = ['physical', 'phone', 'skype', 'zoom'];
+            $types = ['physical', 'phone', 'zoom'];
         }
         foreach ($types as $type) {
             $email_confirmed[] = [$type => $messageService[$type]];

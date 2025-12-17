@@ -47,10 +47,6 @@ export default {
                     case '5':
                     case 'zoom':
                         return ['fas', 'video']
-                    case 3:
-                    case '3':
-                    case 'skype':
-                        return ['fab', 'skype']
                     case 2:
                     case '2':
                     case 'phone':

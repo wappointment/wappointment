@@ -11,7 +11,6 @@ class LegacyBookingAdmin extends AbstractProcessor
         return [
             'is_phone' => __('Your phone number is not valid', 'wappointment'),
             'email' => __('Your email is not valid', 'wappointment'),
-            'skype:regex' => __('Your skype username is not valid', 'wappointment'),
         ];
     }
 
@@ -20,7 +19,7 @@ class LegacyBookingAdmin extends AbstractProcessor
         if (!empty($this->input('clientid'))) {
             return [
                 'name' => 'required_if:type,phone|present|max:100',
-                'type' => 'present|in:physical,phone,skype,zoom',
+                'type' => 'present|in:physical,phone,zoom',
                 'start' => 'required|min:' . time(),
                 'end' => 'required|min:' . time(),
                 'timezone' => '',
@@ -30,9 +29,8 @@ class LegacyBookingAdmin extends AbstractProcessor
             return [
                 'name' => 'required_if:type,phone|present|max:100',
                 'email' => 'present|email',
-                'type' => 'present|in:physical,phone,skype,zoom',
+                'type' => 'present|in:physical,phone,zoom',
                 'phone' => 'required_if:type,phone|is_phone',
-                'skype' => 'required_if:type,skype|regex:/^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/',
                 'start' => 'required|min:' . time(),
                 'end' => 'required|min:' . time(),
                 'timezone' => '',

@@ -11,7 +11,6 @@ class Client extends AbstractProcessor
         return [
             'is_phone' => __('Your phone number is not valid', 'wappointment'),
             'email' => __('Your email is not valid', 'wappointment'),
-            'skype:regex' => __('Your skype username is not valid', 'wappointment'),
         ];
     }
 
@@ -22,7 +21,6 @@ class Client extends AbstractProcessor
             'email' => 'present|email',
             'options' => '',
             'options.phone' => 'present|is_phone',
-            'options.skype' => 'present|regex:/^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/',
         ];
     }
 

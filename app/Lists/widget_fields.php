@@ -138,7 +138,6 @@ return [
                 'fields' => [
                     'byzoom' => false,
                     'inperson' => false,
-                    'byskype' => false,
                 ]
             ],
             [
@@ -147,7 +146,6 @@ return [
                     'fullname' => false,
                     'email' => false,
                     'phone' => false,
-                    'skype' => false,
                     'address' => false,
                     'back' => false,
                     'confirm' => false,
@@ -175,7 +173,6 @@ return [
                 'label' => __('Conditional confirmation', 'wappointment'),
                 'fields' => [
                     'pending' => ['tip' => __('When admin confirmation is required', 'wappointment')],
-                    'skype' => ['tip' => __('Skype appointments only', 'wappointment')],
                     'phone' => ['tip' => __('Phone appointments only', 'wappointment')],
                     'physical' => ['tip' => __('Appointments at a location only', 'wappointment')],
                     'zoom' => ['tip' => __('Video appointments only', 'wappointment')],

@@ -100,7 +100,6 @@ class Client
                 'name' => $data['name'],
                 'options' => [
                     'tz' => $data['options']['tz'],
-                    'skype' => $data['options']['skype'],
                     'phone' => $data['options']['phone'],
                 ]
             ]

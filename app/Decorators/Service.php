@@ -45,10 +45,7 @@ class Service
     {
         return $this->hasType('phone');
     }
-    public function hasSkype()
-    {
-        return $this->hasType('skype');
-    }
+
     public function hasZoom()
     {
         return $this->hasType('zoom');

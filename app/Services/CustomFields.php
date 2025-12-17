@@ -37,16 +37,6 @@ class CustomFields
             ],
             'core' => true
         ],
-        [
-            'name' => 'Skype username:',
-            'type' => 'input',
-            'namekey' => 'skype',
-            'validations' => 'required|regex:/^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/',
-            'errors' => [
-                'regex' => 'Skype username is not valid'
-            ],
-            'core' => true
-        ],
 
     ];
 

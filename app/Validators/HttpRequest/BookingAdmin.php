@@ -19,7 +19,6 @@ class BookingAdmin extends Booking
             'clientid' => '',
             'staff_id' => '',
             'phone' => '',
-            'skype' => '',
             'recurrent' => '',
             'page' => ''
         ];

@@ -16,11 +16,6 @@
             <FaIcon icon="phone" size="lg"/>
             <div>By phone</div>
         </div>
-        <div v-if="allowedType('skype')" @click="selectType('skype')" class="btn btn-secondary btn-cell" role="button" :class="{selected: skypeSelected}">
-            <span class="dashicons" :class="[skypeSelected ? 'dashicons-yes-alt text-primary':'dashicons-marker']"></span>
-            <FaIcon :icon="['fab', 'skype']" size="lg"/>
-            <div>By skype</div>
-        </div>
     </div>
 </template>
 

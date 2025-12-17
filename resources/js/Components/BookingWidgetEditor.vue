@@ -260,7 +260,6 @@ export default {
                 name: 'John Mcgregor',
                 email: 'j.mcgregor@gmail',
                 phone: '6552',
-                skype: 'jmcg',
                 type: this.config.service.type !== undefined ? this.config.service.type[0]:'',
                 time: false,
             }

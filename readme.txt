@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.7.2
+Stable tag: 2.7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,11 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.7.3 - 2025-12-09 =
+* removed skype option
+* fix timezone issue (thanks to [lukesUbuntu](https://github.com/lukesUbuntu/wappointment/commits?author=lukesUbuntu))
+* fixed deprecated warnings in Carbon and Illuminate packages
 
 = 2.7.2 - 2025-12-09 =
 * improved timezone display in emails to show full timezone name instead of abbreviation

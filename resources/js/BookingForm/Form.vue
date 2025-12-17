@@ -106,9 +106,6 @@ export default {
             return this.phoneSelected || [undefined,false,''].indexOf(this.service.options.phone_required) === -1 
         },
 
-        skypeValid(){
-            return /^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/.test(this.bookingForm.skype)
-        },
         
         dataEmpty(){
             for (const key in this.bookingForm) {

@@ -2,7 +2,7 @@
     <StaffModalWrapper @save="save" nosave :user="staff">
         <div class="mb-2">
             <div>Describe your staff better with fields to be used in emails and SMS</div>
-            <div class="text-muted small">For instance, you can create fields for staff's phone number or Skype account and ask the clients to call on those within the confirmation emails</div>
+            <div class="text-muted small">For instance, you can create fields for staff's phone number and ask the clients to call on those within the confirmation emails</div>
         </div>
         <div class="p-2 rounded bg-secondary">
             <div v-if="adding">

@@ -72,14 +72,12 @@ return [
         'slots_left' => sprintf(__('%s left', 'wappointment'), '[slots_left]'),
     ],
     'form' => [
-        'byskype' => __('By Skype', 'wappointment'),
         'byphone' => __('By Phone', 'wappointment'),
         'byzoom' => __('Video meeting', 'wappointment'),
         'inperson' => __('At a Location', 'wappointment'),
         'fullname' => __('Full Name:', 'wappointment'),
         'email' => __('Email:', 'wappointment'),
         'phone' => __('Phone:', 'wappointment'),
-        'skype' => __('Skype username:', 'wappointment'),
         'back' => __('Back', 'wappointment'),
         'confirm' => __('Confirm', 'wappointment'),
         'check_terms' => false,
@@ -93,7 +91,6 @@ return [
         'service' => __('Service:', 'wappointment'),
         'duration' => __('Duration:', 'wappointment'),
         'pending' => __('The appointment is pending and should be quickly confirmed', 'wappointment'),
-        'skype' => __('The appointment will take place on Skype, we will call you on this account:', 'wappointment'),
         /* translators: %s - a "here" link is added. */
         'zoom' => sprintf(__('The appointment will take place by Video meeting online, the link will show %s.', 'wappointment'), '[meeting_link]' . __('here', 'wappointment') . '[/meeting_link]'),
         'phone' => __('The appointment will take place over the phone, we will call you on this number:', 'wappointment'),

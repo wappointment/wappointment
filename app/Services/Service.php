@@ -21,7 +21,7 @@ class Service implements ServiceInterface
         $validationRules = [
             'name' => 'required|is_adv_string|max:100',
             'duration' => 'required|numeric',
-            'type' => 'required|array|hasvalues:physical,phone,skype,zoom',
+            'type' => 'required|array|hasvalues:physical,phone,zoom',
             'address' => 'required_if_has:type,physical',
             'options' => '',
             'options.countries' => 'required_if_has:type,phone|array',
@@ -117,9 +117,6 @@ class Service implements ServiceInterface
                 $optionsTemp['countries'] = $options['countries'];
                 $types[] = 'phone';
             }
-            if ($location->type == Location::TYPE_SKYPE) {
-                $types[] = 'skype';
-            }
             $location->options = $optionsTemp;
             $location->save();
         }
@@ -142,9 +139,6 @@ class Service implements ServiceInterface
 
     public static function getLocationTypeId($type_name)
     {
-        if ($type_name == 'skype') {
-            return Location::TYPE_SKYPE;
-        }
         if ($type_name == 'zoom') {
             return Location::TYPE_ZOOM;
         }

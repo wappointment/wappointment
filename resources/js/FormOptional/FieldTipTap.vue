@@ -108,7 +108,7 @@
               <div class="dropdown" :data-tt="get_i18n('showonlywhen', 'settings')">
                 <button
                   class="btn btn-secondary dropdown-toggle"
-                   :class="{'active': (isActive.cblockphysical && isActive.cblockphysical() || isActive.cblockskype && isActive.cblockskype() || isActive.cblockphone && isActive.cblockphone() || isActive.cblockzoom && isActive.cblockzoom())}"
+                   :class="{'active': (isActive.cblockphysical && isActive.cblockphysical() ||  isActive.cblockphone && isActive.cblockphone() || isActive.cblockzoom && isActive.cblockzoom())}"
                   type="button"
                   @click="toggleDDP('ddpc')"
                   data-toggle="dropdown"
@@ -125,11 +125,6 @@
                     :class="{ 'active': isActive.cblockphone && isActive.cblockphone() }"
                     @click.prevent="conditionalBlockNew(commands, 'cblockphone')"
                   >{{ get_i18n('phonesession', 'settings') }}</a>
-                  <a
-                    class="dropdown-item btn btn-secondary"
-                    :class="{ 'active': isActive.cblockskype && isActive.cblockskype() }"
-                    @click.prevent="conditionalBlockNew(commands, 'cblockskype')"
-                  >{{ get_i18n('skypesession', 'settings') }}</a>
                   <a
                     class="dropdown-item btn btn-secondary"
                     :class="{ 'active': isActive.cblockzoom && isActive.cblockzoom() }"
@@ -200,7 +195,6 @@ import {
 } from 'tiptap-extensions'
 import CustomFieldNode from "./text-editor/CustomField.js"
 import ConditionalPhoneBlockNode from "./text-editor/ConditionalPhoneBlock.js"
-import ConditionalSkypeBlockNode from "./text-editor/ConditionalSkypeBlock.js"
 import ConditionalZoomBlockNode from "./text-editor/ConditionalZoomBlock.js"
 import ConditionalPhysicalBlockNode from "./text-editor/ConditionalPhysicalBlock.js"
 import LinkEdit from "../Components/LinkEdit"
@@ -314,7 +308,6 @@ export default {
       extensions = [
         new CustomFieldNode(),
         new ConditionalPhoneBlockNode(),
-        new ConditionalSkypeBlockNode(),
         new ConditionalZoomBlockNode(),
         new ConditionalPhysicalBlockNode()
       ]
@@ -340,7 +333,6 @@ export default {
         new Placeholder(),
         new CustomFieldNode(),
         new ConditionalPhoneBlockNode(),
-        new ConditionalSkypeBlockNode(),
         new ConditionalZoomBlockNode(),
         new ConditionalPhysicalBlockNode()
       ]
@@ -512,7 +504,7 @@ export default {
       },
 
       conditionalBlock(nodes, activateCondition) {
-        let cblocks = ["cblockphone", "cblockskype", "cblockphysical", "cblockzoom"];
+        let cblocks = ["cblockphone", "cblockphysical", "cblockzoom"];
         let rerun = true;
         for (let index = 0; index < cblocks.length; index++) {
           const condition = cblocks[index];
@@ -617,7 +609,6 @@ export default {
 .conditional.conditional-physical::before {
   content: "\f231";
 }
-.conditional.conditional-skype::before,
 .conditional.conditional-zoom::before {
   content: "\f235";
 }
@@ -636,7 +627,6 @@ export default {
 .conditional.conditional-physical:hover::before {
   content: "\f231 " attr(data-tt);
 }
-.conditional.conditional-skype:hover::before,
 .conditional.conditional-zoom:hover::before {
   content: "\f235 " attr(data-tt);
 }

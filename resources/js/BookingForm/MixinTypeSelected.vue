@@ -18,9 +18,7 @@ export default {
         physicalSelected(){
             return this.appointmentIsType('physical')
         },
-        skypeSelected(){
-            return this.appointmentIsType('skype')
-        },
+
         zoomSelected(){
             return this.appointmentIsType('zoom')
         },

@@ -20,13 +20,6 @@ return [
         'sanitize' => true
     ],
     [
-        'model' => 'client',
-        'key' => 'skype',
-        'label' => __('Client\'s skype', 'wappointment'),
-        'getMethod' => 'getSkype',
-        'sanitize' => true
-    ],
-    [
         'model' => 'service',
         'key' => 'name',
         'label' => __('Service name', 'wappointment'),

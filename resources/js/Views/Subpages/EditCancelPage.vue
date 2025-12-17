@@ -152,7 +152,6 @@ export default {
             "email":"jp@email"+start_at+".com",
             "options":{
               "phone":"+33 6 51 02 48 81",
-              "skype":"j.patrick",
               "tz":"Europe\/Paris",
               
               }
@@ -160,7 +159,7 @@ export default {
             "service":{
               "name":"Consultation",
               "duration":60,
-              "type":["skype"],
+              "type":["phone"],
               "address":"",
               "options":{
                 "countries":["FR"]
