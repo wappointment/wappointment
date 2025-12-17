@@ -42,7 +42,7 @@ define('WAPPOINTMENT_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 require_once WAPPOINTMENT_PATH . 'app' . DIRECTORY_SEPARATOR . 'required.php';
 
 add_action('wappointments_autoload_init', 'wappointment_starts');
-
+//
 function get_wappointment_autoloader()
 {
     static $wappointment_loader = false;
