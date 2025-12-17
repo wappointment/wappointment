@@ -29,7 +29,9 @@
             "webpack.config.copy.js", 
             "webpack.config.general.js", 
             "webpack.config.copy.js", 
-            "webpack.config.scss.js"
+            "webpack.config.scss.js",
+            "apply-vendor-patches.js",
+            "vendor-patches.json"
         ]
     },
     "must_remove": {
