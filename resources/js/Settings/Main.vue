@@ -24,9 +24,6 @@
         <div class="tab-pane fade" :class="{'show active' : isActive('advanced')}" v-if="isActive('advanced')">
             <settingsAdvanced @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.advanced.label" />
         </div>
-        <div class="tab-pane fade" :class="{'show active' : isActive('addonstab')}" v-if="isActive('addonstab')">
-            <settingsAddons @fullyLoaded="$emit('fullyLoaded')" :tablabel="tabs.addonstab.label" />
-        </div>
     </div>
     
   </div>
@@ -40,7 +37,6 @@ import settingsServices from './Services'
 import settingsEmailNSms from './EmailNSms'
 import SettingsAppearance from './Appearance'
 import settingsAdvanced from './Advanced'
-import settingsAddons from './Addons'
 import hasPermissions from '../Mixins/hasPermissions'
 
 export default {
@@ -57,7 +53,6 @@ export default {
       settingsEmailNSms,
       settingsAdvanced,
       SettingsAppearance,
-      settingsAddons,
     },
 
     computed: {
@@ -85,25 +80,9 @@ export default {
             advanced:{
                 label: this.get_i18n('advanced_title', 'settings'),
             },
-            addonstab:{
-                label: this.get_i18n('addons_title', 'settings'),
-            },
         }
     },  
     methods: {
-         addonsWithSettings(){
-            let addonsWithSettings = {}
-            let addonscopy = window.wappointmentAdmin.addons
-            for (const key in addonscopy) {
-                if (addonscopy.hasOwnProperty(key)) {
-                    const element = addonscopy[key]
-                    if([undefined,false].indexOf(element.settings)=== -1){
-                        addonsWithSettings[key] = element
-                    }
-                }
-            }
-            return Object.keys(addonsWithSettings)
-        },
 
         isActive(key){
             return key == this.activeTab || this.activeTab.indexOf(key) === 0
