@@ -14,6 +14,7 @@ class StaffLegacy
     public $avatar = null; //avatar
     public $name = null; //staffname
     public $timezone = null; //staff timezon
+    public $gravatar = '';
 
     public function __construct($staff_id = false)
     {
@@ -21,6 +22,7 @@ class StaffLegacy
             $staff_id = Settings::get('activeStaffId');
         }
         $this->wp_user = get_userdata($staff_id);
+
         unset($this->wp_user->data->user_pass);
         unset($this->wp_user->data->user_activation_key);
         if (empty($this->wp_user)) {
@@ -31,11 +33,17 @@ class StaffLegacy
         $this->avatar = Settings::getStaff('avatarId') ? wp_get_attachment_image_src(Settings::getStaff('avatarId'))[0] : $this->gravatar;
         $dname = Settings::getStaff('display_name');
         $this->name = !empty($dname) ? $dname : $this->getUserDisplayName();
+
         $this->timezone = Settings::getStaff('timezone', $staff_id);
+        if (empty($this->timezone)) {
+            $this->timezone = 'UTC';
+        }
+
     }
 
     public function fullData()
     {
+        
         return [
             'id' => $this->id,
             'name' => $this->name,

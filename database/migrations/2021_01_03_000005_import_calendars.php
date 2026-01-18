@@ -22,6 +22,7 @@ class ImportCalendars extends Wappointment\Installation\Migrate
         $staff = new StaffLegacy;
         $dotcom = $staff->getDotcom();
         Settings::save('email_logo', Settings::getStaff('email_logo'));
+
         $data = [
             'wp_uid' => $staff->id,
             'name' => $staff->name,
