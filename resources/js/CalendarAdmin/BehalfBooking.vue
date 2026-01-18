@@ -124,7 +124,6 @@ export default {
         bookingForm: {
             email: '',
             phone: '',
-            skype: '',
             name: '',
         },
         clientSelected:false,
@@ -180,16 +179,8 @@ export default {
             return this.viewData.preferredCountries
         },
 
-        skypeValid(){
-            return /^[a-zA-Z][a-zA-Z0-9.\-_]{5,31}$/.test(this.bookingForm.skype)
-        },
-
         phoneSelected(){
             return this.selectedAppointmentType == 'phone'
-        },
-
-        skypeSelected(){
-            return this.selectedAppointmentType == 'skype'
         },
 
         hasMoreThanOneService(){
@@ -240,7 +231,6 @@ export default {
             if(newValue.name!== undefined && isEmpty(newValue.name) ) this.errorsOnFields.name = true
             if(newValue.email!== undefined && isEmpty(newValue.email) || !isEmail(newValue.email)) this.errorsOnFields.email = true
             if(newValue.phone!== undefined && this.phoneSelected && (isEmpty(newValue.phone) || !this.phoneValid)) this.errorsOnFields.phone = true
-            if(newValue.skype!== undefined && this.skypeSelected && (isEmpty(newValue.skype) || !this.skypeValid)) this.errorsOnFields.skype = true
 
         },
     

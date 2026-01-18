@@ -46,7 +46,6 @@ class UpdateAppointmentsLocationsForService extends Wappointment\Installation\Mi
             'zoom' => ['label' => $widgetSettings['form']['byzoom'], 'type' => Location::TYPE_ZOOM],
             'physical' => ['label' => $widgetSettings['form']['inperson'], 'type' => Location::TYPE_AT_LOCATION],
             'phone' => ['label' => $widgetSettings['form']['byphone'], 'type' => Location::TYPE_PHONE],
-            'skype' => ['label' => $widgetSettings['form']['byskype'], 'type' => Location::TYPE_SKYPE]
         ];
     }
 

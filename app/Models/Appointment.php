@@ -42,7 +42,6 @@ class Appointment extends TicketAbstract
 
     public const TYPE_PHYSICAL = 0;
     public const TYPE_PHONE = 1;
-    public const TYPE_SKYPE = 2;
     public const TYPE_ZOOM = 5;
     public const STATUS_AWAITING_CONFIRMATION = 0;
     public const STATUS_CONFIRMED = 1;
@@ -73,7 +72,7 @@ class Appointment extends TicketAbstract
     {
         $cmodel = $this->getClientModel();
 
-        if ($cmodel && !is_null($cmodel) && in_array($key, ['getPhone', 'getSkype', 'getNameForDotcom', 'getEmailForDotcom'])) {
+        if ($cmodel && !is_null($cmodel) && in_array($key, ['getPhone', 'getNameForDotcom', 'getEmailForDotcom'])) {
             return call_user_func([$cmodel, $key]);
         }
         return '';

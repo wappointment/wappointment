@@ -49,9 +49,6 @@ export default {
                     return this.getTitle(this.options.i18n.a_is_video, html)+
                     lnb + this.options.i18n.a_with_videolink +
                     lnb + this.generateLink('view-event', html, this.options.i18n.begin_meeting)
-                case 'skype':
-                    return this.getTitle(this.options.i18n.a_is_skype, html)+
-                    lnb + this.options.i18n.a_with_phone.replace('%s',this.getSkypeUsername) 
                 case 'physical':
                     return lnb + this.getTitle(this.options.i18n.a_is_address, html)+ 
                     lnb + this.eventLocation
@@ -157,9 +154,6 @@ export default {
             return this.service.name + ' - ' + this.staff.n
         },
 
-        getSkypeUsername(){
-            return this.appointment.client.options !== undefined && this.appointment.client.options.skype !==undefined ?  this.appointment.client.options.skype:''
-        },
         getClientPhone(){
             return this.appointment.client.options !== undefined && this.appointment.client.options.phone !==undefined ?  this.appointment.client.options.phone:''
         },

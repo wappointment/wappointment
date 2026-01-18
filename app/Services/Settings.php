@@ -181,7 +181,7 @@ class Settings
             'regav' => static::get('regavDefault'),
             'availaible_booking_days' => 60,
             'calurl' => '',
-            'timezone' => $timezone,
+            'timezone' => empty($timezone) ? 'UTC' : $timezone,
             'avatarId' => false,
             'viewed_updates' => false,
             'email_logo' => false,
@@ -220,7 +220,7 @@ class Settings
     protected static function prepareSave($setting_key, $value)
     {
         if (!static::$valid || static::valid($setting_key, $value)) {
-            $updatedValues = static::getValues();
+            $updatedValues = static::getValues()??[];
 
             if ($setting_key == 'service') {
                 unset($value['id']);

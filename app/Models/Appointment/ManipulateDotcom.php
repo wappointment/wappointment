@@ -46,9 +46,7 @@ trait ManipulateDotcom
         if ($this->isPhone()) {
             $toDotcom['phone']  = $this->getClientMethodOrEmpty('getPhone');
         }
-        if ($this->isSkype()) {
-            $toDotcom['skype']  = $this->getClientMethodOrEmpty('getSkype');
-        }
+
         return $toDotcom;
     }
 

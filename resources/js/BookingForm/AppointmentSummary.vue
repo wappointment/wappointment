@@ -91,7 +91,6 @@ export default {
             if([undefined,''].indexOf(this.location.name) === -1) return this.location.name
             if(this.isPhysical) return this.getAddress
             if(['phone',2].indexOf(this.location) !==-1) return this.options.form.byphone
-            if(['skype',3].indexOf(this.location) !==-1) return this.options.form.byskype
             if(['zoom',5].indexOf(this.location) !==-1) return this.options.form.byzoom
         },
         isPhysical(){

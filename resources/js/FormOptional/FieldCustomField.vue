@@ -160,9 +160,6 @@ export default {
             if(this.typeLocation){
                 for (let i = 0; i < this.itemsLoaded.length; i++) {
                     if(this.itemsLoaded[i].core !== undefined){
-                        if(this.itemsLoaded[i].namekey == 'skype'){
-                            this.itemsLoaded[i].always = (this.typeLocation == 3) ? true:undefined
-                        } 
                         if(this.itemsLoaded[i].namekey == 'phone'){
                             this.itemsLoaded[i].always = (this.typeLocation == 2) ? true:undefined
                         }

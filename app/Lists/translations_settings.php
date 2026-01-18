@@ -65,7 +65,6 @@ return [
     'add_smsreminder' => __('Add SMS reminder', 'wappointment'),
     'noreminder' => __('You don\'t have any reminders', 'wappointment'),
     'phonesession' =>  __('Phone session', 'wappointment'),
-    'skypesession' =>  __('Skype session', 'wappointment'),
     'videosession' =>  __('Video session', 'wappointment'),
     'physicalsession' =>  __('Session at an address', 'wappointment'),
     'linkselection' => __('Link to a Wappointment page', 'wappointment'),

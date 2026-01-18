@@ -46,11 +46,6 @@ export default {
                         label: this.options.form.byphone,
                         icon: 'phone'
                     }
-                case 'skype':
-                    return {
-                        label: this.options.form.byskype,
-                        icon: ['fab', 'skype']
-                    }
             }
         }
     }

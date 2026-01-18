@@ -21,7 +21,6 @@ return [
     'wizard_3_delivery_video' => __('Video meeting', 'wappointment'),
     'wizard_3_delivery_address' => __('At an address', 'wappointment'),
     'wizard_3_delivery_byphone' => __('By Phone', 'wappointment'),
-    'wizard_3_delivery_byskype' => __('By Skype', 'wappointment'),
     'wizard_3_address' => __('Address', 'wappointment'),
     'wizard_3_delivery_phone_require' => __('Clients must provide a phone number when booking', 'wappointment'),
     'wizard_3_accepted_countries' => __('Accepted countries for phone field', 'wappointment'),

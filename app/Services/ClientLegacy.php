@@ -28,9 +28,6 @@ class ClientLegacy
         if (!empty($booking->get('phone'))) {
             $dataClient['options']['phone'] = $booking->get('phone');
         }
-        if (!empty($booking->get('skype'))) {
-            $dataClient['options']['skype'] = $booking->get('skype');
-        }
 
         if (empty($client)) {
             $dataClient['email'] = $booking->get('email');
@@ -39,9 +36,6 @@ class ClientLegacy
             $options = $client->options;
             if (!empty($booking->get('phone'))) {
                 $options['phone'] = $booking->get('phone');
-            }
-            if (!empty($booking->get('skype'))) {
-                $options['skype'] = $booking->get('skype');
             }
             $client->options = $options;
             $client->save();

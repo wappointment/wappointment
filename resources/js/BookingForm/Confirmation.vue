@@ -35,9 +35,6 @@
         <div class="wdescription" v-if="phoneSelected">
             {{options.confirmation.phone}} <strong>{{ getClientPhone}}</strong>
         </div>
-        <div class="wdescription" v-if="skypeSelected">
-            {{options.confirmation.skype}} <strong>{{ getClientSkype }}</strong> 
-        </div>
          <div class="wdescription" v-if="zoomSelected" v-html="getZoomWithLink">
         </div>
         <div class="wdescription my-2 text-center">
@@ -125,9 +122,6 @@ export default {
         getClientPhone(){
             return this.showResult.client !== undefined ? this.showResult.client.options.phone : this.showResult.phone
         },
-        getClientSkype(){
-            return this.showResult.client !== undefined ? this.showResult.client.options.skype : this.showResult.skype
-        },
         getZoomWithLink(){
             let url = apiWappointment.frontPage + (apiWappointment.frontPage.indexOf('?') === -1 ? '?':'&' )+'view=view-event&appointmentkey=' + this.appointment.edit_key
             url = window.wappointmentExtends.filter('urlAppointmentKey', url, {appointment: this.appointment, ticket:this.resultBooking.ticket})
@@ -147,13 +141,6 @@ export default {
                  return this.locationObj.type == 1
             }else{
                 return this.selectedServiceType == 'physical'
-            }
-        },
-        skypeSelected(){
-            if(this.locationObj!== null){
-                 return this.locationObj.type == 3
-            }else{
-                return this.selectedServiceType == 'skype'
             }
         },
     },

@@ -88,6 +88,9 @@ mv "$tmpfolder/vendor/composer/autoload_realNEW.php" "$tmpfolder/vendor/composer
 echo '[BUILD] Reinstall node_modules folder to avoid conflict'
 npm i
 
+echo '[BUILD] applying patch vendors'
+node apply-vendor-patches.js
+
 echo '[BUILD] Generating dist folder'
 npm run scss
 echo '[BUILD] Generating dist folder'

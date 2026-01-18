@@ -22,7 +22,7 @@ class DateTime
                 //this throws exception for 'US/Pacific-New'
                 $zone = new \DateTimeZone($full_name);
 
-                $seconds = $zone->getOffset(new \DateTime('now', $zone));
+                $seconds = $zone->getOffset(new \DateTime('January 1st', $zone));
                 $hours = sprintf('%+02d', intval($seconds / 3600));
                 $minutes = sprintf('%02d', ($seconds % 3600) / 60);
 

@@ -9,7 +9,7 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
 {
     public $capsule;
     public $migrationRepo;
-    protected $migrations_folders = false;
+    protected $migrations_folders = [];
 
     public function __construct($migrations_folder = false)
     {
@@ -23,6 +23,7 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
         if (!$this->migrationRepo->repositoryExists()) {
             $this->migrationRepo->createRepository();
         }
+       
         $this->setMigrationFolders($migrations_folder);
     }
 
@@ -41,6 +42,7 @@ class Migrate extends \Illuminate\Database\Migrations\Migration
     protected function addFolder($folder = false)
     {
         if ($folder!==false) {
+
             $this->migrations_folders[] = $folder;
         }
     }

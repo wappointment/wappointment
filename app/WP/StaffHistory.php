@@ -92,12 +92,6 @@ class StaffHistory extends AppointmentHistory
             ];
         }
 
-        if (!empty($client->getSkype())) {
-            $data['skype'] = [
-                'label' => 'Skype',
-                'value' => $client->getSkype()
-            ];
-        }
         $cfs = Central::get('CustomFields')::get();
         foreach ($cfs as $cf) {
             if (empty($cf['core'])) {

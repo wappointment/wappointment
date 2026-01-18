@@ -171,9 +171,7 @@ class Reminder extends Model
                 } else {
                     if ($appointment->isPhone() && $rowContent['type'] == 'cblockphone') {
                         $newBodyEmailContent[] = $rowContent;
-                    } elseif ($appointment->isSkype() && $rowContent['type'] == 'cblockskype') {
-                        $newBodyEmailContent[] = $rowContent;
-                    } elseif ($appointment->isZoom() && $rowContent['type'] == 'cblockzoom') {
+                    }  elseif ($appointment->isZoom() && $rowContent['type'] == 'cblockzoom') {
                         $newBodyEmailContent[] = $rowContent;
                     }
                 }

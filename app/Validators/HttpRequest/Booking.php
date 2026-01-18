@@ -24,7 +24,6 @@ class Booking extends LegacyBooking
         return [
             'is_phone' => __('Your phone number is not valid', 'wappointment'),
             'email' => __('Your email is not valid', 'wappointment'),
-            'skype:regex' => __('Your skype username is not valid', 'wappointment'),
             static::$startKey => __('The selected time is not valid', 'wappointment'),
         ];
     }
@@ -157,9 +156,6 @@ class Booking extends LegacyBooking
                 }
                 if ($this->location->type == 2) {
                     $this->location->options['fields'][] = 'phone';
-                }
-                if ($this->location->type == 3) {
-                    $this->location->options['fields'][] = 'skype';
                 }
             }
         }

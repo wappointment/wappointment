@@ -46,7 +46,6 @@ class TipTap
                 return 'ul';
             case 'cblockphysical':
             case 'cblockphone':
-            case 'cblockskype':
             case 'cblockzoom':
             case 'customfield':
             case 'text':
@@ -285,16 +284,6 @@ class TipTap
     {
         return [
             'type' => 'cblockphone',
-            'content' => [
-                self::integrateContent(self::typeToOptions($type), $value)
-            ]
-        ];
-    }
-
-    protected static function tiptapSkype($value, $type = 'p')
-    {
-        return [
-            'type' => 'cblockskype',
             'content' => [
                 self::integrateContent(self::typeToOptions($type), $value)
             ]

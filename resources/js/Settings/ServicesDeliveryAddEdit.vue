@@ -63,7 +63,6 @@ export default {
                   { value:5, name:'Video meeting', icon: ['fas', 'video'], sub:'(Zoom, Google meet, ...)'},
                   { value:1, name:'At an address', icon: 'map-marked-alt', sub:'For physical address'},
                   { value:2, name:'By Phone', icon: 'phone', sub:'Includes a phone number field'},
-                  { value:3, name:'By Skype', icon: ['fab', 'skype'], sub:'Includes a skype username field'},
                   { value:4, name:'Custom' , sub:'Set your own modality'},
                 ],
                 labelSearchKey: 'name',

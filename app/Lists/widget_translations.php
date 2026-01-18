@@ -6,7 +6,6 @@ return [
     /* translators: %s - is a phone number or a skype account username. */
     'a_with_phone' => __('We will call you on %s', 'wappointment'),
     'begin_meeting' => __('Begin meeting', 'wappointment'),
-    'a_is_skype' => __('Appointment on Skype', 'wappointment'),
     'a_is_address' => __('Appointment is taking place at this address', 'wappointment'),
     'reschedule' => __('Reschedule', 'wappointment'),
     'cancel' => __('Cancel', 'wappointment'),

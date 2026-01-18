@@ -11,7 +11,6 @@ class Location extends Model
 
     public const TYPE_AT_LOCATION = 1;
     public const TYPE_PHONE = 2;
-    public const TYPE_SKYPE = 3;
     public const TYPE_OTHERS = 4;
     public const TYPE_ZOOM = 5;
     public const STATUS_ARCHIVED = -1;

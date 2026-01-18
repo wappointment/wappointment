@@ -81,11 +81,6 @@ class Client extends Model
         return empty($this->options['phone']) ? '' : $this->options['phone'];
     }
 
-    public function getSkype()
-    {
-        return empty($this->options['skype']) ? '' : $this->options['skype'];
-    }
-
     public function getTimezone($defaultTz = 'UTC')
     {
         return empty($this->options['tz']) ? $defaultTz : $this->options['tz'];

@@ -42,10 +42,6 @@ trait AdminGeneratesDefault
                 /* translators: %s is replaced with the client's phone */
                 $dataEmail[] =  sprintf(__("Client's phone: %s", 'wappointment'), sanitize_text_field($client->getPhone()));
             }
-            if (!empty($client->getSkype())) {
-                /* translators: %s is replaced with the client's skype username */
-                $dataEmail[] =  sprintf(__("Client's skype: %s", 'wappointment'), sanitize_text_field($client->getSkype()));
-            }
         }
 
 

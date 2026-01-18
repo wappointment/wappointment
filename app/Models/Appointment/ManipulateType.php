@@ -14,11 +14,6 @@ trait ManipulateType
         return self::TYPE_PHYSICAL == $this->type;
     }
 
-    public function isSkype()
-    {
-        return self::TYPE_SKYPE == $this->type;
-    }
-
     public function isZoom()
     {
         return self::TYPE_ZOOM == $this->type;
@@ -32,11 +27,6 @@ trait ManipulateType
     public static function getTypePhone()
     {
         return self::TYPE_PHONE;
-    }
-
-    public static function getTypeSkype()
-    {
-        return self::TYPE_SKYPE;
     }
 
     public static function getTypeZoom()

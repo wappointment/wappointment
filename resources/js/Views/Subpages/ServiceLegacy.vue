@@ -80,7 +80,6 @@ export default {
                   subname:'(Zoom, Google meet, ...)', icon: ['fas', 'video']},
                   { value:'physical', name:this.get_i18n('wizard_3_delivery_address', 'wizard'), icon: 'map-marked-alt'},
                   { value:'phone', name:this.get_i18n('wizard_3_delivery_byphone', 'wizard'), icon: 'phone'},
-                  { value:'skype', name:this.get_i18n('wizard_3_delivery_byskype', 'wizard'), icon: ['fab', 'skype']}
                 ],
                 validation: ['required']
             },
