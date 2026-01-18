@@ -148,10 +148,11 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.7.3 - 2025-12-09 =
-* removed skype option
+= 2.7.3 - 2026-01-18 =
 * fix timezone issue (thanks to [lukesUbuntu](https://github.com/lukesUbuntu/wappointment/commits?author=lukesUbuntu))
-* fixed deprecated warnings in Carbon and Illuminate packages
+* fixed error messages showing
+* fixed remove addons tab
+* fixed remove skype option
 
 = 2.7.2 - 2025-12-09 =
 * improved timezone display in emails to show full timezone name instead of abbreviation
