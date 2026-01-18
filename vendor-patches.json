@@ -29,9 +29,16 @@
       "patches": [
         {
           "matches": [
-            "    public function __construct(ConnectionInterface $connection,\n                                Grammar $grammar = null,\n                                Processor $processor = null)"
+            "Grammar $grammar = null"
           ],
-          "replace": "    public function __construct(ConnectionInterface $connection,\n                                ?Grammar $grammar = null,\n                                ?Processor $processor = null)",
+          "replace": "?Grammar $grammar = null",
+          "comment": "Fix nullable parameter types for PHP 8.1+"
+        },
+        {
+          "matches": [
+            "Processor $processor = null"
+          ],
+          "replace": "?Processor $processor = null",
           "comment": "Fix nullable parameter types for PHP 8.1+"
         }
       ]
