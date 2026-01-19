@@ -1,10 +1,10 @@
 === Appointment Bookings for Zoom GoogleMeet and more - Wappointment  ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
-Requires at least: 4.7
+Requires at least: 6.0
 Tested up to: 6.9
-Requires PHP: 7.4
-Stable tag: 2.7.5
+Requires PHP: 8.2
+Stable tag: 3.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -130,9 +130,9 @@ You can set buffer time for that particular case, you can define it in the *Wapp
 
 = Minimum Requirements =
 
-* WordPress 4.7(or greater)
-* PHP version 7.0(or greater)
-* MySQL version 5.6(or greater) or MariaDB 10.0(or greater)
+* WordPress 6.0 (or greater)
+* PHP version 8.2 (or greater)
+* MySQL version 5.7 (or greater) or MariaDB 10.3 (or greater)
 
 Always keep your softwares updated.
 It requires work on your end but keeps your site safe and optimized.
@@ -147,6 +147,12 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 3.0.0 - 2026-01-19 =
+* BREAKING: Raised minimum PHP version requirement to 8.2
+* Major refactoring for modern PHP 8.2+ features
+* Improved type safety and code quality
+* Updated WordPress minimum version to 6.0
 
 = 2.7.5 - 2026-01-18 =
 * fix timezone issue (thanks to [lukesUbuntu](https://github.com/lukesUbuntu/wappointment/commits?author=lukesUbuntu))

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 if (!defined('ABSPATH')) {
     exit;
@@ -6,13 +7,13 @@ if (!defined('ABSPATH')) {
 
 /**
  * Plugin Name: Wappointment
- * Version: 2.7.5
+ * Version: 3.0.0
  * Plugin URI: https://wappointment.com
  * Description: Clients quickly book a meeting with you on Zoom , GoogleMeet , the phone or at your office
  * Author: Wappointment
  * Author URI: https://wappointment.com
- * Requires at least: 5.5
- * Requires PHP: 7.4
+ * Requires at least: 6.0
+ * Requires PHP: 8.2
  * Tested up to: 6.9
  *
  * Text Domain: wappointment
@@ -32,33 +33,35 @@ if (!defined('ABSPATH')) {
  * GNU General Public License for more details.
  */
 
-define('WAPPOINTMENT_VERSION', '2.7.5');
-define('WAPPOINTMENT_PHP_MIN', '7.4.0');
+define('WAPPOINTMENT_VERSION', '3.0.0');
+define('WAPPOINTMENT_PHP_MIN', '8.2.0');
 define('WAPPOINTMENT_NAME', 'Wappointment');
 define('WAPPOINTMENT_SLUG', strtolower(WAPPOINTMENT_NAME));
 define('WAPPOINTMENT_FILE', __FILE__);
 define('WAPPOINTMENT_PATH', dirname(__FILE__) . DIRECTORY_SEPARATOR);
 
-require_once WAPPOINTMENT_PATH . 'app' . DIRECTORY_SEPARATOR . 'required.php';
-
-add_action('wappointments_autoload_init', 'wappointment_starts');
-//
-function get_wappointment_autoloader()
-{
-    static $wappointment_loader = false;
-    if ($wappointment_loader !== false) {
-        return $wappointment_loader;
-    }
-
-    if (!defined('WAPPOINTMENT_PHP_FAIL')) {
-        $wappointment_loader = require_once WAPPOINTMENT_PATH . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
-        do_action('wappointments_autoload_init');
-    }
+// Check PHP version before loading
+if (version_compare(PHP_VERSION, WAPPOINTMENT_PHP_MIN, '<')) {
+    add_action('admin_notices', function () {
+        echo '<div class="error"><p>';
+        echo sprintf(
+            'Wappointment requires PHP %s or higher. You are running PHP %s.',
+            WAPPOINTMENT_PHP_MIN,
+            PHP_VERSION
+        );
+        echo '</p></div>';
+    });
+    return;
 }
 
-get_wappointment_autoloader();
+// Load Composer autoloader
+require_once WAPPOINTMENT_PATH . 'vendor' . DIRECTORY_SEPARATOR . 'autoload.php';
 
-function wappointment_starts()
-{
+// Initialize plugin
+add_action('plugins_loaded', function () {
     new \Wappointment\System\Init();
-}
+});
+add_action('plugins_loaded', function () {
+    new \Wappointment\System\Init();
+});
+

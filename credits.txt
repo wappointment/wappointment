@@ -1,4 +1,0 @@
-We use various open source libraries and content, here is the credits page.
-
-Icons
-- "Cash icon" made by https://www.flaticon.com/authors/flat-icons
