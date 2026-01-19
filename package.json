@@ -3,8 +3,11 @@
   "version": "3.0.0",
   "description": "Wappointment React Admin Interface",
   "scripts": {
-    "build": "webpack --mode production --config=webpack.config.react.js",
-    "dev": "webpack --mode development --watch --config=webpack.config.react.js"
+    "build": "webpack --mode production --config=webpack.config.react.js && webpack --mode production --config=webpack.config.widget.js",
+    "build:admin": "webpack --mode production --config=webpack.config.react.js",
+    "build:widget": "webpack --mode production --config=webpack.config.widget.js",
+    "dev": "webpack --mode development --watch --config=webpack.config.react.js",
+    "dev:widget": "webpack --mode development --watch --config=webpack.config.widget.js"
   },
   "dependencies": {
     "react": "^18.2.0",

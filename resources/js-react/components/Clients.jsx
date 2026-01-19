@@ -23,12 +23,15 @@ function Clients() {
         try {
             const response = await apiFetch(`/clients?page_num=${page}&per_page=${pagination.perPage}`);
             
-            setClients(response.data);
+            // WordPress REST API wraps response in { success: true, data: {...} }
+            const responseData = response.data;
+            
+            setClients(responseData.data);
             setPagination({
-                page: response.page,
-                perPage: response.per_page,
-                total: response.total,
-                totalPages: response.total_pages
+                page: responseData.page,
+                perPage: responseData.per_page,
+                total: responseData.total,
+                totalPages: responseData.total_pages
             });
         } catch (err) {
             setError(err.message);

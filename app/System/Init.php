@@ -23,6 +23,7 @@ class Init
     {
         add_action('admin_menu', [$this, 'registerAdminMenu']);
         add_action('rest_api_init', [$this, 'registerRestApi']);
+        add_action('init', [$this, 'registerShortcodes']);
     }
 
     /**
@@ -41,5 +42,14 @@ class Init
     {
         $api = new RestApi();
         $api->register();
+    }
+
+    /**
+     * Register shortcodes
+     */
+    public function registerShortcodes(): void
+    {
+        $shortcodes = new Shortcodes();
+        $shortcodes->register();
     }
 }
