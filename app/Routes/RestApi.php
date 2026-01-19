@@ -35,10 +35,21 @@ class RestApi
         
         foreach ($files as $file) {
             $className = basename($file, '.php');
+            
+            // Skip BaseRoute as it's abstract
+            if ($className === 'BaseRoute') {
+                continue;
+            }
+            
             $fullClassName = "Wappointment\\Routes\\Api\\{$className}";
             
             if (class_exists($fullClassName)) {
-                $this->routes[] = new $fullClassName();
+                $reflection = new \ReflectionClass($fullClassName);
+                
+                // Only instantiate concrete classes
+                if (!$reflection->isAbstract()) {
+                    $this->routes[] = new $fullClassName();
+                }
             }
         }
     }
