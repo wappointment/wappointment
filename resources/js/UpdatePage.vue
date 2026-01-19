@@ -5,17 +5,18 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img v-if="false" :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.7.2</span>   
-                <span class="ml-2">Timezone display improvements</span>
+                <span>V2.7.5</span>   
+                <span class="ml-2">Bug fix version</span>
               </h3>
               <div class="d-flex flex-align-items-center">
                   <div class="ml-3">
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>improved timezone display in emails to show full timezone name instead of abbreviation</li>
-                        <li>enhanced vendor patches for PHP 8.1+ compatibility</li>
-                        <li>fixed deprecated warnings in Carbon and Illuminate packages</li>
+                        <li>* fix timezone issue (thanks to [lukesUbuntu](https://github.com/lukesUbuntu/wappointment/commits?author=lukesUbuntu))</li>
+                        <li>fixed error messages showing</li>
+                        <li>fixed remove addons tab</li>
+                        <li>fixed remove skype option</li>
                     </ol>
                   </div>
               </div>

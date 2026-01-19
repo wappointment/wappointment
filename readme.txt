@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.7.3
+Stable tag: 2.7.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -148,7 +148,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.7.3 - 2026-01-18 =
+= 2.7.5 - 2026-01-18 =
 * fix timezone issue (thanks to [lukesUbuntu](https://github.com/lukesUbuntu/wappointment/commits?author=lukesUbuntu))
 * fixed error messages showing
 * fixed remove addons tab
