@@ -9,35 +9,51 @@ namespace Wappointment\Controllers;
 class AdminController extends BaseController
 {
     /**
-     * First page action
+     * Render the React app for all pages
+     */
+    public function renderApp(): void
+    {
+        // Enqueue React app assets
+        wp_enqueue_script(
+            'wappointment-react-app',
+            plugins_url('dist/app.js', WAPPOINTMENT_FILE),
+            ['wp-element'],
+            WAPPOINTMENT_VERSION,
+            true
+        );
+
+        // Pass data to React app
+        wp_localize_script('wappointment-react-app', 'wappointmentData', [
+            'apiUrl' => rest_url('wappointment/v1'),
+            'nonce' => wp_create_nonce('wp_rest'),
+            'currentPage' => $_GET['page'] ?? 'wappointment'
+        ]);
+
+        // Render the root view
+        $this->render('admin/app');
+    }
+
+    /**
+     * First page (alias for renderApp)
      */
     public function page1(): void
     {
-        $this->render('admin/page1', [
-            'title' => 'Page 1',
-            'message' => 'Hello World from Page 1!'
-        ]);
+        $this->renderApp();
     }
 
     /**
-     * Second page action
+     * Second page (alias for renderApp)
      */
     public function page2(): void
     {
-        $this->render('admin/page2', [
-            'title' => 'Page 2',
-            'message' => 'Hello World from Page 2!'
-        ]);
+        $this->renderApp();
     }
 
     /**
-     * Third page action
+     * Third page (alias for renderApp)
      */
     public function page3(): void
     {
-        $this->render('admin/page3', [
-            'title' => 'Page 3',
-            'message' => 'Hello World from Page 3!'
-        ]);
+        $this->renderApp();
     }
 }
