@@ -32,28 +32,4 @@ class AdminController extends BaseController
         // Render the root view
         $this->render('admin/app');
     }
-
-    /**
-     * First page (alias for renderApp)
-     */
-    public function page1(): void
-    {
-        $this->renderApp();
-    }
-
-    /**
-     * Second page (alias for renderApp)
-     */
-    public function page2(): void
-    {
-        $this->renderApp();
-    }
-
-    /**
-     * Third page (alias for renderApp)
-     */
-    public function page3(): void
-    {
-        $this->renderApp();
-    }
 }
