@@ -60,5 +60,23 @@ class AdminMenu
             'wappointment-page3',
             [$this->controller, 'page3']
         );
+
+        add_submenu_page(
+            'wappointment',
+            'Jobs',
+            'Jobs',
+            'manage_options',
+            'wappointment-jobs',
+            [$this->controller, 'jobs']
+        );
+
+        add_submenu_page(
+            'wappointment',
+            'Clients',
+            'Clients',
+            'manage_options',
+            'wappointment-clients',
+            [$this->controller, 'clients']
+        );
     }
 }

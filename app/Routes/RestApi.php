@@ -40,6 +40,18 @@ class RestApi
             'callback' => [$this->controller, 'getPage3Data'],
             'permission_callback' => [$this, 'checkPermissions']
         ]);
+
+        register_rest_route($this->namespace, '/jobs', [
+            'methods' => 'GET',
+            'callback' => [$this->controller, 'getJobsData'],
+            'permission_callback' => [$this, 'checkPermissions']
+        ]);
+
+        register_rest_route($this->namespace, '/clients', [
+            'methods' => 'GET',
+            'callback' => [$this->controller, 'getClientsData'],
+            'permission_callback' => [$this, 'checkPermissions']
+        ]);
     }
 
     /**

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Page1 from './Page1';
 import Page2 from './Page2';
 import Page3 from './Page3';
+import Jobs from './Jobs';
+import Clients from './Clients';
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('wappointment');
@@ -51,6 +53,10 @@ const App = () => {
         return <Page2 />;
       case 'wappointment-page3':
         return <Page3 />;
+      case 'wappointment-jobs':
+        return <Jobs />;
+      case 'wappointment-clients':
+        return <Clients />;
       case 'wappointment':
       default:
         return <Page1 />;

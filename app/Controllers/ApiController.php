@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Wappointment\Controllers;
 
+use Wappointment\Models\Job;
+use Wappointment\Models\Client;
+
 /**
  * API controller handling JSON endpoints
  */
@@ -45,6 +48,38 @@ class ApiController
             'description' => 'This is the third admin page in our Wappointment plugin.',
             'timestamp' => time()
         ]);
+    }
+
+    /**
+     * Get jobs data
+     */
+    public function getJobsData(): void
+    {
+        $jobModel = new Job();
+        
+        // Get pagination parameters from request
+        $page = isset($_GET['page_num']) ? (int) $_GET['page_num'] : 1;
+        $perPage = isset($_GET['per_page']) ? (int) $_GET['per_page'] : 10;
+        
+        $result = $jobModel->paginate($page, $perPage);
+        
+        $this->sendJson($result);
+    }
+
+    /**
+     * Get clients data
+     */
+    public function getClientsData(): void
+    {
+        $clientModel = new Client();
+        
+        // Get pagination parameters from request
+        $page = isset($_GET['page_num']) ? (int) $_GET['page_num'] : 1;
+        $perPage = isset($_GET['per_page']) ? (int) $_GET['per_page'] : 10;
+        
+        $result = $clientModel->paginate($page, $perPage);
+        
+        $this->sendJson($result);
     }
 
     /**
