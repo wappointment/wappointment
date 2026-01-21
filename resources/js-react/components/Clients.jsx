@@ -1,115 +1,153 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import DataList from './DataList';
+import ClientDetailsModal from './ClientDetailsModal';
+import ClientFormModal from './ClientFormModal';
 import apiFetch from '../utils/apiFetch';
 
 function Clients() {
-    const [clients, setClients] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [pagination, setPagination] = useState({
-        page: 1,
-        perPage: 10,
-        total: 0,
-        totalPages: 0
-    });
+    const [selectedClient, setSelectedClient] = useState(null);
+    const [editingClient, setEditingClient] = useState(null);
+    const [isCreating, setIsCreating] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
 
-    useEffect(() => {
-        loadClients(pagination.page);
-    }, []);
+    const columns = [
+        { key: 'id', label: 'ID' },
+        { key: 'name', label: 'Name' },
+        { key: 'email', label: 'Email' },
+        { key: 'created_at', label: 'Created' },
+        { key: 'actions', label: 'Actions' },
+    ];
 
-    const loadClients = async (page) => {
-        setLoading(true);
-        setError(null);
+    const handleSave = async (formData) => {
+        if (editingClient) {
+            // Update existing client
+            await apiFetch(`/clients/${editingClient.id}`, {
+                method: 'PUT',
+                body: JSON.stringify(formData),
+            });
+        } else {
+            // Create new client
+            await apiFetch('/clients', {
+                method: 'POST',
+                body: JSON.stringify(formData),
+            });
+        }
+        
+        // Refresh the list
+        setRefreshKey(prev => prev + 1);
+    };
+
+    const handleDelete = async (client) => {
+        if (!confirm(`Are you sure you want to delete ${client.name || client.email}?`)) {
+            return;
+        }
 
         try {
-            const response = await apiFetch(`/clients?page_num=${page}&per_page=${pagination.perPage}`);
-            
-            // WordPress REST API wraps response in { success: true, data: {...} }
-            const responseData = response.data;
-            
-            setClients(responseData.data);
-            setPagination({
-                page: responseData.page,
-                perPage: responseData.per_page,
-                total: responseData.total,
-                totalPages: responseData.total_pages
+            await apiFetch(`/clients/${client.id}`, {
+                method: 'DELETE',
             });
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
+            
+            // Refresh the list
+            setRefreshKey(prev => prev + 1);
+        } catch (error) {
+            alert('Failed to delete client: ' + error.message);
         }
     };
 
-    const handlePageChange = (newPage) => {
-        loadClients(newPage);
-    };
-
-    if (loading) {
-        return <div className="wrap"><h1>Clients</h1><p>Loading...</p></div>;
-    }
-
-    if (error) {
-        return <div className="wrap"><h1>Clients</h1><p>Error: {error}</p></div>;
-    }
+    const renderRow = (client) => (
+        <>
+            <td>{client.id}</td>
+            <td>{client.name || 'N/A'}</td>
+            <td>{client.email || 'N/A'}</td>
+            <td>{client.created_at || 'N/A'}</td>
+            <td>
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        setEditingClient(client);
+                    }}
+                    style={{
+                        padding: '4px 8px',
+                        marginRight: '5px',
+                        border: '1px solid #0073aa',
+                        borderRadius: '4px',
+                        backgroundColor: 'white',
+                        color: '#0073aa',
+                        cursor: 'pointer',
+                        fontSize: '12px'
+                    }}
+                >
+                    Edit
+                </button>
+                <button
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        handleDelete(client);
+                    }}
+                    style={{
+                        padding: '4px 8px',
+                        border: '1px solid #dc3545',
+                        borderRadius: '4px',
+                        backgroundColor: 'white',
+                        color: '#dc3545',
+                        cursor: 'pointer',
+                        fontSize: '12px'
+                    }}
+                >
+                    Delete
+                </button>
+            </td>
+        </>
+    );
 
     return (
-        <div className="wrap">
-            <h1>Clients</h1>
+        <>
+            <div style={{ marginBottom: '20px' }}>
+                <button
+                    onClick={() => setIsCreating(true)}
+                    style={{
+                        padding: '8px 16px',
+                        border: 'none',
+                        borderRadius: '4px',
+                        backgroundColor: '#0073aa',
+                        color: 'white',
+                        cursor: 'pointer',
+                        fontSize: '14px'
+                    }}
+                >
+                    Create Client
+                </button>
+            </div>
             
-            <table className="wp-list-table widefat fixed striped">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Created</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {clients.length === 0 ? (
-                        <tr>
-                            <td colSpan="4">No clients found</td>
-                        </tr>
-                    ) : (
-                        clients.map(client => (
-                            <tr key={client.id}>
-                                <td>{client.id}</td>
-                                <td>{client.name || 'N/A'}</td>
-                                <td>{client.email || 'N/A'}</td>
-                                <td>{client.created_at || 'N/A'}</td>
-                            </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
-
-            {pagination.totalPages > 1 && (
-                <div className="tablenav">
-                    <div className="tablenav-pages">
-                        <span className="displaying-num">{pagination.total} items</span>
-                        {pagination.page > 1 && (
-                            <button 
-                                className="button" 
-                                onClick={() => handlePageChange(pagination.page - 1)}
-                            >
-                                Previous
-                            </button>
-                        )}
-                        <span className="paging-input">
-                            Page {pagination.page} of {pagination.totalPages}
-                        </span>
-                        {pagination.page < pagination.totalPages && (
-                            <button 
-                                className="button" 
-                                onClick={() => handlePageChange(pagination.page + 1)}
-                            >
-                                Next
-                            </button>
-                        )}
-                    </div>
-                </div>
+            <DataList
+                key={refreshKey}
+                endpoint="/clients"
+                title="Clients"
+                columns={columns}
+                renderRow={renderRow}
+                onRowClick={setSelectedClient}
+                searchPlaceholder="Search by name or email..."
+                emptyMessage="No clients found"
+            />
+            
+            {selectedClient && (
+                <ClientDetailsModal 
+                    client={selectedClient} 
+                    onClose={() => setSelectedClient(null)} 
+                />
             )}
-        </div>
+            
+            {(isCreating || editingClient) && (
+                <ClientFormModal
+                    client={editingClient}
+                    onClose={() => {
+                        setIsCreating(false);
+                        setEditingClient(null);
+                    }}
+                    onSave={handleSave}
+                />
+            )}
+        </>
     );
 }
 

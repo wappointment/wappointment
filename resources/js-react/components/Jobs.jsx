@@ -1,101 +1,48 @@
-import React, { useEffect, useState } from 'react';
-import apiFetch from '../utils/apiFetch';
+import React, { useState } from 'react';
+import DataList from './DataList';
+import JobDetailsModal from './JobDetailsModal';
 
 const Jobs = () => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedJob, setSelectedJob] = useState(null);
 
-  const loadJobs = (page = 1) => {
-    setLoading(true);
-    apiFetch(`/jobs?page_num=${page}&per_page=10`)
-      .then(response => {
-        setData(response.data);
-        setCurrentPage(page);
-        setLoading(false);
-      })
-      .catch(err => {
-        setError(err.message);
-        setLoading(false);
-      });
-  };
+  const columns = [
+    { key: 'id', label: 'ID' },
+    { key: 'queue', label: 'Queue' },
+    { key: 'appointment_id', label: 'Appointment ID' },
+    { key: 'attempts', label: 'Attempts' },
+    { key: 'available_at', label: 'Available At' },
+    { key: 'created_at', label: 'Created At' },
+  ];
 
-  useEffect(() => {
-    loadJobs(1);
-  }, []);
-
-  if (loading) return <div className="loading">Loading jobs...</div>;
-  if (error) return <div className="error">Error: {error}</div>;
-  if (!data) return null;
-
-  const { data: jobs, total, page, total_pages } = data;
+  const renderRow = (job) => (
+    <>
+      <td>{job.id}</td>
+      <td>{job.queue || 'N/A'}</td>
+      <td>{job.appointment_id || 'N/A'}</td>
+      <td>{job.attempts}</td>
+      <td>{job.available_at ? new Date(job.available_at * 1000).toLocaleString() : 'N/A'}</td>
+      <td>{job.created_at ? new Date(job.created_at * 1000).toLocaleString() : 'N/A'}</td>
+    </>
+  );
 
   return (
-    <div className="wappointment-page">
-      <h1>Jobs</h1>
-      <p>Total jobs: {total}</p>
+    <>
+      <DataList
+        endpoint="/jobs"
+        title="Jobs"
+        columns={columns}
+        renderRow={renderRow}
+        onRowClick={setSelectedJob}
+        emptyMessage="No jobs found in the database."
+      />
       
-      {jobs.length === 0 ? (
-        <div className="notice notice-info">
-          <p>No jobs found in the database.</p>
-        </div>
-      ) : (
-        <>
-          <table className="wp-list-table widefat fixed striped">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Subject</th>
-                <th>Created</th>
-              </tr>
-            </thead>
-            <tbody>
-              {jobs.map((job) => (
-                <tr key={job.id}>
-                  <td>{job.id}</td>
-                  <td>{job.type || 'N/A'}</td>
-                  <td>{job.status || 'N/A'}</td>
-                  <td>{job.subject || 'N/A'}</td>
-                  <td>{job.created_at || 'N/A'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-
-          {total_pages > 1 && (
-            <div className="tablenav">
-              <div className="tablenav-pages">
-                <span className="displaying-num">{total} items</span>
-                <span className="pagination-links">
-                  {page > 1 && (
-                    <button 
-                      className="button"
-                      onClick={() => loadJobs(page - 1)}
-                    >
-                      Previous
-                    </button>
-                  )}
-                  <span className="paging-input">
-                    Page {page} of {total_pages}
-                  </span>
-                  {page < total_pages && (
-                    <button 
-                      className="button"
-                      onClick={() => loadJobs(page + 1)}
-                    >
-                      Next
-                    </button>
-                  )}
-                </span>
-              </div>
-            </div>
-          )}
-        </>
+      {selectedJob && (
+        <JobDetailsModal 
+          job={selectedJob} 
+          onClose={() => setSelectedJob(null)} 
+        />
       )}
-    </div>
+    </>
   );
 };
 

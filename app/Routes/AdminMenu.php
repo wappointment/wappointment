@@ -27,42 +27,14 @@ class AdminMenu
             'Wappointment',           // Page title
             'Wappointment',           // Menu title
             'manage_options',         // Capability
-            'wappointment',           // Menu slug
-            [$this->controller, 'page1'], // Callback
+            'wappointment-jobs',      // Menu slug
+            [$this->controller, 'jobs'], // Callback
             'dashicons-calendar-alt', // Icon
             20                        // Position
         );
 
-        // Add submenu pages
         add_submenu_page(
-            'wappointment',           // Parent slug
-            'Page 1',                 // Page title
-            'Page 1',                 // Menu title
-            'manage_options',         // Capability
-            'wappointment',           // Menu slug (same as parent for first item)
-            [$this->controller, 'page1'] // Callback
-        );
-
-        add_submenu_page(
-            'wappointment',
-            'Page 2',
-            'Page 2',
-            'manage_options',
-            'wappointment-page2',
-            [$this->controller, 'page2']
-        );
-
-        add_submenu_page(
-            'wappointment',
-            'Page 3',
-            'Page 3',
-            'manage_options',
-            'wappointment-page3',
-            [$this->controller, 'page3']
-        );
-
-        add_submenu_page(
-            'wappointment',
+            'wappointment-jobs',
             'Jobs',
             'Jobs',
             'manage_options',
@@ -71,7 +43,7 @@ class AdminMenu
         );
 
         add_submenu_page(
-            'wappointment',
+            'wappointment-jobs',
             'Clients',
             'Clients',
             'manage_options',

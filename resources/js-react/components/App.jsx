@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import Page1 from './Page1';
-import Page2 from './Page2';
-import Page3 from './Page3';
 import Jobs from './Jobs';
 import Clients from './Clients';
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('wappointment');
+  const [currentPage, setCurrentPage] = useState('wappointment-jobs');
 
   useEffect(() => {
     // Get initial page from localized data
@@ -36,7 +33,7 @@ const App = () => {
     // Handle browser back/forward buttons
     const handlePopState = () => {
       const params = new URLSearchParams(window.location.search);
-      const page = params.get('page') || 'wappointment';
+      const page = params.get('page') || 'wappointment-jobs';
       setCurrentPage(page);
     };
     window.addEventListener('popstate', handlePopState);
@@ -49,17 +46,11 @@ const App = () => {
 
   const renderPage = () => {
     switch (currentPage) {
-      case 'wappointment-page2':
-        return <Page2 />;
-      case 'wappointment-page3':
-        return <Page3 />;
-      case 'wappointment-jobs':
-        return <Jobs />;
       case 'wappointment-clients':
         return <Clients />;
-      case 'wappointment':
+      case 'wappointment-jobs':
       default:
-        return <Page1 />;
+        return <Jobs />;
     }
   };
 

@@ -3,6 +3,9 @@ declare(strict_types=1);
 
 namespace Wappointment\Models;
 
+use Wappointment\Database\WpDbConnector;
+use Wappointment\System\Container;
+
 /**
  * Base Model - Abstract class for all models
  */
@@ -10,11 +13,12 @@ abstract class BaseModel
 {
     protected string $table;
     protected string $tableName;
+    protected array $columns = [];
 
-    public function __construct()
-    {
-        global $wpdb;
-        $this->table = $wpdb->prefix . $this->tableName;
+    public function __construct(
+        protected WpDbConnector $db
+    ) {
+        $this->table = $this->db->getPrefix() . $this->tableName;
     }
 
     /**
@@ -22,14 +26,7 @@ abstract class BaseModel
      */
     public function all(): array
     {
-        global $wpdb;
-        
-        $results = $wpdb->get_results(
-            "SELECT * FROM {$this->table} ORDER BY id DESC",
-            ARRAY_A
-        );
-
-        return $results ?? [];
+        return $this->db->select($this->table);
     }
 
     /**
@@ -37,42 +34,75 @@ abstract class BaseModel
      */
     public function find(int $id): ?array
     {
-        global $wpdb;
-        
-        $result = $wpdb->get_row(
-            $wpdb->prepare("SELECT * FROM {$this->table} WHERE id = %d", $id),
-            ARRAY_A
-        );
-
-        return $result ?: null;
+        return $this->db->find($this->table, $id);
     }
 
     /**
      * Get records with pagination
      */
-    public function paginate(int $page = 1, int $perPage = 10): array
+    public function paginate(int $page = 1, int $perPage = 10, array $where = []): array
     {
-        global $wpdb;
+        return $this->db->paginate($this->table, $page, $perPage, 'id DESC', $where);
+    }
+    
+    /**
+     * Get searchable columns for this model
+     */
+    protected function getSearchableColumns(): array
+    {
+        return [];
+    }
+    
+    /**
+     * Search records with pagination
+     */
+    public function search(string $term, int $page = 1, int $perPage = 10): array
+    {
+        $searchableColumns = $this->getSearchableColumns();
         
-        $offset = ($page - 1) * $perPage;
+        if (empty($searchableColumns)) {
+            return $this->paginate($page, $perPage);
+        }
         
-        $results = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT * FROM {$this->table} ORDER BY id DESC LIMIT %d OFFSET %d",
-                $perPage,
-                $offset
-            ),
-            ARRAY_A
-        );
-
-        $total = $wpdb->get_var("SELECT COUNT(*) FROM {$this->table}");
-
-        return [
-            'data' => $results ?? [],
-            'total' => (int) $total,
-            'page' => $page,
-            'per_page' => $perPage,
-            'total_pages' => ceil($total / $perPage)
+        $conditions = [];
+        $values = [];
+        
+        foreach ($searchableColumns as $column) {
+            $conditions[] = "{$column} LIKE %s";
+            $values[] = '%' . $this->db->escapeWildcards($term) . '%';
+        }
+        
+        $where = [
+            [
+                'clause' => '(' . implode(' OR ', $conditions) . ')',
+                'values' => $values
+            ]
         ];
+        
+        return $this->paginate($page, $perPage, $where);
+    }
+    
+    /**
+     * Create a new record
+     */
+    public function create(array $data): int
+    {
+        return $this->db->insert($this->table, $data);
+    }
+    
+    /**
+     * Update a record by ID
+     */
+    public function update(int $id, array $data): int
+    {
+        return $this->db->update($this->table, $data, ['id' => $id]);
+    }
+    
+    /**
+     * Delete a record by ID
+     */
+    public function delete(int $id): int
+    {
+        return $this->db->delete($this->table, ['id' => $id]);
     }
 }

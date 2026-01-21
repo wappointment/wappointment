@@ -3,6 +3,8 @@ declare(strict_types=1);
 
 namespace Wappointment\Routes;
 
+use Wappointment\System\Container;
+
 /**
  * REST API routes configuration
  */
@@ -13,54 +15,59 @@ class RestApi
 
     public function __construct()
     {
-        // Auto-discover route classes
-        $this->discoverRoutes();
+        // Load routes from configuration file
+        $this->loadRoutes();
         
         // Add filter to handle cache headers
         add_filter('rest_post_dispatch', [$this, 'setCacheHeaders'], 10, 3);
     }
 
     /**
-     * Discover all route classes in Api directory
+     * Load routes from configuration file
      */
-    private function discoverRoutes(): void
+    private function loadRoutes(): void
     {
-        $routesDir = __DIR__ . '/Api';
+        $routesConfig = require __DIR__ . '/api.php';
         
-        if (!is_dir($routesDir)) {
-            return;
-        }
-
-        $files = glob($routesDir . '/*Route.php');
-        
-        foreach ($files as $file) {
-            $className = basename($file, '.php');
-            
-            // Skip BaseRoute as it's abstract
-            if ($className === 'BaseRoute') {
-                continue;
-            }
-            
-            $fullClassName = "Wappointment\\Routes\\Api\\{$className}";
-            
-            if (class_exists($fullClassName)) {
-                $reflection = new \ReflectionClass($fullClassName);
-                
-                // Only instantiate concrete classes
-                if (!$reflection->isAbstract()) {
-                    $this->routes[] = new $fullClassName();
+        foreach ($routesConfig as $route) {
+            $this->routes[] = [
+                'method' => $route['method'] ?? 'GET',
+                'path' => $route['path'],
+                'controller' => $route['controller'],
+                'cacheable' => $route['cacheable'] ?? true,
+                'permission_callback' => $route['permission_callback'] ?? function() {
+                    return current_user_can('manage_options');
                 }
-            }
+            ];
         }
     }
 
     /**
-     * Register all discovered REST API routes
+     * Register all REST API routes
      */
     public function register(): void
     {
         foreach ($this->routes as $route) {
-            $route->register();
+            register_rest_route(
+                $this->namespace,
+                $route['path'],
+                [
+                    'methods' => $route['method'],
+                    'callback' => function(\WP_REST_Request $request) use ($route) {
+                        // Handle Class@method syntax
+                        $controllerClass = $route['controller'];
+                        $method = '__invoke';
+                        
+                        if (strpos($controllerClass, '@') !== false) {
+                            [$controllerClass, $method] = explode('@', $controllerClass);
+                        }
+                        
+                        $controller = Container::getInstance()->make($controllerClass);
+                        return $controller->$method($request);
+                    },
+                    'permission_callback' => $route['permission_callback']
+                ]
+            );
         }
     }
 
@@ -76,33 +83,18 @@ class RestApi
             return $response;
         }
 
-        // Get route handler
-        $routes = $server->get_routes();
-        $route_config = $routes[$route] ?? null;
+        // Find matching route configuration
+        $routePath = str_replace('/' . $this->namespace, '', $route);
         
-        if (!$route_config) {
-            return $response;
-        }
-
-        // Check cacheable flag from route args
-        $cacheable = false;
-        foreach ($route_config as $handler) {
-            if (isset($handler['args']['cacheable'])) {
-                $cacheable = $handler['args']['cacheable'];
+        foreach ($this->routes as $routeConfig) {
+            if ($routeConfig['path'] === $routePath) {
+                if ($routeConfig['cacheable']) {
+                    $response->header('Cache-Control', 'public, max-age=3600');
+                } else {
+                    $response->header('Cache-Control', 'no-cache, must-revalidate, max-age=0');
+                }
                 break;
             }
-        }
-
-        // Set appropriate cache headers
-        if ($cacheable) {
-            // Cacheable: 1 hour
-            $response->header('Cache-Control', 'public, max-age=3600');
-            $response->header('Expires', gmdate('D, d M Y H:i:s', time() + 3600) . ' GMT');
-        } else {
-            // Not cacheable
-            $response->header('Cache-Control', 'no-cache, no-store, must-revalidate');
-            $response->header('Pragma', 'no-cache');
-            $response->header('Expires', '0');
         }
 
         return $response;

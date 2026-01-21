@@ -5,6 +5,7 @@ namespace Wappointment\System;
 
 use Wappointment\Routes\AdminMenu;
 use Wappointment\Routes\RestApi;
+use Wappointment\Database\WpDbConnector;
 
 /**
  * Main plugin initialization class
@@ -13,7 +14,21 @@ class Init
 {
     public function __construct()
     {
+        $this->bootContainer();
         $this->registerHooks();
+    }
+
+    /**
+     * Bootstrap dependency injection container
+     */
+    private function bootContainer(): void
+    {
+        $container = Container::getInstance();
+        
+        // Register WpDbConnector as singleton
+        $container->singleton(WpDbConnector::class, function() {
+            return new WpDbConnector();
+        });
     }
 
     /**

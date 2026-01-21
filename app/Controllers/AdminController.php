@@ -26,35 +26,11 @@ class AdminController extends BaseController
         wp_localize_script('wappointment-react-app', 'wappointmentData', [
             'apiUrl' => rest_url('wappointment/v1'),
             'nonce' => wp_create_nonce('wp_rest'),
-            'currentPage' => $_GET['page'] ?? 'wappointment'
+            'currentPage' => $_GET['page'] ?? 'wappointment-jobs'
         ]);
 
         // Render the root view
         $this->render('admin/app');
-    }
-
-    /**
-     * Page 1 - alias for renderApp
-     */
-    public function page1(): void
-    {
-        $this->renderApp();
-    }
-
-    /**
-     * Page 2 - alias for renderApp
-     */
-    public function page2(): void
-    {
-        $this->renderApp();
-    }
-
-    /**
-     * Page 3 - alias for renderApp
-     */
-    public function page3(): void
-    {
-        $this->renderApp();
     }
 
     public function jobs(): void

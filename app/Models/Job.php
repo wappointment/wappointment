@@ -9,4 +9,15 @@ namespace Wappointment\Models;
 class Job extends BaseModel
 {
     protected string $tableName = 'wappo_jobs';
+    
+    protected array $columns = [
+        'id' => 'int',
+        'queue' => 'string',
+        'payload' => 'json',
+        'appointment_id' => 'int',
+        'attempts' => 'int',
+        'reserved_at' => 'int',
+        'available_at' => 'int',
+        'created_at' => 'int',
+    ];
 }
