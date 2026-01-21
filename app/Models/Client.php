@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Wappointment\Models;
 
 /**
- * Client Model - Handles wp_wappo_clients table
+ * Client Model - Defines wp_wappo_clients table schema
  */
 class Client extends BaseModel
 {
@@ -19,9 +19,4 @@ class Client extends BaseModel
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
-    
-    protected function getSearchableColumns(): array
-    {
-        return ['name', 'email'];
-    }
 }

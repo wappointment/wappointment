@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import DataList from './DataList';
 import ClientDetailsModal from './ClientDetailsModal';
 import ClientFormModal from './ClientFormModal';
+import Notification from './Notification';
 import apiFetch from '../utils/apiFetch';
 
 function Clients() {
@@ -9,6 +10,11 @@ function Clients() {
     const [editingClient, setEditingClient] = useState(null);
     const [isCreating, setIsCreating] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [notification, setNotification] = useState(null);
+
+    const showNotification = (message, type = 'success') => {
+        setNotification({ message, type });
+    };
 
     const columns = [
         { key: 'id', label: 'ID' },
@@ -19,18 +25,22 @@ function Clients() {
     ];
 
     const handleSave = async (formData) => {
-        if (editingClient) {
+        const isUpdate = !!editingClient;
+        
+        if (isUpdate) {
             // Update existing client
             await apiFetch(`/clients/${editingClient.id}`, {
                 method: 'PUT',
                 body: JSON.stringify(formData),
             });
+            showNotification('Client updated successfully');
         } else {
             // Create new client
             await apiFetch('/clients', {
                 method: 'POST',
                 body: JSON.stringify(formData),
             });
+            showNotification('Client created successfully');
         }
         
         // Refresh the list
@@ -47,10 +57,12 @@ function Clients() {
                 method: 'DELETE',
             });
             
+            showNotification('Client deleted successfully');
+            
             // Refresh the list
             setRefreshKey(prev => prev + 1);
         } catch (error) {
-            alert('Failed to delete client: ' + error.message);
+            showNotification('Failed to delete client: ' + error.message, 'error');
         }
     };
 
@@ -145,6 +157,14 @@ function Clients() {
                         setEditingClient(null);
                     }}
                     onSave={handleSave}
+                />
+            )}
+            
+            {notification && (
+                <Notification
+                    message={notification.message}
+                    type={notification.type}
+                    onClose={() => setNotification(null)}
                 />
             )}
         </>

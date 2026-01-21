@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Wappointment\Controllers\Api;
 
-use Wappointment\Models\Client;
+use Wappointment\Repositories\ClientRepository;
 
 class ClientsController extends BaseApiController
 {
     public function __construct(
-        private Client $model
+        private ClientRepository $repository
     ) {}
 
     public function __invoke(\WP_REST_Request $request): void
@@ -18,9 +18,9 @@ class ClientsController extends BaseApiController
         $search = isset($_GET['search']) ? sanitize_text_field($_GET['search']) : '';
         
         if (!empty($search)) {
-            $result = $this->model->search($search, $page, $perPage);
+            $result = $this->repository->search($search, $page, $perPage);
         } else {
-            $result = $this->model->paginate($page, $perPage);
+            $result = $this->repository->paginate($page, $perPage);
         }
         
         $this->sendJson($result);
@@ -43,10 +43,10 @@ class ClientsController extends BaseApiController
             'updated_at' => current_time('mysql'),
         ];
         
-        $id = $this->model->create($clientData);
+        $id = $this->repository->create($clientData);
         
         if ($id) {
-            $client = $this->model->find($id);
+            $client = $this->repository->find($id);
             $this->sendJson(['success' => true, 'data' => $client], 201);
         } else {
             $this->sendJson(['error' => 'Failed to create client'], 500);
@@ -58,7 +58,7 @@ class ClientsController extends BaseApiController
         $id = (int) $request->get_param('id');
         $data = $request->get_json_params();
         
-        $client = $this->model->find($id);
+        $client = $this->repository->find($id);
         if (!$client) {
             $this->sendJson(['error' => 'Client not found'], 404);
             return;
@@ -80,10 +80,10 @@ class ClientsController extends BaseApiController
         
         $clientData['updated_at'] = current_time('mysql');
         
-        $updated = $this->model->update($id, $clientData);
+        $updated = $this->repository->update($id, $clientData);
         
         if ($updated !== false) {
-            $client = $this->model->find($id);
+            $client = $this->repository->find($id);
             $this->sendJson(['success' => true, 'data' => $client]);
         } else {
             $this->sendJson(['error' => 'Failed to update client'], 500);
@@ -94,13 +94,13 @@ class ClientsController extends BaseApiController
     {
         $id = (int) $request->get_param('id');
         
-        $client = $this->model->find($id);
+        $client = $this->repository->find($id);
         if (!$client) {
             $this->sendJson(['error' => 'Client not found'], 404);
             return;
         }
         
-        $deleted = $this->model->delete($id);
+        $deleted = $this->repository->delete($id);
         
         if ($deleted) {
             $this->sendJson(['success' => true, 'message' => 'Client deleted']);
