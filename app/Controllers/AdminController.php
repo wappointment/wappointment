@@ -29,6 +29,9 @@ class AdminController extends BaseController
             'currentPage' => $_GET['page'] ?? 'wappointment-jobs'
         ]);
 
+        // Hook to allow addons to enqueue their own scripts/overrides
+        do_action('wappointment_admin_enqueue_scripts', $_GET['page'] ?? 'wappointment-jobs');
+
         // Render the root view
         $this->render('admin/app');
     }
@@ -39,6 +42,11 @@ class AdminController extends BaseController
     }
 
     public function clients(): void
+    {
+        $this->renderApp();
+    }
+
+    public function settings(): void
     {
         $this->renderApp();
     }

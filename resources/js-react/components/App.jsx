@@ -1,6 +1,24 @@
 import React, { useEffect, useState } from 'react';
 import Jobs from './Jobs';
 import Clients from './Clients';
+import Settings from './Settings';
+
+// Component registry for addon overrides
+const componentRegistry = {
+  'wappointment-jobs': Jobs,
+  'wappointment-clients': Clients,
+  'wappointment-settings': Settings,
+};
+
+// Hook to allow addons to register component overrides
+window.wappointmentRegisterComponent = (pageSlug, component) => {
+  componentRegistry[pageSlug] = component;
+};
+
+// Hook to get the registered component
+window.wappointmentGetComponent = (pageSlug) => {
+  return componentRegistry[pageSlug];
+};
 
 const App = () => {
   const [currentPage, setCurrentPage] = useState('wappointment-jobs');
@@ -45,13 +63,15 @@ const App = () => {
   }, []);
 
   const renderPage = () => {
-    switch (currentPage) {
-      case 'wappointment-clients':
-        return <Clients />;
-      case 'wappointment-jobs':
-      default:
-        return <Jobs />;
+    // Get component from registry (allows addon overrides)
+    const Component = componentRegistry[currentPage];
+    
+    if (Component) {
+      return <Component />;
     }
+    
+    // Default fallback
+    return <Jobs />;
   };
 
   return (

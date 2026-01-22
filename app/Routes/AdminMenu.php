@@ -50,5 +50,14 @@ class AdminMenu
             'wappointment-clients',
             [$this->controller, 'clients']
         );
+
+        add_submenu_page(
+            'wappointment-jobs',
+            'Settings',
+            'Settings',
+            'manage_options',
+            'wappointment-settings',
+            [$this->controller, 'settings']
+        );
     }
 }
