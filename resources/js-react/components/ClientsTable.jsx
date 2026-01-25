@@ -1,6 +1,7 @@
 import React from 'react';
 import DataList from './DataList';
 import ClientActions from './ClientActions';
+import { buildRoute } from '../config/routes';
 
 function ClientsTable({ refreshKey, onClientClick, onEdit, onDelete }) {
     const columns = [
@@ -27,10 +28,12 @@ function ClientsTable({ refreshKey, onClientClick, onEdit, onDelete }) {
         </>
     );
 
+    const { path } = buildRoute('clients.list');
+
     return (
         <DataList
             key={refreshKey}
-            endpoint="/clients"
+            endpoint={path}
             title="Clients"
             columns={columns}
             renderRow={renderRow}

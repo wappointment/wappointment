@@ -3,11 +3,12 @@
   "version": "3.0.0",
   "description": "Wappointment React Admin Interface",
   "scripts": {
-    "build": "webpack --mode production --config=webpack.config.react.js && webpack --mode production --config=webpack.config.widget.js",
-    "build:admin": "webpack --mode production --config=webpack.config.react.js",
+    "build": "npm run routes && webpack --mode production --config=webpack.config.react.js && webpack --mode production --config=webpack.config.widget.js",
+    "build:admin": "npm run routes && webpack --mode production --config=webpack.config.react.js",
     "build:widget": "webpack --mode production --config=webpack.config.widget.js",
-    "dev": "webpack --mode development --watch --config=webpack.config.react.js",
-    "dev:widget": "webpack --mode development --watch --config=webpack.config.widget.js"
+    "dev": "npm run routes && webpack --mode development --watch --config=webpack.config.react.js",
+    "dev:widget": "webpack --mode development --watch --config=webpack.config.widget.js",
+    "routes": "php bin/generate-routes.php"
   },
   "dependencies": {
     "react": "^18.2.0",
