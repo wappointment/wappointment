@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace Wappointment\Controllers\Api;
 
+use Wappointment\Http\JsonResponse;
 use Wappointment\Repositories\JobRepository;
 
-class JobsController extends BaseApiController
+class JobsController
 {
     public function __construct(
         private JobRepository $repository
@@ -18,6 +19,6 @@ class JobsController extends BaseApiController
         
         $result = $this->repository->paginate($page, $perPage);
         
-        $this->sendJson($result);
+        JsonResponse::send($result);
     }
 }

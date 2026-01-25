@@ -72,6 +72,9 @@ spl_autoload_register(function ($class) {
     }
 });
 
+// Load helper functions
+require_once WAPPOINTMENT_PATH . 'app/helpers.php';
+
 // Initialize plugin
 add_action('plugins_loaded', function () {
     new \Wappointment\System\Init();

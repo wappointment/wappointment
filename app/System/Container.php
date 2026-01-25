@@ -34,16 +34,16 @@ class Container
         });
     }
 
-    public function make(string $abstract): mixed
+    public function make(string $abstract, array $parameters = []): mixed
     {
         if (isset($this->bindings[$abstract])) {
             return $this->bindings[$abstract]();
         }
 
-        return $this->resolve($abstract);
+        return $this->resolve($abstract, $parameters);
     }
 
-    private function resolve(string $class): mixed
+    private function resolve(string $class, array $parameters = []): mixed
     {
         $reflector = new \ReflectionClass($class);
 
@@ -57,20 +57,27 @@ class Container
             return new $class;
         }
 
-        $parameters = $constructor->getParameters();
+        $constructorParams = $constructor->getParameters();
         $dependencies = [];
 
-        foreach ($parameters as $parameter) {
+        foreach ($constructorParams as $parameter) {
             $type = $parameter->getType();
 
             if (!$type || $type->isBuiltin()) {
-                if ($parameter->isDefaultValueAvailable()) {
+                if (isset($parameters[$parameter->getName()])) {
+                    $dependencies[] = $parameters[$parameter->getName()];
+                } elseif ($parameter->isDefaultValueAvailable()) {
                     $dependencies[] = $parameter->getDefaultValue();
                 } else {
                     throw new \Exception("Cannot resolve {$parameter->getName()}");
                 }
             } else {
-                $dependencies[] = $this->make($type->getName());
+                $typeName = $type->getName();
+                if (isset($parameters[$typeName])) {
+                    $dependencies[] = $parameters[$typeName];
+                } else {
+                    $dependencies[] = $this->make($typeName, $parameters);
+                }
             }
         }
 

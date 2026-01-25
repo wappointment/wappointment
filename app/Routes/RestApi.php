@@ -54,16 +54,37 @@ class RestApi
                 [
                     'methods' => $route['method'],
                     'callback' => function(\WP_REST_Request $request) use ($route) {
-                        // Handle Class@method syntax
-                        $controllerClass = $route['controller'];
-                        $method = '__invoke';
+                        $container = Container::getInstance();
+                        $controller = $container->make($route['controller']);
                         
-                        if (strpos($controllerClass, '@') !== false) {
-                            [$controllerClass, $method] = explode('@', $controllerClass);
+                        // Get method parameters
+                        $reflection = new \ReflectionMethod($controller, '__invoke');
+                        $params = $reflection->getParameters();
+                        
+                        $args = [];
+                        foreach ($params as $param) {
+                            $type = $param->getType();
+                            if ($type && !$type->isBuiltin()) {
+                                $className = $type->getName();
+                                
+                                try {
+                                    // Check if class has a static 'fromWpRequest' method
+                                    if (method_exists($className, 'fromWpRequest')) {
+                                        $args[] = $className::fromWpRequest($request);
+                                    } elseif (method_exists($className, 'from')) {
+                                        $args[] = $className::from($request);
+                                    } else {
+                                        // Resolve from container with request parameter
+                                        $args[] = $container->make($className, ['request' => $request]);
+                                    }
+                                } catch (\InvalidArgumentException $e) {
+                                    // Return validation error response
+                                    return new \WP_REST_Response(['error' => $e->getMessage()], 400);
+                                }
+                            }
                         }
                         
-                        $controller = Container::getInstance()->make($controllerClass);
-                        return $controller->$method($request);
+                        return $controller(...$args);
                     },
                     'permission_callback' => $route['permission_callback']
                 ]

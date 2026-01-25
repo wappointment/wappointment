@@ -2,8 +2,13 @@
 declare(strict_types=1);
 
 use Wappointment\Controllers\Api\JobsController;
-use Wappointment\Controllers\Api\ClientsController;
-use Wappointment\Controllers\Api\SettingsController;
+use Wappointment\Controllers\Api\Clients\ListClientsController;
+use Wappointment\Controllers\Api\Clients\CreateClientController;
+use Wappointment\Controllers\Api\Clients\UpdateClientController;
+use Wappointment\Controllers\Api\Clients\DeleteClientController;
+use Wappointment\Controllers\Api\Settings\GetSettingsController;
+use Wappointment\Controllers\Api\Settings\SaveSettingsController;
+use Wappointment\Controllers\Api\Settings\GetSettingController;
 
 return [
     [
@@ -15,43 +20,43 @@ return [
     [
         'method' => 'GET',
         'path' => '/clients',
-        'controller' => ClientsController::class,
+        'controller' => ListClientsController::class,
         'cacheable' => false,
     ],
     [
         'method' => 'POST',
         'path' => '/clients',
-        'controller' => ClientsController::class . '@create',
+        'controller' => CreateClientController::class,
         'cacheable' => false,
     ],
     [
-        'method' => 'PUT',
+        'method' => 'POST',
         'path' => '/clients/(?P<id>\d+)',
-        'controller' => ClientsController::class . '@update',
+        'controller' => UpdateClientController::class,
         'cacheable' => false,
     ],
     [
-        'method' => 'DELETE',
-        'path' => '/clients/(?P<id>\d+)',
-        'controller' => ClientsController::class . '@delete',
+        'method' => 'POST',
+        'path' => '/clients/delete/(?P<id>\d+)',
+        'controller' => DeleteClientController::class,
         'cacheable' => false,
     ],
     [
         'method' => 'GET',
         'path' => '/settings',
-        'controller' => SettingsController::class,
+        'controller' => GetSettingsController::class,
         'cacheable' => false,
     ],
     [
         'method' => 'POST',
         'path' => '/settings',
-        'controller' => SettingsController::class . '@save',
+        'controller' => SaveSettingsController::class,
         'cacheable' => false,
     ],
     [
         'method' => 'GET',
         'path' => '/settings/(?P<name>[a-zA-Z0-9_-]+)',
-        'controller' => SettingsController::class . '@getSetting',
+        'controller' => GetSettingController::class,
         'cacheable' => false,
     ],
 ];

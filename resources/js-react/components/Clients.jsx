@@ -1,50 +1,31 @@
 import React, { useState } from 'react';
-import DataList from './DataList';
+import ClientsTable from './ClientsTable';
 import ClientDetailsModal from './ClientDetailsModal';
 import ClientFormModal from './ClientFormModal';
 import Notification from './Notification';
-import apiFetch from '../utils/apiFetch';
+import { useClients } from '../hooks/useClients';
+import { useNotification } from '../hooks/useNotification';
 
 function Clients() {
     const [selectedClient, setSelectedClient] = useState(null);
     const [editingClient, setEditingClient] = useState(null);
     const [isCreating, setIsCreating] = useState(false);
-    const [refreshKey, setRefreshKey] = useState(0);
-    const [notification, setNotification] = useState(null);
 
-    const showNotification = (message, type = 'success') => {
-        setNotification({ message, type });
-    };
-
-    const columns = [
-        { key: 'id', label: 'ID' },
-        { key: 'name', label: 'Name' },
-        { key: 'email', label: 'Email' },
-        { key: 'created_at', label: 'Created' },
-        { key: 'actions', label: 'Actions' },
-    ];
+    const { refreshKey, createClient, updateClient, deleteClient } = useClients();
+    const { notification, showNotification, hideNotification } = useNotification();
 
     const handleSave = async (formData) => {
-        const isUpdate = !!editingClient;
-        
-        if (isUpdate) {
-            // Update existing client
-            await apiFetch(`/clients/${editingClient.id}`, {
-                method: 'PUT',
-                body: JSON.stringify(formData),
-            });
-            showNotification('Client updated successfully');
-        } else {
-            // Create new client
-            await apiFetch('/clients', {
-                method: 'POST',
-                body: JSON.stringify(formData),
-            });
-            showNotification('Client created successfully');
+        try {
+            if (editingClient) {
+                await updateClient(editingClient.id, formData);
+                showNotification('Client updated successfully');
+            } else {
+                await createClient(formData);
+                showNotification('Client created successfully');
+            }
+        } catch (error) {
+            showNotification('Operation failed: ' + error.message, 'error');
         }
-        
-        // Refresh the list
-        setRefreshKey(prev => prev + 1);
     };
 
     const handleDelete = async (client) => {
@@ -53,64 +34,17 @@ function Clients() {
         }
 
         try {
-            await apiFetch(`/clients/${client.id}`, {
-                method: 'DELETE',
-            });
-            
+            await deleteClient(client.id);
             showNotification('Client deleted successfully');
-            
-            // Refresh the list
-            setRefreshKey(prev => prev + 1);
         } catch (error) {
             showNotification('Failed to delete client: ' + error.message, 'error');
         }
     };
 
-    const renderRow = (client) => (
-        <>
-            <td>{client.id}</td>
-            <td>{client.name || 'N/A'}</td>
-            <td>{client.email || 'N/A'}</td>
-            <td>{client.created_at || 'N/A'}</td>
-            <td>
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setEditingClient(client);
-                    }}
-                    style={{
-                        padding: '4px 8px',
-                        marginRight: '5px',
-                        border: '1px solid #0073aa',
-                        borderRadius: '4px',
-                        backgroundColor: 'white',
-                        color: '#0073aa',
-                        cursor: 'pointer',
-                        fontSize: '12px'
-                    }}
-                >
-                    Edit
-                </button>
-                <button
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        handleDelete(client);
-                    }}
-                    style={{
-                        padding: '4px 8px',
-                        border: '1px solid #dc3545',
-                        borderRadius: '4px',
-                        backgroundColor: 'white',
-                        color: '#dc3545',
-                        cursor: 'pointer',
-                        fontSize: '12px'
-                    }}
-                >
-                    Delete
-                </button>
-            </td>
-        </>
-    );
+    const handleCloseModal = () => {
+        setIsCreating(false);
+        setEditingClient(null);
+    };
 
     return (
         <>
@@ -131,15 +65,11 @@ function Clients() {
                 </button>
             </div>
             
-            <DataList
-                key={refreshKey}
-                endpoint="/clients"
-                title="Clients"
-                columns={columns}
-                renderRow={renderRow}
-                onRowClick={setSelectedClient}
-                searchPlaceholder="Search by name or email..."
-                emptyMessage="No clients found"
+            <ClientsTable
+                refreshKey={refreshKey}
+                onClientClick={setSelectedClient}
+                onEdit={setEditingClient}
+                onDelete={handleDelete}
             />
             
             {selectedClient && (
@@ -152,10 +82,7 @@ function Clients() {
             {(isCreating || editingClient) && (
                 <ClientFormModal
                     client={editingClient}
-                    onClose={() => {
-                        setIsCreating(false);
-                        setEditingClient(null);
-                    }}
+                    onClose={handleCloseModal}
                     onSave={handleSave}
                 />
             )}
@@ -164,7 +91,7 @@ function Clients() {
                 <Notification
                     message={notification.message}
                     type={notification.type}
-                    onClose={() => setNotification(null)}
+                    onClose={hideNotification}
                 />
             )}
         </>
