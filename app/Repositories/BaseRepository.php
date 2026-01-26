@@ -35,33 +35,13 @@ abstract class BaseRepository
         return $this->db->paginate($this->table, $page, $perPage, 'id DESC', $where);
     }
 
-    protected function getSearchableColumns(): array
-    {
-        return [];
-    }
-
     public function search(string $term, int $page = 1, int $perPage = 10): array
     {
-        $searchableColumns = $this->getSearchableColumns();
+        $where = $this->model->buildSearchWhereClause($term, fn($str) => $this->db->escapeWildcards($str));
 
-        if (empty($searchableColumns)) {
+        if (empty($where)) {
             return $this->paginate($page, $perPage);
         }
-
-        $conditions = [];
-        $values = [];
-
-        foreach ($searchableColumns as $column) {
-            $conditions[] = "{$column} LIKE %s";
-            $values[] = '%' . $this->db->escapeWildcards($term) . '%';
-        }
-
-        $where = [
-            [
-                'clause' => '(' . implode(' OR ', $conditions) . ')',
-                'values' => $values
-            ]
-        ];
 
         return $this->paginate($page, $perPage, $where);
     }

@@ -17,9 +17,4 @@ class ClientRepository extends BaseRepository
     ) {
         parent::__construct($db, $model);
     }
-
-    protected function getSearchableColumns(): array
-    {
-        return ['name', 'email'];
-    }
 }

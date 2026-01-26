@@ -11,6 +11,7 @@ abstract class BaseModel
 {
     protected string $tableName;
     protected array $columns = [];
+    protected array $searchableColumns = [];
 
     /**
      * Get the table name
@@ -26,5 +27,38 @@ abstract class BaseModel
     public function getColumns(): array
     {
         return $this->columns;
+    }
+
+    /**
+     * Get the searchable columns
+     */
+    public function getSearchableColumns(): array
+    {
+        return $this->searchableColumns;
+    }
+
+    /**
+     * Build WHERE clause for search across searchable columns
+     */
+    public function buildSearchWhereClause(string $term, callable $escapeWildcards): array
+    {
+        if (empty($this->searchableColumns)) {
+            return [];
+        }
+
+        $conditions = [];
+        $values = [];
+
+        foreach ($this->searchableColumns as $column) {
+            $conditions[] = "{$column} LIKE %s";
+            $values[] = '%' . $escapeWildcards($term) . '%';
+        }
+
+        return [
+            [
+                'clause' => '(' . implode(' OR ', $conditions) . ')',
+                'values' => $values
+            ]
+        ];
     }
 }

@@ -65,27 +65,32 @@ abstract class Data
         foreach ($properties as $property) {
             $name = $property->getName();
             $value = $property->getValue($this);
-            
-            // Handle value objects with a value property
-            if (is_object($value) && property_exists($value, 'value')) {
-                $array[$name] = $value->value;
-            }
-            // Handle nested Data objects
-            elseif ($value instanceof self) {
-                $array[$name] = $value->toArray();
-            }
-            // Handle arrays of Data objects
-            elseif (is_array($value)) {
-                $array[$name] = array_map(
-                    fn($item) => $item instanceof self ? $item->toArray() : $item,
-                    $value
-                );
-            }
-            else {
-                $array[$name] = $value;
-            }
+            $array[$name] = $this->convertValueForArray($value);
         }
         
         return $array;
+    }
+
+    private function convertValueForArray(mixed $value): mixed
+    {
+        // Handle value objects with a value property
+        if (is_object($value) && property_exists($value, 'value')) {
+            return $value->value;
+        }
+        
+        // Handle nested Data objects
+        if ($value instanceof self) {
+            return $value->toArray();
+        }
+        
+        // Handle arrays of Data objects
+        if (is_array($value)) {
+            return array_map(
+                fn($item) => $item instanceof self ? $item->toArray() : $item,
+                $value
+            );
+        }
+        
+        return $value;
     }
 }

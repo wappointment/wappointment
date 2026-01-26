@@ -45,6 +45,11 @@ class Container
 
     private function resolve(string $class, array $parameters = []): mixed
     {
+        // Special case: resolve Container to its singleton instance
+        if ($class === self::class) {
+            return $this;
+        }
+
         $reflector = new \ReflectionClass($class);
 
         if (!$reflector->isInstantiable()) {
@@ -61,26 +66,38 @@ class Container
         $dependencies = [];
 
         foreach ($constructorParams as $parameter) {
-            $type = $parameter->getType();
-
-            if (!$type || $type->isBuiltin()) {
-                if (isset($parameters[$parameter->getName()])) {
-                    $dependencies[] = $parameters[$parameter->getName()];
-                } elseif ($parameter->isDefaultValueAvailable()) {
-                    $dependencies[] = $parameter->getDefaultValue();
-                } else {
-                    throw new \Exception("Cannot resolve {$parameter->getName()}");
-                }
-            } else {
-                $typeName = $type->getName();
-                if (isset($parameters[$typeName])) {
-                    $dependencies[] = $parameters[$typeName];
-                } else {
-                    $dependencies[] = $this->make($typeName, $parameters);
-                }
-            }
+            $dependencies[] = $this->resolveParameter($parameter, $parameters);
         }
 
         return $reflector->newInstanceArgs($dependencies);
+    }
+
+    private function resolveParameter(\ReflectionParameter $parameter, array $parameters): mixed
+    {
+        $type = $parameter->getType();
+
+        // Handle built-in types (string, int, etc.)
+        if (!$type || $type->isBuiltin()) {
+            return $this->resolveBuiltInParameter($parameter, $parameters);
+        }
+
+        // Handle class/interface types
+        $typeName = $type->getName();
+        return $parameters[$typeName] ?? $this->make($typeName, $parameters);
+    }
+
+    private function resolveBuiltInParameter(\ReflectionParameter $parameter, array $parameters): mixed
+    {
+        $paramName = $parameter->getName();
+
+        if (isset($parameters[$paramName])) {
+            return $parameters[$paramName];
+        }
+
+        if ($parameter->isDefaultValueAvailable()) {
+            return $parameter->getDefaultValue();
+        }
+
+        throw new \Exception("Cannot resolve parameter {$paramName}");
     }
 }

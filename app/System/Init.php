@@ -56,7 +56,8 @@ class Init
      */
     public function registerRestApi(): void
     {
-        $api = new RestApi();
+        $container = Container::getInstance();
+        $api = $container->make(RestApi::class);
         $api->register();
     }
 

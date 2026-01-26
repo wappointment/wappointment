@@ -19,4 +19,6 @@ class Client extends BaseModel
         'created_at' => 'datetime',
         'updated_at' => 'datetime'
     ];
+
+    protected array $searchableColumns = ['name', 'email'];
 }
