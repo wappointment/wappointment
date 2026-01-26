@@ -1,0 +1,17 @@
+FROM wordpress:6.4-php8.2-apache
+
+# Install WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
+
+# Install additional PHP extensions and tools
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Allow root to run WP-CLI
+RUN echo "alias wp='wp --allow-root'" >> /root/.bashrc
+
