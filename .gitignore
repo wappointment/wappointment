@@ -10,3 +10,10 @@
 !/bin/build.sh
 /test_availability.json
 /.phpunit.result.cache
+
+# Playwright
+/test-results
+/playwright-report
+/playwright/.cache
+*.png
+*.webm

@@ -13,6 +13,9 @@
     "test:start": "docker compose -f docker-compose.test.yml up -d && docker compose -f docker-compose.test.yml exec test-runner composer install && docker compose -f docker-compose.test.yml exec wordpress /var/www/html/wp-content/plugins/wappointment/tests/docker/setup-test-user.sh",
     "test:stop": "docker compose -f docker-compose.test.yml down -v",
     "test:api": "npm run test:stop && npm run test:start && docker compose -f docker-compose.test.yml exec test-runner vendor/bin/pest --group=api",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
     "test": "npm run test:api"
   },
   "dependencies": {
@@ -23,7 +26,14 @@
     "@babel/core": "^7.23.0",
     "@babel/preset-env": "^7.23.0",
     "@babel/preset-react": "^7.22.0",
+    "@playwright/test": "^1.40.0",
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
     "babel-loader": "^9.1.3",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "msw": "^2.0.11",
     "webpack": "^5.89.0",
     "webpack-cli": "^5.1.4"
   },
