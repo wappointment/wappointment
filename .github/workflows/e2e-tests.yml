@@ -1,13 +1,10 @@
-name: API Tests
+name: E2E Tests
 
 on:
-  push:
-    branches: [ main, feat/v3.0.0 ]
-  pull_request:
-    branches: [ main, feat/v3.0.0 ]
+  workflow_dispatch: # Manual trigger only
 
 jobs:
-  test:
+  e2e:
     runs-on: ubuntu-latest
     
     steps:
@@ -29,8 +26,19 @@ jobs:
       - name: Start test environment
         run: npm run test:start
       
-      - name: Run API tests
-        run: docker compose -f docker-compose.test.yml exec -T test-runner vendor/bin/pest --group=api
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      
+      - name: Run E2E tests
+        run: npm run test:e2e
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 30
       
       - name: Stop test environment
         if: always()
