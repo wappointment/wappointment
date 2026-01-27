@@ -1,0 +1,6 @@
+{
+    "status": 400,
+    "body": {
+        "error": "Email is required"
+    }
+}

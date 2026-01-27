@@ -160,3 +160,20 @@ expect()->extend('toBeApiError', function (int $expectedStatus = null) {
     }
     return $this;
 });
+
+/**
+ * Normalize response by removing dynamic fields like timestamps and IDs
+ */
+function normalizeResponse(array $response): array
+{
+    $normalized = $response;
+    
+    // Remove timestamps recursively
+    array_walk_recursive($normalized, function(&$value, $key) {
+        if (in_array($key, ['created_at', 'updated_at', 'id'])) {
+            $value = '[FILTERED]';
+        }
+    });
+    
+    return $normalized;
+}

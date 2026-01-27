@@ -1,0 +1,15 @@
+{
+    "status": 201,
+    "body": {
+        "success": true,
+        "data": {
+            "id": "[FILTERED]",
+            "email": "test-new-client@test.local",
+            "name": "Test Client",
+            "options": "{\"source\":\"test\"}",
+            "deleted_at": null,
+            "created_at": "[FILTERED]",
+            "updated_at": "[FILTERED]"
+        }
+    }
+}

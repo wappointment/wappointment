@@ -11,8 +11,8 @@
     "routes": "php bin/generate-routes.php",
     "test:build": "docker compose -f docker-compose.test.yml build",
     "test:start": "docker compose -f docker-compose.test.yml up -d && docker compose -f docker-compose.test.yml exec test-runner composer install && docker compose -f docker-compose.test.yml exec wordpress /var/www/html/wp-content/plugins/wappointment/tests/docker/setup-test-user.sh",
-    "test:stop": "docker compose -f docker-compose.test.yml down",
-    "test:api": "docker compose -f docker-compose.test.yml exec test-runner vendor/bin/pest --group=api",
+    "test:stop": "docker compose -f docker-compose.test.yml down -v",
+    "test:api": "npm run test:stop && npm run test:start && docker compose -f docker-compose.test.yml exec test-runner vendor/bin/pest --group=api",
     "test": "npm run test:api"
   },
   "dependencies": {
