@@ -2,6 +2,11 @@ name: E2E Tests
 
 on:
   workflow_dispatch: # Manual trigger only
+    inputs:
+      branch:
+        description: 'Branch to run tests on'
+        required: false
+        default: 'feat/v3.0.0'
 
 jobs:
   e2e:
