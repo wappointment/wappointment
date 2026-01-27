@@ -18,7 +18,7 @@ class CreateClientAction
         $id = $this->repository->create($payload);
 
         if (!$id) {
-            throw new \RuntimeException('Failed to create client');
+            throw new \RuntimeException('Failed to create clientt');
         }
 
         $client = $this->repository->find($id);
