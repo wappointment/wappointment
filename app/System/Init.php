@@ -29,6 +29,11 @@ class Init
         $container->singleton(WpDbConnector::class, function() {
             return new WpDbConnector();
         });
+        
+        // Register Settings as singleton
+        $container->singleton(Settings::class, function() {
+            return new Settings();
+        });
     }
 
     /**

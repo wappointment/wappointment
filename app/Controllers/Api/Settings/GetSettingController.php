@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace Wappointment\Controllers\Api\Settings;
 
 use Wappointment\Http\JsonResponse;
-use Wappointment\Repositories\SettingRepository;
+use Wappointment\System\Settings;
 
 class GetSettingController
 {
     public function __construct(
-        private SettingRepository $repository
+        private Settings $settings
     ) {}
 
     public function __invoke(\WP_REST_Request $request): void
@@ -21,7 +21,7 @@ class GetSettingController
             return;
         }
         
-        $value = $this->repository->get($name);
+        $value = $this->settings->get($name);
         
         JsonResponse::send(['name' => $name, 'value' => $value]);
     }

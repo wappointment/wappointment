@@ -4,12 +4,12 @@ declare(strict_types=1);
 namespace Wappointment\Controllers\Api\Settings;
 
 use Wappointment\Http\JsonResponse;
-use Wappointment\Repositories\SettingRepository;
+use Wappointment\System\Settings;
 
 class SaveSettingsController
 {
     public function __construct(
-        private SettingRepository $repository
+        private Settings $settings
     ) {}
 
     public function __invoke(\WP_REST_Request $request): void
@@ -21,12 +21,13 @@ class SaveSettingsController
             return;
         }
         
-        $success = $this->repository->setMultiple($data);
+        // Save all settings at once for better performance
+        $success = $this->settings->setMultiple($data);
         
         if ($success) {
             JsonResponse::send(['success' => true, 'message' => 'Settings saved successfully']);
         } else {
-            JsonResponse::send(['error' => 'Failed to save some settings'], 500);
+            JsonResponse::send(['error' => 'Failed to save settings'], 500);
         }
     }
 }

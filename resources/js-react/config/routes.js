@@ -1,5 +1,6 @@
 // Auto-generated file - DO NOT EDIT MANUALLY
 // Generated from app/Routes/api.php
+// Run: php bin/generate-routes.php to regenerate
 
 export const routes = {
     "jobs.list": {

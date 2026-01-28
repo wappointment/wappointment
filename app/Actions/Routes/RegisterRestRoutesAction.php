@@ -35,6 +35,12 @@ class RegisterRestRoutesAction
                             if ($type && !$type->isBuiltin()) {
                                 $className = $type->getName();
                                 
+                                // Special handling for WP_REST_Request
+                                if ($className === 'WP_REST_Request') {
+                                    $args[] = $request;
+                                    continue;
+                                }
+                                
                                 try {
                                     // Check if class has a static 'fromWpRequest' method
                                     if (method_exists($className, 'fromWpRequest')) {

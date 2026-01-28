@@ -21,15 +21,12 @@ window.wappointmentGetComponent = (pageSlug) => {
 };
 
 const App = () => {
-  const [currentPage, setCurrentPage] = useState('wappointment-jobs');
+  // Initialize with the correct page from the start to avoid unnecessary renders
+  const [currentPage, setCurrentPage] = useState(() => {
+    return window.wappointmentData?.currentPage || 'wappointment-jobs';
+  });
 
   useEffect(() => {
-    // Get initial page from localized data
-    if (window.wappointmentData) {
-      setCurrentPage(window.wappointmentData.currentPage);
-    }
-
-    // Intercept menu clicks to prevent page reload
     const interceptMenuClicks = (e) => {
       const link = e.target.closest('a[href*="page=wappointment"]');
       if (link) {
@@ -70,8 +67,13 @@ const App = () => {
       return <Component />;
     }
     
-    // Default fallback
-    return <Jobs />;
+    // Return null or a message instead of defaulting to Jobs
+    return (
+      <div className="wrap">
+        <h1>Page Not Found</h1>
+        <p>The requested page could not be found.</p>
+      </div>
+    );
   };
 
   return (
