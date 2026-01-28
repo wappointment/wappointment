@@ -1,0 +1,10 @@
+{
+    "status": 200,
+    "body": {
+        "success": true,
+        "data": {
+            "success": true,
+            "message": "Client deleted"
+        }
+    }
+}

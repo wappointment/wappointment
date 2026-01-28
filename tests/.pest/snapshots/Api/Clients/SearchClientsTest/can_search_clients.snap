@@ -1,0 +1,50 @@
+{
+    "status": 200,
+    "body": {
+        "success": true,
+        "data": {
+            "data": [
+                {
+                    "id": "5",
+                    "email": "ben@wa3ppointment.com",
+                    "name": "fewfwef",
+                    "options": "{\"tz\":\"Europe\\\/Brussels\",\"appointment_key\":false,\"phone\":\"+33 4 97 28 80 30\",\"rtl\":false,\"locale\":\"en_US\"}",
+                    "deleted_at": null,
+                    "created_at": "2026-01-19 21:49:29",
+                    "updated_at": "2026-01-19 21:50:36"
+                },
+                {
+                    "id": "4",
+                    "email": "ben@wa12ppointment.com",
+                    "name": "fewfwef",
+                    "options": "{\"tz\":\"Europe\\\/Brussels\",\"appointment_key\":false,\"phone\":\"+33 4 97 28 80 30\",\"rtl\":false,\"locale\":\"en_US\"}",
+                    "deleted_at": null,
+                    "created_at": "2026-01-19 21:49:29",
+                    "updated_at": "2026-01-19 21:50:36"
+                },
+                {
+                    "id": "3",
+                    "email": "ben@wa1ppointment.com",
+                    "name": "fewfwef",
+                    "options": "{\"tz\":\"Europe\\\/Brussels\",\"appointment_key\":false,\"phone\":\"+33 4 97 28 80 30\",\"rtl\":false,\"locale\":\"en_US\"}",
+                    "deleted_at": null,
+                    "created_at": "2026-01-19 21:49:29",
+                    "updated_at": "2026-01-19 21:50:36"
+                },
+                {
+                    "id": "1",
+                    "email": "ben@wappointment.com",
+                    "name": "fewfwef",
+                    "options": "{\"tz\":\"Europe\\\/Brussels\",\"appointment_key\":false,\"phone\":\"+33 4 97 28 80 30\",\"rtl\":false,\"locale\":\"en_US\"}",
+                    "deleted_at": null,
+                    "created_at": "2026-01-19 21:49:29",
+                    "updated_at": "2026-01-19 21:50:36"
+                }
+            ],
+            "total": 4,
+            "page": 1,
+            "per_page": 10,
+            "total_pages": 1
+        }
+    }
+}

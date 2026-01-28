@@ -1,23 +1,23 @@
 <?php
+declare(strict_types=1);
 
 namespace Wappointment\Models;
 
-use Wappointment\ClassConnect\Model;
-
-class Job extends Model
+/**
+ * Job Model - Handles wp_wappo_jobs table
+ */
+class Job extends BaseModel
 {
-    protected $table = 'wappo_jobs';
-    protected $fillable = [
-        'queue', 'payload', 'attempts', 'appointment_id', 'reserved_at', 'available_at', 'created_at'
+    protected string $tableName = 'wappo_jobs';
+    
+    protected array $columns = [
+        'id' => 'int',
+        'queue' => 'string',
+        'payload' => 'json',
+        'appointment_id' => 'int',
+        'attempts' => 'int',
+        'reserved_at' => 'int',
+        'available_at' => 'int',
+        'created_at' => 'int',
     ];
-    protected $casts = [
-        'payload' => 'array',
-    ];
-    protected $attributes = [
-        'queue' => 'default',
-        'attempts' => 0,
-        'available_at' => 0,
-        'created_at' => 0,
-    ];
-    public $timestamps = false;
 }

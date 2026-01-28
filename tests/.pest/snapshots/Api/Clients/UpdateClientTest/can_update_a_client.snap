@@ -1,0 +1,15 @@
+{
+    "status": 200,
+    "body": {
+        "success": true,
+        "data": {
+            "id": "[FILTERED]",
+            "email": "ben@wa3ppointment.com",
+            "name": "Updated Name",
+            "options": "{\"tz\":\"Europe\\\/Brussels\",\"appointment_key\":false,\"phone\":\"+33 4 97 28 80 30\",\"rtl\":false,\"locale\":\"en_US\"}",
+            "deleted_at": null,
+            "created_at": "[FILTERED]",
+            "updated_at": "[FILTERED]"
+        }
+    }
+}

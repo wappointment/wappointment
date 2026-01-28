@@ -1,27 +1,103 @@
 <?php
+declare(strict_types=1);
 
 namespace Wappointment\System;
 
-use Wappointment\ClassConnect\Arr;
-
 class Container
 {
-    private $bindings = [];
+    private static ?Container $instance = null;
+    private array $bindings = [];
+    private array $instances = [];
 
-    public function bind($bindingName, $instance)
+    private function __construct() {}
+
+    public static function getInstance(): Container
     {
-        $this->bindings[] = [
-            'name' => $bindingName,
-            'instance' => $instance,
-        ];
-        return $instance;
+        if (self::$instance === null) {
+            self::$instance = new self();
+        }
+        return self::$instance;
     }
 
-    public function resolve($bindingName)
+    public function bind(string $abstract, callable $concrete): void
     {
-        $result = Arr::first($this->bindings, function ($item) use ($bindingName) {
-            return $item['name'] === $bindingName;
+        $this->bindings[$abstract] = $concrete;
+    }
+
+    public function singleton(string $abstract, callable $concrete): void
+    {
+        $this->bind($abstract, function() use ($abstract, $concrete) {
+            if (!isset($this->instances[$abstract])) {
+                $this->instances[$abstract] = $concrete();
+            }
+            return $this->instances[$abstract];
         });
-        return $result['instance'] ?? null;
+    }
+
+    public function make(string $abstract, array $parameters = []): mixed
+    {
+        if (isset($this->bindings[$abstract])) {
+            return $this->bindings[$abstract]();
+        }
+
+        return $this->resolve($abstract, $parameters);
+    }
+
+    private function resolve(string $class, array $parameters = []): mixed
+    {
+        // Special case: resolve Container to its singleton instance
+        if ($class === self::class) {
+            return $this;
+        }
+
+        $reflector = new \ReflectionClass($class);
+
+        if (!$reflector->isInstantiable()) {
+            throw new \Exception("Class {$class} is not instantiable");
+        }
+
+        $constructor = $reflector->getConstructor();
+
+        if (!$constructor) {
+            return new $class;
+        }
+
+        $constructorParams = $constructor->getParameters();
+        $dependencies = [];
+
+        foreach ($constructorParams as $parameter) {
+            $dependencies[] = $this->resolveParameter($parameter, $parameters);
+        }
+
+        return $reflector->newInstanceArgs($dependencies);
+    }
+
+    private function resolveParameter(\ReflectionParameter $parameter, array $parameters): mixed
+    {
+        $type = $parameter->getType();
+
+        // Handle built-in types (string, int, etc.)
+        if (!$type || $type->isBuiltin()) {
+            return $this->resolveBuiltInParameter($parameter, $parameters);
+        }
+
+        // Handle class/interface types
+        $typeName = $type->getName();
+        return $parameters[$typeName] ?? $this->make($typeName, $parameters);
+    }
+
+    private function resolveBuiltInParameter(\ReflectionParameter $parameter, array $parameters): mixed
+    {
+        $paramName = $parameter->getName();
+
+        if (isset($parameters[$paramName])) {
+            return $parameters[$paramName];
+        }
+
+        if ($parameter->isDefaultValueAvailable()) {
+            return $parameter->getDefaultValue();
+        }
+
+        throw new \Exception("Cannot resolve parameter {$paramName}");
     }
 }
