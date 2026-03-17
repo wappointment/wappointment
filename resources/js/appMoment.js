@@ -1,4 +1,4 @@
-let momenttz = require ('moment-timezone/builds/moment-timezone-with-data-2012-2022.js') 
+let momenttz = require ('moment-timezone/builds/moment-timezone-with-data-1970-2030.js') 
 
 momenttz.tz.setDefault()
 
