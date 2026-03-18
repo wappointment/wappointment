@@ -4,7 +4,7 @@ Tags: appointment scheduling, appointment booking, booking calendar, booking for
 Requires at least: 4.7
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 2.7.5
+Stable tag: 2.7.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -147,6 +147,11 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.7.6 - 2026-03-19 =
+* fixed phone validation script with new prefix not working
+* fixed bug with conditional slots and group event
+* fixed timezone and conditional slots issue
 
 = 2.7.5 - 2026-01-18 =
 * fix timezone issue (thanks to [lukesUbuntu](https://github.com/lukesUbuntu/wappointment/commits?author=lukesUbuntu))
