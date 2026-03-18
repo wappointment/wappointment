@@ -64,7 +64,7 @@ export default class Intervals {
              const interval = this.intervals[i]
              if(!Array.isArray(interval)){
                 for (const removeMe of removeIntervals.intervals) {
-                    if(this.intersecting(interval,removeMe)){
+                    if(interval.left === undefined && this.intersecting(interval,removeMe)){
                         if(this.aContainsB(interval,removeMe)){
                             //we get 2 intervals out
                             this.intervals[i] = this.aMinusBWhenContaining(interval,removeMe)
