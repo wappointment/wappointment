@@ -23,8 +23,9 @@
             <div class="d-flex flex-wrap">
               <button
                 class="btn btn-secondary btn-xs"
-                :class="{ 'active': isActive[button.mark] && isActive[button.mark]() }"
-                @click.prevent="commands[button.mark] && commands[button.mark]()"
+                :class="{ 'active': isActive[button.mark] && isActive[button.mark](), 'disabled': button.mark === 'link' && !selectionIsOn }"
+                :disabled="button.mark === 'link' && !selectionIsOn"
+                @click.prevent="button.mark === 'link' ? showLinkInputNew(commands, isActive, getMarkAttrs) : (commands[button.mark] && commands[button.mark]())"
                 v-for="button in toolbar"
               >
                 <span
@@ -556,6 +557,34 @@ export default {
         }
         this.resetLink();
         this.writingUrl = false;
+      },
+
+      showLinkInputNew(commands, isActive, getMarkAttrs) {
+        // If link is already active, get the current href
+        if (isActive.link && isActive.link()) {
+          const attrs = getMarkAttrs('link');
+          this.linkUrl = attrs.href || 'https://';
+        } else {
+          // New link - show input with placeholder value
+          this.linkUrl = 'https://';
+        }
+        this.position = this.getSelectionDimensions();
+        
+        // If no selection dimensions (no text selected), set a default position
+        if (!this.position || this.position.top === 0) {
+          this.position = { top: 52, left: 0, height: 0, width: 0 };
+        }
+        
+        this.writingUrl = false;
+        
+        // Focus the input field after it's shown
+        this.$nextTick(() => {
+          const linkInput = this.$el.querySelector('.linkfield input[type="text"]');
+          if (linkInput) {
+            linkInput.focus();
+            linkInput.select();
+          }
+        });
       }
     },
     mounted() {
@@ -659,6 +688,7 @@ export default {
     position: absolute !important;
     top: 52px !important;
     left: 0 !important;
+    z-index: 10000;
 }
 
 .ProseMirror-focused a {
