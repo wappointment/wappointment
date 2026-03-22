@@ -148,7 +148,7 @@ It requires work on your end but keeps your site safe and optimized.
 
 == Changelog ==
 
-= 2.7.6 - 2026-03-19 =
+= 2.7.6 - 2026-03-22 =
 * fixed phone validation script with new prefix not working
 * fixed bug with conditional slots and group event
 * fixed timezone and conditional slots issue
