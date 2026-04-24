@@ -39,7 +39,7 @@ trait CanBook
 
         $duration = $service->hasDuration($bookingRequest->get('duration'));
 
-        $end_at = $start_at + $this->getRealDuration(['duration' => $duration]);
+        $end_at = $start_at + $this->getRealDuration(['duration' => $duration, 'service' => $service]);
 
         $staff = !empty($bookingRequest->staff) ? $bookingRequest->staff : $bookingRequest->get('staff');
         if ($forceConfirmed) {
