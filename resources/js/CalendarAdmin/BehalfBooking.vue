@@ -306,7 +306,13 @@ export default {
             this.setDuration(this.durationSelectedFC)
         },
         realSlotDuration(duration){
-            return parseInt(duration) + parseInt(this.viewData.buffer_time) 
+            return parseInt(duration) + parseInt(this.serviceBuffer())
+        },
+        serviceBuffer(){
+            if (this.service && this.service.options && this.service.options.buffer_time !== undefined && this.service.options.buffer_time !== '') {
+                return this.service.options.buffer_time
+            }
+            return this.viewData.buffer_time
         },
         setDuration(duration){
             if(duration === false){

@@ -102,7 +102,21 @@ class Client extends Model
 
     protected function getRealDuration($service)
     {
-        return ((int) $service['duration'] + (int) Settings::get('buffer_time')) * 60;
+        return ((int) $service['duration'] + $this->resolveBufferTime($service)) * 60;
+    }
+
+    protected function resolveBufferTime($service)
+    {
+        if (is_array($service) && isset($service['service']) && is_object($service['service']) && method_exists($service['service'], 'getBufferTime')) {
+            return $service['service']->getBufferTime();
+        }
+        if (is_object($service) && method_exists($service, 'getBufferTime')) {
+            return $service->getBufferTime();
+        }
+        if (is_array($service) && isset($service['options']['buffer_time']) && $service['options']['buffer_time'] !== '') {
+            return (int) $service['options']['buffer_time'];
+        }
+        return (int) Settings::get('buffer_time');
     }
 
     public function mailableAddress()

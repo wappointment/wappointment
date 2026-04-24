@@ -338,7 +338,17 @@ export default {
          * service slot duration in seconds
          */
         realSlotDuration(){
-            return (parseInt(this.duration) + parseInt(this.viewData.buffer_time)) *60
+            return (parseInt(this.duration) + parseInt(this.serviceBuffer())) *60
+        },
+
+        /**
+         * Per-service buffer when defined on the service, otherwise the global default.
+         */
+        serviceBuffer(){
+            if (this.service && this.service.options && this.service.options.buffer_time !== undefined && this.service.options.buffer_time !== '') {
+                return this.service.options.buffer_time
+            }
+            return this.viewData.buffer_time
         },
 
         setIntervals(start, end){
