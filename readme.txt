@@ -2,9 +2,9 @@
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
 Requires at least: 4.7
-Tested up to: 6.9
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 2.7.6
+Stable tag: 2.7.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -98,31 +98,31 @@ And for any question or doubt, you can reach us:
 
 == Frequently Asked Questions ==
 
-**Why do reminders go out late sometimes?**
-
-WordPress by default uses an unreliable system to process background scheduled tasks; but we have created a guide to help you [make your site faster and more reliable](https://wappointment.com/docs/wp-cron?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
-
-**Why does nobody receive my confirmations or reminders emails?**
-
-Your emails most likely go straight to SPAM or don't event reach your inbox. Check this guide to [improve your emails' deliverability](https://wappointment.com/docs/configure-email?utm_source=wp-repo&utm_medium=link&utm_campaign=readme)
-
-**Can I change text and colors of the booking form?**
+= Can I change text and colors of the booking form? =
 
 You can change all the texts, colors and few other parameters of each step of the booking process. We plan on adding several templates in the future, meanwhile simply use css to make it exactly the way you want.
 
-**Can I set time limits for cancelling and rescheduling appointments?**
+= Can I set time limits for cancelling and rescheduling appointments? =
 
 You can configure when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
 
-**Can I sync multiple calendars besides of my Google calendar?**
+= Can I sync multiple calendars besides of my Google calendar? =
 
 Sure you can, we allow up to 4 calendars in the ics format to be synched from. It can be personal calendar(Google, Outlook, iCal, etc..) or from external applications handling part of your schedule
 
-**How often my Google calendar is being checked for sync?**
+= How often my Google calendar is being checked for sync? =
 
 Every 5 minutes we download your calendar and check for changes, we don't do it more often as it could be a heavy task depending on how big is your calendar.
 
-**I need 10 minutes to prepare between 2 appointments, how do I proceed?**
+= Why do reminders go out late sometimes? =
+
+It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
+
+= Why does nobody receive my confirmations or reminders emails? =
+
+Your emails most likely go straight to SPAM or don't event reach your inbox. *Change the email sending method* in *Wappointment > Settings > Confirmations & Reminders* just go for the easy and reliable solution, [create a free account at SendGrid (100emails/day are free)](https://signup.sendgrid.com/) and configure Wappointment with the *SendGrid API*
+
+= I need 10 minutes to prepare between 2 appointments, how do I proceed? =
 
 You can set buffer time for that particular case, you can define it in the *Wappointment > Settings > Advanced*. When someone books you, you will become unavailable during the time of the appointment + buffer time
 
@@ -147,6 +147,9 @@ It requires work on your end but keeps your site safe and optimized.
 6. Service Setup. Describe the appointment and how you provide it: By Phone, By Skype or At a location.
 
 == Changelog ==
+
+= 2.7.7 - 2026-05-24 =
+* fixed security issue CVE-2025-68575 and CVE-2026-9188
 
 = 2.7.6 - 2026-03-22 =
 * fixed phone validation script with new prefix not working
