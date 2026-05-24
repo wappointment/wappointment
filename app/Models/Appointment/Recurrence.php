@@ -44,7 +44,7 @@ class Recurrence
 
     public function generateEditKey($start_at)
     {
-        return md5($start_at);
+        return bin2hex(random_bytes(16));
     }
 
     private function generateForDay(Carbon $start_temp)
