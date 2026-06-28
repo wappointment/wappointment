@@ -97,31 +97,31 @@ And for any question or doubt, you can reach us:
 
 ## Frequently Asked Questions 
 
-**Can I change text and colors of the booking form?**
+= Can I change text and colors of the booking form? =
 
 You can change all the texts, colors and few other parameters of each step of the booking process. We plan on adding several templates in the future, meanwhile simply use css to make it exactly the way you want.
 
-**Can I set time limits for cancelling and rescheduling appointments?**
+= Can I set time limits for cancelling and rescheduling appointments? =
 
 You can configure when clients can cancel and reschedule their appointments in the settings page *Wappointment > Settings > General* 
 
-**Can I sync multiple calendars besides of my Google calendar?**
+= Can I sync multiple calendars besides of my Google calendar? =
 
 Sure you can, we allow up to 4 calendars in the ics format to be synched from. It can be personal calendar(Google, Outlook, iCal, etc..) or from external applications handling part of your schedule
 
-**How often my Google calendar is being checked for sync?**
+= How often my Google calendar is being checked for sync? =
 
 Every 5 minutes we download your calendar and check for changes, we don't do it more often as it could be a heavy task depending on how big is your calendar.
 
-**Why do reminders go out late sometimes?**
+= Why do reminders go out late sometimes? =
 
 It depends on your website's configuration. The most reliable solution is to setup a cron task manually on your server(check your host's documentation) and disable WP cron (DISABLE_WP_CRON)
 
-**Why does nobody receive my confirmations or reminders emails?**
+= Why does nobody receive my confirmations or reminders emails? =
 
 Your emails most likely go straight to SPAM or don't event reach your inbox. *Change the email sending method* in *Wappointment > Settings > Confirmations & Reminders* just go for the easy and reliable solution, [create a free account at SendGrid (100emails/day are free)](https://signup.sendgrid.com/) and configure Wappointment with the *SendGrid API*
 
-**I need 10 minutes to prepare between 2 appointments, how do I proceed?**
+= I need 10 minutes to prepare between 2 appointments, how do I proceed? =
 
 You can set buffer time for that particular case, you can define it in the *Wappointment > Settings > Advanced*. When someone books you, you will become unavailable during the time of the appointment + buffer time
 

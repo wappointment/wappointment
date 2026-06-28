@@ -49,7 +49,7 @@ class Client extends Model
 
     public function generateEditKey($start_at)
     {
-        return md5($this->id . $start_at);
+        return bin2hex(random_bytes(16));
     }
 
     public function getFirstName()

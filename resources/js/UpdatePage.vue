@@ -5,17 +5,15 @@
           <div class="update-section">
               <h3 class="d-flex align-items-center">
                 <img v-if="false" :src="getUpdateImg" class="img-fluid mr-3" alt="What's new in Wappointment">
-                <span>V2.7.6</span>   
-                <span class="ml-2">Bug fix version</span>
+                <span>V2.7.7</span>   
+                <span class="ml-2">Security release</span>
               </h3>
               <div class="d-flex flex-align-items-center">
                   <div class="ml-3">
                     
                     <p>Changelog:</p>
                     <ol>
-                        <li>Fixed phone validation script with new prefix not working</li>
-                        <li>Fixed bug with conditional slots and group event</li>
-                        <li>Fixed timezone and conditional slots issue</li>
+                        <li>Fixed security issue CVE-2025-68575 and CVE-2026-9188</li>
                     </ol>
                   </div>
               </div>
