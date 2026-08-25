@@ -53,6 +53,9 @@ class AppointmentNew
             'staff_id' => $staff_id_value,
             'package_id' => $client->bookingRequest->get('package_id'),
             'package_price_id' => $client->bookingRequest->get('package_price_id'),
+            'options' => ['buffer_time' => is_object($service) && method_exists($service, 'getBufferTime')
+                ? $service->getBufferTime()
+                : (int) Settings::get('buffer_time')],
         ], $client, $start_at, $service, $adminBooked);
 
         return static::bookCreate($appointmentData, $client, $forceConfirmed, $status, $adminBooked);
@@ -180,7 +183,11 @@ class AppointmentNew
             throw new \WappointmentException('Cannot book, data is invalid', 1);
         }
 
-        $data['options']['buffer_time'] = (int) Settings::get('buffer_time');
+        if (!isset($data['options']['buffer_time'])) {
+            $data['options']['buffer_time'] = (int) Settings::get('buffer_time');
+        } else {
+            $data['options']['buffer_time'] = (int) $data['options']['buffer_time'];
+        }
         return static::getAppointmentModel()::create($data);
     }
 

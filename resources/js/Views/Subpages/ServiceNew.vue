@@ -93,7 +93,21 @@ export default {
                 required_options_props:{
                   'woo_sellable':'woo_sellable'
                 },
-               
+
+            },
+            {
+                type: 'duration',
+                label: this.get_i18n('service_f_buffer','settings'),
+                model: 'options.buffer_time',
+                cast: Number,
+                class: 'w-100',
+                default: 0,
+                min: 0,
+                max: 120,
+                step: 5,
+                int: true,
+                unit: 'min',
+                tip: this.get_i18n('service_f_buffer_tip','settings'),
             },
             {
                 type: 'opt-modality',

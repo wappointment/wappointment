@@ -4,6 +4,7 @@ namespace Wappointment\Models;
 
 use Wappointment\ClassConnect\Model;
 use Wappointment\ClassConnect\SoftDeletes;
+use Wappointment\Services\Settings;
 
 class Service extends Model
 {
@@ -68,5 +69,17 @@ class Service extends Model
                 return $duration_row['price_id'];
             }
         }
+    }
+
+    /**
+     * Per-service buffer time in minutes. Falls back to the global setting
+     * when the service does not define its own (incl. unmigrated services).
+     */
+    public function getBufferTime()
+    {
+        if (is_array($this->options) && isset($this->options['buffer_time']) && $this->options['buffer_time'] !== '') {
+            return (int) $this->options['buffer_time'];
+        }
+        return (int) Settings::get('buffer_time');
     }
 }

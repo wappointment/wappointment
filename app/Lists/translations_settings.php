@@ -49,6 +49,8 @@ return [
     'service_f_sell' => __('Sell service', 'wappointment'),
     'service_f_sdecs' => __('Short description', 'wappointment'),
     'service_f_duration' => __('Durations', 'wappointment'),
+    'service_f_buffer' => __('Buffer time', 'wappointment'),
+    'service_f_buffer_tip' => __('Time (in minutes) reserved after this service to prepare for the next appointment. Leave at 0 to use the global default.', 'wappointment'),
     'service_f_modality' => __('Delivery modality', 'wappointment'),
     'service_f_cfield' => __('When client select this service, display the following fields', 'wappointment'),
     'service_f_countries' => __('Phone field accepted countries', 'wappointment'),

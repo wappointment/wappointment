@@ -39,6 +39,7 @@ class Services implements ServiceInterface
             'options' => '',
             'options.durations' => 'required|array',
             'options.durations.*.duration' => 'required|numeric',
+            'options.buffer_time' => 'numeric|min:0',
             'locations_id' => 'required',
         ];
 
