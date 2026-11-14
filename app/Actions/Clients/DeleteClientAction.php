@@ -4,25 +4,18 @@ declare(strict_types=1);
 namespace Wappointment\Actions\Clients;
 
 use Wappointment\Repositories\ClientRepository;
+use Wappointment\Auth\AccessPolicy;
 
 class DeleteClientAction
 {
-	public function __construct(private ClientRepository $repository)
+	public function __construct(private ClientRepository $repository, private AccessPolicy $access)
 	{
 	}
 
 	public function handle(int $id): array
 	{
-		$client = $this->repository->find($id);
-		if (!$client) {
-			throw new \RuntimeException('Client not found', 404);
-		}
-
-		$deleted = $this->repository->delete($id);
-		if (!$deleted) {
-			throw new \RuntimeException('Failed to delete client', 500);
-		}
-
+		$this->access->assert('clients.delete');
+		$this->repository->deleteVisible($id, $this->access->clientOwner());
 		return ['success' => true, 'message' => 'Client deleted'];
 	}
 }

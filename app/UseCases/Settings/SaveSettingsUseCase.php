@@ -13,6 +13,6 @@ class SaveSettingsUseCase
 
     public function execute(SaveSettingsRequestData $requestData): SaveSettingsResponseData
     {
-        return new SaveSettingsResponseData($this->action->handle($requestData->toArray()));
+        return SaveSettingsResponseData::from($this->action->handle($requestData->toArray()));
     }
 }

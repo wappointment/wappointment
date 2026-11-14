@@ -23,22 +23,21 @@ class Availability
         if ($duration < 5 || $duration > 1440 || $buffer < 0 || $buffer > 1440) {
             throw new BookingException(__('Invalid appointment duration or buffer.', 'wappointment'));
         }
-        $step = (int) ($settings['starting_each'] ?? 30);
-        if ($step < 1 || $step > 1440) {
+        $customStep = !empty($settings['more_st']);
+        $step = $customStep ? (int) ($settings['starting_each'] ?? 30) : $duration + $buffer;
+        if ($step < 1 || ($customStep && $step > 1440)) {
             throw new BookingException(__('Invalid slot interval. Review booking settings.', 'wappointment'), 409);
         }
         $earliest = $now + (int) ((float) ($settings['hours_before_booking_allowed'] ?? 3) * 3600);
         $latest = $now + (int) ($calendar['options']['avb'] ?? 60) * 86400;
         $windows = $extra;
         $weekday = strtolower($day->format('l'));
-        foreach ($calendar['options']['regav'][$weekday] ?? [] as $block) {
-            if (!is_array($block) || count($block) < 2 || !is_numeric($block[0]) || !is_numeric($block[1])
-                || $block[0] < 0 || $block[1] > 1440 || $block[0] >= $block[1]) {
-                throw new BookingException(__('Invalid weekly availability. Review your calendar.', 'wappointment'), 409);
-            }
-            if (!empty($block[2])) {
-                throw new BookingException(__('Availability conditions need to be migrated before this calendar can accept bookings.', 'wappointment'), 409);
-            }
+        try {
+            $schedule = WeeklySchedule::minutes(array_key_exists('regav', $calendar['options']) ? $calendar['options']['regav'] : []);
+        } catch (\InvalidArgumentException $error) {
+            throw new BookingException(__('Invalid weekly availability or availability conditions. Review your calendar and its stored precision before accepting bookings.', 'wappointment'), 409);
+        }
+        foreach ($schedule[$weekday] as $block) {
             $windows[] = [
                 $this->minute($day, (int) $block[0]),
                 $this->minute($day, (int) $block[1]),
@@ -57,6 +56,22 @@ class Availability
                 $merged[] = [$from, $to];
             }
         }
+        foreach ($busy as [$busyStart, $busyEnd]) {
+            $remaining = [];
+            foreach ($merged as [$from, $to]) {
+                if ($busyStart >= $to || $busyEnd <= $from) {
+                    $remaining[] = [$from, $to];
+                    continue;
+                }
+                if ($busyStart > $from) {
+                    $remaining[] = [$from, $busyStart];
+                }
+                if ($busyEnd < $to) {
+                    $remaining[] = [$busyEnd, $to];
+                }
+            }
+            $merged = $remaining;
+        }
         foreach ($merged as [$from, $to]) {
             $from = max($from, $day->getTimestamp());
             $to = min($to, $dayEnd, $latest);
@@ -65,11 +80,6 @@ class Availability
                     continue;
                 }
                 $end = $start + $length;
-                foreach ($busy as [$busyStart, $busyEnd]) {
-                    if ($start < $busyEnd && $end > $busyStart) {
-                        continue 2;
-                    }
-                }
                 $slots[$start] = [
                     'start' => $start,
                     'end' => $start + $duration * 60,

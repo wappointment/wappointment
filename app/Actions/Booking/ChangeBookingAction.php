@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Wappointment\Actions\Booking;
 
-use Wappointment\Http\Requests\BookingRequestData;
+use Wappointment\Http\Requests\ManageBookingRequestData;
 use Wappointment\Repositories\BookingRepository;
 
 class ChangeBookingAction
@@ -16,17 +16,17 @@ class ChangeBookingAction
         private GetSelectedSlotAction $selectedSlot
     ) {}
 
-    public function handle(BookingRequestData $input, string $action): array
+    public function handle(ManageBookingRequestData $input, string $action): array
     {
         return $this->repository->exclusive(function () use ($input, $action): array {
-            $appointment = $this->getAppointment->handle($input);
+            $appointment = $this->getAppointment->handle($input->edit_key);
             $this->assertChangeAllowed->handle($appointment, $action);
             $changes = ['updated_at' => gmdate('Y-m-d H:i:s')];
             if ($action === 'cancel') {
                 $changes['status'] = -1;
             } else {
                 $slot = $this->selectedSlot->handle(
-                    $this->rescheduleInput->handle($appointment, $input), (int) $appointment['id'],
+                    $this->rescheduleInput->handle($appointment, $input->date, $input->start), (int) $appointment['id'],
                     (int) ($appointment['options']['buffer_time'] ?? 0)
                 );
                 $changes['start_at'] = gmdate('Y-m-d H:i:s', $slot['start']);

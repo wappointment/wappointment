@@ -13,6 +13,6 @@ class UpdateClientUseCase
 
     public function execute(UpdateClientRequestData $requestData): UpdateClientResponseData
     {
-        return new UpdateClientResponseData($this->action->handle($requestData));
+        return UpdateClientResponseData::from($this->action->handle($requestData));
     }
 }

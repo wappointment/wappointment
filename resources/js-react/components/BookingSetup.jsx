@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import apiFetch from '../utils/apiFetch';
+import WeeklyAvailabilityEditor, { weekdays as days } from './WeeklyAvailabilityEditor';
 
-const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
 const defaults = {
     service_name: '', calendar_name: '', location_name: '', location_type: 1,
     duration: 60, booking_days: 60, timezone: 'UTC', phone_required: false,
     booking_page: 0,
     regav: Object.fromEntries(days.map((day) => [day, []])),
 };
-const timeValue = (minutes) => `${String(Math.floor(minutes / 60) % 24).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
 
 export default function BookingSetup() {
     const [form, setForm] = useState(defaults);
@@ -44,12 +43,6 @@ export default function BookingSetup() {
     const update = (key, value) => {
         setSaved(false);
         setForm((previous) => ({ ...previous, [key]: value }));
-    };
-    const updateBlock = (day, index, endpoint, value) => {
-        const [hour, minute] = value.split(':').map(Number);
-        const minutes = hour * 60 + minute;
-        update('regav', { ...form.regav, [day]: form.regav[day].map((block, position) =>
-            position === index ? block.map((current, column) => column === endpoint ? (endpoint === 1 && minutes === 0 ? 1440 : minutes) : current) : block) });
     };
     const save = async (event) => {
         event.preventDefault();
@@ -100,16 +93,7 @@ export default function BookingSetup() {
                 </td></tr>
             </tbody></table>
             <h2>Weekly availability</h2>
-            <p>Times use the organizer timezone. An end time of 00:00 means midnight at the end of the day.</p>
-            {days.map((day) => <fieldset key={day} style={{ marginBottom: 16 }}>
-                <legend><strong>{day}</strong></legend>
-                {form.regav[day].map((block, index) => <div key={index}>
-                    <label>From <input type="time" required value={timeValue(block[0])} onChange={(event) => updateBlock(day, index, 0, event.target.value)} /></label>
-                    <label> until <input type="time" required value={timeValue(block[1])} onChange={(event) => updateBlock(day, index, 1, event.target.value)} /></label>
-                    <button type="button" className="button" onClick={() => update('regav', { ...form.regav, [day]: form.regav[day].filter((_, position) => position !== index) })}>Remove range</button>
-                </div>)}
-                <button type="button" className="button" onClick={() => update('regav', { ...form.regav, [day]: [...form.regav[day], [540, 1020]] })}>Add range</button>
-            </fieldset>)}
+            <WeeklyAvailabilityEditor value={form.regav} onChange={(value) => update('regav', value)} />
             <button type="submit" className="button button-primary" disabled={saving}>{saving ? 'Saving...' : 'Save booking setup'}</button>
         </form>
     </div>;

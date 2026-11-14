@@ -3,12 +3,8 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Responses;
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Data\BookingData;
 
-class ManageBookingResponseData extends ResponseData
+class ManageBookingResponseData extends BookingData
 {
-    public static function schema(): array
-    {
-        return ApiSchemas::booking();
-    }
 }

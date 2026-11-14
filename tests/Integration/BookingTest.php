@@ -37,7 +37,7 @@ function bookingFixture(): array
         'duration' => 30, 'date' => gmdate('Y-m-d', time() + 3 * DAY_IN_SECONDS),
         'name' => 'Booking Test', 'email' => 'booking-test@example.invalid',
     ];
-    $slots = bookingRest('/booking/availability', 'POST', array_intersect_key($input, \Wappointment\Http\ApiSchemas::selection()));
+    $slots = bookingRest('/booking/availability', 'POST', array_intersect_key($input, \Wappointment\Http\Requests\BookingRequestData::schema()['properties']));
     expect($slots['status'])->toBe(200);
     $input['start'] = $slots['body']['data']['slots'][0]['start'];
     return $input;
@@ -80,6 +80,95 @@ test('saves a real booking with UTC times and the original buffer contract', fun
     $conflict = bookingRest('/booking', 'POST', $input);
     expect($conflict['status'])->toBe(409)
         ->and((int) $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}wappo_appointments"))->toBe(1);
+})->group('booking-integration');
+
+test('legacy schedule precision is projected consistently and public bookings retain stored source data', function (string $precision) {
+    global $wpdb;
+    $input = bookingFixture();
+    $table = $wpdb->prefix . 'wappo_calendars';
+    $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", $input['calendar_id']), ARRAY_A);
+    $options = json_decode($row['options'], true);
+    $options['private'] = ['preserved' => 'unchanged'];
+    $options['regav'] = array_fill_keys(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+        [$precision === 'minutes' ? [540, 720] : [9, 12]]);
+    if ($precision !== 'unmarked-hours') {
+        $options['regav']['precise'] = $precision === 'minutes';
+    }
+    $stored = wp_json_encode($options);
+    $wpdb->update($table, ['options' => $stored], ['id' => $input['calendar_id']]);
+    wp_set_current_user(1);
+    $settings = bookingRest('/booking-settings');
+    expect($settings['status'])->toBe(200)
+        ->and($settings['body']['data']['calendar']['options']['regav']['monday'])->toBe([[540, 720]])
+        ->and($settings['body']['data']['calendar']['options']['regav'])->not->toHaveKey('precise');
+    wp_set_current_user(0);
+    $response = bookingRest('/booking/availability', 'POST',
+        array_intersect_key($input, \Wappointment\Http\Requests\BookingRequestData::schema()['properties']));
+    expect($response['status'])->toBe(200);
+    $slots = $response['body']['data']['slots'];
+    $day = new DateTimeImmutable($input['date'], new DateTimeZone('Europe/Paris'));
+    $start = $day->setTime(9, 0)->getTimestamp();
+    expect(array_column($slots, 'start'))->toBe([$start, $start + 2700, $start + 5400, $start + 8100]);
+    $input['start'] = $start;
+    expect(bookingRest('/booking', 'POST', $input)['status'])->toBe(201)
+        ->and($wpdb->get_var($wpdb->prepare("SELECT options FROM {$table} WHERE id = %d", $input['calendar_id'])))->toBe($stored);
+    wp_set_current_user(1);
+    $request = [
+        'service_name' => 'Free consultation', 'calendar_name' => 'Organizer', 'location_name' => 'Office',
+        'location_type' => 1, 'phone_required' => false, 'duration' => 30, 'booking_days' => 60,
+        'timezone' => 'Europe/Paris', 'regav' => $settings['body']['data']['calendar']['options']['regav'],
+    ];
+    expect(bookingRest('/booking-settings', 'POST', $request)['status'])->toBe(200);
+    $saved = json_decode($wpdb->get_var($wpdb->prepare("SELECT options FROM {$table} WHERE id = %d", $input['calendar_id'])), true);
+    expect($saved['regav']['precise'])->toBeTrue()
+        ->and($saved['regav']['monday'])->toBe([[540, 720]])
+        ->and($saved['private'])->toBe(['preserved' => 'unchanged']);
+})->with(['unmarked-hours', 'explicit-hours', 'minutes'])->group('booking-integration');
+
+test('busy boundaries reanchor public slots and custom spacing requires more starts enabled', function () {
+    global $wpdb;
+    $input = bookingFixture();
+    $day = new DateTimeImmutable($input['date'], new DateTimeZone('Europe/Paris'));
+    $start = $day->setTime(9, 0)->getTimestamp();
+    $wpdb->insert($wpdb->prefix . 'wappo_statuses', [
+        'staff_id' => $input['calendar_id'], 'start_at' => gmdate('Y-m-d H:i:s', $start + 4200),
+        'end_at' => gmdate('Y-m-d H:i:s', $start + 6000), 'type' => 1, 'recur' => 0, 'muted' => 0,
+    ]);
+    $settings = \Wappointment\System\Container::getInstance()->make(\Wappointment\System\Settings::class);
+    $settings->set('starting_each', 10);
+    $body = array_intersect_key($input, \Wappointment\Http\Requests\BookingRequestData::schema()['properties']);
+    $response = bookingRest('/booking/availability', 'POST', $body);
+    expect($response['status'])->toBe(200);
+    $starts = array_column($response['body']['data']['slots'], 'start');
+    expect(array_slice($starts, 0, 3))->toBe([$start, $start + 6000, $start + 8700]);
+    $settings->set('more_st', true);
+    $response = bookingRest('/booking/availability', 'POST', $body);
+    expect($response['status'])->toBe(200);
+    $starts = array_column($response['body']['data']['slots'], 'start');
+    expect(array_slice($starts, 0, 3))->toBe([$start, $start + 600, $start + 1200])
+        ->and($starts)->toContain($start + 6000);
+})->group('booking-integration');
+
+test('unsupported stored precision blocks slots and setup overwrites without changing records', function () {
+    global $wpdb;
+    $input = bookingFixture();
+    $table = $wpdb->prefix . 'wappo_calendars';
+    $row = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$table} WHERE id = %d", $input['calendar_id']), ARRAY_A);
+    $options = json_decode($row['options'], true);
+    unset($options['regav']['precise']);
+    $wpdb->update($table, ['options' => wp_json_encode($options)], ['id' => $input['calendar_id']]);
+    $before = $wpdb->get_results("SELECT * FROM {$table} ORDER BY id", ARRAY_A);
+    $body = array_intersect_key($input, \Wappointment\Http\Requests\BookingRequestData::schema()['properties']);
+    expect(bookingRest('/booking/availability', 'POST', $body)['status'])->toBe(409);
+    wp_set_current_user(1);
+    expect(bookingRest('/booking-settings')['status'])->toBe(409);
+    expect(bookingRest('/booking-settings', 'POST', [
+        'service_name' => 'Must not change', 'calendar_name' => 'Must not change', 'location_name' => 'Office',
+        'location_type' => 1, 'phone_required' => false, 'duration' => 30, 'booking_days' => 60,
+        'timezone' => 'Europe/Paris',
+        'regav' => array_fill_keys(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'], []),
+    ])['status'])->toBe(409)
+        ->and($wpdb->get_results("SELECT * FROM {$table} ORDER BY id", ARRAY_A))->toBe($before);
 })->group('booking-integration');
 
 test('rejects forged timestamps, duration and location relationships without writing clients', function () {
@@ -141,7 +230,7 @@ test('enforces active booking limits across distinct available times', function 
     $settings = \Wappointment\System\Container::getInstance()->make(\Wappointment\System\Settings::class);
     $settings->set('max_active_bookings', 1);
     expect(bookingRest('/booking', 'POST', $input)['status'])->toBe(201);
-    $slots = bookingRest('/booking/availability', 'POST', array_intersect_key($input, \Wappointment\Http\ApiSchemas::selection()))['body']['data']['slots'];
+    $slots = bookingRest('/booking/availability', 'POST', array_intersect_key($input, \Wappointment\Http\Requests\BookingRequestData::schema()['properties']))['body']['data']['slots'];
     $input['start'] = $slots[0]['start'];
     expect(bookingRest('/booking', 'POST', $input)['status'])->toBe(409);
 })->group('booking-integration');
@@ -155,6 +244,70 @@ test('never overwrites existing customer data from a public booking', function (
     expect(bookingRest('/booking', 'POST', $input)['status'])->toBe(201);
     $client = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wappo_clients WHERE email = %s", $input['email']), ARRAY_A);
     expect($client['name'])->toBe('Private Name')->and($client['options'])->toBe('{"private":"retained"}');
+})->group('booking-integration');
+
+test('a returning customer restores the soft-deleted client without losing identity or private fields', function () {
+    global $wpdb;
+    $input = bookingFixture();
+    $wpdb->insert($wpdb->prefix . 'wappo_clients', [
+        'name' => 'Retained Name', 'email' => $input['email'], 'options' => '{"private":"retained"}',
+        'deleted_at' => '2025-01-01 00:00:00',
+    ]);
+    $id = (int) $wpdb->insert_id;
+    expect(bookingRest('/booking', 'POST', $input)['status'])->toBe(201);
+    $client = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wappo_clients WHERE id = %d", $id), ARRAY_A);
+    expect($client['deleted_at'])->toBeNull()->and($client['name'])->toBe('Retained Name')
+        ->and($client['options'])->toBe('{"private":"retained"}')
+        ->and((int) $wpdb->get_var("SELECT client_id FROM {$wpdb->prefix}wappo_appointments LIMIT 1"))->toBe($id)
+        ->and((int) $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}wappo_clients"))->toBe(1);
+})->group('booking-integration');
+
+test('a failed repeat booking rolls back client restoration and leaves existing appointments intact', function () {
+    global $wpdb;
+    $input = bookingFixture();
+    expect(bookingRest('/booking', 'POST', $input)['status'])->toBe(201);
+    $id = (int) $wpdb->get_var("SELECT id FROM {$wpdb->prefix}wappo_clients LIMIT 1");
+    wp_set_current_user(1);
+    expect(bookingRest('/clients/' . $id . '/delete', 'POST')['status'])->toBe(200);
+    $before = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wappo_clients WHERE id = %d", $id), ARRAY_A);
+    \Wappointment\System\Container::getInstance()->make(\Wappointment\System\Settings::class)->set('max_active_bookings', 1);
+    wp_set_current_user(0);
+    $slots = bookingRest('/booking/availability', 'POST', array_intersect_key($input, \Wappointment\Http\Requests\BookingRequestData::schema()['properties']))['body']['data']['slots'];
+    $input['start'] = $slots[0]['start'];
+    expect(bookingRest('/booking', 'POST', $input)['status'])->toBe(409)
+        ->and($wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wappo_clients WHERE id = %d", $id), ARRAY_A))->toBe($before)
+        ->and((int) $wpdb->get_var("SELECT COUNT(*) FROM {$wpdb->prefix}wappo_appointments"))->toBe(1);
+})->group('booking-integration');
+
+test('own availability changes reach the public slots API without changing existing appointments', function () {
+    global $wpdb;
+    $input = bookingFixture();
+    expect(bookingRest('/booking', 'POST', $input)['status'])->toBe(201);
+    $before = $wpdb->get_results("SELECT * FROM {$wpdb->prefix}wappo_appointments", ARRAY_A);
+    $wpdb->update($wpdb->prefix . 'wappo_calendars', ['wp_uid' => 1], ['id' => $input['calendar_id']]);
+    $weekly = [
+        'timezone' => 'UTC', 'booking_days' => 60,
+        'regav' => array_fill_keys(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'], [[840, 960]]),
+    ];
+    $path = '/me/calendars/' . $input['calendar_id'] . '/weekly-settings';
+    $selection = array_intersect_key($input, \Wappointment\Http\Requests\BookingRequestData::schema()['properties']);
+    wp_set_current_user(1);
+    expect(bookingRest($path, 'POST', ['settings' => $weekly])['status'])->toBe(200);
+    wp_set_current_user(0);
+    $slots = bookingRest('/booking/availability', 'POST', $selection);
+    $start = strtotime($input['date'] . ' 14:00:00 UTC');
+    expect($slots['status'])->toBe(200)
+        ->and(array_column($slots['body']['data']['slots'], 'start'))->toBe([$start, $start + 2700]);
+    wp_set_current_user(1);
+    expect(bookingRest($path, 'POST', ['settings' => array_replace($weekly, ['booking_days' => 1])])['status'])->toBe(200);
+    wp_set_current_user(0);
+    expect(bookingRest('/booking/availability', 'POST', $selection)['body']['data']['slots'])->toBe([]);
+    wp_set_current_user(1);
+    $weekly['regav'] = array_fill_keys(array_keys($weekly['regav']), []);
+    expect(bookingRest($path, 'POST', ['settings' => $weekly])['status'])->toBe(200);
+    wp_set_current_user(0);
+    expect(bookingRest('/booking/availability', 'POST', $selection)['body']['data']['slots'])->toBe([])
+        ->and($wpdb->get_results("SELECT * FROM {$wpdb->prefix}wappo_appointments", ARRAY_A))->toBe($before);
 })->group('booking-integration');
 
 test('schema bootstrap does not modify existing booking data', function () {
@@ -285,6 +438,25 @@ test('the container resolves all controller UseCase and Action dependencies', fu
         expect($container->make($route['controller']))->toBeInstanceOf($route['controller']);
     }
     expect($container->make(\Wappointment\Controllers\AdminController::class))->toBeCallable();
+})->group('booking-integration');
+
+test('booking admin submenus register under their parent rather than as frontend paths', function () {
+    require_once ABSPATH . 'wp-admin/includes/plugin.php';
+    wp_set_current_user(1);
+    global $menu, $submenu, $admin_page_hooks, $_registered_pages, $_parent_pages;
+    $saved = [$menu, $submenu, $admin_page_hooks, $_registered_pages, $_parent_pages];
+    $menu = $submenu = $admin_page_hooks = $_registered_pages = $_parent_pages = [];
+    try {
+        (new \Wappointment\Routes\AdminMenu())->register();
+        foreach (['wappointment-appointments', 'wappointment-booking-setup'] as $slug) {
+            $hook = get_plugin_page_hook($slug, 'wappointment-jobs');
+            expect($hook)->toBe('wappointment_page_' . $slug)
+                ->and($_registered_pages[$hook] ?? false)->toBeTrue()
+                ->and($_parent_pages[$slug] ?? null)->toBe('wappointment-jobs');
+        }
+    } finally {
+        [$menu, $submenu, $admin_page_hooks, $_registered_pages, $_parent_pages] = $saved;
+    }
 })->group('booking-integration');
 
 test('booking request data failures are returned as REST errors before executing the UseCase', function () {
@@ -430,7 +602,7 @@ test('all admin listing and setup responses satisfy their contracts after bookin
 
 test('settings defaults validate and partial updates preserve stored extension settings', function () {
     $settings = \Wappointment\System\Container::getInstance()->make(\Wappointment\System\Settings::class);
-    expect(\Wappointment\Http\Requests\SaveSettingsRequestData::from($settings->all())->toArray())->toBe($settings->all());
+    expect(\Wappointment\Http\Requests\SaveSettingsRequestData::from($settings->all())->toArray())->toEqual($settings->all());
     $settings->set('legacy_extension_setting', ['preserve' => true]);
     wp_set_current_user(1);
     expect(bookingRest('/settings', 'POST', ['approval_mode' => 0])['status'])->toBe(200);

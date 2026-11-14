@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { __, sprintf } from '@wordpress/i18n';
 import ClientsTable from './ClientsTable';
 import ClientDetailsModal from './ClientDetailsModal';
 import ClientFormModal from './ClientFormModal';
@@ -7,6 +8,7 @@ import { useClients } from '../hooks/useClients';
 import { useNotification } from '../hooks/useNotification';
 
 function Clients() {
+    const permissions = window.wappointmentData?.permissions || {};
     const [selectedClient, setSelectedClient] = useState(null);
     const [editingClient, setEditingClient] = useState(null);
     const [isCreating, setIsCreating] = useState(false);
@@ -15,21 +17,20 @@ function Clients() {
     const { notification, showNotification, hideNotification } = useNotification();
 
     const handleSave = async (formData) => {
-        try {
-            if (editingClient) {
-                await updateClient(editingClient.id, formData);
-                showNotification('Client updated successfully');
-            } else {
-                await createClient(formData);
-                showNotification('Client created successfully');
-            }
-        } catch (error) {
-            showNotification('Operation failed: ' + error.message, 'error');
+        if (editingClient) {
+            await updateClient(editingClient.id, formData);
+            showNotification('Client updated successfully');
+        } else {
+            await createClient(formData);
+            showNotification('Client created successfully');
         }
     };
 
     const handleDelete = async (client) => {
-        if (!confirm(`Are you sure you want to delete ${client.name || client.email}?`)) {
+        if (!confirm(sprintf(
+            __('Remove %s from client lists on all calendars? Appointment history will be kept.', 'wappointment'),
+            client.name || client.email
+        ))) {
             return;
         }
 
@@ -48,7 +49,7 @@ function Clients() {
 
     return (
         <>
-            <div style={{ marginBottom: '20px' }}>
+            {permissions.clientsCreate && <div style={{ marginBottom: '20px' }}>
                 <button
                     onClick={() => setIsCreating(true)}
                     style={{
@@ -63,13 +64,14 @@ function Clients() {
                 >
                     Create Client
                 </button>
-            </div>
+            </div>}
             
             <ClientsTable
                 refreshKey={refreshKey}
                 onClientClick={setSelectedClient}
                 onEdit={setEditingClient}
                 onDelete={handleDelete}
+                permissions={permissions}
             />
             
             {selectedClient && (
@@ -79,7 +81,7 @@ function Clients() {
                 />
             )}
             
-            {(isCreating || editingClient) && (
+            {((isCreating && permissions.clientsCreate) || (editingClient && permissions.clientsEdit)) && (
                 <ClientFormModal
                     client={editingClient}
                     onClose={handleCloseModal}

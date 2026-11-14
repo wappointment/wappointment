@@ -3,12 +3,8 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Responses;
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Data\ClientData;
 
-class UpdateClientResponseData extends ResponseData
+class UpdateClientResponseData extends ClientData
 {
-    public static function schema(): array
-    {
-        return ApiSchemas::client();
-    }
 }

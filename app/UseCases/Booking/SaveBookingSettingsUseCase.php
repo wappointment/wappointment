@@ -13,6 +13,6 @@ class SaveBookingSettingsUseCase
 
     public function execute(SaveBookingSettingsRequestData $requestData): SaveBookingSettingsResponseData
     {
-        return new SaveBookingSettingsResponseData($this->action->handle($requestData->toArray()));
+        return SaveBookingSettingsResponseData::from($this->action->handle($requestData->toArray()));
     }
 }

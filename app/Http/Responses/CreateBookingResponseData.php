@@ -3,15 +3,18 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Responses;
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Data\BookingData;
 
-class CreateBookingResponseData extends ResponseData
+class CreateBookingResponseData extends BookingData
 {
-    public static function schema(): array
-    {
-        $schema = ApiSchemas::booking();
-        $schema['properties']['notification_sent'] = ['type' => 'boolean'];
-        $schema['required'][] = 'notification_sent';
-        return $schema;
+    public function __construct(
+        int $id,
+        int $status,
+        int $start,
+        int $end,
+        string $edit_key,
+        public readonly bool $notification_sent,
+    ) {
+        parent::__construct($id, $status, $start, $end, $edit_key);
     }
 }

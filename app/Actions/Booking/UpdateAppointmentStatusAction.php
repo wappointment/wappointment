@@ -5,10 +5,11 @@ namespace Wappointment\Actions\Booking;
 
 use Wappointment\Booking\BookingException;
 use Wappointment\Repositories\BookingRepository;
+use Wappointment\Auth\AccessPolicy;
 
 class UpdateAppointmentStatusAction
 {
-    public function __construct(private BookingRepository $repository) {}
+    public function __construct(private BookingRepository $repository, private AccessPolicy $access) {}
 
     public function handle(array $data): array
     {
@@ -16,7 +17,8 @@ class UpdateAppointmentStatusAction
             || filter_var($data['id'] ?? null, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]]) === false) {
             throw new BookingException(__('Supply an appointment ID and a valid status.', 'wappointment'));
         }
-        $this->repository->setStatus((int) $data['id'], $data['status']);
+        $this->access->assert($data['status'] === 1 ? 'appointments.confirm' : 'appointments.cancel');
+        $this->repository->setStatus((int) $data['id'], $data['status'], $this->access->appointmentOwner());
         return ['updated' => true];
     }
 }

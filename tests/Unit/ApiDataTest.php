@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Requests\BookingRequestData;
 use Wappointment\Http\ContractValidator;
 use Wappointment\Http\Requests\ClientCreateRequestData;
 use Wappointment\Http\Requests\CreateBookingRequestData;
@@ -61,10 +61,10 @@ test('booking request rejects malformed missing and unknown fields', function (a
 ]);
 
 test('availability contract accepts only a selection or a secret-key date pair', function () {
-    $selection = array_intersect_key(contractBookingInput(), ApiSchemas::selection());
-    expect(GetAvailabilityRequestData::from($selection)->toArray())->toBe($selection);
+    $selection = array_intersect_key(contractBookingInput(), BookingRequestData::schema()['properties']);
+    expect(GetAvailabilityRequestData::from($selection)->toArray())->toEqual($selection);
     $reschedule = ['edit_key' => str_repeat('a', 32), 'date' => '2030-01-02'];
-    expect(GetAvailabilityRequestData::from($reschedule)->toArray())->toBe($reschedule);
+    expect(GetAvailabilityRequestData::from($reschedule)->toArray())->toEqual($reschedule);
     expect(fn() => GetAvailabilityRequestData::from($selection + ['start' => 1893571200]))->toThrow(InvalidArgumentException::class);
     expect(fn() => GetAvailabilityRequestData::from($reschedule + ['service_id' => 1]))->toThrow(InvalidArgumentException::class);
 });
@@ -88,7 +88,7 @@ test('client requests preserve API values and map wire pagination names', functi
 
 test('settings accept typed known fields and reject unknown keys and string booleans', function () {
     $settings = ['approval_mode' => 0, 'allow_cancellation' => false, 'mail_config' => ['method' => 'wpmail']];
-    expect(SaveSettingsRequestData::from($settings)->toArray())->toBe($settings);
+    expect(SaveSettingsRequestData::from($settings)->toArray())->toEqual($settings);
     expect(fn() => SaveSettingsRequestData::from([]))->toThrow(InvalidArgumentException::class);
     expect(fn() => SaveSettingsRequestData::from(['typo' => true]))->toThrow(InvalidArgumentException::class);
     expect(fn() => SaveSettingsRequestData::from(['allow_cancellation' => 'false']))->toThrow(InvalidArgumentException::class);
@@ -120,19 +120,89 @@ test('response contracts preserve types and treat missing unexpected or wrong fi
 });
 
 test('contract validation distinguishes lists from objects and validates declared dynamic properties', function () {
-    expect(fn() => ContractValidator::validate(['not-a-list' => 1], ApiSchemas::list(['type' => 'integer'])))->toThrow(InvalidArgumentException::class);
-    expect(fn() => ContractValidator::validate([1, 2], ApiSchemas::object([], [], true)))->toThrow(InvalidArgumentException::class);
-    expect(fn() => ContractValidator::validate(['monday' => true], ApiSchemas::object([], [], ['type' => 'string'])))->toThrow(InvalidArgumentException::class);
+    expect(fn() => ContractValidator::validate(['not-a-list' => 1], ['type' => 'array', 'items' => ['type' => 'integer']]))->toThrow(InvalidArgumentException::class);
+    expect(fn() => ContractValidator::validate([1, 2], ['type' => 'object', 'additionalProperties' => true]))->toThrow(InvalidArgumentException::class);
+    expect(fn() => ContractValidator::validate(['monday' => true], ['type' => 'object', 'additionalProperties' => ['type' => 'string']]))->toThrow(InvalidArgumentException::class);
     expect(fn() => ContractValidator::validate(INF, ['type' => 'number']))->toThrow(InvalidArgumentException::class);
-    expect(fn() => ContractValidator::validate([], ApiSchemas::object([]), 'request', true, true))->toThrow(InvalidArgumentException::class);
-    expect(ContractValidator::validate((object) [], ApiSchemas::object([]), 'request', true, true))->toBe([]);
+    $emptyObject = ['type' => 'object', 'properties' => [], 'additionalProperties' => false];
+    expect(fn() => ContractValidator::validate([], $emptyObject, 'request', true, true))->toThrow(InvalidArgumentException::class);
+    expect(ContractValidator::validate((object) [], $emptyObject, 'request', true, true))->toBe([]);
+});
+
+test('Data properties and nested collections hydrate as concrete typed objects', function () {
+    $request = CreateBookingRequestData::from(contractBookingInput());
+    expect($request->service_id)->toBe(1)
+        ->and($request->name)->toBe('Customer')
+        ->and($request->phone)->toBe(\Wappointment\System\Optional::Missing);
+    $settings = SaveSettingsRequestData::from(['mail_config' => ['method' => 'wpmail']]);
+    expect($settings->mail_config)->toBeInstanceOf(\Wappointment\Http\Data\MailSettingsData::class)
+        ->and($settings->mail_config->method)->toBe('wpmail')
+        ->and($settings->toArray())->toBe(['mail_config' => ['method' => 'wpmail']]);
+    $availability = GetAvailabilityResponseData::from([
+        'timezone' => 'UTC',
+        'slots' => [['start' => 1, 'end' => 2, 'reserved_until' => 3]],
+    ]);
+    expect($availability->slots[0])->toBeInstanceOf(\Wappointment\Http\Data\AvailableSlotData::class)
+        ->and($availability->slots[0]->reserved_until)->toBe(3)
+        ->and($availability->toArray()['slots'][0])->toBe(['start' => 1, 'end' => 2, 'reserved_until' => 3]);
+});
+
+test('Optional distinguishes an omitted update from nullable response values', function () {
+    $update = UpdateClientRequestData::from(['id' => 7]);
+    expect($update->name)->toBe(\Wappointment\System\Optional::Missing)
+        ->and($update->toArray())->toBe(['id' => 7]);
+    expect(fn() => UpdateClientRequestData::from(['id' => 7, 'name' => null]))->toThrow(InvalidArgumentException::class);
+    $setup = \Wappointment\Http\Responses\GetBookingSettingsResponseData::from([
+        'service' => null, 'calendar' => null, 'location' => null, 'booking_page' => 0,
+    ]);
+    expect($setup->service)->toBeNull()->and($setup->toArray())->toHaveKey('service', null);
+});
+
+test('native constructors support named arguments and immutable properties', function () {
+    $request = new BookingRequestData(service_id: 1, calendar_id: 2, location_id: 3, duration: 30, date: '2030-01-02');
+    expect($request->duration)->toBe(30);
+    expect(function () use ($request) { $request->duration = 45; })->toThrow(Error::class);
+    $response = new GetAvailabilityResponseData('UTC', [new \Wappointment\Http\Data\AvailableSlotData(1, 2, 3)]);
+    expect(json_encode($response, JSON_THROW_ON_ERROR))->toBe('{"timezone":"UTC","slots":[{"start":1,"end":2,"reserved_until":3}]}');
+    $invalid = new GetAvailabilityResponseData('UTC', [new \Wappointment\Http\Data\AvailableSlotData(0, 2, 3)]);
+    expect(fn() => $invalid->jsonSerialize())->toThrow(UnexpectedValueException::class);
+});
+
+test('schemas are derived from types defaults mapping and inherited attributes', function () {
+    $schema = CreateBookingRequestData::schema();
+    expect($schema['properties']['service_id'])->toBe(['type' => 'integer', 'minimum' => 1])
+        ->and($schema['properties']['date'])->toBe(['type' => 'string', 'format' => 'date'])
+        ->and($schema['properties']['email']['format'])->toBe('email')
+        ->and($schema['required'])->toContain('service_id', 'start', 'name')->not->toContain('email', 'phone')
+        ->and($schema['additionalProperties'])->toBeFalse();
+    $pagination = ListClientsRequestData::from(['page_num' => 2, 'per_page' => 5]);
+    expect($pagination->toArray())->toBe(['page_num' => 2, 'per_page' => 5, 'search' => '']);
+    $response = GetAvailabilityResponseData::schema();
+    expect($response['properties']['slots']['items']['properties']['reserved_until'])->toBe(['type' => 'integer', 'minimum' => 1]);
+});
+
+test('collections validate each scalar item and preserve scalar alternatives in unions', function () {
+    expect(SaveSettingsRequestData::from(['servicesDefault' => true])->servicesDefault)->toBeTrue();
+    expect(SaveSettingsRequestData::from(['servicesDefault' => [1, 2]])->servicesDefault)->toBe([1, 2]);
+    expect(SaveSettingsRequestData::from(['service' => ['type' => 'phone']])->service->type)->toBe('phone');
+    expect(SaveSettingsRequestData::from(['service' => ['type' => ['phone']]])->service->type)->toBe(['phone']);
+    expect(fn() => SaveSettingsRequestData::from(['calendar_roles' => [1]]))->toThrow(InvalidArgumentException::class);
+    expect(fn() => SaveSettingsRequestData::from(['servicesDefault' => [true]]))->toThrow(InvalidArgumentException::class);
+    expect(fn() => SaveSettingsRequestData::from(['service' => ['type' => [true]]]))->toThrow(InvalidArgumentException::class);
+});
+
+test('invalid Data definitions fail explicitly instead of dropping constructor parameters', function () {
+    $invalid = new class(7) extends \Wappointment\System\Data {
+        public function __construct(private readonly int $id) {}
+    };
+    expect(fn() => $invalid::schema())->toThrow(LogicException::class, 'must have a public readonly property');
 });
 
 test('response serialization preserves empty JSON objects instead of emitting lists', function () {
-    $response = new \Wappointment\Http\Responses\GetSettingsResponseData([
+    $response = \Wappointment\Http\Responses\GetSettingsResponseData::from([
         'settings' => ['general' => [], 'notifications' => [], 'advanced' => []],
     ]);
     expect(json_encode($response, JSON_THROW_ON_ERROR))->toBe('{"settings":{"general":{},"notifications":{},"advanced":{}}}');
-    $availability = new GetAvailabilityResponseData(['timezone' => 'UTC', 'slots' => []]);
+    $availability = GetAvailabilityResponseData::from(['timezone' => 'UTC', 'slots' => []]);
     expect(json_encode($availability, JSON_THROW_ON_ERROR))->toBe('{"timezone":"UTC","slots":[]}');
 });

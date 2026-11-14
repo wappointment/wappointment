@@ -25,6 +25,7 @@ function ClientFormModal({ client, onClose, onSave }) {
         },
         {
             name: 'options',
+            label: 'Options',
             type: 'json',
             defaultValue: {}
         }
@@ -42,4 +43,3 @@ function ClientFormModal({ client, onClose, onSave }) {
 }
 
 export default ClientFormModal;
-

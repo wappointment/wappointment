@@ -13,7 +13,6 @@ class ListJobsUseCase
 
     public function execute(ListJobsRequestData $requestData): ListJobsResponseData
     {
-        $input = $requestData->toArray();
-        return new ListJobsResponseData($this->action->handle($input['page_num'] ?? 1, $input['per_page'] ?? 10));
+        return ListJobsResponseData::from($this->action->handle($requestData->page_num, $requestData->per_page));
     }
 }

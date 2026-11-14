@@ -5,34 +5,27 @@ namespace Wappointment\Actions\Clients;
 
 use Wappointment\Http\Requests\UpdateClientRequestData;
 use Wappointment\Repositories\ClientRepository;
+use Wappointment\System\Optional;
+use Wappointment\Auth\AccessPolicy;
 
 class UpdateClientAction
 {
-	public function __construct(private ClientRepository $repository)
+	public function __construct(private ClientRepository $repository, private AccessPolicy $access)
 	{
 	}
 
 	public function handle(UpdateClientRequestData $requestData): array
 	{
-		$client = $this->repository->find($requestData->id);
-		if (!$client) {
-			throw new \RuntimeException('Client not found', 404);
-		}
-
+		$this->access->assert('clients.edit');
 		$updateData = array_filter(
 			['name' => $requestData->name, 'email' => $requestData->email, 'options' => $requestData->options],
-			static fn(mixed $value): bool => $value !== null
+			static fn(mixed $value): bool => !$value instanceof Optional
 		);
-		if ($requestData->options !== null) {
-			$updateData['options'] = json_encode($requestData->options, JSON_THROW_ON_ERROR);
+		if (!$requestData->options instanceof Optional) {
+			$updateData['options'] = json_encode((object) $requestData->options, JSON_THROW_ON_ERROR);
 		}
 		$updateData['updated_at'] = current_time('mysql');
 
-		$updated = $this->repository->update($requestData->id, $updateData);
-		if ($updated === false) {
-			throw new \RuntimeException('Failed to update client', 500);
-		}
-
-		return $this->repository->find($requestData->id);
+		return $this->repository->updateVisible($requestData->id, $updateData, $this->access->clientOwner());
 	}
 }

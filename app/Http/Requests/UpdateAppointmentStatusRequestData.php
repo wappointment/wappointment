@@ -3,15 +3,13 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Attributes\In;
+use Wappointment\Http\Attributes\Min;
 
 class UpdateAppointmentStatusRequestData extends RequestData
 {
-    public static function schema(): array
-    {
-        return ApiSchemas::object([
-            'id' => ['type' => 'integer', 'minimum' => 1],
-            'status' => ['type' => 'integer', 'enum' => [-1, 1]],
-        ]);
-    }
+    public function __construct(
+        #[Min(1)] public readonly int $id,
+        #[In([-1, 1])] public readonly int $status,
+    ) {}
 }

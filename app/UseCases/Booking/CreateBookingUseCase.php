@@ -25,6 +25,6 @@ class CreateBookingUseCase
         $appointment = $this->createBooking->handle($input, $contact);
         $result = $this->presentBooking->handle($appointment);
         $result['notification_sent'] = $this->sendConfirmation->handle($contact['email'], $result);
-        return new CreateBookingResponseData($result);
+        return CreateBookingResponseData::from($result);
     }
 }

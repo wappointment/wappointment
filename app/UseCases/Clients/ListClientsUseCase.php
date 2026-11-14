@@ -13,6 +13,6 @@ class ListClientsUseCase
 
     public function execute(ListClientsRequestData $requestData): ListClientsResponseData
     {
-        return new ListClientsResponseData($this->action->handle($requestData));
+        return ListClientsResponseData::from($this->action->handle($requestData));
     }
 }

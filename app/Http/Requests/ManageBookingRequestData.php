@@ -3,18 +3,26 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Attributes\Date;
+use Wappointment\Http\Attributes\In;
+use Wappointment\Http\Attributes\Min;
+use Wappointment\Http\Attributes\Pattern;
+use Wappointment\System\Optional;
 
-class ManageBookingRequestData extends BookingRequestData
+class ManageBookingRequestData extends RequestData
 {
-    public static function schema(): array
+    public function __construct(
+        #[In(['view', 'cancel', 'reschedule'])] public readonly string $action,
+        #[Pattern('^[a-f0-9]{32}$')] public readonly string $edit_key,
+        #[Date] public readonly string|Optional $date = Optional::Missing,
+        #[Min(1)] public readonly int|Optional $start = Optional::Missing,
+    ) {}
+
+    protected function validate(): void
     {
-        return ['anyOf' => [
-            ApiSchemas::object(['action' => ['type' => 'string', 'enum' => ['view', 'cancel']], 'edit_key' => ApiSchemas::editKey()]),
-            ApiSchemas::object([
-                'action' => ['type' => 'string', 'enum' => ['reschedule']], 'edit_key' => ApiSchemas::editKey(),
-                'date' => ['type' => 'string', 'format' => 'date'], 'start' => ['type' => 'integer', 'minimum' => 1],
-            ]),
-        ]];
+        $rescheduling = $this->action === 'reschedule';
+        if ($rescheduling !== is_string($this->date) || $rescheduling !== is_int($this->start)) {
+            throw new \InvalidArgumentException('Only rescheduling requires a date and start time.');
+        }
     }
 }

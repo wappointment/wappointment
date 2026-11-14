@@ -8,7 +8,11 @@ const apiFetch = async (endpoint, options = {}) => {
     throw new Error('API URL not configured');
   }
 
-  const url = `${apiUrl}${endpoint}`;
+  const queryStart = endpoint.indexOf('?');
+  const path = queryStart === -1 ? endpoint : endpoint.slice(0, queryStart);
+  const query = queryStart === -1 ? '' : endpoint.slice(queryStart + 1);
+  const routeUrl = `${apiUrl}${path}`;
+  const url = query ? `${routeUrl}${routeUrl.includes('?') ? '&' : '?'}${query}` : routeUrl;
   const method = options.method || 'GET';
   
   const fetchOptions = {

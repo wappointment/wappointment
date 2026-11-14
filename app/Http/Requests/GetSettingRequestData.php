@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Attributes\Length;
+use Wappointment\Http\Attributes\Pattern;
 
 class GetSettingRequestData extends RequestData
 {
-    public static function schema(): array
-    {
-        return ApiSchemas::object(['name' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 100, 'pattern' => '^[a-zA-Z0-9_-]+$']]);
-    }
+    public function __construct(
+        #[Length(1, 100), Pattern('^[a-zA-Z0-9_-]+$')] public readonly string $name,
+    ) {}
 }

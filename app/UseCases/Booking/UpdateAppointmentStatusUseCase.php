@@ -13,6 +13,6 @@ class UpdateAppointmentStatusUseCase
 
     public function execute(UpdateAppointmentStatusRequestData $requestData): UpdateAppointmentStatusResponseData
     {
-        return new UpdateAppointmentStatusResponseData($this->action->handle($requestData->toArray()));
+        return UpdateAppointmentStatusResponseData::from($this->action->handle($requestData->toArray()));
     }
 }

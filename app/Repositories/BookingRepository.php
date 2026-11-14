@@ -8,38 +8,41 @@ use Wappointment\Booking\BookingException;
 class BookingRepository
 {
     private \wpdb $db;
-    private string $prefix;
 
     public function __construct()
     {
         global $wpdb;
         $this->db = $wpdb;
-        $this->prefix = $wpdb->prefix . 'wappo_';
+    }
+
+    private function prefix(): string
+    {
+        return $this->db->prefix . 'wappo_';
     }
 
     public function catalog(): array
     {
-        $services = $this->rows("SELECT * FROM {$this->prefix}services WHERE deleted_at IS NULL ORDER BY sorting, id LIMIT 3");
-        $calendars = $this->rows("SELECT * FROM {$this->prefix}calendars WHERE deleted_at IS NULL AND status > 0 ORDER BY sorting, id LIMIT 2");
-        $locations = $this->rows("SELECT * FROM {$this->prefix}locations WHERE deleted_at IS NULL AND status >= 0 ORDER BY id");
+        $services = $this->rows("SELECT * FROM {$this->prefix()}services WHERE deleted_at IS NULL ORDER BY sorting, id LIMIT 3");
+        $calendars = $this->rows("SELECT * FROM {$this->prefix()}calendars WHERE deleted_at IS NULL AND status > 0 ORDER BY sorting, id LIMIT 2");
+        $locations = $this->rows("SELECT * FROM {$this->prefix()}locations WHERE deleted_at IS NULL AND status >= 0 ORDER BY id");
         return [
             'services' => $services,
             'calendars' => $calendars,
             'locations' => $locations,
-            'calendar_service' => $this->rows("SELECT calendar_id, service_id FROM {$this->prefix}calendar_service"),
-            'service_location' => $this->rows("SELECT service_id, location_id FROM {$this->prefix}service_location"),
+            'calendar_service' => $this->rows("SELECT calendar_id, service_id FROM {$this->prefix()}calendar_service"),
+            'service_location' => $this->rows("SELECT service_id, location_id FROM {$this->prefix()}service_location"),
         ];
     }
 
     public function intervals(int $calendar, int $from, int $to, int $exclude = 0): array
     {
         $appointments = $this->rows($this->db->prepare(
-            "SELECT start_at, end_at FROM {$this->prefix}appointments
+            "SELECT start_at, end_at FROM {$this->prefix()}appointments
              WHERE staff_id = %d AND status >= 0 AND id <> %d AND start_at < %s AND end_at > %s",
             $calendar, $exclude, gmdate('Y-m-d H:i:s', $to), gmdate('Y-m-d H:i:s', $from)
         ));
         $statuses = $this->rows($this->db->prepare(
-            "SELECT * FROM {$this->prefix}statuses
+            "SELECT * FROM {$this->prefix()}statuses
              WHERE staff_id = %d AND muted = 0 AND start_at < %s AND (end_at > %s OR recur > 0)",
             $calendar, gmdate('Y-m-d H:i:s', $to), gmdate('Y-m-d H:i:s', $from)
         ));
@@ -62,7 +65,7 @@ class BookingRepository
     public function appointment(string $key): array
     {
         $rows = $this->rows($this->db->prepare(
-            "SELECT * FROM {$this->prefix}appointments WHERE edit_key = %s LIMIT 1", $key
+            "SELECT * FROM {$this->prefix()}appointments WHERE edit_key = %s LIMIT 1", $key
         ));
         if (!$rows) {
             throw new BookingException(__('Appointment not found.', 'wappointment'), 404);
@@ -73,12 +76,16 @@ class BookingRepository
     public function client(array $data): int
     {
         $rows = $this->rows($this->db->prepare(
-            "SELECT * FROM {$this->prefix}clients WHERE email = %s LIMIT 1", $data['email']
+            "SELECT * FROM {$this->prefix()}clients WHERE email = %s LIMIT 1", $data['email']
         ));
         if ($rows) {
             // Public bookings must not overwrite an existing customer's name or private fields.
             if ($rows[0]['deleted_at'] !== null) {
-                throw new BookingException(__('This email cannot be used for a booking. Please contact the organizer.', 'wappointment'), 409);
+                if ($this->db->update($this->prefix() . 'clients', [
+                    'deleted_at' => null, 'updated_at' => gmdate('Y-m-d H:i:s'),
+                ], ['id' => (int) $rows[0]['id']]) === false) {
+                    $this->failure();
+                }
             }
             return (int) $rows[0]['id'];
         }
@@ -92,7 +99,7 @@ class BookingRepository
     public function activeBookings(int $client, ?int $calendar, int $now): int
     {
         $sql = $this->db->prepare(
-            "SELECT COUNT(*) FROM {$this->prefix}appointments WHERE client_id = %d AND status >= 0 AND start_at >= %s",
+            "SELECT COUNT(*) FROM {$this->prefix()}appointments WHERE client_id = %d AND status >= 0 AND start_at >= %s",
             $client, gmdate('Y-m-d H:i:s', $now)
         );
         if ($calendar !== null) {
@@ -118,9 +125,9 @@ class BookingRepository
                 foreach ($relation as $column => $value) {
                     $where[] = $this->db->prepare("{$column} = %d", $value);
                 }
-                $count = $this->db->get_var("SELECT COUNT(*) FROM {$this->prefix}{$table} WHERE " . implode(' AND ', $where));
+                $count = $this->db->get_var("SELECT COUNT(*) FROM {$this->prefix()}{$table} WHERE " . implode(' AND ', $where));
                 $this->checkError();
-                if (!(int) $count && $this->db->insert($this->prefix . $table, $relation) === false) {
+                if (!(int) $count && $this->db->insert($this->prefix() . $table, $relation) === false) {
                     $this->failure();
                 }
             }
@@ -128,22 +135,34 @@ class BookingRepository
         });
     }
 
-    public function adminAppointments(): array
+    public function adminAppointments(?int $owner = null): array
     {
+        $scope = $owner === null ? '' : $this->db->prepare(
+            " WHERE EXISTS (SELECT 1 FROM {$this->prefix()}calendars owner
+                            WHERE owner.id = a.staff_id AND owner.wp_uid = %d AND owner.deleted_at IS NULL)",
+            $owner
+        );
         return $this->rows(
             "SELECT a.id, a.start_at, a.end_at, a.status, c.name AS client_name, c.email AS client_email,
                     s.name AS service_name, a.options
-             FROM {$this->prefix}appointments a
-             LEFT JOIN {$this->prefix}clients c ON c.id = a.client_id
-             LEFT JOIN {$this->prefix}services s ON s.id = a.service_id
-             ORDER BY a.start_at DESC LIMIT 100"
+             FROM {$this->prefix()}appointments a
+             LEFT JOIN {$this->prefix()}clients c ON c.id = a.client_id
+             LEFT JOIN {$this->prefix()}services s ON s.id = a.service_id
+             {$scope} ORDER BY a.start_at DESC LIMIT 100"
         );
     }
 
-    public function setStatus(int $id, int $status): void
+    public function setStatus(int $id, int $status, ?int $owner = null): void
     {
-        $this->exclusive(function () use ($id, $status): void {
-            $rows = $this->rows($this->db->prepare("SELECT * FROM {$this->prefix}appointments WHERE id = %d", $id));
+        $this->exclusive(function () use ($id, $status, $owner): void {
+            $sql = $owner === null
+                ? $this->db->prepare("SELECT a.* FROM {$this->prefix()}appointments a WHERE a.id = %d FOR UPDATE", $id)
+                : $this->db->prepare(
+                    "SELECT a.* FROM {$this->prefix()}appointments a
+                     JOIN {$this->prefix()}calendars owner ON owner.id = a.staff_id
+                     WHERE a.id = %d AND owner.wp_uid = %d AND owner.deleted_at IS NULL FOR UPDATE", $id, $owner
+                );
+            $rows = $this->rows($sql);
             if (!$rows) {
                 throw new BookingException(__('Appointment not found.', 'wappointment'), 404);
             }
@@ -160,7 +179,7 @@ class BookingRepository
     public function insert(string $table, array $data): int
     {
         $this->assertWritableTable($table);
-        if ($this->db->insert($this->prefix . $table, $data) === false) {
+        if ($this->db->insert($this->prefix() . $table, $data) === false) {
             $this->failure();
         }
         return (int) $this->db->insert_id;
@@ -168,20 +187,20 @@ class BookingRepository
 
     public function updateAppointment(int $id, array $data): void
     {
-        if ($this->db->update($this->prefix . 'appointments', $data, ['id' => $id]) === false) {
+        if ($this->db->update($this->prefix() . 'appointments', $data, ['id' => $id]) === false) {
             $this->failure();
         }
     }
 
     public function exclusive(callable $operation): mixed
     {
-        $name = 'wappo_booking_' . substr(hash('sha256', DB_NAME . $this->prefix), 0, 40);
+        $name = 'wappo_booking_' . substr(hash('sha256', DB_NAME . $this->prefix()), 0, 40);
         if ((string) $this->db->get_var($this->db->prepare('SELECT GET_LOCK(%s, 5)', $name)) !== '1') {
             throw new BookingException(__('Booking is busy. Please try again.', 'wappointment'), 503);
         }
         try {
             foreach (['appointments', 'clients', 'services', 'calendars', 'locations', 'calendar_service', 'service_location'] as $suffix) {
-                $table = $this->prefix . $suffix;
+                $table = $this->prefix() . $suffix;
                 $engine = $this->db->get_row($this->db->prepare('SHOW TABLE STATUS LIKE %s', $this->db->esc_like($table)), ARRAY_A);
                 if (!$engine || strcasecmp($engine['Engine'], 'InnoDB') !== 0) {
                     throw new BookingException(__('Booking requires InnoDB tables. Please contact the site administrator.', 'wappointment'), 503);
@@ -255,7 +274,7 @@ class BookingRepository
         $data['options'] = wp_json_encode(array_merge($existing['options'] ?? [], $data['options']));
         $data['updated_at'] = gmdate('Y-m-d H:i:s');
         if ($existing) {
-            if ($this->db->update($this->prefix . $table, $data, ['id' => (int) $existing['id']]) === false) {
+            if ($this->db->update($this->prefix() . $table, $data, ['id' => (int) $existing['id']]) === false) {
                 $this->failure();
             }
             return (int) $existing['id'];

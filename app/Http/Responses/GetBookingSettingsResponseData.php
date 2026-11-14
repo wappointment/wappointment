@@ -3,22 +3,16 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Responses;
 
-use Wappointment\Http\ApiSchemas as S;
+use Wappointment\Http\Attributes\Min;
+use Wappointment\Http\Data\BookingSettingData;
+use Wappointment\Http\Data\LocationSettingData;
 
 class GetBookingSettingsResponseData extends ResponseData
 {
-    public static function schema(): array
-    {
-        $record = [
-            'id' => S::id(), 'name' => ['type' => 'string'],
-            'options' => S::object([], [], true),
-        ];
-        $integer = ['anyOf' => [['type' => 'integer'], ['type' => 'string', 'pattern' => '^[0-9]+$']]];
-        return S::object([
-            'service' => S::nullable(S::object($record)),
-            'calendar' => S::nullable(S::object($record)),
-            'location' => S::nullable(S::object($record + ['type' => $integer])),
-            'booking_page' => ['type' => 'integer', 'minimum' => 0],
-        ]);
-    }
+    public function __construct(
+        public readonly ?BookingSettingData $service,
+        public readonly ?BookingSettingData $calendar,
+        public readonly ?LocationSettingData $location,
+        #[Min(0)] public readonly int $booking_page,
+    ) {}
 }

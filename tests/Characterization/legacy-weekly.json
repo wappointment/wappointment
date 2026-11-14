@@ -1,0 +1,105 @@
+{
+    "source": "fcf2cfe296a240421ed91f28ff3672ece04e4786",
+    "cases_sha256": "41271c8b903f02c58eb5868f405f23fb44031fb78407d0535146194768340a16",
+    "scope": "Unmodified PHP weekly generation and Segment union/subtraction; synthetic inputs and frozen Carbon clock; no WordPress, database, HTTP or lifecycle execution.",
+    "windows": {
+        "legacy-hours": [
+            [
+                1794819600,
+                1794830400
+            ]
+        ],
+        "explicit-hours": [
+            [
+                1794819600,
+                1794830400
+            ]
+        ],
+        "precise-minutes": [
+            [
+                1794819600,
+                1794830400
+            ]
+        ],
+        "midnight-minutes": [
+            [
+                1794787200,
+                1794788400
+            ]
+        ],
+        "fractional-hours": [
+            [
+                1794819600,
+                1794830400
+            ]
+        ],
+        "paris-2026-03-28": [
+            [
+                1774684800,
+                1774695600
+            ]
+        ],
+        "paris-2026-03-29": [
+            [
+                1774767600,
+                1774778400
+            ]
+        ],
+        "paris-2026-10-24": [
+            [
+                1792825200,
+                1792836000
+            ]
+        ],
+        "paris-2026-10-25": [
+            [
+                1792915200,
+                1792926000
+            ]
+        ],
+        "paris-transition-2026-03-29": [
+            [
+                1774744200,
+                1774747800
+            ]
+        ],
+        "paris-transition-2026-10-25": [
+            [
+                1792884600,
+                1792895400
+            ]
+        ],
+        "midnight-endpoint": [
+            [
+                1794870000,
+                1794873600
+            ]
+        ],
+        "busy-splits-window": [
+            [
+                1794819600,
+                1794823800
+            ],
+            [
+                1794825600,
+                1794830400
+            ]
+        ],
+        "free-extends-window": [
+            [
+                1794816000,
+                1794830400
+            ]
+        ],
+        "busy-overrides-free": [
+            [
+                1794816000,
+                1794817800
+            ],
+            [
+                1794823200,
+                1794830400
+            ]
+        ]
+    }
+}

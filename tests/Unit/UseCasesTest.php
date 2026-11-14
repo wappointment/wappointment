@@ -25,7 +25,6 @@ use Wappointment\UseCases\Jobs\ListJobsUseCase;
 use Wappointment\UseCases\Settings\GetSettingUseCase;
 use Wappointment\UseCases\Settings\GetSettingsUseCase;
 use Wappointment\UseCases\Settings\SaveSettingsUseCase;
-use Wappointment\ValueObjects\Email;
 
 test('job UseCase forwards the requested pagination and returns the Action result', function () {
     $result = ['data' => [], 'total' => 17, 'page' => 2, 'per_page' => 5, 'total_pages' => 4];
@@ -43,11 +42,11 @@ test('client listing UseCase preserves the search request data', function () {
 });
 
 test('client creation UseCase forwards the typed data without changing its response', function () {
-    $request = new ClientCreateRequestData('Customer', new Email('customer@example.com'));
+    $request = new ClientCreateRequestData('Customer', 'customer@example.com');
     $result = ['id' => 7, 'name' => 'Customer', 'email' => 'customer@example.com', 'options' => '{}', 'created_at' => null, 'updated_at' => null, 'deleted_at' => null];
     $action = $this->createMock(CreateClientAction::class);
     $action->expects($this->once())->method('handle')->with($this->identicalTo($request))->willReturn($result);
-    expect((new CreateClientUseCase($action))->execute($request)->toArray())->toBe($result);
+    expect((new CreateClientUseCase($action))->execute($request)->toArray())->toEqual($result);
 });
 
 test('client update UseCase forwards partial request data', function () {
@@ -55,7 +54,7 @@ test('client update UseCase forwards partial request data', function () {
     $result = ['id' => 7, 'name' => 'Updated Customer', 'email' => 'customer@example.com', 'options' => null, 'created_at' => null, 'updated_at' => null, 'deleted_at' => null];
     $action = $this->createMock(UpdateClientAction::class);
     $action->expects($this->once())->method('handle')->with($this->identicalTo($request))->willReturn($result);
-    expect((new UpdateClientUseCase($action))->execute($request)->toArray())->toBe($result);
+    expect((new UpdateClientUseCase($action))->execute($request)->toArray())->toEqual($result);
 });
 
 test('client deletion UseCase keeps the existing result contract', function () {

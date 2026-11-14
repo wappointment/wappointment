@@ -15,31 +15,17 @@ function FormModal({
     const [saving, setSaving] = useState(false);
 
     useEffect(() => {
-        if (item) {
-            const initialData = {};
-            fields.forEach(field => {
-                let value = item[field.name] || field.defaultValue || '';
-                
-                // Parse JSON fields
-                if (field.type === 'json' && typeof value === 'string') {
-                    try {
-                        value = JSON.parse(value || '{}');
-                    } catch {
-                        value = {};
-                    }
-                }
-                
-                initialData[field.name] = value;
-            });
-            setFormData(initialData);
-        } else {
-            // Initialize with default values for create mode
-            const initialData = {};
-            fields.forEach(field => {
-                initialData[field.name] = field.defaultValue !== undefined ? field.defaultValue : '';
-            });
-            setFormData(initialData);
-        }
+        const initialData = {};
+        fields.forEach(field => {
+            const value = item?.[field.name] ?? field.defaultValue ?? '';
+            initialData[field.name] = field.type === 'json' && typeof value !== 'string'
+                ? JSON.stringify(value, null, 2) : value;
+            // Legacy empty option maps were also stored as [].
+            if (field.type === 'json' && /^\s*\[\s*\]\s*$/.test(initialData[field.name])) {
+                initialData[field.name] = '{}';
+            }
+        });
+        setFormData(initialData);
     }, [item, fields]);
 
     const handleChange = (e) => {
@@ -64,6 +50,16 @@ function FormModal({
         const newErrors = {};
         
         fields.forEach(field => {
+            if (field.type === 'json') {
+                try {
+                    const value = JSON.parse(formData[field.name]);
+                    if (value === null || typeof value !== 'object' || Array.isArray(value)) {
+                        newErrors[field.name] = `${field.label} must be a JSON object`;
+                    }
+                } catch {
+                    newErrors[field.name] = `${field.label} must be valid JSON`;
+                }
+            }
             if (field.required) {
                 const value = formData[field.name];
                 if (!value || (typeof value === 'string' && !value.trim())) {
@@ -100,7 +96,11 @@ function FormModal({
         setSaving(true);
         setApiError(null);
         try {
-            await onSave(formData);
+            const payload = { ...formData };
+            fields.filter(field => field.type === 'json').forEach(field => {
+                payload[field.name] = JSON.parse(formData[field.name]);
+            });
+            await onSave(payload);
             onClose();
         } catch (error) {
             setApiError(error);
@@ -114,6 +114,7 @@ function FormModal({
         const value = formData[field.name] || '';
 
         switch (field.type) {
+            case 'json':
             case 'textarea':
                 return (
                     <textarea

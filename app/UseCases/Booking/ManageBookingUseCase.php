@@ -20,12 +20,12 @@ class ManageBookingUseCase
 
     public function execute(ManageBookingRequestData $input): ManageBookingResponseData
     {
-        $action = $input->text('action', 20);
+        $action = $input->action;
         $appointment = match ($action) {
-            'view' => $this->getAppointment->handle($input),
+            'view' => $this->getAppointment->handle($input->edit_key),
             'cancel', 'reschedule' => $this->changeBooking->handle($input, $action),
             default => throw new BookingException(__('Unknown appointment action.', 'wappointment')),
         };
-        return new ManageBookingResponseData($this->presentBooking->handle($appointment));
+        return ManageBookingResponseData::from($this->presentBooking->handle($appointment));
     }
 }

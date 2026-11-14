@@ -13,6 +13,6 @@ class GetSettingsUseCase
 
     public function execute(GetSettingsRequestData $requestData): GetSettingsResponseData
     {
-        return new GetSettingsResponseData($this->action->handle());
+        return GetSettingsResponseData::from($this->action->handle());
     }
 }

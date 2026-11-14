@@ -13,6 +13,6 @@ class GetBookingSettingsUseCase
 
     public function execute(GetBookingSettingsRequestData $requestData): GetBookingSettingsResponseData
     {
-        return new GetBookingSettingsResponseData($this->action->handle());
+        return GetBookingSettingsResponseData::from($this->action->handle());
     }
 }

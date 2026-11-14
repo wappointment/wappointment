@@ -13,6 +13,6 @@ class GetSettingUseCase
 
     public function execute(GetSettingRequestData $requestData): GetSettingResponseData
     {
-        return new GetSettingResponseData($this->action->handle($requestData->toArray()['name']));
+        return GetSettingResponseData::from($this->action->handle($requestData->name));
     }
 }

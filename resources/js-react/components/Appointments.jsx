@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import apiFetch from '../utils/apiFetch';
 
 export default function Appointments() {
+    const permissions = window.wappointmentData?.permissions || {};
     const [appointments, setAppointments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -36,8 +37,8 @@ export default function Appointments() {
                 <td>{appointment.service_name}</td><td>{date(appointment.start_at)}</td>
                 <td>{Number(appointment.status) < 0 ? 'Cancelled' : Number(appointment.status) === 1 ? 'Confirmed' : 'Pending'}</td>
                 <td>
-                    {Number(appointment.status) === 0 && <button className="button" disabled={saving} onClick={() => changeStatus(appointment.id, 1)}>Confirm</button>}
-                    {Number(appointment.status) >= 0 && <button className="button" disabled={saving} onClick={() => changeStatus(appointment.id, -1)}>Cancel</button>}
+                    {permissions.appointmentsConfirm && Number(appointment.status) === 0 && <button className="button" disabled={saving} onClick={() => changeStatus(appointment.id, 1)}>Confirm</button>}
+                    {permissions.appointmentsCancel && Number(appointment.status) >= 0 && <button className="button" disabled={saving} onClick={() => changeStatus(appointment.id, -1)}>Cancel</button>}
                 </td>
             </tr>)}</tbody>
         </table>}

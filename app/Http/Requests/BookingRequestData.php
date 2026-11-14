@@ -3,25 +3,17 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\Booking\BookingException;
+use Wappointment\Http\Attributes\Date;
+use Wappointment\Http\Attributes\Max;
+use Wappointment\Http\Attributes\Min;
 
-abstract class BookingRequestData extends RequestData
+class BookingRequestData extends RequestData
 {
-    public function text(string $key, int $length, ?string $default = null): string
-    {
-        $value = $this->toArray()[$key] ?? $default;
-        if (!is_string($value) || strlen($value) > $length || str_contains($value, "\0")) {
-            throw new BookingException(sprintf(__('Invalid booking field: %s.', 'wappointment'), $key));
-        }
-        return sanitize_text_field(trim($value));
-    }
-
-    public function integer(string $key, int $min, int $max = PHP_INT_MAX): int
-    {
-        $value = $this->toArray()[$key] ?? null;
-        if (filter_var($value, FILTER_VALIDATE_INT, ['options' => ['min_range' => $min, 'max_range' => $max]]) === false) {
-            throw new BookingException(sprintf(__('Invalid booking field: %s.', 'wappointment'), $key));
-        }
-        return (int) $value;
-    }
+    public function __construct(
+        #[Min(1)] public readonly int $service_id,
+        #[Min(1)] public readonly int $calendar_id,
+        #[Min(1)] public readonly int $location_id,
+        #[Min(5), Max(1440)] public readonly int $duration,
+        #[Date] public readonly string $date,
+    ) {}
 }

@@ -3,17 +3,24 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Attributes\Email;
+use Wappointment\Http\Attributes\Length;
+use Wappointment\Http\Attributes\Min;
+use Wappointment\System\Optional;
 
 class CreateBookingRequestData extends BookingRequestData
 {
-    public static function schema(): array
-    {
-        return ApiSchemas::object(ApiSchemas::selection() + [
-            'start' => ['type' => 'integer', 'minimum' => 1],
-            'name' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 100],
-            'email' => ['type' => 'string', 'format' => 'email', 'maxLength' => 191],
-            'phone' => ['type' => 'string', 'maxLength' => 40],
-        ], ['service_id', 'calendar_id', 'location_id', 'duration', 'date', 'start', 'name']);
+    public function __construct(
+        int $service_id,
+        int $calendar_id,
+        int $location_id,
+        int $duration,
+        string $date,
+        #[Min(1)] public readonly int $start,
+        #[Length(1, 100)] public readonly string $name,
+        #[Email, Length(max: 191)] public readonly string|Optional $email = Optional::Missing,
+        #[Length(max: 40)] public readonly string|Optional $phone = Optional::Missing,
+    ) {
+        parent::__construct($service_id, $calendar_id, $location_id, $duration, $date);
     }
 }

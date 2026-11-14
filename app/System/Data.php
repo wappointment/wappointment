@@ -3,88 +3,80 @@ declare(strict_types=1);
 
 namespace Wappointment\System;
 
-abstract class Data
+use Wappointment\Http\ContractValidator;
+
+abstract class Data implements \JsonSerializable
 {
-    public static function from(array $data): static
+    public static function schema(): array
     {
-        // Get constructor parameters
-        $reflection = new \ReflectionClass(static::class);
-        $constructor = $reflection->getConstructor();
-        
-        if (!$constructor) {
-            return new static();
-        }
-        
-        $params = $constructor->getParameters();
-        $args = [];
-        
-        foreach ($params as $param) {
-            $name = $param->getName();
-            $value = $data[$name] ?? null;
-            
-            // Get the parameter type
-            $type = $param->getType();
-            
-            if ($type && !$type->isBuiltin()) {
-                $typeName = $type->getName();
-                
-                // Check if the type has a static 'from' method
-                if (method_exists($typeName, 'from')) {
-                    try {
-                        $value = $typeName::from($value ?? '');
-                    } catch (\InvalidArgumentException $e) {
-                        throw $e;
-                    }
-                }
-            }
-            
-            // Handle default values
-            if ($value === null && $param->isDefaultValueAvailable()) {
-                $value = $param->getDefaultValue();
-            }
-            
-            $args[] = $value;
-        }
-        
-        return new static(...$args);
-    }
-    
-    public function toArray(): array
-    {
-        $reflection = new \ReflectionClass($this);
-        $properties = $reflection->getProperties(\ReflectionProperty::IS_PUBLIC);
-        
-        $array = [];
-        
-        foreach ($properties as $property) {
-            $name = $property->getName();
-            $value = $property->getValue($this);
-            $array[$name] = $this->convertValueForArray($value);
-        }
-        
-        return $array;
+        return DataDefinition::schema(static::class);
     }
 
-    private function convertValueForArray(mixed $value): mixed
+    public static function from(array $data): static
     {
-        // Handle value objects with a value property
-        if (is_object($value) && property_exists($value, 'value')) {
-            return $value->value;
+        $data = ContractValidator::validate($data, static::schema(), 'data', static::normalizeIntegers());
+        $reflection = new \ReflectionClass(static::class);
+        $arguments = [];
+        foreach ($reflection->getConstructor()?->getParameters() ?? [] as $parameter) {
+            $property = $reflection->getProperty($parameter->getName());
+            $name = DataDefinition::name($property);
+            if (array_key_exists($name, $data)) {
+                $arguments[$parameter->getName()] = DataDefinition::hydrate($data[$name], $property);
+            }
         }
-        
-        // Handle nested Data objects
+        $instance = new static(...$arguments);
+        $instance->validate();
+        return $instance;
+    }
+
+    public function toArray(): array
+    {
+        return $this->serialize(false);
+    }
+
+    public function jsonSerialize(): array
+    {
+        return $this->serialize(true);
+    }
+
+    protected static function normalizeIntegers(): bool
+    {
+        return false;
+    }
+
+    protected function validate(): void {}
+
+    private function serialize(bool $json): array
+    {
+        $result = [];
+        $schema = static::schema();
+        $reflection = new \ReflectionClass($this);
+        foreach ($reflection->getConstructor()?->getParameters() ?? [] as $parameter) {
+            $property = $reflection->getProperty($parameter->getName());
+            $value = $property->getValue($this);
+            if ($value instanceof Optional) {
+                continue;
+            }
+            $name = DataDefinition::name($property);
+            $result[$name] = self::serializeValue($value, $schema['properties'][$name], $json);
+        }
+        return $result;
+    }
+
+    private static function serializeValue(mixed $value, array $schema, bool $json): mixed
+    {
         if ($value instanceof self) {
-            return $value->toArray();
+            $serialized = $json ? $value->jsonSerialize() : $value->toArray();
+            return $json && $serialized === [] ? new \stdClass() : $serialized;
         }
-        
-        // Handle arrays of Data objects
         if (is_array($value)) {
-            return array_map(
-                fn($item) => $item instanceof self ? $item->toArray() : $item,
-                $value
-            );
+            if ($json && $value === [] && ($schema['type'] ?? null) === 'object') {
+                return new \stdClass();
+            }
+            foreach ($value as $key => $item) {
+                $value[$key] = self::serializeValue($item, $schema['items'] ?? [], $json);
+            }
         }
-        
         return $value;
     }
 }

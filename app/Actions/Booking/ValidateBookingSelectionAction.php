@@ -14,10 +14,10 @@ class ValidateBookingSelectionAction
     public function handle(BookingRequestData $input): array
     {
         $catalog = $this->repository->catalog();
-        $service = $this->find($catalog['services'], $input->integer('service_id', 1));
-        $calendar = $this->find($catalog['calendars'], $input->integer('calendar_id', 1));
-        $location = $this->find($catalog['locations'], $input->integer('location_id', 1));
-        $duration = $input->integer('duration', 5, 1440);
+        $service = $this->find($catalog['services'], $input->service_id);
+        $calendar = $this->find($catalog['calendars'], $input->calendar_id);
+        $location = $this->find($catalog['locations'], $input->location_id);
+        $duration = $input->duration;
         $timezone = $calendar['options']['timezone'] ?? 'UTC';
         if (!is_string($timezone) || (!in_array($timezone, \DateTimeZone::listIdentifiers(), true) && $timezone !== 'UTC')) {
             throw new BookingException(__('Invalid calendar timezone. Please contact the organizer.', 'wappointment'), 409);

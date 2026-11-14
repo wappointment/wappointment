@@ -13,6 +13,6 @@ class GetBookingCatalogUseCase
 
     public function execute(GetBookingCatalogRequestData $requestData): GetBookingCatalogResponseData
     {
-        return new GetBookingCatalogResponseData($this->action->handle());
+        return GetBookingCatalogResponseData::from($this->action->handle());
     }
 }

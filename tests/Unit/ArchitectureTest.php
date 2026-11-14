@@ -86,3 +86,28 @@ test('each API operation uses its own controller UseCase and matching request an
     expect(array_unique($requests))->toHaveCount(count($routes));
     expect(array_unique($responses))->toHaveCount(count($routes));
 });
+
+test('Data contracts declare readonly constructor properties rather than payloads or manual schemas', function (string $class) {
+    $reflection = new ReflectionClass($class);
+    if ($reflection->isAbstract()) {
+        expect($reflection->isInstantiable())->toBeFalse();
+        return;
+    }
+    expect($reflection->getMethod('schema')->getDeclaringClass()->getName())->toBe(\Wappointment\System\Data::class);
+    $parameters = $reflection->getConstructor()?->getParameters() ?? [];
+    foreach ($parameters as $parameter) {
+        $property = $reflection->getProperty($parameter->getName());
+        expect($property->isPublic())->toBeTrue()
+            ->and($property->isReadOnly())->toBeTrue()
+            ->and($property->hasType())->toBeTrue();
+    }
+    expect(file_get_contents($reflection->getFileName()))->not->toContain(
+        'private readonly array $values', 'function text(', 'function integer(', 'ApiSchemas',
+        'WP_REST', 'sanitize_text_field', 'current_time('
+    );
+    expect($class::schema()['additionalProperties'])->toBeFalse();
+})->with(array_merge(
+    architectureClasses('Http/Requests'),
+    architectureClasses('Http/Responses'),
+    architectureClasses('Http/Data')
+));

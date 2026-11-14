@@ -44,7 +44,22 @@ class Init
     private function registerHooks(): void
     {
         add_action('init', static function (): void {
-            if (get_option('wappointment_booking_schema') !== '3.0.0') {
+            try {
+                Container::getInstance()->make(\Wappointment\UseCases\Auth\RegisterRolesUseCase::class)->execute();
+            } catch (\RuntimeException $error) {
+                error_log('Wappointment role setup failed: ' . $error->getMessage());
+                add_action('admin_notices', static function (): void {
+                    if (current_user_can('manage_options')) {
+                        echo '<div class="notice notice-error"><p>' . esc_html__(
+                            'Wappointment roles could not be initialized. Check the server error log before assigning staff access.',
+                            'wappointment'
+                        ) . '</p></div>';
+                    }
+                });
+            }
+        }, 0);
+        add_action('init', static function (): void {
+            if (get_option('wappointment_booking_schema') !== BookingSchema::VERSION) {
                 try {
                     BookingSchema::install();
                 } catch (\RuntimeException $error) {
@@ -52,7 +67,7 @@ class Init
                     add_action('admin_notices', static function (): void {
                         if (current_user_can('manage_options')) {
                             echo '<div class="notice notice-error"><p>' . esc_html__(
-                                'Wappointment could not initialize its booking tables. Check the database permissions and server error log before accepting bookings.',
+                                'Wappointment database setup is blocked. Existing tables will not be automatically repaired. Open Wappointment Diagnostics and check the server error log before accepting bookings.',
                                 'wappointment'
                             ) . '</p></div>';
                         }

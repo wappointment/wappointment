@@ -3,30 +3,25 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Attributes\In;
+use Wappointment\Http\Attributes\Length;
+use Wappointment\Http\Attributes\Max;
+use Wappointment\Http\Attributes\Min;
+use Wappointment\Http\Data\WeeklyAvailabilityData;
+use Wappointment\System\Optional;
 
 class SaveBookingSettingsRequestData extends RequestData
 {
-    public static function schema(): array
-    {
-        $day = ApiSchemas::list(['type' => 'array', 'minItems' => 2, 'maxItems' => 2, 'items' => [
-            'type' => 'integer', 'minimum' => 0, 'maximum' => 1440,
-        ]]);
-        $day['maxItems'] = 24;
-        $properties = [
-            'service_name' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255],
-            'calendar_name' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255],
-            'location_name' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255],
-            'location_type' => ['type' => 'integer', 'enum' => [1, 2, 4]],
-            'duration' => ['type' => 'integer', 'minimum' => 5, 'maximum' => 1440],
-            'booking_days' => ['type' => 'integer', 'minimum' => 1, 'maximum' => 365],
-            'timezone' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 255],
-            'phone_required' => ['type' => 'boolean'],
-            'regav' => ApiSchemas::object(array_fill_keys(
-                ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'], $day
-            )),
-            'booking_page' => ['type' => 'integer', 'minimum' => 0],
-        ];
-        return ApiSchemas::object($properties, array_diff(array_keys($properties), ['booking_page']));
-    }
+    public function __construct(
+        #[Length(1, 255)] public readonly string $service_name,
+        #[Length(1, 255)] public readonly string $calendar_name,
+        #[Length(1, 255)] public readonly string $location_name,
+        #[In([1, 2, 4])] public readonly int $location_type,
+        #[Min(5), Max(1440)] public readonly int $duration,
+        #[Min(1), Max(365)] public readonly int $booking_days,
+        #[Length(1, 255)] public readonly string $timezone,
+        public readonly bool $phone_required,
+        public readonly WeeklyAvailabilityData $regav,
+        #[Min(0)] public readonly int|Optional $booking_page = Optional::Missing,
+    ) {}
 }

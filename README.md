@@ -8,6 +8,13 @@ The migration targets one free plugin (`wappointment-plugin`) and one paid plugi
 Premium will initially contain the former Services features. Licensing and automatic
 Premium updates are deferred.
 
+See the [master feature audit and v3 migration plan](docs/V3-MIGRATION-PLAN.md) for
+the feature inventory, implementation order, and acceptance gates. Legacy API routes
+and payloads may be redesigned; the current database schema must remain unchanged.
+Both packaged plugins must run without external PHP packages or a Composer autoloader.
+Composer development dependencies, including Pest, stay for testing/tooling only;
+release ZIPs must exclude vendor files, Composer metadata, tests and development tools.
+
 The v3 implementation uses PHP 8.2+, WordPress 6.2+, native WordPress REST/database APIs,
 and React. It does not load the old Illuminate/Vue runtime.
 
@@ -33,8 +40,42 @@ API errors now consistently use `{ "code": "...", "message": "...", "data": { "s
 instead of the older clients/settings error envelopes. WordPress still handles its own
 authentication, routing and malformed-JSON errors.
 
-Each Data contract exposes a JSON-Schema-shaped `schema()` consumed by the shared PHP
-validator. Unknown structural fields, missing required values, wrong types, malformed
+Data contracts use native, Spatie-inspired constructor properties, without Laravel
+dependencies or array-backed payloads. Types define the structure; attributes add
+constraints that PHP types cannot express. Shared nested Data objects live in
+`app/Http/Data`.
+
+```php
+class BookingRequestData extends RequestData
+{
+    public function __construct(
+        #[Min(1)] public readonly int $service_id,
+        #[Min(1)] public readonly int $calendar_id,
+        #[Min(1)] public readonly int $location_id,
+        #[Min(5), Max(1440)] public readonly int $duration,
+        #[Date] public readonly string $date,
+    ) {}
+}
+```
+
+Actions read `$request->service_id` directly, not generic `text()`/`integer()` helpers.
+`Data::from($array)` validates input and hydrates nested Data/`#[CollectionOf(...)]`
+items; native constructors also support named arguments and already-typed nested
+objects. As with ordinary PHP constructors, direct construction enforces PHP types,
+not validation attributes. Responses are validated again at the HTTP boundary.
+`toArray()` recursively exports plain PHP values; JSON serialization preserves
+declared empty object maps. `#[MapInputName(...)]` maps wire names where needed.
+
+An `Optional::Missing` default means a field can be omitted but cannot be null.
+Omitted fields are left out of serialization and updates. Nullable types instead
+allow an explicit null; a nullable field with no default is still required.
+`#[Map]` declares an intentionally extensible options/settings map rather than a list.
+Cross-field rules (availability selection versus secret key, rescheduling-only fields)
+live in protected `validate()` hooks on the request DTO.
+
+The shared Data implementation derives `schema()` from types, defaults and attributes;
+endpoint classes no longer maintain parallel schema arrays. The existing PHP validator
+consumes these generated schemas. Unknown structural fields, missing required values, wrong types, malformed
 dates/emails and invalid nested arrays are rejected. Numeric strings are normalized
 only where integer parameters are declared (query strings and HTML selects).
 JSON objects and lists remain distinct at the HTTP boundary, including empty objects.
@@ -47,8 +88,9 @@ exposing complete database records.
 
 These are application contracts, not an OpenAPI export or automatically registered
 WordPress argument schemas. WordPress provides REST discovery/OPTIONS but no built-in
-OpenAPI generator. An exporter can consume the Data schemas and controller signatures
-later; no OpenAPI tooling is added here.
+OpenAPI generator. An exporter can consume the generated schemas and controller
+signatures later, but would also need to describe cross-field rules from validation
+hooks. No OpenAPI tooling is added here.
 
 For example:
 `JobsController::__invoke()` -> `ListJobsUseCase::execute()` -> `ListJobsAction::handle()`.
@@ -71,20 +113,115 @@ Implemented booking baseline:
 - A basic customer confirmation through `wp_mail` when that transport is configured.
   Delivery failure is logged and shown without pretending that the saved booking failed.
 
+Weekly scheduling now has a reproducible, isolated legacy-engine baseline:
+15 frozen weekly/DST/busy/free fixtures and 60 duration/buffer/spacing comparisons.
+The [characterization instructions](tests/README.md#legacy-weekly-runtime-characterization)
+describe exactly which legacy methods execute; this is not full WordPress/lifecycle parity.
+Slots use duration plus buffer as their default spacing. `starting_each` applies only
+when `more_st` is enabled, and spacing restarts at each remaining free interval after
+busy time is subtracted.
+
+Stored weekly schedules follow master's format: `regav.precise: true` means minutes;
+an absent/false flag means hours. Both setup editors expose minute values and write
+`precise: true` on explicit saves. Reads/bookings do not rewrite stored schedules.
+**Earlier v3 test builds wrote unmarked minute schedules.** Those test calendars need
+administrator review before reuse: values above 24 without the flag are refused,
+not guessed or automatically repaired. Smaller unmarked values follow master's
+hour interpretation. Only mark an existing schedule as minutes after confirming its
+actual origin; do not bulk-convert populated sites.
+
 ### Data and legacy plugins
 
 Existing `{$wpdb->prefix}wappo_*` tables, row IDs, UTC timestamps, JSON options, and
-`wappointment_settings` remain in place. The bootstrap creates missing tables only;
-it does not rebuild existing tables, delete add-on data, or reset settings.
+`wappointment_settings` remain in place. Fresh installation now creates the 16 core
+tables derived from `master`, including its timestamp/text types, pivot IDs, indexes
+and foreign keys. Existing installations are inspected, not rebuilt or completed:
+partial/incompatible schemas block setup without changing their tables or records.
+An empty database with existing installation/settings markers is not treated as fresh.
 Stored appointment end times continue to include the buffer. Public bookings do not
 overwrite existing customer names or private custom fields. This is not yet a certified
-upgrade/migration path: older schemas and populated v2 installations need migration testing.
+upgrade path: representative populated v2 installations still need characterization.
+
+**Wappointment > Diagnostics** (administrators and Wappointment managers) displays a read-only schema
+report, also available at `GET /wappointment/v1/system/schema`. It reads metadata,
+not customer records. Additional extension tables are listed but not certified.
+This follows the same Controller -> UseCase -> Action and typed Data architecture.
+Schema compatibility does not certify feature parity or production readiness.
+
+The old development marker `3.0.0` no longer authorizes API operations: successful
+schema verification records the audited master reference instead. Until verified,
+other API operations return `503 wappointment_schema_not_ready`; Diagnostics remains
+available. Earlier v3 test databases may therefore need review. They are **not**
+automatically converted or reset; preserve any data and use a separate disposable
+fixture for a clean installation.
 
 Legacy paid-plugin boot hooks are disabled in v3, with an administrator notice.
 Their source repositories and stored data are not removed. Bookings that require
 unported features are rejected explicitly rather than ignoring their rules.
 The single-service setup editor refuses to overwrite multi-service/calendar/location
 setups, multiple durations, custom fields, or conditional availability.
+
+### Current admin permissions
+
+The shared access policy allows site administrators (`manage_options`) and the
+existing `wappointment_manager` role to use the current management screens and APIs.
+It does not grant managers WordPress administrator privileges or treat
+`switch_themes` as permission to manage bookings.
+
+Staff need `wappo_calendar_man` to open Appointments. Listings are scoped in SQL to
+all non-deleted calendars whose `wp_uid` is the current WordPress user, before the
+100-row limit. Unpublished calendars retain their appointment history.
+Confirmation additionally requires `wappo_calendar_confirm`; cancellation requires
+`wappo_calendar_cancel`. Both mutations recheck ownership within the transaction;
+another user's appointment ID returns 404. Menus, direct page access and React
+controls use the same policy; the server always enforces the grants.
+
+Missing legacy staff/manager roles are created using their legacy defaults.
+Existing roles and per-user grants/denials are never refreshed or overwritten.
+Permissions and appointment/client table prefixes follow the current user/site when
+switching blogs on multisite.
+
+Staff with `wappo_clients_man` can use Clients independently of calendar-management
+permissions. Listings, name/email/client-field search and pagination counts use
+appointment links to all their own non-deleted calendars. Editing additionally
+requires `wappo_clients_edit`; deletion requires `wappo_clients_del`. Ownership is
+locked and checked during each mutation, including calls made directly to an Action.
+Unowned/missing/deleted client IDs return 404. Standalone client creation remains
+administrator/manager-only.
+
+As in legacy, a client linked to multiple calendars is a shared record: authorized
+staff on either calendar may edit or soft-delete it. Deletion removes the client
+from all client lists but keeps their row and every appointment reference. A new
+successful public booking with the same email restores that client's original ID,
+without overwriting their existing name/private fields; a failed booking rolls back
+restoration. Client editing shows options as JSON and rejects invalid/non-object
+JSON instead of silently clearing stored values. Legacy empty `[]` option maps are
+shown as `{}`, and empty maps are persisted as JSON objects.
+
+**Wappointment > My availability** is a separate own-calendar screen.
+`wappo_self_man` grants read access, independently of calendar/client management;
+`wappo_self_weekly` additionally permits changing timezone, booking horizon and
+weekly hours. Managers may also use it, but this `/me` operation never edits another
+user's calendar. Missing calendar assignments show an explicit empty state.
+
+The typed `GET /wappointment/v1/me/calendars` response contains only each owned
+calendar's ID, name and supported weekly settings, not account keys/private options.
+`POST /wappointment/v1/me/calendars/{id}/weekly-settings` accepts a `settings` object
+containing `timezone`, `booking_days` and seven-day `regav` ranges in minutes.
+Existing `calendars.options` keys (`timezone`, `avb`, `regav`) are updated under an
+ownership-checked transaction; other options, relationships, cached legacy data and
+existing appointments are preserved. The current booking engine reads these options
+live: changes affect subsequent public slot searches, not existing bookings.
+
+Conditional/unsupported stored schedules are explicitly read-only, with mutation
+returning 409 rather than dropping conditions. Malformed stored JSON is a logged
+server error. This editor supports basic weekly ranges only; no legacy usermeta is
+automatically imported or rewritten.
+
+This is **not complete staff-workflow parity**. Global settings, Booking setup,
+Jobs and Diagnostics remain administrator/manager-only. Staff profile/service/
+publishing/provider settings, history and remaining calendar actions still need
+dedicated scoped operations.
 
 ### Remaining release blockers
 
@@ -94,6 +231,9 @@ setups, multiple durations, custom fields, or conditional availability.
   other than the basic WordPress mail path, and cancellation/reschedule/approval messages.
 - Full admin calendar behavior, punctual availability editing, manual/recurrent booking
   tools, booking-widget appearance/text settings, and save-to-calendar downloads.
+- Remaining staff profile/service/publishing/provider settings, history and calendar
+  workflows; own weekly settings, appointment listing/confirmation/cancellation and
+  scoped client management are implemented.
 - Country-aware phone validation, complete logged-in/autofill behavior, and the remaining
   advanced scheduling settings (`scheduler_mode`, fluid availability, daily release, etc.).
 - Upgrade tests using representative v2 data, existing management links/shortcodes,

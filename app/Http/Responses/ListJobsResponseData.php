@@ -3,17 +3,18 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Responses;
 
-use Wappointment\Http\ApiSchemas as S;
+use Wappointment\Http\Attributes\CollectionOf;
+use Wappointment\Http\Attributes\Min;
+use Wappointment\Http\Data\JobData;
 
 class ListJobsResponseData extends ResponseData
 {
-    public static function schema(): array
-    {
-        $integer = ['anyOf' => [['type' => 'integer'], ['type' => 'string', 'pattern' => '^[0-9]+$']]];
-        return S::pagination(S::object([
-            'id' => S::id(), 'queue' => S::nullable(['type' => 'string']), 'payload' => ['type' => 'string'],
-            'appointment_id' => S::nullable($integer), 'attempts' => $integer,
-            'reserved_at' => S::nullable($integer), 'available_at' => $integer, 'created_at' => $integer,
-        ]));
-    }
+    public function __construct(
+        /** @var list<JobData> */
+        #[CollectionOf(JobData::class)] public readonly array $data,
+        #[Min(0)] public readonly int $total,
+        #[Min(1)] public readonly int $page,
+        #[Min(1)] public readonly int $per_page,
+        #[Min(0)] public readonly int|float $total_pages,
+    ) {}
 }

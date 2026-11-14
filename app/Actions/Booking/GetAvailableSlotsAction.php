@@ -21,8 +21,8 @@ class GetAvailableSlotsAction
     public function handle(BookingRequestData $input, int $exclude = 0, ?int $bufferOverride = null): array
     {
         [$service, $calendar] = $this->selection->handle($input);
-        $date = $input->text('date', 10);
-        $duration = $input->integer('duration', 5, 1440);
+        $date = $input->date;
+        $duration = $input->duration;
         $buffer = (int) $this->settings->get('buffer_time', 0);
         $timezone = new \DateTimeZone($calendar['options']['timezone'] ?? 'UTC');
         $day = \DateTimeImmutable::createFromFormat('!Y-m-d', $date, $timezone);

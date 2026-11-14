@@ -3,13 +3,14 @@ import DataList from './DataList';
 import ClientActions from './ClientActions';
 import { buildRoute } from '../config/routes';
 
-function ClientsTable({ refreshKey, onClientClick, onEdit, onDelete }) {
+function ClientsTable({ refreshKey, onClientClick, onEdit, onDelete, permissions = {} }) {
+    const hasActions = permissions.clientsEdit || permissions.clientsDelete;
     const columns = [
         { key: 'id', label: 'ID' },
         { key: 'name', label: 'Name' },
         { key: 'email', label: 'Email' },
         { key: 'created_at', label: 'Created' },
-        { key: 'actions', label: 'Actions' },
+        ...(hasActions ? [{ key: 'actions', label: 'Actions' }] : []),
     ];
 
     const renderRow = (client) => (
@@ -18,13 +19,15 @@ function ClientsTable({ refreshKey, onClientClick, onEdit, onDelete }) {
             <td>{client.name || 'N/A'}</td>
             <td>{client.email || 'N/A'}</td>
             <td>{client.created_at || 'N/A'}</td>
-            <td>
+            {hasActions && <td>
                 <ClientActions 
                     client={client}
                     onEdit={onEdit}
                     onDelete={onDelete}
+                    canEdit={permissions.clientsEdit}
+                    canDelete={permissions.clientsDelete}
                 />
-            </td>
+            </td>}
         </>
     );
 
@@ -38,7 +41,7 @@ function ClientsTable({ refreshKey, onClientClick, onEdit, onDelete }) {
             columns={columns}
             renderRow={renderRow}
             onRowClick={onClientClick}
-            searchPlaceholder="Search by name or email..."
+            searchPlaceholder="Search by name, email or client fields..."
             emptyMessage="No clients found"
         />
     );

@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Wappointment\Actions\Booking;
 
 use Wappointment\Booking\BookingException;
-use Wappointment\Http\Requests\BookingRequestData;
+use Wappointment\Http\Requests\CreateBookingRequestData;
 use Wappointment\Repositories\BookingRepository;
 use Wappointment\System\Settings;
 
@@ -17,7 +17,7 @@ class CreateBookingAction
         private Settings $settings
     ) {}
 
-    public function handle(BookingRequestData $input, array $contact): array
+    public function handle(CreateBookingRequestData $input, array $contact): array
     {
         return $this->repository->exclusive(function () use ($input, $contact): array {
             [$service, $calendar, $location] = $this->selection->handle($input);

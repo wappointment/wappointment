@@ -1,0 +1,6 @@
+{
+    "duration-step": {"duration": 30, "buffer": 0, "settings": {"more_st": false, "starting_each": 10}},
+    "duration-buffer-step": {"duration": 30, "buffer": 15, "settings": {"more_st": false, "starting_each": 10}},
+    "custom-step": {"duration": 30, "buffer": 0, "settings": {"more_st": true, "starting_each": 30}},
+    "custom-step-buffer": {"duration": 60, "buffer": 15, "settings": {"more_st": true, "starting_each": 30}}
+}

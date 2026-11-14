@@ -6,61 +6,25 @@ namespace Wappointment\Http\Responses;
 use Wappointment\Http\ContractValidator;
 use Wappointment\System\Data;
 
-abstract class ResponseData extends Data implements \JsonSerializable
+abstract class ResponseData extends Data
 {
-    private readonly array $values;
-
-    final public function __construct(array $values)
+    public static function from(array $data): static
     {
         try {
-            $this->values = ContractValidator::validate($values, static::schema(), 'response');
+            return parent::from($data);
         } catch (\InvalidArgumentException $error) {
             throw new \UnexpectedValueException(static::class . ': ' . $error->getMessage(), 0, $error);
         }
     }
 
-    abstract public static function schema(): array;
-
-    public static function from(array $data): static
-    {
-        return new static($data);
-    }
-
-    public function toArray(): array
-    {
-        return $this->values;
-    }
-
     public function jsonSerialize(): array
     {
-        return self::wireValue($this->values, static::schema());
-    }
-
-    private static function wireValue(mixed $value, array $schema): mixed
-    {
-        if (isset($schema['anyOf'])) {
-            foreach ($schema['anyOf'] as $alternative) {
-                try {
-                    ContractValidator::validate($value, $alternative);
-                } catch (\InvalidArgumentException) {
-                    continue;
-                }
-                return self::wireValue($value, $alternative);
-            }
+        try {
+            $this->validate();
+            ContractValidator::validate($this->toArray(), static::schema(), 'response');
+            return parent::jsonSerialize();
+        } catch (\InvalidArgumentException $error) {
+            throw new \UnexpectedValueException(static::class . ': ' . $error->getMessage(), 0, $error);
         }
-        if (($schema['type'] ?? null) === 'object') {
-            if ($value === []) {
-                return new \stdClass();
-            }
-            foreach ($value as $key => $item) {
-                $property = $schema['properties'][$key] ?? $schema['additionalProperties'] ?? [];
-                $value[$key] = self::wireValue($item, is_array($property) ? $property : []);
-            }
-        } elseif (($schema['type'] ?? null) === 'array') {
-            foreach ($value as $key => $item) {
-                $value[$key] = self::wireValue($item, $schema['items'] ?? []);
-            }
-        }
-        return $value;
     }
 }

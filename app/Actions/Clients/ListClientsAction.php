@@ -5,19 +5,18 @@ namespace Wappointment\Actions\Clients;
 
 use Wappointment\Http\Requests\ListClientsRequestData;
 use Wappointment\Repositories\ClientRepository;
+use Wappointment\Auth\AccessPolicy;
 
 class ListClientsAction
 {
-	public function __construct(private ClientRepository $repository)
+	public function __construct(private ClientRepository $repository, private AccessPolicy $access)
 	{
 	}
 
 	public function handle(ListClientsRequestData $requestData): array
 	{
-		if ($requestData->search !== '') {
-			return $this->repository->search($requestData->search, $requestData->page, $requestData->perPage);
-		}
-
-		return $this->repository->paginate($requestData->page, $requestData->perPage);
+		return $this->repository->listVisible(
+			$requestData->search, $requestData->page, $requestData->perPage, $this->access->clientOwner()
+		);
 	}
 }

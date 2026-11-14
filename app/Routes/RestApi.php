@@ -6,6 +6,7 @@ namespace Wappointment\Routes;
 use Wappointment\Actions\Routes\GetRoutesForJsAction;
 use Wappointment\Actions\Routes\RegisterRestRoutesAction;
 use Wappointment\Actions\Routes\SetCacheHeadersAction;
+use Wappointment\Auth\AccessPolicy;
 
 /**
  * REST API routes configuration
@@ -18,7 +19,8 @@ class RestApi
     public function __construct(
         private GetRoutesForJsAction $getRoutesForJsAction,
         private RegisterRestRoutesAction $registerRestRoutesAction,
-        private SetCacheHeadersAction $setCacheHeadersAction
+        private SetCacheHeadersAction $setCacheHeadersAction,
+        private AccessPolicy $accessPolicy
     ) {
         // Load routes from configuration file
         $this->loadRoutes();
@@ -55,9 +57,10 @@ class RestApi
                 'controller' => $route['controller'],
                 'status' => $route['status'] ?? 200,
                 'cacheable' => $route['cacheable'] ?? true,
-                'permission_callback' => $route['permission_callback'] ?? function() {
-                    return current_user_can('manage_options');
-                },
+                'requires_schema' => $route['requires_schema'] ?? true,
+                'permission_callback' => isset($route['permission_callback'])
+                    ? $route['permission_callback']
+                    : fn(): bool => $this->accessPolicy->can($route['access'] ?? 'manage'),
                 'original_method' => $route['method'] ?? 'GET',
                 'original_path' => $route['path'],
             ];

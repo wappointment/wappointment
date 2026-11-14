@@ -13,6 +13,6 @@ class DeleteClientUseCase
 
     public function execute(DeleteClientRequestData $requestData): DeleteClientResponseData
     {
-        return new DeleteClientResponseData($this->action->handle($requestData->id));
+        return DeleteClientResponseData::from($this->action->handle($requestData->id));
     }
 }

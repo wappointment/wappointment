@@ -3,6 +3,18 @@
 // Run: php bin/generate-routes.php to regenerate
 
 export const routes = {
+    "self.calendars": {
+        "method": "GET",
+        "path": "/me/calendars"
+    },
+    "self.weekly.save": {
+        "method": "POST",
+        "path": "/me/calendars/(?P<id>\\d+)/weekly-settings"
+    },
+    "database.schema": {
+        "method": "GET",
+        "path": "/system/schema"
+    },
     "appointments.list": {
         "method": "GET",
         "path": "/appointments"

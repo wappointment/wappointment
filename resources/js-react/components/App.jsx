@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from 'react';
+import { __ } from '@wordpress/i18n';
 import Jobs from './Jobs';
 import Clients from './Clients';
 import Settings from './Settings';
 import Appointments from './Appointments';
 import BookingSetup from './BookingSetup';
+import Diagnostics from './Diagnostics';
+import MyAvailability from './MyAvailability';
 
 // Component registry for addon overrides
 const componentRegistry = {
   'wappointment-appointments': Appointments,
   'wappointment-booking-setup': BookingSetup,
+  'wappointment-diagnostics': Diagnostics,
   'wappointment-jobs': Jobs,
   'wappointment-clients': Clients,
   'wappointment-settings': Settings,
+  'wappointment-my-availability': MyAvailability,
 };
 
 // Hook to allow addons to register component overrides
@@ -64,6 +69,12 @@ const App = () => {
   }, []);
 
   const renderPage = () => {
+    if (!window.wappointmentData?.allowedPages?.includes(currentPage)) {
+      return <div className="wrap">
+        <h1>{__('Access denied', 'wappointment')}</h1>
+        <p>{__('You are not allowed to view this Wappointment page. Reload to refresh your permissions.', 'wappointment')}</p>
+      </div>;
+    }
     // Get component from registry (allows addon overrides)
     const Component = componentRegistry[currentPage];
     

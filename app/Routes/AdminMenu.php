@@ -5,6 +5,7 @@ namespace Wappointment\Routes;
 
 use Wappointment\Controllers\AdminController;
 use Wappointment\System\Container;
+use Wappointment\Auth\AccessPolicy;
 
 /**
  * Admin menu configuration
@@ -23,51 +24,39 @@ class AdminMenu
      */
     public function register(): void
     {
-        foreach ([
-            'wappointment-appointments' => 'Appointments',
-            'wappointment-booking-setup' => 'Booking setup',
-        ] as $slug => $label) {
-            add_submenu_page(
-                'wappointment-jobs', $label, $label, 'manage_options', $slug,
-                $this->controller
-            );
+        $access = new AccessPolicy();
+        $allowed = $access->allowedPages();
+        if ($allowed === []) {
+            return;
         }
-        // Add top-level menu
+        $parent = in_array('wappointment-jobs', $allowed, true)
+            ? 'wappointment-jobs' : $allowed[0];
         add_menu_page(
             'Wappointment',           // Page title
             'Wappointment',           // Menu title
-            'manage_options',         // Capability
-            'wappointment-jobs',      // Menu slug
+            $access->menuCapability($parent),
+            $parent,
             $this->controller,          // Callback
             'dashicons-calendar-alt', // Icon
             20                        // Position
         );
 
-        add_submenu_page(
-            'wappointment-jobs',
-            'Jobs',
-            'Jobs',
-            'manage_options',
-            'wappointment-jobs',
-            $this->controller
-        );
-
-        add_submenu_page(
-            'wappointment-jobs',
-            'Clients',
-            'Clients',
-            'manage_options',
-            'wappointment-clients',
-            $this->controller
-        );
-
-        add_submenu_page(
-            'wappointment-jobs',
-            'Settings',
-            'Settings',
-            'manage_options',
-            'wappointment-settings',
-            $this->controller
-        );
+        foreach ([
+            'wappointment-appointments' => 'Appointments',
+            'wappointment-booking-setup' => 'Booking setup',
+            'wappointment-diagnostics' => 'Diagnostics',
+            'wappointment-jobs' => 'Jobs',
+            'wappointment-clients' => 'Clients',
+            'wappointment-my-availability' => 'My availability',
+            'wappointment-settings' => 'Settings',
+        ] as $slug => $label) {
+            if (!in_array($slug, $allowed, true)) {
+                continue;
+            }
+            add_submenu_page(
+                $parent, $label, $label, $access->menuCapability($slug), $slug,
+                $this->controller
+            );
+        }
     }
 }

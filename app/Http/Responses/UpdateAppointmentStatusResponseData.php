@@ -3,12 +3,9 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Responses;
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Attributes\In;
 
 class UpdateAppointmentStatusResponseData extends ResponseData
 {
-    public static function schema(): array
-    {
-        return ApiSchemas::object(['updated' => ['type' => 'boolean', 'enum' => [true]]]);
-    }
+    public function __construct(#[In([true])] public readonly bool $updated) {}
 }

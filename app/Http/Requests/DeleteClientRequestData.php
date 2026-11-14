@@ -3,16 +3,9 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\Attributes\Min;
 
 class DeleteClientRequestData extends RequestData
 {
-	public function __construct(
-		public readonly int $id
-	) {}
-
-	public static function schema(): array
-	{
-		return ApiSchemas::object(['id' => ['type' => 'integer', 'minimum' => 1]]);
-	}
+    public function __construct(#[Min(1)] public readonly int $id) {}
 }

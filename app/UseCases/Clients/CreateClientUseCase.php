@@ -13,6 +13,6 @@ class CreateClientUseCase
 
     public function execute(ClientCreateRequestData $requestData): CreateClientResponseData
     {
-        return new CreateClientResponseData($this->action->handle($requestData));
+        return CreateClientResponseData::from($this->action->handle($requestData));
     }
 }

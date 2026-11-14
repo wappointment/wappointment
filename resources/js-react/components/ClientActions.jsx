@@ -1,9 +1,9 @@
 import React from 'react';
 
-function ClientActions({ client, onEdit, onDelete }) {
+function ClientActions({ client, onEdit, onDelete, canEdit = false, canDelete = false }) {
     return (
         <>
-            <button
+            {canEdit && <button
                 onClick={(e) => {
                     e.stopPropagation();
                     onEdit(client);
@@ -20,8 +20,8 @@ function ClientActions({ client, onEdit, onDelete }) {
                 }}
             >
                 Edit
-            </button>
-            <button
+            </button>}
+            {canDelete && <button
                 onClick={(e) => {
                     e.stopPropagation();
                     onDelete(client);
@@ -37,7 +37,7 @@ function ClientActions({ client, onEdit, onDelete }) {
                 }}
             >
                 Delete
-            </button>
+            </button>}
         </>
     );
 }

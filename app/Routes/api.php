@@ -12,7 +12,32 @@ use Wappointment\Controllers\Api\Settings\GetSettingController;
 
 return [
     [
+        'name' => 'self.calendars',
+        'access' => 'self.view',
+        'method' => 'GET',
+        'path' => '/me/calendars',
+        'controller' => \Wappointment\Controllers\Api\Settings\GetOwnCalendarSettingsController::class,
+        'cacheable' => false,
+    ],
+    [
+        'name' => 'self.weekly.save',
+        'access' => 'self.weekly',
+        'method' => 'POST',
+        'path' => '/me/calendars/(?P<id>\d+)/weekly-settings',
+        'controller' => \Wappointment\Controllers\Api\Settings\SaveOwnCalendarSettingsController::class,
+        'cacheable' => false,
+    ],
+    [
+        'name' => 'database.schema',
+        'method' => 'GET',
+        'path' => '/system/schema',
+        'controller' => \Wappointment\Controllers\Api\Database\GetDatabaseSchemaController::class,
+        'cacheable' => false,
+        'requires_schema' => false,
+    ],
+    [
         'name' => 'appointments.list',
+        'access' => 'appointments.view',
         'method' => 'GET',
         'path' => '/appointments',
         'controller' => \Wappointment\Controllers\Api\Booking\ListAppointmentsController::class,
@@ -20,6 +45,7 @@ return [
     ],
     [
         'name' => 'appointments.status',
+        'access' => 'appointments.change',
         'method' => 'POST',
         'path' => '/appointments',
         'controller' => \Wappointment\Controllers\Api\Booking\UpdateAppointmentStatusController::class,
@@ -81,6 +107,7 @@ return [
     ],
     [
         'name' => 'clients.list',
+        'access' => 'clients.view',
         'method' => 'GET',
         'path' => '/clients',
         'controller' => ListClientsController::class,
@@ -88,6 +115,7 @@ return [
     ],
     [
         'name' => 'clients.create',
+        'access' => 'clients.create',
         'status' => 201,
         'method' => 'POST',
         'path' => '/clients',
@@ -96,6 +124,7 @@ return [
     ],
     [
         'name' => 'clients.update',
+        'access' => 'clients.edit',
         'method' => 'PUT',
         'path' => '/clients/(?P<id>\d+)',
         'controller' => UpdateClientController::class,
@@ -103,6 +132,7 @@ return [
     ],
     [
         'name' => 'clients.delete',
+        'access' => 'clients.delete',
         'method' => 'DELETE',
         'path' => '/clients/(?P<id>\d+)',
         'controller' => DeleteClientController::class,

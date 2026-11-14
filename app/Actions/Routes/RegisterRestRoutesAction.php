@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Wappointment\Actions\Routes;
 
 use Wappointment\Booking\BookingException;
-use Wappointment\Http\ContractValidator;
+use Wappointment\Database\BookingSchema;
 use Wappointment\Http\Requests\RequestData;
 use Wappointment\Http\Responses\ErrorResponseData;
 use Wappointment\Http\Responses\ResponseData;
@@ -37,8 +37,16 @@ class RegisterRestRoutesAction
                 'permission_callback' => $route['permission_callback'],
                 'callback' => function (\WP_REST_Request $request) use ($route, $requestClass, $responseClass, $status): \WP_REST_Response {
                     try {
-                        $input = ContractValidator::validate((object) $this->input($request), $requestClass::schema(), 'request', true, true);
-                        $requestData = $requestClass::from($input);
+                        if (($route['requires_schema'] ?? true)
+                            && get_option('wappointment_booking_schema') !== BookingSchema::VERSION) {
+                            error_log('Wappointment API: operation blocked because database schema verification is required.');
+                            return $this->error(
+                                'wappointment_schema_not_ready',
+                                __('Database setup must be reviewed by the site administrator in Wappointment Diagnostics before this operation can run.', 'wappointment'),
+                                503
+                            );
+                        }
+                        $requestData = $requestClass::fromHttp($this->input($request));
                         $controller = $this->container->make($route['controller']);
                         $responseData = $controller($requestData);
                         if (!$responseData instanceof $responseClass) {
@@ -107,7 +115,7 @@ class RegisterRestRoutesAction
 
     private function error(string $code, string $message, int $status): \WP_REST_Response
     {
-        $data = new ErrorResponseData(['code' => $code, 'message' => $message, 'data' => ['status' => $status]]);
+        $data = ErrorResponseData::from(['code' => $code, 'message' => $message, 'data' => ['status' => $status]]);
         return new \WP_REST_Response($data->toArray(), $status);
     }
 }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Wappointment\Actions\Booking;
 
 use Wappointment\Booking\BookingException;
+use Wappointment\Booking\WeeklySchedule;
 use Wappointment\Repositories\BookingRepository;
 use Wappointment\System\Settings;
 
@@ -65,15 +66,11 @@ class SaveBookingSettingsAction
             || array_diff($existing['locations'][0]['options']['fields'] ?? [], ['name', 'email', 'phone'])) {
             throw new BookingException(__('This setup editor only supports a single free service, calendar and location. Existing multi-service data has not been changed.', 'wappointment'), 409);
         }
-        foreach ($existing['calendars'][0]['options']['regav'] ?? [] as $blocks) {
-            if (!is_array($blocks)) {
-                continue;
-            }
-            foreach ($blocks as $block) {
-                if (!empty($block[2])) {
-                    throw new BookingException(__('Existing availability conditions must be migrated before editing this setup.', 'wappointment'), 409);
-                }
-            }
+        $options = $existing['calendars'][0]['options'] ?? [];
+        try {
+            WeeklySchedule::minutes(array_key_exists('regav', $options) ? $options['regav'] : []);
+        } catch (\InvalidArgumentException $error) {
+            throw new BookingException(__('Stored weekly availability needs review before using the setup editor. Nothing has been changed.', 'wappointment'), 409);
         }
         $result = $this->repository->configure(
             ['name' => sanitize_text_field($data['service_name']), 'options' => [
@@ -81,7 +78,7 @@ class SaveBookingSettingsAction
                 'fields' => $data['phone_required'] ? ['name', 'email', 'phone'] : ['name', 'email'],
             ]],
             ['name' => sanitize_text_field($data['calendar_name']), 'options' => [
-                'timezone' => $data['timezone'], 'avb' => (int) $data['booking_days'], 'regav' => $schedule,
+                'timezone' => $data['timezone'], 'avb' => (int) $data['booking_days'], 'regav' => $schedule + ['precise' => true],
             ]],
             ['name' => sanitize_text_field($data['location_name']), 'type' => (int) $data['location_type'],
                 'options' => ['fields' => (int) $data['location_type'] === 2 ? ['phone'] : []]]
