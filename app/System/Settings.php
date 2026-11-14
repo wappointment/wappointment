@@ -29,9 +29,7 @@ class Settings
     {
         $settings = $this->all();
         $settings[$key] = $value;
-        $this->cache = $settings;
-        update_option(self::OPTION_KEY, $settings, false);
-        return true;
+        return $this->persist($settings);
     }
     
     /**
@@ -43,9 +41,7 @@ class Settings
         foreach ($data as $key => $value) {
             $settings[$key] = $value;
         }
-        $this->cache = $settings;
-        update_option(self::OPTION_KEY, $settings, false);
-        return true;
+        return $this->persist($settings);
     }
     
     /**
@@ -76,7 +72,6 @@ class Settings
         // Merge with defaults for any missing keys
         if (empty($settings)) {
             $settings = $this->getDefaults();
-            update_option(self::OPTION_KEY, $settings, false);
         } else {
             $settings = array_merge($this->getDefaults(), $settings);
         }
@@ -100,6 +95,17 @@ class Settings
     public function clearCache(): void
     {
         $this->cache = null;
+    }
+
+    private function persist(array $settings): bool
+    {
+        $updated = update_option(self::OPTION_KEY, $settings, false);
+        if (!$updated && get_option(self::OPTION_KEY) !== $settings) {
+            $this->cache = null;
+            return false;
+        }
+        $this->cache = $settings;
+        return true;
     }
     
     /**

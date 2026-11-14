@@ -3,25 +3,18 @@ declare(strict_types=1);
 
 namespace Wappointment\Controllers\Api\Clients;
 
-use Wappointment\Actions\Clients\UpdateClientAction;
-use Wappointment\Http\JsonErrorResponse;
-use Wappointment\Http\JsonResponse;
+use Wappointment\UseCases\Clients\UpdateClientUseCase;
+use Wappointment\Http\Responses\UpdateClientResponseData;
 use Wappointment\Http\Requests\UpdateClientRequestData;
 
 class UpdateClientController
 {
     public function __construct(
-        private UpdateClientAction $action
+        private UpdateClientUseCase $useCase
     ) {}
 
-    public function __invoke(UpdateClientRequestData $request): void
+    public function __invoke(UpdateClientRequestData $request): UpdateClientResponseData
     {
-        try {
-            $result = $this->action->handle($request);
-            JsonResponse::success($result);
-        } catch (\RuntimeException $e) {
-            $status = $e->getCode() === 404 ? 404 : 500;
-            JsonErrorResponse::send($e->getMessage(), $status);
-        }
+        return $this->useCase->execute($request);
     }
 }

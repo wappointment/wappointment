@@ -53,6 +53,7 @@ class RestApi
                 'method' => $method,
                 'path' => $path,
                 'controller' => $route['controller'],
+                'status' => $route['status'] ?? 200,
                 'cacheable' => $route['cacheable'] ?? true,
                 'permission_callback' => $route['permission_callback'] ?? function() {
                     return current_user_can('manage_options');

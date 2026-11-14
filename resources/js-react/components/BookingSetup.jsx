@@ -1,0 +1,116 @@
+import React, { useEffect, useState } from 'react';
+import apiFetch from '../utils/apiFetch';
+
+const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+const defaults = {
+    service_name: '', calendar_name: '', location_name: '', location_type: 1,
+    duration: 60, booking_days: 60, timezone: 'UTC', phone_required: false,
+    booking_page: 0,
+    regav: Object.fromEntries(days.map((day) => [day, []])),
+};
+const timeValue = (minutes) => `${String(Math.floor(minutes / 60) % 24).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`;
+
+export default function BookingSetup() {
+    const [form, setForm] = useState(defaults);
+    const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
+    const [saved, setSaved] = useState(false);
+    useEffect(() => {
+        let mounted = true;
+        apiFetch('/booking-settings').then(({ data }) => {
+            if (!mounted) return;
+            setForm({
+                ...defaults,
+                service_name: data.service?.name || '',
+                duration: data.service?.options.durations?.[0]?.duration || 60,
+                phone_required: data.service?.options.fields?.includes('phone') || false,
+                calendar_name: data.calendar?.name || '',
+                timezone: data.calendar?.options.timezone || 'UTC',
+                booking_days: data.calendar?.options.avb || 60,
+                regav: { ...defaults.regav, ...data.calendar?.options.regav },
+                location_name: data.location?.name || '',
+                location_type: data.location?.type || 1,
+                booking_page: data.booking_page || 0,
+            });
+        }).catch((failure) => {
+            if (mounted) setError(failure.message);
+        }).finally(() => {
+            if (mounted) setLoading(false);
+        });
+        return () => { mounted = false; };
+    }, []);
+
+    const update = (key, value) => {
+        setSaved(false);
+        setForm((previous) => ({ ...previous, [key]: value }));
+    };
+    const updateBlock = (day, index, endpoint, value) => {
+        const [hour, minute] = value.split(':').map(Number);
+        const minutes = hour * 60 + minute;
+        update('regav', { ...form.regav, [day]: form.regav[day].map((block, position) =>
+            position === index ? block.map((current, column) => column === endpoint ? (endpoint === 1 && minutes === 0 ? 1440 : minutes) : current) : block) });
+    };
+    const save = async (event) => {
+        event.preventDefault();
+        setSaving(true); setError(''); setSaved(false);
+        try {
+            await apiFetch('/booking-settings', { method: 'POST', body: JSON.stringify(form) });
+            setSaved(true);
+        } catch (failure) {
+            setError(failure.message);
+        } finally {
+            setSaving(false);
+        }
+    };
+    if (loading) return <p role="status">Loading booking setup...</p>;
+    return <div className="wrap">
+        <h1>Booking setup</h1>
+        <p>Configure your free service and weekly availability, then place <code>[wap_widget]</code> on your booking page.</p>
+        <p>This editor will not overwrite existing multi-service, multi-calendar or multi-location setups.</p>
+        {error && <div className="notice notice-error"><p role="alert">{error}</p></div>}
+        {saved && <div className="notice notice-success"><p role="status">Booking setup saved.</p></div>}
+        <form onSubmit={save}>
+            <table className="form-table"><tbody>
+                {[
+                    ['service_name', 'Service name', 'text'],
+                    ['calendar_name', 'Calendar name', 'text'],
+                    ['location_name', 'Location or meeting instructions', 'text'],
+                    ['timezone', 'Organizer timezone (for example Europe/Paris)', 'text'],
+                    ['duration', 'Duration in minutes', 'number'],
+                    ['booking_days', 'Days available in advance', 'number'],
+                ].map(([key, label, type]) => <tr key={key}>
+                    <th><label htmlFor={`booking-${key}`}>{label}</label></th>
+                    <td><input id={`booking-${key}`} type={type} required value={form[key]}
+                        min={key === 'duration' ? 5 : 1} max={key === 'duration' ? 1440 : 365}
+                        onChange={(event) => update(key, type === 'number' ? Number(event.target.value) : event.target.value)} /></td>
+                </tr>)}
+                <tr><th><label htmlFor="booking-location-type">Meeting type</label></th><td>
+                    <select id="booking-location-type" value={form.location_type} onChange={(event) => update('location_type', Number(event.target.value))}>
+                        <option value="1">At a location</option><option value="2">Phone</option><option value="4">Other meeting link or instructions</option>
+                    </select>
+                </td></tr>
+                <tr><th>Phone number</th><td><label>
+                    <input type="checkbox" checked={form.phone_required} onChange={(event) => update('phone_required', event.target.checked)} /> Required
+                </label></td></tr>
+                <tr><th><label htmlFor="booking-page-id">Booking page ID</label></th><td>
+                    <input id="booking-page-id" type="number" min="0" value={form.booking_page}
+                        onChange={(event) => update('booking_page', Number(event.target.value))} />
+                    <p className="description">Use a published page containing [wap_widget]. Leave 0 to disable confirmation emails until a booking page is ready.</p>
+                </td></tr>
+            </tbody></table>
+            <h2>Weekly availability</h2>
+            <p>Times use the organizer timezone. An end time of 00:00 means midnight at the end of the day.</p>
+            {days.map((day) => <fieldset key={day} style={{ marginBottom: 16 }}>
+                <legend><strong>{day}</strong></legend>
+                {form.regav[day].map((block, index) => <div key={index}>
+                    <label>From <input type="time" required value={timeValue(block[0])} onChange={(event) => updateBlock(day, index, 0, event.target.value)} /></label>
+                    <label> until <input type="time" required value={timeValue(block[1])} onChange={(event) => updateBlock(day, index, 1, event.target.value)} /></label>
+                    <button type="button" className="button" onClick={() => update('regav', { ...form.regav, [day]: form.regav[day].filter((_, position) => position !== index) })}>Remove range</button>
+                </div>)}
+                <button type="button" className="button" onClick={() => update('regav', { ...form.regav, [day]: [...form.regav[day], [540, 1020]] })}>Add range</button>
+            </fieldset>)}
+            <button type="submit" className="button button-primary" disabled={saving}>{saving ? 'Saving...' : 'Save booking setup'}</button>
+        </form>
+    </div>;
+}

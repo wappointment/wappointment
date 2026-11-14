@@ -3,18 +3,16 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\System\Data;
+use Wappointment\Http\ApiSchemas;
 
-class DeleteClientRequestData extends Data
+class DeleteClientRequestData extends RequestData
 {
 	public function __construct(
 		public readonly int $id
 	) {}
 
-	public static function fromWpRequest(\WP_REST_Request $request): static
+	public static function schema(): array
 	{
-		return static::from([
-			'id' => (int) $request->get_param('id'),
-		]);
+		return ApiSchemas::object(['id' => ['type' => 'integer', 'minimum' => 1]]);
 	}
 }

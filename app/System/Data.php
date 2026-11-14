@@ -49,12 +49,6 @@ abstract class Data
         return new static(...$args);
     }
     
-    public static function fromWpRequest(\WP_REST_Request $request): static
-    {
-        $data = $request->get_json_params() ?? [];
-        return static::from($data);
-    }
-    
     public function toArray(): array
     {
         $reflection = new \ReflectionClass($this);

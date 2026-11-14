@@ -19,17 +19,17 @@ class Shortcodes
     /**
      * Render the booking widget shortcode
      */
-    public function renderBookingWidget(array $atts): string
+    public function renderBookingWidget($atts = []): string
     {
         $atts = shortcode_atts([
-            'title' => 'Book now'
+            'title' => __('Book now', 'wappointment'),
         ], $atts);
 
         // Enqueue widget assets
         wp_enqueue_script(
             'wappointment-widget',
             plugins_url('dist/widget.js', WAPPOINTMENT_FILE),
-            ['wp-element'],
+            ['wp-element', 'wp-i18n'],
             WAPPOINTMENT_VERSION,
             true
         );
@@ -43,7 +43,6 @@ class Shortcodes
 
         // Pass data to widget
         wp_localize_script('wappointment-widget', 'wappointmentWidget', [
-            'title' => esc_html($atts['title']),
             'apiUrl' => rest_url('wappointment/v1'),
             'nonce' => wp_create_nonce('wp_rest')
         ]);

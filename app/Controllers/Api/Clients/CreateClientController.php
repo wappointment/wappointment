@@ -3,26 +3,18 @@ declare(strict_types=1);
 
 namespace Wappointment\Controllers\Api\Clients;
 
-use Wappointment\Actions\Clients\CreateClientAction;
-use Wappointment\Http\JsonErrorResponse;
-use Wappointment\Http\JsonResponse;
+use Wappointment\UseCases\Clients\CreateClientUseCase;
+use Wappointment\Http\Responses\CreateClientResponseData;
 use Wappointment\Http\Requests\ClientCreateRequestData;
 
 class CreateClientController
 {
     public function __construct(
-        private CreateClientAction $action
+        private CreateClientUseCase $useCase
     ) {}
 
-    public function __invoke(ClientCreateRequestData $requestData): void
+    public function __invoke(ClientCreateRequestData $requestData): CreateClientResponseData
     {
-        try {
-            $result = $this->action->handle($requestData);
-            JsonResponse::success($result, 201);
-        } catch (\InvalidArgumentException $e) {
-            JsonErrorResponse::send($e->getMessage(), 400);
-        } catch (\RuntimeException $e) {
-            JsonErrorResponse::send($e->getMessage(), 500);
-        }
+        return $this->useCase->execute($requestData);
     }
 }

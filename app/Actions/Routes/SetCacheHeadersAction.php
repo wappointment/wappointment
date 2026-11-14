@@ -29,7 +29,7 @@ class SetCacheHeadersAction
                 if ($routeConfig['cacheable']) {
                     $response->header('Cache-Control', 'public, max-age=3600');
                 } else {
-                    $response->header('Cache-Control', 'no-cache, must-revalidate, max-age=0');
+                    $response->header('Cache-Control', 'private, no-store, no-cache, must-revalidate, max-age=0');
                 }
                 break;
             }

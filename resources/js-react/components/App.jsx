@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import Jobs from './Jobs';
 import Clients from './Clients';
 import Settings from './Settings';
+import Appointments from './Appointments';
+import BookingSetup from './BookingSetup';
 
 // Component registry for addon overrides
 const componentRegistry = {
+  'wappointment-appointments': Appointments,
+  'wappointment-booking-setup': BookingSetup,
   'wappointment-jobs': Jobs,
   'wappointment-clients': Clients,
   'wappointment-settings': Settings,

@@ -1,4 +1,111 @@
 # Appointment Bookings for WordPress
+
+## v3 development status
+
+**This branch is not production-ready and does not yet have free-feature parity with v2.**
+The migration targets one free plugin (`wappointment-plugin`) and one paid plugin
+(`wappointment-premium`). Complete the free booking flow before implementing Premium;
+Premium will initially contain the former Services features. Licensing and automatic
+Premium updates are deferred.
+
+The v3 implementation uses PHP 8.2+, WordPress 6.2+, native WordPress REST/database APIs,
+and React. It does not load the old Illuminate/Vue runtime.
+
+### PHP request architecture
+
+Each operation has one invokable controller with exactly one constructor dependency:
+its UseCase in `app/UseCases`. Each API controller accepts its own RequestData and
+returns its own ResponseData, matching the UseCase's `execute()` signature.
+Controllers only delegate; they never parse WordPress requests, send responses,
+catch exceptions, or call repositories or Actions directly.
+UseCases coordinate the operation through focused Actions in `app/Actions`.
+An Action exposes `handle()`; a UseCase exposes `execute()`. Neither layer depends
+on controllers, and UseCases do not depend on REST request/response objects.
+Request contracts belong in `app/Http/Requests`, response contracts in
+`app/Http/Responses`; database access stays in repositories.
+
+The route-registration Action is the HTTP boundary. It merges URL/query/JSON parameters,
+rejects conflicting identifiers, validates input, invokes the controller through the
+container, and serializes its ResponseData into a `WP_REST_Response`.
+Creation statuses (201) are route metadata, not controller logic.
+Success responses keep `{ "success": true, "data": ... }`.
+API errors now consistently use `{ "code": "...", "message": "...", "data": { "status": 400 } }`
+instead of the older clients/settings error envelopes. WordPress still handles its own
+authentication, routing and malformed-JSON errors.
+
+Each Data contract exposes a JSON-Schema-shaped `schema()` consumed by the shared PHP
+validator. Unknown structural fields, missing required values, wrong types, malformed
+dates/emails and invalid nested arrays are rejected. Numeric strings are normalized
+only where integer parameters are declared (query strings and HTML selects).
+JSON objects and lists remain distinct at the HTTP boundary, including empty objects.
+Email contracts use native PHP validation rather than WordPress sanitization filters.
+Response contract violations are logged server errors (500), never successful or
+client-validation responses. Stored extension settings and option maps are explicitly
+extensible; the settings UI sends only changed fields to avoid replaying legacy keys.
+The settings editor response projects service/calendar/location fields instead of
+exposing complete database records.
+
+These are application contracts, not an OpenAPI export or automatically registered
+WordPress argument schemas. WordPress provides REST discovery/OPTIONS but no built-in
+OpenAPI generator. An exporter can consume the Data schemas and controller signatures
+later; no OpenAPI tooling is added here.
+
+For example:
+`JobsController::__invoke()` -> `ListJobsUseCase::execute()` -> `ListJobsAction::handle()`.
+GET and POST operations use separate controllers/UseCases even when they share a URL.
+Booking actions are split by validation, availability, persistence, presentation,
+and notification, rather than collected into a multi-operation service.
+`tests/Unit/ArchitectureTest.php` enforces these conventions.
+
+Implemented booking baseline:
+
+- Free service/calendar/location setup and weekly availability.
+- Live, timezone-aware slots, minimum notice, booking horizon, buffers, busy/free
+  exceptions, and existing pending/confirmed appointment conflicts.
+- Persisted public bookings with server-side service/location/duration validation,
+  active-booking limits, serialized concurrent writes, and transaction rollback.
+- Pending versus confirmed bookings, administrator approval/cancellation, and
+  secret-link customer cancellation/rescheduling with configurable deadlines.
+- Live React booking widgets with independent instance titles, explicit request errors,
+  and no fabricated confirmation or email-delivery messages.
+- A basic customer confirmation through `wp_mail` when that transport is configured.
+  Delivery failure is logged and shown without pretending that the saved booking failed.
+
+### Data and legacy plugins
+
+Existing `{$wpdb->prefix}wappo_*` tables, row IDs, UTC timestamps, JSON options, and
+`wappointment_settings` remain in place. The bootstrap creates missing tables only;
+it does not rebuild existing tables, delete add-on data, or reset settings.
+Stored appointment end times continue to include the buffer. Public bookings do not
+overwrite existing customer names or private custom fields. This is not yet a certified
+upgrade/migration path: older schemas and populated v2 installations need migration testing.
+
+Legacy paid-plugin boot hooks are disabled in v3, with an administrator notice.
+Their source repositories and stored data are not removed. Bookings that require
+unported features are rejected explicitly rather than ignoring their rules.
+The single-service setup editor refuses to overwrite multi-service/calendar/location
+setups, multiple durations, custom fields, or conditional availability.
+
+### Remaining release blockers
+
+- Calendar synchronization (ICS and the existing connected-calendar service), automatic
+  video-meeting creation, and recurring/conditional availability.
+- Notification templates, organizer notifications, reminders, summaries, mail transports
+  other than the basic WordPress mail path, and cancellation/reschedule/approval messages.
+- Full admin calendar behavior, punctual availability editing, manual/recurrent booking
+  tools, booking-widget appearance/text settings, and save-to-calendar downloads.
+- Country-aware phone validation, complete logged-in/autofill behavior, and the remaining
+  advanced scheduling settings (`scheduler_mode`, fluid availability, daily release, etc.).
+- Upgrade tests using representative v2 data, existing management links/shortcodes,
+  pending background jobs/reminders, multisite, and minimum supported WordPress versions.
+- The Premium plugin and the complete former Services feature set.
+
+Use **Wappointment > Booking setup**, add `[wap_widget title="Book now"]` to a
+published page, and set its ID in Booking setup to enable confirmation links.
+Without a valid booking page, the appointment is saved but the confirmation email
+is explicitly reported as not sent. Exercise this baseline on staging only.
+See [booking tests](tests/README.md#v3-booking-tests) for reproducible checks.
+
 ![Appointment Bookings WordPress](https://ps.w.org/wappointment/assets/banner-1544x500.gif)
 
 **Appointment booking calendar** for personal coaches, teachers, therapists and service professionals of all kind.
@@ -131,8 +238,8 @@ You can set buffer time for that particular case, you can define it in the *Wapp
 
 ### Minimum Requirements 
 
-* WordPress 4.7(or greater)
-* PHP version 7.0(or greater)
+* WordPress 6.2(or greater)
+* PHP version 8.2(or greater)
 * MySQL version 5.6(or greater) or MariaDB 10.0(or greater)
 
 Always keep your softwares updated.

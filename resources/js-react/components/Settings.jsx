@@ -12,6 +12,7 @@ function Settings() {
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
+    const [changes, setChanges] = useState({});
     const [error, setError] = useState(null);
     const [notification, setNotification] = useState(null);
 
@@ -26,6 +27,7 @@ function Settings() {
         try {
             const response = await apiFetch('/settings');
             setSettings(response.data.settings);
+            setChanges({});
         } catch (err) {
             setError(err);
         } finally {
@@ -34,6 +36,7 @@ function Settings() {
     };
 
     const handleInputChange = (tab, field, value) => {
+        setChanges(prev => ({ ...prev, [field]: value }));
         setSettings(prev => ({
             ...prev,
             [tab]: {
@@ -49,17 +52,13 @@ function Settings() {
         setError(null);
 
         try {
-            // Flatten settings for saving
-            const flatSettings = {
-                ...settings.general,
-                ...settings.notifications,
-                ...settings.advanced
-            };
-
             await apiFetch('/settings', {
                 method: 'POST',
-                body: JSON.stringify(flatSettings)
+                body: JSON.stringify(changes)
             });
+            setChanges(current => Object.fromEntries(
+                Object.entries(current).filter(([field, value]) => value !== changes[field])
+            ));
 
             setNotification({ message: 'Settings saved successfully', type: 'success' });
         } catch (err) {
@@ -589,7 +588,7 @@ function Settings() {
                     <button
                         type="submit"
                         className="button button-primary"
-                        disabled={saving}
+                        disabled={saving || Object.keys(changes).length === 0}
                     >
                         {saving ? 'Saving...' : 'Save Settings'}
                     </button>

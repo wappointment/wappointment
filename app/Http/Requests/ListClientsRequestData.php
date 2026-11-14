@@ -3,9 +3,10 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\System\Data;
+use Wappointment\Http\ApiSchemas;
+use Wappointment\Http\ContractValidator;
 
-class ListClientsRequestData extends Data
+class ListClientsRequestData extends RequestData
 {
 	public function __construct(
 		public readonly int $page = 1,
@@ -13,16 +14,14 @@ class ListClientsRequestData extends Data
 		public readonly string $search = ''
 	) {}
 
-	public static function fromWpRequest(\WP_REST_Request $request): static
+	public static function schema(): array
 	{
-		$page = (int) $request->get_param('page_num') ?: 1;
-		$perPage = (int) $request->get_param('per_page') ?: 10;
-		$search = sanitize_text_field((string) ($request->get_param('search') ?? ''));
+		return ApiSchemas::paginationRequest(true);
+	}
 
-		return static::from([
-			'page' => $page,
-			'perPage' => $perPage,
-			'search' => $search,
-		]);
+	public static function from(array $data): static
+	{
+		$data = ContractValidator::validate($data, static::schema(), 'request', true);
+		return new static($data['page_num'] ?? 1, $data['per_page'] ?? 10, $data['search'] ?? '');
 	}
 }

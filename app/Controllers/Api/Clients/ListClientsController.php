@@ -3,20 +3,18 @@ declare(strict_types=1);
 
 namespace Wappointment\Controllers\Api\Clients;
 
-use Wappointment\Actions\Clients\ListClientsAction;
-use Wappointment\Http\JsonResponse;
+use Wappointment\UseCases\Clients\ListClientsUseCase;
+use Wappointment\Http\Responses\ListClientsResponseData;
 use Wappointment\Http\Requests\ListClientsRequestData;
 
 class ListClientsController
 {
     public function __construct(
-        private ListClientsAction $action
+        private ListClientsUseCase $useCase
     ) {}
 
-    public function __invoke(ListClientsRequestData $requestData): void
+    public function __invoke(ListClientsRequestData $requestData): ListClientsResponseData
     {
-        $result = $this->action->handle($requestData);
-
-        JsonResponse::send($result);
+        return $this->useCase->execute($requestData);
     }
 }

@@ -1,6 +1,10 @@
 {
     "status": 400,
     "body": {
-        "error": "Email is required"
+        "code": "wappointment_invalid_request",
+        "message": "Missing request.email.",
+        "data": {
+            "status": 400
+        }
     }
 }

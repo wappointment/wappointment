@@ -11,17 +11,15 @@ class Email
 
     public static function from(string $email): self
     {
-        $sanitized = sanitize_email($email);
-        
-        if (empty($sanitized)) {
+        if (trim($email) === '') {
             throw new \InvalidArgumentException('Email is required');
         }
         
-        if (!is_email($sanitized)) {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL) === false) {
             throw new \InvalidArgumentException('Invalid email format');
         }
         
-        return new self($sanitized);
+        return new self($email);
     }
 
     public function __toString(): string

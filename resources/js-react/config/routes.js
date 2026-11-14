@@ -3,6 +3,38 @@
 // Run: php bin/generate-routes.php to regenerate
 
 export const routes = {
+    "appointments.list": {
+        "method": "GET",
+        "path": "/appointments"
+    },
+    "appointments.status": {
+        "method": "POST",
+        "path": "/appointments"
+    },
+    "booking-settings.get": {
+        "method": "GET",
+        "path": "/booking-settings"
+    },
+    "booking-settings.save": {
+        "method": "POST",
+        "path": "/booking-settings"
+    },
+    "booking.catalog": {
+        "method": "GET",
+        "path": "/booking/catalog"
+    },
+    "booking.availability": {
+        "method": "POST",
+        "path": "/booking/availability"
+    },
+    "booking.create": {
+        "method": "POST",
+        "path": "/booking"
+    },
+    "booking.manage": {
+        "method": "POST",
+        "path": "/booking/manage"
+    },
     "jobs.list": {
         "method": "GET",
         "path": "/jobs"

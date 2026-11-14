@@ -12,7 +12,7 @@ if (!defined('ABSPATH')) {
  * Description: Clients quickly book a meeting with you on Zoom , GoogleMeet , the phone or at your office
  * Author: Wappointment
  * Author URI: https://wappointment.com
- * Requires at least: 6.0
+ * Requires at least: 6.2
  * Requires PHP: 8.2
  * Tested up to: 6.9
  *
@@ -79,4 +79,3 @@ require_once WAPPOINTMENT_PATH . 'app/helpers.php';
 add_action('plugins_loaded', function () {
     new \Wappointment\System\Init();
 });
-

@@ -1,7 +1,7 @@
 === Appointment Bookings for Zoom GoogleMeet and more - Wappointment  ===
 Contributors: wappointment, benheu
 Tags: appointment scheduling, appointment booking, booking calendar, booking form, zoom
-Requires at least: 6.0
+Requires at least: 6.2
 Tested up to: 6.9
 Requires PHP: 8.2
 Stable tag: 3.0.0
@@ -9,6 +9,14 @@ License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Get clients to quickly book a meeting with you by Zoom, GoogleMeet, phone or at your office
+
+== v3 development warning ==
+
+This branch is not production-ready. The live free-booking baseline is implemented,
+but full v2 feature parity and upgrade certification are not complete. Calendar sync,
+automatic meeting creation, recurring availability, notification/reminder parity,
+and Premium remain release blockers. See README.md for the current implementation
+and limitations. Test on a staging copy, not a production booking site.
 
 == Booking plugin for WordPress ==
 
@@ -713,4 +721,3 @@ It requires work on your end but keeps your site safe and optimized.
 * Hello WordPress!
 
 Maintained at https://github.com/wappointment/wappointment
-

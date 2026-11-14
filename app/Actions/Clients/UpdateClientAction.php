@@ -19,7 +19,14 @@ class UpdateClientAction
 			throw new \RuntimeException('Client not found', 404);
 		}
 
-		$updateData = $requestData->updatePayload();
+		$updateData = array_filter(
+			['name' => $requestData->name, 'email' => $requestData->email, 'options' => $requestData->options],
+			static fn(mixed $value): bool => $value !== null
+		);
+		if ($requestData->options !== null) {
+			$updateData['options'] = json_encode($requestData->options, JSON_THROW_ON_ERROR);
+		}
+		$updateData['updated_at'] = current_time('mysql');
 
 		$updated = $this->repository->update($requestData->id, $updateData);
 		if ($updated === false) {

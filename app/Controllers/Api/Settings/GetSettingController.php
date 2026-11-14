@@ -3,26 +3,18 @@ declare(strict_types=1);
 
 namespace Wappointment\Controllers\Api\Settings;
 
-use Wappointment\Http\JsonResponse;
-use Wappointment\System\Settings;
+use Wappointment\Http\Requests\GetSettingRequestData;
+use Wappointment\Http\Responses\GetSettingResponseData;
+use Wappointment\UseCases\Settings\GetSettingUseCase;
 
 class GetSettingController
 {
     public function __construct(
-        private Settings $settings
+        private GetSettingUseCase $useCase
     ) {}
 
-    public function __invoke(\WP_REST_Request $request): void
+    public function __invoke(GetSettingRequestData $requestData): GetSettingResponseData
     {
-        $name = $request->get_param('name');
-        
-        if (empty($name)) {
-            JsonResponse::send(['error' => 'Setting name is required'], 400);
-            return;
-        }
-        
-        $value = $this->settings->get($name);
-        
-        JsonResponse::send(['name' => $name, 'value' => $value]);
+        return $this->useCase->execute($requestData);
     }
 }

@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\System\Data;
+use Wappointment\Http\ApiSchemas;
 use Wappointment\ValueObjects\Email;
 
-class ClientCreateRequestData extends Data
+class ClientCreateRequestData extends RequestData
 {
     public function __construct(
         public readonly string $name,
@@ -14,14 +14,12 @@ class ClientCreateRequestData extends Data
         public readonly array $options = [],
     ) {}
 
-    public function toArray(): array
+    public static function schema(): array
     {
-        return [
-            'name' => $this->name,
-            'email' => $this->email->value,
-            'options' => json_encode($this->options),
-            'created_at' => current_time('mysql'),
-            'updated_at' => current_time('mysql'),
-        ];
+        return ApiSchemas::object([
+            'name' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 100],
+            'email' => ['type' => 'string', 'format' => 'email', 'maxLength' => 191],
+            'options' => ApiSchemas::object([], [], true),
+        ], ['name', 'email']);
     }
 }

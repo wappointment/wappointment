@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace Wappointment\Http\Requests;
 
-use Wappointment\System\Data;
+use Wappointment\Http\ApiSchemas;
 
-class UpdateClientRequestData extends Data
+class UpdateClientRequestData extends RequestData
 {
 	public function __construct(
 		public readonly int $id,
@@ -14,30 +14,14 @@ class UpdateClientRequestData extends Data
 		public readonly ?array $options = null,
 	) {}
 
-	public static function fromWpRequest(\WP_REST_Request $request): static
+	public static function schema(): array
 	{
-		$payload = $request->get_json_params() ?? [];
-		return static::from([
-			'id' => (int) $request->get_param('id'),
-			'name' => $payload['name'] ?? null,
-			'email' => isset($payload['email']) ? sanitize_email($payload['email']) : null,
-			'options' => $payload['options'] ?? null,
-		]);
+		return ApiSchemas::object([
+			'id' => ['type' => 'integer', 'minimum' => 1],
+			'name' => ['type' => 'string', 'minLength' => 1, 'maxLength' => 100],
+			'email' => ['type' => 'string', 'format' => 'email', 'maxLength' => 191],
+			'options' => ApiSchemas::object([], [], true),
+		], ['id']);
 	}
 
-	public function updatePayload(): array
-	{
-		$data = [];
-		if ($this->name !== null) {
-			$data['name'] = $this->name;
-		}
-		if ($this->email !== null) {
-			$data['email'] = $this->email;
-		}
-		if ($this->options !== null) {
-			$data['options'] = json_encode($this->options);
-		}
-		$data['updated_at'] = current_time('mysql');
-		return $data;
-	}
 }

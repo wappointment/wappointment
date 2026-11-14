@@ -1,0 +1,33 @@
+services:
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_ROOT_PASSWORD: disposable-booking-root
+      MARIADB_DATABASE: booking_test
+      MARIADB_USER: booking_test
+      MARIADB_PASSWORD: disposable-booking
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  wordpress:
+    build:
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.wordpress
+    image: wappointment-plugin-wordpress:latest
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: booking_test
+      WORDPRESS_DB_USER: booking_test
+      WORDPRESS_DB_PASSWORD: disposable-booking
+      WORDPRESS_CONFIG_EXTRA: "define('WP_ENVIRONMENT_TYPE', 'local');"
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${WAPPOINTMENT_BOOKING_PORT:-18089}:80"
+    volumes:
+      - ../..:/var/www/html/wp-content/plugins/wappointment:ro

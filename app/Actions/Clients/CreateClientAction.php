@@ -15,6 +15,9 @@ class CreateClientAction
     public function handle(ClientCreateRequestData $requestData): array
     {
         $payload = $requestData->toArray();
+        $payload['options'] = json_encode($requestData->options, JSON_THROW_ON_ERROR);
+        $payload['created_at'] = current_time('mysql');
+        $payload['updated_at'] = current_time('mysql');
         $id = $this->repository->create($payload);
 
         if (!$id) {

@@ -3,22 +3,18 @@ declare(strict_types=1);
 
 namespace Wappointment\Controllers\Api;
 
-use Wappointment\Http\JsonResponse;
-use Wappointment\Repositories\JobRepository;
+use Wappointment\Http\Requests\ListJobsRequestData;
+use Wappointment\Http\Responses\ListJobsResponseData;
+use Wappointment\UseCases\Jobs\ListJobsUseCase;
 
 class JobsController
 {
     public function __construct(
-        private JobRepository $repository
+        private ListJobsUseCase $useCase
     ) {}
 
-    public function __invoke(\WP_REST_Request $request): void
+    public function __invoke(ListJobsRequestData $requestData): ListJobsResponseData
     {
-        $page = isset($_GET['page_num']) ? (int) $_GET['page_num'] : 1;
-        $perPage = isset($_GET['per_page']) ? (int) $_GET['per_page'] : 10;
-        
-        $result = $this->repository->paginate($page, $perPage);
-        
-        JsonResponse::send($result);
+        return $this->useCase->execute($requestData);
     }
 }

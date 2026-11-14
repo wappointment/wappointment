@@ -30,7 +30,18 @@ const apiFetch = async (endpoint, options = {}) => {
 
     if (!response.ok) {
       const errorData = await response.text();
-      const error = new Error(`HTTP ${response.status}: ${response.statusText}`);
+      let detail = '';
+      if (response.headers.get('content-type')?.includes('application/json')) {
+        try {
+          const parsed = JSON.parse(errorData);
+          const message = parsed.message || parsed.data?.error;
+          if (typeof message === 'string') detail = message;
+        } catch (parseError) {
+          if (!(parseError instanceof SyntaxError)) throw parseError;
+          detail = 'The server returned a malformed error response.';
+        }
+      }
+      const error = new Error(`HTTP ${response.status}: ${response.statusText}${detail ? ` - ${detail}` : ''}`);
       error.status = response.status;
       error.statusText = response.statusText;
       error.response = errorData;
