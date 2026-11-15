@@ -64,6 +64,43 @@ test('only booking endpoints are anonymous', function () {
     expect(bookingRest('/booking/catalog')['status'])->toBe(200);
 })->group('booking-integration');
 
+test('booking catalog returns only the signed-in customer identity and forced-email policy', function () {
+    $settings = \Wappointment\System\Container::getInstance()->make(\Wappointment\System\Settings::class);
+    $settings->set('forceemail', true);
+    wp_set_current_user(1);
+    $signedIn = bookingRest('/booking/catalog');
+    expect($signedIn['status'])->toBe(200)
+        ->and($signedIn['body']['data']['customer']['email'])->toBe(wp_get_current_user()->user_email)
+        ->and($signedIn['body']['data']['customer']['force_email'])->toBeTrue();
+
+    wp_set_current_user(0);
+    $anonymous = bookingRest('/booking/catalog');
+    expect($anonymous['status'])->toBe(200)
+        ->and($anonymous['body']['data']['customer'])->toBeNull();
+})->group('booking-integration');
+
+test('booking shortcodes normalize supported flags and validate preselected values', function () {
+    $shortcodes = new \Wappointment\System\Shortcodes();
+    $markup = $shortcodes->renderBookingWidget([
+        0 => 'open', 1 => 'week', 2 => 'popup',
+        'title' => 'Book safely', 'button_title' => 'Reserve',
+        'service' => '3', 'calendar' => '4', 'location' => '5', 'duration' => '45',
+    ]);
+    expect($markup)->toContain('data-title="Book safely"')
+        ->and($markup)->toContain('data-button-title="Reserve"');
+    preg_match('/data-config="([^"]*)"/', $markup, $matches);
+    expect($matches)->toHaveCount(2);
+    $configuration = json_decode(html_entity_decode($matches[1], ENT_QUOTES), true, 512, JSON_THROW_ON_ERROR);
+    expect($configuration)->toMatchArray([
+        'open' => true, 'week' => true, 'popup' => true, 'service_id' => 3,
+        'calendar_id' => 4, 'location_id' => 5, 'duration' => 45,
+    ]);
+    expect($shortcodes->renderBookingWidget(['duration' => '0']))->toContain('role="alert"');
+    expect($shortcodes->renderLegacyBookingPage(['title' => 'Old booking page']))
+        ->toContain('data-title="Old booking page"');
+    expect($shortcodes->renderBookingWidget(['popup' => ['invalid']]))->toContain('role="alert"');
+})->group('booking-integration');
+
 test('saves a real booking with UTC times and the original buffer contract', function () {
     global $wpdb;
     $input = bookingFixture();
@@ -71,6 +108,10 @@ test('saves a real booking with UTC times and the original buffer contract', fun
     expect($result['status'])->toBe(201);
     $booking = $result['body']['data'];
     expect($booking['status'])->toBe(1)
+        ->and($booking['service_id'])->toBe($input['service_id'])
+        ->and($booking['calendar_id'])->toBe($input['calendar_id'])
+        ->and($booking['location_id'])->toBe($input['location_id'])
+        ->and($booking['duration'])->toBe($input['duration'])
         ->and($booking['notification_sent'])->toBeFalse()
         ->and($booking['end'] - $booking['start'])->toBe(1800);
     $stored = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wappo_appointments WHERE id = %d", $booking['id']), ARRAY_A);
@@ -150,6 +191,59 @@ test('admin can reschedule a booking and book an existing client on behalf', fun
             "SELECT start_at FROM {$wpdb->prefix}wappo_appointments WHERE id = %d",
             $appointmentId
         )))->toBe(gmdate('Y-m-d H:i:s', $next['start']));
+})->group('booking-integration');
+
+test('customer and staff history shortcodes return only appointments in their own scope', function () {
+    global $wpdb;
+    $input = bookingFixture();
+    $customerSuffix = str_replace('-', '', wp_generate_uuid4());
+    $input['email'] = 'history-' . $customerSuffix . '@example.com';
+    $created = bookingRest('/booking', 'POST', $input);
+    expect($created['status'])->toBe(201);
+    $clientUser = wp_insert_user([
+        'user_login' => 'history-customer-' . $customerSuffix,
+        'user_pass' => wp_generate_password(),
+        'user_email' => $input['email'],
+        'role' => 'subscriber',
+    ]);
+    expect(is_wp_error($clientUser))->toBeFalse(is_wp_error($clientUser) ? $clientUser->get_error_message() : '');
+
+    $pageId = wp_insert_post([
+        'post_type' => 'page',
+        'post_status' => 'publish',
+        'post_title' => 'Booking history test',
+        'post_content' => '[wap_widget]',
+    ]);
+    expect(is_wp_error($pageId))->toBeFalse();
+    $settings = \Wappointment\System\Container::getInstance()->make(\Wappointment\System\Settings::class);
+    $settings->set('booking_page', (int) $pageId);
+    wp_set_current_user((int) $clientUser);
+    $customerHistory = do_shortcode('[wap_history]');
+    expect($customerHistory)->toContain('Free consultation')
+        ->and($customerHistory)->toContain('Organizer')
+        ->and($customerHistory)->toContain('Manage appointment')
+        ->and($customerHistory)->not->toContain($input['email']);
+
+    $otherUser = wp_insert_user([
+        'user_login' => 'other-history-customer-' . $customerSuffix,
+        'user_pass' => wp_generate_password(),
+        'user_email' => 'other-' . $customerSuffix . '@example.com',
+        'role' => 'subscriber',
+    ]);
+    expect(is_wp_error($otherUser))->toBeFalse();
+    wp_set_current_user((int) $otherUser);
+    expect(do_shortcode('[wap_history]'))->toBe('No appointments found.');
+
+    wp_set_current_user(0);
+    expect(do_shortcode('[wap_history]'))->toBe('Please log in to view your appointment history.');
+
+    $calendarId = (int) $wpdb->get_var("SELECT id FROM {$wpdb->prefix}wappo_calendars LIMIT 1");
+    $wpdb->update($wpdb->prefix . 'wappo_calendars', ['wp_uid' => 1], ['id' => $calendarId]);
+    wp_set_current_user(1);
+    $staffHistory = do_shortcode('[wap_staff_history]');
+    expect($staffHistory)->toContain('Free consultation')
+        ->and($staffHistory)->toContain($input['email']);
+    wp_delete_post((int) $pageId, true);
 })->group('booking-integration');
 
 test('legacy schedule precision is projected consistently and public bookings retain stored source data', function (string $precision) {

@@ -42,7 +42,7 @@ test('self view without weekly permission shows disabled fields and no save cont
     expect(await screen.findByLabelText('Organizer timezone')).toBeDisabled();
     expect(screen.getByLabelText('Days available in advance')).toBeDisabled();
     expect(screen.queryByRole('button', { name: 'Save availability' })).not.toBeInTheDocument();
-    expect(screen.getByText(/do not have permission/)).toBeVisible();
+    expect(screen.getByText('You can view this calendar, but do not have permission to change weekly availability.')).toBeVisible();
 });
 
 test('a calendar needing migration has an explicit problem and no editable form', async () => {

@@ -42,7 +42,9 @@ manual approval, active-booking limits, customer-data preservation, own-calendar
 exception CRUD and editing effects on live slots, idempotent schema bootstrap, and
 non-destructive refusal of multi-service setup edits. Rescheduling checks include disabled
 and late actions, collision with a different appointment, and retention of the original
-buffer and sequence; the widget suite also opens the emailed `#wappointment=<key>` link.
+buffer and sequence; the widget suite opens the emailed `#wappointment=<key>` and legacy
+`?appointmentkey=<key>&view=reschedule-event` links, verifies unique widget-instance labels,
+and checks the generated ICS start/end, location, and UID.
 Change `WAPPOINTMENT_BOOKING_PORT` and the installation URL together if port 18089
 is already in use.
 
@@ -80,6 +82,8 @@ It verifies typed week events, authorized lock/edit controls, timezone-aware res
 fields, client selection, and the on-behalf booking request/confirmation flow. The UI
 test does not certify external-calendar events, multi-calendar timezone rendering,
 optimistic drag/drop rollback, or the still-unimplemented history/order screens.
+The customer widget suite also covers the accessible seven-day date chooser, organizer
+timezone labeling, week navigation, and invalidating stale availability after a date change.
 It also tests URL/body identifier conflicts, unknown query/body fields, JSON shape,
 default settings compatibility, retained extension settings, and invalid Action output
 becoming a server error rather than a success or client error. That last test deliberately

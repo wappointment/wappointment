@@ -13,8 +13,12 @@ class CreateBookingResponseData extends BookingData
         int $start,
         int $end,
         string $edit_key,
+        int $service_id,
+        int $calendar_id,
+        int $location_id,
+        int $duration,
         public readonly bool $notification_sent,
     ) {
-        parent::__construct($id, $status, $start, $end, $edit_key);
+        parent::__construct($id, $status, $start, $end, $edit_key, $service_id, $calendar_id, $location_id, $duration);
     }
 }

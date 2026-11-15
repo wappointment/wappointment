@@ -6,6 +6,39 @@
     margin: 0 auto;
 }
 
+.wap-widget-centered {
+    margin-inline: auto;
+}
+
+.wap-widget-floating {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 99990;
+}
+
+.wap-widget-floating .wap-book-btn {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.wap-widget-large,
+.wap-widget-large .wap-widget-open {
+    max-width: 760px;
+}
+
+.wap-widget-popup.wap-widget-open {
+    position: fixed;
+    top: 5vh;
+    left: 50%;
+    z-index: 100000;
+    width: min(600px, 96vw);
+    max-width: 96vw;
+    max-height: 90vh;
+    overflow: auto;
+    transform: translateX(-50%);
+    box-shadow: 0 0 0 100vmax rgba(0, 0, 0, 0.45), 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
 /* Initial Book Now Button */
 .wap-book-btn {
     background: #2271b1;
@@ -80,6 +113,17 @@
     opacity: 1;
 }
 
+.wap-inline-close {
+    display: block;
+    margin: 0 24px 20px auto;
+    border: 0;
+    background: transparent;
+    color: #135e96;
+    cursor: pointer;
+    font: inherit;
+    text-decoration: underline;
+}
+
 /* Widget Body */
 .wap-widget-body {
     padding: 24px;
@@ -114,6 +158,97 @@
 .wap-form-group select:focus {
     outline: none;
     border-color: #2271b1;
+}
+
+.wap-date-picker {
+    margin: 0 0 20px;
+}
+
+.wap-date-picker-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    text-align: center;
+}
+
+.wap-date-view-toggle {
+    display: flex;
+    justify-content: flex-end;
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.wap-date-view-toggle button {
+    border: 1px solid #8c8f94;
+    border-radius: 4px;
+    background: #fff;
+    color: #1e1e1e;
+    cursor: pointer;
+    font: inherit;
+    padding: 4px 10px;
+}
+
+.wap-date-view-toggle button[aria-pressed="true"] {
+    border-color: #135e96;
+    background: #135e96;
+    color: #fff;
+}
+
+.wap-date-nav,
+.wap-date-day {
+    border: 1px solid #8c8f94;
+    border-radius: 6px;
+    background: #fff;
+    color: #1e1e1e;
+    cursor: pointer;
+    font: inherit;
+}
+
+.wap-date-nav {
+    min-width: 40px;
+    min-height: 40px;
+    font-size: 24px;
+}
+
+.wap-date-picker-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.wap-date-day {
+    display: flex;
+    min-height: 64px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 4px 2px;
+    font-size: 12px;
+}
+
+.wap-date-day[aria-pressed="true"] {
+    border-color: #135e96;
+    background: #2271b1;
+    color: #fff;
+}
+
+.wap-date-day-outside {
+    color: #757575;
+}
+
+.wap-date-nav:focus-visible,
+.wap-date-day:focus-visible,
+.wap-date-view-toggle button:focus-visible {
+    outline: 3px solid #135e96;
+    outline-offset: 2px;
+}
+
+.wap-date-picker p {
+    margin: 8px 0 0;
+    font-size: 13px;
 }
 
 /* Widget Footer */
@@ -205,6 +340,18 @@
     
     .wap-book-btn {
         max-width: 100%;
+    }
+
+    .wap-widget-floating {
+        right: 12px;
+        bottom: 12px;
+        left: 12px;
+    }
+
+    .wap-widget-popup.wap-widget-open {
+        top: 2vh;
+        width: 96vw;
+        max-height: 96vh;
     }
 }
 

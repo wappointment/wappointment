@@ -15,5 +15,9 @@ class BookingData extends ResponseData
         #[Min(1)] public readonly int $start,
         #[Min(1)] public readonly int $end,
         #[Pattern('^[a-f0-9]{32}$')] public readonly string $edit_key,
+        #[Min(1)] public readonly int $service_id,
+        #[Min(1)] public readonly int $calendar_id,
+        #[Min(1)] public readonly int $location_id,
+        #[Min(5)] public readonly int $duration,
     ) {}
 }

@@ -113,7 +113,11 @@ test('nested request schemas validate schedules and arrays', function () {
 });
 
 test('response contracts preserve types and treat missing unexpected or wrong fields as server failures', function () {
-    $booking = ['id' => 1, 'status' => 1, 'start' => 1893571200, 'end' => 1893573000, 'edit_key' => str_repeat('c', 32), 'notification_sent' => false];
+    $booking = [
+        'id' => 1, 'status' => 1, 'start' => 1893571200, 'end' => 1893573000,
+        'edit_key' => str_repeat('c', 32), 'service_id' => 1, 'calendar_id' => 2,
+        'location_id' => 3, 'duration' => 30, 'notification_sent' => false,
+    ];
     expect(CreateBookingResponseData::from($booking)->toArray())->toBe($booking);
     expect(fn() => CreateBookingResponseData::from($booking + ['private' => 'secret']))->toThrow(UnexpectedValueException::class);
     expect(fn() => CreateBookingResponseData::from(array_replace($booking, ['id' => '1'])))->toThrow(UnexpectedValueException::class);

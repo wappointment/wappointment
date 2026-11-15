@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Wappointment\Http\Responses;
 
 use Wappointment\Http\Attributes\CollectionOf;
+use Wappointment\Http\Data\BookingCustomerData;
 use Wappointment\Http\Data\CalendarServiceData;
 use Wappointment\Http\Data\CatalogCalendarData;
 use Wappointment\Http\Data\CatalogLocationData;
@@ -23,5 +24,6 @@ class GetBookingCatalogResponseData extends ResponseData
         #[CollectionOf(CalendarServiceData::class)] public readonly array $calendar_service,
         /** @var list<ServiceLocationData> */
         #[CollectionOf(ServiceLocationData::class)] public readonly array $service_location,
+        public readonly ?BookingCustomerData $customer = null,
     ) {}
 }
