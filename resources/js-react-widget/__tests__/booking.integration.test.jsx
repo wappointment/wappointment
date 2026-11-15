@@ -59,6 +59,21 @@ test('only confirms a persisted booking and does not invent an email delivery', 
     }));
 });
 
+test('opens the appointment management link embedded in a confirmation email', async () => {
+    window.history.replaceState({}, '', `/#wappointment=${appointment.edit_key}`);
+    bookingFetch.mockImplementation((path, data) => {
+        if (path === '/booking/manage' && data.action === 'view') return Promise.resolve(appointment);
+        return Promise.resolve(catalog);
+    });
+
+    render(<BookingWidget title="Reserve a meeting" />);
+
+    expect(await screen.findByRole('heading', { name: 'Appointment confirmed' })).toBeVisible();
+    expect(bookingFetch).toHaveBeenCalledWith('/booking/manage', {
+        action: 'view', edit_key: appointment.edit_key,
+    }, expect.any(AbortSignal));
+});
+
 test('cancellation sends only the management contract fields', async () => {
     await chooseSlot();
     fireEvent.click(screen.getByRole('button', { name: 'Book appointment', exact: true }));

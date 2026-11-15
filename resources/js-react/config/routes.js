@@ -19,6 +19,10 @@ export const routes = {
         "method": "POST",
         "path": "/me/calendars/(?P<id>\\d+)/statuses"
     },
+    "self.statuses.update": {
+        "method": "POST",
+        "path": "/me/calendars/(?P<id>\\d+)/statuses/(?P<status_id>\\d+)/put"
+    },
     "self.statuses.delete": {
         "method": "POST",
         "path": "/me/calendars/(?P<id>\\d+)/statuses/(?P<status_id>\\d+)/delete"
@@ -34,6 +38,26 @@ export const routes = {
     "appointments.status": {
         "method": "POST",
         "path": "/appointments"
+    },
+    "appointments.lock": {
+        "method": "POST",
+        "path": "/appointments/(?P<id>\\d+)/lock"
+    },
+    "appointments.delete": {
+        "method": "POST",
+        "path": "/appointments/(?P<id>\\d+)/delete"
+    },
+    "appointments.force-delete": {
+        "method": "POST",
+        "path": "/appointments/(?P<id>\\d+)/force-delete"
+    },
+    "appointments.reschedule": {
+        "method": "POST",
+        "path": "/appointments/(?P<id>\\d+)/reschedule"
+    },
+    "appointments.book": {
+        "method": "POST",
+        "path": "/appointments/book"
     },
     "booking-settings.get": {
         "method": "GET",

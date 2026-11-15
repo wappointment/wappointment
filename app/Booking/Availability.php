@@ -112,7 +112,7 @@ class Availability
             $to = min($to, $dayEnd);
             if ($fluidStart !== null) {
                 $from = max($from, $fluidStart);
-            } elseif ($isToday && $from < $earliest) {
+            } elseif ($from < $earliest) {
                 $initialStep = !empty($settings['more_st']) ? $step : $duration;
                 $increments = (int) ceil(($earliest - $from) / ($initialStep * 60));
                 $from += $increments * $initialStep * 60;

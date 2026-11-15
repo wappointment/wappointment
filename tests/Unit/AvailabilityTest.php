@@ -53,6 +53,18 @@ test('honors minimum notice and booking horizon', function () {
     expect((new Availability())->slots('2027-02-01', bookingCalendar(), 30, 0, [], [], [], $now))->toBe([]);
 });
 
+test('applies minimum notice to future dates and advances from the schedule start', function () {
+    $now = strtotime('2026-11-15 08:15 UTC');
+    $slots = (new Availability())->slots('2026-11-17', bookingCalendar('UTC', [[540, 720]]), 30, 0, [
+        'hours_before_booking_allowed' => 50,
+    ], [], [], $now);
+    expect(array_column($slots, 'start'))->toBe([
+        strtotime('2026-11-17 10:30 UTC'),
+        strtotime('2026-11-17 11:00 UTC'),
+        strtotime('2026-11-17 11:30 UTC'),
+    ]);
+});
+
 test('uses organizer local time through daylight saving changes', function (string $date, string $expected) {
     $slots = (new Availability())->slots($date, bookingCalendar('Europe/Paris'), 60, 0, [
         'hours_before_booking_allowed' => 0,
@@ -71,6 +83,25 @@ test('does not duplicate slots in overlapping windows', function () {
     ], [], [[strtotime('2026-11-16 09:00 UTC'), strtotime('2026-11-16 10:00 UTC')]], strtotime('2026-11-15 UTC'));
     expect(array_column($slots, 'start'))->toHaveCount(6);
 });
+
+test('merges duplicate and overlapping free windows and subtracts overlapping busy ranges as a union', function () {
+    $stamp = static fn(string $time): int => strtotime('2026-11-16 ' . $time . ' UTC');
+    $slots = (new Availability())->slots('2026-11-16', bookingCalendar('UTC', []), 30, 0, [
+        'hours_before_booking_allowed' => 0,
+    ], [
+        [$stamp('10:00'), $stamp('10:30')],
+        [$stamp('10:15'), $stamp('11:00')],
+        [$stamp('10:15'), $stamp('11:00')],
+    ], [
+        [$stamp('09:00'), $stamp('11:00')],
+        [$stamp('09:00'), $stamp('11:00')],
+        [$stamp('10:00'), $stamp('12:00')],
+    ], $stamp('00:00'));
+
+    expect(array_column($slots, 'start'))->toBe([
+        $stamp('09:00'), $stamp('09:30'), $stamp('11:00'), $stamp('11:30'),
+    ]);
+})->group('availability');
 
 test('busy exceptions take precedence over additional free time', function () {
     $slots = (new Availability())->slots('2026-11-16', bookingCalendar('UTC', []), 30, 0, [

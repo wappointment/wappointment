@@ -23,7 +23,7 @@ class ChangeBookingAction
             $this->assertChangeAllowed->handle($appointment, $action);
             $changes = ['updated_at' => gmdate('Y-m-d H:i:s')];
             if ($action === 'cancel') {
-                $changes['status'] = -1;
+                $changes['status'] = $this->repository->nextCanceledStatus($appointment);
             } else {
                 $slot = $this->selectedSlot->handle(
                     $this->rescheduleInput->handle($appointment, $input->date, $input->start), (int) $appointment['id'],

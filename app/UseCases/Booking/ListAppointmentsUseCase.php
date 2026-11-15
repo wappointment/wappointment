@@ -13,6 +13,13 @@ class ListAppointmentsUseCase
 
     public function execute(ListAppointmentsRequestData $requestData): ListAppointmentsResponseData
     {
-        return ListAppointmentsResponseData::from($this->action->handle());
+        return ListAppointmentsResponseData::from($this->action->handle([
+            'from' => $requestData->from,
+            'to' => $requestData->to,
+            'calendar_id' => $requestData->calendarId,
+            'service_id' => $requestData->serviceId,
+            'page' => $requestData->page,
+            'per_page' => $requestData->perPage,
+        ]));
     }
 }

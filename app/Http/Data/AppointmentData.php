@@ -12,6 +12,9 @@ class AppointmentData extends Data
 {
     public function __construct(
         #[Min(1), Pattern('^[1-9][0-9]*$')] public readonly int|string $id,
+        public readonly int|string|null $staff_id,
+        public readonly int|string|null $service_id,
+        public readonly int|string|null $location_id,
         public readonly string $start_at,
         public readonly string $end_at,
         #[Pattern('^-?[0-9]+$')] public readonly int|string $status,

@@ -17,9 +17,10 @@ class CreateBookingAction
         private Settings $settings
     ) {}
 
-    public function handle(CreateBookingRequestData $input, array $contact): array
+    public function handle(CreateBookingRequestData $input, array $contact, ?int $owner = null): array
     {
-        return $this->repository->exclusive(function () use ($input, $contact): array {
+        return $this->repository->exclusive(function () use ($input, $contact, $owner): array {
+            $this->repository->assertCalendarOwned($input->calendar_id, $owner);
             [$service, $calendar, $location] = $this->selection->handle($input);
             $fields = array_merge($service['options']['fields'] ?? [], $location['options']['fields'] ?? []);
             if ((in_array('phone', $fields, true) || (int) $location['type'] === 2) && $contact['phone'] === '') {

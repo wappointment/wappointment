@@ -23,7 +23,12 @@ if (DB_NAME !== 'booking_test' || wp_get_environment_type() !== 'local') {
 
 function permissionRest(string $path, string $method = 'GET', ?array $payload = null): array
 {
-    $request = new WP_REST_Request($method, '/wappointment/v1' . $path);
+    $parts = parse_url('/wappointment/v1' . $path);
+    $request = new WP_REST_Request($method, $parts['path']);
+    if (isset($parts['query'])) {
+        parse_str($parts['query'], $query);
+        $request->set_query_params($query);
+    }
     if ($payload !== null) {
         $request->set_header('content-type', 'application/json');
         $request->set_body(wp_json_encode($payload));
@@ -161,12 +166,53 @@ test('staff list only their own appointments and cannot override the owner with 
         $listed = permissionRest('/appointments');
         expect($listed['status'])->toBe(200)
             ->and(array_map('intval', array_column($listed['body']['data']['appointments'], 'id')))->toBe([$appointments['staff']]);
-        $request = new WP_REST_Request('GET', '/wappointment/v1/appointments');
-        $request->set_query_params(['calendar_id' => $calendars['other']]);
-        expect(rest_do_request($request)->get_status())->toBe(400);
+        $otherCalendar = permissionRest('/appointments?calendar_id=' . $calendars['other']);
+        expect($otherCalendar['status'])->toBe(200)
+            ->and($otherCalendar['body']['data']['appointments'])->toBe([]);
         permissionUser($users['other']);
         expect(array_map('intval', array_column(permissionRest('/appointments')['body']['data']['appointments'], 'id')))
             ->toBe([$appointments['other']]);
+    });
+})->group('permissions-integration');
+
+test('managers can manage calendar exceptions while non-owners cannot access them', function () {
+    withPermissionFixture(function ($users, $calendars) {
+        global $wpdb;
+        $calendarId = $calendars['staff'];
+        $path = '/me/calendars/' . $calendarId . '/statuses';
+        $adminPath = $path . '?scope=admin';
+        $start = (new DateTimeImmutable('+3 days', new DateTimeZone('UTC')))->setTime(9, 0)->getTimestamp();
+
+        permissionUser($users['manager']);
+        $created = permissionRest($adminPath, 'POST', [
+            'type' => 1,
+            'start' => $start,
+            'end' => $start + 3600,
+            'recur' => 0,
+            'scope' => 'admin',
+        ]);
+        expect($created['status'])->toBe(201);
+        $statusId = $created['body']['data']['status']['id'];
+        expect(permissionRest($adminPath)['body']['data']['statuses'])->toHaveCount(1)
+            ->and(permissionRest($path)['status'])->toBe(404);
+        expect(permissionRest($path . '/' . $statusId . '/put?scope=admin', 'POST', [
+            'type' => 0,
+            'start' => $start,
+            'end' => $start + 3600,
+            'recur' => 0,
+            'scope' => 'admin',
+        ])['status'])->toBe(200)
+            ->and((int) $wpdb->get_var($wpdb->prepare(
+                "SELECT type FROM {$wpdb->prefix}wappo_statuses WHERE id = %d", $statusId
+            )))->toBe(0);
+
+        permissionUser($users['other']);
+        expect(permissionRest($path)['status'])->toBe(404)
+            ->and(permissionRest($adminPath)['status'])->toBe(403);
+
+        permissionUser($users['manager']);
+        expect(permissionRest($path . '/' . $statusId . '/delete?scope=admin', 'POST')['status'])->toBe(200)
+            ->and(permissionRest($adminPath)['body']['data']['statuses'])->toBe([]);
     });
 })->group('permissions-integration');
 
@@ -245,6 +291,139 @@ test('staff cannot change guessed appointments owned by another user', function 
         expect(fn() => Container::getInstance()->make(UpdateAppointmentStatusAction::class)->handle([
             'id' => $appointments['other'], 'status' => 1,
         ]))->toThrow(\Wappointment\Booking\BookingException::class, 'Appointment not found');
+    });
+})->group('permissions-integration');
+
+test('appointment range listing enforces ownership, filters and pagination', function () {
+    withPermissionFixture(function ($users, $calendars, $appointments, $clients) {
+        global $wpdb;
+        permissionUser($users['staff']);
+        expect($wpdb->insert($wpdb->prefix . 'wappo_appointments', [
+            'staff_id' => $calendars['staff'], 'client_id' => $clients['staff'],
+            'start_at' => '2030-01-01 23:45:00', 'end_at' => '2030-01-02 00:15:00',
+            'status' => 0, 'options' => '{}', 'edit_key' => bin2hex(random_bytes(16)),
+        ]))->not->toBeFalse();
+        $overlappingAppointment = (int) $wpdb->insert_id;
+        foreach ([
+            ['type' => 1, 'source' => null, 'start_at' => '2030-01-02 11:00:00', 'end_at' => '2030-01-02 12:00:00'],
+            ['type' => 1, 'source' => 'ics', 'start_at' => '2030-01-02 13:00:00', 'end_at' => '2030-01-02 14:00:00'],
+        ] as $status) {
+            expect($wpdb->insert($wpdb->prefix . 'wappo_statuses', $status + [
+                'staff_id' => $calendars['staff'], 'recur' => 0, 'muted' => 0, 'options' => '{}',
+            ]))->not->toBeFalse();
+        }
+        try {
+            $from = strtotime('2030-01-02 00:00:00 UTC');
+            $to = strtotime('2030-01-03 00:00:00 UTC');
+            $query = http_build_query([
+                'from' => $from, 'to' => $to, 'calendar_id' => $calendars['staff'],
+                'page' => 1, 'per_page' => 1,
+            ]);
+            $first = permissionRest('/appointments?' . $query);
+            expect($first['status'])->toBe(200)
+                ->and(array_map('intval', array_column($first['body']['data']['appointments'], 'id')))
+                ->toBe([$overlappingAppointment])
+                ->and($first['body']['data']['total'])->toBe(2)
+                ->and($first['body']['data']['per_page'])->toBe(1)
+                ->and(array_map('intval', array_column($first['body']['data']['calendars'], 'id')))
+                ->toContain($calendars['staff'])
+                ->and(array_column($first['body']['data']['events'], 'type'))
+                ->toContain('appointment_pending', 'availability_busy', 'external');
+
+            $second = permissionRest('/appointments?' . http_build_query([
+                'from' => $from, 'to' => $to, 'calendar_id' => $calendars['staff'],
+                'page' => 2, 'per_page' => 1,
+            ]));
+            expect(array_map('intval', array_column($second['body']['data']['appointments'], 'id')))
+                ->toBe([$appointments['staff']]);
+
+            $otherCalendar = permissionRest('/appointments?' . http_build_query([
+                'from' => $from, 'to' => $to, 'calendar_id' => $calendars['other'],
+            ]));
+            expect($otherCalendar['status'])->toBe(200)
+                ->and($otherCalendar['body']['data']['appointments'])->toBe([]);
+
+            expect(permissionRest('/appointments?' . http_build_query([
+                'from' => $from, 'to' => $to, 'service_id' => 987654,
+            ]))['body']['data']['appointments'])->toBe([]);
+
+            expect(permissionRest('/appointments?from=' . $from)['status'])->toBe(400);
+            expect(permissionRest('/appointments?' . http_build_query([
+                'from' => $from, 'to' => $from + YEAR_IN_SECONDS + 1,
+            ]))['status'])->toBe(400);
+        } finally {
+            $wpdb->delete($wpdb->prefix . 'wappo_appointments', ['id' => $overlappingAppointment]);
+        }
+    });
+})->group('permissions-integration');
+
+test('appointment locks protect ordinary deletion while cancellation keeps history', function () {
+    withPermissionFixture(function ($users, $calendars, $appointments) {
+        global $wpdb;
+        permissionUser($users['staff']);
+        expect(permissionRest('/appointments/' . $appointments['staff'] . '/lock', 'POST', ['locked' => true])['status'])->toBe(200);
+        $stored = $wpdb->get_row($wpdb->prepare(
+            "SELECT status, options FROM {$wpdb->prefix}wappo_appointments WHERE id = %d",
+            $appointments['staff']
+        ), ARRAY_A);
+        expect(json_decode($stored['options'], true)['locked'])->toBeTrue();
+
+        expect(permissionRest('/appointments/' . $appointments['staff'] . '/delete', 'POST')['status'])->toBe(409)
+            ->and(permissionRest('/appointments/' . $appointments['staff'] . '/force-delete', 'POST')['status'])->toBe(403);
+        expect(permissionRest('/appointments', 'POST', ['id' => $appointments['staff'], 'status' => -1])['status'])->toBe(200);
+        $stored = $wpdb->get_row($wpdb->prepare(
+            "SELECT status, options FROM {$wpdb->prefix}wappo_appointments WHERE id = %d",
+            $appointments['staff']
+        ), ARRAY_A);
+        expect((int) $stored['status'])->toBeLessThan(0)
+            ->and(json_decode($stored['options'], true)['locked'])->toBeTrue();
+
+        expect(permissionRest('/appointments/' . $appointments['staff'] . '/lock', 'POST', ['locked' => false])['status'])->toBe(200)
+            ->and(permissionRest('/appointments/' . $appointments['staff'] . '/delete', 'POST')['status'])->toBe(200)
+            ->and((int) $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM {$wpdb->prefix}wappo_appointments WHERE id = %d",
+                $appointments['staff']
+            )))->toBe(0);
+    });
+})->group('permissions-integration');
+
+test('manager force deletion unlinks an order item without deleting order history', function () {
+    withPermissionFixture(function ($users, $calendars, $appointments, $clients) {
+        global $wpdb;
+        $prefix = $wpdb->prefix . 'wappo_';
+        expect($wpdb->insert($prefix . 'orders', [
+            'client_id' => $clients['staff'], 'options' => '{}',
+        ]))->not->toBeFalse();
+        $order = (int) $wpdb->insert_id;
+        expect($wpdb->insert($prefix . 'prices', [
+            'name' => 'Historical booking', 'type' => 0, 'reference_id' => 1,
+        ]))->not->toBeFalse();
+        $price = (int) $wpdb->insert_id;
+        expect($wpdb->insert($prefix . 'order_price', [
+            'order_id' => $order, 'price_id' => $price, 'item_name' => 'Historical booking',
+            'price_value' => 100, 'appointment_id' => $appointments['staff'],
+        ]))->not->toBeFalse();
+        $item = (int) $wpdb->insert_id;
+        $wpdb->update($prefix . 'appointments', ['options' => wp_json_encode(['locked' => true])], ['id' => $appointments['staff']]);
+
+        permissionUser($users['manager']);
+        expect(permissionRest('/appointments/' . $appointments['staff'] . '/force-delete', 'POST')['status'])->toBe(200)
+            ->and($wpdb->get_var($wpdb->prepare(
+                "SELECT appointment_id FROM {$prefix}order_price WHERE id = %d",
+                $item
+            )))->toBeNull()
+            ->and((int) $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM {$prefix}orders WHERE id = %d",
+                $order
+            )))->toBe(1)
+            ->and((int) $wpdb->get_var($wpdb->prepare(
+                "SELECT COUNT(*) FROM {$prefix}order_price WHERE id = %d",
+                $item
+            )))->toBe(1);
+
+        $wpdb->delete($prefix . 'order_price', ['id' => $item]);
+        $wpdb->delete($prefix . 'orders', ['id' => $order]);
+        $wpdb->delete($prefix . 'prices', ['id' => $price]);
     });
 })->group('permissions-integration');
 
@@ -380,6 +559,8 @@ test('the admin bootstrap exposes only the current users pages and exact operati
             expect($data['allowedPages'])->toBe(['wappointment-appointments', 'wappointment-clients', 'wappointment-my-availability'])
                 ->and($data['permissions'])->toBe([
                     'appointmentsConfirm' => true, 'appointmentsCancel' => false,
+                    'appointmentsBook' => true, 'appointmentsEdit' => true, 'appointmentsLock' => true,
+                    'appointmentsDelete' => false, 'appointmentsForceDelete' => false,
                     'clientsCreate' => false, 'clientsEdit' => true, 'clientsDelete' => true,
                     'selfWeekly' => true, 'selfStatuses' => true,
                 ]);
@@ -693,6 +874,12 @@ test('self settings permissions are independent and require both parent and week
             ->and($status['status'])->toBe(201)
             ->and(permissionRest($statusPath)['status'])->toBe(200)
             ->and(permissionRest($otherStatusPath)['status'])->toBe(404)
+            ->and(permissionRest($statusPath . '/' . $status['body']['data']['status']['id'] . '/put', 'POST', [
+                'type' => 0, 'start' => time() + 7200, 'end' => time() + 10800,
+            ])['status'])->toBe(200)
+            ->and(permissionRest($otherStatusPath . '/' . $status['body']['data']['status']['id'] . '/put', 'POST', [
+                'type' => 0, 'start' => time() + 7200, 'end' => time() + 10800,
+            ])['status'])->toBe(404)
             ->and(permissionRest($statusPath, 'POST', [
                 'type' => 1, 'start' => time() + 7200, 'end' => time() + 3600,
             ])['status'])->toBe(400)

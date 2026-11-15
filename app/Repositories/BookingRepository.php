@@ -141,21 +141,279 @@ class BookingRepository
         });
     }
 
-    public function adminAppointments(?int $owner = null): array
+    public function adminAppointments(?int $owner = null, array $filters = []): array
     {
-        $scope = $owner === null ? '' : $this->db->prepare(
-            " WHERE EXISTS (SELECT 1 FROM {$this->prefix()}calendars owner
-                            WHERE owner.id = a.staff_id AND owner.wp_uid = %d AND owner.deleted_at IS NULL)",
+        $where = [];
+        $params = [];
+        if ($owner !== null) {
+            $where[] = "EXISTS (SELECT 1 FROM {$this->prefix()}calendars owner
+                                WHERE owner.id = a.staff_id AND owner.wp_uid = %d AND owner.deleted_at IS NULL)";
+            $params[] = $owner;
+        }
+        if (isset($filters['from'], $filters['to'])) {
+            $where[] = 'a.start_at < %s AND a.end_at > %s';
+            $params[] = gmdate('Y-m-d H:i:s', $filters['to']);
+            $params[] = gmdate('Y-m-d H:i:s', $filters['from']);
+        }
+        if (isset($filters['calendar_id'])) {
+            $where[] = 'a.staff_id = %d';
+            $params[] = $filters['calendar_id'];
+        }
+        if (isset($filters['service_id'])) {
+            $where[] = 'a.service_id = %d';
+            $params[] = $filters['service_id'];
+        }
+        $clause = $where ? ' WHERE ' . implode(' AND ', $where) : '';
+        $page = max(1, (int) ($filters['page'] ?? 1));
+        $perPage = min(100, max(1, (int) ($filters['per_page'] ?? 100)));
+        $offset = ($page - 1) * $perPage;
+        $order = isset($filters['from']) ? 'ASC' : 'DESC';
+        $countSql = "SELECT COUNT(*) FROM {$this->prefix()}appointments a{$clause}";
+        $count = $this->db->get_var($params
+            ? $this->db->prepare($countSql, ...$params)
+            : $countSql);
+        $this->checkError();
+        $total = (int) $count;
+        $query = "SELECT a.id, a.staff_id, a.service_id, a.location_id, a.start_at, a.end_at, a.status,
+                         c.name AS client_name, c.email AS client_email, s.name AS service_name, a.options
+                  FROM {$this->prefix()}appointments a
+                  LEFT JOIN {$this->prefix()}clients c ON c.id = a.client_id
+                  LEFT JOIN {$this->prefix()}services s ON s.id = a.service_id
+                  {$clause} ORDER BY a.start_at {$order}, a.id {$order} LIMIT %d OFFSET %d";
+        $params[] = $perPage;
+        $params[] = $offset;
+        $rows = $this->rows($this->db->prepare($query, ...$params));
+        $filtersData = $this->adminAppointmentFilters($owner);
+        $events = [];
+        foreach ($rows as $appointment) {
+            $status = (int) $appointment['status'];
+            $type = $status < 0
+                ? 'appointment_cancelled'
+                : ($status === 1 ? 'appointment_confirmed' : 'appointment_pending');
+            $events[] = [
+                'id' => 'appointment-' . $appointment['id'],
+                'type' => $type,
+                'title' => trim(($appointment['client_name'] ?? '') . ' - ' . ($appointment['service_name'] ?? 'Appointment'), ' -'),
+                'start_at' => $appointment['start_at'],
+                'end_at' => $appointment['end_at'],
+                'appointment_id' => (int) $appointment['id'],
+            ];
+        }
+        if (isset($filters['from'], $filters['to'])) {
+            array_push($events, ...$this->adminAvailabilityEvents($owner, $filters));
+        }
+        usort($events, static fn(array $left, array $right): int => strcmp($left['start_at'], $right['start_at']));
+        return [
+            'appointments' => $rows,
+            'total' => $total,
+            'page' => $page,
+            'per_page' => $perPage,
+            'calendars' => $filtersData['calendars'],
+            'services' => $filtersData['services'],
+            'locations' => $filtersData['locations'],
+            'events' => $events,
+        ];
+    }
+
+    private function adminAppointmentFilters(?int $owner): array
+    {
+        $ownerCalendar = $owner === null ? '' : $this->db->prepare(
+            ' AND c.wp_uid = %d',
             $owner
         );
-        return $this->rows(
-            "SELECT a.id, a.start_at, a.end_at, a.status, c.name AS client_name, c.email AS client_email,
-                    s.name AS service_name, a.options
-             FROM {$this->prefix()}appointments a
-             LEFT JOIN {$this->prefix()}clients c ON c.id = a.client_id
-             LEFT JOIN {$this->prefix()}services s ON s.id = a.service_id
-             {$scope} ORDER BY a.start_at DESC LIMIT 100"
+        $calendarRows = $this->rows(
+            "SELECT c.id, c.name, c.options FROM {$this->prefix()}calendars c
+             WHERE c.deleted_at IS NULL{$ownerCalendar}
+             ORDER BY c.sorting, c.id"
         );
+        foreach ($calendarRows as &$calendar) {
+            $timezone = $calendar['options']['timezone'] ?? 'UTC';
+            $calendar['timezone'] = is_string($timezone) && in_array($timezone, \DateTimeZone::listIdentifiers(), true)
+                ? $timezone
+                : 'UTC';
+            unset($calendar['options']);
+        }
+        unset($calendar);
+        $serviceScope = $owner === null ? '' : $this->db->prepare(
+            ' AND c.wp_uid = %d',
+            $owner
+        );
+        $serviceRows = $this->rows(
+            "SELECT DISTINCT s.id, s.name, s.options FROM {$this->prefix()}services s
+             JOIN {$this->prefix()}calendar_service cs ON cs.service_id = s.id
+             JOIN {$this->prefix()}calendars c ON c.id = cs.calendar_id
+             WHERE s.deleted_at IS NULL AND c.deleted_at IS NULL{$serviceScope}
+             ORDER BY s.sorting, s.id"
+        );
+        $locationRows = $this->rows(
+            "SELECT l.id, l.name, l.type FROM {$this->prefix()}locations l
+             WHERE l.deleted_at IS NULL ORDER BY l.id"
+        );
+        return [
+            'calendars' => $calendarRows,
+            'services' => $serviceRows,
+            'locations' => $locationRows,
+        ];
+    }
+
+    private function adminAvailabilityEvents(?int $owner, array $filters): array
+    {
+        $where = ['s.muted = 0', 's.start_at < %s', '(s.end_at > %s OR s.recur > 0)'];
+        $params = [
+            gmdate('Y-m-d H:i:s', $filters['to']),
+            gmdate('Y-m-d H:i:s', $filters['from']),
+        ];
+        if ($owner !== null) {
+            $where[] = 'c.wp_uid = %d AND c.deleted_at IS NULL';
+            $params[] = $owner;
+        }
+        if (isset($filters['calendar_id'])) {
+            $where[] = 's.staff_id = %d';
+            $params[] = $filters['calendar_id'];
+        }
+        if (isset($filters['service_id'])) {
+            $where[] = "EXISTS (
+                SELECT 1 FROM {$this->prefix()}calendar_service cs
+                WHERE cs.calendar_id = s.staff_id AND cs.service_id = %d
+            )";
+            $params[] = $filters['service_id'];
+        }
+        $statuses = $this->rows($this->db->prepare(
+            "SELECT s.* FROM {$this->prefix()}statuses s
+             LEFT JOIN {$this->prefix()}calendars c ON c.id = s.staff_id
+             WHERE " . implode(' AND ', $where),
+            ...$params
+        ));
+        $recurrence = new RecurringStatusOccurrences();
+        $events = [];
+        foreach ($statuses as $status) {
+            $occurrences = (int) $status['recur'] > 0
+                ? $recurrence->expand($status, $filters['from'], $filters['to'])
+                : [[
+                    $this->timestamp($status['start_at']),
+                    $this->timestamp($status['end_at']),
+                ]];
+            foreach ($occurrences as [$start, $end]) {
+                $external = !empty($status['source']);
+                $available = (int) $status['type'] === 0;
+                $events[] = [
+                    'id' => 'status-' . $status['id'] . '-' . $start,
+                    'type' => $external ? 'external' : ($available ? 'availability_free' : 'availability_busy'),
+                    'title' => $external ? __('External calendar', 'wappointment')
+                        : ($available ? __('Available', 'wappointment') : __('Busy', 'wappointment')),
+                    'start_at' => gmdate('Y-m-d H:i:s', $start),
+                    'end_at' => gmdate('Y-m-d H:i:s', $end),
+                    'appointment_id' => null,
+                ];
+            }
+        }
+        return $events;
+    }
+
+    public function adminAppointment(int $id, ?int $owner = null, bool $lock = false): array
+    {
+        $sql = $owner === null
+            ? $this->db->prepare("SELECT a.* FROM {$this->prefix()}appointments a WHERE a.id = %d", $id)
+            : $this->db->prepare(
+                "SELECT a.* FROM {$this->prefix()}appointments a
+                 JOIN {$this->prefix()}calendars owner ON owner.id = a.staff_id
+                 WHERE a.id = %d AND owner.wp_uid = %d AND owner.deleted_at IS NULL",
+                $id,
+                $owner
+            );
+        $rows = $this->rows($sql . ($lock ? ' FOR UPDATE' : ''));
+        if (!$rows) {
+            throw new BookingException(__('Appointment not found.', 'wappointment'), 404);
+        }
+        return $rows[0];
+    }
+
+    public function adminBookingClient(int $id, ?int $owner): array
+    {
+        $scope = $owner === null ? '' : $this->db->prepare(
+            " AND EXISTS (
+                SELECT 1 FROM {$this->prefix()}appointments a
+                JOIN {$this->prefix()}calendars owner ON owner.id = a.staff_id
+                WHERE a.client_id = c.id AND owner.wp_uid = %d AND owner.deleted_at IS NULL
+            )",
+            $owner
+        );
+        $rows = $this->rows($this->db->prepare(
+            "SELECT c.* FROM {$this->prefix()}clients c
+             WHERE c.id = %d AND c.deleted_at IS NULL{$scope} LIMIT 1",
+            $id
+        ));
+        if (!$rows) {
+            throw new BookingException(__('Client not found.', 'wappointment'), 404);
+        }
+        return $rows[0];
+    }
+
+    public function assertCalendarOwned(int $calendarId, ?int $owner): void
+    {
+        if ($owner === null) {
+            return;
+        }
+        $count = $this->db->get_var($this->db->prepare(
+            "SELECT COUNT(*) FROM {$this->prefix()}calendars
+             WHERE id = %d AND wp_uid = %d AND deleted_at IS NULL",
+            $calendarId,
+            $owner
+        ));
+        $this->checkError();
+        if ((int) $count !== 1) {
+            throw new BookingException(__('Calendar not found.', 'wappointment'), 404);
+        }
+    }
+
+    public function setAppointmentLocked(int $id, bool $locked, ?int $owner): void
+    {
+        $this->exclusive(function () use ($id, $locked, $owner): void {
+            $appointment = $this->adminAppointment($id, $owner, true);
+            $this->assertStandaloneAppointment($appointment);
+            $options = $appointment['options'];
+            if ($locked) {
+                $options['locked'] = true;
+            } else {
+                unset($options['locked']);
+            }
+            $this->updateAppointment($id, [
+                'options' => wp_json_encode($options, JSON_THROW_ON_ERROR),
+                'updated_at' => gmdate('Y-m-d H:i:s'),
+            ]);
+        });
+    }
+
+    public function deleteAdminAppointment(int $id, ?int $owner, bool $force): void
+    {
+        $this->exclusive(function () use ($id, $owner, $force): void {
+            $appointment = $this->adminAppointment($id, $owner, true);
+            $this->assertStandaloneAppointment($appointment);
+            if (!empty($appointment['options']['locked']) && !$force) {
+                throw new BookingException(__('This appointment is locked. Force deletion requires manager access.', 'wappointment'), 409);
+            }
+            if (!empty($appointment['options']['providers'])) {
+                throw new BookingException(__('This appointment is linked to an external provider that v3 cannot safely update.', 'wappointment'), 409);
+            }
+            $updated = $this->db->update(
+                $this->prefix() . 'order_price',
+                ['appointment_id' => null],
+                ['appointment_id' => $id]
+            );
+            if ($updated === false) {
+                $this->failure();
+            }
+            if ($this->db->delete($this->prefix() . 'appointments', ['id' => $id]) === false) {
+                $this->failure();
+            }
+        });
+    }
+
+    private function assertStandaloneAppointment(array $appointment): void
+    {
+        if (!empty($appointment['recurrent']) || !empty($appointment['parent'])) {
+            throw new BookingException(__('Recurring appointment operations are unavailable until Group support is migrated.', 'wappointment'), 409);
+        }
     }
 
     public function setStatus(int $id, int $status, ?int $owner = null): void
@@ -196,6 +454,27 @@ class BookingRepository
         if ($this->db->update($this->prefix() . 'appointments', $data, ['id' => $id]) === false) {
             $this->failure();
         }
+    }
+
+    public function nextCanceledStatus(array $appointment): int
+    {
+        $rows = $this->rows($this->db->prepare(
+            "SELECT status FROM {$this->prefix()}appointments
+             WHERE staff_id = %d AND start_at = %s AND end_at = %s AND status < 0 AND id <> %d",
+            (int) $appointment['staff_id'],
+            $appointment['start_at'],
+            $appointment['end_at'],
+            (int) $appointment['id']
+        ));
+        // The existing unique index includes status; distinct negative states preserve same-slot history.
+        $used = array_fill_keys(array_map(static fn(array $row): int => (int) $row['status'], $rows), true);
+        for ($status = -1; $status >= -128; $status--) {
+            if (!isset($used[$status])) {
+                return $status;
+            }
+        }
+
+        throw new BookingException(__('This appointment cannot be canceled because its slot has exhausted the available canceled states.', 'wappointment'), 409);
     }
 
     public function exclusive(callable $operation): mixed

@@ -11,7 +11,12 @@ module.exports = {
       ]
     }]
   },
+  transformIgnorePatterns: ['/node_modules/(?!(until-async)/)'],
   moduleNameMapper: {
+    '^msw/node$': '<rootDir>/node_modules/msw/lib/node/index.js',
+    '^@mswjs/interceptors/WebSocket$': '<rootDir>/node_modules/@mswjs/interceptors/lib/browser/interceptors/WebSocket/index.js',
+    '^@mswjs/interceptors/(.*)$': '<rootDir>/node_modules/@mswjs/interceptors/lib/node/interceptors/$1/index.js',
+    '^@mswjs/interceptors$': '<rootDir>/node_modules/@mswjs/interceptors/lib/node/index.js',
     '\\.(css|less|scss|sass)$': '<rootDir>/resources/js-react/__tests__/__mocks__/styleMock.js',
   },
   setupFilesAfterEnv: ['<rootDir>/resources/js-react/__tests__/setup.js'],

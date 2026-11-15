@@ -13,8 +13,9 @@ class DeleteOwnCalendarStatusAction
 
     public function handle(DeleteOwnCalendarStatusRequestData $requestData): array
     {
-        $this->access->assert('self.statuses');
-        $this->repository->delete($requestData->id, $requestData->status_id, get_current_user_id());
+        $this->access->assert($requestData->scope === 'admin' ? 'manage' : 'self.statuses');
+        $owner = $requestData->scope === 'admin' ? null : get_current_user_id();
+        $this->repository->delete($requestData->id, $requestData->status_id, $owner);
         return ['deleted' => true];
     }
 }

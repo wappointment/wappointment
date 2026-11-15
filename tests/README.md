@@ -39,8 +39,10 @@ docker compose -p wappointment-booking-tests -f tests/docker/booking.compose.yml
 The suite covers public versus administrator permissions, UTC persistence and buffers,
 forged inputs, duplicate/concurrent bookings, rescheduling, cancellation deadlines,
 manual approval, active-booking limits, customer-data preservation, own-calendar busy/free
-exception CRUD and its effect on live slots, idempotent schema bootstrap, and
-non-destructive refusal of multi-service setup edits.
+exception CRUD and editing effects on live slots, idempotent schema bootstrap, and
+non-destructive refusal of multi-service setup edits. Rescheduling checks include disabled
+and late actions, collision with a different appointment, and retention of the original
+buffer and sequence; the widget suite also opens the emailed `#wappointment=<key>` link.
 Change `WAPPOINTMENT_BOOKING_PORT` and the installation URL together if port 18089
 is already in use.
 
@@ -65,6 +67,19 @@ PHP types, and response validation also runs before HTTP serialization.
 The integration suite resolves the complete dependency graph for every controller
 and exercises the existing client CRUD and settings endpoints over authenticated HTTP,
 checking their original success statuses/envelopes and the unified error envelope.
+The W3 appointment integration checks cover bounded range/event filtering, appointment
+lock and deletion permissions, manager force-delete, order-item unlinking, admin
+rescheduling, and on-behalf booking with both anonymous denial and conflict preservation.
+The focused admin calendar UI suite can be run with:
+
+```bash
+npx --no-install jest --config jest.config.js --runInBand resources/js-react/__tests__/appointments.integration.test.jsx
+```
+
+It verifies typed week events, authorized lock/edit controls, timezone-aware rescheduling
+fields, client selection, and the on-behalf booking request/confirmation flow. The UI
+test does not certify external-calendar events, multi-calendar timezone rendering,
+optimistic drag/drop rollback, or the still-unimplemented history/order screens.
 It also tests URL/body identifier conflicts, unknown query/body fields, JSON shape,
 default settings compatibility, retained extension settings, and invalid Action output
 becoming a server error rather than a success or client error. That last test deliberately
@@ -180,8 +195,12 @@ It is a master baseline, not a requirement to reproduce legacy defects: for
 example, master accepts some off-grid/past reschedule inputs and its occupied-slot
 reschedule can hit a database uniqueness error. v3 intentionally validates those
 selections more strictly. The PHP unit suite checks the fixture's source/input
-hashes and its key lifecycle transitions without loading legacy libraries.
-The v3 integration suite also checks pending cancellation after its deadline and
+hashes and its key lifecycle transitions without loading legacy libraries. The
+disposable v3 booking integration suite executes the same 38 scenarios and compares
+success/failure plus persisted appointment/client state at each step. Explicitly
+accepted differences cover stricter invalid-slot rejection, canceled-history
+retention, preserving existing customer data, and rollback of customers from failed
+booking attempts. It also checks pending cancellation after its deadline and
 monotonic sequence increments over repeated reschedules.
 
 Recurring status occurrences have a separate source-pinned oracle:
@@ -197,7 +216,8 @@ for daily interval/exclusion/until rules, weekly weekdays, a timezone/DST transi
 monthly day 15/31 and ordinal weekday rules, and leap-year rollover. The v3 unit suite
 consumes these committed results without loading legacy libraries. A separate
 disposable WordPress integration test verifies recurring busy and free records alter
-public slots. This does not cover the status editor or imported-calendar lifecycle.
+public slots and that those projected slots are enforced by booking creation. This
+does not cover the status editor or imported-calendar lifecycle.
 Another integration test stores a free status carrying Services `options.conditions`
 and verifies that availability and booking return 409 for the overlapping day only,
 with no appointment written and the stored options unchanged.

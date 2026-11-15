@@ -9,6 +9,8 @@ final class AccessPolicy
     {
         if (!in_array($operation, [
             'manage', 'appointments.view', 'appointments.change', 'appointments.confirm', 'appointments.cancel',
+            'appointments.book', 'appointments.edit', 'appointments.lock', 'appointments.delete',
+            'appointments.force_delete',
             'clients.view', 'clients.create', 'clients.edit', 'clients.delete',
             'self.view', 'self.weekly', 'self.statuses',
         ], true)) {
@@ -41,6 +43,11 @@ final class AccessPolicy
             'appointments.confirm' => current_user_can('wappo_calendar_confirm'),
             'appointments.cancel' => current_user_can('wappo_calendar_cancel'),
             'appointments.change' => current_user_can('wappo_calendar_confirm') || current_user_can('wappo_calendar_cancel'),
+            'appointments.book' => current_user_can('wappo_calendar_book') && current_user_can('wappo_clients_man'),
+            'appointments.edit' => current_user_can('wappo_calendar_reschedule'),
+            'appointments.lock' => true,
+            'appointments.delete' => current_user_can('wappo_calendar_cancel'),
+            'appointments.force_delete' => false,
         };
     }
 

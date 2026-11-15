@@ -209,11 +209,15 @@ shown as `{}`, and empty maps are persisted as JSON objects.
 **Wappointment > My availability** is a separate own-calendar screen.
 `wappo_self_man` grants read access, independently of calendar/client management;
 `wappo_self_weekly` additionally permits changing timezone, booking horizon, weekly
-hours and one-off busy/free times. Managers may also use it, but this `/me` operation
-never edits another user's calendar. Missing calendar assignments show an explicit
-empty state. Busy/free exception inputs use the browser timezone and are stored in the
-existing statuses table; recurring exception editing and conditional Services rules
-are not exposed in this screen.
+hours and busy/free times. One-off and supported recurring intervals can be created,
+edited and deleted from the same screen. This `/me` operation remains owner-scoped even
+for managers. Missing calendar assignments show an explicit empty state. Busy/free
+exception inputs use the browser timezone and are stored in the existing statuses table;
+conditional Services rules and recurring rules with excluded dates remain protected.
+
+Managers can also create, edit and delete busy/free intervals for the configured calendar
+from **Wappointment > Booking setup**. That editor requests an explicit manager scope,
+which requires manager authorization and is kept separate from own-calendar access.
 
 The typed `GET /wappointment/v1/me/calendars` response contains only each owned
 calendar's ID, name and supported weekly settings, not account keys/private options.

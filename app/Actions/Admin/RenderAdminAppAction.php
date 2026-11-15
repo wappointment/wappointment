@@ -30,6 +30,11 @@ class RenderAdminAppAction
             'permissions' => [
                 'appointmentsConfirm' => $this->access->can('appointments.confirm'),
                 'appointmentsCancel' => $this->access->can('appointments.cancel'),
+                'appointmentsBook' => $this->access->can('appointments.book'),
+                'appointmentsEdit' => $this->access->can('appointments.edit'),
+                'appointmentsLock' => $this->access->can('appointments.lock'),
+                'appointmentsDelete' => $this->access->can('appointments.delete'),
+                'appointmentsForceDelete' => $this->access->can('appointments.force_delete'),
                 'clientsCreate' => $this->access->can('clients.create'),
                 'clientsEdit' => $this->access->can('clients.edit'),
                 'clientsDelete' => $this->access->can('clients.delete'),

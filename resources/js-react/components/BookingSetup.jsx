@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import apiFetch from '../utils/apiFetch';
 import WeeklyAvailabilityEditor, { weekdays as days } from './WeeklyAvailabilityEditor';
+import { AvailabilityExceptions } from './MyAvailability';
 
 const defaults = {
     service_name: '', calendar_name: '', location_name: '', location_type: 1,
@@ -15,10 +16,12 @@ export default function BookingSetup() {
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
     const [saved, setSaved] = useState(false);
+    const [calendarId, setCalendarId] = useState(null);
     useEffect(() => {
         let mounted = true;
         apiFetch('/booking-settings').then(({ data }) => {
             if (!mounted) return;
+            setCalendarId(Number(data.calendar?.id) || null);
             setForm({
                 ...defaults,
                 service_name: data.service?.name || '',
@@ -48,7 +51,8 @@ export default function BookingSetup() {
         event.preventDefault();
         setSaving(true); setError(''); setSaved(false);
         try {
-            await apiFetch('/booking-settings', { method: 'POST', body: JSON.stringify(form) });
+            const { data } = await apiFetch('/booking-settings', { method: 'POST', body: JSON.stringify(form) });
+            setCalendarId(Number(data.calendar_id) || null);
             setSaved(true);
         } catch (failure) {
             setError(failure.message);
@@ -96,5 +100,10 @@ export default function BookingSetup() {
             <WeeklyAvailabilityEditor value={form.regav} onChange={(value) => update('regav', value)} />
             <button type="submit" className="button button-primary" disabled={saving}>{saving ? 'Saving...' : 'Save booking setup'}</button>
         </form>
+        {calendarId !== null && <AvailabilityExceptions
+            calendar={{ id: calendarId, name: form.calendar_name, settings: { timezone: form.timezone } }}
+            canManage
+            adminScope
+        />}
     </div>;
 }
