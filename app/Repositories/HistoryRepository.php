@@ -53,12 +53,17 @@ class HistoryRepository
         return array_map(static function (array $row): array {
             $calendarOptions = self::decodeOptions($row['calendar_options']);
             $clientOptions = self::decodeOptions($row['client_options']);
+            $appointmentOptions = self::decodeOptions($row['appointment_options']);
             $calendarTimezone = $calendarOptions['timezone'] ?? 'UTC';
             $customerTimezone = $clientOptions['tz'] ?? '';
+            $utc = new \DateTimeZone('UTC');
+            $start = (new \DateTimeImmutable($row['start_at'], $utc))->getTimestamp();
+            $end = (new \DateTimeImmutable($row['end_at'], $utc))->getTimestamp();
             return [
                 'id' => (int) $row['id'],
                 'start_at' => $row['start_at'],
                 'end_at' => $row['end_at'],
+                'duration_minutes' => ($end - $start) / 60 - (int) ($appointmentOptions['buffer_time'] ?? 0),
                 'status' => (int) $row['status'],
                 'edit_key' => $row['edit_key'],
                 'client_name' => $row['client_name'],

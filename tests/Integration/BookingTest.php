@@ -102,6 +102,50 @@ test('booking shortcodes normalize supported flags and validate preselected valu
     expect($shortcodes->renderBookingWidget(['popup' => ['invalid']]))->toContain('role="alert"');
 })->group('booking-integration');
 
+test('legacy privacy notices retain safe text and link without requiring consent', function () {
+    $previous = get_option('wappointment_widget_settings', null);
+    try {
+        update_option('wappointment_widget_settings', [
+            'form' => [
+                'check_terms' => true,
+                'terms' => 'Please read [link]<strong>our policy</strong>[/link]. <img src=x onerror=alert(1)>',
+                'terms_link' => 'https://example.invalid/privacy',
+            ],
+        ]);
+        wp_scripts()->add_data('wappointment-widget', 'data', '');
+        (new \Wappointment\System\Shortcodes())->renderBookingWidget();
+        $inline = wp_scripts()->get_data('wappointment-widget', 'data');
+        expect(preg_match('/var wappointmentWidget = (.*);/', $inline, $matches))->toBe(1);
+        $data = json_decode($matches[1], true, 512, JSON_THROW_ON_ERROR);
+        expect($data['legacyPrivacyNotice'])->toContain('>our policy</a>')
+            ->toContain('href="https://example.invalid/privacy"')
+            ->toContain('rel="noopener noreferrer"')
+            ->not->toContain('<strong>')
+            ->not->toContain('onerror');
+
+        update_option('wappointment_widget_settings', [
+            'form' => ['check_terms' => true, 'terms' => 'Read [link]the policy[/link].', 'terms_link' => 'javascript:alert(1)'],
+        ]);
+        wp_scripts()->add_data('wappointment-widget', 'data', '');
+        (new \Wappointment\System\Shortcodes())->renderBookingWidget();
+        expect(preg_match('/var wappointmentWidget = (.*);/', wp_scripts()->get_data('wappointment-widget', 'data'), $matches))->toBe(1);
+        expect(json_decode($matches[1], true, 512, JSON_THROW_ON_ERROR)['legacyPrivacyNotice'])->toBe('Read the policy.');
+
+        update_option('wappointment_widget_settings', ['form' => ['check_terms' => false]]);
+        wp_scripts()->add_data('wappointment-widget', 'data', '');
+        (new \Wappointment\System\Shortcodes())->renderBookingWidget();
+        expect(preg_match('/var wappointmentWidget = (.*);/', wp_scripts()->get_data('wappointment-widget', 'data'), $matches))->toBe(1);
+        expect(json_decode($matches[1], true, 512, JSON_THROW_ON_ERROR)['legacyPrivacyNotice'])->toBeNull();
+    } finally {
+        if ($previous === null) {
+            delete_option('wappointment_widget_settings');
+        } else {
+            update_option('wappointment_widget_settings', $previous);
+        }
+        wp_scripts()->add_data('wappointment-widget', 'data', '');
+    }
+})->group('booking-integration');
+
 test('native WordPress booking widget sanitizes settings and renders isolated shortcode configuration', function () {
     $widget = new \Wappointment\System\WordPressBookingWidget();
     $instance = $widget->update([
@@ -122,6 +166,65 @@ test('native WordPress booking widget sanitizes settings and renders isolated sh
         ->and($markup)->toContain('data-title="Book"')
         ->and($markup)->toContain('data-button-title="Choose a time"')
         ->and($markup)->toContain('&quot;brc_floats&quot;:true');
+})->group('booking-integration');
+
+test('legacy sidebar widget registrations render existing instances without rewriting their settings', function () {
+    global $wp_widget_factory;
+    $previousSettings = get_option('widget_wappointment', null);
+    $previousSidebars = wp_get_sidebars_widgets();
+    $previousRequest = $_REQUEST;
+    $legacy = [
+        2 => ['title' => 'Meet our team', 'button_title' => 'Reserve', 'brc_floats' => false, 'extension' => ['kept' => true]],
+        3 => ['title' => 'Floating title', 'button_title' => 'Book online', 'brc_floats' => true],
+        '_multiwidget' => 1,
+    ];
+    try {
+        update_option('widget_wappointment', $legacy);
+        register_sidebar([
+            'id' => 'w4-legacy-test', 'name' => 'Legacy widget test',
+            'before_widget' => '<aside id="%1$s" class="%2$s">', 'after_widget' => '</aside>',
+            'before_title' => '<h2>', 'after_title' => '</h2>',
+        ]);
+        wp_set_sidebars_widgets(['w4-legacy-test' => ['wappointment-2', 'wappointment-3']]);
+        $widget = $wp_widget_factory->widgets[\Wappointment\System\LegacyWordPressBookingWidget::class];
+        $widget->_register();
+        $_REQUEST = [];
+
+        ob_start();
+        $shown = dynamic_sidebar('w4-legacy-test');
+        $markup = ob_get_clean();
+        expect($shown)->toBeTrue()
+            ->and($markup)->toContain('id="wappointment-2"')
+            ->toContain('id="wappointment-3"')
+            ->toContain('<h2>Meet our team</h2>')
+            ->not->toContain('<h2>Floating title</h2>')
+            ->toContain('data-button-title="Reserve"')
+            ->toContain('data-button-title="Book online"')
+            ->toContain('&quot;brc_floats&quot;:true')
+            ->and(get_option('widget_wappointment'))->toBe($legacy);
+
+        $updated = $widget->update(['title' => 'Updated', 'button_title' => 'Book'], $legacy[2]);
+        expect($updated['extension'])->toBe(['kept' => true])
+            ->and($updated['title'])->toBe('Updated');
+
+        $_REQUEST['appointmentkey'] = str_repeat('a', 32);
+        ob_start();
+        dynamic_sidebar('w4-legacy-test');
+        expect(ob_get_clean())->not->toContain('wappointment-widget-root');
+        $_REQUEST = ['wappo_module_off' => '1'];
+        ob_start();
+        dynamic_sidebar('w4-legacy-test');
+        expect(ob_get_clean())->not->toContain('wappointment-widget-root');
+    } finally {
+        $_REQUEST = $previousRequest;
+        unregister_sidebar('w4-legacy-test');
+        wp_set_sidebars_widgets($previousSidebars);
+        if ($previousSettings === null) {
+            delete_option('widget_wappointment');
+        } else {
+            update_option('widget_wappointment', $previousSettings);
+        }
+    }
 })->group('booking-integration');
 
 test('booking setup lists and accepts published legacy booking pages', function () {
@@ -289,10 +392,13 @@ test('customer and staff history shortcodes return only appointments in their ow
     $customerHistory = do_shortcode('[wap_history]');
     expect($customerHistory)->toContain('Free consultation')
         ->and($customerHistory)->toContain('Organizer')
+        ->and($customerHistory)->toContain('<th scope="col">Duration</th>')
+        ->and($customerHistory)->toContain('<td>30 min</td>')
         ->and($customerHistory)->toContain('view=cancel-event')
         ->and($customerHistory)->toContain('view=reschedule-event')
         ->and($customerHistory)->toContain('view=add-to-calendar')
         ->and($customerHistory)->not->toContain($input['email']);
+    expect(do_shortcode('[wap_history duration_label="Length"]'))->toContain('<th scope="col">Length</th>');
 
     $otherUser = wp_insert_user([
         'user_login' => 'other-history-customer-' . $customerSuffix,
@@ -312,7 +418,8 @@ test('customer and staff history shortcodes return only appointments in their ow
     wp_set_current_user(1);
     $staffHistory = do_shortcode('[wap_staff_history]');
     expect($staffHistory)->toContain('Free consultation')
-        ->and($staffHistory)->toContain($input['email']);
+        ->and($staffHistory)->toContain($input['email'])
+        ->and($staffHistory)->not->toContain('<th scope="col">Duration</th>');
     wp_delete_post((int) $pageId, true);
 })->group('booking-integration');
 

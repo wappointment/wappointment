@@ -12,6 +12,7 @@ class HistoryAppointmentData extends Data
         #[Min(1)] public readonly int $id,
         public readonly string $start_at,
         public readonly string $end_at,
+        public readonly int|float $duration_minutes,
         public readonly int $status,
         public readonly string $edit_key,
         public readonly string $client_name,

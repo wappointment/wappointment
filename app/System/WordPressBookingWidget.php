@@ -5,10 +5,10 @@ namespace Wappointment\System;
 
 class WordPressBookingWidget extends \WP_Widget
 {
-    public function __construct()
+    public function __construct(string $idBase = 'wappointment_booking_widget')
     {
         parent::__construct(
-            'wappointment_booking_widget',
+            $idBase,
             __('Wappointment Booking', 'wappointment'),
             ['description' => __('Add a Wappointment booking widget.', 'wappointment')]
         );
@@ -54,10 +54,10 @@ class WordPressBookingWidget extends \WP_Widget
 
     public function update($newInstance, $oldInstance): array
     {
-        return [
+        return array_replace(is_array($oldInstance) ? $oldInstance : [], [
             'title' => sanitize_text_field($newInstance['title'] ?? ''),
             'button_title' => sanitize_text_field($newInstance['button_title'] ?? ''),
             'brc_floats' => !empty($newInstance['brc_floats']) ? 1 : 0,
-        ];
+        ]);
     }
 }

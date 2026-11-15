@@ -337,6 +337,15 @@ test('renders the localized site privacy link and right-to-left direction', asyn
     expect(screen.getByText('janvier 2030')).toBeVisible();
 });
 
+test('shows the saved legacy privacy notice instead of the default policy text', async () => {
+    window.wappointmentWidget.privacyPolicyUrl = 'https://example.invalid/default-policy';
+    window.wappointmentWidget.legacyPrivacyNotice = 'Please read <a href="https://example.invalid/custom-policy" target="_blank" rel="noopener noreferrer">our policy</a>.';
+    await chooseSlot();
+
+    expect(screen.getByText('our policy')).toHaveAttribute('href', 'https://example.invalid/custom-policy');
+    expect(screen.queryByRole('link', { name: 'privacy policy' })).not.toBeInTheDocument();
+});
+
 test('cancellation sends only the management contract fields', async () => {
     await chooseSlot();
     fireEvent.click(screen.getByRole('button', { name: 'Book appointment', exact: true }));

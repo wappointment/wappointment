@@ -85,6 +85,7 @@ class Init
         });
         add_action('admin_menu', [$this, 'registerAdminMenu']);
         add_action('rest_api_init', [$this, 'registerRestApi']);
+        add_action('widgets_init', [Shortcodes::class, 'registerWidgets']);
         add_action('init', [$this, 'registerShortcodes']);
         add_action('admin_init', [$this, 'generateRoutes']);
     }

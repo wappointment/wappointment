@@ -23,9 +23,12 @@ class Shortcodes
         add_shortcode('wappointment_page', [$this, 'renderLegacyBookingPage']);
         add_shortcode('wap_history', [$this, 'renderCustomerHistory']);
         add_shortcode('wap_staff_history', [$this, 'renderStaffHistory']);
-        add_action('widgets_init', static function (): void {
-            register_widget(WordPressBookingWidget::class);
-        });
+    }
+
+    public static function registerWidgets(): void
+    {
+        register_widget(WordPressBookingWidget::class);
+        register_widget(LegacyWordPressBookingWidget::class);
     }
 
     /**
@@ -110,6 +113,7 @@ class Shortcodes
             'locale' => str_replace('_', '-', determine_locale()),
             'rtl' => is_rtl(),
             'privacyPolicyUrl' => get_privacy_policy_url(),
+            'legacyPrivacyNotice' => $this->legacyPrivacyNotice(),
             'weekStartsOn' => (int) $weekStartsOn,
         ]);
 
@@ -125,6 +129,33 @@ class Shortcodes
         return $this->renderBookingWidget($atts);
     }
 
+    private function legacyPrivacyNotice(): ?string
+    {
+        $settings = get_option('wappointment_widget_settings', []);
+        if (!is_array($settings) || !isset($settings['form']) || !is_array($settings['form'])) {
+            return null;
+        }
+        $form = $settings['form'];
+        if (($form['check_terms'] ?? false) !== true) {
+            return null;
+        }
+        $defaultText = sprintf(
+            /* translators: %s is the linked privacy-policy text. */
+            __('View %s', 'wappointment'),
+            '[link]' . __('the privacy policy', 'wappointment') . '[/link]'
+        );
+        $text = isset($form['terms']) && is_string($form['terms']) ? $form['terms'] : $defaultText;
+        $url = isset($form['terms_link']) && is_string($form['terms_link'])
+            ? $form['terms_link'] : get_privacy_policy_url();
+        $url = esc_url($url, ['http', 'https']);
+        if ($url === '' && (str_contains($text, '[link]') || str_contains($text, '[/link]'))) {
+            error_log('Wappointment: the enabled privacy notice has an invalid or missing policy URL.');
+        }
+        $text = esc_html(wp_strip_all_tags($text));
+        $open = $url === '' ? '' : '<a href="' . $url . '" target="_blank" rel="noopener noreferrer">';
+        return str_replace(['[link]', '[/link]'], [$open, $url === '' ? '' : '</a>'], $text);
+    }
+
     public function renderCustomerHistory($atts = []): string
     {
         $user = wp_get_current_user();
@@ -135,7 +166,7 @@ class Shortcodes
         $history = Container::getInstance()
             ->make(ListCustomerAppointmentHistoryUseCase::class)
             ->execute($request);
-        $atts = shortcode_atts(['date_label' => '', 'service_label' => '', 'staff_label' => ''], is_array($atts) ? $atts : []);
+        $atts = shortcode_atts(['date_label' => '', 'service_label' => '', 'duration_label' => '', 'staff_label' => ''], is_array($atts) ? $atts : []);
         return $this->renderHistory($history->appointments, $atts, false);
     }
 
@@ -168,6 +199,9 @@ class Shortcodes
         $html = '<div class="wappointment-history"><table><thead><tr>';
         $html .= '<th scope="col">' . esc_html($labels['date_label']) . '</th>';
         $html .= '<th scope="col">' . esc_html($labels['service_label']) . '</th>';
+        if (!$staff) {
+            $html .= '<th scope="col">' . esc_html($this->label($atts, 'duration_label', __('Duration', 'wappointment'))) . '</th>';
+        }
         $html .= '<th scope="col">' . esc_html($labels['person_label']) . '</th>';
         $html .= '</tr></thead><tbody>';
         foreach ($appointments as $appointment) {
@@ -183,7 +217,12 @@ class Shortcodes
             if ($appointment->location_name !== '') {
                 $html .= '<br>' . esc_html($appointment->location_name);
             }
-            $html .= '</td><td>';
+            $html .= '</td>';
+            if (!$staff) {
+                /* translators: %s is the appointment duration in minutes. */
+                $html .= '<td>' . esc_html(sprintf(__('%s min', 'wappointment'), $appointment->duration_minutes)) . '</td>';
+            }
+            $html .= '<td>';
             if ($staff) {
                 $html .= esc_html($appointment->client_name) . '<br><a href="mailto:' .
                     esc_attr($appointment->client_email) . '">' . esc_html($appointment->client_email) . '</a>';

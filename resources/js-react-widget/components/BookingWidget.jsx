@@ -637,7 +637,9 @@ export default function BookingWidget({
                                         {field === 'email' && catalog.customer?.force_email && <p>{__('Your account email is required for this booking.', 'wappointment')}</p>}
                                     </div>
                                 ))}
-                                {!rescheduling && window.wappointmentWidget?.privacyPolicyUrl && (
+                                {!rescheduling && window.wappointmentWidget?.legacyPrivacyNotice != null ? (
+                                    <div className="wap-privacy-policy" dangerouslySetInnerHTML={{ __html: window.wappointmentWidget.legacyPrivacyNotice }} />
+                                ) : !rescheduling && window.wappointmentWidget?.privacyPolicyUrl && (
                                     <p className="wap-privacy-policy">
                                         {__('Your information is handled according to the site', 'wappointment')}{' '}
                                         <a href={window.wappointmentWidget.privacyPolicyUrl} target="_blank" rel="noopener noreferrer">
