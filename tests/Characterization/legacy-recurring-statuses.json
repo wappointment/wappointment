@@ -1,0 +1,121 @@
+{
+    "source": "fcf2cfe296a240421ed91f28ff3672ece04e4786",
+    "source_sha256": {
+        "Services/Status.php": "ed97322a82286e357a2fc5e25573680dc78eba3ec8bde18e293853437344cf63",
+        "Models/Status.php": "202bc614979d3cb4507cd627ae8d16ab7f9a735faa4d361e4d9f3bada58c92d8"
+    },
+    "cases_sha256": "4dc6f0b9c50845918b315816ba2378084688cb7e2fc54abf5bdcb63fcba30114",
+    "scope": "Unmodified master Status::expand with frozen Carbon and a minimal cast-on-read Eloquent model shim; synthetic recurrence options only; no WordPress, database, HTTP or lifecycle execution.",
+    "occurrences": {
+        "daily-interval-with-exdate-and-until": [
+            [
+                1893574800,
+                1893578400
+            ]
+        ],
+        "weekly-tuesday-thursday": [
+            [
+                1893488400,
+                1893492000
+            ],
+            [
+                1893661200,
+                1893664800
+            ],
+            [
+                1894698000,
+                1894701600
+            ],
+            [
+                1894870800,
+                1894874400
+            ]
+        ],
+        "weekly-wall-time-across-dst": [
+            [
+                1899208800,
+                1899212400
+            ],
+            [
+                1899810000,
+                1899813600
+            ],
+            [
+                1900414800,
+                1900418400
+            ]
+        ],
+        "monthly-day-fifteenth": [
+            [
+                1894698000,
+                1894701600
+            ],
+            [
+                1897376400,
+                1897380000
+            ],
+            [
+                1899795600,
+                1899799200
+            ],
+            [
+                1902474000,
+                1902477600
+            ]
+        ],
+        "monthly-day-thirty-first": [
+            [
+                1896080400,
+                1896084000
+            ],
+            [
+                1901178000,
+                1901181600
+            ],
+            [
+                1906448400,
+                1906452000
+            ]
+        ],
+        "monthly-second-monday": [
+            [
+                1894611600,
+                1894615200
+            ],
+            [
+                1897030800,
+                1897034400
+            ],
+            [
+                1899450000,
+                1899453600
+            ],
+            [
+                1901869200,
+                1901872800
+            ]
+        ],
+        "yearly-leap-day": [
+            [
+                1961658000,
+                1961661600
+            ],
+            [
+                1993280400,
+                1993284000
+            ],
+            [
+                2024816400,
+                2024820000
+            ],
+            [
+                2056352400,
+                2056356000
+            ],
+            [
+                2087974800,
+                2087978400
+            ]
+        ]
+    }
+}

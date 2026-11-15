@@ -38,8 +38,9 @@ docker compose -p wappointment-booking-tests -f tests/docker/booking.compose.yml
 
 The suite covers public versus administrator permissions, UTC persistence and buffers,
 forged inputs, duplicate/concurrent bookings, rescheduling, cancellation deadlines,
-manual approval, active-booking limits, customer-data preservation, idempotent schema
-bootstrap, and non-destructive refusal of multi-service setup edits.
+manual approval, active-booking limits, customer-data preservation, own-calendar busy/free
+exception CRUD and its effect on live slots, idempotent schema bootstrap, and
+non-destructive refusal of multi-service setup edits.
 Change `WAPPOINTMENT_BOOKING_PORT` and the installation URL together if port 18089
 is already in use.
 
@@ -71,7 +72,7 @@ logs a response-contract violation. The jobs response test retains its legacy-sh
 fixture; fresh installation now includes that table, but queue processing is not
 implemented by the installer.
 
-## Legacy weekly runtime characterization
+## Legacy availability runtime characterization
 
 The committed golden files under [Characterization](Characterization/) come from
 audited master `fcf2cfe296a240421ed91f28ff3672ece04e4786`, not hand-authored expected
@@ -100,15 +101,106 @@ PHP interval output. No WordPress site, external service, Vue mount or productio
 database is involved. Both commands must reproduce the golden files byte-for-byte.
 The legacy libraries remain outside v3 and are not release dependencies.
 
+The golden files also characterize notice rounding and horizons:
+
+```bash
+php8.3 tests/Characterization/capture-legacy-notice-horizon.php > /tmp/wappo-legacy-notice.json
+cmp tests/Characterization/legacy-notice-horizon.json /tmp/wappo-legacy-notice.json
+WAPPOINTMENT_NOTICE_WINDOWS=/tmp/wappo-legacy-notice.json \
+  node tests/Characterization/capture-legacy-notice-slots.cjs > /tmp/wappo-legacy-notice-slots.json
+cmp tests/Characterization/legacy-notice-slots.json /tmp/wappo-legacy-notice-slots.json
+```
+
+The PHP runner also verifies the master Settings source hash and executes its
+unmodified `daysRegenerating` and `generateAvailabilityWithRA` methods against a
+frozen clock. The Node runner source-hash-pins the original `DatesExtended`,
+`Calendar`, `IncrementTime` and `DaySlots` components; a small UTC Moment-compatible
+test shim supplies only clock/timezone arithmetic. It executes the original
+minimum-start and slot-generation methods, not a rewritten expected-value formula.
+
+Seventeen cases cover fractional/minute-rounded minimum notice, no-hours and fluid
+availability, windows ending before notice, overnight notice, normal horizon
+inclusion/exclusion, the exact daily-refresh hour, and a Paris DST calendar-day
+horizon, plus explicit rejection of past dates. Five duration/buffer/custom-spacing
+configurations produce 85 direct comparisons to original frontend slot starts. The
+PHP oracle records availability
+windows and effective refresh-day counts separately.
+
 Covered: unmarked/explicit hourly schedules, precise minute schedules (including
 small midnight values), legacy fractional-hour truncation, Paris DST dates and
 transition-spanning windows, midnight endpoints, busy/free precedence, busy interval
 splitting, duration-plus-buffer default spacing, and opt-in custom spacing.
-**Not covered by this oracle:** today's notice/fluid rounding, horizon boundaries,
-conditional availability, recurring statuses, appointment database selection,
-booking limits, lifecycle side effects, notifications or populated-site cutover.
+**The availability-only slot oracles above do not cover:** appointment database
+selection, booking limits, lifecycle side effects, notifications or populated-site
+cutover.
+Service/location availability conditions are Services add-on behavior that free
+master never evaluates, so there is no free oracle for them; free v3 blocks them.
 Existing v3 integration tests still cover its booking/reschedule/cancel/approval,
 transaction and concurrency behavior; those are not legacy differential tests.
+
+## Legacy booking lifecycle oracle
+
+The database-backed lifecycle oracle captures 38 scenarios against audited master
+`fcf2cfe296a240421ed91f28ff3672ece04e4786`. Its input inventory is
+[lifecycle-cases.php](Characterization/lifecycle-cases.php); the source-pinned
+result is [legacy-lifecycle.json](Characterization/legacy-lifecycle.json). It
+covers approval state, buffers, conflicts, booking limits, cancel/reschedule
+deadlines, client restoration, and stored state after each public REST operation.
+The runner refuses any database except the disposable `legacy_oracle` database
+in a `local` WordPress environment. Cron is disabled; queued jobs are summarized
+instead of processed, and no mail or provider calls are sent.
+
+Use a **separate checkout** of audited master with its Composer dependencies
+restored. Do not check out master over the v3 worktree or install its runtime
+dependencies into v3. Build the master's frontend first so its `dist/manifest.json`
+exists (the test site does not load the frontend bundle):
+
+```bash
+export WAPPOINTMENT_LEGACY_ROOT=/absolute/path/to/isolated-master
+(cd "$WAPPOINTMENT_LEGACY_ROOT" && npm ci && npm run build)
+docker compose -p wappo-legacy-oracle -f tests/docker/legacy.compose.yml up -d --build --wait
+docker compose -p wappo-legacy-oracle -f tests/docker/legacy.compose.yml exec wordpress \
+  wp core install --url=http://localhost --title='Legacy oracle' \
+  --admin_user=oracle-admin --admin_password=disposable-oracle-test \
+  --admin_email=admin@example.invalid --skip-email --allow-root
+docker compose -p wappo-legacy-oracle -f tests/docker/legacy.compose.yml exec wordpress \
+  wp plugin activate wappointment --allow-root
+docker compose -p wappo-legacy-oracle -f tests/docker/legacy.compose.yml exec wordpress \
+  wp eval-file /characterization/capture-legacy-lifecycle.php --allow-root \
+  > /tmp/wappo-legacy-lifecycle.json
+cmp tests/Characterization/legacy-lifecycle.json /tmp/wappo-legacy-lifecycle.json
+docker compose -p wappo-legacy-oracle -f tests/docker/legacy.compose.yml down -v
+```
+
+The site must have the plugin's default calendar `1` and physical location `2`;
+the runner fails explicitly if either seeded fixture is absent. Never use a
+working/demo WordPress database with this oracle. The source and input hashes,
+normalized errors, and relative timestamps make the captured JSON reproducible.
+It is a master baseline, not a requirement to reproduce legacy defects: for
+example, master accepts some off-grid/past reschedule inputs and its occupied-slot
+reschedule can hit a database uniqueness error. v3 intentionally validates those
+selections more strictly. The PHP unit suite checks the fixture's source/input
+hashes and its key lifecycle transitions without loading legacy libraries.
+The v3 integration suite also checks pending cancellation after its deadline and
+monotonic sequence increments over repeated reschedules.
+
+Recurring status occurrences have a separate source-pinned oracle:
+
+```bash
+php8.3 tests/Characterization/capture-legacy-recurring-statuses.php > /tmp/wappo-legacy-recurring.json
+cmp tests/Characterization/legacy-recurring-statuses.json /tmp/wappo-legacy-recurring.json
+```
+
+It executes master `Status::expand` with a frozen Carbon clock and a minimal
+cast-on-read model shim. Seven cases compare the exact occurrence start/end timestamps
+for daily interval/exclusion/until rules, weekly weekdays, a timezone/DST transition,
+monthly day 15/31 and ordinal weekday rules, and leap-year rollover. The v3 unit suite
+consumes these committed results without loading legacy libraries. A separate
+disposable WordPress integration test verifies recurring busy and free records alter
+public slots. This does not cover the status editor or imported-calendar lifecycle.
+Another integration test stores a free status carrying Services `options.conditions`
+and verifies that availability and booking return 409 for the overlapping day only,
+with no appointment written and the stored options unchanged.
 
 The isolated WordPress integration suites additionally verify hourly/minute API
 projection, unchanged stored options during reads/bookings, explicit `precise: true`
@@ -222,8 +314,9 @@ controls and edit workflow are also checked in a browser on the separate fixture
 
 ## Own weekly settings tests
 
-The same permission suite covers `GET /me/calendars` and
-`POST /me/calendars/{id}/weekly-settings`. It tests self-only menus; separate
+The same permission suite covers `GET /me/calendars`,
+`POST /me/calendars/{id}/weekly-settings`, and own-calendar busy/free status listing,
+creation and deletion. It tests self-only menus; separate
 `wappo_self_man` and `wappo_self_weekly` grants; actor-owned calendar projection;
 no private-option leakage; unassigned users and unowned/missing/deleted/reassigned
 IDs; no-op writes; retained nested option objects/lists; unknown/forged parameters;

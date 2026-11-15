@@ -92,6 +92,8 @@ test('settings accept typed known fields and reject unknown keys and string bool
     expect(fn() => SaveSettingsRequestData::from([]))->toThrow(InvalidArgumentException::class);
     expect(fn() => SaveSettingsRequestData::from(['typo' => true]))->toThrow(InvalidArgumentException::class);
     expect(fn() => SaveSettingsRequestData::from(['allow_cancellation' => 'false']))->toThrow(InvalidArgumentException::class);
+    expect(SaveSettingsRequestData::from(['refreshavb_at' => 23])->refreshavb_at)->toBe(23)
+        ->and(fn() => SaveSettingsRequestData::from(['refreshavb_at' => 24]))->toThrow(InvalidArgumentException::class);
     expect(fn() => SaveSettingsRequestData::from(['mail_config' => ['unknown' => 'value']]))->toThrow(InvalidArgumentException::class);
 });
 

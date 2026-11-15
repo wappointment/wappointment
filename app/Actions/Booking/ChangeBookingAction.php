@@ -31,6 +31,9 @@ class ChangeBookingAction
                 );
                 $changes['start_at'] = gmdate('Y-m-d H:i:s', $slot['start']);
                 $changes['end_at'] = gmdate('Y-m-d H:i:s', $slot['reserved_until']);
+                $options = $appointment['options'];
+                $options['sequence'] = (int) ($options['sequence'] ?? 0) + 1;
+                $changes['options'] = wp_json_encode($options, JSON_THROW_ON_ERROR);
             }
             $this->repository->updateAppointment((int) $appointment['id'], $changes);
             return array_merge($appointment, $changes);

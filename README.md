@@ -130,6 +130,14 @@ not guessed or automatically repaired. Smaller unmarked values follow master's
 hour interpretation. Only mark an existing schedule as minutes after confirming its
 actual origin; do not bulk-convert populated sites.
 
+Frozen comparisons also cover notice rounding, fluid start times, the daily
+availability-refresh cutoff, and the calendar-day booking horizon (including DST).
+Minimum notice is rounded down to whole minutes as in the old UI. Fluid availability
+starts on the next five-minute boundary. Without fluid availability, today's first
+slot advances from its schedule start using the appointment duration, while normal
+slot spacing still accounts for buffer. The configured daily refresh hour delays one
+booking-horizon day until reached. Out-of-horizon dates return no slots.
+
 ### Data and legacy plugins
 
 Existing `{$wpdb->prefix}wappo_*` tables, row IDs, UTC timestamps, JSON options, and
@@ -200,9 +208,12 @@ shown as `{}`, and empty maps are persisted as JSON objects.
 
 **Wappointment > My availability** is a separate own-calendar screen.
 `wappo_self_man` grants read access, independently of calendar/client management;
-`wappo_self_weekly` additionally permits changing timezone, booking horizon and
-weekly hours. Managers may also use it, but this `/me` operation never edits another
-user's calendar. Missing calendar assignments show an explicit empty state.
+`wappo_self_weekly` additionally permits changing timezone, booking horizon, weekly
+hours and one-off busy/free times. Managers may also use it, but this `/me` operation
+never edits another user's calendar. Missing calendar assignments show an explicit
+empty state. Busy/free exception inputs use the browser timezone and are stored in the
+existing statuses table; recurring exception editing and conditional Services rules
+are not exposed in this screen.
 
 The typed `GET /wappointment/v1/me/calendars` response contains only each owned
 calendar's ID, name and supported weekly settings, not account keys/private options.

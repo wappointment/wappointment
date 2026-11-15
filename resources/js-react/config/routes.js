@@ -11,6 +11,18 @@ export const routes = {
         "method": "POST",
         "path": "/me/calendars/(?P<id>\\d+)/weekly-settings"
     },
+    "self.statuses.list": {
+        "method": "GET",
+        "path": "/me/calendars/(?P<id>\\d+)/statuses"
+    },
+    "self.statuses.create": {
+        "method": "POST",
+        "path": "/me/calendars/(?P<id>\\d+)/statuses"
+    },
+    "self.statuses.delete": {
+        "method": "POST",
+        "path": "/me/calendars/(?P<id>\\d+)/statuses/(?P<status_id>\\d+)/delete"
+    },
     "database.schema": {
         "method": "GET",
         "path": "/system/schema"

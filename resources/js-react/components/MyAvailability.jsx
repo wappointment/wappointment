@@ -3,6 +3,93 @@ import { __ } from '@wordpress/i18n';
 import apiFetch from '../utils/apiFetch';
 import WeeklyAvailabilityEditor from './WeeklyAvailabilityEditor';
 
+function localDateTime(timestamp) {
+    const date = new Date(timestamp * 1000);
+    const pad = (value) => String(value).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
+function AvailabilityExceptions({ calendar, canManage }) {
+    const [statuses, setStatuses] = useState([]);
+    const [type, setType] = useState(1);
+    const [start, setStart] = useState(() => localDateTime(Math.floor(Date.now() / 1000) + 3600));
+    const [end, setEnd] = useState(() => localDateTime(Math.floor(Date.now() / 1000) + 7200));
+    const [loading, setLoading] = useState(canManage);
+    const [saving, setSaving] = useState(false);
+    const [error, setError] = useState('');
+    const endpoint = `/me/calendars/${calendar.id}/statuses`;
+    const load = async () => {
+        setLoading(true); setError('');
+        try {
+            const { data } = await apiFetch(endpoint);
+            setStatuses(data.statuses);
+        } catch (failure) {
+            setError(failure.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+    useEffect(() => {
+        if (canManage) load();
+    }, [calendar.id, canManage]);
+    const save = async (event) => {
+        event.preventDefault();
+        const startAt = Math.floor(new Date(start).getTime() / 1000);
+        const endAt = Math.floor(new Date(end).getTime() / 1000);
+        setSaving(true); setError('');
+        try {
+            await apiFetch(endpoint, {
+                method: 'POST',
+                body: JSON.stringify({ type: Number(type), start: startAt, end: endAt }),
+            });
+            await load();
+        } catch (failure) {
+            setError(failure.message);
+        } finally {
+            setSaving(false);
+        }
+    };
+    const remove = async (statusId) => {
+        setSaving(true); setError('');
+        try {
+            await apiFetch(`${endpoint}/${statusId}/delete`, { method: 'POST' });
+            await load();
+        } catch (failure) {
+            setError(failure.message);
+        } finally {
+            setSaving(false);
+        }
+    };
+    return <section aria-label={`${calendar.name} availability exceptions`}>
+        <h3>{__('Busy and free times', 'wappointment')}</h3>
+        <p>{__('Times are entered and shown in your browser timezone. Busy times block bookings; free times add bookable hours within your weekly schedule.', 'wappointment')}</p>
+        {error && <p role="alert">{error}</p>}
+        {!canManage && <p>{__('You do not have permission to change this calendar’s busy and free times.', 'wappointment')}</p>}
+        {canManage && <form onSubmit={save}>
+            <fieldset disabled={saving}>
+                <p><label htmlFor={`status-type-${calendar.id}`}>{__('Time type', 'wappointment')}</label><br />
+                    <select id={`status-type-${calendar.id}`} value={type} onChange={(event) => setType(event.target.value)}>
+                        <option value="1">{__('Busy — block bookings', 'wappointment')}</option>
+                        <option value="0">{__('Free — add bookable time', 'wappointment')}</option>
+                    </select></p>
+                <p><label htmlFor={`status-start-${calendar.id}`}>{__('Start', 'wappointment')}</label><br />
+                    <input id={`status-start-${calendar.id}`} type="datetime-local" required value={start}
+                        onChange={(event) => setStart(event.target.value)} /></p>
+                <p><label htmlFor={`status-end-${calendar.id}`}>{__('End', 'wappointment')}</label><br />
+                    <input id={`status-end-${calendar.id}`} type="datetime-local" required value={end}
+                        onChange={(event) => setEnd(event.target.value)} /></p>
+                <button className="button button-primary" type="submit">{saving ? __('Saving...', 'wappointment') : __('Add time', 'wappointment')}</button>
+            </fieldset>
+        </form>}
+        {loading ? <p role="status">{__('Loading busy and free times...', 'wappointment')}</p> : statuses.length > 0
+            ? <ul>{statuses.map((status) => <li key={status.id}>
+                <span>{Number(status.type) === 0 ? __('Free', 'wappointment') : __('Busy', 'wappointment')}: {new Date(status.start * 1000).toLocaleString()} – {new Date(status.end * 1000).toLocaleString()}</span>
+                {canManage && <button className="button-link-delete" type="button" disabled={saving} onClick={() => remove(status.id)}>{__('Delete', 'wappointment')}</button>}
+            </li>)}</ul>
+            : <p>{__('No one-off busy or free times.', 'wappointment')}</p>}
+    </section>;
+}
+
 function CalendarForm({ calendar, canSave }) {
     const [settings, setSettings] = useState(calendar.settings);
     const [saving, setSaving] = useState(false);
@@ -46,6 +133,7 @@ function CalendarForm({ calendar, canSave }) {
                 </button>}
             </fieldset>
         </form>}
+        <AvailabilityExceptions calendar={calendar} canManage={window.wappointmentData?.permissions?.selfStatuses === true} />
     </section>;
 }
 

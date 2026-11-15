@@ -58,7 +58,7 @@ class SaveSettingsRequestData extends RequestData
         #[Min(0)] public readonly int|float|Optional $booking_page = Optional::Missing,
         #[Min(0)] public readonly int|float|Optional $max_active_bookings = Optional::Missing,
         #[Min(0)] public readonly int|float|Optional $video_link_shows = Optional::Missing,
-        #[Min(0)] public readonly int|float|Optional $refreshavb_at = Optional::Missing,
+        #[Min(0), Max(23)] public readonly int|float|Optional $refreshavb_at = Optional::Missing,
         #[Min(0)] public readonly int|float|Optional $clean_pending_every = Optional::Missing,
         #[Min(1), Max(1440)] public readonly int|Optional $starting_each = Optional::Missing,
         #[Min(0)] public readonly int|float|Optional $tax = Optional::Missing,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Wappointment\Repositories;
 
 use Wappointment\Booking\BookingException;
+use Wappointment\Booking\RecurringStatusOccurrences;
 
 class BookingRepository
 {
@@ -48,15 +49,20 @@ class BookingRepository
         ));
         $busy = array_map(fn(array $row): array => [$this->timestamp($row['start_at']), $this->timestamp($row['end_at'])], $appointments);
         $extra = [];
+        $recurringStatuses = new RecurringStatusOccurrences();
         foreach ($statuses as $status) {
-            if ((int) $status['recur'] !== 0 || !empty($status['options']['conditions'])) {
-                throw new BookingException(__('Recurring or conditional availability must be migrated before this calendar can accept bookings.', 'wappointment'), 409);
+            if (!empty($status['options']['conditions'])) {
+                throw new BookingException(__('Conditional availability must be migrated before this calendar can accept bookings.', 'wappointment'), 409);
             }
-            $interval = [$this->timestamp($status['start_at']), $this->timestamp($status['end_at'])];
-            if ((int) $status['type'] === 0) {
-                $extra[] = $interval;
-            } else {
-                $busy[] = $interval;
+            $intervals = (int) $status['recur'] === 0
+                ? [[$this->timestamp($status['start_at']), $this->timestamp($status['end_at'])]]
+                : $recurringStatuses->expand($status, $from, $to);
+            foreach ($intervals as $interval) {
+                if ((int) $status['type'] === 0) {
+                    $extra[] = $interval;
+                } else {
+                    $busy[] = $interval;
+                }
             }
         }
         return [$busy, $extra];
@@ -199,7 +205,7 @@ class BookingRepository
             throw new BookingException(__('Booking is busy. Please try again.', 'wappointment'), 503);
         }
         try {
-            foreach (['appointments', 'clients', 'services', 'calendars', 'locations', 'calendar_service', 'service_location'] as $suffix) {
+            foreach (['appointments', 'clients', 'services', 'calendars', 'locations', 'statuses', 'calendar_service', 'service_location'] as $suffix) {
                 $table = $this->prefix() . $suffix;
                 $engine = $this->db->get_row($this->db->prepare('SHOW TABLE STATUS LIKE %s', $this->db->esc_like($table)), ARRAY_A);
                 if (!$engine || strcasecmp($engine['Engine'], 'InnoDB') !== 0) {

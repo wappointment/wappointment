@@ -1,0 +1,33 @@
+services:
+  db:
+    image: mariadb:11.4
+    environment:
+      MARIADB_ROOT_PASSWORD: disposable-legacy-root
+      MARIADB_DATABASE: legacy_oracle
+      MARIADB_USER: legacy_oracle
+      MARIADB_PASSWORD: disposable-legacy
+    tmpfs:
+      - /var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 2s
+      timeout: 5s
+      retries: 30
+  wordpress:
+    build:
+      context: ../..
+      dockerfile: tests/docker/Dockerfile.legacy
+    image: wappointment-legacy-oracle-wordpress:latest
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: legacy_oracle
+      WORDPRESS_DB_USER: legacy_oracle
+      WORDPRESS_DB_PASSWORD: disposable-legacy
+      WORDPRESS_CONFIG_EXTRA: "define('WP_ENVIRONMENT_TYPE', 'local'); define('DISABLE_WP_CRON', true);"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ${WAPPOINTMENT_LEGACY_ROOT:?Set WAPPOINTMENT_LEGACY_ROOT to an isolated audited master checkout}:/var/www/html/wp-content/plugins/wappointment
+      - ../Characterization:/characterization:ro
+      - ../Characterization/legacy-oracle-mu-plugin.php:/var/www/html/wp-content/mu-plugins/wappo-oracle.php:ro

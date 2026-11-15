@@ -81,6 +81,7 @@ function withPermissionFixture(callable $test): void
             $wpdb->delete($wpdb->prefix . 'wappo_appointments', ['id' => $id]);
         }
         foreach ($calendars as $id) {
+            $wpdb->delete($wpdb->prefix . 'wappo_statuses', ['staff_id' => $id]);
             $wpdb->delete($wpdb->prefix . 'wappo_calendars', ['id' => $id]);
         }
         foreach ($clients as $id) {
@@ -380,7 +381,7 @@ test('the admin bootstrap exposes only the current users pages and exact operati
                 ->and($data['permissions'])->toBe([
                     'appointmentsConfirm' => true, 'appointmentsCancel' => false,
                     'clientsCreate' => false, 'clientsEdit' => true, 'clientsDelete' => true,
-                    'selfWeekly' => true,
+                    'selfWeekly' => true, 'selfStatuses' => true,
                 ]);
         } finally {
             $wp_scripts = $saved;
@@ -677,17 +678,31 @@ test('self settings permissions are independent and require both parent and week
         }
         permissionUser($users['staff']);
         $path = '/me/calendars/' . $calendars['staff'] . '/weekly-settings';
+        $statusPath = '/me/calendars/' . $calendars['staff'] . '/statuses';
         expect(permissionMenuPages())->toBe(['wappointment-my-availability'])
             ->and(permissionRest('/me/calendars')['status'])->toBe(200)
-            ->and(permissionRest($path, 'POST', ['settings' => ownWeeklySettings()])['status'])->toBe(403);
+            ->and(permissionRest($path, 'POST', ['settings' => ownWeeklySettings()])['status'])->toBe(403)
+            ->and(permissionRest($statusPath)['status'])->toBe(403);
         $user->add_cap('wappo_self_weekly', true);
         permissionUser($users['staff']);
-        expect(permissionRest($path, 'POST', ['settings' => ownWeeklySettings()])['status'])->toBe(200);
+        $otherStatusPath = '/me/calendars/' . $calendars['other'] . '/statuses';
+        $status = permissionRest($statusPath, 'POST', [
+            'type' => 1, 'start' => time() + 3600, 'end' => time() + 7200,
+        ]);
+        expect(permissionRest($path, 'POST', ['settings' => ownWeeklySettings()])['status'])->toBe(200)
+            ->and($status['status'])->toBe(201)
+            ->and(permissionRest($statusPath)['status'])->toBe(200)
+            ->and(permissionRest($otherStatusPath)['status'])->toBe(404)
+            ->and(permissionRest($statusPath, 'POST', [
+                'type' => 1, 'start' => time() + 7200, 'end' => time() + 3600,
+            ])['status'])->toBe(400)
+            ->and(permissionRest($statusPath . '/' . $status['body']['data']['status']['id'] . '/delete', 'POST')['status'])->toBe(200);
         $user->add_cap('wappo_self_man', false);
         permissionUser($users['staff']);
         expect(permissionMenuPages())->toBe([])
             ->and(permissionRest('/me/calendars')['status'])->toBe(403)
-            ->and(permissionRest($path, 'POST', ['settings' => ownWeeklySettings()])['status'])->toBe(403);
+            ->and(permissionRest($path, 'POST', ['settings' => ownWeeklySettings()])['status'])->toBe(403)
+            ->and(permissionRest($statusPath)['status'])->toBe(403);
         expect(fn() => Container::getInstance()->make(\Wappointment\Actions\Settings\SaveOwnCalendarSettingsAction::class)->handle(
             \Wappointment\Http\Requests\SaveOwnCalendarSettingsRequestData::from(['id' => $calendars['staff'], 'settings' => ownWeeklySettings()])
         ))->toThrow(RuntimeException::class, 'You are not allowed');

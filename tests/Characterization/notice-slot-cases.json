@@ -1,0 +1,7 @@
+{
+    "duration": {"duration": 30, "buffer": 0, "more_st": false, "starting_each": 10},
+    "duration-plus-buffer": {"duration": 30, "buffer": 15, "more_st": false, "starting_each": 10},
+    "custom-spacing": {"duration": 30, "buffer": 0, "more_st": true, "starting_each": 10},
+    "custom-spacing-buffer": {"duration": 60, "buffer": 15, "more_st": true, "starting_each": 30},
+    "longer-default-step": {"duration": 40, "buffer": 15, "more_st": false, "starting_each": 10}
+}

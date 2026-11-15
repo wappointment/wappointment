@@ -1,0 +1,358 @@
+{
+    "source": "fcf2cfe296a240421ed91f28ff3672ece04e4786",
+    "source_sha256": {
+        "Availability.php": "ff8932079bc211b4ca70ab7d8662d9de0659a08267169fc5f16e3160187b461b",
+        "Settings.php": "1e5e284b5882700aa756c473bf99bb7c5aef5015103f40e03f78b4c2b642ccef"
+    },
+    "cases_sha256": "243521066aa1e456a06285973412bcf28ac00488b6cb9eaf515b6a6ac1682cc9",
+    "scope": "Unmodified PHP weekly generation and daysRegenerating with frozen Carbon; synthetic schedules/settings only; no WordPress, database, HTTP or lifecycle execution.",
+    "cases": {
+        "notice-hour-rounding": {
+            "now": 1794816157,
+            "timezone": "UTC",
+            "effective_days": 3,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                480,
+                720
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 1.25,
+                "availability_fluid": false
+            },
+            "windows": [
+                [
+                    1794816000,
+                    1794830400
+                ]
+            ]
+        },
+        "notice-no-fluid-buffer": {
+            "now": 1794816157,
+            "timezone": "UTC",
+            "effective_days": 3,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                480,
+                720
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0.1,
+                "availability_fluid": false
+            },
+            "windows": [
+                [
+                    1794816000,
+                    1794830400
+                ]
+            ]
+        },
+        "notice-no-fluid-small-buffer": {
+            "now": 1794816157,
+            "timezone": "UTC",
+            "effective_days": 3,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                480,
+                720
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0.1,
+                "availability_fluid": false
+            },
+            "windows": [
+                [
+                    1794816000,
+                    1794830400
+                ]
+            ]
+        },
+        "notice-fluid-quarter-hour": {
+            "now": 1794816157,
+            "timezone": "UTC",
+            "effective_days": 3,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                480,
+                720
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 1.25,
+                "availability_fluid": true
+            },
+            "windows": [
+                [
+                    1794820800,
+                    1794830400
+                ]
+            ]
+        },
+        "notice-fluid-no-hours": {
+            "now": 1794816157,
+            "timezone": "UTC",
+            "effective_days": 3,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                480,
+                720
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": true
+            },
+            "windows": [
+                [
+                    1794816300,
+                    1794830400
+                ]
+            ]
+        },
+        "notice-over-midnight": {
+            "now": 1794873517,
+            "timezone": "UTC",
+            "effective_days": 3,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                1320,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 1.25,
+                "availability_fluid": true
+            },
+            "windows": []
+        },
+        "notice-window-ended": {
+            "now": 1794816157,
+            "timezone": "UTC",
+            "effective_days": 3,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                480,
+                540
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 2,
+                "availability_fluid": true
+            },
+            "windows": []
+        },
+        "past-date": {
+            "now": 1794816157,
+            "timezone": "UTC",
+            "effective_days": 2,
+            "target_date": "2026-11-15",
+            "duration_window": [
+                0,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": false,
+                "allow_refreshavb": false,
+                "refreshavb_at": 23
+            },
+            "windows": []
+        },
+        "normal-horizon-before": {
+            "now": 1794675600,
+            "timezone": "UTC",
+            "effective_days": 2,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                0,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": false,
+                "allow_refreshavb": false,
+                "refreshavb_at": 23
+            },
+            "windows": [
+                [
+                    1794787200,
+                    1794873600
+                ]
+            ]
+        },
+        "normal-horizon-at-end": {
+            "now": 1794675600,
+            "timezone": "UTC",
+            "effective_days": 2,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                0,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": false,
+                "allow_refreshavb": false,
+                "refreshavb_at": 23
+            },
+            "windows": [
+                [
+                    1794787200,
+                    1794873600
+                ]
+            ]
+        },
+        "normal-horizon-next-day": {
+            "now": 1794675600,
+            "timezone": "UTC",
+            "effective_days": 2,
+            "target_date": "2026-11-17",
+            "duration_window": [
+                0,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": false,
+                "allow_refreshavb": false,
+                "refreshavb_at": 23
+            },
+            "windows": []
+        },
+        "daily-refresh-before": {
+            "now": 1794697199,
+            "timezone": "UTC",
+            "effective_days": 1,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                0,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": false,
+                "allow_refreshavb": true,
+                "refreshavb_at": 23
+            },
+            "windows": []
+        },
+        "daily-refresh-at": {
+            "now": 1794697200,
+            "timezone": "UTC",
+            "effective_days": 2,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                0,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": false,
+                "allow_refreshavb": true,
+                "refreshavb_at": 23
+            },
+            "windows": [
+                [
+                    1794787200,
+                    1794873600
+                ]
+            ]
+        },
+        "daily-refresh-before-midnight": {
+            "now": 1794700799,
+            "timezone": "UTC",
+            "effective_days": 2,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                0,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": false,
+                "allow_refreshavb": true,
+                "refreshavb_at": 23
+            },
+            "windows": [
+                [
+                    1794787200,
+                    1794873600
+                ]
+            ]
+        },
+        "daily-refresh-after-midnight": {
+            "now": 1794700800,
+            "timezone": "UTC",
+            "effective_days": 1,
+            "target_date": "2026-11-16",
+            "duration_window": [
+                0,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": false,
+                "allow_refreshavb": true,
+                "refreshavb_at": 23
+            },
+            "windows": [
+                [
+                    1794787200,
+                    1794873600
+                ]
+            ]
+        },
+        "dst-calendar-day": {
+            "now": 1774737000,
+            "timezone": "Europe/Paris",
+            "effective_days": 1,
+            "target_date": "2026-03-29",
+            "duration_window": [
+                0,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": false,
+                "allow_refreshavb": false,
+                "refreshavb_at": 23
+            },
+            "windows": [
+                [
+                    1774738800,
+                    1774821600
+                ]
+            ]
+        },
+        "dst-calendar-beyond": {
+            "now": 1774737000,
+            "timezone": "Europe/Paris",
+            "effective_days": 1,
+            "target_date": "2026-03-30",
+            "duration_window": [
+                0,
+                1440
+            ],
+            "precise": true,
+            "settings": {
+                "hours_before_booking_allowed": 0,
+                "availability_fluid": false,
+                "allow_refreshavb": false,
+                "refreshavb_at": 23
+            },
+            "windows": []
+        }
+    }
+}

@@ -34,6 +34,7 @@ class RenderAdminAppAction
                 'clientsEdit' => $this->access->can('clients.edit'),
                 'clientsDelete' => $this->access->can('clients.delete'),
                 'selfWeekly' => $this->access->can('self.weekly'),
+                'selfStatuses' => $this->access->can('self.statuses'),
             ],
         ]);
         do_action('wappointment_admin_enqueue_scripts', $page);

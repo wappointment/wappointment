@@ -10,7 +10,7 @@ final class AccessPolicy
         if (!in_array($operation, [
             'manage', 'appointments.view', 'appointments.change', 'appointments.confirm', 'appointments.cancel',
             'clients.view', 'clients.create', 'clients.edit', 'clients.delete',
-            'self.view', 'self.weekly',
+            'self.view', 'self.weekly', 'self.statuses',
         ], true)) {
             throw new \LogicException('Unknown Wappointment permission: ' . $operation);
         }

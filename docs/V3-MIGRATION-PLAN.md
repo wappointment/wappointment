@@ -174,11 +174,11 @@ is a minimum requirement, in addition to the cross-cutting test gates in section
 
 | ID | Feature and evidence | v3 status | Planned migration / wave | Acceptance |
 |---|---|---|---|---|
-| F07 | Weekly working hours, timezone, booking horizon and minimum notice (E03/E05) | Partial: runtime weekly/DST oracle and stored precision restored; notice/horizon parity pending | Characterize legacy slot results, port supported configuration and exact boundary semantics. W2 | Same bookable instants for frozen fixtures, including DST changes, midnight, split ranges and organizer/browser timezone differences. |
-| F08 | Slot starts, duration, buffer, scheduler mode, fluid/daily availability release rules (E02/E03/E05) | Partial: 60 legacy differential cases for duration/buffer/default/custom spacing; fluid/release modes pending | Extract rule-specific Actions/value objects; wire each setting into one availability pipeline. W2 | Differential tests cover all legacy scheduling modes; stored end includes buffer exactly once; adjacent appointments and horizon edges match. |
-| F09 | Punctual busy/free exceptions, recurring busy/free periods, conditional availability (E03/E04) | Partial: consumes basic intervals; no equivalent editor; recurring/conditional inputs rejected | Status CRUD UseCases and recurrence/condition expansion; admin editors use same availability rules. W2/W3 | Add/edit/delete exceptions changes slots correctly; duplicate/overlapping ranges merge predictably; recurrence and excluded dates remain bounded and DST-safe. |
-| F10 | Booking creation, pending/confirmed states, limits and concurrency (E02/E09) | Partial: real persistence/locking/basic limits | Complete legacy validation/state transitions using existing booking Actions, not a second booking path. W2 | Same limits and state defaults; concurrent conflicting bookings cannot both persist; failures roll back client/appointment writes; retries have a defined duplicate policy. |
-| F11 | Public view/cancel/reschedule and action deadlines (E02/E06/E07) | Partial: new secret-link flow and deadlines | Complete management behavior through redesigned API contracts; keep public-link resolution separate. W2/W4/W5 | Old emailed links resolve to the new frontend/API flow; late/disabled actions fail clearly; rescheduling excludes self but not other bookings; stored buffer and relations survive. |
+| F07 | Weekly working hours, timezone, booking horizon and minimum notice (E03/E05) | Partial: source-pinned weekly/DST, notice/horizon rules plus 38 database-backed lifecycle scenarios; unsupported slot behavior is recorded | Characterize remaining calendar release rules and document deliberate safe validation differences. W2 | Supported bookable instants match frozen fixtures; past/off-grid requests are explicitly rejected or documented as intentional differences. |
+| F08 | Slot starts, duration, buffer, scheduler mode, fluid/daily availability release rules (E02/E03/E05) | Partial: 145 slot-rule comparisons plus lifecycle coverage for buffers, conflicts, reschedule sequence and buffer retention; other modes pending | Extract rule-specific Actions/value objects; wire each setting into one availability pipeline. W2 | Stored end includes buffer exactly once; adjacent appointments and horizon edges match; ICS sequence advances on reschedule. |
+| F09 | Punctual busy/free exceptions and recurring busy/free periods (E03/E04). Service/location availability conditions are **not free behavior**: they belong to the Services add-on (W8) | Partial: own-calendar users can create/list/delete one-off busy/free intervals; public slots consume punctual and recurring intervals; stored Services conditions fail closed | Complete status CRUD and admin calendar editors using the same rules; recurring exception editing remains pending. W2/W3 | Add/delete one-off exceptions changes slots correctly; duplicate/overlapping ranges merge predictably; recurrence and excluded dates remain bounded and DST-safe. |
+| F10 | Booking creation, pending/confirmed states, limits and concurrency (E02/E09) | Partial: real persistence/locking/basic limits; master baseline captures approval, capacity, conflicts and client restoration | Complete legacy validation/state transitions using existing booking Actions, not a second booking path. W2 | Same limits and state defaults where safe; concurrent conflicting bookings cannot both persist; failures roll back client/appointment writes; retries have a defined duplicate policy. |
+| F11 | Public view/cancel/reschedule and action deadlines (E02/E06/E07) | Partial: secret-link flow, deadlines and reschedule sequence; 38-case master oracle records cancel/reschedule outcomes | Complete management behavior through redesigned API contracts; keep public-link resolution separate. W2/W4/W5 | Old emailed links resolve to the new frontend/API flow; late/disabled actions fail clearly; rescheduling excludes self but not other bookings; stored buffer and sequence survive. |
 | F12 | Recurring appointments, children/parents and series edits/deletion (E02/E04/E11) | Missing: baseline explicitly blocks recurrence | Recurrence generation/reservation Actions, series-aware lifecycle UseCases and worker jobs. W2/W3/W5 | Parent/child IDs preserved; repeated generation creates no duplicates; single/series operations are distinct; conflicting occurrences have explicit outcomes. |
 | F13 | Locked appointments and safe cancel/delete/force-delete distinctions (E02/E04/E14) | Partial: only basic status changes | Separate confirm/cancel/delete/force-delete UseCases with order/provider cleanup orchestration. W3 | Locks enforced; force actions authorized and explicit; cancellations release slots without losing historical links; unrelated order items are not removed. |
 
@@ -242,7 +242,7 @@ There is no defensible time estimate until W0 fixtures establish the difficult c
 |---|---|---|---|---|
 | W0 | Characterization suite and ownership/configuration ledger | None | Baseline for F01-F44, especially F05/F17/F20/F38/F40-F42 | For each feature: legacy evidence, free/paid/remote owner, input fixtures, output/side effects, target test and disposition. |
 | W1 | Schema-preserving cutover, resource authorization, persistence/job foundations | W0 schema/permission fixtures | F01-F03, F06, F18/F25/F34/F40/F42 data foundations | Read-only preflight and staged cutover on the current schema; before/after schema equality; correct scoped access; no data loss. |
-| W2 | One complete availability/reservation/lifecycle core | W0 behavior fixtures; W1 repositories and policies | F05, F07-F13, F17/F20 domain rules | Differential slot/lifecycle suite passes; recurrent/conditional fixtures book correctly; parallel conflicts handled. |
+| W2 | One complete availability/reservation/lifecycle core | W0 behavior fixtures; W1 repositories and policies | F05, F07-F13, F17/F20 domain rules | Differential slot/lifecycle suite passes; recurrent fixtures book correctly; stored Services conditions stay blocked until W8; parallel conflicts handled. |
 | W3 | Operational administration APIs and admin calendar | W1 + relevant W2 operations | F09/F12-F19/F26; F40 read/admin core | Organizer manages working time and bookings entirely from the calendar, including on-behalf and series actions. |
 | W4 | Customer workflow, embedding/history and full free configuration UX | W2; W3 APIs for admin/history features; W1 legacy-link resolver | F01/F04/F17-F30; F39 instructions; free F40 UX | Existing free pages/widgets/settings usable without editing page content; full end-to-end customer and organizer journeys. |
 | W5 | Durable notifications, reminders, summaries and operational queue | W1 queue/storage; W2 lifecycle events | F31-F35 | Booking/approval/change/cancel/reminder/summary flows survive worker restart without duplicate effects. Can proceed alongside W3/W4 after prerequisites. |
@@ -465,6 +465,130 @@ availability and real database lifecycle/limits/notification side effects. Exist
 v3 lifecycle tests are regression evidence, not proof of matching legacy behavior.
 No populated-v2 cutover or full admin-calendar/Premium implementation is claimed.
 
+### Implementation progress: minimum notice and booking horizons (2026-11-14)
+
+The second F07/F08/W0/W2 differential slice characterizes server and frontend
+minimum-start behavior together:
+
+- The source-pinned PHP runner exercises legacy `Availability::daysRegenerating`
+  and `generateAvailabilityWithRA` with frozen Carbon, representative schedules,
+  and exact master `Settings`/`Availability` hashes. Cases include notice hours and
+  fractional minutes, fluid/non-fluid windows, windows closed by notice, overnight
+  cutoffs, day horizons, the refresh hour, and a Paris DST day boundary.
+- A second source-pinned Node runner executes the original `DatesExtended`,
+  `Calendar`, `IncrementTime` and `DaySlots` methods with a small deterministic UTC
+  clock shim. Seventeen cases across five spacing/buffer scenarios produce 85
+  comparisons of final slot starts, checked directly against v3. Combined with the
+  earlier 60 comparisons, this slice now has **145 legacy differential cases**.
+- Restored master behavior: fractional notice is truncated to whole minutes;
+  fluid starts round up to the next five-minute boundary; non-fluid starts advance
+  from the schedule's first start using duration (custom step when enabled), while
+  ordinary slot progression uses duration plus buffer. Calendar horizons end on the
+  complete local date `now + N days`; before the configured refresh hour, one day is
+  withheld, becoming available at the configured hour. Calendar-day addition is
+  timezone/DST aware. New v3 output returns no slots before today or after the
+  applicable horizon date.
+- The candidate availability engine fails closed for invalid stored booking-day
+  counts, notice values and refresh hours; the settings RequestData now also caps
+  `refreshavb_at` at 23. Schema and runtime dependency sets remain unchanged.
+- Public WordPress integration verifies fluid same-day starts, refresh-hour/day
+  horizon behavior and unchanged stored calendar options. Frozen golden comparisons
+  verify the exact minute and DST boundaries. Existing transaction, cancellation,
+  rescheduling, approval, role, ownership and multisite tests remain regression
+  checks, not legacy lifecycle comparisons.
+- Validation: 400 PHP unit tests on PHP 8.2, including 85 notice/horizon and 60
+  weekly/spacing differential cases; byte-identical golden regeneration; 79
+  single-site integration tests (two multisite-only skips); 50 real multisite tests;
+  44 frontend tests; production bundles and PHP/Node syntax checks.
+
+### Implementation progress: recurring busy/free status expansion (2026-11-14)
+
+- The booking repository now expands persisted daily, weekly, monthly and yearly
+  busy/free statuses into the requested calendar window, honoring the stored origin
+  timezone, interval, `BYDAY`/`BYMONTHDAY` shape, `until` and excluded dates. It uses
+  native PHP date/time APIs; no runtime Composer dependency or schema change was added.
+- Malformed recurrence data fails closed with a conflict instead of silently opening
+  slots. Conditional status rules still return a conflict; see the finding below.
+- Seven frozen-clock fixtures execute the unmodified master `Status::expand` method
+  against a minimal cast-on-read model shim, covering daily intervals/exclusions,
+  weekly weekdays, a DST transition, monthly day/ordinal-weekday rules and leap-year
+  rollover, including legacy month-end overflow behavior. A disposable WordPress API
+  integration test verifies recurring busy blocks remove slots and recurring free
+  blocks add them in the calendar timezone.
+- This restores slot projection only; it does not add status CRUD, the admin calendar
+  editor, imported-calendar lifecycle/synchronization, or conditional availability.
+- Validation: 413 PHP unit tests (2,447 assertions) and 80 single-site integration
+  tests passed; two multisite-only integration tests were skipped. PHP 8.5 reports
+  existing `ReflectionMethod::setAccessible()` deprecations during the unit run.
+
+### Finding: availability conditions are Services add-on behavior (2026-11-15)
+
+Earlier revisions of this plan listed conditional availability as free W2 work. A
+source audit shows that is wrong; no condition evaluation was added to free.
+
+- **Free master never evaluates conditions.** `Availability::generateAvailabilityWithRA`
+  reads only elements 0 and 1 of a weekly range, free statuses are consumed without
+  reading `options`, and the only core reference is a delete-popup label in
+  `CalendarAdmin/MixinSelection.vue`. `Calendars::regavClean` preserves a third element
+  untouched. This comes from reading the audited source, not from an executed oracle.
+- **The Services add-on owns the feature** (`wappointment-services` master
+  `580383c4012b65c0885bd27ab839b81e8643c8ee`; its `feat/v3.0.0` currently points at
+  the same commit). It writes `regav[day][n][2] = {locations: [ids], services: [ids]}`
+  only when at least one list is non-empty, stores `options.conditions` on free
+  statuses plus a per-staff `punctual_conditions` option, filters slots in its own
+  `BookingForm/Calendar.vue`, and validates bookings in `BookingValidateConditions`.
+  A slot is bookable when no condition covers it, or when one covering condition
+  accepts both the location and the service; an empty list accepts any value.
+- **W8 must characterize, not copy, the server matcher.** Its weekly test compares
+  hours and minutes independently, its second-day branch ignores minutes, and its
+  punctual list is pruned by wall-clock time on read. Decide per defect whether
+  Premium reproduces or corrects it, with fixtures.
+- **Free v3 keeps blocking stored conditions**, following the agreed rule to block
+  unsupported paid rules rather than ignore them. This deliberately differs from
+  free master, which would offer restricted windows to every service. A conditional
+  weekly range blocks the whole calendar and makes My availability read-only; a
+  conditional status blocks only the days it overlaps. Both are tested, and stored
+  data is never rewritten.
+- **Consequence for upgrades:** a v2 site that used Services conditions cannot take
+  bookings on the affected calendar or days under free v3 alone. The preflight
+  report must list these calendars, and Premium release 1 must include condition
+  evaluation before such sites are cut over.
+- Validation: 81 single-site integration tests passed (two multisite-only skips),
+  including the new status-condition case.
+
+### Implementation progress: booking lifecycle characterization (2026-11-15)
+
+- Added a 38-scenario database-backed oracle against audited master
+  `fcf2cfe296a240421ed91f28ff3672ece04e4786`. The shared case hash and five PHP
+  source hashes are pinned; the compact fixture normalizes generated IDs and
+  timestamps and reproduces byte-for-byte on the isolated `legacy_oracle` WordPress
+  stack. Cron is disabled and queued jobs are recorded without sending mail.
+- The fixture covers automatic/manual approval, buffers, overlap/adjacency, booking
+  limits, cancel/reschedule deadlines and disabled controls, repeated changes,
+  returning/deleted clients, public view, and state/jobs after each step.
+- Source-observed differences are documented rather than copied blindly: master
+  accepts some off-grid bookings and past/beyond-horizon reschedules; rescheduling
+  onto an occupied slot can fail at the database uniqueness constraint. V3 validates
+  those selections before writing. Master overwrites a returning client's name and
+  deletes canceled appointment rows; v3 intentionally preserves existing client
+  data and canceled history.
+- V3 `ChangeBookingAction` now increments the stored reschedule sequence while
+  preserving the booking's original buffer. Integration coverage confirms pending
+  bookings remain cancelable after the deadline, consistent with master; the
+  existing soft-cancel state remains for v3 history.
+- The lifecycle fixture and unit suite check source/input hashes and captured
+  transitions without loading legacy libraries. Validation: 111 focused unit tests
+  (189 assertions; PHP 8.5 emits the existing `ReflectionMethod::setAccessible()`
+  deprecations), 34 booking integration tests (303 assertions), and byte-identical
+  lifecycle fixture regeneration.
+
+F07/F08/F10/F11 remain **partial**. Outstanding work includes full daily cache
+regeneration/release parity, status and booking notification jobs, admin lifecycle
+operations, and populated v2 migration. V3's safe per-slot filtering may
+intentionally reject pre-notice slots in additional split intervals that the legacy
+browser could accidentally expose; this legacy UI edge is not reproduced as an
+authorization bypass.
+
 ## 5. Fixed database schema and cutover contract
 
 The current database schema is the persistence contract. Do not redesign storage
@@ -618,7 +742,7 @@ restore the old add-on boot machinery.
 
 | Legacy package | Required future audit / migration question |
 |---|---|
-| Services | Exact service/duration/pricing/custom-field expansions and overlap with free schemas. Initial Premium scope. |
+| Services | Exact service/duration/pricing/custom-field expansions, service/location availability conditions, and overlap with free schemas. Initial Premium scope. |
 | Staff | Multiple staff/calendars, assignment and permission expansions; retain free own-calendar behavior. |
 | Group | Capacity/multi-attendee semantics, shared slots and concurrency; do not treat group appointments as ordinary single bookings. |
 | Packages | Ticket/credit redemption, balances, expiration and order linkage. |
