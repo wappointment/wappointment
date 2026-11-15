@@ -13,5 +13,6 @@ class BookingCustomerData extends Data
         #[Email] public readonly string $email,
         public readonly string $phone,
         public readonly bool $force_email,
+        public readonly string $timezone,
     ) {}
 }

@@ -36,8 +36,9 @@ class SaveBookingSettingsAction
         }
         if ((int) $bookingPage > 0) {
             $page = get_post((int) $bookingPage);
-            if (!$page || $page->post_status !== 'publish' || !has_shortcode($page->post_content, 'wap_widget')) {
-                throw new BookingException(__('The booking page must be published and contain the wap_widget shortcode.', 'wappointment'));
+            if (!$page || $page->post_status !== 'publish' ||
+                (!has_shortcode($page->post_content, 'wap_widget') && !has_shortcode($page->post_content, 'wappointment_page'))) {
+                throw new BookingException(__('The booking page must be published and contain a Wappointment booking shortcode.', 'wappointment'));
             }
         }
         $regav = $data['regav'] ?? null;

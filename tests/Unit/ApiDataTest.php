@@ -94,6 +94,8 @@ test('settings accept typed known fields and reject unknown keys and string bool
     expect(fn() => SaveSettingsRequestData::from(['allow_cancellation' => 'false']))->toThrow(InvalidArgumentException::class);
     expect(SaveSettingsRequestData::from(['refreshavb_at' => 23])->refreshavb_at)->toBe(23)
         ->and(fn() => SaveSettingsRequestData::from(['refreshavb_at' => 24]))->toThrow(InvalidArgumentException::class);
+    expect(SaveSettingsRequestData::from(['week_starts_on' => 6])->week_starts_on)->toBe(6)
+        ->and(fn() => SaveSettingsRequestData::from(['week_starts_on' => 7]))->toThrow(InvalidArgumentException::class);
     expect(fn() => SaveSettingsRequestData::from(['mail_config' => ['unknown' => 'value']]))->toThrow(InvalidArgumentException::class);
 });
 
@@ -159,7 +161,7 @@ test('Optional distinguishes an omitted update from nullable response values', f
         ->and($update->toArray())->toBe(['id' => 7]);
     expect(fn() => UpdateClientRequestData::from(['id' => 7, 'name' => null]))->toThrow(InvalidArgumentException::class);
     $setup = \Wappointment\Http\Responses\GetBookingSettingsResponseData::from([
-        'service' => null, 'calendar' => null, 'location' => null, 'booking_page' => 0,
+        'service' => null, 'calendar' => null, 'location' => null, 'booking_page' => 0, 'booking_pages' => [],
     ]);
     expect($setup->service)->toBeNull()->and($setup->toArray())->toHaveKey('service', null);
 });

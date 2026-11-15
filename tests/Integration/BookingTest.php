@@ -71,6 +71,7 @@ test('booking catalog returns only the signed-in customer identity and forced-em
     $signedIn = bookingRest('/booking/catalog');
     expect($signedIn['status'])->toBe(200)
         ->and($signedIn['body']['data']['customer']['email'])->toBe(wp_get_current_user()->user_email)
+        ->and($signedIn['body']['data']['customer']['timezone'])->toBeString()
         ->and($signedIn['body']['data']['customer']['force_email'])->toBeTrue();
 
     wp_set_current_user(0);
@@ -101,9 +102,69 @@ test('booking shortcodes normalize supported flags and validate preselected valu
     expect($shortcodes->renderBookingWidget(['popup' => ['invalid']]))->toContain('role="alert"');
 })->group('booking-integration');
 
+test('native WordPress booking widget sanitizes settings and renders isolated shortcode configuration', function () {
+    $widget = new \Wappointment\System\WordPressBookingWidget();
+    $instance = $widget->update([
+        'title' => '<script>alert(1)</script>Book',
+        'button_title' => 'Choose a time',
+        'brc_floats' => '1',
+    ], []);
+    expect($instance)->toBe([
+        'title' => 'Book',
+        'button_title' => 'Choose a time',
+        'brc_floats' => 1,
+    ]);
+
+    ob_start();
+    $widget->widget(['before_widget' => '<aside>', 'after_widget' => '</aside>'], $instance);
+    $markup = ob_get_clean();
+    expect($markup)->toContain('<aside>')
+        ->and($markup)->toContain('data-title="Book"')
+        ->and($markup)->toContain('data-button-title="Choose a time"')
+        ->and($markup)->toContain('&quot;brc_floats&quot;:true');
+})->group('booking-integration');
+
+test('booking setup lists and accepts published legacy booking pages', function () {
+    $pageId = wp_insert_post([
+        'post_title' => 'Legacy booking page',
+        'post_status' => 'publish',
+        'post_type' => 'page',
+        'post_content' => '[wappointment_page]',
+    ], true);
+    expect(is_wp_error($pageId))->toBeFalse();
+    wp_set_current_user(1);
+
+    $settings = bookingRest('/booking-settings');
+    expect($settings['body']['data']['booking_pages'])->toContain([
+        'id' => (int) $pageId,
+        'title' => 'Legacy booking page',
+        'url' => get_permalink($pageId),
+    ]);
+    $schedule = array_fill_keys(
+        ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'],
+        [[540, 600]]
+    );
+    $saved = bookingRest('/booking-settings', 'POST', [
+        'service_name' => 'Consultation',
+        'calendar_name' => 'Organizer',
+        'location_name' => 'Office',
+        'location_type' => 1,
+        'duration' => 30,
+        'booking_days' => 60,
+        'timezone' => 'UTC',
+        'phone_required' => false,
+        'regav' => $schedule,
+        'booking_page' => (int) $pageId,
+    ]);
+    expect($saved['status'])->toBe(200);
+})->group('booking-integration');
+
 test('saves a real booking with UTC times and the original buffer contract', function () {
     global $wpdb;
     $input = bookingFixture();
+    wp_set_current_user(1);
+    $input['email'] = wp_get_current_user()->user_email;
+    $input['timezone'] = 'Pacific/Honolulu';
     $result = bookingRest('/booking', 'POST', $input);
     expect($result['status'])->toBe(201);
     $booking = $result['body']['data'];
@@ -114,6 +175,13 @@ test('saves a real booking with UTC times and the original buffer contract', fun
         ->and($booking['duration'])->toBe($input['duration'])
         ->and($booking['notification_sent'])->toBeFalse()
         ->and($booking['end'] - $booking['start'])->toBe(1800);
+    $client = $wpdb->get_row($wpdb->prepare(
+        "SELECT options FROM {$wpdb->prefix}wappo_clients WHERE email = %s",
+        $input['email']
+    ), ARRAY_A);
+    expect(json_decode($client['options'], true, 512, JSON_THROW_ON_ERROR)['tz'])->toBe('Pacific/Honolulu');
+    $catalog = bookingRest('/booking/catalog');
+    expect($catalog['body']['data']['customer']['timezone'])->toBe('Pacific/Honolulu');
     $stored = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}wappo_appointments WHERE id = %d", $booking['id']), ARRAY_A);
     expect($stored['start_at'])->toBe(gmdate('Y-m-d H:i:s', $input['start']))
         ->and(strtotime($stored['end_at'] . ' UTC') - $input['start'])->toBe(2700)
@@ -221,7 +289,9 @@ test('customer and staff history shortcodes return only appointments in their ow
     $customerHistory = do_shortcode('[wap_history]');
     expect($customerHistory)->toContain('Free consultation')
         ->and($customerHistory)->toContain('Organizer')
-        ->and($customerHistory)->toContain('Manage appointment')
+        ->and($customerHistory)->toContain('view=cancel-event')
+        ->and($customerHistory)->toContain('view=reschedule-event')
+        ->and($customerHistory)->toContain('view=add-to-calendar')
         ->and($customerHistory)->not->toContain($input['email']);
 
     $otherUser = wp_insert_user([

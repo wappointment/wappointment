@@ -25,6 +25,19 @@ class ValidateBookingContactAction
         if ($phone !== '' && !preg_match('/^\+?[\d ()\-.]{5,40}$/D', $phone)) {
             throw new BookingException(__('Enter a valid phone number.', 'wappointment'));
         }
-        return compact('name', 'email', 'phone');
+        $timezone = $input->timezone instanceof Optional ? '' : sanitize_text_field(trim($input->timezone));
+        if ($timezone !== '' && $timezone !== 'UTC'
+            && !in_array($timezone, \DateTimeZone::listIdentifiers(), true)) {
+            throw new BookingException(__('Choose a valid timezone.', 'wappointment'));
+        }
+        $timezoneTrusted = is_user_logged_in()
+            && strtolower($email) === strtolower((string) wp_get_current_user()->user_email);
+        return [
+            'name' => $name,
+            'email' => $email,
+            'phone' => $phone,
+            'timezone' => $timezone,
+            'timezone_trusted' => $timezoneTrusted,
+        ];
     }
 }

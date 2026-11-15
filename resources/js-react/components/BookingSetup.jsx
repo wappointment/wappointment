@@ -17,11 +17,13 @@ export default function BookingSetup() {
     const [error, setError] = useState('');
     const [saved, setSaved] = useState(false);
     const [calendarId, setCalendarId] = useState(null);
+    const [bookingPages, setBookingPages] = useState([]);
     useEffect(() => {
         let mounted = true;
         apiFetch('/booking-settings').then(({ data }) => {
             if (!mounted) return;
             setCalendarId(Number(data.calendar?.id) || null);
+            setBookingPages(data.booking_pages || []);
             setForm({
                 ...defaults,
                 service_name: data.service?.name || '',
@@ -60,6 +62,7 @@ export default function BookingSetup() {
             setSaving(false);
         }
     };
+    const selectedBookingPage = bookingPages.find((page) => page.id === form.booking_page);
     if (loading) return <p role="status">Loading booking setup...</p>;
     return <div className="wrap">
         <h1>Booking setup</h1>
@@ -90,10 +93,17 @@ export default function BookingSetup() {
                 <tr><th>Phone number</th><td><label>
                     <input type="checkbox" checked={form.phone_required} onChange={(event) => update('phone_required', event.target.checked)} /> Required
                 </label></td></tr>
-                <tr><th><label htmlFor="booking-page-id">Booking page ID</label></th><td>
-                    <input id="booking-page-id" type="number" min="0" value={form.booking_page}
-                        onChange={(event) => update('booking_page', Number(event.target.value))} />
-                    <p className="description">Use a published page containing [wap_widget]. Leave 0 to disable confirmation emails until a booking page is ready.</p>
+                <tr><th><label htmlFor="booking-page-id">Booking page</label></th><td>
+                    <select id="booking-page-id" value={form.booking_page}
+                        onChange={(event) => update('booking_page', Number(event.target.value))}>
+                        <option value="0">No booking page selected</option>
+                        {form.booking_page > 0 && !bookingPages.some((page) => page.id === form.booking_page) &&
+                            <option value={form.booking_page}>Configured page is unavailable or no longer contains a booking widget</option>}
+                        {bookingPages.map((page) => <option key={page.id} value={page.id}>{page.title}</option>)}
+                    </select>
+                    <p className="description">Choose a published page containing [wap_widget] or [wappointment_page]. Leave unselected to disable confirmation links.</p>
+                    {selectedBookingPage?.url &&
+                        <p><a href={selectedBookingPage.url} target="_blank" rel="noopener noreferrer">Preview booking page</a></p>}
                 </td></tr>
             </tbody></table>
             <h2>Weekly availability</h2>

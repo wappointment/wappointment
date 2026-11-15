@@ -35,9 +35,9 @@ function addDays(date, amount) {
     return value.toISOString().slice(0, 10);
 }
 
-function weekStart(date) {
+function weekStart(date, firstDay = 1) {
     const value = new Date(`${date}T00:00:00Z`);
-    value.setUTCDate(value.getUTCDate() - ((value.getUTCDay() + 6) % 7));
+    value.setUTCDate(value.getUTCDate() - ((value.getUTCDay() - firstDay + 7) % 7));
     return value.toISOString().slice(0, 10);
 }
 
@@ -55,8 +55,49 @@ function monthStart(date) {
     return `${date.slice(0, 7)}-01`;
 }
 
+function uiLocale() {
+    return window.wappointmentWidget?.locale || undefined;
+}
+
 function dateLabel(date, options) {
-    return new Intl.DateTimeFormat(undefined, { ...options, timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
+    return new Intl.DateTimeFormat(uiLocale(), { ...options, timeZone: 'UTC' }).format(new Date(`${date}T00:00:00Z`));
+}
+
+function validTimezone(timezone) {
+    try {
+        new Intl.DateTimeFormat(undefined, { timeZone: timezone });
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+function initialTimezone() {
+    const browserTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
+    try {
+        const timezone = savedTimezone();
+        return timezone || browserTimezone;
+    } catch {
+        return browserTimezone;
+    }
+}
+
+function savedTimezone() {
+    try {
+        const timezone = window.localStorage.getItem('wappointment-customer-timezone');
+        return timezone && validTimezone(timezone) ? timezone : '';
+    } catch {
+        return '';
+    }
+}
+
+function timezoneOptions(currentTimezone) {
+    const supported = typeof Intl.supportedValuesOf === 'function'
+        ? Intl.supportedValuesOf('timeZone')
+        : ['UTC', 'America/Los_Angeles', 'America/New_York', 'Asia/Kolkata', 'Asia/Tokyo',
+            'Australia/Sydney', 'Europe/London', 'Europe/Paris'];
+    if (!supported.includes(currentTimezone)) supported.push(currentTimezone);
+    return supported.map((timezone) => ({ id: timezone, name: timezone }));
 }
 
 function downloadCalendarEvent(appointment, fallbackTitle) {
@@ -99,25 +140,40 @@ export default function BookingWidget({
     instanceId = '',
 }) {
     const [editKey, setEditKey] = useState(initialKey);
-    const [open, setOpen] = useState(Boolean(initialKey() || hasInvalidManagementLink() || configuration.open));
+    const [open, setOpen] = useState(Boolean(initialKey() || hasInvalidManagementLink()
+        || initialLegacyView() === 'new-event' || configuration.open));
     const [invalidManagementLink] = useState(hasInvalidManagementLink);
     const [catalog, setCatalog] = useState(null);
     const [selection, setSelection] = useState({ service_id: '', calendar_id: '', location_id: '', duration: '', date: '', start: '' });
     const [contact, setContact] = useState({ name: '', email: '', phone: '' });
     const [availability, setAvailability] = useState(null);
     const [appointment, setAppointment] = useState(null);
+    const [managementLoading, setManagementLoading] = useState(Boolean(initialKey()));
+    const [managementFailed, setManagementFailed] = useState(false);
     const [rescheduling, setRescheduling] = useState(false);
+    const [confirmCancellation, setConfirmCancellation] = useState(false);
     const [legacyView] = useState(initialLegacyView);
     const [calendarView, setCalendarView] = useState(configuration.week ? 'week' : 'month');
+    const [searchMessage, setSearchMessage] = useState('');
+    const [timezone, setTimezone] = useState(initialTimezone);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState('');
     const submitting = useRef(false);
     const requestId = useRef(0);
+    const availabilityController = useRef(null);
+    const calendarDownloadKey = useRef('');
     const triggerRef = useRef(null);
     const dialogRef = useRef(null);
     const id = `${instanceId}-${React.useId()}`;
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const format = (timestamp) => new Date(timestamp * 1000).toLocaleString(undefined, { timeZone: timezone, timeZoneName: 'short' });
+    const format = (timestamp) => new Date(timestamp * 1000).toLocaleString(uiLocale(), { timeZone: timezone, timeZoneName: 'short' });
+
+    useEffect(() => {
+        try {
+            window.localStorage.setItem('wappointment-customer-timezone', timezone);
+        } catch {
+            setError(__('Your timezone preference could not be saved in this browser.', 'wappointment'));
+        }
+    }, [timezone]);
 
     useEffect(() => {
         if (invalidManagementLink) {
@@ -134,8 +190,13 @@ export default function BookingWidget({
         return () => controller.abort();
     }, [open, catalog, invalidManagementLink]);
 
+    useEffect(() => () => availabilityController.current?.abort(), []);
+
     useEffect(() => {
         if (!catalog?.customer) return;
+        if (!savedTimezone() && catalog.customer.timezone && validTimezone(catalog.customer.timezone)) {
+            setTimezone(catalog.customer.timezone);
+        }
         setContact((previous) => ({
             ...previous,
             name: previous.name || catalog.customer.name,
@@ -179,19 +240,46 @@ export default function BookingWidget({
         }
         if (!configuration.popup) return undefined;
         dialogRef.current?.querySelector('button, input, select, a')?.focus();
-        const closeOnEscape = (event) => {
+        const handleDialogKeys = (event) => {
             if (event.key === 'Escape') setOpen(false);
+            if (event.key !== 'Tab') return;
+            const focusable = dialogRef.current?.querySelectorAll(
+                'button:not([disabled]), input:not([disabled]), select:not([disabled]), a[href]'
+            );
+            if (!focusable?.length) {
+                event.preventDefault();
+                dialogRef.current?.focus();
+                return;
+            }
+            const first = focusable[0];
+            const last = focusable[focusable.length - 1];
+            if (event.shiftKey && document.activeElement === first) {
+                event.preventDefault();
+                last.focus();
+            } else if (!event.shiftKey && document.activeElement === last) {
+                event.preventDefault();
+                first.focus();
+            }
         };
-        document.addEventListener('keydown', closeOnEscape);
-        return () => document.removeEventListener('keydown', closeOnEscape);
+        document.addEventListener('keydown', handleDialogKeys);
+        return () => document.removeEventListener('keydown', handleDialogKeys);
     }, [open, configuration.popup]);
 
     useEffect(() => {
         if (!editKey || appointment?.edit_key === editKey) return;
         const controller = new AbortController();
+        setManagementLoading(true);
+        setManagementFailed(false);
         bookingFetch('/booking/manage', { edit_key: editKey, action: 'view' }, controller.signal)
-            .then(setAppointment).catch((failure) => {
-                if (failure.name !== 'AbortError') setError(failure.message);
+            .then((result) => {
+                setAppointment(result);
+                setManagementLoading(false);
+            }).catch((failure) => {
+                if (failure.name !== 'AbortError') {
+                    setError(failure.message);
+                    setManagementFailed(true);
+                    setManagementLoading(false);
+                }
             });
         return () => controller.abort();
     }, [editKey]);
@@ -227,12 +315,32 @@ export default function BookingWidget({
         }
     }, [appointment, legacyView]);
 
+    useEffect(() => {
+        if (!appointment || !catalog || legacyView !== 'add-to-calendar' || appointment.status !== 1
+            || calendarDownloadKey.current === appointment.edit_key) return;
+        try {
+            downloadCalendarEvent(appointment, appointment.service_name || title);
+            calendarDownloadKey.current = appointment.edit_key;
+        } catch (failure) {
+            setError(failure instanceof Error ? failure.message : __('Calendar download failed.', 'wappointment'));
+        }
+    }, [appointment, catalog, legacyView, title]);
+
+    useEffect(() => {
+        if (appointment && legacyView === 'cancel-event' && appointment.status >= 0) {
+            setConfirmCancellation(true);
+        }
+    }, [appointment, legacyView]);
+
     const change = (field, value) => {
         if (field === 'start') {
             setSelection((previous) => ({ ...previous, start: value }));
             return;
         }
         requestId.current += 1;
+        availabilityController.current?.abort();
+        setBusy(false);
+        setSearchMessage('');
         const selectedCalendar = field === 'calendar_id'
             ? catalog?.calendars.find((row) => String(row.id) === value)
             : null;
@@ -253,16 +361,65 @@ export default function BookingWidget({
         setBusy(true);
         setError('');
         setAvailability(null);
+        setSearchMessage('');
         setSelection((previous) => ({ ...previous, start: '' }));
+        const controller = new AbortController();
+        availabilityController.current = controller;
         try {
             const { service_id, calendar_id, location_id, duration, date } = selection;
             const result = await bookingFetch('/booking/availability', rescheduling
-                ? { date, edit_key: editKey } : { service_id, calendar_id, location_id, duration, date });
+                ? { date, edit_key: editKey } : { service_id, calendar_id, location_id, duration, date }, controller.signal);
             if (currentRequest === requestId.current) setAvailability(result);
         } catch (failure) {
-            if (currentRequest === requestId.current) setError(failure.message);
+            if (currentRequest === requestId.current && failure.name !== 'AbortError') setError(failure.message);
         } finally {
-            setBusy(false);
+            if (currentRequest === requestId.current) setBusy(false);
+        }
+    };
+
+    const findFirstAvailability = async () => {
+        if (!selection.service_id || !selection.calendar_id || !selection.location_id || !selection.duration) {
+            setError(__('Choose a service, calendar, location and duration before searching.', 'wappointment'));
+            return;
+        }
+        const currentRequest = ++requestId.current;
+        const firstDate = selection.date || dateInTimezone(selectedCalendar?.timezone || timezone);
+        setBusy(true);
+        setError('');
+        setAvailability(null);
+        setSearchMessage(__('Searching the next 30 days for an available time...', 'wappointment'));
+        const controller = new AbortController();
+        availabilityController.current = controller;
+        try {
+            for (let offset = 0; offset < 30; offset += 1) {
+                const date = addDays(firstDate, offset);
+                const result = await bookingFetch('/booking/availability', rescheduling
+                    ? { date, edit_key: editKey }
+                    : {
+                        service_id: selection.service_id,
+                        calendar_id: selection.calendar_id,
+                        location_id: selection.location_id,
+                        duration: selection.duration,
+                        date,
+                    }, controller.signal);
+                if (currentRequest !== requestId.current) return;
+                if (result.slots.length > 0) {
+                    setSelection((previous) => ({ ...previous, date, start: String(result.slots[0].start) }));
+                    setAvailability(result);
+                    setSearchMessage(__('The first available time is selected. Review the time and confirm to continue.', 'wappointment'));
+                    return;
+                }
+            }
+            if (currentRequest === requestId.current) {
+                setSearchMessage(__('No available times were found in the next 30 days. Choose another date and try again.', 'wappointment'));
+            }
+        } catch (failure) {
+            if (currentRequest === requestId.current && failure.name !== 'AbortError') {
+                setSearchMessage('');
+                setError(failure.message);
+            }
+        } finally {
+            if (currentRequest === requestId.current) setBusy(false);
         }
     };
 
@@ -278,7 +435,7 @@ export default function BookingWidget({
                     edit_key: editKey, action,
                     ...(action === 'reschedule' ? { date: selection.date, start: selection.start } : {}),
                 })
-                : await bookingFetch('/booking', { ...selection, ...contact });
+                : await bookingFetch('/booking', { ...selection, ...contact, timezone });
             setAppointment(action ? result : {
                 ...result,
                 service_name: catalog.services.find((row) => String(row.id) === selection.service_id)?.name || '',
@@ -286,6 +443,7 @@ export default function BookingWidget({
             });
             setEditKey(result.edit_key);
             setRescheduling(false);
+            setConfirmCancellation(false);
             setAvailability(null);
         } catch (failure) {
             setError(failure.message);
@@ -321,10 +479,13 @@ export default function BookingWidget({
     const phoneRequired = service?.fields.includes('phone') || location?.fields.includes('phone') || location?.type === 2;
     const calendarTimezone = selectedCalendar?.timezone || availability?.timezone || timezone;
     const selectedDate = selection.date || dateInTimezone(calendarTimezone);
-    const firstDay = weekStart(selectedDate);
+    const preferredWeekStart = Number(window.wappointmentWidget?.weekStartsOn);
+    const firstDayOfWeek = Number.isInteger(preferredWeekStart) && preferredWeekStart >= 0 && preferredWeekStart <= 6
+        ? preferredWeekStart : 1;
+    const firstDay = weekStart(selectedDate, firstDayOfWeek);
     const weekDates = Array.from({ length: 7 }, (_, index) => addDays(firstDay, index));
     const currentMonth = monthStart(selectedDate);
-    const monthGridStart = weekStart(currentMonth);
+    const monthGridStart = weekStart(currentMonth, firstDayOfWeek);
     const monthDates = Array.from({ length: 42 }, (_, index) => addDays(monthGridStart, index));
     const select = (field, label, rows) => (
         <div className="wap-form-group">
@@ -339,14 +500,31 @@ export default function BookingWidget({
     return (
         <section className={`${rootClass} wap-widget-open${configuration.large ? ' wap-widget-large' : ''}${configuration.popup ? ' wap-widget-popup' : ''}`}
             aria-labelledby={`${id}-title`} aria-busy={busy} role={configuration.popup ? 'dialog' : undefined}
-            aria-modal={configuration.popup ? 'true' : undefined} ref={dialogRef}>
+            aria-modal={configuration.popup ? 'true' : undefined}
+            dir={window.wappointmentWidget?.rtl ? 'rtl' : 'ltr'} tabIndex={configuration.popup ? -1 : undefined} ref={dialogRef}>
             <div className="wap-widget-header">
                 <h3 id={`${id}-title`}>{title}</h3>
                 {configuration.close_cross && <button type="button" className="wap-close-btn" aria-label={__('Close', 'wappointment')} onClick={() => setOpen(false)}>×</button>}
             </div>
             <div className="wap-widget-body">
                 {error && <p role="alert">{error}</p>}
-                {appointment && !rescheduling ? (
+                {invalidManagementLink ? null : managementLoading ? (
+                    <p role="status">{__('Loading appointment details...', 'wappointment')}</p>
+                ) : managementFailed ? (
+                    <div>
+                        <p role="status">{__('This appointment could not be loaded. The link may have expired or the appointment may no longer be available.', 'wappointment')}</p>
+                        <button type="button" onClick={() => {
+                            setError('');
+                            setManagementFailed(false);
+                            setEditKey('');
+                            const url = new URL(window.location.href);
+                            url.hash = '';
+                            url.searchParams.delete('appointmentkey');
+                            url.searchParams.delete('view');
+                            window.history.replaceState(null, '', `${url.pathname}${url.search}`);
+                        }}>{__('Start a new booking', 'wappointment')}</button>
+                    </div>
+                ) : appointment && !rescheduling ? (
                     <div className="wap-confirmation" role="status">
                         <h4>{appointment.status < 0 ? __('Appointment cancelled', 'wappointment')
                             : appointment.status === 1 ? __('Appointment confirmed', 'wappointment') : __('Awaiting approval', 'wappointment')}</h4>
@@ -355,22 +533,28 @@ export default function BookingWidget({
                         {appointment.location_name && <p>{__('Location:', 'wappointment')} {appointment.location_name}</p>}
                         {appointment.notification_sent === false && <p>{__('Your appointment was saved, but no confirmation email was sent. Save your management link below.', 'wappointment')}</p>}
                         <p><a href={`#wappointment=${appointment.edit_key}`}>{__('Appointment management link', 'wappointment')}</a></p>
-                        {appointment.status >= 0 && <>
-                            <button type="button" onClick={() => {
+                        {confirmCancellation && <div role="alertdialog" aria-labelledby={`${id}-cancel-title`}>
+                            <h4 id={`${id}-cancel-title`}>{__('Cancel this appointment?', 'wappointment')}</h4>
+                            <button type="button" disabled={busy} onClick={(event) => submit(event, 'cancel')}>{__('Confirm cancellation', 'wappointment')}</button>
+                            <button type="button" onClick={() => setConfirmCancellation(false)}>{__('Keep appointment', 'wappointment')}</button>
+                        </div>}
+                        {appointment.status === 1 && <button type="button" onClick={() => {
                                 try {
                                     downloadCalendarEvent(appointment, title);
                                     setError('');
                                 } catch (failure) {
                                     setError(failure instanceof Error ? failure.message : __('Calendar download failed.', 'wappointment'));
                                 }
-                            }}>{__('Add to calendar', 'wappointment')}</button>
-                            <button type="button" disabled={busy} onClick={(event) => submit(event, 'cancel')}>{__('Cancel appointment', 'wappointment')}</button>
-                            <button type="button" disabled={busy} onClick={() => {
+                            }}>{__('Add to calendar', 'wappointment')}</button>}
+                        {appointment.status >= 0 && <>
+                            {!confirmCancellation && <button type="button" disabled={busy} onClick={(event) => submit(event, 'cancel')}>{__('Cancel appointment', 'wappointment')}</button>}
+                            {!confirmCancellation && <button type="button" disabled={busy} onClick={() => {
                                 setError(''); setAvailability(null); setRescheduling(true);
-                            }}>{__('Reschedule appointment', 'wappointment')}</button>
+                            }}>{__('Reschedule appointment', 'wappointment')}</button>}
                         </>}
                         <button type="button" onClick={() => {
                             setAppointment(null); setEditKey(''); setAvailability(null); setSelection((previous) => ({ ...previous, start: '' }));
+                            setManagementFailed(false);
                             const url = new URL(window.location.href);
                             url.hash = '';
                             url.searchParams.delete('appointmentkey');
@@ -391,6 +575,14 @@ export default function BookingWidget({
                             <div className="wap-form-group">
                                 <label htmlFor={`${id}-date`}>{__('Date in organizer timezone', 'wappointment')}</label>
                                 <input id={`${id}-date`} type="date" required value={selection.date} onChange={(event) => change('date', event.target.value)} />
+                            </div>
+                            <div className="wap-form-group">
+                                <label htmlFor={`${id}-timezone`}>{__('Show appointment times in', 'wappointment')}</label>
+                                <select id={`${id}-timezone`} value={timezone} onChange={(event) => setTimezone(event.target.value)}>
+                                    {timezoneOptions(timezone).map((option) => (
+                                        <option key={option.id} value={option.id}>{option.name}</option>
+                                    ))}
+                                </select>
                             </div>
                             <div className="wap-date-picker" role="group" aria-label={__('Choose appointment date', 'wappointment')}>
                                 <div className="wap-date-picker-header">
@@ -423,7 +615,10 @@ export default function BookingWidget({
                                 <p>{__('Dates use the selected calendar timezone:', 'wappointment')} {calendarTimezone}</p>
                             </div>
                             <button className="wap-btn wap-btn-primary" disabled={busy}>{__('Show available times', 'wappointment')}</button>
+                            <button type="button" className="wap-btn wap-btn-secondary" disabled={busy}
+                                onClick={findFirstAvailability}>{__('Find first available time (next 30 days)', 'wappointment')}</button>
                         </form>
+                        {searchMessage && <p role="status" aria-live="polite">{searchMessage}</p>}
                         {availability && <form onSubmit={(event) => submit(event, rescheduling ? 'reschedule' : null)}>
                             <p>{__('Times are displayed in your timezone:', 'wappointment')} {timezone}</p>
                             <p>{__('Organizer timezone:', 'wappointment')} {availability.timezone}</p>
@@ -442,6 +637,14 @@ export default function BookingWidget({
                                         {field === 'email' && catalog.customer?.force_email && <p>{__('Your account email is required for this booking.', 'wappointment')}</p>}
                                     </div>
                                 ))}
+                                {!rescheduling && window.wappointmentWidget?.privacyPolicyUrl && (
+                                    <p className="wap-privacy-policy">
+                                        {__('Your information is handled according to the site', 'wappointment')}{' '}
+                                        <a href={window.wappointmentWidget.privacyPolicyUrl} target="_blank" rel="noopener noreferrer">
+                                            {__('privacy policy', 'wappointment')}
+                                        </a>.
+                                    </p>
+                                )}
                                 <button className="wap-btn wap-btn-primary" disabled={busy || !selection.start}>
                                     {rescheduling ? __('Confirm new time', 'wappointment') : __('Book appointment', 'wappointment')}
                                 </button>

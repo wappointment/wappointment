@@ -86,10 +86,21 @@ class BookingRepository
         ));
         if ($rows) {
             // Public bookings must not overwrite an existing customer's name or private fields.
+            $changes = [];
             if ($rows[0]['deleted_at'] !== null) {
-                if ($this->db->update($this->prefix() . 'clients', [
-                    'deleted_at' => null, 'updated_at' => gmdate('Y-m-d H:i:s'),
-                ], ['id' => (int) $rows[0]['id']]) === false) {
+                $changes['deleted_at'] = null;
+            }
+            if (!empty($data['timezone']) && !empty($data['timezone_trusted'])) {
+                $options = $rows[0]['options'] ?? [];
+                if (!is_array($options)) {
+                    throw new \RuntimeException('Stored customer options must be a JSON object.');
+                }
+                $options['tz'] = $data['timezone'];
+                $changes['options'] = wp_json_encode($options, JSON_THROW_ON_ERROR);
+            }
+            if ($changes !== []) {
+                $changes['updated_at'] = gmdate('Y-m-d H:i:s');
+                if ($this->db->update($this->prefix() . 'clients', $changes, ['id' => (int) $rows[0]['id']]) === false) {
                     $this->failure();
                 }
             }
@@ -97,9 +108,33 @@ class BookingRepository
         }
         return $this->insert('clients', [
             'email' => $data['email'], 'name' => $data['name'],
-            'options' => wp_json_encode(['phone' => $data['phone'] ?? '']),
+            'options' => wp_json_encode(array_filter([
+                'phone' => $data['phone'] ?? '',
+                'tz' => !empty($data['timezone_trusted']) ? ($data['timezone'] ?? '') : '',
+            ], static fn(string $value): bool => $value !== ''), JSON_THROW_ON_ERROR),
             'created_at' => gmdate('Y-m-d H:i:s'), 'updated_at' => gmdate('Y-m-d H:i:s'),
         ]);
+    }
+
+    public function clientTimezone(string $email): string
+    {
+        $rows = $this->rows($this->db->prepare(
+            "SELECT options FROM {$this->prefix()}clients WHERE email = %s AND deleted_at IS NULL LIMIT 1",
+            $email
+        ));
+        if (!$rows) {
+            return '';
+        }
+        $options = $rows[0]['options'] ?? [];
+        if (!is_array($options)) {
+            throw new \RuntimeException('Stored customer options must be a JSON object.');
+        }
+        $timezone = $options['tz'] ?? '';
+        if (!is_string($timezone) || $timezone === ''
+            || ($timezone !== 'UTC' && !in_array($timezone, \DateTimeZone::listIdentifiers(), true))) {
+            return '';
+        }
+        return $timezone;
     }
 
     public function activeBookings(int $client, ?int $calendar, int $now): int

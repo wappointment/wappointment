@@ -48,6 +48,7 @@ class GetBookingCatalogAction
             'email' => sanitize_email($user->user_email),
             'phone' => '',
             'force_email' => (bool) $this->settings->get('forceemail', false),
+            'timezone' => $this->repository->clientTimezone($user->user_email),
         ];
     }
 }

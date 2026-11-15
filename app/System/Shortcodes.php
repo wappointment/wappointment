@@ -97,10 +97,20 @@ class Shortcodes
             WAPPOINTMENT_VERSION
         );
 
+        $weekStartsOn = Container::getInstance()->make(Settings::class)->get('week_starts_on', 1);
+        if (!is_numeric($weekStartsOn) || (float) $weekStartsOn !== (float) (int) $weekStartsOn
+            || (int) $weekStartsOn < 0 || (int) $weekStartsOn > 6) {
+            throw new \RuntimeException('The configured first weekday must be an integer between 0 and 6.');
+        }
+
         // Pass data to widget
         wp_localize_script('wappointment-widget', 'wappointmentWidget', [
             'apiUrl' => rest_url('wappointment/v1'),
-            'nonce' => wp_create_nonce('wp_rest')
+            'nonce' => wp_create_nonce('wp_rest'),
+            'locale' => str_replace('_', '-', determine_locale()),
+            'rtl' => is_rtl(),
+            'privacyPolicyUrl' => get_privacy_policy_url(),
+            'weekStartsOn' => (int) $weekStartsOn,
         ]);
 
         // Return the container
@@ -194,19 +204,36 @@ class Shortcodes
             return '';
         }
         $settings = Container::getInstance()->make(Settings::class);
-        $cancelAfter = max(0, (float) $settings->get('hours_before_cancellation_allowed', 0)) * HOUR_IN_SECONDS;
-        $rescheduleAfter = max(0, (float) $settings->get('hours_before_rescheduling_allowed', 0)) * HOUR_IN_SECONDS;
-        if ($start - time() < $cancelAfter && $start - time() < $rescheduleAfter) {
-            return '';
-        }
         $pageId = (int) $settings->get('booking_page', 0);
         $page = $pageId > 0 ? get_post($pageId) : null;
         if (!$page || $page->post_status !== 'publish' ||
             (!has_shortcode($page->post_content, 'wap_widget') && !has_shortcode($page->post_content, 'wappointment_page'))) {
             return '';
         }
-        $url = get_permalink($pageId) . '#wappointment=' . rawurlencode($appointment->edit_key);
-        return '<br><a href="' . esc_url($url) . '">' . esc_html__('Manage appointment', 'wappointment') . '</a>';
+        $now = time();
+        $links = [];
+        $cancelAfter = max(0, (float) $settings->get('hours_before_cancellation_allowed', 24)) * HOUR_IN_SECONDS;
+        if ($settings->get('allow_cancellation', true) &&
+            ($appointment->status === 0 || $start - $now >= $cancelAfter)) {
+            $links[] = $this->historyActionLink($pageId, $appointment->edit_key, 'cancel-event', __('Cancel', 'wappointment'));
+        }
+        $rescheduleAfter = max(0, (float) $settings->get('hours_before_rescheduling_allowed', 24)) * HOUR_IN_SECONDS;
+        if ($settings->get('allow_rescheduling', true) && $start - $now >= $rescheduleAfter) {
+            $links[] = $this->historyActionLink($pageId, $appointment->edit_key, 'reschedule-event', __('Reschedule', 'wappointment'));
+        }
+        if ($appointment->status === 1) {
+            $links[] = $this->historyActionLink($pageId, $appointment->edit_key, 'add-to-calendar', __('Add to calendar', 'wappointment'));
+        }
+        return $links ? '<br>' . implode(' &middot; ', $links) : '';
+    }
+
+    private function historyActionLink(int $pageId, string $editKey, string $view, string $label): string
+    {
+        $url = add_query_arg([
+            'view' => $view,
+            'appointmentkey' => $editKey,
+        ], get_permalink($pageId));
+        return '<a href="' . esc_url($url) . '">' . esc_html($label) . '</a>';
     }
 
     private function historyTimezone(string $timezone): \DateTimeZone
@@ -228,7 +255,8 @@ class Shortcodes
         if (array_key_exists($flag, $attributes)) {
             return !in_array(strtolower((string) $attributes[$flag]), ['', '0', 'false', 'no'], true);
         }
-        return in_array($flag, array_map('strval', array_values(array_filter($attributes, 'is_string'))), true);
+        return in_array($flag, array_map(static fn(string $value): string => strtolower(trim($value)),
+            array_values(array_filter($attributes, 'is_string'))), true);
     }
 
     private function shortcodeValue($value): string

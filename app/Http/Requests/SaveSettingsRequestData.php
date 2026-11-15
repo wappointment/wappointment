@@ -48,7 +48,7 @@ class SaveSettingsRequestData extends RequestData
         #[Min(0)] public readonly int|float|Optional $scheduler_mode = Optional::Missing,
         #[Min(0)] public readonly int|float|Optional $front_page = Optional::Missing,
         #[In([0, 1])] public readonly int|Optional $approval_mode = Optional::Missing,
-        #[Min(0)] public readonly int|float|Optional $week_starts_on = Optional::Missing,
+        #[Min(0), Max(6)] public readonly int|float|Optional $week_starts_on = Optional::Missing,
         #[Min(0)] public readonly int|float|Optional $hours_before_booking_allowed = Optional::Missing,
         #[Min(0)] public readonly int|float|Optional $hours_before_cancellation_allowed = Optional::Missing,
         #[Min(0)] public readonly int|float|Optional $hours_before_rescheduling_allowed = Optional::Missing,

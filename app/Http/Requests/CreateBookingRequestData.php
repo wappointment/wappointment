@@ -20,6 +20,7 @@ class CreateBookingRequestData extends BookingRequestData
         #[Length(1, 100)] public readonly string $name,
         #[Email, Length(max: 191)] public readonly string|Optional $email = Optional::Missing,
         #[Length(max: 40)] public readonly string|Optional $phone = Optional::Missing,
+        public readonly string|Optional $timezone = Optional::Missing,
     ) {
         parent::__construct($service_id, $calendar_id, $location_id, $duration, $date);
     }

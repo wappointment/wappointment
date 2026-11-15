@@ -20,6 +20,8 @@ const appointment = { id: 10, start, end: start + 1800, status: 1, edit_key: 'a'
 
 beforeEach(() => {
     window.history.replaceState({}, '', '/');
+    window.localStorage.clear();
+    window.wappointmentWidget = { locale: 'en-US', rtl: false, privacyPolicyUrl: '', weekStartsOn: 1 };
     bookingFetch.mockReset();
     bookingFetch.mockImplementation((path) => {
         if (path === '/booking/catalog') return Promise.resolve(catalog);
@@ -62,7 +64,7 @@ test('only confirms a persisted booking and does not invent an email delivery', 
     await chooseSlot();
     expect(bookingFetch).toHaveBeenCalledWith('/booking/availability', {
         service_id: '1', calendar_id: '2', location_id: '3', duration: '30', date: '2030-01-02',
-    });
+    }, expect.any(AbortSignal));
     fireEvent.click(screen.getByRole('button', { name: 'Book appointment', exact: true }));
     expect(await screen.findByRole('heading', { name: 'Appointment confirmed' })).toBeVisible();
     expect(screen.getByText(/no confirmation email was sent/)).toBeVisible();
@@ -146,6 +148,46 @@ test('prefills a signed-in customer and keeps the configured account email read-
     expect(screen.getByLabelText('Email', { exact: true })).toHaveAttribute('readonly');
 });
 
+test('finds and selects the earliest available slot and persists the customer timezone', async () => {
+    bookingFetch.mockImplementation((path, data) => {
+        if (path === '/booking/catalog') return Promise.resolve(catalog);
+        if (path === '/booking/availability') {
+            return Promise.resolve(data.date === '2030-01-02'
+                ? { timezone: 'Europe/Paris', slots: [] }
+                : { timezone: 'Europe/Paris', slots: [{ start, end: start + 1800 }] });
+        }
+        if (path === '/booking') return Promise.resolve(appointment);
+        return Promise.reject(new Error(`Unexpected booking endpoint: ${path}`));
+    });
+
+    render(<BookingWidget title="Reserve a meeting" configuration={{
+        open: true, service_id: 1, calendar_id: 2, location_id: 3, duration: 30,
+    }} />);
+    const dateInput = await screen.findByLabelText('Date in organizer timezone');
+    fireEvent.change(dateInput, { target: { value: '2030-01-02' } });
+    fireEvent.change(screen.getByLabelText('Show appointment times in'), { target: { value: 'Pacific/Honolulu' } });
+    fireEvent.click(screen.getByRole('button', { name: /Find first available time/ }));
+
+    expect(await screen.findByText(/The first available time is selected/)).toBeVisible();
+    expect(screen.getByLabelText('Date in organizer timezone')).toHaveValue('2030-01-03');
+    expect(screen.getByLabelText('Available time')).toHaveValue(String(start));
+    expect(bookingFetch).toHaveBeenNthCalledWith(2, '/booking/availability', {
+        service_id: '1', calendar_id: '2', location_id: '3', duration: '30', date: '2030-01-02',
+    }, expect.any(AbortSignal));
+    expect(bookingFetch).toHaveBeenNthCalledWith(3, '/booking/availability', {
+        service_id: '1', calendar_id: '2', location_id: '3', duration: '30', date: '2030-01-03',
+    }, expect.any(AbortSignal));
+    expect(window.localStorage.getItem('wappointment-customer-timezone')).toBe('Pacific/Honolulu');
+
+    fireEvent.change(screen.getByLabelText('Full name'), { target: { value: 'Widget Customer' } });
+    fireEvent.change(screen.getByLabelText('Email', { exact: true }), { target: { value: 'customer@example.invalid' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Book appointment', exact: true }));
+    await screen.findByRole('heading', { name: 'Appointment confirmed' });
+    expect(bookingFetch).toHaveBeenLastCalledWith('/booking', expect.objectContaining({
+        timezone: 'Pacific/Honolulu',
+    }));
+});
+
 test('preselected booking options are resolved against catalog relationships and sent to availability', async () => {
     render(<BookingWidget title="Reserve a meeting" configuration={{
         service_id: 1, calendar_id: 2, location_id: 3, duration: 30,
@@ -161,7 +203,7 @@ test('preselected booking options are resolved against catalog relationships and
     await screen.findByLabelText('Available time');
     expect(bookingFetch).toHaveBeenCalledWith('/booking/availability', expect.objectContaining({
         service_id: '1', calendar_id: '2', location_id: '3', duration: '30',
-    }));
+    }), expect.any(AbortSignal));
 });
 
 test('month view navigates calendar dates and clears previously loaded slots', async () => {
@@ -188,6 +230,61 @@ test('opens the appointment management link embedded in a confirmation email', a
     }, expect.any(AbortSignal));
 });
 
+test('invalid appointment keys do not fall through to a fresh booking form', async () => {
+    window.history.replaceState({}, '', '/?appointmentkey=invalid');
+    render(<BookingWidget title="Reserve a meeting" />);
+
+    expect(await screen.findByRole('alert')).toHaveTextContent('This appointment link is invalid');
+    expect(screen.queryByLabelText('Service', { exact: true })).not.toBeInTheDocument();
+    expect(bookingFetch).not.toHaveBeenCalled();
+});
+
+test('expired appointment keys hide the booking form until the visitor chooses a new booking', async () => {
+    window.history.replaceState({}, '', `/?appointmentkey=${appointment.edit_key}`);
+    bookingFetch.mockImplementation((path) => {
+        if (path === '/booking/catalog') return Promise.resolve(catalog);
+        return Promise.reject(new Error('Appointment not found.'));
+    });
+    render(<BookingWidget title="Reserve a meeting" />);
+
+    expect(await screen.findByText(/The link may have expired/)).toBeVisible();
+    expect(screen.queryByLabelText('Service', { exact: true })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: 'Start a new booking' }));
+    expect(await screen.findByRole('option', { name: 'Consultation' })).toBeVisible();
+});
+
+test('legacy cancellation links ask for confirmation before changing the appointment', async () => {
+    window.history.replaceState({}, '', `/?view=cancel-event&appointmentkey=${appointment.edit_key}`);
+    bookingFetch.mockImplementation((path, data) => {
+        if (path === '/booking/manage' && data.action === 'view') return Promise.resolve(appointment);
+        if (path === '/booking/manage' && data.action === 'cancel') return Promise.resolve({ ...appointment, status: -1 });
+        if (path === '/booking/catalog') return Promise.resolve(catalog);
+        return Promise.reject(new Error(`Unexpected booking endpoint: ${path}`));
+    });
+
+    render(<BookingWidget title="Reserve a meeting" />);
+
+    expect(await screen.findByRole('alertdialog')).toBeVisible();
+    expect(bookingFetch).not.toHaveBeenCalledWith('/booking/manage', expect.objectContaining({ action: 'cancel' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Confirm cancellation' }));
+    expect(await screen.findByRole('heading', { name: 'Appointment cancelled' })).toBeVisible();
+    expect(bookingFetch).toHaveBeenCalledWith('/booking/manage', {
+        action: 'cancel', edit_key: appointment.edit_key,
+    });
+});
+
+test('popup dialog closes with Escape and returns keyboard focus to its trigger', async () => {
+    render(<BookingWidget title="Reserve a meeting" configuration={{ open: true, popup: true, close_cross: true }} />);
+    expect(await screen.findByRole('dialog', { name: 'Reserve a meeting' })).toBeVisible();
+    expect(screen.getByRole('button', { name: 'Close' })).toHaveFocus();
+    fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+    expect(screen.getByRole('button', { name: 'Close', exact: true })).not.toHaveFocus();
+    fireEvent.keyDown(document, { key: 'Escape' });
+
+    const trigger = await screen.findByRole('button', { name: 'Reserve a meeting' });
+    await waitFor(() => expect(trigger).toHaveFocus());
+});
+
 test('opens legacy appointment URLs directly in the reschedule flow', async () => {
     window.history.replaceState({}, '', `/?view=reschedule-event&appointmentkey=${appointment.edit_key}`);
     bookingFetch.mockImplementation((path, data) => {
@@ -207,8 +304,37 @@ test('opens legacy appointment URLs directly in the reschedule flow', async () =
     fireEvent.click(screen.getByRole('button', { name: 'Show available times' }));
     await waitFor(() => expect(bookingFetch).toHaveBeenCalledWith('/booking/availability', {
         date: '2030-01-02', edit_key: appointment.edit_key,
-    }));
+    }, expect.any(AbortSignal)));
     expect(screen.queryByLabelText('Email', { exact: true })).not.toBeInTheDocument();
+});
+
+test('legacy new-event links open booking and respect the configured first weekday', async () => {
+    window.history.replaceState({}, '', '/?view=new-event');
+    window.wappointmentWidget.weekStartsOn = 0;
+    render(<BookingWidget title="Reserve a meeting" configuration={{ week: true }} />);
+
+    const dateInput = await screen.findByLabelText('Date in organizer timezone');
+    fireEvent.change(dateInput, { target: { value: '2030-01-02' } });
+    expect(screen.getByRole('button', { name: 'Sunday, December 30, 2029' })).toBeVisible();
+    expect(screen.queryByRole('button', { name: 'Reserve a meeting' })).not.toBeInTheDocument();
+});
+
+test('renders the localized site privacy link and right-to-left direction', async () => {
+    window.wappointmentWidget.locale = 'fr-FR';
+    window.wappointmentWidget.rtl = true;
+    window.wappointmentWidget.privacyPolicyUrl = 'https://example.invalid/privacy';
+    render(<BookingWidget title="Reserve a meeting" configuration={{
+        open: true, service_id: 1, calendar_id: 2, location_id: 3, duration: 30,
+    }} />);
+    fireEvent.change(await screen.findByLabelText('Date in organizer timezone'), { target: { value: '2030-01-02' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Show available times' }));
+
+    expect(await screen.findByRole('link', { name: 'privacy policy' })).toHaveAttribute(
+        'href', 'https://example.invalid/privacy'
+    );
+    expect(screen.getByRole('link', { name: 'privacy policy' })).toHaveAttribute('rel', 'noopener noreferrer');
+    expect(screen.getByRole('region', { name: 'Reserve a meeting' })).toHaveAttribute('dir', 'rtl');
+    expect(screen.getByText('janvier 2030')).toBeVisible();
 });
 
 test('cancellation sends only the management contract fields', async () => {
@@ -229,7 +355,9 @@ test('rescheduling uses only the secret key and selected new time', async () => 
     bookingFetch.mockResolvedValue({ timezone: 'Europe/Paris', slots: [{ start, end: start + 1800 }] });
     fireEvent.click(screen.getByRole('button', { name: 'Show available times', exact: true }));
     await screen.findByLabelText('Available time');
-    expect(bookingFetch).toHaveBeenLastCalledWith('/booking/availability', { edit_key: appointment.edit_key, date: '2030-01-02' });
+    expect(bookingFetch).toHaveBeenLastCalledWith('/booking/availability', {
+        edit_key: appointment.edit_key, date: '2030-01-02',
+    }, expect.any(AbortSignal));
     fireEvent.change(screen.getByLabelText('Available time'), { target: { value: String(start) } });
     bookingFetch.mockResolvedValue(appointment);
     fireEvent.click(screen.getByRole('button', { name: 'Confirm new time', exact: true }));

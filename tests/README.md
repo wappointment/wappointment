@@ -44,7 +44,10 @@ non-destructive refusal of multi-service setup edits. Rescheduling checks includ
 and late actions, collision with a different appointment, and retention of the original
 buffer and sequence; the widget suite opens the emailed `#wappointment=<key>` and legacy
 `?appointmentkey=<key>&view=reschedule-event` links, verifies unique widget-instance labels,
-and checks the generated ICS start/end, location, and UID.
+checks the generated ICS start/end, location, and UID, exercises first-available search,
+browser timezone persistence and popup keyboard focus management. The PHP integration suite
+also verifies native widget sanitization, customer timezone persistence, and time-gated
+separate cancel/reschedule/calendar links in customer history.
 Change `WAPPOINTMENT_BOOKING_PORT` and the installation URL together if port 18089
 is already in use.
 
@@ -83,7 +86,9 @@ fields, client selection, and the on-behalf booking request/confirmation flow. T
 test does not certify external-calendar events, multi-calendar timezone rendering,
 optimistic drag/drop rollback, or the still-unimplemented history/order screens.
 The customer widget suite also covers the accessible seven-day date chooser, organizer
-timezone labeling, week navigation, and invalidating stale availability after a date change.
+timezone labeling, site-configured first-weekday ordering, locale-aware RTL rendering,
+privacy-policy links, legacy `new-event` booking links, week navigation, and invalidating
+stale availability after a date change.
 It also tests URL/body identifier conflicts, unknown query/body fields, JSON shape,
 default settings compatibility, retained extension settings, and invalid Action output
 becoming a server error rather than a success or client error. That last test deliberately
