@@ -9,6 +9,7 @@ use Wappointment\Notifications\AdminEmail;
 use Wappointment\Notifications\CustomerEmail;
 use Wappointment\Notifications\EmailContext;
 use Wappointment\Notifications\InvalidTemplateException;
+use Wappointment\Notifications\OrganizerRecipients;
 use Wappointment\Repositories\NotificationRepository;
 use Wappointment\System\Mailer;
 use Wappointment\System\Settings;
@@ -190,21 +191,7 @@ class DeliverBookingNotificationAction
     /** Legacy recipients: every `email_notifications` address plus the calendar owner's address. */
     private function organizerRecipients(int $calendarUserId): array
     {
-        $configured = $this->settings->get('email_notifications', '');
-        $addresses = is_array($configured) ? $configured : explode(',', (string) $configured);
-        if ($calendarUserId > 0) {
-            $owner = get_userdata($calendarUserId);
-            if ($owner) {
-                $addresses[] = $owner->user_email;
-            }
-        }
-        $valid = [];
-        foreach ($addresses as $address) {
-            $address = sanitize_email(trim((string) $address));
-            if ($address !== '' && is_email($address)) {
-                $valid[strtolower($address)] = $address;
-            }
-        }
-        return array_values($valid);
+        $owner = $calendarUserId > 0 ? get_userdata($calendarUserId) : false;
+        return OrganizerRecipients::resolve($this->settings->get('email_notifications', ''), $owner ? (string) $owner->user_email : null);
     }
 }

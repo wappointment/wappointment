@@ -12,7 +12,8 @@ use Wappointment\Repositories\JobQueueRepository;
 use Wappointment\System\Container;
 
 /**
- * One worker pass: recover stale reservations, then claim and run due v3 jobs.
+ * One worker pass: recover stale reservations, keep organizer summaries scheduled,
+ * then claim and run due v3 jobs.
  * Only one worker runs at a time per site; a second concurrent pass returns `locked`.
  */
 class ProcessJobQueueAction
@@ -23,19 +24,27 @@ class ProcessJobQueueAction
     public function __construct(
         private JobQueueRepository $queue,
         private RecoverTimedOutJobsAction $recover,
+        private ScheduleSummariesAction $summaries,
         private Container $container
     ) {}
 
     /**
      * @return array{locked: bool, completed: int, retried: int, failed: int, quarantined: int,
-     *               recovered: int, abandoned: int, legacy_pending: array<string, int>}
+     *               recovered: int, abandoned: int, scheduled: int, unscheduled: int,
+     *               legacy_pending: array<string, int>}
      */
     public function handle(int $now): array
     {
         $report = ['locked' => false, 'completed' => 0, 'retried' => 0, 'failed' => 0, 'quarantined' => 0,
-            'recovered' => 0, 'abandoned' => 0, 'legacy_pending' => []];
+            'recovered' => 0, 'abandoned' => 0, 'scheduled' => 0, 'unscheduled' => 0, 'legacy_pending' => []];
         $ran = $this->queue->withWorkerLock(function () use (&$report, $now): void {
             $report = array_merge($report, $this->recover->handle($now));
+            try {
+                $report = array_merge($report, $this->summaries->handle($now));
+            } catch (\Throwable $error) {
+                // Summary scheduling must never hold up the jobs that are already due.
+                error_log('Wappointment: organizer summaries could not be scheduled: ' . $error->getMessage());
+            }
             $deadline = microtime(true) + self::TIME_BUDGET_SECONDS;
             foreach ($this->queue->available(JobRegistry::queues(), $now, self::BATCH) as $row) {
                 if (microtime(true) > $deadline) {

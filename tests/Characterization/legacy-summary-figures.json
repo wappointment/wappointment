@@ -1,0 +1,45 @@
+{
+    "source": "fcf2cfe296a240421ed91f28ff3672ece04e4786",
+    "source_sha256": {
+        "Services/Sections.php": "9a9654ad917c0e007021fba4e4a92afb18db4a9d64d35561fedc5c7990f7d6e8"
+    },
+    "cases_sha256": "d8eb711675a936bbd95a9060983a63ef5bada178498efec19df4ee75fe8d356c",
+    "results": {
+        "empty day": {
+            "free_slots": 0,
+            "coverage": 0
+        },
+        "free shorter than one slot": {
+            "free_slots": 0,
+            "coverage": 0
+        },
+        "all free": {
+            "free_slots": 8,
+            "coverage": "0%"
+        },
+        "partial slots are dropped per window": {
+            "free_slots": 2,
+            "coverage": "0%"
+        },
+        "fully booked": {
+            "free_slots": 0,
+            "coverage": "100%"
+        },
+        "one third booked": {
+            "free_slots": 2,
+            "coverage": "33%"
+        },
+        "rounding half up": {
+            "free_slots": 3,
+            "coverage": "40%"
+        },
+        "buffered appointments count their buffer": {
+            "free_slots": 1,
+            "coverage": "40%"
+        },
+        "booked shorter than one slot": {
+            "free_slots": 0,
+            "coverage": 0
+        }
+    }
+}

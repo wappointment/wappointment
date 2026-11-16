@@ -216,6 +216,19 @@ class JobQueueRepository
         ));
     }
 
+    /**
+     * Every job on a v3 queue that no worker has claimed yet.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function unclaimed(string $queue): array
+    {
+        return $this->rows($this->db->prepare(
+            "SELECT * FROM {$this->table()} WHERE queue = %s AND reserved_at = 0 ORDER BY id",
+            $queue
+        ));
+    }
+
     /** Delete a job only while it is still unclaimed, so a running delivery is never pulled from under a worker. */
     public function deleteUnclaimed(int $id): bool
     {

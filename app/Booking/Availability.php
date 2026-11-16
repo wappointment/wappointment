@@ -36,28 +36,7 @@ class Availability
         $noticeMinutes = (int) floor(((float) $noticeHours - $wholeNoticeHours) * 60);
         $earliest = $now + ($wholeNoticeHours * 3600) + ($noticeMinutes * 60);
         $nowLocal = (new \DateTimeImmutable('@' . $now))->setTimezone($timezone);
-        $bookingDaysValue = $calendar['options']['avb'] ?? 60;
-        if (!is_numeric($bookingDaysValue) || !is_finite((float) $bookingDaysValue)
-            || (float) $bookingDaysValue !== (float) (int) $bookingDaysValue) {
-            throw new BookingException(__('Invalid booking horizon. Review your calendar settings.', 'wappointment'), 409);
-        }
-        $bookingDays = (int) $bookingDaysValue;
-        if ($bookingDays < 1 || $bookingDays > 365) {
-            throw new BookingException(__('Invalid booking horizon. Review your calendar settings.', 'wappointment'), 409);
-        }
-        $refreshAt = $settings['refreshavb_at'] ?? 23;
-        if (!is_numeric($refreshAt) || !is_finite((float) $refreshAt) || $refreshAt < 0 || $refreshAt > 23) {
-            throw new BookingException(__('Invalid availability refresh time. Review booking settings.', 'wappointment'), 409);
-        }
-        $refreshEnabled = $settings['allow_refreshavb'] ?? false;
-        if (!in_array($refreshEnabled, [true, false, 0, 1, '0', '1'], true)) {
-            throw new BookingException(__('Invalid availability refresh setting. Review booking settings.', 'wappointment'), 409);
-        }
-        $effectiveDays = $bookingDays;
-        if (!empty($refreshEnabled) && (float) $nowLocal->format('G') < (float) $refreshAt) {
-            $effectiveDays--;
-        }
-        $latestDate = $nowLocal->modify('+' . $effectiveDays . ' days')->format('Y-m-d');
+        $latestDate = $this->latestBookableDate($calendar, $settings, $now);
         if ($date < $nowLocal->format('Y-m-d') || $date > $latestDate) {
             return [];
         }
@@ -65,6 +44,45 @@ class Availability
         $fluidStart = !empty($settings['availability_fluid']) && $isToday
             ? $this->roundUpToFiveMinutes($earliest, $timezone)
             : null;
+        $slots = [];
+        $length = ($duration + $buffer) * 60;
+        foreach ($this->freeWindows($date, $calendar, $busy, $extra) as [$from, $to]) {
+            if ($fluidStart !== null) {
+                $from = max($from, $fluidStart);
+            } elseif ($from < $earliest) {
+                $initialStep = !empty($settings['more_st']) ? $step : $duration;
+                $increments = (int) ceil(($earliest - $from) / ($initialStep * 60));
+                $from += $increments * $initialStep * 60;
+            }
+            for ($start = $from; $start + $length <= $to; $start += $step * 60) {
+                $end = $start + $length;
+                $slots[$start] = [
+                    'start' => $start,
+                    'end' => $start + $duration * 60,
+                    'reserved_until' => $end,
+                ];
+            }
+        }
+        ksort($slots, SORT_NUMERIC);
+        return array_values($slots);
+    }
+
+    /**
+     * The calendar's free time on one local day: weekly schedule plus free statuses,
+     * merged, minus busy intervals (appointments with their buffer and busy statuses),
+     * clipped to the day. Notice and horizon rules are not applied here.
+     *
+     * @param list<array{int, int}> $busy
+     * @param list<array{int, int}> $extra
+     * @return list<array{int, int}>
+     */
+    public function freeWindows(string $date, array $calendar, array $busy, array $extra): array
+    {
+        $timezone = new \DateTimeZone($calendar['options']['timezone'] ?? 'UTC');
+        $day = \DateTimeImmutable::createFromFormat('!Y-m-d', $date, $timezone);
+        if (!$day || $day->format('Y-m-d') !== $date) {
+            throw new BookingException(__('Choose a valid date.', 'wappointment'));
+        }
         $windows = $extra;
         $weekday = strtolower($day->format('l'));
         try {
@@ -78,9 +96,6 @@ class Availability
                 $this->minute($day, (int) $block[1]),
             ];
         }
-        $slots = [];
-        $dayEnd = $day->modify('+1 day')->getTimestamp();
-        $length = ($duration + $buffer) * 60;
         usort($windows, static fn(array $left, array $right): int => $left[0] <=> $right[0]);
         $merged = [];
         foreach ($windows as [$from, $to]) {
@@ -107,27 +122,46 @@ class Availability
             }
             $merged = $remaining;
         }
+        $dayStart = $day->getTimestamp();
+        $dayEnd = $day->modify('+1 day')->getTimestamp();
+        $clipped = [];
         foreach ($merged as [$from, $to]) {
-            $from = max($from, $day->getTimestamp());
+            $from = max($from, $dayStart);
             $to = min($to, $dayEnd);
-            if ($fluidStart !== null) {
-                $from = max($from, $fluidStart);
-            } elseif ($from < $earliest) {
-                $initialStep = !empty($settings['more_st']) ? $step : $duration;
-                $increments = (int) ceil(($earliest - $from) / ($initialStep * 60));
-                $from += $increments * $initialStep * 60;
-            }
-            for ($start = $from; $start + $length <= $to; $start += $step * 60) {
-                $end = $start + $length;
-                $slots[$start] = [
-                    'start' => $start,
-                    'end' => $start + $duration * 60,
-                    'reserved_until' => $end,
-                ];
+            if ($from < $to) {
+                $clipped[] = [$from, $to];
             }
         }
-        ksort($slots, SORT_NUMERIC);
-        return array_values($slots);
+        return $clipped;
+    }
+
+    /** The last local date (Y-m-d) the calendar accepts bookings for, from its horizon and the refresh rule. */
+    public function latestBookableDate(array $calendar, array $settings, int $now): string
+    {
+        $timezone = new \DateTimeZone($calendar['options']['timezone'] ?? 'UTC');
+        $nowLocal = (new \DateTimeImmutable('@' . $now))->setTimezone($timezone);
+        $bookingDaysValue = $calendar['options']['avb'] ?? 60;
+        if (!is_numeric($bookingDaysValue) || !is_finite((float) $bookingDaysValue)
+            || (float) $bookingDaysValue !== (float) (int) $bookingDaysValue) {
+            throw new BookingException(__('Invalid booking horizon. Review your calendar settings.', 'wappointment'), 409);
+        }
+        $bookingDays = (int) $bookingDaysValue;
+        if ($bookingDays < 1 || $bookingDays > 365) {
+            throw new BookingException(__('Invalid booking horizon. Review your calendar settings.', 'wappointment'), 409);
+        }
+        $refreshAt = $settings['refreshavb_at'] ?? 23;
+        if (!is_numeric($refreshAt) || !is_finite((float) $refreshAt) || $refreshAt < 0 || $refreshAt > 23) {
+            throw new BookingException(__('Invalid availability refresh time. Review booking settings.', 'wappointment'), 409);
+        }
+        $refreshEnabled = $settings['allow_refreshavb'] ?? false;
+        if (!in_array($refreshEnabled, [true, false, 0, 1, '0', '1'], true)) {
+            throw new BookingException(__('Invalid availability refresh setting. Review booking settings.', 'wappointment'), 409);
+        }
+        $effectiveDays = $bookingDays;
+        if (!empty($refreshEnabled) && (float) $nowLocal->format('G') < (float) $refreshAt) {
+            $effectiveDays--;
+        }
+        return $nowLocal->modify('+' . $effectiveDays . ' days')->format('Y-m-d');
     }
 
     private function minute(\DateTimeImmutable $day, int $minute): int

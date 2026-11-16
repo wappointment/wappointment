@@ -82,6 +82,7 @@ beforeEach(function () {
         'notify_new_appointments' => true, 'notify_pending_appointments' => true,
         'notify_rescheduled_appointments' => true, 'notify_canceled_appointments' => true,
     ], false);
+    delete_option(\Wappointment\Repositories\SummaryRepository::SENT_OPTION);
     Container::getInstance()->make(Settings::class)->clearCache();
     $this->mail = [];
     $this->mailResult = true;
@@ -458,4 +459,124 @@ test('the worker is scheduled once in WP-cron and skips sites whose schema is no
     }
     JobScheduler::run();
     expect(queuedNotifications())->toBe([])->and($this->mail)->toHaveCount(1);
+})->group('booking-integration');
+
+/** Pending summary jobs as "<kind>:<period start>" => send time. */
+function queuedSummaries(): array
+{
+    global $wpdb;
+    $summaries = [];
+    foreach ($wpdb->get_results('SELECT * FROM ' . queueTable() . ' ORDER BY id', ARRAY_A) as $row) {
+        $job = QueuedJob::fromRow($row);
+        if ($job->type === JobRegistry::ADMIN_SUMMARY) {
+            $summaries[$job->params['kind'] . ':' . $job->params['period_start']] = (int) $row['available_at'];
+        }
+    }
+    return $summaries;
+}
+
+function summaryLocal(string $local): int
+{
+    return (new DateTimeImmutable($local, new DateTimeZone('Europe/Paris')))->getTimestamp();
+}
+
+test('summary jobs follow the settings: one per calendar, moved with the hour, removed when turned off', function () {
+    bookingFixture();
+    $now = summaryLocal('2030-03-04 08:00');
+    queueSettings(['daily_summary' => true, 'daily_summary_time' => 10]);
+    expect(queueWorker($now)['scheduled'])->toBe(1)
+        ->and(queuedSummaries())->toBe(['daily:2030-03-05' => summaryLocal('2030-03-04 10:00')])
+        ->and(queueWorker($now + 60)['scheduled'])->toBe(0)
+        ->and(queuedSummaries())->toHaveCount(1);
+
+    queueSettings(['daily_summary_time' => 18]);
+    $report = queueWorker($now + 120);
+    expect($report['unscheduled'])->toBe(1)->and($report['scheduled'])->toBe(1)
+        ->and(queuedSummaries())->toBe(['daily:2030-03-05' => summaryLocal('2030-03-04 18:00')]);
+
+    // 2030-03-04 is a Monday; weekday 3 is Wednesday.
+    queueSettings(['weekly_summary' => true, 'weekly_summary_day' => 3, 'weekly_summary_time' => 9]);
+    queueWorker($now + 180);
+    expect(queuedSummaries())->toBe([
+        'daily:2030-03-05' => summaryLocal('2030-03-04 18:00'),
+        'weekly:2030-03-07' => summaryLocal('2030-03-06 09:00'),
+    ]);
+
+    queueSettings(['daily_summary' => false, 'weekly_summary' => false]);
+    expect(queueWorker($now + 240)['unscheduled'])->toBe(2)
+        ->and(queuedSummaries())->toBe([])
+        ->and($this->mail)->toBe([]);
+})->group('booking-integration');
+
+test('the daily summary reports the next day to the organizers once, then schedules the following day', function () {
+    global $wpdb;
+    $input = bookingFixture();
+    expect(bookingRest('/booking', 'POST', $input)['status'])->toBe(201);
+    $wpdb->update(queueTable('calendars'), ['wp_uid' => 1], ['id' => $input['calendar_id']]);
+    // Only the summary is under test: drop the booking notifications.
+    $wpdb->query('DELETE FROM ' . queueTable());
+    $day = (new DateTimeImmutable('@' . $input['start']))->setTimezone(new DateTimeZone('Europe/Paris'));
+    $before = $day->modify('-1 day')->setTime(10, 0)->getTimestamp();
+    queueSettings(['daily_summary' => true, 'daily_summary_time' => 10, 'date_format' => 'Y-m-d', 'time_format' => 'H:i']);
+
+    expect(queueWorker($before - 3600)['completed'])->toBe(0)
+        ->and(queuedSummaries())->toBe(['daily:' . $day->format('Y-m-d') => $before]);
+    $report = queueWorker($before);
+    expect($report['completed'])->toBe(1)->and($this->mail)->toHaveCount(1);
+
+    $mail = $this->mail[0];
+    $admin = get_userdata(1)->user_email;
+    // 09:00-17:00 schedule, one 30 minute booking plus its 15 minute buffer at 09:00.
+    expect($mail['to'])->toBe(['ops@example.invalid', $admin])
+        ->and($mail['subject'])->toBe('Daily summary for ' . $day->format('Y-m-d'))
+        ->and($mail['message'])->toContain('New Appointments: 1')
+        ->and($mail['message'])->toContain('Available slots: 14 (duration 30 min)')
+        ->and($mail['message'])->toContain('Coverage: 9%')
+        ->and($mail['message'])->toContain($day->format('H:i') . ' Booking Test / 30 min - Office')
+        ->and($mail['message'])->toContain($input['email'])
+        ->and($mail['message'])->not->toContain('Open new slots');
+
+    // Sent once: the next job is for the following day, and moving the hour later today
+    // does not produce a second summary for the same day.
+    $next = $day->modify('+1 day')->format('Y-m-d');
+    expect(queuedSummaries())->toBe([])
+        ->and(queueWorker($before + 60)['scheduled'])->toBe(1)
+        ->and(queuedSummaries())->toBe(['daily:' . $next => $before + DAY_IN_SECONDS]);
+    queueSettings(['daily_summary_time' => 20]);
+    queueWorker($before + 120);
+    expect(array_keys(queuedSummaries()))->toBe(['daily:' . $next])
+        ->and(queueWorker($day->modify('-1 day')->setTime(20, 0)->getTimestamp())['completed'])->toBe(0)
+        ->and($this->mail)->toHaveCount(1);
+})->group('booking-integration');
+
+test('a summary whose period has begun fails visibly instead of describing a day under way', function () {
+    global $wpdb;
+    bookingFixture();
+    $now = summaryLocal('2030-03-04 08:00');
+    queueSettings(['daily_summary' => true, 'daily_summary_time' => 10]);
+    queueWorker($now);
+    // The site was down until after midnight: the summary for 2030-03-05 is now stale.
+    $report = queueWorker(summaryLocal('2030-03-05 00:30'));
+    $exception = json_decode((string) $wpdb->get_var('SELECT exception FROM ' . queueTable('failed_jobs')), true);
+    expect($report['failed'])->toBe(1)
+        ->and($exception['message'])->toContain('was not sent before the period began')
+        ->and($this->mail)->toBe([])
+        ->and(queueWorker(summaryLocal('2030-03-05 00:31'))['scheduled'])->toBe(1)
+        ->and(queuedSummaries())->toBe(['daily:2030-03-06' => summaryLocal('2030-03-05 10:00')]);
+})->group('booking-integration');
+
+test('a fully booked or closed day offers to open new slots', function () {
+    bookingFixture();
+    global $wpdb;
+    $calendar = $wpdb->get_row('SELECT id, options FROM ' . queueTable('calendars'), ARRAY_A);
+    $options = json_decode($calendar['options'], true);
+    $options['regav'] = array_merge($options['regav'], ['tuesday' => []]);
+    $wpdb->update(queueTable('calendars'), ['options' => wp_json_encode($options)], ['id' => $calendar['id']]);
+    queueSettings(['daily_summary' => true, 'daily_summary_time' => 10, 'date_format' => 'Y-m-d']);
+    // 2030-03-05 is a Tuesday.
+    queueWorker(summaryLocal('2030-03-04 08:00'));
+    expect(queueWorker(summaryLocal('2030-03-04 10:00'))['completed'])->toBe(1)
+        ->and($this->mail[0]['message'])->toContain('No availabilities for 2030-03-05')
+        ->and($this->mail[0]['message'])->toContain('Open new slots')
+        ->and($this->mail[0]['message'])->toContain('page=wappointment-appointments');
 })->group('booking-integration');

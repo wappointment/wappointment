@@ -10,6 +10,7 @@ namespace Wappointment\Jobs;
 final class JobRegistry
 {
     public const BOOKING_NOTIFICATION = 'booking_notification';
+    public const ADMIN_SUMMARY = 'admin_summary';
 
     /** Queue names written by v3. Legacy queues (client, admin, api, availability, daily, ...) are left untouched. */
     public const NOTIFICATIONS_QUEUE = 'v3_notifications';
@@ -18,6 +19,10 @@ final class JobRegistry
         self::BOOKING_NOTIFICATION => [
             'queue' => self::NOTIFICATIONS_QUEUE,
             'handler' => BookingNotificationJob::class,
+        ],
+        self::ADMIN_SUMMARY => [
+            'queue' => self::NOTIFICATIONS_QUEUE,
+            'handler' => AdminSummaryJob::class,
         ],
     ];
 
