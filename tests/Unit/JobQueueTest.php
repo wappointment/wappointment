@@ -2,7 +2,6 @@
 declare(strict_types=1);
 
 use Wappointment\Jobs\BookingNotificationJob;
-use Wappointment\Jobs\BookingNotificationMessage;
 use Wappointment\Jobs\BookingNotificationPlan;
 use Wappointment\Jobs\JobRegistry;
 use Wappointment\Jobs\PermanentJobFailure;
@@ -104,30 +103,4 @@ test('unknown transitions are programming errors, not silent no-ops', function (
         ->and(BookingNotificationPlan::exists('customer_reminder'))->toBeFalse()
         ->and(BookingNotificationPlan::isCustomer('customer_canceled'))->toBeTrue()
         ->and(BookingNotificationPlan::isCustomer('admin_canceled'))->toBeFalse();
-});
-
-test('notification messages show local times, changes and only the details each recipient needs', function () {
-    $context = [
-        'client_name' => 'Ada', 'client_email' => 'ada@example.invalid', 'client_phone' => '+32 2 000',
-        'service_name' => 'Consultation', 'location_name' => 'Office',
-        'start' => 1893574800, 'end' => 1893576600, 'previous_start' => 1893571200, 'previous_end' => 1893573000,
-        'timezone' => 'Europe/Brussels',
-    ];
-    $customer = BookingNotificationMessage::compose('customer_rescheduled', $context, 'https://example.invalid/book#wappointment=abc');
-    expect($customer['subject'])->toBe('Your appointment was rescheduled')
-        ->and($customer['body'])->toContain('When: Wednesday 2 January 2030, 10:00 - 10:30 (Europe/Brussels)')
-        ->and($customer['body'])->toContain('Previously: Wednesday 2 January 2030, 09:00 - 09:30 (Europe/Brussels)')
-        ->and($customer['body'])->toContain('Manage your appointment: https://example.invalid/book#wappointment=abc')
-        ->and($customer['body'])->not->toContain('ada@example.invalid')
-        ->and($customer['body'])->not->toContain('+32');
-
-    $admin = BookingNotificationMessage::compose('admin_new', ['previous_start' => null, 'previous_end' => null, 'timezone' => 'bogus/zone'] + $context, null);
-    expect($admin['subject'])->toBe('New appointment: Ada')
-        ->and($admin['body'])->toContain('Client: Ada <ada@example.invalid>')
-        ->and($admin['body'])->toContain('Phone: +32 2 000')
-        ->and($admin['body'])->toContain('(UTC)')
-        ->and($admin['body'])->not->toContain('Previously')
-        ->and($admin['body'])->not->toContain('Manage your appointment');
-
-    expect(fn() => BookingNotificationMessage::compose('customer_reminder', $context, null))->toThrow(PermanentJobFailure::class);
 });

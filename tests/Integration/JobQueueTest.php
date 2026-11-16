@@ -42,9 +42,10 @@ function queueSettings(array $values): void
 /** Publish legacy email reminders for the given events (2 confirmed, 3 rescheduled, 4 canceled, 5 pending). */
 function queuePublishReminders(int ...$events): void
 {
-    global $wpdb;
     foreach ($events as $event) {
-        $wpdb->insert(queueTable('reminders'), ['subject' => 'Reminder ' . $event, 'type' => 1, 'event' => $event, 'published' => 1]);
+        bookingPublishEmailTemplate($event, 'Reminder ' . $event . ' for [client:name]', [
+            'Dear [client:name],', '', 'Your [service:name] starts on [appointment:starts].',
+        ]);
     }
 }
 
@@ -191,9 +192,17 @@ test('confirm, reschedule and cancel each deliver one customer and one organizer
         foreach ([0, 2, 4, 6] as $index) {
             expect($this->mail[$index]['to'])->toBe([$input['email']]);
         }
-        expect($this->mail[4]['message'])->toContain('Previously:')
-            ->and($this->mail[4]['message'])->toContain('#wappointment=' . $booking['edit_key'])
-            ->and($this->mail[6]['message'])->not->toContain('#wappointment=');
+        expect($this->mail[4]['subject'])->toBe('Reminder 3 for Booking Test')
+            ->and($this->mail[4]['message'])->toContain("Dear Booking Test,\n\nYour Free consultation starts on")
+            ->and($this->mail[4]['message'])->toContain('(Europe/Paris)')
+            // Confirmed and rescheduled emails carry the legacy footer links on the booking page.
+            ->and($this->mail[4]['message'])->toContain(add_query_arg(['view' => 'reschedule-event', 'appointmentkey' => $booking['edit_key']], get_permalink($page)))
+            ->and($this->mail[4]['message'])->toContain('view=add-event-to-calendar')
+            ->and($this->mail[5]['subject'])->toBe('Rescheduled appointment')
+            ->and($this->mail[5]['message'])->toContain('Former appointment')
+            // Pending and canceled emails have no footer links.
+            ->and($this->mail[0]['message'])->not->toContain('appointmentkey=')
+            ->and($this->mail[6]['message'])->not->toContain('appointmentkey=');
 
         // Re-running the worker (for example after a restart) sends nothing more.
         expect(queueWorker(time() + 3600)['completed'])->toBe(0)->and($this->mail)->toHaveCount(8);
@@ -245,6 +254,40 @@ test('permanent failures skip retries and keep the booking saved', function () {
         ->and($exception['message'])->toContain('"smtp" has not been migrated')
         ->and($this->mail)->toBe([])
         ->and((int) $wpdb->get_var($wpdb->prepare('SELECT status FROM ' . queueTable('appointments') . ' WHERE id = %d', $booking['id'])))->toBe(1);
+})->group('booking-integration');
+
+test('customer emails use the template in the client locale and fail visibly when it cannot be rendered', function () {
+    global $wpdb;
+    $page = queueBookingPage();
+    try {
+        queueSettings(['notify_new_appointments' => false, 'mail_config' => ['method' => 'wpmail', 'wpmail_html' => true]]);
+        bookingPublishEmailTemplate(2, 'English', ['Hello [client:name]']);
+        bookingPublishEmailTemplate(2, 'Français', ['Bonjour [client:name]'], 'fr_FR');
+        $booking = bookingRest('/booking', 'POST', bookingFixture())['body']['data'];
+        $wpdb->update(queueTable('clients'), ['options' => wp_json_encode(['tz' => 'Europe/Paris', 'locale' => 'fr_FR'])],
+            ['id' => (int) $wpdb->get_var($wpdb->prepare('SELECT client_id FROM ' . queueTable('appointments') . ' WHERE id = %d', $booking['id']))]);
+        expect(queueWorker(time())['completed'])->toBe(1)
+            ->and($this->mail[0]['subject'])->toBe('Français')
+            ->and($this->mail[0]['message'])->toStartWith('<!DOCTYPE html>')
+            ->and($this->mail[0]['message'])->toContain('<p>Bonjour Booking Test</p>')
+            ->and(implode("\n", (array) $this->mail[0]['headers']))->toContain('Content-Type: text/html');
+
+        $wpdb->query('DELETE FROM ' . queueTable('reminders'));
+        $wpdb->insert(queueTable('reminders'), [
+            'subject' => 'Broken', 'type' => 1, 'event' => 2, 'published' => 1,
+            'options' => wp_json_encode(['body' => ['type' => 'doc', 'content' => [['type' => 'image', 'attrs' => ['src' => 'x']]]]]),
+        ]);
+        $templateId = (int) $wpdb->insert_id;
+        $second = bookingRest('/booking', 'POST', array_merge(bookingFixture(), ['email' => 'second@example.invalid']))['body']['data'];
+        $report = queueWorker(time());
+        $exception = json_decode($wpdb->get_var('SELECT exception FROM ' . queueTable('failed_jobs')), true, 512, JSON_THROW_ON_ERROR);
+        expect($report['failed'])->toBe(1)->and($report['retried'])->toBe(0)
+            ->and($exception['message'])->toContain('Email template ' . $templateId . ' cannot be rendered')
+            ->and($this->mail)->toHaveCount(1)
+            ->and((int) $wpdb->get_var($wpdb->prepare('SELECT status FROM ' . queueTable('appointments') . ' WHERE id = %d', $second['id'])))->toBe(1);
+    } finally {
+        wp_delete_post($page, true);
+    }
 })->group('booking-integration');
 
 test('a reservation abandoned by a stopped worker is reported, never re-sent', function () {

@@ -1373,7 +1373,7 @@ test('confirmation emails are queued with the booking and delivered once by the 
     $settings = \Wappointment\System\Container::getInstance()->make(\Wappointment\System\Settings::class);
     $settings->setMultiple(['mail_status' => true, 'booking_page' => $page, 'notify_new_appointments' => false]);
     // Legacy semantics: a published email reminder for the "confirmed" event enables the customer email.
-    $wpdb->insert($wpdb->prefix . 'wappo_reminders', ['subject' => 'Confirmed', 'type' => 1, 'event' => 2, 'published' => 1]);
+    bookingPublishEmailTemplate(2, 'Confirmed', ['Your appointment is confirmed.']);
     $messages = [];
     $capture = static function ($return, $attributes) use (&$messages) {
         $messages[] = $attributes;
@@ -1389,7 +1389,9 @@ test('confirmation emails are queued with the booking and delivered once by the 
         expect($worker->execute(time())['completed'])->toBe(1)
             ->and($messages)->toHaveCount(1)
             ->and($messages[0]['to'])->toBe([$input['email']])
-            ->and($messages[0]['message'])->toContain(get_permalink($page) . '#wappointment=' . $result['body']['data']['edit_key']);
+            ->and($messages[0]['message'])->toContain(add_query_arg([
+                'view' => 'reschedule-event', 'appointmentkey' => $result['body']['data']['edit_key'],
+            ], get_permalink($page)));
         expect($worker->execute(time() + 3600)['completed'])->toBe(0)
             ->and($messages)->toHaveCount(1);
     } finally {

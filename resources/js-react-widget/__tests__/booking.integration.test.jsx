@@ -286,6 +286,39 @@ test('legacy cancellation links ask for confirmation before changing the appoint
     });
 });
 
+test('legacy emailed save-to-calendar links download the confirmed appointment', async () => {
+    // Every v2 confirmation email links to `view=add-event-to-calendar`; v3 emails keep that name.
+    window.history.replaceState({}, '', `/?view=add-event-to-calendar&appointmentkey=${appointment.edit_key}`);
+    bookingFetch.mockImplementation((path, data) => {
+        if (path === '/booking/manage' && data.action === 'view') return Promise.resolve({ ...appointment, status: 1 });
+        if (path === '/booking/catalog') return Promise.resolve(catalog);
+        return Promise.reject(new Error(`Unexpected booking endpoint: ${path}`));
+    });
+    const originalCreateObjectURL = URL.createObjectURL;
+    const originalRevokeObjectURL = URL.revokeObjectURL;
+    const createObjectURL = jest.fn(() => 'blob:wappointment-legacy');
+    const clickAnchor = jest.spyOn(HTMLAnchorElement.prototype, 'click').mockImplementation(() => {});
+    Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: createObjectURL });
+    Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: jest.fn() });
+    try {
+        render(<BookingWidget title="Reserve a meeting" />);
+        await waitFor(() => expect(createObjectURL).toHaveBeenCalledTimes(1));
+        expect(clickAnchor).toHaveBeenCalledTimes(1);
+    } finally {
+        clickAnchor.mockRestore();
+        if (originalCreateObjectURL) {
+            Object.defineProperty(URL, 'createObjectURL', { configurable: true, value: originalCreateObjectURL });
+        } else {
+            delete URL.createObjectURL;
+        }
+        if (originalRevokeObjectURL) {
+            Object.defineProperty(URL, 'revokeObjectURL', { configurable: true, value: originalRevokeObjectURL });
+        } else {
+            delete URL.revokeObjectURL;
+        }
+    }
+});
+
 test('popup dialog closes with Escape and returns keyboard focus to its trigger', async () => {
     render(<BookingWidget title="Reserve a meeting" configuration={{ open: true, popup: true, close_cross: true }} />);
     expect(await screen.findByRole('dialog', { name: 'Reserve a meeting' })).toBeVisible();

@@ -316,7 +316,7 @@ export default function BookingWidget({
     }, [appointment, legacyView]);
 
     useEffect(() => {
-        if (!appointment || !catalog || legacyView !== 'add-to-calendar' || appointment.status !== 1
+        if (!appointment || !catalog || !['add-to-calendar', 'add-event-to-calendar'].includes(legacyView) || appointment.status !== 1
             || calendarDownloadKey.current === appointment.edit_key) return;
         try {
             downloadCalendarEvent(appointment, appointment.service_name || title);

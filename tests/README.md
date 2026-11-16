@@ -105,7 +105,11 @@ fixture; the v3 queue leaves such rows untouched.
 Unit coverage (`tests/Unit/JobQueueTest.php`) runs without WordPress: v3 payload
 round-trips, refusal of legacy class-name/malformed/unknown-version payloads, the closed
 job-type registry, bounded retry/backoff and timeout detection, the legacy notification
-toggle matrix, and plain-text message content and timezones.
+toggle matrix. `tests/Unit/EmailTemplateTest.php` covers stored-template rendering:
+legacy seeded bodies, escaping of tag values and links, blank-line paragraphs,
+conditional blocks per appointment type, footer links, test/RTL handling, visible
+failure for malformed templates, organizer email content, and the plain-text version
+(its expected string is legacy `ConvertHtmlToText` output for the same input).
 
 The integration suite (`tests/Integration/JobQueueTest.php`) uses the same disposable
 `booking_test` stack as `BookingTest.php` and the same Pest command, with this file
@@ -117,7 +121,10 @@ pass; retry with backoff to `wappo_failed_jobs` after three rejected sends; imme
 failure for an unmigrated transport; no resend of abandoned reservations; legacy rows
 left untouched while unsupported v3-queue payloads are quarantined; the worker lock
 held from a second database connection; single-claim rows; and WP-cron scheduling.
-Both PHP files share `tests/Integration/booking-helpers.php`.
+It also checks rendered template content and legacy-format footer links, the
+client-locale template choice with HTML mail, and that an unrenderable template fails
+the job permanently while the booking stays saved. Fixtures store TipTap bodies with
+`bookingPublishEmailTemplate()`; both PHP files share `tests/Integration/booking-helpers.php`.
 
 ## Legacy availability runtime characterization
 

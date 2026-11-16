@@ -213,11 +213,11 @@ is a minimum requirement, in addition to the cross-cutting test gates in section
 
 | ID | Feature and evidence | v3 status | Planned migration / wave | Acceptance |
 |---|---|---|---|---|
-| F31 | Confirmed/pending/canceled/rescheduled customer and organizer notifications (E02/E10) | Partial (W5 slice 1): transactional queueing for book/confirm/reschedule/cancel with legacy `mail_status`/`notify_*`/published-reminder gating and organizer recipients; basic plain-text messages delivered by the worker. Reminder-template rendering (F32) is still missing | Domain event -> durable job -> delivery Actions; preserve per-event toggles and recipients. W5 | One intended notification per transition; confirmation versus approval distinguished; failures observable without rolling back an already-saved booking. |
-| F32 | Reminder editor, publication/locking, preview, tags, links, HTML/plain text and attachments (E05/E10/E15) | Missing | Reminder CRUD/preview UseCases, template Data and renderer; migrate `lang`/`parent` relationships and per-service/modality rules. W5 | Existing templates render with equivalent vocabulary; timing/publication respected; malformed templates fail visibly; previews use safe fixture data; links and ICS valid. |
+| F31 | Confirmed/pending/canceled/rescheduled customer and organizer notifications (E02/E10) | Partial (W5 slices 1-2): transactional queueing for book/confirm/reschedule/cancel with legacy `mail_status`/`notify_*`/published-reminder gating and organizer recipients; customer emails render the stored templates (F32) and organizer emails carry the legacy detail content. ICS attachments (F37) and timed reminders (F33) remain | Domain event -> durable job -> delivery Actions; preserve per-event toggles and recipients. W5 | One intended notification per transition; confirmation versus approval distinguished; failures observable without rolling back an already-saved booking. |
+| F32 | Reminder editor, publication/locking, preview, tags, links, HTML/plain text and attachments (E05/E10/E15) | Partial (W5 slice 2): published templates render at delivery with locale preference, the legacy tag/link vocabulary (escaped), modality blocks, footer links, logo, RTL and a plain-text alternative; malformed templates fail visibly. Editor CRUD/publication/preview, fresh-install seeding, ICS attachments and add-on tags remain | Reminder CRUD/preview UseCases, template Data and renderer; migrate `lang`/`parent` relationships and per-service/modality rules. W5 | Existing templates render with equivalent vocabulary; timing/publication respected; malformed templates fail visibly; previews use safe fixture data; links and ICS valid. |
 | F33 | Reminder timing and daily/weekly summaries (E10/E11) | Missing | Typed scheduled jobs and timezone-aware schedulers with duplicate suppression. W5 | Frozen clock/DST cases; canceled/rescheduled bookings invalidate stale jobs; recipient preferences respected; no duplicate summaries after worker retry/restart. |
 | F34 | Queue worker, retries/failed jobs, reservation recovery, cron and pending cleanup (E11/E14/E16) | Partial (W5 slice 1): repository-backed worker on `wappo_jobs`, restricted type registry, minute WP-cron hook, worker lock, bounded retry, failed-job records, no-resend timeout recovery; legacy rows are left untouched and counted. Legacy payload conversion, pending-payment cleanup and the operational UI remain | Native WP-cron trigger plus durable repository-backed job dispatcher, restricted job-type registry and operational UI. W1/W5 | Concurrency-safe claiming; timeout recovery; bounded retry/failure state; unsupported legacy jobs quarantined/reported; no arbitrary class execution or dropped pending reminders. |
-| F35 | Mail configuraCustom rewrite routetion, sender/footer/logo, HTML/plain text and test email (E05/E10/E11/E15) | Partial: basic `wp_mail` only | Transport adapter inventory from actual mail configuration; port core-supported choices, retaining WP mail plugin interoperability. W5 | Each advertised transport is exercised on staging; credentials protected; test-email failures clear; attachment/HTML preferences and sender options honored. SMTP/Mailgun-like config keys alone are not runtime certification. |
+| F35 | Mail configuration, sender/footer/logo, HTML/plain text and test email (E05/E10/E11/E15) | Partial: `wp_mail` only; legacy `wpmail_html`/SMTP-plugin HTML-versus-text choice, footer text and logo honored; other transports fail explicitly; no test email yet | Transport adapter inventory from actual mail configuration; port core-supported choices, retaining WP mail plugin interoperability. W5 | Each advertised transport is exercised on staging; credentials protected; test-email failures clear; attachment/HTML preferences and sender options honored. SMTP/Mailgun-like config keys alone are not runtime certification. |
 | F36 | Incoming ICS feeds: connect/validate/refresh/disconnect, logs and recurring external events (E03/E13) | Missing: configured sync currently blocks booking | Restore URL import with recurrence/timezone parsing, bounded fetches/change detection and availability invalidation. W6 | Recurring/changed/deleted/all-day external events tested; unchanged feed not duplicated; refresh/disconnect releases correct intervals; failure/staleness policy explicit. This is not provider OAuth write-back. |
 | F37 | Outgoing appointment ICS/export and external calendar subscriptions (E07/E12/E13) | Missing/Boundary | Restore confirmed core download/export behavior; establish which subscription/write-back paths belong to remote service or Syncal. W6 | Import into calendar client; identifiers/timezones/escaping correct; authorized feed access and canceled/changed events handled; no false claim of two-way sync. |
 | F38 | Connected Wappointment account and automatic meeting/provider synchronization (E01/E13/E17) | Missing/Boundary: core contains connection routes/UI | Explicit remote-service adapter and capability inventory using an authorized test account after free/paid verification. W6 | Connect/disconnect/refresh/provider failure/revoked access tested; no fictitious meeting URL; booking persistence and retry behavior defined. Do not assume Zoom/GoogleMeet are paid-only from names or UI injection points. |
@@ -655,6 +655,60 @@ source audit shows that is wrong; no condition evaluation was added to free.
   The new Pest unit and integration suites (`tests/Unit/JobQueueTest.php`,
   `tests/Integration/JobQueueTest.php`) and the updated widget Jest suite were not
   executed in this session because Composer/npm dependencies could not be installed.
+
+### W5 implementation progress: stored email templates (2026-11-16)
+
+- Legacy reference (master `fcf2cfe`): customer emails load the published
+  `wappo_reminders` row (`type = 1`) for the event, preferring the client's
+  `options.locale` and otherwise taking the first published row whatever its `lang`;
+  `options.body` is a TipTap document rendered by `Helpers\TipTap::toHTML` after
+  `Reminder::filterBody` drops conditional blocks (`cblockphysical`/`cblockphone`/
+  `cblockzoom`) that do not match `appointments.type` (0/1/5). Tags are replaced by
+  `str_replace` over the final HTML (`Messages\TagsReplacement`, `Lists/email_tags.php`,
+  `Lists/email_links.php`). Confirmed/rescheduled/reminder emails append `email_footer`
+  and save/reschedule/cancel links (`HasAppointmentFooterLinks`, gated only by
+  `allow_rescheduling`/`allow_cancellation`); pending/canceled emails have none. A
+  `test_appointment` client prefixes the subject with `[TEST_EMAIL]`; client
+  `options.rtl` switches direction; `email_logo.src` is the header image. Organizer
+  emails never used templates (`AdminGeneratesDefault`).
+- Findings while characterizing: legacy read the subject before replacing tags, so
+  tags in subjects were sent literally; empty paragraphs render as blank lines
+  (`<p><br/></p>`); `appointment:location` and the address fall back to the service
+  address/empty when the appointment has no `location_id`; links use the legacy
+  `front_page` with `?view=…&appointmentkey=…`, and the save-to-calendar view is
+  named `add-event-to-calendar` (the v3 widget only recognized `add-to-calendar`, so
+  every saved v2 save-to-calendar link was inert; it now accepts both). Legacy
+  `wpmail` sent plain text unless `wpmail_html` was on or WP Mail SMTP, Post SMTP,
+  WP HTML Mail or Fluent SMTP was active; ICS attachments were only attached on the
+  multipart path.
+- v3 (`app/Notifications`): `TipTapRenderer` maps the same nodes and marks
+  (plus blockquote/code/rule produced by editor shortcuts) and escapes text, tag
+  values and link targets; `javascript:` and other non-http(s)/mailto/tel links are
+  dropped. Unknown nodes (image, todo lists) or marks, a non-document body, a blank
+  subject or blank content make the job fail permanently with the template ID instead
+  of sending broken or empty mail (legacy silently skipped a bodiless template).
+  Unknown tags are kept literally, as legacy did. `CustomerEmail`/`AdminEmail` produce
+  subject, HTML and a plain-text version (`HtmlToText`, matching legacy output);
+  `Mailer` sends HTML with the text as `AltBody` under the legacy HTML conditions and
+  plain text otherwise. Subjects now get their tags replaced (intentional fix).
+- Links: v3 `booking_page`, else legacy `front_page`, when published and holding
+  `[wap_widget]`/`[wappointment_page]`; the legacy `wappointment` custom post type is
+  not served by v3 and is skipped (F25 owns that page variant). Without a page,
+  link tags render their text without a target and the email is still sent.
+- Deliberate gaps, tracked elsewhere: `.ics` attachments and the organizer "Ps: an
+  .ics file is attached" line wait for F37; `order:summary` resolves empty until F40;
+  `appointment:linkView` is the page view link because provider meeting URLs are F38;
+  add-on tags (client custom fields, staff custom fields under `allow_staff_cf`) stay
+  literal until their owners migrate; the Foundation/Emogrifier layout is replaced by
+  a small inline-styled frame (no Composer packages), so styling is equivalent, not
+  identical. Fresh v3 installs still seed no templates (decision above still open).
+- Validation: `php -l` on all changed PHP; standalone harnesses rendered the legacy
+  seeded bodies through both legacy `TipTap::toHTML` and v3 and drove the delivery
+  Action and Mailer against WordPress stubs (locale lookup, front/booking page links,
+  text/HTML modes, failure paths); `HtmlToText` output was compared with legacy
+  `ConvertHtmlToText` on the same input. `tests/Unit/EmailTemplateTest.php` passed
+  under a minimal Pest-compatible runner. Real Pest, the integration suites and Jest
+  were not run (Composer/npm dependencies cannot be installed in this session).
 
 V3 continues to reject pre-notice slots that a legacy browser edge case might expose;
 this is an intentional safe validation difference, not an authorization bypass.

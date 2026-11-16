@@ -38,3 +38,28 @@ if (!function_exists('bookingFixture')) {
         return $input;
     }
 }
+
+if (!function_exists('bookingPublishEmailTemplate')) {
+    /**
+     * Store a published email reminder the way legacy master does: `options.body` holds
+     * a TipTap document. Event codes: 2 confirmed, 3 rescheduled, 4 canceled, 5 pending.
+     *
+     * @param list<string> $paragraphs text that may contain `[model:key]` tags
+     */
+    function bookingPublishEmailTemplate(int $event, string $subject, array $paragraphs, ?string $lang = null): int
+    {
+        global $wpdb;
+        $body = ['type' => 'doc', 'content' => array_map(
+            static fn(string $text): array => $text === ''
+                ? ['type' => 'paragraph']
+                : ['type' => 'paragraph', 'content' => [['type' => 'text', 'text' => $text]]],
+            $paragraphs
+        )];
+        $inserted = $wpdb->insert($wpdb->prefix . 'wappo_reminders', [
+            'subject' => $subject, 'type' => 1, 'event' => $event, 'published' => 1, 'locked' => 1,
+            'options' => wp_json_encode(['body' => $body]), 'lang' => $lang,
+        ]);
+        expect($inserted)->toBe(1);
+        return (int) $wpdb->insert_id;
+    }
+}
