@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Wappointment\Actions\Booking;
 
+use Wappointment\Actions\Jobs\QueueBookingNotificationsAction;
 use Wappointment\Booking\BookingException;
+use Wappointment\Jobs\BookingNotificationPlan;
 use Wappointment\Http\Requests\CreateBookingRequestData;
 use Wappointment\Repositories\BookingRepository;
 use Wappointment\System\Settings;
@@ -14,7 +16,8 @@ class CreateBookingAction
         private BookingRepository $repository,
         private ValidateBookingSelectionAction $selection,
         private GetSelectedSlotAction $selectedSlot,
-        private Settings $settings
+        private Settings $settings,
+        private QueueBookingNotificationsAction $notifications
     ) {}
 
     public function handle(CreateBookingRequestData $input, array $contact, ?int $owner = null): array
@@ -50,6 +53,10 @@ class CreateBookingAction
                 'created_at' => gmdate('Y-m-d H:i:s'), 'updated_at' => gmdate('Y-m-d H:i:s'),
             ];
             $data['id'] = $this->repository->insert('appointments', $data);
+            $data['notification_queued'] = $this->notifications->handle(
+                $data['status'] === 1 ? BookingNotificationPlan::CONFIRMED : BookingNotificationPlan::BOOKED_PENDING,
+                $data
+            );
             return $data;
         });
     }

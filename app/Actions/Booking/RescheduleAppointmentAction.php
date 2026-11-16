@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Wappointment\Actions\Booking;
 
+use Wappointment\Actions\Jobs\QueueBookingNotificationsAction;
 use Wappointment\Auth\AccessPolicy;
+use Wappointment\Jobs\BookingNotificationPlan;
 use Wappointment\Booking\BookingException;
 use Wappointment\Http\Requests\RescheduleAppointmentRequestData;
 use Wappointment\Repositories\BookingRepository;
@@ -14,7 +16,8 @@ class RescheduleAppointmentAction
         private BookingRepository $repository,
         private AccessPolicy $access,
         private GetRescheduleInputAction $rescheduleInput,
-        private GetSelectedSlotAction $selectedSlot
+        private GetSelectedSlotAction $selectedSlot,
+        private QueueBookingNotificationsAction $notifications
     ) {}
 
     public function handle(RescheduleAppointmentRequestData $input): array
@@ -37,12 +40,14 @@ class RescheduleAppointmentAction
             );
             $options = $appointment['options'];
             $options['sequence'] = (int) ($options['sequence'] ?? 0) + 1;
-            $this->repository->updateAppointment((int) $appointment['id'], [
+            $changes = [
                 'start_at' => gmdate('Y-m-d H:i:s', $slot['start']),
                 'end_at' => gmdate('Y-m-d H:i:s', $slot['reserved_until']),
                 'options' => wp_json_encode($options, JSON_THROW_ON_ERROR),
                 'updated_at' => gmdate('Y-m-d H:i:s'),
-            ]);
+            ];
+            $this->repository->updateAppointment((int) $appointment['id'], $changes);
+            $this->notifications->handle(BookingNotificationPlan::RESCHEDULED, array_merge($appointment, $changes), $appointment);
             return ['updated' => true];
         });
     }

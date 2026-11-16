@@ -531,7 +531,7 @@ export default function BookingWidget({
                         <p>{format(appointment.start)} - {format(appointment.end)}</p>
                         {appointment.service_name && <p>{__('Service:', 'wappointment')} {appointment.service_name}</p>}
                         {appointment.location_name && <p>{__('Location:', 'wappointment')} {appointment.location_name}</p>}
-                        {appointment.notification_sent === false && <p>{__('Your appointment was saved, but no confirmation email was sent. Save your management link below.', 'wappointment')}</p>}
+                        {appointment.notification_queued === false && <p>{__('Your appointment was saved, but no confirmation email will be sent. Save your management link below.', 'wappointment')}</p>}
                         <p><a href={`#wappointment=${appointment.edit_key}`}>{__('Appointment management link', 'wappointment')}</a></p>
                         {confirmCancellation && <div role="alertdialog" aria-labelledby={`${id}-cancel-title`}>
                             <h4 id={`${id}-cancel-title`}>{__('Cancel this appointment?', 'wappointment')}</h4>

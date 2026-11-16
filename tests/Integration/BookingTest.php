@@ -11,42 +11,12 @@ if (DB_NAME !== 'booking_test' || wp_get_environment_type() !== 'local') {
     throw new RuntimeException('Booking integration tests may only run against the disposable local booking_test database.');
 }
 
-function bookingRest(string $path, string $method = 'GET', ?array $data = null): array
-{
-    $request = new WP_REST_Request($method, '/wappointment/v1' . $path);
-    if ($data !== null) {
-        $request->set_header('content-type', 'application/json');
-        $request->set_body(wp_json_encode($data));
-    }
-    $response = rest_do_request($request);
-    return ['status' => $response->get_status(), 'body' => $response->get_data()];
-}
-
-function bookingFixture(): array
-{
-    wp_set_current_user(1);
-    $schedule = array_fill_keys(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'], [[540, 1020]]);
-    $configuration = bookingRest('/booking-settings', 'POST', [
-        'service_name' => 'Free consultation', 'calendar_name' => 'Organizer', 'location_name' => 'Office',
-        'location_type' => 1, 'phone_required' => false, 'duration' => 30, 'booking_days' => 60,
-        'timezone' => 'Europe/Paris', 'regav' => $schedule,
-    ]);
-    expect($configuration['status'])->toBe(200);
-    wp_set_current_user(0);
-    $input = $configuration['body']['data'] + [
-        'duration' => 30, 'date' => gmdate('Y-m-d', time() + 3 * DAY_IN_SECONDS),
-        'name' => 'Booking Test', 'email' => 'booking-test@example.invalid',
-    ];
-    $slots = bookingRest('/booking/availability', 'POST', array_intersect_key($input, \Wappointment\Http\Requests\BookingRequestData::schema()['properties']));
-    expect($slots['status'])->toBe(200);
-    $input['start'] = $slots['body']['data']['slots'][0]['start'];
-    return $input;
-}
+require_once __DIR__ . '/booking-helpers.php';
 
 beforeEach(function () {
     global $wpdb;
     wp_set_current_user(0);
-    foreach (['appointments', 'statuses', 'calendar_service', 'service_location', 'clients', 'services', 'locations', 'calendars'] as $table) {
+    foreach (['jobs', 'failed_jobs', 'reminders', 'appointments', 'statuses', 'calendar_service', 'service_location', 'clients', 'services', 'locations', 'calendars'] as $table) {
         $wpdb->query('DELETE FROM ' . $wpdb->prefix . 'wappo_' . $table);
     }
     update_option('wappointment_settings', [
@@ -276,7 +246,7 @@ test('saves a real booking with UTC times and the original buffer contract', fun
         ->and($booking['calendar_id'])->toBe($input['calendar_id'])
         ->and($booking['location_id'])->toBe($input['location_id'])
         ->and($booking['duration'])->toBe($input['duration'])
-        ->and($booking['notification_sent'])->toBeFalse()
+        ->and($booking['notification_queued'])->toBeFalse()
         ->and($booking['end'] - $booking['start'])->toBe(1800);
     $client = $wpdb->get_row($wpdb->prepare(
         "SELECT options FROM {$wpdb->prefix}wappo_clients WHERE email = %s",
@@ -1392,7 +1362,8 @@ test('settings persistence does not report an unsuccessful write as saved', func
     }
 })->group('booking-integration');
 
-test('confirmation emails use a working booking page link and report actual mail acceptance', function () {
+test('confirmation emails are queued with the booking and delivered once by the worker with a working link', function () {
+    global $wpdb;
     $input = bookingFixture();
     $page = wp_insert_post([
         'post_title' => 'Disposable booking page', 'post_status' => 'publish',
@@ -1400,7 +1371,9 @@ test('confirmation emails use a working booking page link and report actual mail
     ], true);
     expect(is_wp_error($page))->toBeFalse();
     $settings = \Wappointment\System\Container::getInstance()->make(\Wappointment\System\Settings::class);
-    $settings->setMultiple(['mail_status' => true, 'booking_page' => $page]);
+    $settings->setMultiple(['mail_status' => true, 'booking_page' => $page, 'notify_new_appointments' => false]);
+    // Legacy semantics: a published email reminder for the "confirmed" event enables the customer email.
+    $wpdb->insert($wpdb->prefix . 'wappo_reminders', ['subject' => 'Confirmed', 'type' => 1, 'event' => 2, 'published' => 1]);
     $messages = [];
     $capture = static function ($return, $attributes) use (&$messages) {
         $messages[] = $attributes;
@@ -1410,10 +1383,15 @@ test('confirmation emails use a working booking page link and report actual mail
     try {
         $result = bookingRest('/booking', 'POST', $input);
         expect($result['status'])->toBe(201)
-            ->and($result['body']['data']['notification_sent'])->toBeTrue()
+            ->and($result['body']['data']['notification_queued'])->toBeTrue()
+            ->and($messages)->toBe([]);
+        $worker = \Wappointment\System\Container::getInstance()->make(\Wappointment\UseCases\Jobs\ProcessJobQueueUseCase::class);
+        expect($worker->execute(time())['completed'])->toBe(1)
             ->and($messages)->toHaveCount(1)
-            ->and($messages[0]['to'])->toBe($input['email'])
+            ->and($messages[0]['to'])->toBe([$input['email']])
             ->and($messages[0]['message'])->toContain(get_permalink($page) . '#wappointment=' . $result['body']['data']['edit_key']);
+        expect($worker->execute(time() + 3600)['completed'])->toBe(0)
+            ->and($messages)->toHaveCount(1);
     } finally {
         remove_filter('pre_wp_mail', $capture, 10);
         wp_delete_post($page, true);

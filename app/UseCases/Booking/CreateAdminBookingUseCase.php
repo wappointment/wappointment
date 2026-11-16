@@ -6,7 +6,6 @@ namespace Wappointment\UseCases\Booking;
 use Wappointment\Actions\Booking\CreateBookingAction;
 use Wappointment\Actions\Booking\GetAdminBookingClientAction;
 use Wappointment\Actions\Booking\PresentBookingAction;
-use Wappointment\Actions\Booking\SendBookingConfirmationAction;
 use Wappointment\Auth\AccessPolicy;
 use Wappointment\Http\Requests\AdminBookingRequestData;
 use Wappointment\Http\Requests\CreateBookingRequestData;
@@ -18,7 +17,6 @@ class CreateAdminBookingUseCase
         private GetAdminBookingClientAction $getClient,
         private CreateBookingAction $createBooking,
         private PresentBookingAction $presentBooking,
-        private SendBookingConfirmationAction $sendConfirmation,
         private AccessPolicy $access
     ) {}
 
@@ -38,7 +36,7 @@ class CreateAdminBookingUseCase
         ]);
         $appointment = $this->createBooking->handle($input, $contact, $this->access->appointmentOwner());
         $result = $this->presentBooking->handle($appointment);
-        $result['notification_sent'] = $this->sendConfirmation->handle($contact['email'], $result);
+        $result['notification_queued'] = $appointment['notification_queued'];
         return CreateAdminBookingResponseData::from($result);
     }
 }

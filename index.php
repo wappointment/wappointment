@@ -75,6 +75,8 @@ spl_autoload_register(function ($class) {
 // Load helper functions
 require_once WAPPOINTMENT_PATH . 'app/helpers.php';
 
+register_deactivation_hook(__FILE__, [\Wappointment\System\JobScheduler::class, 'unschedule']);
+
 // Initialize plugin
 add_action('plugins_loaded', function () {
     new \Wappointment\System\Init();

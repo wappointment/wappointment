@@ -82,7 +82,7 @@ test('books an existing client through the authorized admin flow', async () => {
     })),
     http.post(`${API_BASE}/appointments/book`, async ({ request }) => {
       bookedRequests.push(await request.json());
-      return HttpResponse.json({ success: true, data: { id: 18, status: 1, start: 1893574800, end: 1893576600, edit_key: 'a'.repeat(32), notification_sent: false } }, { status: 201 });
+      return HttpResponse.json({ success: true, data: { id: 18, status: 1, start: 1893574800, end: 1893576600, edit_key: 'a'.repeat(32), notification_queued: false } }, { status: 201 });
     })
   );
   render(<Appointments />);

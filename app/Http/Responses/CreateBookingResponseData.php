@@ -17,7 +17,7 @@ class CreateBookingResponseData extends BookingData
         int $calendar_id,
         int $location_id,
         int $duration,
-        public readonly bool $notification_sent,
+        public readonly bool $notification_queued,
     ) {
         parent::__construct($id, $status, $start, $end, $edit_key, $service_id, $calendar_id, $location_id, $duration);
     }

@@ -83,6 +83,7 @@ class Init
                 ) . '</p></div>';
             }
         });
+        JobScheduler::register();
         add_action('admin_menu', [$this, 'registerAdminMenu']);
         add_action('rest_api_init', [$this, 'registerRestApi']);
         add_action('widgets_init', [Shortcodes::class, 'registerWidgets']);

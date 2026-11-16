@@ -118,7 +118,7 @@ test('response contracts preserve types and treat missing unexpected or wrong fi
     $booking = [
         'id' => 1, 'status' => 1, 'start' => 1893571200, 'end' => 1893573000,
         'edit_key' => str_repeat('c', 32), 'service_id' => 1, 'calendar_id' => 2,
-        'location_id' => 3, 'duration' => 30, 'notification_sent' => false,
+        'location_id' => 3, 'duration' => 30, 'notification_queued' => false,
     ];
     expect(CreateBookingResponseData::from($booking)->toArray())->toBe($booking);
     expect(fn() => CreateBookingResponseData::from($booking + ['private' => 'secret']))->toThrow(UnexpectedValueException::class);

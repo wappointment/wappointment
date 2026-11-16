@@ -451,9 +451,12 @@ class BookingRepository
         }
     }
 
-    public function setStatus(int $id, int $status, ?int $owner = null): void
+    /**
+     * @param callable|null $afterChange called inside the transaction with (updated row, previous row)
+     */
+    public function setStatus(int $id, int $status, ?int $owner = null, ?callable $afterChange = null): void
     {
-        $this->exclusive(function () use ($id, $status, $owner): void {
+        $this->exclusive(function () use ($id, $status, $owner, $afterChange): void {
             $sql = $owner === null
                 ? $this->db->prepare("SELECT a.* FROM {$this->prefix()}appointments a WHERE a.id = %d FOR UPDATE", $id)
                 : $this->db->prepare(
@@ -471,7 +474,11 @@ class BookingRepository
             if ($status === 1 && (int) $rows[0]['status'] !== 0) {
                 throw new BookingException(__('Only pending appointments can be confirmed.', 'wappointment'), 409);
             }
-            $this->updateAppointment($id, ['status' => $status, 'updated_at' => gmdate('Y-m-d H:i:s')]);
+            $changes = ['status' => $status, 'updated_at' => gmdate('Y-m-d H:i:s')];
+            $this->updateAppointment($id, $changes);
+            if ($afterChange !== null) {
+                $afterChange(array_merge($rows[0], $changes), $rows[0]);
+            }
         });
     }
 
@@ -519,7 +526,7 @@ class BookingRepository
             throw new BookingException(__('Booking is busy. Please try again.', 'wappointment'), 503);
         }
         try {
-            foreach (['appointments', 'clients', 'services', 'calendars', 'locations', 'statuses', 'calendar_service', 'service_location'] as $suffix) {
+            foreach (['appointments', 'clients', 'services', 'calendars', 'locations', 'statuses', 'calendar_service', 'service_location', 'jobs'] as $suffix) {
                 $table = $this->prefix() . $suffix;
                 $engine = $this->db->get_row($this->db->prepare('SHOW TABLE STATUS LIKE %s', $this->db->esc_like($table)), ARRAY_A);
                 if (!$engine || strcasecmp($engine['Engine'], 'InnoDB') !== 0) {

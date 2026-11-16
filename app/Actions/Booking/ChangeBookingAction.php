@@ -3,7 +3,9 @@ declare(strict_types=1);
 
 namespace Wappointment\Actions\Booking;
 
+use Wappointment\Actions\Jobs\QueueBookingNotificationsAction;
 use Wappointment\Http\Requests\ManageBookingRequestData;
+use Wappointment\Jobs\BookingNotificationPlan;
 use Wappointment\Repositories\BookingRepository;
 
 class ChangeBookingAction
@@ -13,7 +15,8 @@ class ChangeBookingAction
         private GetAppointmentByKeyAction $getAppointment,
         private AssertBookingChangeAllowedAction $assertChangeAllowed,
         private GetRescheduleInputAction $rescheduleInput,
-        private GetSelectedSlotAction $selectedSlot
+        private GetSelectedSlotAction $selectedSlot,
+        private QueueBookingNotificationsAction $notifications
     ) {}
 
     public function handle(ManageBookingRequestData $input, string $action): array
@@ -36,7 +39,13 @@ class ChangeBookingAction
                 $changes['options'] = wp_json_encode($options, JSON_THROW_ON_ERROR);
             }
             $this->repository->updateAppointment((int) $appointment['id'], $changes);
-            return array_merge($appointment, $changes);
+            $updated = array_merge($appointment, $changes);
+            $this->notifications->handle(
+                $action === 'cancel' ? BookingNotificationPlan::CANCELED : BookingNotificationPlan::RESCHEDULED,
+                $updated,
+                $action === 'cancel' ? null : $appointment
+            );
+            return $updated;
         });
     }
 }

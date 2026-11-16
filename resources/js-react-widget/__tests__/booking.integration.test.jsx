@@ -16,7 +16,7 @@ const catalog = {
     calendar_service: [{ calendar_id: 2, service_id: 1 }],
     service_location: [{ service_id: 1, location_id: 3 }],
 };
-const appointment = { id: 10, start, end: start + 1800, status: 1, edit_key: 'a'.repeat(32), notification_sent: false };
+const appointment = { id: 10, start, end: start + 1800, status: 1, edit_key: 'a'.repeat(32), notification_queued: false };
 
 beforeEach(() => {
     window.history.replaceState({}, '', '/');
@@ -67,11 +67,24 @@ test('only confirms a persisted booking and does not invent an email delivery', 
     }, expect.any(AbortSignal));
     fireEvent.click(screen.getByRole('button', { name: 'Book appointment', exact: true }));
     expect(await screen.findByRole('heading', { name: 'Appointment confirmed' })).toBeVisible();
-    expect(screen.getByText(/no confirmation email was sent/)).toBeVisible();
+    expect(screen.getByText(/no confirmation email will be sent/)).toBeVisible();
     expect(bookingFetch).toHaveBeenCalledWith('/booking', expect.objectContaining({
         service_id: '1', calendar_id: '2', location_id: '3', duration: '30',
         start: String(start), name: 'Widget Customer', email: 'customer@example.invalid',
     }));
+});
+
+test('does not warn about email when the confirmation was queued for delivery', async () => {
+    bookingFetch.mockImplementation((path) => {
+        if (path === '/booking/catalog') return Promise.resolve(catalog);
+        if (path === '/booking/availability') return Promise.resolve({ timezone: 'Europe/Paris', slots: [{ start, end: start + 1800 }] });
+        if (path === '/booking') return Promise.resolve({ ...appointment, notification_queued: true });
+        return Promise.reject(new Error(`Unexpected booking endpoint: ${path}`));
+    });
+    await chooseSlot();
+    fireEvent.click(screen.getByRole('button', { name: 'Book appointment', exact: true }));
+    expect(await screen.findByRole('heading', { name: 'Appointment confirmed' })).toBeVisible();
+    expect(screen.queryByText(/no confirmation email/)).toBeNull();
 });
 
 test('downloads an escaped calendar event using the confirmed appointment time and details', async () => {

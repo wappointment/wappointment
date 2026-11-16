@@ -32,7 +32,8 @@ docker compose -p wappointment-booking-tests -f tests/docker/booking.compose.yml
   php /var/www/html/wp-content/plugins/wappointment/vendor/bin/pest \
   --do-not-cache-result --cache-directory=/tmp/wappo-pest \
   --configuration=/var/www/html/wp-content/plugins/wappointment/phpunit.xml \
-  /var/www/html/wp-content/plugins/wappointment/tests/Integration/BookingTest.php
+  /var/www/html/wp-content/plugins/wappointment/tests/Integration/BookingTest.php \
+  /var/www/html/wp-content/plugins/wappointment/tests/Integration/JobQueueTest.php
 docker compose -p wappointment-booking-tests -f tests/docker/booking.compose.yml down -v
 ```
 
@@ -97,8 +98,26 @@ It also tests URL/body identifier conflicts, unknown query/body fields, JSON sha
 default settings compatibility, retained extension settings, and invalid Action output
 becoming a server error rather than a success or client error. That last test deliberately
 logs a response-contract violation. The jobs response test retains its legacy-shaped
-fixture; fresh installation now includes that table, but queue processing is not
-implemented by the installer.
+fixture; the v3 queue leaves such rows untouched.
+
+## Job queue and booking notification tests
+
+Unit coverage (`tests/Unit/JobQueueTest.php`) runs without WordPress: v3 payload
+round-trips, refusal of legacy class-name/malformed/unknown-version payloads, the closed
+job-type registry, bounded retry/backoff and timeout detection, the legacy notification
+toggle matrix, and plain-text message content and timezones.
+
+The integration suite (`tests/Integration/JobQueueTest.php`) uses the same disposable
+`booking_test` stack as `BookingTest.php` and the same Pest command, with this file
+added to the paths. It captures mail through `pre_wp_mail`, so nothing is sent. It
+checks that jobs commit and roll back with the booking; the per-transition jobs for
+pending/confirm/reschedule/cancel under the legacy toggles and published reminders;
+one delivery per job with organizer recipients and Reply-To; no resend on a second
+pass; retry with backoff to `wappo_failed_jobs` after three rejected sends; immediate
+failure for an unmigrated transport; no resend of abandoned reservations; legacy rows
+left untouched while unsupported v3-queue payloads are quarantined; the worker lock
+held from a second database connection; single-claim rows; and WP-cron scheduling.
+Both PHP files share `tests/Integration/booking-helpers.php`.
 
 ## Legacy availability runtime characterization
 

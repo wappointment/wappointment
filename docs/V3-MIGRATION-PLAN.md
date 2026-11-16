@@ -213,10 +213,10 @@ is a minimum requirement, in addition to the cross-cutting test gates in section
 
 | ID | Feature and evidence | v3 status | Planned migration / wave | Acceptance |
 |---|---|---|---|---|
-| F31 | Confirmed/pending/canceled/rescheduled customer and organizer notifications (E02/E10) | Partial: only basic synchronous customer confirmation | Domain event -> durable job -> delivery Actions; preserve per-event toggles and recipients. W5 | One intended notification per transition; confirmation versus approval distinguished; failures observable without rolling back an already-saved booking. |
+| F31 | Confirmed/pending/canceled/rescheduled customer and organizer notifications (E02/E10) | Partial (W5 slice 1): transactional queueing for book/confirm/reschedule/cancel with legacy `mail_status`/`notify_*`/published-reminder gating and organizer recipients; basic plain-text messages delivered by the worker. Reminder-template rendering (F32) is still missing | Domain event -> durable job -> delivery Actions; preserve per-event toggles and recipients. W5 | One intended notification per transition; confirmation versus approval distinguished; failures observable without rolling back an already-saved booking. |
 | F32 | Reminder editor, publication/locking, preview, tags, links, HTML/plain text and attachments (E05/E10/E15) | Missing | Reminder CRUD/preview UseCases, template Data and renderer; migrate `lang`/`parent` relationships and per-service/modality rules. W5 | Existing templates render with equivalent vocabulary; timing/publication respected; malformed templates fail visibly; previews use safe fixture data; links and ICS valid. |
 | F33 | Reminder timing and daily/weekly summaries (E10/E11) | Missing | Typed scheduled jobs and timezone-aware schedulers with duplicate suppression. W5 | Frozen clock/DST cases; canceled/rescheduled bookings invalidate stale jobs; recipient preferences respected; no duplicate summaries after worker retry/restart. |
-| F34 | Queue worker, retries/failed jobs, reservation recovery, cron and pending cleanup (E11/E14/E16) | Missing: Jobs listing is not a worker; jobs table not installed by booking bootstrap | Native WP-cron trigger plus durable repository-backed job dispatcher, restricted job-type registry and operational UI. W1/W5 | Concurrency-safe claiming; timeout recovery; bounded retry/failure state; unsupported legacy jobs quarantined/reported; no arbitrary class execution or dropped pending reminders. |
+| F34 | Queue worker, retries/failed jobs, reservation recovery, cron and pending cleanup (E11/E14/E16) | Partial (W5 slice 1): repository-backed worker on `wappo_jobs`, restricted type registry, minute WP-cron hook, worker lock, bounded retry, failed-job records, no-resend timeout recovery; legacy rows are left untouched and counted. Legacy payload conversion, pending-payment cleanup and the operational UI remain | Native WP-cron trigger plus durable repository-backed job dispatcher, restricted job-type registry and operational UI. W1/W5 | Concurrency-safe claiming; timeout recovery; bounded retry/failure state; unsupported legacy jobs quarantined/reported; no arbitrary class execution or dropped pending reminders. |
 | F35 | Mail configuraCustom rewrite routetion, sender/footer/logo, HTML/plain text and test email (E05/E10/E11/E15) | Partial: basic `wp_mail` only | Transport adapter inventory from actual mail configuration; port core-supported choices, retaining WP mail plugin interoperability. W5 | Each advertised transport is exercised on staging; credentials protected; test-email failures clear; attachment/HTML preferences and sender options honored. SMTP/Mailgun-like config keys alone are not runtime certification. |
 | F36 | Incoming ICS feeds: connect/validate/refresh/disconnect, logs and recurring external events (E03/E13) | Missing: configured sync currently blocks booking | Restore URL import with recurrence/timezone parsing, bounded fetches/change detection and availability invalidation. W6 | Recurring/changed/deleted/all-day external events tested; unchanged feed not duplicated; refresh/disconnect releases correct intervals; failure/staleness policy explicit. This is not provider OAuth write-back. |
 | F37 | Outgoing appointment ICS/export and external calendar subscriptions (E07/E12/E13) | Missing/Boundary | Restore confirmed core download/export behavior; establish which subscription/write-back paths belong to remote service or Syncal. W6 | Import into calendar client; identifiers/timezones/escaping correct; authorized feed access and canceled/changed events handled; no false claim of two-way sync. |
@@ -608,6 +608,53 @@ source audit shows that is wrong; no condition evaluation was added to free.
   suite, booking and permissions integration suites, booking-widget tests and
   production build. PHP 8.5 emits existing `ReflectionMethod::setAccessible()`
   deprecations.
+
+### W5 implementation progress: durable queue and booking notifications (2026-11-16)
+
+- Legacy reference (audited master `fcf2cfe`): `System\Listeners` registers customer
+  listeners only when `mail_status` is on and queues a customer email only when a
+  published `wappo_reminders` row with `type = 1` exists for the event (2 confirmed,
+  3 rescheduled, 4 canceled, 5 pending). Organizer emails follow `notify_new/pending/
+  rescheduled/canceled_appointments` and go to every `email_notifications` address plus
+  the calendar owner's address, with Reply-To set to the client. Admin jobs were queued
+  on the `client` queue. `Services\Queue` ran every minute with a lock, 3 attempts,
+  a 120 s retry delay and hourly timeout recovery that re-ran interrupted jobs. Payloads
+  named PHP classes and were instantiated after a `class_exists` check.
+- v3 keeps the unchanged `wappo_jobs`/`wappo_failed_jobs` columns and their meaning
+  (Unix-second `reserved_at`/`available_at`, rows deleted when done). v3 payloads name
+  a registered type (`{"job":"booking_notification","version":1,"params":{...}}`) and
+  hold IDs and times only; contact details are read at delivery. Jobs go on the
+  dedicated `v3_notifications` queue, which is the only queue the worker reads.
+- Booking create, admin confirm/cancel, and public/admin reschedule/cancel queue their
+  jobs inside the existing booking transaction (`jobs` joined the InnoDB check), so a
+  rolled-back booking leaves no job and a saved booking never loses its notifications.
+  The synchronous `SendBookingConfirmationAction` was removed; the booking responses
+  report `notification_queued` (renamed from `notification_sent`; the widget updated).
+- Worker (`wappointment_v3_process_queue`, every minute; unscheduled on deactivation):
+  `GET_LOCK` single-worker pass, per-row conditional claim that counts the attempt,
+  10 jobs/20 s budget, growing backoff (120 s x attempt), `wappo_failed_jobs` after 3
+  attempts or immediately for permanent failures (unsupported transport, missing
+  appointment/page/recipient, mail turned off). A reservation older than 300 s is
+  never re-sent for email; it is moved to failed jobs as an unknown outcome. If a sent
+  job cannot be deleted, it stays reserved for that path rather than being retried.
+- Legacy rows: rows on other queues are neither executed nor deleted and are reported
+  as `legacy_pending` counts; legacy class payloads or unregistered types on the v3
+  queue are quarantined to failed jobs without resolving any class. Decoding pending
+  legacy reminders into typed jobs belongs to the cutover work. If v2 is reactivated,
+  its worker cannot run v3 payloads; its timeout recovery would eventually move them to
+  failed jobs, so drain the v3 queue before any rollback.
+- Decision to confirm: v3 installs do not seed reminder rows, so on a fresh v3 site
+  customer emails stay off until reminders exist (the widget says no confirmation
+  email will be sent). Existing sites keep their published reminders and get the
+  legacy per-event behavior. Messages are basic plain text in the customer's stored
+  timezone (else the calendar's); rendering stored reminder templates is F32. Timed
+  reminders and daily/weekly summaries (F33) are not queued yet.
+- Validation: the PHP sources pass `php -l`, and standalone harnesses passed for the
+  payload codec, registry, retry policy, notification plan/messages, and the worker
+  Actions against an in-memory queue (claim/retry/fail/quarantine/lock/timeout).
+  The new Pest unit and integration suites (`tests/Unit/JobQueueTest.php`,
+  `tests/Integration/JobQueueTest.php`) and the updated widget Jest suite were not
+  executed in this session because Composer/npm dependencies could not be installed.
 
 V3 continues to reject pre-notice slots that a legacy browser edge case might expose;
 this is an intentional safe validation difference, not an authorization bypass.
