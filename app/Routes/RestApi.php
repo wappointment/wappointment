@@ -34,36 +34,10 @@ class RestApi
      */
     private function loadRoutes(): void
     {
-        $routesConfig = require __DIR__ . '/api.php';
-        
-        foreach ($routesConfig as $route) {
-            $method = $route['method'] ?? 'GET';
-            $path = $route['path'];
-            
-            // Convert DELETE, PUT, PATCH to POST with path suffix
-            if (in_array(strtoupper($method), ['DELETE', 'PUT', 'PATCH'])) {
-                $suffix = '/' . strtolower($method);
-                // Only add suffix if it's not already there
-                if (!str_ends_with($path, $suffix)) {
-                    $path = $path . $suffix;
-                }
-                $method = 'POST';
-            }
-            
-            $this->routes[] = [
-                'name' => $route['name'] ?? null,
-                'method' => $method,
-                'path' => $path,
-                'controller' => $route['controller'],
-                'status' => $route['status'] ?? 200,
-                'cacheable' => $route['cacheable'] ?? true,
-                'requires_schema' => $route['requires_schema'] ?? true,
-                'permission_callback' => isset($route['permission_callback'])
-                    ? $route['permission_callback']
-                    : fn(): bool => $this->accessPolicy->can($route['access'] ?? 'manage'),
-                'original_method' => $route['method'] ?? 'GET',
-                'original_path' => $route['path'],
-            ];
+        foreach (RouteTable::load() as $route) {
+            $access = $route['access'];
+            $route['permission_callback'] ??= fn(): bool => $this->accessPolicy->can($access);
+            $this->routes[] = $route;
         }
     }
 

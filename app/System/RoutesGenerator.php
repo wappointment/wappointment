@@ -3,31 +3,27 @@ declare(strict_types=1);
 
 namespace Wappointment\System;
 
-use Wappointment\Routes\RestApi;
+use Wappointment\Actions\Routes\GetRoutesForJsAction;
+use Wappointment\Routes\RouteTable;
 
 /**
- * Generate JavaScript routes file from PHP route definitions
+ * Build-time generator of resources/js-react/config/routes.js from app/Routes/api.php.
+ *
+ * Runs from bin/generate-routes.php (npm run routes). It is never executed by the
+ * plugin at runtime: the file is bundled by webpack, and plugin folders may be read-only.
  */
 class RoutesGenerator
 {
-    private string $outputPath;
+    public function __construct(private GetRoutesForJsAction $getRoutesForJs = new GetRoutesForJsAction()) {}
 
-    public function __construct()
+    public function render(): string
     {
-        $this->outputPath = WAPPOINTMENT_PATH . 'resources/js-react/config/routes.js';
-    }
-
-    /**
-     * Generate the JavaScript routes file
-     */
-    public function generate(): void
-    {
-        $restApi = new RestApi();
-        $routes = $restApi->getRoutesForJs();
+        $routes = $this->getRoutesForJs->handle(RouteTable::load());
 
         $js = "// Auto-generated file - DO NOT EDIT MANUALLY\n";
-        $js .= "// Generated from app/Routes/api.php\n\n";
-        $js .= "export const routes = " . $this->toJavaScript($routes) . ";\n\n";
+        $js .= "// Generated from app/Routes/api.php\n";
+        $js .= "// Run: php bin/generate-routes.php to regenerate\n\n";
+        $js .= "export const routes = " . json_encode($routes, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . ";\n\n";
         $js .= "export function buildRoute(name, params = {}) {\n";
         $js .= "    const route = routes[name];\n";
         $js .= "    if (!route) {\n";
@@ -40,22 +36,17 @@ class RoutesGenerator
         $js .= "    });\n\n";
         $js .= "    return { path, method: route.method };\n";
         $js .= "}\n";
-
-        // Ensure directory exists
-        $dir = dirname($this->outputPath);
-        if (!file_exists($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
-        file_put_contents($this->outputPath, $js);
+        return $js;
     }
 
-    /**
-     * Convert PHP array to JavaScript object notation
-     */
-    private function toJavaScript(array $data): string
+    public function generate(string $outputPath): void
     {
-        $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-        return $json;
+        $dir = dirname($outputPath);
+        if (!is_dir($dir) && !mkdir($dir, 0755, true) && !is_dir($dir)) {
+            throw new \RuntimeException("Cannot create {$dir}.");
+        }
+        if (file_put_contents($outputPath, $this->render()) === false) {
+            throw new \RuntimeException("Cannot write {$outputPath}.");
+        }
     }
 }

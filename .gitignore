@@ -1,6 +1,6 @@
 /node_modules
 /build/wappointment*
-/bin
+/bin/*
 /dist
 /dist2
 /logs
@@ -8,6 +8,7 @@
 /wappointment
 /wappointment.zip
 !/bin/build.sh
+!/bin/generate-routes.php
 /test_availability.json
 /.phpunit.result.cache
 

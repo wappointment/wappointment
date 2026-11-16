@@ -87,7 +87,6 @@ class Init
         add_action('rest_api_init', [$this, 'registerRestApi']);
         add_action('widgets_init', [Shortcodes::class, 'registerWidgets']);
         add_action('init', [$this, 'registerShortcodes']);
-        add_action('admin_init', [$this, 'generateRoutes']);
     }
 
     /**
@@ -116,20 +115,5 @@ class Init
     {
         $shortcodes = new Shortcodes();
         $shortcodes->register();
-    }
-
-    /**
-     * Generate JavaScript routes file
-     */
-    public function generateRoutes(): void
-    {
-        // Only generate in development or when routes change
-        $routesFile = WAPPOINTMENT_PATH . 'resources/js-react/config/routes.js';
-        $apiFile = WAPPOINTMENT_PATH . 'app/Routes/api.php';
-        
-        if (!file_exists($routesFile) || filemtime($apiFile) > filemtime($routesFile)) {
-            $generator = new RoutesGenerator();
-            $generator->generate();
-        }
     }
 }
