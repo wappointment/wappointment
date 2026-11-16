@@ -202,6 +202,33 @@ class JobQueueRepository
         return $counts;
     }
 
+    /**
+     * Jobs on a v3 queue for one appointment that no worker has claimed yet.
+     *
+     * @return list<array<string, mixed>>
+     */
+    public function unclaimedForAppointment(string $queue, int $appointmentId): array
+    {
+        return $this->rows($this->db->prepare(
+            "SELECT * FROM {$this->table()} WHERE queue = %s AND appointment_id = %d AND reserved_at = 0 ORDER BY id",
+            $queue,
+            $appointmentId
+        ));
+    }
+
+    /** Delete a job only while it is still unclaimed, so a running delivery is never pulled from under a worker. */
+    public function deleteUnclaimed(int $id): bool
+    {
+        $deleted = $this->db->query($this->db->prepare(
+            "DELETE FROM {$this->table()} WHERE id = %d AND reserved_at = 0",
+            $id
+        ));
+        if ($deleted === false) {
+            $this->failure();
+        }
+        return $deleted === 1;
+    }
+
     private function placeholders(array $values): string
     {
         if ($values === []) {

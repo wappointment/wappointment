@@ -290,6 +290,85 @@ test('customer emails use the template in the client locale and fail visibly whe
     }
 })->group('booking-integration');
 
+/** Pending timed reminders as [reminder template id => available_at]. */
+function queuedReminders(): array
+{
+    global $wpdb;
+    $reminders = [];
+    foreach ($wpdb->get_results('SELECT * FROM ' . queueTable() . ' ORDER BY id', ARRAY_A) as $row) {
+        $job = QueuedJob::fromRow($row);
+        if ($job->params['notification'] === 'customer_reminder') {
+            $reminders[$job->params['reminder_id']] = (int) $row['available_at'];
+        }
+    }
+    return $reminders;
+}
+
+test('timed reminders are scheduled on confirmation, moved on reschedule, dropped on cancel and sent once in the client locale', function () {
+    global $wpdb;
+    $page = queueBookingPage();
+    try {
+        queueSettings(['notify_new_appointments' => false, 'notify_rescheduled_appointments' => false, 'notify_canceled_appointments' => false]);
+        $day = bookingPublishEmailTemplate(1, "Don't forget [service:name]", ['See you on [appointment:starts]'], null, ['when_number' => '1', 'when_unit' => '3']);
+        bookingPublishEmailTemplate(1, 'N\'oubliez pas [service:name]', ['À bientôt'], 'fr_FR', ['when_number' => '1', 'when_unit' => '3'], $day);
+        $hours = bookingPublishEmailTemplate(1, 'Starting soon', ['In two hours'], null, ['when_number' => '2', 'when_unit' => '2']);
+        $tooEarly = bookingPublishEmailTemplate(1, 'Too early', ['Ten days'], null, ['when_number' => '10', 'when_unit' => '3']);
+
+        $input = bookingFixture();
+        $booking = bookingRest('/booking', 'POST', $input)['body']['data'];
+        $start = (int) $input['start'];
+        // One job per published reminder (not per translation); a time already past is skipped.
+        expect(queuedReminders())->toBe([$day => $start - DAY_IN_SECONDS, $hours => $start - 2 * HOUR_IN_SECONDS])
+            ->and(array_key_exists($tooEarly, queuedReminders()))->toBeFalse()
+            ->and(queueWorker(time())['completed'])->toBe(0);
+
+        $slots = bookingRest('/booking/availability', 'POST', ['edit_key' => $booking['edit_key'], 'date' => $input['date']]);
+        $newStart = (int) $slots['body']['data']['slots'][3]['start'];
+        expect(bookingRest('/booking/manage', 'POST', [
+            'action' => 'reschedule', 'edit_key' => $booking['edit_key'], 'date' => $input['date'], 'start' => $newStart,
+        ])['status'])->toBe(200)
+            ->and(queuedReminders())->toBe([$day => $newStart - DAY_IN_SECONDS, $hours => $newStart - 2 * HOUR_IN_SECONDS]);
+
+        $clientId = (int) $wpdb->get_var($wpdb->prepare('SELECT client_id FROM ' . queueTable('appointments') . ' WHERE id = %d', $booking['id']));
+        $wpdb->update(queueTable('clients'), ['options' => wp_json_encode(['tz' => 'Europe/Paris', 'locale' => 'fr_FR'])], ['id' => $clientId]);
+        expect(queueWorker($newStart - DAY_IN_SECONDS)['completed'])->toBe(1)
+            ->and($this->mail)->toHaveCount(1)
+            ->and($this->mail[0]['to'])->toBe([$input['email']])
+            ->and($this->mail[0]['subject'])->toBe("N'oubliez pas Free consultation")
+            ->and($this->mail[0]['message'])->toContain('view=reschedule-event');
+        expect(queueWorker($newStart - 2 * HOUR_IN_SECONDS)['completed'])->toBe(1)
+            ->and($this->mail[1]['subject'])->toBe('Starting soon')
+            ->and(queueWorker($newStart)['completed'])->toBe(0)
+            ->and($this->mail)->toHaveCount(2);
+
+        $second = bookingRest('/booking', 'POST', array_merge(bookingFixture(), ['email' => 'second@example.invalid']))['body']['data'];
+        expect(queuedReminders())->toHaveCount(2);
+        expect(bookingRest('/booking/manage', 'POST', ['action' => 'cancel', 'edit_key' => $second['edit_key']])['status'])->toBe(200)
+            ->and(queuedReminders())->toBe([]);
+    } finally {
+        wp_delete_post($page, true);
+    }
+})->group('booking-integration');
+
+test('pending bookings get reminders only once confirmed, and test clients never', function () {
+    global $wpdb;
+    bookingPublishEmailTemplate(1, 'Reminder', ['Soon'], null, ['when_number' => '1', 'when_unit' => '3']);
+    queueSettings(['approval_mode' => 0]);
+    $booking = bookingRest('/booking', 'POST', bookingFixture())['body']['data'];
+    expect(queuedReminders())->toBe([]);
+    wp_set_current_user(1);
+    expect(bookingRest('/appointments', 'POST', ['id' => $booking['id'], 'status' => 1])['status'])->toBe(200)
+        ->and(queuedReminders())->toHaveCount(1);
+    wp_set_current_user(0);
+
+    $other = bookingRest('/booking', 'POST', array_merge(bookingFixture(), ['email' => 'tester@example.invalid']))['body']['data'];
+    $clientId = (int) $wpdb->get_var($wpdb->prepare('SELECT client_id FROM ' . queueTable('appointments') . ' WHERE id = %d', $other['id']));
+    $wpdb->update(queueTable('clients'), ['options' => wp_json_encode(['test_appointment' => true])], ['id' => $clientId]);
+    wp_set_current_user(1);
+    expect(bookingRest('/appointments', 'POST', ['id' => $other['id'], 'status' => 1])['status'])->toBe(200)
+        ->and(queuedReminders())->toHaveCount(1);
+})->group('booking-integration');
+
 test('a reservation abandoned by a stopped worker is reported, never re-sent', function () {
     global $wpdb;
     bookingRest('/booking', 'POST', bookingFixture());

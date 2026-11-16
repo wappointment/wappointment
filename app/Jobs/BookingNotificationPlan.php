@@ -16,8 +16,13 @@ final class BookingNotificationPlan
     public const RESCHEDULED = 'rescheduled';
     public const CANCELED = 'canceled';
 
-    /** Legacy `Reminder::APPOINTMENT_*` event codes for the customer notifications. */
+    /**
+     * Legacy `Reminder::APPOINTMENT_*` event codes for the customer notifications.
+     * `customer_reminder` (event 1) is scheduled per reminder by
+     * `QueueBookingNotificationsAction`, not by a transition.
+     */
     public const CUSTOMER_EVENTS = [
+        'customer_reminder' => 1,
         'customer_confirmed' => 2,
         'customer_rescheduled' => 3,
         'customer_canceled' => 4,

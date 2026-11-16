@@ -21,7 +21,7 @@ use Wappointment\System\Settings;
 class DeliverBookingNotificationAction
 {
     /** Customer notifications that carry the footer links (legacy `HasAppointmentFooterLinks`). */
-    private const WITH_FOOTER = ['customer_confirmed', 'customer_rescheduled'];
+    private const WITH_FOOTER = ['customer_confirmed', 'customer_rescheduled', 'customer_reminder'];
 
     public function __construct(
         private NotificationRepository $repository,
@@ -66,8 +66,11 @@ class DeliverBookingNotificationAction
         if (!is_email($appointment['client_email'])) {
             throw new PermanentJobFailure('The client has no valid email address.');
         }
-        $event = BookingNotificationPlan::CUSTOMER_EVENTS[$notification];
-        $template = $this->repository->emailTemplate($event, $appointment['client_locale']);
+        if ($notification === 'customer_reminder') {
+            $template = $this->reminderTemplate($params, $appointment);
+        } else {
+            $template = $this->repository->emailTemplate(BookingNotificationPlan::CUSTOMER_EVENTS[$notification], $appointment['client_locale']);
+        }
         if ($template === null) {
             throw new PermanentJobFailure('No published email template exists for this notification any more.');
         }
@@ -93,6 +96,25 @@ class DeliverBookingNotificationAction
             throw new PermanentJobFailure('Email template ' . $template['id'] . ' cannot be rendered: ' . $error->getMessage(), 0, $error);
         }
         $this->mailer->send([$appointment['client_email']], $email);
+    }
+
+    /**
+     * A timed reminder is only sent for the slot it was scheduled for. Cancel and
+     * reschedule remove pending reminders; this check covers a reminder claimed while
+     * that change was being saved.
+     */
+    private function reminderTemplate(array $params, array $appointment): ?array
+    {
+        if (!is_int($params['reminder_id'] ?? null) || $params['reminder_id'] <= 0) {
+            throw new PermanentJobFailure('Booking notification parameter "reminder_id" is invalid.');
+        }
+        if ($appointment['status'] !== 1) {
+            throw new PermanentJobFailure('The appointment is no longer confirmed; its reminder was not sent.');
+        }
+        if ($appointment['start'] !== $params['start']) {
+            throw new PermanentJobFailure('The appointment was moved after this reminder was scheduled; it was not sent.');
+        }
+        return $this->repository->timedReminderTemplate($params['reminder_id'], $appointment['client_locale']);
     }
 
     private function context(array $appointment, array $params, string $timezone): EmailContext

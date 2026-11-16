@@ -213,9 +213,9 @@ is a minimum requirement, in addition to the cross-cutting test gates in section
 
 | ID | Feature and evidence | v3 status | Planned migration / wave | Acceptance |
 |---|---|---|---|---|
-| F31 | Confirmed/pending/canceled/rescheduled customer and organizer notifications (E02/E10) | Partial (W5 slices 1-2): transactional queueing for book/confirm/reschedule/cancel with legacy `mail_status`/`notify_*`/published-reminder gating and organizer recipients; customer emails render the stored templates (F32) and organizer emails carry the legacy detail content. ICS attachments (F37) and timed reminders (F33) remain | Domain event -> durable job -> delivery Actions; preserve per-event toggles and recipients. W5 | One intended notification per transition; confirmation versus approval distinguished; failures observable without rolling back an already-saved booking. |
+| F31 | Confirmed/pending/canceled/rescheduled customer and organizer notifications (E02/E10) | Partial (W5 slices 1-2): transactional queueing for book/confirm/reschedule/cancel with legacy `mail_status`/`notify_*`/published-reminder gating and organizer recipients; customer emails render the stored templates (F32) and organizer emails carry the legacy detail content. timed reminders are scheduled (F33); ICS attachments (F37) and summaries remain | Domain event -> durable job -> delivery Actions; preserve per-event toggles and recipients. W5 | One intended notification per transition; confirmation versus approval distinguished; failures observable without rolling back an already-saved booking. |
 | F32 | Reminder editor, publication/locking, preview, tags, links, HTML/plain text and attachments (E05/E10/E15) | Partial (W5 slice 2): published templates render at delivery with locale preference, the legacy tag/link vocabulary (escaped), modality blocks, footer links, logo, RTL and a plain-text alternative; malformed templates fail visibly. Editor CRUD/publication/preview, fresh-install seeding, ICS attachments and add-on tags remain | Reminder CRUD/preview UseCases, template Data and renderer; migrate `lang`/`parent` relationships and per-service/modality rules. W5 | Existing templates render with equivalent vocabulary; timing/publication respected; malformed templates fail visibly; previews use safe fixture data; links and ICS valid. |
-| F33 | Reminder timing and daily/weekly summaries (E10/E11) | Missing | Typed scheduled jobs and timezone-aware schedulers with duplicate suppression. W5 | Frozen clock/DST cases; canceled/rescheduled bookings invalidate stale jobs; recipient preferences respected; no duplicate summaries after worker retry/restart. |
+| F33 | Reminder timing and daily/weekly summaries (E10/E11) | Partial (W5 slice 3): timed customer reminders are scheduled on confirmation from each published reminder's `when_number`/`when_unit`, replaced on reschedule, removed on cancel, refused at delivery if the slot changed, and sent in the client's translation. Daily/weekly organizer summaries remain | Typed scheduled jobs and timezone-aware schedulers with duplicate suppression. W5 | Frozen clock/DST cases; canceled/rescheduled bookings invalidate stale jobs; recipient preferences respected; no duplicate summaries after worker retry/restart. |
 | F34 | Queue worker, retries/failed jobs, reservation recovery, cron and pending cleanup (E11/E14/E16) | Partial (W5 slice 1): repository-backed worker on `wappo_jobs`, restricted type registry, minute WP-cron hook, worker lock, bounded retry, failed-job records, no-resend timeout recovery; legacy rows are left untouched and counted. Legacy payload conversion, pending-payment cleanup and the operational UI remain | Native WP-cron trigger plus durable repository-backed job dispatcher, restricted job-type registry and operational UI. W1/W5 | Concurrency-safe claiming; timeout recovery; bounded retry/failure state; unsupported legacy jobs quarantined/reported; no arbitrary class execution or dropped pending reminders. |
 | F35 | Mail configuration, sender/footer/logo, HTML/plain text and test email (E05/E10/E11/E15) | Partial: `wp_mail` only; legacy `wpmail_html`/SMTP-plugin HTML-versus-text choice, footer text and logo honored; other transports fail explicitly; no test email yet | Transport adapter inventory from actual mail configuration; port core-supported choices, retaining WP mail plugin interoperability. W5 | Each advertised transport is exercised on staging; credentials protected; test-email failures clear; attachment/HTML preferences and sender options honored. SMTP/Mailgun-like config keys alone are not runtime certification. |
 | F36 | Incoming ICS feeds: connect/validate/refresh/disconnect, logs and recurring external events (E03/E13) | Missing: configured sync currently blocks booking | Restore URL import with recurrence/timezone parsing, bounded fetches/change detection and availability invalidation. W6 | Recurring/changed/deleted/all-day external events tested; unchanged feed not duplicated; refresh/disconnect releases correct intervals; failure/staleness policy explicit. This is not provider OAuth write-back. |
@@ -709,6 +709,46 @@ source audit shows that is wrong; no condition evaluation was added to free.
   `ConvertHtmlToText` on the same input. `tests/Unit/EmailTemplateTest.php` passed
   under a minimal Pest-compatible runner. Real Pest, the integration suites and Jest
   were not run (Composer/npm dependencies cannot be installed in this session).
+
+### W5 implementation progress: timed reminders (2026-11-16)
+
+- Legacy reference (master `fcf2cfe`): `AppointmentReminderListener` runs on
+  `appointment.confirmed` (auto-confirmed booking or admin approval) when
+  `mail_status` is on. For every published email reminder with `event = 1` it queues
+  an `AppointmentEmailReminder` job on the `client` queue with `appointment_id` set and
+  `available_at = start - when_number x unit` (1 minute, 2 hour, 3 day; fixed-length
+  units, `Reminder::getDelay()`), skipping a time already past and test appointments.
+  Reschedule and cancel listeners call `Queue::cancelAppointmentJob`, which deletes
+  every `client` job with that `appointment_id` (only reminders had one). Delivery
+  loads the reminder by ID and sends it with the footer links and ICS attachment.
+- Legacy defects not carried over: (1) a reschedule deleted the reminders and never
+  queued new ones, so a rescheduled client got no reminder; v3 schedules them for the
+  new time. (2) Translated reminders are separate published rows (`parent`, `lang`),
+  and legacy queued a job for each, so a multilingual site sent every translation;
+  v3 schedules one job per root reminder and delivery picks the published translation
+  for the client's `locale`, else the root. (3) A zero/missing `when_number` or an
+  unknown unit gave "no delay" and the reminder went out at confirmation; v3 does not
+  schedule it.
+- v3: `ReminderSchedule` computes the send time; `QueueBookingNotificationsAction`
+  removes unclaimed reminder jobs for the appointment on every non-pending transition
+  (so confirming twice cannot duplicate them) and, for a confirmed appointment that is
+  not a test client, enqueues `customer_reminder` jobs with `reminder_id` and the
+  scheduled start, inside the booking transaction. Jobs a worker already claimed are
+  never deleted. Delivery refuses (permanent failure, visible in failed jobs) a
+  reminder whose appointment is no longer confirmed or no longer starts at the
+  scheduled time, or whose reminder is unpublished, so a race with cancel/reschedule
+  cannot send a stale reminder. Pending legacy reminder rows on the `client` queue are
+  still left untouched for the cutover work.
+- Not in this slice: daily/weekly organizer summaries (they need slot coverage from
+  the v3 availability engine) and the reminder `.ics` attachment (F37). Changing a
+  reminder's timing does not move reminders already queued, as in legacy; that belongs
+  to the reminder editor (F32).
+- Validation: `php -l`; standalone harnesses for the schedule rules, the queueing
+  rules against in-memory repositories (pending/confirm/double-confirm/reschedule/
+  cancel/claimed job/test client/mail off) and reminder delivery against WordPress
+  stubs (template by ID and locale, footer, stale and unpublished refusals). Unit
+  cases passed under the Pest-compatible runner; real Pest and the integration suite
+  were not run in this session.
 
 V3 continues to reject pre-notice slots that a legacy browser edge case might expose;
 this is an intentional safe validation difference, not an authorization bypass.

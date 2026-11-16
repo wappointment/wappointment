@@ -100,7 +100,24 @@ test('notification plans follow legacy listener toggles and published reminder e
 test('unknown transitions are programming errors, not silent no-ops', function () {
     expect(fn() => BookingNotificationPlan::for('deleted', notificationSettings(), []))->toThrow(InvalidArgumentException::class);
     expect(BookingNotificationPlan::exists('admin_new'))->toBeTrue()
-        ->and(BookingNotificationPlan::exists('customer_reminder'))->toBeFalse()
+        ->and(BookingNotificationPlan::exists('customer_reminder'))->toBeTrue()
+        ->and(BookingNotificationPlan::exists('customer_summary'))->toBeFalse()
         ->and(BookingNotificationPlan::isCustomer('customer_canceled'))->toBeTrue()
         ->and(BookingNotificationPlan::isCustomer('admin_canceled'))->toBeFalse();
 });
+
+test('timed reminders are sent the configured time before the start, never late or immediately', function (array $options, int $offset, ?int $expected) {
+    $start = 1893574800;
+    $now = $start - $offset;
+    expect(\Wappointment\Jobs\ReminderSchedule::sendAt($options, $start, $now))->toBe($expected === null ? null : $start - $expected);
+})->with([
+    'legacy seeded 1 day (strings)' => [['when_number' => '1', 'when_unit' => '3'], 3 * 86400, 86400],
+    '2 hours' => [['when_number' => 2, 'when_unit' => 2], 86400, 7200],
+    '30 minutes' => [['when_number' => 30, 'when_unit' => 1], 86400, 1800],
+    'exactly now' => [['when_number' => 1, 'when_unit' => 3], 86400, 86400],
+    'already past' => [['when_number' => 4, 'when_unit' => 3], 3 * 86400, null],
+    'zero number (legacy sent at once)' => [['when_number' => 0, 'when_unit' => 3], 86400, null],
+    'unknown unit (legacy sent at once)' => [['when_number' => 1, 'when_unit' => 9], 86400, null],
+    'missing options' => [[], 86400, null],
+    'fractional number' => [['when_number' => '1.5', 'when_unit' => 2], 86400, null],
+]);

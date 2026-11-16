@@ -62,11 +62,74 @@ class NotificationRepository
         ];
     }
 
+    /**
+     * Published "before the appointment" email reminders (`event = 1`). Translations
+     * (rows with a `parent`) are not scheduled separately; delivery picks the
+     * translation of the scheduled reminder that matches the client's locale.
+     *
+     * @return list<array{id: int, options: array}>
+     */
+    public function publishedTimedReminders(): array
+    {
+        $rows = $this->db->get_results(
+            "SELECT id, options FROM {$this->prefix()}reminders
+             WHERE published = 1 AND type = 1 AND event = 1 AND (parent IS NULL OR parent = 0)
+             ORDER BY id",
+            ARRAY_A
+        );
+        $this->checkError();
+        return array_map(fn(array $row): array => [
+            'id' => (int) $row['id'],
+            'options' => $this->object($row['options']),
+        ], $rows ?? []);
+    }
+
+    /**
+     * The template for a scheduled timed reminder: its published translation in the
+     * client's locale, else the reminder itself while it is still published.
+     *
+     * @return array{id: int, subject: string, body: mixed}|null
+     */
+    public function timedReminderTemplate(int $reminderId, string $locale): ?array
+    {
+        $row = $this->db->get_row($this->db->prepare(
+            "SELECT id, subject, options FROM {$this->prefix()}reminders
+             WHERE published = 1 AND type = 1 AND event = 1
+               AND (id = %d OR (parent = %d AND lang = %s AND lang <> ''))
+             ORDER BY (id = %d) ASC, id ASC LIMIT 1",
+            $reminderId,
+            $reminderId,
+            $locale,
+            $reminderId
+        ), ARRAY_A);
+        $this->checkError();
+        if (!$row) {
+            return null;
+        }
+        $options = $this->object($row['options']);
+        return [
+            'id' => (int) $row['id'],
+            'subject' => (string) ($row['subject'] ?? ''),
+            'body' => $options['body'] ?? null,
+        ];
+    }
+
+    /** Legacy `AppointmentReminderListener` never schedules reminders for test appointments. */
+    public function isTestClient(int $clientId): bool
+    {
+        $options = $this->db->get_var($this->db->prepare(
+            "SELECT options FROM {$this->prefix()}clients WHERE id = %d",
+            $clientId
+        ));
+        $this->checkError();
+        return !empty($this->object(is_string($options) ? $options : null)['test_appointment']);
+    }
+
     /** Everything a booking notification needs, read at delivery time. */
     public function appointmentContext(int $appointmentId): ?array
     {
         $row = $this->db->get_row($this->db->prepare(
-            "SELECT a.id, a.status, a.type, a.edit_key, a.staff_id, a.location_id, a.options,
+            "SELECT a.id, a.status, a.start_at, a.type, a.edit_key, a.staff_id, a.location_id, a.options,
                     c.name AS client_name, c.email AS client_email, c.options AS client_options,
                     s.name AS service_name, l.name AS location_name, l.options AS location_options,
                     cal.name AS calendar_name, cal.wp_uid AS calendar_wp_uid, cal.options AS calendar_options
@@ -91,6 +154,7 @@ class NotificationRepository
         return [
             'id' => (int) $row['id'],
             'status' => (int) $row['status'],
+            'start' => (new \DateTimeImmutable((string) $row['start_at'], new \DateTimeZone('UTC')))->getTimestamp(),
             'type' => (int) $row['type'],
             'edit_key' => (string) $row['edit_key'],
             'staff_id' => (int) ($row['staff_id'] ?? 0),

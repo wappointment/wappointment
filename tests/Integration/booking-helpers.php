@@ -44,9 +44,12 @@ if (!function_exists('bookingPublishEmailTemplate')) {
      * Store a published email reminder the way legacy master does: `options.body` holds
      * a TipTap document. Event codes: 2 confirmed, 3 rescheduled, 4 canceled, 5 pending.
      *
+     * Event 1 is a timed reminder: pass `when_number`/`when_unit` in $options. A
+     * translation names its reminder in $parent and its locale in $lang.
+     *
      * @param list<string> $paragraphs text that may contain `[model:key]` tags
      */
-    function bookingPublishEmailTemplate(int $event, string $subject, array $paragraphs, ?string $lang = null): int
+    function bookingPublishEmailTemplate(int $event, string $subject, array $paragraphs, ?string $lang = null, array $options = [], ?int $parent = null): int
     {
         global $wpdb;
         $body = ['type' => 'doc', 'content' => array_map(
@@ -57,7 +60,7 @@ if (!function_exists('bookingPublishEmailTemplate')) {
         )];
         $inserted = $wpdb->insert($wpdb->prefix . 'wappo_reminders', [
             'subject' => $subject, 'type' => 1, 'event' => $event, 'published' => 1, 'locked' => 1,
-            'options' => wp_json_encode(['body' => $body]), 'lang' => $lang,
+            'options' => wp_json_encode(['body' => $body] + $options), 'lang' => $lang, 'parent' => $parent,
         ]);
         expect($inserted)->toBe(1);
         return (int) $wpdb->insert_id;

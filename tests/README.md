@@ -123,7 +123,10 @@ left untouched while unsupported v3-queue payloads are quarantined; the worker l
 held from a second database connection; single-claim rows; and WP-cron scheduling.
 It also checks rendered template content and legacy-format footer links, the
 client-locale template choice with HTML mail, and that an unrenderable template fails
-the job permanently while the booking stays saved. Fixtures store TipTap bodies with
+the job permanently while the booking stays saved; and timed reminders: one job per
+published reminder at the configured offset, replaced on reschedule, removed on
+cancel, sent once in the client's translation, none before approval or for test
+clients. Fixtures store TipTap bodies with
 `bookingPublishEmailTemplate()`; both PHP files share `tests/Integration/booking-helpers.php`.
 
 ## Legacy availability runtime characterization
